@@ -31,13 +31,13 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         clampedMax = new int2(math.clamp(max.x, 0, grid.Width), math.clamp(max.y, 0, grid.Height));
     }
 
-    private static void AddOccupancy(in GridConfig grid, ref DynamicOccupancyData occ, NativeArray<int> counts, int2 centerCell, int2 size)
+    private static void AddOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 centerCell, int2 size)
     {
         GetClampedFootprintBounds(grid, centerCell, size, out int2 clampedMin, out int2 clampedMax);
         AddOccupancyRect(grid, ref occ, counts, clampedMin, clampedMax);
     }
 
-    private static void AddOccupancyRect(in GridConfig grid, ref DynamicOccupancyData occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
+    private static void AddOccupancyRect(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
     {
         for (int y = clampedMin.y; y < clampedMax.y; y++)
         {
@@ -53,13 +53,13 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         }
     }
 
-    private static void RemoveOccupancy(in GridConfig grid, ref DynamicOccupancyData occ, NativeArray<int> counts, int2 centerCell, int2 size)
+    private static void RemoveOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 centerCell, int2 size)
     {
         GetClampedFootprintBounds(grid, centerCell, size, out int2 clampedMin, out int2 clampedMax);
         RemoveOccupancyRect(grid, ref occ, counts, clampedMin, clampedMax);
     }
 
-    private static void RemoveOccupancyRect(in GridConfig grid, ref DynamicOccupancyData occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
+    private static void RemoveOccupancyRect(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
     {
         for (int y = clampedMin.y; y < clampedMax.y; y++)
         {
@@ -77,7 +77,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
 
     private static void UpdateOccupancyDelta(
         in GridConfig grid,
-        ref DynamicOccupancyData occ,
+        ref DynamicOccupancyComponent occ,
         NativeArray<int> counts,
         int2 previousCell,
         int2 previousSize,
@@ -122,7 +122,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<DynamicOccupancyData>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<UnitGrid>();
 
         _trackedUnitsQuery = state.GetEntityQuery(new EntityQueryDesc
@@ -183,7 +183,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         }
     }
 
-    private void RebuildOccupancy(ref SystemState state, Entity gridEntity, in GridConfig grid, ref DynamicOccupancyData occ, int trackedUnitCount)
+    private void RebuildOccupancy(ref SystemState state, Entity gridEntity, in GridConfig grid, ref DynamicOccupancyComponent occ, int trackedUnitCount)
     {
         EnsureStorage(grid.Width * grid.Height, trackedUnitCount);
 
@@ -218,7 +218,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     private void SyncTrackedEntitiesForCountChange(
         ref SystemState state,
         in GridConfig grid,
-        ref DynamicOccupancyData occ,
+        ref DynamicOccupancyComponent occ,
         int trackedUnitCount)
     {
         using var currentEntities = _trackedUnitsQuery.ToEntityArray(Allocator.Temp);
@@ -266,7 +266,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     private void ApplyChangedEntity(
         Entity entity,
         in GridConfig grid,
-        ref DynamicOccupancyData occ,
+        ref DynamicOccupancyComponent occ,
         ComponentLookup<UnitGrid> unitGridLookup,
         ComponentLookup<UnitFootprint> footprintLookup)
     {
@@ -308,7 +308,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
             var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
             var grid = SystemAPI.GetSingleton<GridConfig>();
 
-            var occRw = SystemAPI.GetComponentRW<DynamicOccupancyData>(gridEntity);
+            var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
             ref var occ = ref occRw.ValueRW;
 
             int gridSize = grid.Width * grid.Height;

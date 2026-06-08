@@ -34,9 +34,9 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshMovesSingleMarkerBetweenSelectedBuildings()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingData>();
-        RuntimeBuildingData buildingA = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
-        RuntimeBuildingData buildingB = CreateBuilding(2, new Vector2Int(20, 8), new Vector2Int(10, 8), 0.5f);
+        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity buildingA = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
+        RuntimeBuildingEntity buildingB = CreateBuilding(2, new Vector2Int(20, 8), new Vector2Int(10, 8), 0.5f);
         runtimeBuildings.AddBuilding(buildingA.Id, buildingA);
         runtimeBuildings.AddBuilding(buildingB.Id, buildingB);
 
@@ -65,8 +65,8 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingData>();
-        RuntimeBuildingData building = CreateBuilding(1, Vector2Int.zero, new Vector2Int(4, 4), 0f);
+        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, Vector2Int.zero, new Vector2Int(4, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
         var system = new BuildingSelectionMarkerSystem();
@@ -98,13 +98,13 @@ public sealed class BuildingSelectionMarkerSystemTests
         model.name = "Model";
         model.transform.SetParent(modelRoot.transform, false);
 
-        var building = new RuntimeBuildingData
+        var building = new RuntimeBuildingEntity
         {
             Instance = buildingObject,
             Definition = new BuildingDefinition { FootprintCells = new Vector2Int(4, 4) }
         };
         var visualSystem = new BuildingRuntimeVisualSystem();
-        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingData> { { 1, building } };
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity> { { 1, building } };
         var context = new BuildingRuntimeVisualSystem.Context(
             runtimeBuildings,
             new BuildingVisualSystem(),
@@ -121,7 +121,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         Assert.AreSame(model.GetComponent<Renderer>(), building.FactionVisualRenderers[0]);
     }
 
-    private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildings)
+    private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildings)
     {
         GridConfig grid = new()
         {
@@ -150,12 +150,12 @@ public sealed class BuildingSelectionMarkerSystemTests
             Object.DestroyImmediate);
     }
 
-    private RuntimeBuildingData CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)
+    private RuntimeBuildingEntity CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)
     {
         GameObject instance = new($"Building_{id}");
         _objects.Add(instance);
         instance.transform.position = new Vector3(origin.x, y, origin.y);
-        return new RuntimeBuildingData
+        return new RuntimeBuildingEntity
         {
             Id = id,
             OriginCell = origin,

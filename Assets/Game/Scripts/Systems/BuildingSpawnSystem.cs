@@ -8,7 +8,7 @@ using UnityEngine;
 internal sealed class BuildingSpawnSystem
 {
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
-    public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingData building, string normalizedBuildingId);
+    public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
 
     private sealed class RecentSpawnReservation
     {
@@ -29,7 +29,7 @@ internal sealed class BuildingSpawnSystem
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly EntityQuery LiveUnitFootprintQuery;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
@@ -39,7 +39,7 @@ internal sealed class BuildingSpawnSystem
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             EntityQuery liveUnitFootprintQuery,
             BuildingProductionSystem productionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
@@ -79,7 +79,7 @@ internal sealed class BuildingSpawnSystem
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         int2 unitFootprint,
         ref uint randomState,
         out int2 cell,
@@ -89,7 +89,7 @@ internal sealed class BuildingSpawnSystem
         worldPosition = default;
 
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
         try
         {
@@ -126,7 +126,7 @@ internal sealed class BuildingSpawnSystem
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         int2 unitFootprint,
         out int2 cell,
         out float3 worldPosition)
@@ -163,9 +163,9 @@ internal sealed class BuildingSpawnSystem
 
         int remainingSlotIndex = math.max(0, flattenedSlotIndex);
         string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 !building.HasOwnerFaction ||
@@ -196,7 +196,7 @@ internal sealed class BuildingSpawnSystem
 
     public bool TrySpawnPlayerUnitNearBuilding(
         Context context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int productionIndex,
         int reservedProductionSlotIndex,
         Vector3? overrideWorldPosition,
@@ -204,7 +204,7 @@ internal sealed class BuildingSpawnSystem
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         ref uint randomState)
     {
         if (building == null || building.Definition == null || context.GetProductionPrefab == null)
@@ -237,7 +237,7 @@ internal sealed class BuildingSpawnSystem
                 out float3 pos,
                 out int2 unitFootprint,
                 out bool isAirUnit,
-                out RuntimeBuildingData productionSlotBuilding,
+                out RuntimeBuildingEntity productionSlotBuilding,
                 out int productionSlotIndex))
         {
             return false;
@@ -271,7 +271,7 @@ internal sealed class BuildingSpawnSystem
 
     private bool TryResolveSpawnPlacement(
         Context context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         GameObject spawnUnitPrefab,
         Entity prefabEntity,
         int reservedProductionSlotIndex,
@@ -280,13 +280,13 @@ internal sealed class BuildingSpawnSystem
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         ref uint randomState,
         out int2 cell,
         out float3 pos,
         out int2 unitFootprint,
         out bool isAirUnit,
-        out RuntimeBuildingData productionSlotBuilding,
+        out RuntimeBuildingEntity productionSlotBuilding,
         out int productionSlotIndex)
     {
         pos = default;
@@ -325,7 +325,7 @@ internal sealed class BuildingSpawnSystem
         }
 
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
         try
         {
@@ -449,7 +449,7 @@ internal sealed class BuildingSpawnSystem
         Entity instance,
         float3 pos,
         int2 cell,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         bool isAirUnit,
         ref uint randomState)
     {
@@ -457,9 +457,9 @@ internal sealed class BuildingSpawnSystem
             em.RemoveComponent<UnitGridInitialized>(instance);
         if (em.HasComponent<UnitPrevWorldPos>(instance))
             em.SetComponentData(instance, new UnitPrevWorldPos { Value = pos });
-        if (em.HasComponent<UnitAirState>(instance))
+        if (em.HasComponent<UnitAirComponent>(instance))
         {
-            em.SetComponentData(instance, new UnitAirState
+            em.SetComponentData(instance, new UnitAirComponent
             {
                 HomePosition = pos,
                 HomeCell = cell,
@@ -468,18 +468,18 @@ internal sealed class BuildingSpawnSystem
                 Airborne = 0
             });
         }
-        if (em.HasComponent<UnitMoveVisualState>(instance))
-            em.SetComponentData(instance, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        if (em.HasComponent<UnitMoveVisualComponent>(instance))
+            em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         if (em.HasComponent<Faction>(instance))
             em.SetComponentData(instance, new Faction { Id = building.HasOwnerFaction ? building.OwnerFactionId : (byte)0 });
         if (em.HasComponent<UnitRespawnPrefab>(instance))
             em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = Entity.Null });
-        if (em.HasComponent<UnitAttackState>(instance))
-            em.SetComponentData(instance, new UnitAttackState { CooldownRemaining = 0f });
-        if (em.HasComponent<UnitIdleWanderState>(instance))
+        if (em.HasComponent<UnitAttackCooldownComponent>(instance))
+            em.SetComponentData(instance, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+        if (em.HasComponent<UnitIdleWanderComponent>(instance))
         {
             randomState = math.max(1u, randomState + 1u);
-            em.SetComponentData(instance, new UnitIdleWanderState
+            em.SetComponentData(instance, new UnitIdleWanderComponent
             {
                 RandomState = randomState,
                 RetrySeconds = 0f,
@@ -572,7 +572,7 @@ internal sealed class BuildingSpawnSystem
     private bool TryResolveHelicopterSpawnForFaction(
         Context context,
         byte factionId,
-        RuntimeBuildingData sourceBuilding,
+        RuntimeBuildingEntity sourceBuilding,
         EntityManager em,
         ref Unity.Mathematics.Random rng,
         in GridConfig grid,
@@ -583,7 +583,7 @@ internal sealed class BuildingSpawnSystem
         int2 unitFootprint,
         out int2 cell,
         out float3 worldPosition,
-        out RuntimeBuildingData slotBuilding,
+        out RuntimeBuildingEntity slotBuilding,
         out int slotIndex)
     {
         cell = default;
@@ -596,9 +596,9 @@ internal sealed class BuildingSpawnSystem
         int helipadSearchRadius = 0;
         string helipadKey = NormalizeSpawnableKey("Building_Helipad");
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (!IsOwnedRuntimeBuildingForFaction(building, factionId) ||
                 building.Instance == null ||
                 building.ProductionSpawnLocalPositions == null ||
@@ -642,9 +642,9 @@ internal sealed class BuildingSpawnSystem
 
         if (foundHelipad)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
             {
-                RuntimeBuildingData building = entry.Value;
+                RuntimeBuildingEntity building = entry.Value;
                 if (!IsOwnedRuntimeBuildingForFaction(building, factionId) || !context.RuntimeBuildingMatchesId(building, helipadKey))
                     continue;
 
@@ -870,10 +870,10 @@ internal sealed class BuildingSpawnSystem
 
     private static void ReserveDynamicOccupancy(EntityManager em, Entity gridEntity, in GridConfig grid, int2 centerCell, int2 footprintSize)
     {
-        if (!em.HasComponent<DynamicOccupancyData>(gridEntity))
+        if (!em.HasComponent<DynamicOccupancyComponent>(gridEntity))
             return;
 
-        DynamicOccupancyData occupancy = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+        DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
         if (!occupancy.Occupied.IsCreated)
             return;
 
@@ -902,7 +902,7 @@ internal sealed class BuildingSpawnSystem
         }
     }
 
-    private static bool IsOwnedRuntimeBuildingForFaction(RuntimeBuildingData building, byte factionId)
+    private static bool IsOwnedRuntimeBuildingForFaction(RuntimeBuildingEntity building, byte factionId)
     {
         return building != null &&
                !building.IsDestroyed &&
@@ -910,14 +910,14 @@ internal sealed class BuildingSpawnSystem
                building.OwnerFactionId == factionId;
     }
 
-    private static bool TryGetFactionRuntimeBuildingCenter(Context context, byte factionId, RuntimeBuildingData sourceBuilding, out int2 center)
+    private static bool TryGetFactionRuntimeBuildingCenter(Context context, byte factionId, RuntimeBuildingEntity sourceBuilding, out int2 center)
     {
         center = default;
         int2 sum = default;
         int count = 0;
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (!IsOwnedRuntimeBuildingForFaction(building, factionId))
                 continue;
 

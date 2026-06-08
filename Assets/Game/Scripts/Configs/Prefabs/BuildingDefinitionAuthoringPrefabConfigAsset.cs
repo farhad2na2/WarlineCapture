@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Prefab Config/Building Definition Authoring")]
+[CreateAssetMenu(menuName = "Game/Prefab Config/Building Definition Authoring")]
 public sealed class BuildingDefinitionAuthoringPrefabConfigAsset : BuildingDefinitionAuthoringConfig
 {
 }

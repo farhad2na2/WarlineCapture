@@ -13,7 +13,7 @@ public sealed class UICommandExchangeTests
     public void CommandExchangeScreen_HasLayeredVisualLockHierarchy()
     {
         GameObject prefab = LoadPrefab();
-        UIScreenSystem controller = prefab.GetComponent<UIScreenSystem>();
+        UIScreenView controller = prefab.GetComponent<UIScreenView>();
         Assert.NotNull(controller);
         Assert.AreEqual(UIRoute.CommandExchange, controller.Route);
         Assert.IsNull(prefab.GetComponent<Image>(), "Command Exchange must not bake the full target image into the root.");

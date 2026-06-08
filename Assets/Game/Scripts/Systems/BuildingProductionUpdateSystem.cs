@@ -5,13 +5,13 @@ internal sealed class BuildingProductionUpdateSystem
 {
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
         public readonly BuildingProductionTransportSystem.Context TransportContext;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             BuildingProductionSystem productionSystem,
             BuildingProductionTransportSystem transportSystem,
             BuildingProductionTransportSystem.Context transportContext)
@@ -28,9 +28,9 @@ internal sealed class BuildingProductionUpdateSystem
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
             {
                 context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
@@ -41,7 +41,7 @@ internal sealed class BuildingProductionUpdateSystem
 
             for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
             {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
+                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
                 if (pending == null)
                 {
                     context.ProductionSystem.RemovePendingAt(building.PendingProductions, i);

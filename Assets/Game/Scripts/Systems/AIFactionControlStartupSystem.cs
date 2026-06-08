@@ -19,6 +19,16 @@ public sealed class AIFactionControlStartupSystem
 
     public Result Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
     {
+        Result result = Initialize(em, aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
+        AISettingsRuntimeState.PlayerAutoAIEnabled = result.PlayerAutoModeEnabled;
+        return result;
+    }
+
+    public Result Initialize(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
+    {
         if (aiControllerConfigs == null)
             return default;
 
@@ -51,12 +61,12 @@ public sealed class AIFactionControlStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
             bool isPlayer = config.Role == AIControllerRole.PlayerAuto;
-            bool isAIControlled = AISettingsRuntimeState.ResolveEnabled(config) && (!isPlayer || AISettingsRuntimeState.PlayerAutoAIEnabled);
+            bool isAIControlled = aiSettings.ResolveEnabled(config) && (!isPlayer || aiSettings.PlayerAutoAIEnabled);
             entries.Add(new FactionControlEntry
             {
                 FactionId = factionId,
@@ -68,7 +78,6 @@ public sealed class AIFactionControlStartupSystem
             if (isPlayer)
             {
                 playerAutoModeEnabled = isAIControlled;
-                AISettingsRuntimeState.PlayerAutoAIEnabled = isAIControlled;
                 hasPlayerEntry = true;
             }
 
@@ -101,13 +110,16 @@ public sealed class AIFactionControlStartupSystem
         return new Result(true, playerAutoModeEnabled);
     }
 
-    private bool ShouldIncludeAIConfig(AIControllerConfig config, ref int enemyConfigIndex)
+    private static bool ShouldIncludeAIConfig(
+        AIControllerConfig config,
+        ref int enemyConfigIndex,
+        AISettingsSnapshot aiSettings)
     {
         if (config == null || config.Role != AIControllerRole.Enemy)
             return true;
 
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
-        return AISettingsRuntimeState.IsEnemyAIIndexEnabled(currentIndex);
+        return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
     }
 }

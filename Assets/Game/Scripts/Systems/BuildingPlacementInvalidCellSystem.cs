@@ -27,7 +27,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         BuildingGameplayDependencySystem dependencySystem)
     {
         _hasPlacementInvalidPrefix = false;
-        if (!gridDataSystem.TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (!gridDataSystem.TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return;
 
         bool[] roadFootprintMask = new bool[grid.Width * grid.Height];
@@ -52,7 +52,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         bool rotateVertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         BuildingGameplayDependencySystem dependencySystem,
         BuildingPlacementStartupSystem startupSystem,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,

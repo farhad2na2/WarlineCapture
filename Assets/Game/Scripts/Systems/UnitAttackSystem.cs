@@ -32,7 +32,7 @@ public partial struct UnitAttackSystem : ISystem
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<UnitCombat>();
         state.RequireForUpdate<UnitAttack>();
-        state.RequireForUpdate<UnitAttackState>();
+        state.RequireForUpdate<UnitAttackCooldownComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -45,9 +45,9 @@ public partial struct UnitAttackSystem : ISystem
         var predictedHealth = new System.Collections.Generic.Dictionary<Entity, int>(64);
         var aggregatedEffects = new System.Collections.Generic.Dictionary<Entity, AggregatedTargetEffect>(64);
         foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
-                     .Query<RefRW<EngageTarget>, RefRW<UnitAttackState>, RefRW<UnitAttackTraceState>, RefRW<UnitAttackAnimationState>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
+                     .Query<RefRW<EngageTarget>, RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>, RefRW<UnitAttackAnimationComponent>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
                      .WithNone<StaticGridBlocker>()
-                     .WithNone<UnitDeathAnimationState>()
+                     .WithNone<UnitDeathAnimationComponent>()
                      .WithEntityAccess())
         {
             if (em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack == 0)

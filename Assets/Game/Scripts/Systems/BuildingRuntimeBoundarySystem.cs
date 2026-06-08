@@ -28,7 +28,7 @@ public sealed class BuildingRuntimeBoundarySystem
         FactionResourceSystem factionResourceSystem,
         EntityManager em,
         EntityQuery boundaryQuery,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         float now)
     {
         if (definitionSystem == null ||
@@ -77,7 +77,7 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity,
         float now)
@@ -89,7 +89,7 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private void ProcessResourceSellRequests(
         FactionResourceSystem factionResourceSystem,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -285,7 +285,7 @@ public sealed class BuildingRuntimeBoundarySystem
         FactionResourceSystem factionResourceSystem,
         EntityManager em,
         Entity boundaryEntity,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         float now)
     {
         bool forcePublish = _forcePublishNextUpdate;
@@ -379,7 +379,7 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         RefreshFactionIds(runtimeBuildings);
         DynamicBuffer<BuildingRuntimeFactionSummary> buffer =
@@ -407,7 +407,7 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private void PublishRuntimeOwnedBuildingSummaries(
         BuildingDefinitionSystem definitionSystem,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -417,9 +417,9 @@ public sealed class BuildingRuntimeBoundarySystem
 
         if (runtimeBuildings != null)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
             {
-                RuntimeBuildingData building = pair.Value;
+                RuntimeBuildingEntity building = pair.Value;
                 if (building == null ||
                     building.IsDestroyed ||
                     !building.HasOwnerFaction ||
@@ -487,16 +487,16 @@ public sealed class BuildingRuntimeBoundarySystem
         buffer.Clear();
         PublishConfiguredUnitProductionSummaryRows(definitionSystem, buffer);
 
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
         if (runtimeBuildings == null)
             return;
 
         EntityManager producedUnitEntityManager = default;
         bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
                                 runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
                 continue;
 
@@ -505,7 +505,7 @@ public sealed class BuildingRuntimeBoundarySystem
             {
                 for (int i = 0; i < building.PendingProductions.Count; i++)
                 {
-                    RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
+                    RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
                     if (pending?.Prefab == null)
                         continue;
 
@@ -592,7 +592,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private static bool TryResolveProducedUnitId(
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         Entity unit,
         EntityManager em,
         out FixedString128Bytes unitId)
@@ -621,7 +621,7 @@ public sealed class BuildingRuntimeBoundarySystem
     private void PublishFactionProductionSpawnPointsReadModel(
         EntityManager em,
         Entity boundaryEntity,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer =
             EnsureBoundaryBuffer<BuildingFactionProductionSpawnPointReadModel>(em, boundaryEntity);
@@ -630,9 +630,9 @@ public sealed class BuildingRuntimeBoundarySystem
         if (!TryGetGridConfig(em, out GridConfig grid))
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 !building.HasOwnerFaction ||
@@ -696,12 +696,12 @@ public sealed class BuildingRuntimeBoundarySystem
         return false;
     }
 
-    private void RefreshFactionIds(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+    private void RefreshFactionIds(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         _factionIds.Clear();
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || !building.HasOwnerFaction)
                 continue;
 
@@ -720,7 +720,7 @@ public sealed class BuildingRuntimeBoundarySystem
         _factionIds.Add(factionId);
     }
 
-    private static int ComputeRuntimeBuildingSignature(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+    private static int ComputeRuntimeBuildingSignature(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         if (runtimeBuildings == null)
             return 0;
@@ -728,9 +728,9 @@ public sealed class BuildingRuntimeBoundarySystem
         unchecked
         {
             int hash = 17;
-            foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
             {
-                RuntimeBuildingData building = pair.Value;
+                RuntimeBuildingEntity building = pair.Value;
                 hash = (hash * 31) + pair.Key;
                 if (building == null)
                     continue;

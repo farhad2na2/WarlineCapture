@@ -26,7 +26,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystem
             source.BuildingRuntimeCompositionSystem.CreateRuntimeContextSource(
                 source,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
-                (BuildingGameplayCompositionSourceSystem gridSource, out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                (BuildingGameplayCompositionSourceSystem gridSource, out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                     gridSource.BuildingGridCompositionSystem.TryGetGridData(
                         gridSource,
                         (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
@@ -35,13 +35,13 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystem
                         out roads,
                         out blockerData),
                 (querySource, building) => querySource.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(querySource, building),
-                (BuildingGameplayCompositionSourceSystem querySource, RuntimeBuildingData building, out Vector3 worldPosition) =>
+                (BuildingGameplayCompositionSourceSystem querySource, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
                     querySource.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
                         querySource,
                         building,
                         (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                         out worldPosition),
-                (BuildingGameplayCompositionSourceSystem querySource, int id, out RuntimeBuildingData building) =>
+                (BuildingGameplayCompositionSourceSystem querySource, int id, out RuntimeBuildingEntity building) =>
                     querySource.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(querySource, id, out building),
                 (querySource, definition, originCell, grid, rotateVertical) =>
                     querySource.BuildingRuntimeCompositionQuerySystem.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));

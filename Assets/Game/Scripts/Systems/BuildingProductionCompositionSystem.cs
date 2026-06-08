@@ -52,7 +52,7 @@ internal sealed class BuildingProductionCompositionSystem
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,
             (out EntityManager entityManager) => runtimeSource.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 runtimeSource.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => runtimeSource.EnsureEntityQueries?.Invoke(entityManager),
             () => source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,
@@ -65,7 +65,7 @@ internal sealed class BuildingProductionCompositionSystem
     private static bool TryQueuePlayerUnitProduction(
         BuildingGameplayCompositionSourceSystem source,
         BuildingProductionContextSystem.Source productionSource,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int productionIndex,
         GameObject spawnUnitPrefab)
     {
@@ -83,7 +83,7 @@ internal sealed class BuildingProductionCompositionSystem
 
     private static Vector3 ResolveBuildingFocusWorldPosition(
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource,
-        RuntimeBuildingData building)
+        RuntimeBuildingEntity building)
     {
         if (runtimeSource.TryResolveBuildingFocusWorldPosition != null &&
             runtimeSource.TryResolveBuildingFocusWorldPosition(building, out Vector3 worldPosition))

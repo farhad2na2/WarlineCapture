@@ -23,7 +23,7 @@ internal sealed class CitizenPopulationEcsProjectionSystem
         _ecsWorld = world;
         _entityManager = world.EntityManager;
         _citizenEntityQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<CitizenTag>(), ComponentType.ReadOnly<CitizenIdentity>());
-        _householdEntityQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<CitizenHouseholdTag>(), ComponentType.ReadOnly<CitizenHouseholdData>());
+        _householdEntityQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<CitizenHouseholdTag>(), ComponentType.ReadOnly<CitizenHouseholdComponent>());
         _gridConfigQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
     }
 
@@ -92,7 +92,7 @@ internal sealed class CitizenPopulationEcsProjectionSystem
 
         household.HouseholdEntity = _entityManager.CreateEntity();
         _entityManager.AddComponentData(household.HouseholdEntity, new CitizenHouseholdTag());
-        _entityManager.AddComponentData(household.HouseholdEntity, default(CitizenHouseholdData));
+        _entityManager.AddComponentData(household.HouseholdEntity, default(CitizenHouseholdComponent));
     }
 
     public void EnsureCitizenEntity(ref CitizenRecordComponent citizen)
@@ -107,8 +107,8 @@ internal sealed class CitizenPopulationEcsProjectionSystem
         _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenIdentity));
         _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenHouseholdRef));
         _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenHomeTarget));
-        _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenAssignmentsData));
-        _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenTimersData));
+        _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenAssignmentsComponent));
+        _entityManager.AddComponentData(citizen.CitizenEntity, default(CitizenTimersComponent));
     }
 
     public void SyncHouseholdEntity(CitizenHouseholdRecordComponent household)
@@ -118,7 +118,7 @@ internal sealed class CitizenPopulationEcsProjectionSystem
         if (household.HouseholdEntity == Entity.Null || !_entityManager.Exists(household.HouseholdEntity))
             return;
 
-        _entityManager.SetComponentData(household.HouseholdEntity, new CitizenHouseholdData
+        _entityManager.SetComponentData(household.HouseholdEntity, new CitizenHouseholdComponent
         {
             HouseholdId = household.HouseholdId,
             HomeBuildingId = household.HomeBuildingId,
@@ -157,7 +157,7 @@ internal sealed class CitizenPopulationEcsProjectionSystem
             HomeBuildingId = citizen.HomeBuildingId,
             CurrentTargetBuildingId = citizen.CurrentTargetBuildingId
         });
-        _entityManager.SetComponentData(citizen.CitizenEntity, new CitizenAssignmentsData
+        _entityManager.SetComponentData(citizen.CitizenEntity, new CitizenAssignmentsComponent
         {
             WorkBuildingId = citizen.WorkBuildingId,
             PreferredShopBuildingId = citizen.PreferredShopBuildingId,
@@ -165,7 +165,7 @@ internal sealed class CitizenPopulationEcsProjectionSystem
             PreferredWalkBuildingId = citizen.PreferredWalkBuildingId,
             PreferredCityHallBuildingId = citizen.PreferredCityHallBuildingId
         });
-        _entityManager.SetComponentData(citizen.CitizenEntity, new CitizenTimersData
+        _entityManager.SetComponentData(citizen.CitizenEntity, new CitizenTimersComponent
         {
             StateStartedAt = citizen.StateStartedAt,
             StateEndsAt = citizen.StateEndsAt

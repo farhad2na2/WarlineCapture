@@ -33,7 +33,7 @@ public partial struct UnitRotationHoldSystem : ISystem
     {
         public EntityCommandBuffer.ParallelWriter Ecb;
 
-        public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref LocalTransform transform, in UnitMoveVisualState vis, in UnitRotationHold hold)
+        public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref LocalTransform transform, in UnitMoveVisualComponent vis, in UnitRotationHold hold)
         {
             if (vis.IsMoving != 0)
             {

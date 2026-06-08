@@ -14,7 +14,7 @@ internal sealed class BuildingProductionTransportSystem
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingVisualSystem VisualSystem;
@@ -23,7 +23,7 @@ internal sealed class BuildingProductionTransportSystem
         public readonly BuildingProductionTransportBridgeSystem.Context TransportBridgeContext;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             BuildingProductionSystem productionSystem,
             BuildingVisualSystem visualSystem,
@@ -43,8 +43,8 @@ internal sealed class BuildingProductionTransportSystem
 
     public bool TryEnsureActiveProductionTransport(
         Context context,
-        RuntimeBuildingData building,
-        RuntimeBuildingData.PendingProduction pending,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity.PendingProduction pending,
         float now)
     {
         if (building == null || pending == null || pending.TransportPrefab == null || building.ActiveTransport != null)
@@ -136,12 +136,13 @@ internal sealed class BuildingProductionTransportSystem
         HideTransportRuntimeMarkers(instance.transform);
         Transform doorTransform = context.VisualSystem.FindDescendantByName(instance.transform, "Door_X");
 
-        RuntimeBuildingData.ActiveProductionTransport transport = new()
+        RuntimeBuildingEntity.ActiveProductionTransport transport = new()
         {
             LaneIndex = laneIndex,
             Prefab = pending.TransportPrefab,
             Instance = instance,
             Transform = instance.transform,
+            VisualRenderers = instance.GetComponentsInChildren<Renderer>(true),
             DoorTransform = doorTransform,
             DoorOpenLocalEulerX = doorTransform != null ? doorTransform.localEulerAngles.x : 0f,
             HoverPosition = hoverPosition,
@@ -167,12 +168,12 @@ internal sealed class BuildingProductionTransportSystem
         return true;
     }
 
-    public void UpdateActiveProductionTransport(Context context, RuntimeBuildingData building, float now, float deltaTime, ref uint randomState)
+    public void UpdateActiveProductionTransport(Context context, RuntimeBuildingEntity building, float now, float deltaTime, ref uint randomState)
     {
         if (building == null || building.ActiveTransport == null || building.ActiveTransport.Transform == null)
             return;
 
-        RuntimeBuildingData.ActiveProductionTransport transport = building.ActiveTransport;
+        RuntimeBuildingEntity.ActiveProductionTransport transport = building.ActiveTransport;
         if (transport.Mode == ProductionTransportMode.Helicopter || transport.Mode == ProductionTransportMode.AirSelf)
             RotateProductionTransportBlades(transport.Transform, deltaTime);
 
@@ -192,7 +193,7 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private void UpdateArrivalPhase(RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now)
+    private void UpdateArrivalPhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
     {
         float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
         float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
@@ -227,7 +228,7 @@ internal sealed class BuildingProductionTransportSystem
         transport.NextDropReadyAt = transport.Mode == ProductionTransportMode.Plane ? now + 2f : now;
     }
 
-    private void UpdateDeliveryPhase(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
+    private void UpdateDeliveryPhase(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
     {
         if (transport.Mode == ProductionTransportMode.AirSelf)
         {
@@ -256,14 +257,14 @@ internal sealed class BuildingProductionTransportSystem
             return;
         }
 
-        RuntimeBuildingData.PendingProduction readyPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
+        RuntimeBuildingEntity.PendingProduction readyPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
         if (readyPending != null && now >= transport.NextDropReadyAt)
         {
             StartActiveTransportDrop(context, building, transport, readyPending, now);
             return;
         }
 
-        RuntimeBuildingData.PendingProduction soonPending = context.ProductionSystem.FindNextSoonTransportPending(building.PendingProductions, transport.Prefab, now, transport.HoldForNextReadySeconds);
+        RuntimeBuildingEntity.PendingProduction soonPending = context.ProductionSystem.FindNextSoonTransportPending(building.PendingProductions, transport.Prefab, now, transport.HoldForNextReadySeconds);
         bool shouldDepart = soonPending == null && now >= transport.HoverEnteredAt + transport.HoldForNextReadySeconds;
         if (shouldDepart)
         {
@@ -272,11 +273,11 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private bool TryCompleteSelfArrival(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
+    private bool TryCompleteSelfArrival(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
     {
         if (transport.Mode == ProductionTransportMode.AirSelf)
         {
-            RuntimeBuildingData.PendingProduction readyAirPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
+            RuntimeBuildingEntity.PendingProduction readyAirPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
             if (readyAirPending == null)
                 return false;
 
@@ -294,7 +295,7 @@ internal sealed class BuildingProductionTransportSystem
         if (transport.Mode != ProductionTransportMode.Plane)
             return false;
 
-        RuntimeBuildingData.PendingProduction readySelfArrivalPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
+        RuntimeBuildingEntity.PendingProduction readySelfArrivalPending = context.ProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
         if (readySelfArrivalPending == null || readySelfArrivalPending.Prefab != transport.Prefab)
             return false;
 
@@ -322,9 +323,9 @@ internal sealed class BuildingProductionTransportSystem
     }
 
     private static void ConfigureNewestRunwayUnit(
-        RuntimeBuildingData building,
-        RuntimeBuildingData.PendingProduction pending,
-        RuntimeBuildingData.ActiveProductionTransport transport,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity.PendingProduction pending,
+        RuntimeBuildingEntity.ActiveProductionTransport transport,
         int2 runwayCell,
         Context context)
     {
@@ -343,10 +344,10 @@ internal sealed class BuildingProductionTransportSystem
         if (!em.HasComponent<UnitSpawnTransitTag>(newest))
             em.AddComponent<UnitSpawnTransitTag>(newest);
 
-        if (!em.HasComponent<UnitAirState>(newest))
+        if (!em.HasComponent<UnitAirComponent>(newest))
             return;
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(newest);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(newest);
         airState.UsesRunway = 1;
         airState.RunwayTakeoffPosition = transport.TouchdownPosition;
         airState.RunwayTakeoffCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
@@ -357,7 +358,7 @@ internal sealed class BuildingProductionTransportSystem
         em.SetComponentData(newest, airState);
     }
 
-    private static void UpdateDeparturePhase(RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now)
+    private static void UpdateDeparturePhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
     {
         float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
         float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
@@ -380,7 +381,7 @@ internal sealed class BuildingProductionTransportSystem
         {
             foreach (var pair in context.RuntimeBuildings)
             {
-                RuntimeBuildingData.ActiveProductionTransport transport = pair.Value?.ActiveTransport;
+                RuntimeBuildingEntity.ActiveProductionTransport transport = pair.Value?.ActiveTransport;
                 if (transport == null || transport.Prefab != transportPrefab)
                     continue;
 
@@ -418,9 +419,9 @@ internal sealed class BuildingProductionTransportSystem
 
     private static void StartActiveTransportDrop(
         Context context,
-        RuntimeBuildingData building,
-        RuntimeBuildingData.ActiveProductionTransport transport,
-        RuntimeBuildingData.PendingProduction pending,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity.ActiveProductionTransport transport,
+        RuntimeBuildingEntity.PendingProduction pending,
         float now)
     {
         if (building == null || transport == null || pending == null)
@@ -461,7 +462,7 @@ internal sealed class BuildingProductionTransportSystem
             rope.endColor = rope.startColor;
         }
 
-        transport.ActiveDrop = new RuntimeBuildingData.PendingDropVisual
+        transport.ActiveDrop = new RuntimeBuildingEntity.PendingDropVisual
         {
             Production = pending,
             Visual = visual,
@@ -521,9 +522,9 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private static void UpdateActiveTransportDrop(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
+    private static void UpdateActiveTransportDrop(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
     {
-        RuntimeBuildingData.PendingDropVisual drop = transport.ActiveDrop;
+        RuntimeBuildingEntity.PendingDropVisual drop = transport.ActiveDrop;
         if (drop == null)
             return;
 
@@ -562,7 +563,7 @@ internal sealed class BuildingProductionTransportSystem
         if (drop.Rope != null)
             Destroy(drop.Rope.gameObject);
 
-        RuntimeBuildingData.PendingProduction production = drop.Production;
+        RuntimeBuildingEntity.PendingProduction production = drop.Production;
         context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production);
 
         if (transport.Mode == ProductionTransportMode.Plane)
@@ -591,19 +592,19 @@ internal sealed class BuildingProductionTransportSystem
         return context.TransportBridgeSystem.ResolveProductionGroundGoalCell(context.TransportBridgeContext, worldPosition);
     }
 
-    public static void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingData building, int2 goalCell)
+    public static void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingEntity building, int2 goalCell)
     {
         context.TransportBridgeSystem?.MoveNewestProducedUnitToCell(context.TransportBridgeContext, building, goalCell);
     }
 
-    public static void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingData building, Vector3 forward)
+    public static void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingEntity building, Vector3 forward)
     {
         context.TransportBridgeSystem?.AlignNewestProducedUnitRotation(context.TransportBridgeContext, building, forward);
     }
 
     public static bool TrySpawnPlayerUnitNearBuilding(
         Context context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int productionIndex,
         int reservedProductionSlotIndex,
         Vector3? overrideWorldPosition,
@@ -623,15 +624,15 @@ internal sealed class BuildingProductionTransportSystem
             ref randomState);
     }
 
-    private static Vector3 ResolveTransportVisualCenterWorld(RuntimeBuildingData.ActiveProductionTransport transport)
+    private static Vector3 ResolveTransportVisualCenterWorld(RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         if (transport?.Instance == null)
             return transport?.Transform != null ? transport.Transform.position : Vector3.zero;
 
-        Renderer[] renderers = transport.Instance.GetComponentsInChildren<Renderer>(true);
+        Renderer[] renderers = transport.VisualRenderers;
         bool hasBounds = false;
         Bounds bounds = default;
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; renderers != null && i < renderers.Length; i++)
         {
             Renderer renderer = renderers[i];
             if (renderer == null)
@@ -651,14 +652,10 @@ internal sealed class BuildingProductionTransportSystem
         if (hasBounds)
             return bounds.center;
 
-        Transform model = transport.Instance.transform.Find("Model");
-        if (model != null)
-            return model.position;
-
         return transport.Transform != null ? transport.Transform.position : transport.Instance.transform.position;
     }
 
-    private static void SetProductionTransportDoorOpen01(RuntimeBuildingData.ActiveProductionTransport transport, float open01)
+    private static void SetProductionTransportDoorOpen01(RuntimeBuildingEntity.ActiveProductionTransport transport, float open01)
     {
         if (transport?.DoorTransform == null)
             return;
@@ -668,7 +665,7 @@ internal sealed class BuildingProductionTransportSystem
         transport.DoorTransform.localEulerAngles = localEuler;
     }
 
-    private static Vector3 ResolvePlaneTransportDoorWorldPosition(RuntimeBuildingData.ActiveProductionTransport transport)
+    private static Vector3 ResolvePlaneTransportDoorWorldPosition(RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         if (transport?.DoorTransform != null)
         {
@@ -682,7 +679,7 @@ internal sealed class BuildingProductionTransportSystem
         return Vector3.zero;
     }
 
-    private static Vector3 ResolvePlaneTransportInteriorWorldPosition(RuntimeBuildingData.ActiveProductionTransport transport)
+    private static Vector3 ResolvePlaneTransportInteriorWorldPosition(RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         Vector3 doorPosition = ResolvePlaneTransportDoorWorldPosition(transport);
         if (transport?.Transform == null)
@@ -698,7 +695,7 @@ internal sealed class BuildingProductionTransportSystem
         return interior;
     }
 
-    private static Vector3 ResolvePlaneTransportRolloutWorldPosition(RuntimeBuildingData.ActiveProductionTransport transport)
+    private static Vector3 ResolvePlaneTransportRolloutWorldPosition(RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         Vector3 doorPosition = ResolvePlaneTransportDoorWorldPosition(transport);
         if (transport?.Transform == null)
@@ -714,12 +711,12 @@ internal sealed class BuildingProductionTransportSystem
         return rollout;
     }
 
-    private static Vector3 ResolveProductionTransportHoverPosition(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending)
+    private static Vector3 ResolveProductionTransportHoverPosition(RuntimeBuildingEntity building, RuntimeBuildingEntity.PendingProduction pending)
     {
         return ResolveProductionTransportDropPosition(building, pending) + new Vector3(0f, 8f, 0f);
     }
 
-    private static Vector3 ResolveProductionTransportDropPosition(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending)
+    private static Vector3 ResolveProductionTransportDropPosition(RuntimeBuildingEntity building, RuntimeBuildingEntity.PendingProduction pending)
     {
         if (building?.Instance != null &&
             pending != null &&
@@ -771,7 +768,7 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private static void DestroyTransport(RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport)
+    private static void DestroyTransport(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         if (transport.Instance != null)
             Destroy(transport.Instance);

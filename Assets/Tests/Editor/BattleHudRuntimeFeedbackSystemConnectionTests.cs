@@ -28,7 +28,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchOverlayPrefabPath);
         Assert.NotNull(prefab, $"Missing match overlay prefab at {MatchOverlayPrefabPath}.");
         _overlay = Object.Instantiate(prefab);
-        InvokeAwake(_overlay.GetComponent<BattleHudTacticalFeedbackSystem>());
+        InvokeAwake(_overlay.GetComponent<BattleHudTacticalFeedbackView>());
     }
 
     [TearDown]
@@ -242,7 +242,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsTrue(FocusUnit(em, unit, state));
 
         MatchOverlayCommandControlsView controls = _overlay.GetComponent<MatchOverlayCommandControlsView>();
-        CommandWheelPanelSystem wheel = _overlay.GetComponent<CommandWheelPanelSystem>();
+        CommandWheelPanelView wheel = _overlay.GetComponent<CommandWheelPanelView>();
         Assert.NotNull(controls);
         Assert.NotNull(wheel);
         var commandInputSystem = new MatchOverlayCommandInputSystem();
@@ -267,8 +267,8 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
     [Test]
     public void BuildDrawerAndCommandWheelPublishBuildAndSpecialModes()
     {
-        BuildDrawerPanelSystem drawer = _overlay.GetComponent<BuildDrawerPanelSystem>();
-        CommandWheelPanelSystem wheel = _overlay.GetComponent<CommandWheelPanelSystem>();
+        BuildDrawerPanelView drawer = _overlay.GetComponent<BuildDrawerPanelView>();
+        CommandWheelPanelView wheel = _overlay.GetComponent<CommandWheelPanelView>();
         InvokeAwake(drawer);
         InvokeAwake(wheel);
 

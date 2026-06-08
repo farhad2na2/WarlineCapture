@@ -11,14 +11,14 @@ internal sealed class BuildingPlacementQuerySystem
 
     public readonly struct Source
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly GetProductionCountDelegate GetProductionCount;
         public readonly GetProductionPrefabDelegate GetProductionPrefab;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
 
         public Source(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<int?> getActiveBuildingId,
             GetProductionCountDelegate getProductionCount,
             GetProductionPrefabDelegate getProductionPrefab,
@@ -34,7 +34,7 @@ internal sealed class BuildingPlacementQuerySystem
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly int? ActiveBuildingId;
         public readonly GetProductionCountDelegate GetProductionCount;
         public readonly GetProductionPrefabDelegate GetProductionPrefab;
@@ -42,7 +42,7 @@ internal sealed class BuildingPlacementQuerySystem
         public readonly EntityManager EntityManager;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             int? activeBuildingId,
             GetProductionCountDelegate getProductionCount,
             GetProductionPrefabDelegate getProductionPrefab,
@@ -60,7 +60,7 @@ internal sealed class BuildingPlacementQuerySystem
 
     public GameObject GetSelectedBuildingProductionPrefab(Context context, int productionIndex)
     {
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return null;
 
         return context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
@@ -86,7 +86,7 @@ internal sealed class BuildingPlacementQuerySystem
         if (prefabs == null ||
             context.GetProductionCount == null ||
             context.GetProductionPrefab == null ||
-            !TryGetActiveBuilding(context, out RuntimeBuildingData building) ||
+            !TryGetActiveBuilding(context, out RuntimeBuildingEntity building) ||
             building?.Definition == null)
         {
             return;
@@ -114,7 +114,7 @@ internal sealed class BuildingPlacementQuerySystem
 
     public string GetSelectedBuildingLabel(Context context)
     {
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return "Building";
 
         return $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})";
@@ -122,7 +122,7 @@ internal sealed class BuildingPlacementQuerySystem
 
     public string GetSelectedBuildingDisplayName(Context context)
     {
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return "Building";
 
         return string.IsNullOrWhiteSpace(building.Definition.DisplayName)
@@ -132,7 +132,7 @@ internal sealed class BuildingPlacementQuerySystem
 
     public string GetSelectedBuildingDescription(Context context)
     {
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return "Select a building to see its options.";
 
         string description = string.IsNullOrWhiteSpace(building.Definition.Description)
@@ -144,7 +144,7 @@ internal sealed class BuildingPlacementQuerySystem
     public bool TryGetSelectedBuildingPreviewPrefab(Context context, out GameObject prefab)
     {
         prefab = null;
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return false;
 
         prefab = building.Definition.Prefab;
@@ -156,7 +156,7 @@ internal sealed class BuildingPlacementQuerySystem
         current = 0;
         max = 0;
 
-        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
             return false;
 
         max = Mathf.Max(1, building.Definition.MaxHealth);
@@ -175,7 +175,7 @@ internal sealed class BuildingPlacementQuerySystem
         return true;
     }
 
-    private static bool TryGetActiveBuilding(Context context, out RuntimeBuildingData building)
+    private static bool TryGetActiveBuilding(Context context, out RuntimeBuildingEntity building)
     {
         building = null;
         return context.ActiveBuildingId.HasValue &&

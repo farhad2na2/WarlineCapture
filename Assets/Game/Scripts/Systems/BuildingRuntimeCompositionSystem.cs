@@ -11,7 +11,7 @@ internal sealed class BuildingRuntimeCompositionSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -26,17 +26,17 @@ internal sealed class BuildingRuntimeCompositionSystem
 
     internal delegate bool IsHouseBuildingDelegate(
         BuildingGameplayCompositionSourceSystem source,
-        RuntimeBuildingData building);
+        RuntimeBuildingEntity building);
 
     internal delegate bool TryResolveBuildingFocusWorldPositionDelegate(
         BuildingGameplayCompositionSourceSystem source,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         out Vector3 worldPosition);
 
     internal delegate bool TryGetRuntimeBuildingDelegate(
         BuildingGameplayCompositionSourceSystem source,
         int id,
-        out RuntimeBuildingData building);
+        out RuntimeBuildingEntity building);
 
     public BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource(
         BuildingGameplayCompositionSourceSystem source,
@@ -83,7 +83,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                 source.RuntimeBuildingSystem.Buildings,
                 source.BuildingGameplayDependencySystem.IsRuntimeBlockerCell,
                 (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystem, grid, origin, footprint)),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
             (definition, origin, grid, rotateVertical) => getEffectivePlacementRect(source, definition, origin, grid, rotateVertical),
@@ -209,7 +209,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             tryResolveBuildingFocusWorldPosition,
             tryGetRuntimeBuilding,
             getEffectivePlacementRect);
-        BuildingCombatSystem.Context<RuntimeBuildingData> combatContext =
+        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext =
             source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         return source.BuildingRuntimeContextSystem.CreateRuntimeEntityContext(
             runtimeSource,
@@ -253,13 +253,13 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingGameplayEcsQuerySystem.LiveFactionUnitsQuery,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
             (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
             building => isHouseBuilding(source, building),
-            (RuntimeBuildingData building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
-            (int id, out RuntimeBuildingData building) => tryGetRuntimeBuilding(source, id, out building),
+            (RuntimeBuildingEntity building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
+            (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
             (building, grid) => getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false),
             building => source.BuildingBarrierSystem.RememberOpenBaseBreach(
                 source.BuildingRuntimeContextSystem.CreateBarrierContext(CreateRuntimeContextSource(

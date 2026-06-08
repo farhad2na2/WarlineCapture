@@ -16,8 +16,8 @@ internal struct UnitPathfindingQuerySystem
     public void Initialize(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<DynamicBlockerData>();
-        state.RequireForUpdate<DynamicOccupancyData>();
+        state.RequireForUpdate<DynamicBlockerComponent>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
         state.RequireForUpdate<GridRoadDirt>();
@@ -28,8 +28,8 @@ internal struct UnitPathfindingQuerySystem
             All = new[]
             {
                 ComponentType.ReadOnly<GridConfig>(),
-                ComponentType.ReadOnly<DynamicBlockerData>(),
-                ComponentType.ReadOnly<DynamicOccupancyData>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>(),
             }
         });
         RequestQuery = state.GetEntityQuery(new EntityQueryDesc

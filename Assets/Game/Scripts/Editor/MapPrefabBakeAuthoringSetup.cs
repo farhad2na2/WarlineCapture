@@ -16,7 +16,7 @@ public static class MapPrefabBakeAuthoringSetup
     private const string GridConfigGuid = "b201000000000000000000000000000b";
     private const string MapSurfaceDataPath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
 
-    [MenuItem("WarlineCapture/Maps/Setup Map Bake Authoring")]
+    [MenuItem("Game/Maps/Setup Map Bake Authoring")]
     public static void SetupMapBakeAuthoring()
     {
         GameObject prefabRoot = PrefabUtility.LoadPrefabContents(MapPrefabPath);

@@ -43,7 +43,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     [Test]
     public void BeginDestroyedVisualHidesAliveRootsAndSpawnsConfiguredPrefab()
     {
-        RuntimeBuildingData building = CreateBuilding();
+        RuntimeBuildingEntity building = CreateBuilding();
         var system = new BuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
             new BuildingVisualSystem(),
@@ -67,7 +67,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     [Test]
     public void BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt()
     {
-        RuntimeBuildingData building = CreateBuilding();
+        RuntimeBuildingEntity building = CreateBuilding();
         var system = new BuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
             new BuildingVisualSystem(),
@@ -88,9 +88,9 @@ public sealed class BuildingDestroyedVisualSystemTests
         Assert.IsTrue(firstInstance == null);
     }
 
-    private RuntimeBuildingData CreateBuilding()
+    private RuntimeBuildingEntity CreateBuilding()
     {
-        return new RuntimeBuildingData
+        return new RuntimeBuildingEntity
         {
             Instance = _building,
             Definition = new BuildingDefinition { DestroyedVisualPrefab = _destroyedPrefab },

@@ -77,67 +77,6 @@ internal sealed class BuildingPlacementVisualSystem
         }
     }
 
-    public bool TryGetPrefabModelBounds(GameObject prefab, out Bounds combinedBounds)
-    {
-        combinedBounds = default;
-        if (prefab == null)
-            return false;
-
-        Transform modelRoot = prefab.transform.Find("Model");
-        if (modelRoot == null)
-            return false;
-
-        Renderer[] renderers = modelRoot.GetComponentsInChildren<Renderer>(true);
-        bool hasBounds = false;
-        Matrix4x4 worldToLocal = prefab.transform.worldToLocalMatrix;
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            Bounds localBounds = TransformBounds(worldToLocal * renderer.localToWorldMatrix, renderer.localBounds);
-            if (!hasBounds)
-            {
-                combinedBounds = localBounds;
-                hasBounds = true;
-            }
-            else
-            {
-                combinedBounds.Encapsulate(localBounds);
-            }
-        }
-
-        return hasBounds;
-    }
-
-    public Bounds TransformBounds(Matrix4x4 matrix, Bounds bounds)
-    {
-        Vector3 center = bounds.center;
-        Vector3 extents = bounds.extents;
-
-        Vector3 min = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
-        Vector3 max = new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
-
-        for (int x = -1; x <= 1; x += 2)
-        {
-            for (int y = -1; y <= 1; y += 2)
-            {
-                for (int z = -1; z <= 1; z += 2)
-                {
-                    Vector3 corner = center + Vector3.Scale(extents, new Vector3(x, y, z));
-                    Vector3 transformed = matrix.MultiplyPoint3x4(corner);
-                    min = Vector3.Min(min, transformed);
-                    max = Vector3.Max(max, transformed);
-                }
-            }
-        }
-
-        Bounds transformedBounds = new();
-        transformedBounds.SetMinMax(min, max);
-        return transformedBounds;
-    }
-
     private static Transform FindDescendantByName(Transform root, string targetName)
     {
         if (root == null || string.IsNullOrEmpty(targetName))

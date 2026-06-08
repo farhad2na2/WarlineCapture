@@ -6,7 +6,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
 {
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly DayNightSystem DayNightSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
@@ -22,7 +22,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
         public readonly float OilBarrelsPerFuelBarrel;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             DayNightSystem dayNightSystem,
             FactionResourceSystem factionResourceSystem,
             BuildingProductionUpdateSystem productionUpdateSystem,

@@ -24,7 +24,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private const float CharacterTacticalBillboardStartCameraY = 80f;
     private const float CharacterTacticalBillboardFullCameraY = 200f;
     private const float CharacterTacticalBillboardMaxScale = 16f;
-    private const string ImpostorShaderName = "WarlineCapture/Unit Impostor Unlit";
+    private const string ImpostorShaderName = "Game/Unit Impostor Unlit";
 
     private sealed class ImpostorStyle
     {

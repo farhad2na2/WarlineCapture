@@ -8,12 +8,12 @@ internal sealed class BuildingRuntimeQuerySystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate string StringNormalizer(string value);
-    public delegate bool BuildingPredicate(RuntimeBuildingData building);
-    public delegate bool BuildingIdPredicate(RuntimeBuildingData building, string normalizedId);
+    public delegate bool BuildingPredicate(RuntimeBuildingEntity building);
+    public delegate bool BuildingIdPredicate(RuntimeBuildingEntity building, string normalizedId);
     public delegate bool UnitPrefabPredicate(GameObject prefab, string normalizedId);
-    public delegate bool TryResolveBuildingWorldPositionDelegate(RuntimeBuildingData building, out Vector3 worldPosition);
-    public delegate bool TryGetBuildingApproachCellDelegate(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal);
-    public delegate bool IsBuildingApproachCellDelegate(RuntimeBuildingData building, int2 currentCell, int2 unitFootprint);
+    public delegate bool TryResolveBuildingWorldPositionDelegate(RuntimeBuildingEntity building, out Vector3 worldPosition);
+    public delegate bool TryGetBuildingApproachCellDelegate(RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal);
+    public delegate bool IsBuildingApproachCellDelegate(RuntimeBuildingEntity building, int2 currentCell, int2 unitFootprint);
     public delegate bool BuildingDefinitionPredicate(BuildingDefinition definition);
     public delegate bool TryResolveBaseBreachTargetDelegate(
         byte attackerFactionId,
@@ -27,7 +27,7 @@ internal sealed class BuildingRuntimeQuerySystem
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly StringNormalizer NormalizeId;
@@ -41,7 +41,7 @@ internal sealed class BuildingRuntimeQuerySystem
         public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingProductionSystem productionSystem,
             StringNormalizer normalizeId,
@@ -75,9 +75,9 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
                 continue;
 
@@ -97,9 +97,9 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
                 continue;
             if (context.RuntimeBuildingMatchesId == null || !context.RuntimeBuildingMatchesId(building, normalized))
@@ -122,9 +122,9 @@ internal sealed class BuildingRuntimeQuerySystem
             return 0;
         }
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
                 continue;
             if (building.ProducedUnits == null)
@@ -153,9 +153,9 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
                 continue;
             if (building.PendingProductions == null)
@@ -163,7 +163,7 @@ internal sealed class BuildingRuntimeQuerySystem
 
             for (int i = 0; i < building.PendingProductions.Count; i++)
             {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
+                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
                 if (pending == null)
                     continue;
                 if (context.UnitPrefabMatchesId == null || !context.UnitPrefabMatchesId(pending.Prefab, normalized))
@@ -185,9 +185,9 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || building.Instance == null)
                 continue;
             if (context.IsHouseBuilding == null || !context.IsHouseBuilding(building))
@@ -206,9 +206,9 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building?.Definition == null || building.IsDestroyed)
                 continue;
 
@@ -222,7 +222,7 @@ internal sealed class BuildingRuntimeQuerySystem
     public bool TryGetRuntimeBuildingFocusWorldPosition(Context context, int buildingId, out Vector3 worldPosition)
     {
         worldPosition = Vector3.zero;
-        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building))
+        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building))
             return false;
 
         return context.TryResolveBuildingFocusWorldPosition != null &&
@@ -232,7 +232,7 @@ internal sealed class BuildingRuntimeQuerySystem
     public bool TryGetRuntimeBuildingDestroyedState(Context context, int buildingId, out bool isDestroyed)
     {
         isDestroyed = false;
-        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building))
+        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building))
             return false;
 
         isDestroyed = building.IsDestroyed;
@@ -243,7 +243,7 @@ internal sealed class BuildingRuntimeQuerySystem
     {
         refugeeCapacity = 0;
         upkeepPerCitizenPerDay = 0;
-        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) || building?.Definition == null)
             return false;
 
         refugeeCapacity = Mathf.Max(0, building.Definition.RefugeeCapacity);
@@ -253,14 +253,14 @@ internal sealed class BuildingRuntimeQuerySystem
 
     public bool IsRuntimeBuildingCityGenerated(Context context, int buildingId)
     {
-        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) &&
+        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) &&
                building != null &&
                building.IsCityGenerated;
     }
 
     public bool IsRuntimeBuildingWall(Context context, int buildingId)
     {
-        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) &&
+        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) &&
                building?.Definition != null &&
                building.Definition.IsWall;
     }
@@ -268,7 +268,7 @@ internal sealed class BuildingRuntimeQuerySystem
     public bool TryGetRuntimeBuildingOwnerFaction(Context context, int buildingId, out byte factionId)
     {
         factionId = 0;
-        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) || building == null || !building.HasOwnerFaction)
+        if (!TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) || building == null || !building.HasOwnerFaction)
             return false;
 
         factionId = building.OwnerFactionId;
@@ -280,7 +280,7 @@ internal sealed class BuildingRuntimeQuerySystem
         isGate = false;
         isWall = false;
         ownerFactionId = 0;
-        if (!TryFindRuntimeBuildingByCombatEntity(context, combatEntity, out RuntimeBuildingData building) || building?.Definition == null)
+        if (!TryFindRuntimeBuildingByCombatEntity(context, combatEntity, out RuntimeBuildingEntity building) || building?.Definition == null)
             return false;
 
         isGate = context.IsWallGateDefinition != null && context.IsWallGateDefinition(building.Definition);
@@ -292,7 +292,7 @@ internal sealed class BuildingRuntimeQuerySystem
     public bool TryGetRuntimeBuildingApproachCell(Context context, int buildingId, int2 unitFootprint, int2 referenceCell, out int2 goal)
     {
         goal = default;
-        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) &&
+        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) &&
                building != null &&
                !building.IsDestroyed &&
                context.TryGetBuildingApproachCell != null &&
@@ -301,7 +301,7 @@ internal sealed class BuildingRuntimeQuerySystem
 
     public bool IsRuntimeBuildingApproachCell(Context context, int buildingId, int2 currentCell, int2 unitFootprint)
     {
-        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingData building) &&
+        return TryGetRuntimeBuilding(context, buildingId, out RuntimeBuildingEntity building) &&
                building != null &&
                !building.IsDestroyed &&
                context.IsBuildingApproachCell != null &&
@@ -336,14 +336,14 @@ internal sealed class BuildingRuntimeQuerySystem
                    out reason);
     }
 
-    private static bool TryGetRuntimeBuilding(Context context, int buildingId, out RuntimeBuildingData building)
+    private static bool TryGetRuntimeBuilding(Context context, int buildingId, out RuntimeBuildingEntity building)
     {
         building = null;
         return context.RuntimeBuildings != null &&
                context.RuntimeBuildings.TryGetValue(buildingId, out building);
     }
 
-    private static bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingData building)
+    private static bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingEntity building)
     {
         building = null;
         if (combatEntity == Entity.Null || context.RuntimeBuildings == null)
@@ -351,7 +351,7 @@ internal sealed class BuildingRuntimeQuerySystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData candidate = entry.Value;
+            RuntimeBuildingEntity candidate = entry.Value;
             if (candidate == null || candidate.CombatEntity != combatEntity)
                 continue;
 
@@ -362,7 +362,7 @@ internal sealed class BuildingRuntimeQuerySystem
         return false;
     }
 
-    private static bool RuntimeProducedUnitMatchesId(Context context, RuntimeBuildingData building, Entity unit, string normalizedUnitId, EntityManager em)
+    private static bool RuntimeProducedUnitMatchesId(Context context, RuntimeBuildingEntity building, Entity unit, string normalizedUnitId, EntityManager em)
     {
         if (string.IsNullOrEmpty(normalizedUnitId))
             return true;

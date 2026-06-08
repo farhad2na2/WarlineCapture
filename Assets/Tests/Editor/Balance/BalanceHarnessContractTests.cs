@@ -99,7 +99,7 @@ public sealed class BalanceHarnessContractTests
     {
         string reportDirectory = Path.Combine(
             Path.GetTempPath(),
-            "WarlineCaptureBalanceReportTests",
+            "BalanceReportTests",
             Guid.NewGuid().ToString("N"));
 
         try

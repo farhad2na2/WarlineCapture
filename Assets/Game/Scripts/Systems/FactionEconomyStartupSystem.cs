@@ -7,6 +7,14 @@ public sealed class FactionEconomyStartupSystem
 {
     public void Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
     {
+        Initialize(em, aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
+    }
+
+    public void Initialize(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
+    {
         if (aiControllerConfigs == null)
             return;
 
@@ -29,7 +37,7 @@ public sealed class FactionEconomyStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
@@ -46,7 +54,7 @@ public sealed class FactionEconomyStartupSystem
             em.SetComponentData(economyEntity, new FactionEconomy
             {
                 FactionId = factionId,
-                Money = AISettingsRuntimeState.ApplyStartingMoney(config.StartingMoney, config.Role),
+                Money = aiSettings.ApplyStartingMoney(config.StartingMoney, config.Role),
                 Oil = 0f,
                 Fuel = 0f,
                 OilIncomeRate = 0f,
@@ -57,8 +65,8 @@ public sealed class FactionEconomyStartupSystem
 
             em.SetComponentData(economyEntity, new FactionEconomyPolicy
             {
-                Enabled = AISettingsRuntimeState.ResolveEnabled(config) ? (byte)1 : (byte)0,
-                IncomeMultiplier = AISettingsRuntimeState.ApplyIncomeMultiplier(config.IncomeMultiplier, config.Role),
+                Enabled = aiSettings.ResolveEnabled(config) ? (byte)1 : (byte)0,
+                IncomeMultiplier = aiSettings.ApplyIncomeMultiplier(config.IncomeMultiplier, config.Role),
                 OilSellPrice = Mathf.Max(0, config.OilSellPrice),
                 FuelSellPrice = Mathf.Max(0, config.FuelSellPrice),
                 SellIntervalSeconds = Mathf.Max(1f, config.BuildIntervalSeconds)
@@ -66,13 +74,16 @@ public sealed class FactionEconomyStartupSystem
         }
     }
 
-    private bool ShouldIncludeAIConfig(AIControllerConfig config, ref int enemyConfigIndex)
+    private static bool ShouldIncludeAIConfig(
+        AIControllerConfig config,
+        ref int enemyConfigIndex,
+        AISettingsSnapshot aiSettings)
     {
         if (config == null || config.Role != AIControllerRole.Enemy)
             return true;
 
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
-        return AISettingsRuntimeState.IsEnemyAIIndexEnabled(currentIndex);
+        return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
     }
 }

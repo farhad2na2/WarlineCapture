@@ -11,9 +11,9 @@ public partial struct UnitIdleWanderSystem : ISystem
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<GridWalkable>();
-        state.RequireForUpdate<DynamicBlockerData>();
-        state.RequireForUpdate<DynamicOccupancyData>();
-        state.RequireForUpdate<UnitIdleWanderState>();
+        state.RequireForUpdate<DynamicBlockerComponent>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
+        state.RequireForUpdate<UnitIdleWanderComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -23,21 +23,21 @@ public partial struct UnitIdleWanderSystem : ISystem
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var blocked = SystemAPI.GetComponent<DynamicBlockerData>(gridEntity).Blocked;
-        var friendlyPassFactionIds = SystemAPI.GetComponent<DynamicBlockerData>(gridEntity).FriendlyPassFactionIds;
-        var occupied = SystemAPI.GetComponent<DynamicOccupancyData>(gridEntity).Occupied;
+        var blocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;
+        var friendlyPassFactionIds = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).FriendlyPassFactionIds;
+        var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
         float dt = SystemAPI.Time.DeltaTime;
 
         foreach (var (unitGrid, footprint, movementBehavior, moveVisual, animationSettings, idleWanderState, health, entity) in SystemAPI
-                 .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRO<UnitMovementBehavior>, RefRO<UnitMoveVisualState>, RefRO<UnitAnimationSettings>, RefRW<UnitIdleWanderState>, RefRO<UnitHealth>>()
+                 .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRO<UnitMovementBehavior>, RefRO<UnitMoveVisualComponent>, RefRO<UnitAnimationSettings>, RefRW<UnitIdleWanderComponent>, RefRO<UnitHealth>>()
                  .WithNone<StaticGridBlocker>()
                  .WithNone<EngageTarget>()
                  .WithNone<UnitPathFollow>()
                  .WithNone<UnitPathRequest>()
                  .WithNone<ManualMoveOrderTag>()
                  .WithNone<UnitAirMovement>()
-                 .WithNone<UnitDeathAnimationState>()
+                 .WithNone<UnitDeathAnimationComponent>()
                  .WithNone<SelectedUnitTag>()
                  .WithEntityAccess())
         {
@@ -156,7 +156,7 @@ public partial struct UnitIdleWanderSystem : ISystem
         return UnitFootprintUtility.CanPlace(grid, walkable, blocked, friendlyPassFactionIds, occupied, candidate, footprintSize, originCell, factionId);
     }
 
-    private static void EnsureIdleDelay(ref UnitIdleWanderState state, UnitAnimationSettings settings)
+    private static void EnsureIdleDelay(ref UnitIdleWanderComponent state, UnitAnimationSettings settings)
     {
         if (state.CurrentIdleDelaySeconds > 0f)
             return;

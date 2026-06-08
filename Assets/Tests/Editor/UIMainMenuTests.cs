@@ -307,15 +307,15 @@ public sealed class UIMainMenuTests
         Transform counterTransform = prefab.transform.Find(path);
         Assert.NotNull(counterTransform, path);
         Assert.NotNull(counterTransform.GetComponent<UIResourceCounterView>(), path);
-        Assert.NotNull(counterTransform.Find("PlusButton").GetComponent<UIPlaceholderModalSystem>(), path);
+        Assert.NotNull(counterTransform.Find("PlusButton").GetComponent<UIPlaceholderModalButtonView>(), path);
         AssertText(prefab, $"{path}/ValueText", expectedValue);
     }
 
     private static void AssertButtonAnimatorControllerAsset()
     {
         AnimatorOverrideController overrideController = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(UiButtonAnimatorControllerPath);
-        Assert.NotNull(overrideController, "Reusable WarlineCapture button override controller is missing.");
-        Assert.NotNull(overrideController.runtimeAnimatorController, "WarlineCapture button override controller must keep the Synty base controller graph.");
+        Assert.NotNull(overrideController, "Reusable UI button override controller is missing.");
+        Assert.NotNull(overrideController.runtimeAnimatorController, "UI button override controller must keep the Synty base controller graph.");
         Assert.AreEqual(UiButtonAnimatorBaseControllerPath, AssetDatabase.GetAssetPath(overrideController.runtimeAnimatorController));
 
         AnimatorController controller = overrideController.runtimeAnimatorController as AnimatorController;
@@ -337,7 +337,7 @@ public sealed class UIMainMenuTests
             Assert.IsTrue(HasTriggerParameter(controller, expectedState), $"{UiButtonAnimatorControllerPath} must expose trigger '{expectedState}' for Unity Button animation transitions.");
             AnimatorState state = FindAnimatorState(controller, expectedState);
             Assert.NotNull(state, $"{UiButtonAnimatorControllerPath} must contain state '{expectedState}'.");
-            Assert.AreEqual(expectedClipPaths[i], GetOverrideClipPath(overrideController, state.motion as AnimationClip), $"{expectedState} must use the WarlineCapture button animation clip.");
+            Assert.AreEqual(expectedClipPaths[i], GetOverrideClipPath(overrideController, state.motion as AnimationClip), $"{expectedState} must use the UI button animation clip.");
         }
     }
 
@@ -846,11 +846,10 @@ public sealed class UIMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        ScreenRouteSystem routeButton = target.GetComponent<ScreenRouteSystem>();
+        UIShellRouteButtonView routeButton = target.GetComponent<UIShellRouteButtonView>();
         Assert.NotNull(routeButton, path);
 
-        var serializedObject = new SerializedObject(routeButton);
-        Assert.AreEqual((int)expectedRoute, serializedObject.FindProperty("route").enumValueIndex, path);
+        Assert.AreEqual(expectedRoute, routeButton.Route, path);
     }
 
     private static void AssertPlaceholder(GameObject prefab, string path)
@@ -858,12 +857,12 @@ public sealed class UIMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        Assert.NotNull(target.GetComponent<UIPlaceholderModalSystem>(), path);
+        Assert.NotNull(target.GetComponent<UIPlaceholderModalButtonView>(), path);
     }
 
     private static void AssertNoActivePlaceholderModalButtons(GameObject prefab)
     {
-        foreach (UIPlaceholderModalSystem placeholder in prefab.GetComponentsInChildren<UIPlaceholderModalSystem>(true))
+        foreach (UIPlaceholderModalButtonView placeholder in prefab.GetComponentsInChildren<UIPlaceholderModalButtonView>(true))
         {
             if (placeholder.gameObject.activeSelf)
                 Assert.Fail($"{GetHierarchyPath(placeholder.transform)} is an active placeholder modal trigger. Visible Main Menu buttons must route to designed screens.");
@@ -875,7 +874,7 @@ public sealed class UIMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        Assert.NotNull(target.GetComponent<UILegacyGameStartSystem>(), path);
-        Assert.IsNull(target.GetComponent<ScreenRouteSystem>(), path);
+        Assert.NotNull(target.GetComponent<UIGameStartButtonView>(), path);
+        Assert.IsNull(target.GetComponent<UIShellRouteButtonView>(), path);
     }
 }

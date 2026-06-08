@@ -101,7 +101,7 @@ public struct UnitTransportRopeDisembarkRequest : IComponentData
     public int DropCount;
 }
 
-public struct UnitTransportRopeDropState : IComponentData
+public struct UnitTransportRopeDropComponent : IComponentData
 {
     public float3 StartPosition;
     public float3 EndPosition;
@@ -117,7 +117,7 @@ public struct UnitTransportRopeLandingClearance : IComponentData
     public int2 LandingCell;
 }
 
-public struct UnitTransportRopeDisperseState : IComponentData
+public struct UnitTransportRopeDisperseComponent : IComponentData
 {
     public float3 StartPosition;
     public float3 EndPosition;
@@ -132,7 +132,7 @@ public struct UnitAirMovement : IComponentData
     public float RunwayTaxiSpeed;
 }
 
-public struct UnitAirState : IComponentData
+public struct UnitAirComponent : IComponentData
 {
     public float3 HomePosition;
     public int2 HomeCell;
@@ -222,7 +222,7 @@ public struct StaticBlockerPrevBounds : ICleanupComponentData
     public byte FriendlyPassFactionId;
 }
 
-public struct RuntimeGridBlockerDependencyState : IComponentData
+public struct RuntimeGridBlockerDependencyComponent : IComponentData
 {
     public byte ReadyForDependents;
     public byte SpawnOnStart;
@@ -255,7 +255,7 @@ public static class GridUtils
     }
 }
 
-public struct DynamicBlockerData : IComponentData
+public struct DynamicBlockerComponent : IComponentData
 {
     public int GridSize;
     public NativeArray<int> Counts;
@@ -263,12 +263,12 @@ public struct DynamicBlockerData : IComponentData
     public NativeArray<byte> FriendlyPassFactionIds;
 }
 
-public struct PathPoolData : IComponentData
+public struct PathPoolComponent : IComponentData
 {
     public NativeList<int2> Cells;
 }
 
-public struct DynamicOccupancyData : IComponentData
+public struct DynamicOccupancyComponent : IComponentData
 {
     public int GridSize;
     public NativeBitArray Occupied;

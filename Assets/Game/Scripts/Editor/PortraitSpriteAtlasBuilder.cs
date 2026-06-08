@@ -11,7 +11,7 @@ public static class PortraitSpriteAtlasBuilder
     private const string SecondaryPortraitRoot = "Assets/Game/Art/UI/Portraits/Secondary";
     private const string AtlasRoot = "Assets/Game/Art/UI/Portraits/Atlases";
 
-    [MenuItem("WarlineCapture/UI/Rebuild Portrait Sprite Atlases")]
+    [MenuItem("Game/UI/Rebuild Portrait Sprite Atlases")]
     public static void RebuildPortraitSpriteAtlases()
     {
         Directory.CreateDirectory(AtlasRoot);

@@ -45,31 +45,33 @@ public sealed class BattleHudRuntimeFeedbackSystem
 
     private static readonly Dictionary<BattleHudRuntimeFeedbackView, MutableState> StatesByView = new();
     private static readonly MatchOverlayCommandTabFeedbackSystem CommandTabFeedbackSystem = new();
+    private static BattleHudRuntimeFeedbackView ActiveView;
+
+    public static void SetActiveView(BattleHudRuntimeFeedbackView view)
+    {
+        if (view == null)
+            return;
+
+        ActiveView = view;
+        ResolveState(view);
+    }
+
+    public static void ClearActiveView(BattleHudRuntimeFeedbackView view)
+    {
+        if (view == null)
+            return;
+
+        StatesByView.Remove(view);
+        if (ReferenceEquals(ActiveView, view))
+            ActiveView = null;
+    }
 
     public static BattleHudRuntimeFeedbackView ResolveActiveView()
     {
-        IReadOnlyList<BattleHudRuntimeFeedbackView> views = BattleHudRuntimeFeedbackView.Instances;
-        for (int i = 0; i < views.Count; i++)
-        {
-            BattleHudRuntimeFeedbackView view = views[i];
-            if (view == null ||
-                !view.gameObject.scene.IsValid() ||
-                !view.gameObject.activeInHierarchy)
-                continue;
+        if (IsValidView(ActiveView, requireActiveInHierarchy: true))
+            return ActiveView;
 
-            return view;
-        }
-
-        for (int i = 0; i < views.Count; i++)
-        {
-            BattleHudRuntimeFeedbackView view = views[i];
-            if (view == null || !view.gameObject.scene.IsValid())
-                continue;
-
-            return view;
-        }
-
-        return null;
+        return IsValidView(ActiveView, requireActiveInHierarchy: false) ? ActiveView : null;
     }
 
     public static BattleHudRuntimeFeedbackState GetState(BattleHudRuntimeFeedbackView view = null)
@@ -87,7 +89,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
 
     public static void ApplySelection(BattleHudRuntimeFeedbackView view, string displayName, string status)
     {
-        BattleHudTacticalFeedbackSystem feedback = ResolveTacticalFeedback(view);
+        BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
         if (feedback == null)
             return;
 
@@ -217,7 +219,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
         else
             CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, mode);
 
-        BattleHudTacticalFeedbackSystem feedback = ResolveTacticalFeedback(view);
+        BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
         string instruction = TacticalCommandFeedbackText.ToInstructionText(mode);
         if (string.IsNullOrWhiteSpace(instruction))
             view.HideFeedbackMessage();
@@ -242,14 +244,22 @@ public sealed class BattleHudRuntimeFeedbackSystem
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
     }
 
-    private static BattleHudTacticalFeedbackSystem ResolveTacticalFeedback(BattleHudRuntimeFeedbackView view)
+    private static BattleHudTacticalFeedbackView ResolveTacticalFeedback(BattleHudRuntimeFeedbackView view)
     {
         if (view == null)
             return null;
 
         return view.TacticalFeedback != null
             ? view.TacticalFeedback
-            : view.GetComponent<BattleHudTacticalFeedbackSystem>();
+            : view.GetComponent<BattleHudTacticalFeedbackView>();
+    }
+
+    private static bool IsValidView(BattleHudRuntimeFeedbackView view, bool requireActiveInHierarchy)
+    {
+        return view != null &&
+            view.gameObject != null &&
+            view.gameObject.scene.IsValid() &&
+            (!requireActiveInHierarchy || view.gameObject.activeInHierarchy);
     }
 
     private static MutableState ResolveState(BattleHudRuntimeFeedbackView view)

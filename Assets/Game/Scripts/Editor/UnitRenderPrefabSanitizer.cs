@@ -65,7 +65,7 @@ public static class UnitRenderPrefabSanitizer
         Debug.Log($"[UnitRenderSanitizer] updated={updated} removedLodGroups={removedLodGroups} disabledDynamicOcclusion={disabledDynamicOcclusion}");
     }
 
-    [MenuItem("WarlineCapture/Tools/Unit Render/Remove Inherited Placeholder Character Models")]
+    [MenuItem("Game/Tools/Unit Render/Remove Inherited Placeholder Character Models")]
     public static void RemoveInheritedPlaceholderCharacterModels()
     {
         string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
@@ -118,7 +118,7 @@ public static class UnitRenderPrefabSanitizer
         Debug.Log($"[UnitRenderSanitizer] removedPlaceholderCharacterModels={removed} updated={updated}");
     }
 
-    [MenuItem("WarlineCapture/Tools/Unit Render/Validate Character Variant Models")]
+    [MenuItem("Game/Tools/Unit Render/Validate Character Variant Models")]
     public static void ValidateCharacterVariantModels()
     {
         string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
@@ -177,7 +177,7 @@ public static class UnitRenderPrefabSanitizer
             throw new System.InvalidOperationException($"Character variant model validation failed: {failures}");
     }
 
-    [MenuItem("WarlineCapture/Tools/Unit Render/Align Character Model Feet To Root")]
+    [MenuItem("Game/Tools/Unit Render/Align Character Model Feet To Root")]
     public static void AlignCharacterModelFeetToRoot()
     {
         string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });

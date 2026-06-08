@@ -8,16 +8,16 @@ internal sealed class BuildingRuntimeSpawnSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
     public delegate RectInt GetEffectivePlacementRectDelegate(BuildingDefinition definition, Vector2Int originCell, GridConfig grid, bool rotateVertical);
-    public delegate bool IsPlacementValidDelegate(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, bool rotateVertical, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData);
+    public delegate bool IsPlacementValidDelegate(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, bool rotateVertical, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData);
     public delegate bool HasCachedInvalidCellInFootprintDelegate(Vector2Int originCell, Vector2Int footprintCells);
     public delegate GameObject CreateBuildingVisualInstanceDelegate(BuildingDefinition definition, Transform parent);
     public delegate void PositionBuildingObjectDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
-    public delegate RuntimeBuildingData RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
-    public delegate void SetRuntimeBuildingOwnerFactionDelegate(RuntimeBuildingData building, byte? ownerFactionId);
+    public delegate RuntimeBuildingEntity RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
+    public delegate void SetRuntimeBuildingOwnerFactionDelegate(RuntimeBuildingEntity building, byte? ownerFactionId);
 
     public readonly struct SpawnRuntimeBuildingResult
     {
@@ -121,7 +121,7 @@ internal sealed class BuildingRuntimeSpawnSystem
             context.RunwaySystem);
         Vector2Int placementFootprint = context.GetPlacementFootprint(definition, rotateVertical);
 
-        if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingData building))
+        if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingEntity building))
             return false;
 
         building.IsCityGenerated = isCityGenerated;
@@ -190,7 +190,7 @@ internal sealed class BuildingRuntimeSpawnSystem
         {
             Vector2Int origin = origins[i];
             if (context.TryGetGridData == null ||
-                !context.TryGetGridData(out _, out grid, out DynamicBuffer<GridRoad> currentRoads, out DynamicBlockerData currentBlockerData))
+                !context.TryGetGridData(out _, out grid, out DynamicBuffer<GridRoad> currentRoads, out DynamicBlockerComponent currentBlockerData))
             {
                 break;
             }
@@ -212,7 +212,7 @@ internal sealed class BuildingRuntimeSpawnSystem
                 continue;
 
             context.PositionBuildingObject?.Invoke(instance, origin, definition, grid, vertical);
-            RuntimeBuildingData building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin, true);
+            RuntimeBuildingEntity building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin, true);
             context.SetRuntimeBuildingOwnerFaction?.Invoke(building, ownerFactionId);
             spawned++;
         }
@@ -241,7 +241,7 @@ internal sealed class BuildingRuntimeSpawnSystem
     {
         if (prefab == null || context.DefinitionSystem == null || context.PlacementValidationSystem == null)
             return false;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return false;
 
         BuildingDefinition definition = CreateRuntimeWallDefinition(context, prefab);
@@ -267,7 +267,7 @@ internal sealed class BuildingRuntimeSpawnSystem
             return false;
 
         context.PositionBuildingObject?.Invoke(instance, origin, definition, grid, rotateVertical);
-        RuntimeBuildingData building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin, !allowExistingWallOverlap);
+        RuntimeBuildingEntity building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin, !allowExistingWallOverlap);
         context.SetRuntimeBuildingOwnerFaction?.Invoke(building, ownerFactionId);
         return true;
     }
@@ -295,7 +295,7 @@ internal sealed class BuildingRuntimeSpawnSystem
         Context context,
         BuildingDefinition definition,
         Vector2Int preferredOrigin,
-        out RuntimeBuildingData building)
+        out RuntimeBuildingEntity building)
     {
         return TrySpawnInitialBuilding(context, definition, preferredOrigin, false, out building);
     }
@@ -305,13 +305,13 @@ internal sealed class BuildingRuntimeSpawnSystem
         BuildingDefinition definition,
         Vector2Int preferredOrigin,
         bool rotateVertical,
-        out RuntimeBuildingData building)
+        out RuntimeBuildingEntity building)
     {
         building = null;
         if (definition == null || definition.Prefab == null)
             return false;
 
-        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return false;
 
         if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell))
@@ -336,7 +336,7 @@ internal sealed class BuildingRuntimeSpawnSystem
         bool rotateVertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         out Vector2Int originCell)
     {
         originCell = default;
@@ -396,7 +396,7 @@ internal sealed class BuildingRuntimeSpawnSystem
         resolvedOrigin = preferredOrigin;
         if (definition == null || context.GetPlacementFootprint == null || context.IsPlacementValid == null)
             return false;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return false;
 
         const bool rotateVertical = false;

@@ -90,7 +90,7 @@ internal sealed class BuildingPlacementCommitSystem
 
     public delegate GameObject CreateVisualDelegate(BuildingDefinition definition, Transform parent);
     public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
-    public delegate RuntimeBuildingData RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
+    public delegate RuntimeBuildingEntity RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
     public delegate BuildingDefinition CloneDefinitionWithFootprintDelegate(BuildingDefinition definition, Vector2Int footprintCells);
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
     public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
@@ -149,7 +149,7 @@ internal sealed class BuildingPlacementCommitSystem
         return rotateNinety ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
     }
 
-    public RuntimeBuildingData CommitPlacement(CommitRequest request, CommitContext context)
+    public RuntimeBuildingEntity CommitPlacement(CommitRequest request, CommitContext context)
     {
         if (request.Definition == null || context.RegisterRuntimeBuilding == null || context.CloneDefinitionWithFootprint == null)
             return null;
@@ -160,9 +160,9 @@ internal sealed class BuildingPlacementCommitSystem
         return CommitSinglePlacement(request, context);
     }
 
-    private RuntimeBuildingData CommitWallPlacement(CommitRequest request, CommitContext context)
+    private RuntimeBuildingEntity CommitWallPlacement(CommitRequest request, CommitContext context)
     {
-        RuntimeBuildingData lastBuilding = null;
+        RuntimeBuildingEntity lastBuilding = null;
         var wallRuns = new List<WallRun>();
         BuildFinalWallRuns(request, wallRuns);
         for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
@@ -190,7 +190,7 @@ internal sealed class BuildingPlacementCommitSystem
         return ShouldAutoSelectAfterPlacement(lastBuilding?.Definition) ? lastBuilding : null;
     }
 
-    private RuntimeBuildingData CommitSinglePlacement(CommitRequest request, CommitContext context)
+    private RuntimeBuildingEntity CommitSinglePlacement(CommitRequest request, CommitContext context)
     {
         if (request.PreviewInstance == null)
             return null;
@@ -200,7 +200,7 @@ internal sealed class BuildingPlacementCommitSystem
 
         Vector2Int footprint = context.GetPlacementFootprint(request.Definition, request.AutoRotateVertical);
         BuildingDefinition committedDefinition = context.CloneDefinitionWithFootprint(request.Definition, footprint);
-        RuntimeBuildingData building = context.RegisterRuntimeBuilding(committedDefinition, request.PreviewInstance, request.OriginCell, true);
+        RuntimeBuildingEntity building = context.RegisterRuntimeBuilding(committedDefinition, request.PreviewInstance, request.OriginCell, true);
         return ShouldAutoSelectAfterPlacement(building?.Definition) ? building : null;
     }
 

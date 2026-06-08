@@ -16,7 +16,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
         state.RequireForUpdate<GridRoadDirt>();
-        state.RequireForUpdate<DynamicBlockerData>();
+        state.RequireForUpdate<DynamicBlockerComponent>();
         state.RequireForUpdate<UnitAttack>();
     }
 
@@ -26,7 +26,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var blockerData = state.EntityManager.GetComponentData<DynamicBlockerData>(gridEntity);
+        var blockerData = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
         var roads = SystemAPI.GetBuffer<GridRoad>(gridEntity).AsNativeArray();
         var sidewalks = SystemAPI.GetBuffer<GridRoadSidewalk>(gridEntity).AsNativeArray();
         var dirtRoads = SystemAPI.GetBuffer<GridRoadDirt>(gridEntity).AsNativeArray();
@@ -55,7 +55,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
     }
 
     [BurstCompile]
-    [WithNone(typeof(StaticGridBlocker), typeof(UnitDeathAnimationState), typeof(UnitAirMovement))]
+    [WithNone(typeof(StaticGridBlocker), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
     private partial struct EngagedMoveJob : IJobEntity
     {
         public GridConfig Grid;

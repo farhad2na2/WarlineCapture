@@ -280,7 +280,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     CruiseHeight = math.max(3f, modelBounds.size.y > 0f ? modelBounds.size.y * 2f : 6f),
                     RunwayTaxiSpeed = math.max(0.01f, authoring.runwayTaxiSpeed)
                 });
-                AddComponent(entity, new UnitAirState
+                AddComponent(entity, new UnitAirComponent
                 {
                     HomePosition = authoring.transform.position,
                     HomeCell = int2.zero,
@@ -328,8 +328,8 @@ public class UnitGridAuthoring : MonoBehaviour
 
             int maxHp = math.max(1, authoring.maxHealth);
             AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
-            AddComponent(entity, new UnitAttackState { CooldownRemaining = 0f });
-            AddComponent(entity, new UnitAttackTraceState { TimeRemaining = 0f, Phase = 0f });
+            AddComponent(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+            AddComponent(entity, new UnitAttackTraceComponent { TimeRemaining = 0f, Phase = 0f });
             AddComponent(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
             AddComponent(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(authoring.gameObject.name) });
             AddComponent(entity, new UnitDisplayInfo
@@ -339,7 +339,7 @@ public class UnitGridAuthoring : MonoBehaviour
             });
 
             AddComponent(entity, new UnitPrevWorldPos { Value = authoring.transform.position });
-            AddComponent(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+            AddComponent(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
             AddBuffer<UnitTransportHiddenVisualScale>(entity);
             AddComponent(entity, new UnitAnimationSettings
             {
@@ -350,13 +350,13 @@ public class UnitGridAuthoring : MonoBehaviour
                 AttackAnimationSeconds = math.max(0.01f, authoring.attackAnimationSeconds),
                 DeathAnimationSeconds = math.max(0.01f, authoring.deathAnimationSeconds)
             });
-            AddComponent(entity, new UnitIdleWanderState
+            AddComponent(entity, new UnitIdleWanderComponent
             {
                 RandomState = math.max(1u, math.hash(new int4(footprint.x, footprint.y, authoring.gameObject.name.GetHashCode(), 0x45d9f3b))),
                 RetrySeconds = 0f,
                 CurrentIdleDelaySeconds = 0f
             });
-            AddComponent(entity, new UnitAttackAnimationState { TimeRemaining = 0f });
+            AddComponent(entity, new UnitAttackAnimationComponent { TimeRemaining = 0f });
             AddComponent(entity, new UnitResolvedAnimationIndex { Value = byte.MaxValue });
             DynamicBuffer<UnitAnimationOrderEntry> animationOrderBuffer = AddBuffer<UnitAnimationOrderEntry>(entity);
             if (authoring.animationOrder != null)

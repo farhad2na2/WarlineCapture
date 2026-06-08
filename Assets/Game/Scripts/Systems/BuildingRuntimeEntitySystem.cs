@@ -7,7 +7,7 @@ using UnityEngine;
 internal sealed class BuildingRuntimeEntitySystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
 
     public readonly struct Context
@@ -16,7 +16,7 @@ internal sealed class BuildingRuntimeEntitySystem
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingCombatSystem CombatSystem;
-        public readonly BuildingCombatSystem.Context<RuntimeBuildingData> CombatContext;
+        public readonly BuildingCombatSystem.Context<RuntimeBuildingEntity> CombatContext;
         public readonly System.Func<float> GetTime;
         public readonly float DestroyedBuildingLifetimeSeconds;
 
@@ -25,7 +25,7 @@ internal sealed class BuildingRuntimeEntitySystem
             TryGetGridDataDelegate tryGetGridData,
             GetFootprintCenterDelegate getFootprintCenter,
             BuildingCombatSystem combatSystem,
-            BuildingCombatSystem.Context<RuntimeBuildingData> combatContext,
+            BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext,
             System.Func<float> getTime,
             float destroyedBuildingLifetimeSeconds)
         {
@@ -143,7 +143,7 @@ internal sealed class BuildingRuntimeEntitySystem
             });
         }
         em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
-        em.AddComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         em.AddComponentData(entity, new UnitAnimationSettings
         {
             AttackAnimationSeconds = 0.1f,

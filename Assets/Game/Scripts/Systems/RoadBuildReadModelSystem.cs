@@ -9,7 +9,7 @@ public sealed class RoadBuildReadModelSystem
         public readonly RoadBuildSessionSystem.State RoadBuildSessionState;
         public readonly RoadBuildInputSystem RoadBuildInputSystem;
         public readonly RoadBuildInputSystem.State RoadBuildInputState;
-        public readonly BuildingRoadLegacyStorageSystem LegacyStorageSystem;
+        public readonly RoadBuildPlacementStorageSystem PlacementStorageSystem;
         public readonly RoadBuildDependencySystem.State DependencyState;
         public readonly Func<bool> IsDraggingBuildingPlacement;
 
@@ -19,7 +19,7 @@ public sealed class RoadBuildReadModelSystem
             RoadBuildSessionSystem.State roadBuildSessionState,
             RoadBuildInputSystem roadBuildInputSystem,
             RoadBuildInputSystem.State roadBuildInputState,
-            BuildingRoadLegacyStorageSystem legacyStorageSystem,
+            RoadBuildPlacementStorageSystem placementStorageSystem,
             RoadBuildDependencySystem.State dependencyState,
             Func<bool> isDraggingBuildingPlacement)
         {
@@ -28,7 +28,7 @@ public sealed class RoadBuildReadModelSystem
             RoadBuildSessionState = roadBuildSessionState;
             RoadBuildInputSystem = roadBuildInputSystem;
             RoadBuildInputState = roadBuildInputState;
-            LegacyStorageSystem = legacyStorageSystem;
+            PlacementStorageSystem = placementStorageSystem;
             DependencyState = dependencyState;
             IsDraggingBuildingPlacement = isDraggingBuildingPlacement;
         }
@@ -42,13 +42,13 @@ public sealed class RoadBuildReadModelSystem
 
     public bool IsDraggingBuildInteraction =>
         (_context.RoadBuildInputSystem != null && _context.RoadBuildInputSystem.IsDrawing(_context.RoadBuildInputState)) ||
-        (_context.LegacyStorageSystem != null &&
-         _context.LegacyStorageSystem.HasPendingBuildingPlacement &&
+        (_context.PlacementStorageSystem != null &&
+         _context.PlacementStorageSystem.HasPendingBuildingPlacement &&
          _context.IsDraggingBuildingPlacement?.Invoke() == true);
 
     public bool HasPendingBuildingPlacement =>
-        _context.LegacyStorageSystem != null &&
-        _context.LegacyStorageSystem.HasPendingBuildingPlacement;
+        _context.PlacementStorageSystem != null &&
+        _context.PlacementStorageSystem.HasPendingBuildingPlacement;
 
     public bool HasSelectedBuilding
     {
@@ -58,8 +58,8 @@ public sealed class RoadBuildReadModelSystem
             if (interaction != null)
                 return interaction.HasSelectedBuilding(_context.DependencyState.BuildingPlacementInteractionContext);
 
-            return _context.LegacyStorageSystem != null &&
-                   _context.LegacyStorageSystem.HasSelectedBuilding;
+            return _context.PlacementStorageSystem != null &&
+                   _context.PlacementStorageSystem.HasSelectedBuilding;
         }
     }
 
@@ -71,8 +71,8 @@ public sealed class RoadBuildReadModelSystem
             if (interaction != null)
                 return interaction.CanConfirmBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext);
 
-            return _context.LegacyStorageSystem != null &&
-                   _context.LegacyStorageSystem.CanConfirmBuildingPlacement;
+            return _context.PlacementStorageSystem != null &&
+                   _context.PlacementStorageSystem.CanConfirmBuildingPlacement;
         }
     }
 
@@ -87,7 +87,7 @@ public sealed class RoadBuildReadModelSystem
                 return interaction.PlacementStatusText(_context.DependencyState.BuildingPlacementInteractionContext);
             }
 
-            BuildingPlacementInputSystem.IPlacementState activePlacement = _context.LegacyStorageSystem?.ActivePlacement;
+            BuildingPlacementInputSystem.IPlacementState activePlacement = _context.PlacementStorageSystem?.ActivePlacement;
             if (activePlacement == null)
                 return "Choose a build type.";
 
@@ -112,8 +112,8 @@ public sealed class RoadBuildReadModelSystem
             if (!HasSelectedBuilding)
                 return "Building";
 
-            return _context.LegacyStorageSystem != null &&
-                   _context.LegacyStorageSystem.TryGetSelectedBuilding(out RuntimeBuildingData building)
+            return _context.PlacementStorageSystem != null &&
+                   _context.PlacementStorageSystem.TryGetSelectedBuilding(out RuntimeBuildingEntity building)
                 ? $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})"
                 : "Building";
         }

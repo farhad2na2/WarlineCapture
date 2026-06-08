@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -106,18 +105,15 @@ public static class TacticalCommandFeedbackText
 [DisallowMultipleComponent]
 public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 {
-    private static readonly List<BattleHudRuntimeFeedbackView> RegisteredInstances = new();
-
-    [SerializeField] private BattleHudTacticalFeedbackSystem tacticalFeedback;
+    [SerializeField] private BattleHudTacticalFeedbackView tacticalFeedback;
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
     [SerializeField] private GameObject feedbackPanel;
     [SerializeField] private TMP_Text feedbackText;
 
-    public BattleHudTacticalFeedbackSystem TacticalFeedback => tacticalFeedback;
+    public BattleHudTacticalFeedbackView TacticalFeedback => tacticalFeedback;
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
-    public static IReadOnlyList<BattleHudRuntimeFeedbackView> Instances => RegisteredInstances;
 
     private void Awake()
     {
@@ -126,13 +122,12 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!RegisteredInstances.Contains(this))
-            RegisteredInstances.Add(this);
+        BattleHudRuntimeFeedbackSystem.SetActiveView(this);
     }
 
     private void OnDisable()
     {
-        RegisteredInstances.Remove(this);
+        BattleHudRuntimeFeedbackSystem.ClearActiveView(this);
     }
 
     public void ShowFeedbackMessage(string message)

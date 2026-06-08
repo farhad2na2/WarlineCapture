@@ -12,7 +12,7 @@ public partial struct UnitMoveVisualStateSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitPrevWorldPos>();
-        state.RequireForUpdate<UnitMoveVisualState>();
+        state.RequireForUpdate<UnitMoveVisualComponent>();
     }
 
     [BurstCompile]
@@ -39,7 +39,7 @@ public partial struct UnitMoveVisualStateSystem : ISystem
         public float EpsilonSq;
         public float StopHoldSeconds;
 
-        public void Execute(ref UnitPrevWorldPos prev, ref UnitMoveVisualState vis, in LocalTransform transform)
+        public void Execute(ref UnitPrevWorldPos prev, ref UnitMoveVisualComponent vis, in LocalTransform transform)
         {
             float3 cur = transform.Position;
             float3 delta = cur - prev.Value;

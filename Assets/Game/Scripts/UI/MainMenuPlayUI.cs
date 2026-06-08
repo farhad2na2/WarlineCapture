@@ -6,7 +6,9 @@ public sealed class MainMenuPlayUI
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private SelectionUiCameraSystem _selectionUiCameraSystem;
+    private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
+    private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
@@ -27,8 +29,10 @@ public sealed class MainMenuPlayUI
     public void Dispose()
     {
         _matchHudMinimapInputSystem.Dispose();
+        _matchHudSelectionPanelView = null;
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = null;
+        _bindMatchHudSelectionPanel = null;
         _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
         _selectionUiCameraSystem = null;
@@ -50,6 +54,20 @@ public sealed class MainMenuPlayUI
             minimapView,
             _runtimeGameplayStateSystem,
             _selectionUiCameraSystem);
+    }
+
+    public void ConfigureMatchHudSelectionPanelBinding(System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel)
+    {
+        _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
+        if (_matchHudSelectionPanelView != null)
+            _bindMatchHudSelectionPanel?.Invoke(_matchHudSelectionPanelView);
+    }
+
+    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView selectionPanelView)
+    {
+        _matchHudSelectionPanelView = selectionPanelView;
+        _matchHudSelectionPanelView?.HideSelection();
+        _bindMatchHudSelectionPanel?.Invoke(_matchHudSelectionPanelView);
     }
 
     public void ConfigureMatchHudSquadTrayBinding(System.Action<MatchHudSquadTrayView> bindMatchHudSquadTray)

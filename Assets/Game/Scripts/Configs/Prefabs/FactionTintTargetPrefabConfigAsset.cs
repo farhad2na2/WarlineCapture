@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Prefab Config/Faction Tint Target")]
+[CreateAssetMenu(menuName = "Game/Prefab Config/Faction Tint Target")]
 public sealed class FactionTintTargetPrefabConfigAsset : FactionTintTargetConfig
 {
 }

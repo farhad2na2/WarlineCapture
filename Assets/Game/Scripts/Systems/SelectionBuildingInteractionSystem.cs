@@ -31,6 +31,11 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionHudFeedbackSystem.ResetViewCache();
     }
 
+    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+    {
+        _selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
+    }
+
     public void ClearFocusedUnit()
     {
         if (!TryGetDefaultEntityManager(out EntityManager em))

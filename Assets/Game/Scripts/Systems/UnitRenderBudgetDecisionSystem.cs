@@ -14,7 +14,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public NativeHashSet<Entity> ReadyTaggedThisFrame;
         public BufferLookup<Child> ChildLookup;
         public ComponentLookup<MaterialAnimationIndex> AnimationIndexLookup;
-        public ComponentLookup<UnitMoveVisualState> MoveVisualLookup;
+        public ComponentLookup<UnitMoveVisualComponent> MoveVisualLookup;
         public NativeList<UnitDistance> Distances;
         public NativeHashSet<Entity> DetailedUnits;
         public NativeHashSet<Entity> MidLodUnits;
@@ -174,9 +174,9 @@ public readonly struct UnitRenderBudgetDecisionSystem
             bool shouldShowLow = visualPlan.ShouldShowLow;
             bool shouldShowFar = visualPlan.ShouldShowFar;
             UnitRenderVisualKind desiredVisual = visualPlan.DesiredVisual;
-            bool hadVisualState = em.HasComponent<UnitRenderVisualState>(unit);
+            bool hadVisualState = em.HasComponent<UnitRenderVisualComponent>(unit);
             UnitRenderVisualKind previousVisual = hadVisualState
-                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualState>(unit).Current
+                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
                 : UnitRenderVisualKind.Unknown;
             UnitRenderVisualKind activeVisual = context.VisualStateSystem.ResolveStableUnitRenderVisualState(
                 em,

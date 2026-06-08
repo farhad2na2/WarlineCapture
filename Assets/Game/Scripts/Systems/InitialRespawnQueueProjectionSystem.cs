@@ -6,16 +6,16 @@ public readonly struct InitialRespawnQueueProjectionSystem
 {
     public Entity GetOrCreateQueue(ref SystemState state)
     {
-        return RespawnQueueUtils.GetOrCreateQueue(ref state);
+        return RespawnQueueUtility.GetOrCreateQueue(ref state);
     }
 
-    public RespawnQueueState ProjectInitialConfig(
+    public RespawnQueueComponent ProjectInitialConfig(
         EntityManager em,
         Entity queueEntity,
         InitialUnitsSpawnConfig config,
         NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns)
     {
-        RespawnQueueState queueState = em.GetComponentData<RespawnQueueState>(queueEntity);
+        RespawnQueueComponent queueState = em.GetComponentData<RespawnQueueComponent>(queueEntity);
         queueState.SpawnRadiusCells = math.max(0, config.SpawnRadiusCells);
         queueState.RespawnDelaySeconds = math.max(0.01f, config.RespawnDelaySeconds);
 
@@ -36,7 +36,7 @@ public readonly struct InitialRespawnQueueProjectionSystem
     public void WriteRandomState(
         EntityManager em,
         Entity queueEntity,
-        RespawnQueueState queueState,
+        RespawnQueueComponent queueState,
         uint randomState)
     {
         queueState.RandomState = randomState;

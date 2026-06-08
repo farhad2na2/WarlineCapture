@@ -20,7 +20,7 @@ internal sealed class RuntimeCityReadinessQuerySystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData)
+        out DynamicBlockerComponent blockerData)
     {
         gridEntity = Entity.Null;
         grid = default;
@@ -39,7 +39,7 @@ internal sealed class RuntimeCityReadinessQuerySystem
         gridEntity = _gridDataQuery.GetSingletonEntity();
         grid = em.GetComponentData<GridConfig>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         return true;
     }
 
@@ -115,7 +115,7 @@ internal sealed class RuntimeCityReadinessQuerySystem
         _gridDataQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridRoad>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         _hasGridDataQuery = true;
     }
 

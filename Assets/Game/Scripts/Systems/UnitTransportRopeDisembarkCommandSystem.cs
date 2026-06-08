@@ -28,11 +28,11 @@ public readonly struct UnitTransportRopeDisembarkCommandSystem
 
         moveOrderSystem.ClearMovementOrderComponents(em, transport);
         if (em.HasComponent<UnitAirMovement>(transport) &&
-            em.HasComponent<UnitAirState>(transport) &&
+            em.HasComponent<UnitAirComponent>(transport) &&
             em.HasComponent<LocalTransform>(transport))
         {
             UnitAirMovement airMovement = em.GetComponentData<UnitAirMovement>(transport);
-            UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
             LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
             float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
             if (airState.Airborne == 0)

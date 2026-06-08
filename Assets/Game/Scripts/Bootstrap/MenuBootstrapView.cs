@@ -9,15 +9,15 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [SerializeField] private Canvas uiCanvas;
     [SerializeField] private UIShellView shellView;
     [SerializeField] private UIShellEcsPresentationSystem shellEcsPresentation;
-    [SerializeField] private UIShellContentSystem contentSystem;
-    [SerializeField] private UIRouter router;
+    [SerializeField] private UIShellContentView contentSystem;
+    [SerializeField] private UIRouterView router;
 
     public Camera UiCamera => uiCamera;
     public Canvas UiCanvas => uiCanvas;
     public UIShellView ShellView => shellView;
     public UIShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
-    public UIShellContentSystem ContentSystem => contentSystem;
-    public UIRouter Router => router;
+    public UIShellContentView ContentSystem => contentSystem;
+    public UIRouterView Router => router;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
 
     public void Configure(
@@ -25,8 +25,8 @@ public sealed class MenuBootstrapView : MonoBehaviour
         Canvas configuredUiCanvas,
         UIShellView configuredShellView,
         UIShellEcsPresentationSystem configuredShellEcsPresentation,
-        UIShellContentSystem configuredContentSystem,
-        UIRouter configuredRouter)
+        UIShellContentView configuredContentSystem,
+        UIRouterView configuredRouter)
     {
         uiCamera = configuredUiCamera;
         uiCanvas = configuredUiCanvas;

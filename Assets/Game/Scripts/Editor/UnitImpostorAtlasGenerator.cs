@@ -40,7 +40,7 @@ public static class UnitImpostorAtlasGenerator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/WarlineCapture/Rendering/Atlases/Generate All Character Atlases")]
+    [MenuItem("Tools/Game/Rendering/Atlases/Generate All Character Atlases")]
     public static void GenerateAllRegisteredSoldierAtlases()
     {
         UnitPrefabRegistryAuthoringConfig registry = AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(RegistryConfigPath);

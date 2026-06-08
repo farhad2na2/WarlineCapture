@@ -5,7 +5,7 @@ using UnityEngine;
 
 internal sealed class BuildingProductionSlotSystem
 {
-    public bool TryReserveProductionSlot(RuntimeBuildingData building, EntityManager entityManager, out int reservedProductionSlotIndex)
+    public bool TryReserveProductionSlot(RuntimeBuildingEntity building, EntityManager entityManager, out int reservedProductionSlotIndex)
     {
         reservedProductionSlotIndex = -1;
         if (building?.ProducedUnitSlots == null ||
@@ -35,7 +35,7 @@ internal sealed class BuildingProductionSlotSystem
         return false;
     }
 
-    public bool TryGetAvailableProductionSpawnSlot(RuntimeBuildingData building, EntityManager em, out int slotIndex, out Vector3 spawnLocalPosition)
+    public bool TryGetAvailableProductionSpawnSlot(RuntimeBuildingEntity building, EntityManager em, out int slotIndex, out Vector3 spawnLocalPosition)
     {
         slotIndex = -1;
         spawnLocalPosition = Vector3.zero;
@@ -56,15 +56,15 @@ internal sealed class BuildingProductionSlotSystem
         return false;
     }
 
-    public bool IsProductionSlotReservedByPending(RuntimeBuildingData building, int slotIndex)
+    public bool IsProductionSlotReservedByPending(RuntimeBuildingEntity building, int slotIndex)
     {
-        IReadOnlyList<RuntimeBuildingData.PendingProduction> pendingProductions = building?.PendingProductions;
+        IReadOnlyList<RuntimeBuildingEntity.PendingProduction> pendingProductions = building?.PendingProductions;
         if (pendingProductions == null)
             return false;
 
         for (int i = 0; i < pendingProductions.Count; i++)
         {
-            RuntimeBuildingData.PendingProduction pending = pendingProductions[i];
+            RuntimeBuildingEntity.PendingProduction pending = pendingProductions[i];
             if (pending != null && pending.ReservedProductionSlotIndex == slotIndex)
                 return true;
         }
@@ -72,7 +72,7 @@ internal sealed class BuildingProductionSlotSystem
         return false;
     }
 
-    public bool IsProductionSlotOccupied(RuntimeBuildingData building, EntityManager em, int slotIndex)
+    public bool IsProductionSlotOccupied(RuntimeBuildingEntity building, EntityManager em, int slotIndex)
     {
         if (building?.ProducedUnitSlots == null ||
             slotIndex < 0 ||

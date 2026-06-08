@@ -46,18 +46,18 @@ internal sealed class BuildingProductionRequestSystem
     public delegate bool TrySpendDollarsDelegate(int amount);
     public delegate void RefundDollarsDelegate(int amount);
     public delegate void SetActivePlacementCostDelegate(int cost);
-    public delegate bool TryQueuePlayerUnitDelegate(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab);
+    public delegate bool TryQueuePlayerUnitDelegate(RuntimeBuildingEntity building, int productionIndex, GameObject spawnUnitPrefab);
     public delegate void SelectRuntimeBuildingDelegate(int buildingId);
     public delegate void RuntimeGameplayAction();
     public delegate void CameraFocusAction(Vector3 worldPosition);
-    public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingData building);
+    public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingEntity building);
     public delegate void RecordUnitOrderedDelegate(GameObject prefab);
     public delegate void LogWarningDelegate(string message);
     public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly IReadOnlyList<BuildingDefinition> ConfiguredSpawnableDefinitions;
         public readonly IReadOnlyDictionary<GameObject, BuildingDefinition> ConfiguredDefinitionsByPrefab;
         public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
@@ -85,7 +85,7 @@ internal sealed class BuildingProductionRequestSystem
         public readonly CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             IReadOnlyList<BuildingDefinition> configuredSpawnableDefinitions,
             IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
             IReadOnlyList<GameObject> unitSpawnPrefabs,
@@ -142,7 +142,7 @@ internal sealed class BuildingProductionRequestSystem
     }
 
     private int _armedProductionFrame = -1;
-    private RuntimeBuildingData _lastCampProductionFocusBuilding;
+    private RuntimeBuildingEntity _lastCampProductionFocusBuilding;
     private GameObject _lastCampProductionFocusPrefab;
 
     public void CreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex, int frameCount)
@@ -159,7 +159,7 @@ internal sealed class BuildingProductionRequestSystem
             return;
 
         if (context.RuntimeBuildings == null ||
-            !context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) ||
+            !context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building) ||
             building?.Definition == null)
             return;
 
@@ -226,7 +226,7 @@ internal sealed class BuildingProductionRequestSystem
             return CampRequestFailure.NotEnoughMoney;
 
         if (context.RuntimeBuildings == null ||
-            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) ||
+            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
             producerBuilding == null)
         {
             context.RefundDollars?.Invoke(Mathf.Max(0, price));
@@ -263,7 +263,7 @@ internal sealed class BuildingProductionRequestSystem
     {
         if (!activeBuildingId.HasValue ||
             context.RuntimeBuildings == null ||
-            !context.RuntimeBuildings.TryGetValue(activeBuildingId.Value, out RuntimeBuildingData building) ||
+            !context.RuntimeBuildings.TryGetValue(activeBuildingId.Value, out RuntimeBuildingEntity building) ||
             building?.Definition == null)
             return false;
 
@@ -271,7 +271,7 @@ internal sealed class BuildingProductionRequestSystem
         return spawnUnitPrefab != null && CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, false);
     }
 
-    public bool CanQueueUnitFromBuilding(Context context, RuntimeBuildingData building, GameObject spawnUnitPrefab, bool logReason)
+    public bool CanQueueUnitFromBuilding(Context context, RuntimeBuildingEntity building, GameObject spawnUnitPrefab, bool logReason)
     {
         if (building == null || spawnUnitPrefab == null)
             return false;
@@ -336,7 +336,7 @@ internal sealed class BuildingProductionRequestSystem
 
         request.ProducerDisplayName = ToFixedString128(producerDisplayName);
         if (context.RuntimeBuildings == null ||
-            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) ||
+            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
             producerBuilding == null)
         {
             request.ResultCode = BuildingFactionUnitProductionRequest.ProducerUnavailable;
@@ -385,7 +385,7 @@ internal sealed class BuildingProductionRequestSystem
         }
 
         if (context.RuntimeBuildings == null ||
-            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) ||
+            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
             producerBuilding == null)
         {
             result = new FactionUnitProductionResult(
@@ -429,9 +429,9 @@ internal sealed class BuildingProductionRequestSystem
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building?.Definition == null || building.IsDestroyed)
                 continue;
             if (building.IsCityGenerated)
@@ -465,9 +465,9 @@ internal sealed class BuildingProductionRequestSystem
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building?.Definition == null || building.IsDestroyed)
                 continue;
             if (building.IsCityGenerated)
@@ -609,7 +609,7 @@ internal sealed class BuildingProductionRequestSystem
         return true;
     }
 
-    private void SelectBuildingForProductionRequest(Context context, RuntimeBuildingData building, GameObject producedUnitPrefab)
+    private void SelectBuildingForProductionRequest(Context context, RuntimeBuildingEntity building, GameObject producedUnitPrefab)
     {
         if (building == null)
             return;
@@ -623,13 +623,13 @@ internal sealed class BuildingProductionRequestSystem
         context.SmoothMoveCameraGroundCenterTo?.Invoke(focusWorldPosition);
     }
 
-    private void RememberCampProductionFocus(RuntimeBuildingData building, GameObject producedUnitPrefab)
+    private void RememberCampProductionFocus(RuntimeBuildingEntity building, GameObject producedUnitPrefab)
     {
         _lastCampProductionFocusBuilding = building;
         _lastCampProductionFocusPrefab = producedUnitPrefab;
     }
 
-    private Vector3 ResolveProductionRequestFocusWorldPosition(Context context, RuntimeBuildingData producerBuilding, GameObject producedUnitPrefab)
+    private Vector3 ResolveProductionRequestFocusWorldPosition(Context context, RuntimeBuildingEntity producerBuilding, GameObject producedUnitPrefab)
     {
         if (producerBuilding == null)
             return Vector3.zero;

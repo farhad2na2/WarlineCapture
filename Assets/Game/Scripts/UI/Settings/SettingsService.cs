@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class SettingsService
 {
-    private const string Prefix = "WarlineCapture.Settings.";
+    private const string Prefix = "Game.Settings.";
     private const string MasterVolumeKey = Prefix + "Audio.MasterVolume";
     private const string MusicVolumeKey = Prefix + "Audio.MusicVolume";
     private const string SfxVolumeKey = Prefix + "Audio.SfxVolume";

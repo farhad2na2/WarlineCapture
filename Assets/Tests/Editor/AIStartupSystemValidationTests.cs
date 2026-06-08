@@ -28,13 +28,18 @@ public sealed class AIStartupSystemValidationTests
         AIControllerConfig playerAuto = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset");
         AIPlanEntryStartupConfig planEntryConfig = LoadPlanEntryConfig();
         using var world = new World("AIStartupSystemValidationTests");
+        AISettingsSnapshot aiSettings = AISettingsSnapshot.Defaults;
+        aiSettings.PlayerAutoAIEnabled = true;
+        aiSettings.EnemyAICount = 1;
+        AISettingsRuntimeState.ResetDefaults();
 
         AIStartupSystem system = new();
         AIStartupSystem.Result result = system.Initialize(
             world,
             new[] { enemy, playerAuto },
             planEntryConfig,
-            TryResolveFactionSpawnCell);
+            TryResolveFactionSpawnCell,
+            aiSettings);
 
         EntityManager em = world.EntityManager;
         Entity enemyEconomyEntity = GetEntityForFaction<FactionEconomy>(em, 1, economy => economy.FactionId);

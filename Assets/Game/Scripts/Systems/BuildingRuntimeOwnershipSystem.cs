@@ -28,7 +28,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
         }
     }
 
-    public void SetRuntimeBuildingOwnerFaction(Context context, RuntimeBuildingData building, byte? ownerFactionId)
+    public void SetRuntimeBuildingOwnerFaction(Context context, RuntimeBuildingEntity building, byte? ownerFactionId)
     {
         if (building == null)
             return;
@@ -40,7 +40,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
         ApplyRuntimeBuildingFactionVisual(context, building);
     }
 
-    private static void UpdateRuntimeCombatFaction(Context context, RuntimeBuildingData building)
+    private static void UpdateRuntimeCombatFaction(Context context, RuntimeBuildingEntity building)
     {
         if (building.CombatEntity == Entity.Null ||
             context.TryGetEntityManager == null ||
@@ -61,7 +61,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
         }
     }
 
-    private static void UpdateRuntimeGateFriendlyPassFaction(Context context, RuntimeBuildingData building, byte? ownerFactionId)
+    private static void UpdateRuntimeGateFriendlyPassFaction(Context context, RuntimeBuildingEntity building, byte? ownerFactionId)
     {
         if (building?.Definition == null ||
             building.BlockerEntity == Entity.Null ||
@@ -87,7 +87,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
             em.AddComponentData(building.BlockerEntity, pass);
     }
 
-    private static void ApplyRuntimeBuildingFactionVisual(Context context, RuntimeBuildingData building)
+    private static void ApplyRuntimeBuildingFactionVisual(Context context, RuntimeBuildingEntity building)
     {
         if (context.BuildingFactionVisualSystem == null)
             return;

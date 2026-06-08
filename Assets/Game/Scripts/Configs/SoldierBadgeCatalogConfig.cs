@@ -16,7 +16,7 @@ public sealed class SoldierBadgeConfigEntry
     public int Tier => tier;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Soldier Badge Catalog")]
+[CreateAssetMenu(menuName = "Game/Config/Soldier Badge Catalog")]
 public sealed class SoldierBadgeCatalogConfig : ScriptableObject
 {
     [SerializeField] private List<SoldierBadgeConfigEntry> badges = new();

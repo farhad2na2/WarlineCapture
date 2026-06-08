@@ -57,8 +57,8 @@ public readonly struct InitialSpawnGridContextSystem
 
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        NativeBitArray dynamicBlocked = em.GetComponentData<DynamicBlockerData>(gridEntity).Blocked;
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray dynamicBlocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         var reserved = new NativeBitArray(grid.Width * grid.Height, allocator);
         context = new Context(gridEntity, grid, walkable, dynamicBlocked, occupied, reserved);
         return true;

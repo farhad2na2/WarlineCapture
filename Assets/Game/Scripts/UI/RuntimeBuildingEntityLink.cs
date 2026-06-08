@@ -1,13 +1,10 @@
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
-using System.Collections.Generic;
 
 [DisallowMultipleComponent]
 public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 {
-    private static readonly HashSet<RuntimeBuildingEntityLink> ActiveLinks = new();
-
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private int _buildingId;
@@ -20,21 +17,6 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 
     public Entity Entity => _entity;
     public int BuildingId => _buildingId;
-
-    public static IEnumerable<RuntimeBuildingEntityLink> GetActiveLinks()
-    {
-        return ActiveLinks;
-    }
-
-    private void OnEnable()
-    {
-        ActiveLinks.Add(this);
-    }
-
-    private void OnDisable()
-    {
-        ActiveLinks.Remove(this);
-    }
 
     public void Configure(
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,

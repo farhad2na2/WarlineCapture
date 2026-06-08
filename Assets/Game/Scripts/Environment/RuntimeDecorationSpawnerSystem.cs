@@ -96,7 +96,7 @@ public sealed class RuntimeDecorationSpawnerSystem
             return;
         if (_prefabs == null || _prefabs.Count == 0 || _decorationCount <= 0)
             return;
-        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return;
 
         ClearSpawnedDecorations();
@@ -207,7 +207,7 @@ public sealed class RuntimeDecorationSpawnerSystem
         return cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
     }
 
-    private static bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData)
+    private static bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData)
     {
         gridEntity = Entity.Null;
         grid = default;
@@ -222,14 +222,14 @@ public sealed class RuntimeDecorationSpawnerSystem
         using var query = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridRoad>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;
 
         gridEntity = query.GetSingletonEntity();
         grid = em.GetComponentData<GridConfig>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         return true;
     }
 
@@ -237,7 +237,7 @@ public sealed class RuntimeDecorationSpawnerSystem
         ref Unity.Mathematics.Random rng,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         NativeBitArray reserved,
         List<DecorationSeed> seeds,
         List<int2> treeClusterCenters,
@@ -357,7 +357,7 @@ public sealed class RuntimeDecorationSpawnerSystem
     private static bool CanPlaceDecoration(
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         NativeBitArray reserved,
         int2 cell)
     {

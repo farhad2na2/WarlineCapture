@@ -39,7 +39,7 @@ public static class MapPrefabHierarchyOrganizer
         "ResourceAreas"
     };
 
-    [MenuItem("WarlineCapture/Maps/Reorganize Map Prefab By Type")]
+    [MenuItem("Game/Maps/Reorganize Map Prefab By Type")]
     public static void ReorganizeMapPrefabByType()
     {
         GameObject prefabRoot = PrefabUtility.LoadPrefabContents(MapPrefabPath);

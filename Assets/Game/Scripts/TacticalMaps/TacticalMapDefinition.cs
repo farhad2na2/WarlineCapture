@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Tactical Map Definition")]
+[CreateAssetMenu(menuName = "Game/Tactical Map Definition")]
 public sealed class TacticalMapDefinition : ScriptableObject
 {
     [SerializeField] private string mapId;

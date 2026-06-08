@@ -55,7 +55,7 @@ internal struct UnitPathfindingApplySystem
             pendingRequestBudget);
 
         Entity gridEntity = queries.GridQuery.GetSingletonEntity();
-        PathPoolData pool = state.EntityManager.GetComponentData<PathPoolData>(gridEntity);
+        PathPoolComponent pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
         MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(state.EntityManager, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
             ? resolvedSurfaceContext
             : _surfaceReadSystem.CreateFlatFallbackContext();

@@ -12,7 +12,7 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<InitialUnitsBlockerChurnConfig>();
-        state.RequireForUpdate<InitialUnitsBlockerChurnState>();
+        state.RequireForUpdate<InitialUnitsBlockerChurnComponent>();
 
         _blockersQuery = state.GetEntityQuery(new EntityQueryDesc
         {
@@ -30,7 +30,7 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (cfg, churn, entity) in
-                 SystemAPI.Query<RefRO<InitialUnitsBlockerChurnConfig>, RefRW<InitialUnitsBlockerChurnState>>().WithEntityAccess())
+                 SystemAPI.Query<RefRO<InitialUnitsBlockerChurnConfig>, RefRW<InitialUnitsBlockerChurnComponent>>().WithEntityAccess())
         {
             if (!cfg.ValueRO.Enabled)
                 continue;

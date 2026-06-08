@@ -10,7 +10,7 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
     public void Publish(
         EntityManager em,
         Entity boundaryEntity,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         if (boundaryEntity == Entity.Null || runtimeBuildings == null)
             return;
@@ -18,9 +18,9 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         DynamicBuffer<BuildingRuntimeSurfaceOverlay> buffer = EnsureBoundaryBuffer(em, boundaryEntity);
         buffer.Clear();
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 building.Instance == null ||
@@ -34,7 +34,7 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         }
     }
 
-    private static bool TryBuildRunwayOverlay(RuntimeBuildingData building, out BuildingRuntimeSurfaceOverlay overlay)
+    private static bool TryBuildRunwayOverlay(RuntimeBuildingEntity building, out BuildingRuntimeSurfaceOverlay overlay)
     {
         overlay = default;
         Transform instanceTransform = building.Instance.transform;

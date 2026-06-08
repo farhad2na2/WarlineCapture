@@ -13,7 +13,7 @@ public sealed class BuildingUiQuerySystem
 
     internal readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingProductionSystem ProductionSystem;
@@ -35,7 +35,7 @@ public sealed class BuildingUiQuerySystem
         public readonly TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<int?> getActiveBuildingId,
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingProductionSystem productionSystem,
@@ -146,7 +146,7 @@ public sealed class BuildingUiQuerySystem
 
         int? buildingId = context.GetActiveBuildingId();
         if (!buildingId.HasValue ||
-            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) ||
+            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingEntity building) ||
             building == null)
         {
             return;
@@ -304,7 +304,7 @@ public sealed class BuildingUiQuerySystem
 
         int? buildingId = context.GetActiveBuildingId();
         if (!buildingId.HasValue ||
-            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) ||
+            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingEntity building) ||
             building == null)
         {
             return;
@@ -359,9 +359,9 @@ public sealed class BuildingUiQuerySystem
             return;
 
         float now = context.GetNow != null ? context.GetNow() : Time.time;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 building.PendingProductions == null ||

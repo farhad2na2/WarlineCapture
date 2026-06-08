@@ -7,7 +7,7 @@ internal sealed class BuildingProductionContextSystem
 {
     public readonly struct Source
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingProductionSystem ProductionSystem;
@@ -46,7 +46,7 @@ internal sealed class BuildingProductionContextSystem
         public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
 
         public Source(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             BuildingDefinitionSystem definitionSystem,
             BuildingProductionSystem productionSystem,
@@ -125,7 +125,7 @@ internal sealed class BuildingProductionContextSystem
     }
 
     public Source CreateSource(
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Camera worldCamera,
         BuildingDefinitionSystem definitionSystem,
         BuildingProductionSystem productionSystem,
@@ -228,7 +228,7 @@ internal sealed class BuildingProductionContextSystem
     {
         return new BuildingProductionTransportBridgeSystem.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             source.SpawnSystem,

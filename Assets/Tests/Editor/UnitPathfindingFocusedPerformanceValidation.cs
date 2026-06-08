@@ -100,13 +100,13 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
                 em.HasComponent<UnitLongDistanceMove>(longDistanceVehicle),
                 "The long-distance vehicle request should stay segmented after the first pathfinding pass.");
             Assert.IsEmpty(capturedDiagnostics, "Focused pathfinding validation should not emit freeze/path diagnostics with default disabled flags.");
-            Assert.Greater(em.GetComponentData<PathPoolData>(gridEntity).Cells.Length, 0, "Pathfinding should write path cells into the shared path pool.");
+            Assert.Greater(em.GetComponentData<PathPoolComponent>(gridEntity).Cells.Length, 0, "Pathfinding should write path cells into the shared path pool.");
 
             WriteReport(
                 updates,
                 stopwatch.Elapsed.TotalMilliseconds,
                 allocatedBytes,
-                em.GetComponentData<PathPoolData>(gridEntity).Cells.Length,
+                em.GetComponentData<PathPoolComponent>(gridEntity).Cells.Length,
                 CountPathRequests(em),
                 capturedDiagnostics.Count);
         }
@@ -189,27 +189,27 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         pathPool = new NativeList<int2>(1024, Allocator.Persistent);
         Entity gridEntity = em.CreateEntity(
             typeof(GridConfig),
-            typeof(DynamicBlockerData),
-            typeof(DynamicOccupancyData),
-            typeof(PathPoolData),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(PathPoolComponent),
             typeof(GridWalkable),
             typeof(GridRoad),
             typeof(GridRoadSidewalk),
             typeof(GridRoadDirt));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = blockerCounts,
             Blocked = blocked,
             FriendlyPassFactionIds = friendlyPassFactionIds,
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = occupied,
         });
-        em.SetComponentData(gridEntity, new PathPoolData { Cells = pathPool });
+        em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
 
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
         DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);

@@ -11,7 +11,7 @@ internal sealed class MapBuildingPlacementSpawnSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     public readonly struct Context
     {
@@ -131,7 +131,7 @@ internal sealed class MapBuildingPlacementSpawnSystem
         if (instance == null)
             return false;
 
-        RuntimeBuildingData building = spawnContext.RegisterRuntimeBuilding(
+        RuntimeBuildingEntity building = spawnContext.RegisterRuntimeBuilding(
             BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint(definition, footprint),
             instance,
             originCell,

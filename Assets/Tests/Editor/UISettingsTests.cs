@@ -72,7 +72,7 @@ public sealed class UISettingsTests
     public void SettingsPrefab_WiresControllerControls()
     {
         GameObject prefab = LoadSettingsPrefab();
-        SettingsScreenSystem controller = prefab.GetComponent<SettingsScreenSystem>();
+        SettingsScreenView controller = prefab.GetComponent<SettingsScreenView>();
         Assert.NotNull(controller);
 
         var serializedObject = new SerializedObject(controller);
@@ -91,7 +91,7 @@ public sealed class UISettingsTests
         AssertReference(serializedObject, "applyButton");
         AssertReference(serializedObject, "accessibilityApplier");
 
-        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteSystem>());
+        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<UIShellRouteButtonView>());
         Assert.NotNull(prefab.transform.Find("FooterButtons/ApplyButton").GetComponent<Button>());
         Assert.NotNull(prefab.transform.Find("FooterButtons/ResetButton").GetComponent<Button>());
     }

@@ -20,14 +20,14 @@ internal sealed class CitizenPopulationDebugSystem
             ecsProjection.EntityManager.HasComponent<CitizenIdentity>(citizen.CitizenEntity) &&
             ecsProjection.EntityManager.HasComponent<CitizenHouseholdRef>(citizen.CitizenEntity) &&
             ecsProjection.EntityManager.HasComponent<CitizenHomeTarget>(citizen.CitizenEntity) &&
-            ecsProjection.EntityManager.HasComponent<CitizenAssignmentsData>(citizen.CitizenEntity) &&
-            ecsProjection.EntityManager.HasComponent<CitizenTimersData>(citizen.CitizenEntity))
+            ecsProjection.EntityManager.HasComponent<CitizenAssignmentsComponent>(citizen.CitizenEntity) &&
+            ecsProjection.EntityManager.HasComponent<CitizenTimersComponent>(citizen.CitizenEntity))
         {
             CitizenIdentity identity = ecsProjection.EntityManager.GetComponentData<CitizenIdentity>(citizen.CitizenEntity);
             CitizenHouseholdRef householdRef = ecsProjection.EntityManager.GetComponentData<CitizenHouseholdRef>(citizen.CitizenEntity);
             CitizenHomeTarget homeTarget = ecsProjection.EntityManager.GetComponentData<CitizenHomeTarget>(citizen.CitizenEntity);
-            CitizenAssignmentsData assignments = ecsProjection.EntityManager.GetComponentData<CitizenAssignmentsData>(citizen.CitizenEntity);
-            CitizenTimersData timers = ecsProjection.EntityManager.GetComponentData<CitizenTimersData>(citizen.CitizenEntity);
+            CitizenAssignmentsComponent assignments = ecsProjection.EntityManager.GetComponentData<CitizenAssignmentsComponent>(citizen.CitizenEntity);
+            CitizenTimersComponent timers = ecsProjection.EntityManager.GetComponentData<CitizenTimersComponent>(citizen.CitizenEntity);
 
             snapshot =
                 $"citizen={identity.CitizenId} household={householdRef.HouseholdId} gender={(CitizenGender)identity.Gender} " +

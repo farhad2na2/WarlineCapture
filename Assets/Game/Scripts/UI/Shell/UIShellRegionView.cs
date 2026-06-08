@@ -35,11 +35,8 @@ public sealed class UIShellRegionView : MonoBehaviour
     {
         regionRoot = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        if (contentRoot == null)
-        {
-            Transform existingContent = transform.Find("ContentRoot");
-            contentRoot = existingContent as RectTransform;
-        }
+        if (contentRoot == null && transform.childCount > 0)
+            contentRoot = transform.GetChild(0) as RectTransform;
 
         CacheOnScreenPosition();
     }

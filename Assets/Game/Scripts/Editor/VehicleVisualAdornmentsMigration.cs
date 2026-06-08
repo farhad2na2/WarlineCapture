@@ -11,7 +11,7 @@ public static class VehicleVisualAdornmentsMigration
     private const string VehicleHealthBarPrefabPath = VehiclePrefabDirectory + "/VehicleHealthBar.prefab";
     private const string DestroyedVisualDirectory = VehiclePrefabDirectory + "/DestroyedVisuals";
 
-    [MenuItem("WarlineCapture/Migrations/Apply Vehicle Visual Adornments Refactor")]
+    [MenuItem("Game/Migrations/Apply Vehicle Visual Adornments Refactor")]
     public static void Run()
     {
         Directory.CreateDirectory(DestroyedVisualDirectory);

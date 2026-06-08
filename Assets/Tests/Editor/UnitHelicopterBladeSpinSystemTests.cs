@@ -15,11 +15,11 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     {
         using var world = new World(nameof(AirborneAirUnitRotatesVisibleDetailBlade));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualComponent), typeof(LocalTransform), typeof(UnitAirComponent));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
-        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 10f });
         em.SetComponentData(helicopter, LocalTransform.FromPosition(new float3(0f, 6f, 0f)));
-        em.SetComponentData(helicopter, new UnitAirState
+        em.SetComponentData(helicopter, new UnitAirComponent
         {
             HomePosition = float3.zero,
             HomeInitialized = 1,
@@ -51,11 +51,11 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     {
         using var world = new World(nameof(AirborneAirUnitRotatesBakedBladeReference));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualComponent), typeof(LocalTransform), typeof(UnitAirComponent));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
-        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 10f });
         em.SetComponentData(helicopter, LocalTransform.FromPosition(new float3(0f, 6f, 0f)));
-        em.SetComponentData(helicopter, new UnitAirState
+        em.SetComponentData(helicopter, new UnitAirComponent
         {
             HomePosition = float3.zero,
             HomeInitialized = 1,
@@ -82,11 +82,11 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     {
         using var world = new World(nameof(LandedAirUnitDoesNotRotateBakedBladeReference));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualComponent), typeof(LocalTransform), typeof(UnitAirComponent));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
-        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 10f });
         em.SetComponentData(helicopter, LocalTransform.Identity);
-        em.SetComponentData(helicopter, new UnitAirState
+        em.SetComponentData(helicopter, new UnitAirComponent
         {
             HomePosition = float3.zero,
             HomeInitialized = 1,
@@ -116,11 +116,11 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     {
         using var world = new World(nameof(GroundedReturningAirUnitDoesNotRotateBakedBladeReference));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualComponent), typeof(LocalTransform), typeof(UnitAirComponent));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
-        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 10f });
         em.SetComponentData(helicopter, LocalTransform.Identity);
-        em.SetComponentData(helicopter, new UnitAirState
+        em.SetComponentData(helicopter, new UnitAirComponent
         {
             HomePosition = float3.zero,
             HomeInitialized = 1,

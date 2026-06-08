@@ -8,7 +8,7 @@ Target file retired: `Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs`
 
 Hard guard: `CitizenPopulationSystem.cs` must not exist.
 
-Step 4 shared-data transition size: 2168 lines. Citizen enums, totals, and record data now live in `CitizenPopulationComponent.cs`; the then-existing shell still owns state dictionaries and behavior until later extraction steps move those owners out.
+Step 4 shared-data transition size: 2168 lines. Citizen enums, totals, and record data were extracted to `CitizenPopulationComponent.cs` and now live in `Assets/Game/Scripts/Components/CitizenPopulationRuntimeComponents.cs`; the then-existing shell still owns state dictionaries and behavior until later extraction steps move those owners out.
 
 Step 5 state-storage transition size: 2139 lines. Citizen, household, visible-citizen dictionaries, id allocation, and scratch id lists now live in `CitizenPopulationStateSystem`; the then-existing shell still orchestrates record mutations until later behavior extraction steps move those owners out.
 
@@ -168,7 +168,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Move `CitizenGender`, `CitizenLifeState`, `CitizenStatus`, `CitizenPopulationTotals`, citizen record, household record, and visible citizen record into narrow data files.
    - Keep names ECS-aligned: `CitizenPopulationComponent` / `CitizenPopulationSystem` style, not manager/session/builder.
    - Do not change serialized ECS component names.
-   - Added `CitizenPopulationComponent.cs`.
+   - Added `CitizenPopulationComponent.cs`; later moved to `Assets/Game/Scripts/Components/CitizenPopulationRuntimeComponents.cs`.
    - Moved `CitizenGender`, `CitizenLifeState`, `CitizenStatus`, `CitizenPopulationTotals`, `CitizenRecordComponent`, `CitizenHouseholdRecordComponent`, and `VisibleCitizenComponent` out of `CitizenPopulationSystem.cs`.
    - Added `CitizenPopulationSharedDataContractsMustLiveOutsideShell` to the focused architecture validation batch.
 

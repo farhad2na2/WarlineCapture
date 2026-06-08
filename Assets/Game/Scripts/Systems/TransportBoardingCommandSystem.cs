@@ -68,8 +68,8 @@ public sealed class TransportBoardingCommandSystem
         _gridPathingQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>(),
-            ComponentType.ReadOnly<DynamicOccupancyData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
         _allSelectableQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -173,10 +173,10 @@ public sealed class TransportBoardingCommandSystem
         Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         NativeBitArray blocked = blockerData.Blocked;
         NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
         int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
         int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
@@ -586,10 +586,10 @@ public sealed class TransportBoardingCommandSystem
     {
         if (!em.Exists(entity) || !em.HasComponent<UnitAirMovement>(entity))
             return "air=none";
-        if (!em.HasComponent<UnitAirState>(entity))
+        if (!em.HasComponent<UnitAirComponent>(entity))
             return "air=missing-state";
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(entity);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
         return $"airborne={airState.Airborne} takeoff={airState.TakeoffRolling} landing={airState.LandingRolling} returning={airState.ReturningHome} rope={(em.HasComponent<UnitTransportRopeDisembarkRequest>(entity) ? 1 : 0)}";
     }
 

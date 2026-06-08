@@ -6,9 +6,9 @@ internal sealed class BuildingRunwaySystem
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
 
     public bool TryGetNearestAirportRunway(
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Vector3 origin,
-        out RuntimeBuildingData airport,
+        out RuntimeBuildingEntity airport,
         out Vector3 runwayCenter,
         out Quaternion runwayRotation,
         out Vector3 runwayHalfExtents)
@@ -21,9 +21,9 @@ internal sealed class BuildingRunwaySystem
             return false;
 
         float bestDistance = float.PositiveInfinity;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
         {
-            RuntimeBuildingData candidate = pair.Value;
+            RuntimeBuildingEntity candidate = pair.Value;
             if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
                 continue;
 

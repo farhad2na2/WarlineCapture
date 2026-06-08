@@ -24,12 +24,12 @@ public struct InitialSpawnDiagnosticStateSystem
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
         EntityQuery unitGridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>());
-        EntityQuery blockerDependencyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGridBlockerDependencyState>());
+        EntityQuery blockerDependencyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGridBlockerDependencyComponent>());
         byte depsReady = 1;
         string blockerDependencyStatus = "no-blocker-state";
         if (!blockerDependencyQuery.IsEmptyIgnoreFilter)
         {
-            RuntimeGridBlockerDependencyState blockerState = em.GetComponentData<RuntimeGridBlockerDependencyState>(blockerDependencyQuery.GetSingletonEntity());
+            RuntimeGridBlockerDependencyComponent blockerState = em.GetComponentData<RuntimeGridBlockerDependencyComponent>(blockerDependencyQuery.GetSingletonEntity());
             depsReady = blockerState.ReadyForDependents;
             blockerDependencyStatus = $"ready={blockerState.ReadyForDependents} spawnOnStart={blockerState.SpawnOnStart} spawned={blockerState.Spawned} finalizing={blockerState.SpawnFinalizing} finalizeAfter={blockerState.FinalizeAfterFrames} pendingCity={blockerState.PendingCity} cityHasSpawned={blockerState.CityHasSpawned} cityGenerating={blockerState.CityGenerating}";
         }

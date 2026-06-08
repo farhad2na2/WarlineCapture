@@ -222,10 +222,10 @@ public sealed class InitialUnitsSpawnFocusedTests
             typeof(UnitGrid),
             typeof(LocalTransform),
             typeof(UnitPrevWorldPos),
-            typeof(UnitMoveVisualState),
+            typeof(UnitMoveVisualComponent),
             typeof(Faction),
             typeof(UnitRespawnPrefab),
-            typeof(UnitAttackState));
+            typeof(UnitAttackCooldownComponent));
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         _ = new InitialUnitSpawnApplySystem().InstantiateAndConfigureSpawnedUnit(
             em,
@@ -255,7 +255,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.AreEqual(new int2(4, 7), em.GetComponentData<UnitGrid>(spawned).Cell);
         Assert.AreEqual(1, em.GetComponentData<Faction>(spawned).Id);
         Assert.AreEqual(new float3(4.5f, 0f, 7.5f), em.GetComponentData<UnitPrevWorldPos>(spawned).Value);
-        Assert.AreEqual(0, em.GetComponentData<UnitMoveVisualState>(spawned).IsMoving);
+        Assert.AreEqual(0, em.GetComponentData<UnitMoveVisualComponent>(spawned).IsMoving);
     }
 
     [Test]

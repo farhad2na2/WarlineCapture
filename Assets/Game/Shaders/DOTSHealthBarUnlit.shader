@@ -1,4 +1,4 @@
-Shader "WarlineCapture/DOTS Health Bar (Unlit)"
+Shader "Game/DOTS Health Bar (Unlit)"
 {
     Properties
     {

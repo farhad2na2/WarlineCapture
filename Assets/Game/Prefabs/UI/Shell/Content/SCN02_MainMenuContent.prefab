@@ -1505,6 +1505,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2530124075680775280}
   - component: {fileID: 1087137873916986520}
+  - component: {fileID: 2124340068461010062}
   m_Layer: 0
   m_Name: SCN02_MainMenuContent
   m_TagString: Untagged
@@ -1549,6 +1550,31 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2124340068461010062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175976757770164416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67a387512a5a94597bfc9fff6166dd5b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellContentSectionsView
+  sections:
+  - sectionId: 0
+    sectionRoot: {fileID: 8340255960843365529}
+  - sectionId: 1
+    sectionRoot: {fileID: 2961169779934328662}
+  - sectionId: 2
+    sectionRoot: {fileID: 1624451240752519367}
+  - sectionId: 3
+    sectionRoot: {fileID: 7149478073470086564}
+  - sectionId: 4
+    sectionRoot: {fileID: 4221311971876787640}
+  - sectionId: 5
+    sectionRoot: {fileID: 8288166098129651844}
 --- !u!1 &1206741936788545167
 GameObject:
   m_ObjectHideFlags: 0

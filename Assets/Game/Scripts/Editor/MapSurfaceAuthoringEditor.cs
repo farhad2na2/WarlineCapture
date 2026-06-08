@@ -16,7 +16,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.Walkable;
 
-    [MenuItem("WarlineCapture/Map Surface/Bake Active Scene Surface Data")]
+    [MenuItem("Game/Map Surface/Bake Active Scene Surface Data")]
     public static void BakeActiveSceneSurfaceData()
     {
         if (!TryFindActiveSceneAuthoring(out MapSurfaceAuthoring authoring))
@@ -28,7 +28,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         BakeAuthoringToAsset(authoring, authoring.BakedSurfaceData, allowOversizeDialog: false);
     }
 
-    [MenuItem("WarlineCapture/Map Surface/Bake Match Scene Surface Data")]
+    [MenuItem("Game/Map Surface/Bake Match Scene Surface Data")]
     public static void BakeMatchSceneSurfaceData()
     {
         if (!File.Exists(MatchScenePath))

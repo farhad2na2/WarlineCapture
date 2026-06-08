@@ -8,7 +8,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
@@ -21,7 +21,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             RuntimeResourceSystem runtimeResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionSystem definitionSystem,
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
@@ -48,7 +48,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         Action<EntityManager> ensureEntityQueries,

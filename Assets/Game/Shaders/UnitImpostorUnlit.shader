@@ -1,4 +1,4 @@
-Shader "WarlineCapture/Unit Impostor Unlit"
+Shader "Game/Unit Impostor Unlit"
 {
     Properties
     {

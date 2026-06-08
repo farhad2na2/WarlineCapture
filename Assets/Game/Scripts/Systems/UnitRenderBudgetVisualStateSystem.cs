@@ -17,9 +17,9 @@ public readonly struct UnitRenderBudgetVisualStateSystem
         ref int visualTransitionsCommitted)
     {
         byte desired = (byte)desiredVisual;
-        if (!em.HasComponent<UnitRenderVisualState>(unit))
+        if (!em.HasComponent<UnitRenderVisualComponent>(unit))
         {
-            ecb.AddComponent(unit, new UnitRenderVisualState
+            ecb.AddComponent(unit, new UnitRenderVisualComponent
             {
                 Current = desired,
                 Desired = desired,
@@ -29,7 +29,7 @@ public readonly struct UnitRenderBudgetVisualStateSystem
             return desiredVisual;
         }
 
-        UnitRenderVisualState state = em.GetComponentData<UnitRenderVisualState>(unit);
+        UnitRenderVisualComponent state = em.GetComponentData<UnitRenderVisualComponent>(unit);
         if (state.Desired != desired)
         {
             state.Desired = desired;

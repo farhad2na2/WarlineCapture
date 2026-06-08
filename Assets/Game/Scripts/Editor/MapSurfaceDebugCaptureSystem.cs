@@ -8,7 +8,7 @@ public static class MapSurfaceDebugCaptureSystem
 {
     private const string CapturePath = "Design/AgentReports/map_surface_debug_capture.md";
 
-    [MenuItem("WarlineCapture/Map Surface/Capture Selected Surface Summary")]
+    [MenuItem("Game/Map Surface/Capture Selected Surface Summary")]
     public static void CaptureSelectedSurfaceSummary()
     {
         MapSurfaceAuthoring authoring = Selection.activeGameObject != null

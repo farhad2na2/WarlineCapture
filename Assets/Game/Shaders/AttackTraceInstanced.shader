@@ -1,4 +1,4 @@
-Shader "WarlineCapture/AttackTraceInstanced"
+Shader "Game/AttackTraceInstanced"
 {
     Properties
     {

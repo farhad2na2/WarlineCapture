@@ -27,7 +27,7 @@ internal sealed class BuildingGameplayGridDataSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData)
+        out DynamicBlockerComponent blockerData)
     {
         gridEntity = Entity.Null;
         grid = default;
@@ -45,7 +45,7 @@ internal sealed class BuildingGameplayGridDataSystem
         gridEntity = gridDataQuery.GetSingletonEntity();
         grid = em.GetComponentData<GridConfig>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         return true;
     }
 

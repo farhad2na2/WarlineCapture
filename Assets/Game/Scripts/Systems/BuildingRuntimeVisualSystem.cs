@@ -6,7 +6,7 @@ internal sealed class BuildingRuntimeVisualSystem
 {
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingFactionVisualSystem FactionVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
@@ -15,7 +15,7 @@ internal sealed class BuildingRuntimeVisualSystem
         public readonly float FactionTintStrength;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             BuildingVisualSystem visualSystem,
             BuildingFactionVisualSystem factionVisualSystem,
             BuildingBarrierSystem barrierSystem,
@@ -33,7 +33,7 @@ internal sealed class BuildingRuntimeVisualSystem
         }
     }
 
-    public void InitializeBuildingVisuals(Context context, RuntimeBuildingData building)
+    public void InitializeBuildingVisuals(Context context, RuntimeBuildingEntity building)
     {
         if (building?.Instance == null || context.VisualSystem == null)
             return;
@@ -76,7 +76,7 @@ internal sealed class BuildingRuntimeVisualSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
                 continue;
 
@@ -98,7 +98,7 @@ internal sealed class BuildingRuntimeVisualSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null)
                 continue;
 

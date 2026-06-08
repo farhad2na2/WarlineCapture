@@ -13,8 +13,8 @@ internal sealed class BuildingSelectionMarkerSystem
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
         public readonly GameObject MarkerPrefab;
@@ -25,8 +25,8 @@ internal sealed class BuildingSelectionMarkerSystem
         public readonly DestroyObjectDelegate DestroyObject;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,
             GameObject markerPrefab,
@@ -57,7 +57,7 @@ internal sealed class BuildingSelectionMarkerSystem
 
     public void Refresh(Context context)
     {
-        if (!TryResolveSelection(context, out RuntimeBuildingData building, out GridConfig grid))
+        if (!TryResolveSelection(context, out RuntimeBuildingEntity building, out GridConfig grid))
         {
             Hide();
             return;
@@ -125,7 +125,7 @@ internal sealed class BuildingSelectionMarkerSystem
         _baseRendererSize = Vector3.one;
     }
 
-    private bool TryResolveSelection(Context context, out RuntimeBuildingData building, out GridConfig grid)
+    private bool TryResolveSelection(Context context, out RuntimeBuildingEntity building, out GridConfig grid)
     {
         building = null;
         grid = default;
@@ -206,7 +206,7 @@ internal sealed class BuildingSelectionMarkerSystem
         return hasBounds ? bounds.size : Vector3.one;
     }
 
-    private static bool IsMapAuthoredBuilding(RuntimeBuildingData building)
+    private static bool IsMapAuthoredBuilding(RuntimeBuildingEntity building)
     {
         return building?.Instance != null &&
             building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>() != null;

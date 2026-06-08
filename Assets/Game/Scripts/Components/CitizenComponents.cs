@@ -28,7 +28,7 @@ public struct CitizenHomeTarget : IComponentData
     public int CurrentTargetBuildingId;
 }
 
-public struct CitizenAssignmentsData : IComponentData
+public struct CitizenAssignmentsComponent : IComponentData
 {
     public int WorkBuildingId;
     public int PreferredShopBuildingId;
@@ -37,13 +37,13 @@ public struct CitizenAssignmentsData : IComponentData
     public int PreferredCityHallBuildingId;
 }
 
-public struct CitizenTimersData : IComponentData
+public struct CitizenTimersComponent : IComponentData
 {
     public float StateStartedAt;
     public float StateEndsAt;
 }
 
-public struct CitizenHouseholdData : IComponentData
+public struct CitizenHouseholdComponent : IComponentData
 {
     public int HouseholdId;
     public int HomeBuildingId;

@@ -70,7 +70,7 @@ public readonly struct UnitTransportAirPickupSystem
         pickupCell = default;
         if (!em.Exists(transport) ||
             !em.HasComponent<UnitAirMovement>(transport) ||
-            !em.HasComponent<UnitAirState>(transport) ||
+            !em.HasComponent<UnitAirComponent>(transport) ||
             !em.HasComponent<LocalTransform>(transport))
         {
             return false;
@@ -121,7 +121,7 @@ public readonly struct UnitTransportAirPickupSystem
     {
         moveOrderSystem.ClearMovementOrderComponents(em, transport);
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
         float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : grid.Origin.y;
         float3 pickupPosition = GridUtils.CellToWorldCenter(grid, pickupCell);

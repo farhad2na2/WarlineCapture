@@ -23,7 +23,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
                 source.BuildingPlacementStartupSystem.BuildingRoot,
                 markerPropertyBlock,
                 source.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
-        BuildingCombatSystem.Context<RuntimeBuildingData> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
+        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierSystem.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
         return new BuildingPlacementRuntimeTickContextSystem.Source(

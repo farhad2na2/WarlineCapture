@@ -71,7 +71,7 @@ public struct InitialUnitsBlockerChurnConfig : IComponentData
     public int AddRemovePerInterval;
 }
 
-public struct InitialUnitsBlockerChurnState : IComponentData
+public struct InitialUnitsBlockerChurnComponent : IComponentData
 {
     public float Timer;
     public uint RandomState;

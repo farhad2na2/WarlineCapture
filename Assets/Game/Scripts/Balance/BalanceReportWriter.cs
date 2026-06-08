@@ -21,7 +21,7 @@ public static class BalanceReportWriter
     public static ReportPaths WriteProjectReport(BalanceMetrics metrics)
     {
         string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Directory.GetCurrentDirectory();
-        string reportDirectory = Path.Combine(projectRoot, "Library", "WarlineCaptureBalanceReports");
+        string reportDirectory = Path.Combine(projectRoot, "Library", "BalanceReports");
         return WriteReport(metrics, reportDirectory);
     }
 

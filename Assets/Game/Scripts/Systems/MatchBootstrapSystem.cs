@@ -189,6 +189,7 @@ internal sealed class MatchBootstrapSystem
     public void BeginGameplay()
     {
         GameRuntimeStats.Reset();
+        AISettingsSnapshot aiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
         ProjectFactionVisualConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
         ProjectRuntimeStartupConfig(
             World.DefaultGameObjectInjectionWorld,
@@ -199,7 +200,8 @@ internal sealed class MatchBootstrapSystem
             _initialFactionSpawnCellSystem,
             BuildingPlacementConfig,
             _aiStartupSystem,
-            AIControllerConfigs);
+            AIControllerConfigs,
+            aiSettingsSnapshot);
         _customGameStartupSystem.InitializeFromLegacyConfigs(
             World.DefaultGameObjectInjectionWorld,
             BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
@@ -209,6 +211,7 @@ internal sealed class MatchBootstrapSystem
             _aiStartupSystem,
             AIControllerConfigs,
             AIPlanEntryConfig,
+            aiSettingsSnapshot,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
@@ -452,7 +455,8 @@ internal sealed class MatchBootstrapSystem
         InitialFactionSpawnCellSystem initialFactionSpawnCellSystem,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         AIStartupSystem aiStartupSystem,
-        IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
     {
         if (runtimeGridConfig == null)
         {
@@ -470,7 +474,7 @@ internal sealed class MatchBootstrapSystem
         initialFactionSpawnCellSystem.Configure(
             world,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
-        aiStartupSystem.LogConfigValidation(aiControllerConfigs);
+        aiStartupSystem.LogConfigValidation(aiControllerConfigs, aiSettings);
     }
 
     private static float4 ToFloat4(Color color)
@@ -483,13 +487,15 @@ internal sealed class MatchBootstrapSystem
         AIStartupSystem aiStartupSystem,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig aiPlanEntryConfig,
+        AISettingsSnapshot aiSettings,
         AIStartupSystem.TryResolveFactionSpawnCell tryResolveFactionSpawnCell)
     {
         return aiStartupSystem.Initialize(
             world,
             aiControllerConfigs,
             aiPlanEntryConfig,
-            tryResolveFactionSpawnCell);
+            tryResolveFactionSpawnCell,
+            aiSettings);
     }
 
     private static bool FocusInitialCameraOnConfiguredFactionBase(

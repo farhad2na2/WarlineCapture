@@ -183,7 +183,7 @@ public static class GameRuntimeStats
         if (!em.Exists(entity) || em.HasComponent<CivilianUnitTag>(entity))
             return false;
 
-        if (em.HasComponent<UnitAirState>(entity))
+        if (em.HasComponent<UnitAirComponent>(entity))
             return false;
 
         if (em.HasComponent<UnitFootprint>(entity))

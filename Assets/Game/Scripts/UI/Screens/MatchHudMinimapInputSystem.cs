@@ -322,7 +322,7 @@ public sealed class MatchHudMinimapInputSystem
 
         if (!captured || IsFlatCapture())
         {
-            DrawRasterMap(renderedGrid, out renderedGrid);
+            DrawRasterMap(renderedGrid, out renderedGrid, !_minimapZoomedIn);
             readbackMatchesRenderTexture = false;
         }
 
@@ -548,13 +548,16 @@ public sealed class MatchHudMinimapInputSystem
         }
     }
 
-    private void DrawRasterMap(MatchHudMinimapProjectionGrid requestedGrid, out MatchHudMinimapProjectionGrid renderedGrid)
+    private void DrawRasterMap(
+        MatchHudMinimapProjectionGrid requestedGrid,
+        out MatchHudMinimapProjectionGrid renderedGrid,
+        bool allowExpandedFallback)
     {
         renderedGrid = requestedGrid;
         if (_rasterPixels == null || _rasterPixels.Length != CaptureResolution * CaptureResolution)
             _rasterPixels = new Color32[CaptureResolution * CaptureResolution];
 
-        MatchHudMinimapProjectionGrid[] candidates = BuildRasterProjectionCandidates(requestedGrid);
+        MatchHudMinimapProjectionGrid[] candidates = BuildRasterProjectionCandidates(requestedGrid, allowExpandedFallback);
         for (int i = 0; i < candidates.Length; i++)
         {
             MatchHudMinimapProjectionGrid candidate = candidates[i];
@@ -572,8 +575,18 @@ public sealed class MatchHudMinimapInputSystem
         Graphics.Blit(_rasterTexture, _renderTexture);
     }
 
-    private static MatchHudMinimapProjectionGrid[] BuildRasterProjectionCandidates(MatchHudMinimapProjectionGrid requestedGrid)
+    private static MatchHudMinimapProjectionGrid[] BuildRasterProjectionCandidates(
+        MatchHudMinimapProjectionGrid requestedGrid,
+        bool allowExpandedFallback)
     {
+        if (!allowExpandedFallback)
+        {
+            return new[]
+            {
+                requestedGrid
+            };
+        }
+
         MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionSystem.TryGetGrid(out GridConfig grid)
             ? MatchHudMinimapProjectionGrid.FromGridConfig(grid)
             : requestedGrid;
@@ -925,7 +938,8 @@ public sealed class MatchHudMinimapInputSystem
         if (_captureCamera == null)
         {
             GameObject cameraObject = new("Runtime_MatchHudMinimapCaptureCamera");
-            Object.DontDestroyOnLoad(cameraObject);
+            if (Application.isPlaying)
+                Object.DontDestroyOnLoad(cameraObject);
             cameraObject.hideFlags = HideFlags.HideAndDontSave;
             _captureCamera = cameraObject.AddComponent<Camera>();
             UniversalAdditionalCameraData cameraData = cameraObject.AddComponent<UniversalAdditionalCameraData>();
@@ -937,18 +951,18 @@ public sealed class MatchHudMinimapInputSystem
     private void ReleaseCaptureResources()
     {
         if (_captureSprite != null)
-            Object.Destroy(_captureSprite);
+            DestroyRuntimeObject(_captureSprite);
         if (_renderTexture != null)
         {
             _renderTexture.Release();
-            Object.Destroy(_renderTexture);
+            DestroyRuntimeObject(_renderTexture);
         }
         if (_readbackTexture != null)
-            Object.Destroy(_readbackTexture);
+            DestroyRuntimeObject(_readbackTexture);
         if (_rasterTexture != null)
-            Object.Destroy(_rasterTexture);
+            DestroyRuntimeObject(_rasterTexture);
         if (_captureCamera != null)
-            Object.Destroy(_captureCamera.gameObject);
+            DestroyRuntimeObject(_captureCamera.gameObject);
 
         _renderTexture = null;
         _readbackTexture = null;
@@ -956,6 +970,17 @@ public sealed class MatchHudMinimapInputSystem
         _captureSprite = null;
         _rasterPixels = null;
         _captureCamera = null;
+    }
+
+    private static void DestroyRuntimeObject(Object value)
+    {
+        if (value == null)
+            return;
+
+        if (Application.isPlaying)
+            Object.Destroy(value);
+        else
+            Object.DestroyImmediate(value);
     }
 
     private static bool TryGetGridRoadBuffers(

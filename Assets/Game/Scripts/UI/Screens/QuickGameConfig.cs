@@ -69,35 +69,48 @@ public struct QuickGameConfig
 
     public static QuickGameConfig FromRuntimeState()
     {
+        return FromAISettingsSnapshot(AISettingsRuntimeState.CurrentSnapshot);
+    }
+
+    public static QuickGameConfig FromAISettingsSnapshot(AISettingsSnapshot snapshot)
+    {
         QuickGameConfig config = Defaults;
-        config.EnemyCount = Mathf.Clamp(AISettingsRuntimeState.EnemyAICount, 1, 3);
-        config.Difficulty = AISettingsRuntimeState.Difficulty;
-        config.StartingMoney = AISettingsRuntimeState.StartingMoney;
-        config.IncomeMultiplier = Mathf.Clamp(AISettingsRuntimeState.IncomeMultiplier, 0.5f, 3f);
-        config.BuildSpeed = AISettingsRuntimeState.BuildSpeed;
-        config.UnitProductionSpeed = AISettingsRuntimeState.UnitProductionSpeed;
-        config.AttackGroupSize = AISettingsRuntimeState.AttackGroupSize;
-        config.AttackFrequency = AISettingsRuntimeState.AttackFrequency;
-        config.Aggression = AISettingsRuntimeState.Aggression;
-        config.Expansion = AISettingsRuntimeState.Expansion;
-        config.TargetPriority = AISettingsRuntimeState.TargetPriority;
-        config.PlayerAutoAIEnabled = AISettingsRuntimeState.PlayerAutoAIEnabled;
+        config.EnemyCount = Mathf.Clamp(snapshot.EnemyAICount, 1, 3);
+        config.Difficulty = snapshot.Difficulty;
+        config.StartingMoney = snapshot.StartingMoney;
+        config.IncomeMultiplier = Mathf.Clamp(snapshot.IncomeMultiplier, 0.5f, 3f);
+        config.BuildSpeed = snapshot.BuildSpeed;
+        config.UnitProductionSpeed = snapshot.UnitProductionSpeed;
+        config.AttackGroupSize = snapshot.AttackGroupSize;
+        config.AttackFrequency = snapshot.AttackFrequency;
+        config.Aggression = snapshot.Aggression;
+        config.Expansion = snapshot.Expansion;
+        config.TargetPriority = snapshot.TargetPriority;
+        config.PlayerAutoAIEnabled = snapshot.PlayerAutoAIEnabled;
         return config;
+    }
+
+    public AISettingsSnapshot ToAISettingsSnapshot()
+    {
+        return new AISettingsSnapshot
+        {
+            Difficulty = Difficulty,
+            StartingMoney = StartingMoney,
+            IncomeMultiplier = Mathf.Clamp(IncomeMultiplier, 0.5f, 3f),
+            BuildSpeed = BuildSpeed,
+            UnitProductionSpeed = UnitProductionSpeed,
+            AttackGroupSize = AttackGroupSize,
+            AttackFrequency = AttackFrequency,
+            Aggression = Aggression,
+            Expansion = Expansion,
+            TargetPriority = TargetPriority,
+            PlayerAutoAIEnabled = PlayerAutoAIEnabled,
+            EnemyAICount = Mathf.Clamp(EnemyCount, 1, 3)
+        };
     }
 
     public void ApplyToRuntimeState()
     {
-        AISettingsRuntimeState.Difficulty = Difficulty;
-        AISettingsRuntimeState.StartingMoney = StartingMoney;
-        AISettingsRuntimeState.IncomeMultiplier = Mathf.Clamp(IncomeMultiplier, 0.5f, 3f);
-        AISettingsRuntimeState.BuildSpeed = BuildSpeed;
-        AISettingsRuntimeState.UnitProductionSpeed = UnitProductionSpeed;
-        AISettingsRuntimeState.AttackGroupSize = AttackGroupSize;
-        AISettingsRuntimeState.AttackFrequency = AttackFrequency;
-        AISettingsRuntimeState.Aggression = Aggression;
-        AISettingsRuntimeState.Expansion = Expansion;
-        AISettingsRuntimeState.TargetPriority = TargetPriority;
-        AISettingsRuntimeState.PlayerAutoAIEnabled = PlayerAutoAIEnabled;
-        AISettingsRuntimeState.EnemyAICount = Mathf.Clamp(EnemyCount, 1, 3);
+        AISettingsRuntimeState.ApplySnapshot(ToAISettingsSnapshot());
     }
 }

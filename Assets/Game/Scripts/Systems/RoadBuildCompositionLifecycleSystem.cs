@@ -33,12 +33,12 @@ internal sealed class RoadBuildCompositionLifecycleSystem
             source.RoadDeletePromptSystem,
             contextSystem.CreateRoadDeletePromptContext(source));
 
-        source.BuildingRoadLegacyDefinitionSystem.BuildDefinitions(
+        source.RoadBuildDefinitionProjectionSystem.BuildDefinitions(
             source.RoadBuildStartupState.SoldierBasePrefab,
             source.RoadBuildStartupState.SoldierBaseFootprintCells,
-            source.BuildingRoadLegacyStorageSystem);
-        source.BuildingRoadLegacyPlacementVisualSystem.CreatePlacementOutline(
-            source.BuildingRoadLegacyPlacementVisualState,
+            source.RoadBuildPlacementStorageSystem);
+        source.RoadBuildPlacementVisualSystem.CreatePlacementOutline(
+            source.RoadBuildPlacementVisualState,
             source.RoadBuildStartupState.RuntimeRoot,
             source.RoadBuildStartupState.PlacementValidColor);
     }

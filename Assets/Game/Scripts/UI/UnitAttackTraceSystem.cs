@@ -74,7 +74,7 @@ public sealed class UnitAttackTraceSystem
         for (int i = 0; i < entities.Length; i++)
         {
             Entity entity = entities[i];
-            UnitAttackTraceState trace = em.GetComponentData<UnitAttackTraceState>(entity);
+            UnitAttackTraceComponent trace = em.GetComponentData<UnitAttackTraceComponent>(entity);
             if (trace.TimeRemaining <= 0f)
                 continue;
 
@@ -140,7 +140,7 @@ public sealed class UnitAttackTraceSystem
         {
             _cachedWorld = world;
             _traceQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UnitAttackTraceState>(),
+                ComponentType.ReadOnly<UnitAttackTraceComponent>(),
                 ComponentType.ReadOnly<UnitAttack>(),
                 ComponentType.ReadOnly<EngageTarget>(),
                 ComponentType.ReadOnly<LocalTransform>());
@@ -156,7 +156,7 @@ public sealed class UnitAttackTraceSystem
             _traceMesh = BuildTraceMesh();
 
         if (traceShader == null)
-            traceShader = Shader.Find("WarlineCapture/AttackTraceInstanced");
+            traceShader = Shader.Find("Game/AttackTraceInstanced");
         if (traceShader == null)
             return false;
 

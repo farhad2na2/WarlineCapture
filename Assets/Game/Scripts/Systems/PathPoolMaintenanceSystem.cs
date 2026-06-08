@@ -8,7 +8,7 @@ public partial struct PathPoolMaintenanceSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<PathPoolData>();
+        state.RequireForUpdate<PathPoolComponent>();
         _activePaths = state.GetEntityQuery(ComponentType.ReadOnly<UnitPathRange>());
     }
 
@@ -18,7 +18,7 @@ public partial struct PathPoolMaintenanceSystem : ISystem
             return;
 
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        var pool = state.EntityManager.GetComponentData<PathPoolData>(gridEntity);
+        var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
         if (!pool.Cells.IsCreated || pool.Cells.Length == 0)
             return;
 

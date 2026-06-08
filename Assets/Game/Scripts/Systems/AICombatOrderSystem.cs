@@ -703,14 +703,14 @@ public partial struct AICombatOrderSystem : ISystem
 
         Entity gridEntity = gridQuery.GetSingletonEntity();
         if (!em.HasBuffer<GridWalkable>(gridEntity) ||
-            !em.HasComponent<DynamicBlockerData>(gridEntity) ||
-            !em.HasComponent<DynamicOccupancyData>(gridEntity))
+            !em.HasComponent<DynamicBlockerComponent>(gridEntity) ||
+            !em.HasComponent<DynamicOccupancyComponent>(gridEntity))
         {
             return false;
         }
 
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
         if (!blockerData.Blocked.IsCreated || !occupancyData.Occupied.IsCreated)
             return false;
 

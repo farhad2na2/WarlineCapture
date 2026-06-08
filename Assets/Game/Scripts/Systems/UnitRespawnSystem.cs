@@ -12,23 +12,23 @@ public partial struct UnitRespawnSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<DynamicOccupancyData>();
-        state.RequireForUpdate<DynamicBlockerData>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
+        state.RequireForUpdate<DynamicBlockerComponent>();
         state.RequireForUpdate<GridWalkable>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var queueEntity = RespawnQueueUtils.GetOrCreateQueue(ref state);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
 
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = SystemAPI.GetComponent<DynamicOccupancyData>(gridEntity).Occupied;
-        var dynamicBlocked = SystemAPI.GetComponent<DynamicBlockerData>(gridEntity).Blocked;
+        var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
+        var dynamicBlocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;
         var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
 
-        var queueState = SystemAPI.GetComponentRW<RespawnQueueState>(queueEntity);
+        var queueState = SystemAPI.GetComponentRW<RespawnQueueComponent>(queueEntity);
         var rng = new Unity.Mathematics.Random(queueState.ValueRW.RandomState == 0 ? 1u : queueState.ValueRW.RandomState);
 
         var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
@@ -65,11 +65,11 @@ public partial struct UnitRespawnSystem : ISystem
                 _spawnGroundingSystem.TryGroundCellCenter(state.EntityManager, grid, cell, ref pos, out _);
             ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
             ecb.SetComponent(instance, new UnitPrevWorldPos { Value = pos });
-            ecb.SetComponent(instance, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+            ecb.SetComponent(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
             ecb.SetComponent(instance, new Faction { Id = req.FactionId });
             ecb.SetComponent(instance, new UnitRespawnPrefab { Prefab = req.Prefab });
-            ecb.SetComponent(instance, new UnitAttackState { CooldownRemaining = 0f });
-            ecb.SetComponent(instance, new UnitIdleWanderState
+            ecb.SetComponent(instance, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+            ecb.SetComponent(instance, new UnitIdleWanderComponent
             {
                 RandomState = rng.NextUInt(),
                 RetrySeconds = 0f,

@@ -55,7 +55,7 @@ internal sealed class BuildingGameplayCompositionSystem
             out Entity gridEntity,
             out GridConfig grid,
             out DynamicBuffer<GridRoad> roads,
-            out DynamicBlockerData blockerData)
+            out DynamicBlockerComponent blockerData)
         {
             return source.BuildingGridCompositionSystem.TryGetGridData(
                 source,
@@ -105,14 +105,14 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingRuntimeCompositionSystem.IsHouseBuildingDelegate isHouseBuilding =
             (source, building) => source.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(source, building);
         BuildingRuntimeCompositionSystem.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
-            (BuildingGameplayCompositionSourceSystem source, RuntimeBuildingData building, out Vector3 worldPosition) =>
+            (BuildingGameplayCompositionSourceSystem source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
                 source.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
                     source,
                     building,
                     tryGetEntityManager,
                     out worldPosition);
         BuildingRuntimeCompositionSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
-            (BuildingGameplayCompositionSourceSystem source, int id, out RuntimeBuildingData building) =>
+            (BuildingGameplayCompositionSourceSystem source, int id, out RuntimeBuildingEntity building) =>
                 source.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(source, id, out building);
         BuildingRuntimeCompositionSystem.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
             (source, candidateRect) => source.BuildingRuntimeCompositionQuerySystem.OverlapsAnyRuntimeBuilding(
@@ -391,7 +391,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(childSystems));
         };
-        Func<BuildingCombatSystem.Context<RuntimeBuildingData>> createCombatContext = () =>
+        Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
                 childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
@@ -459,7 +459,7 @@ internal sealed class BuildingGameplayCompositionSystem
                                 mapBuildingAuthoringRoot,
                                 source.BuildingRuntimeSpawnSystem,
                                 mapSpawnContext,
-                                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                                     tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
                                 Debug.LogWarning));
                     },

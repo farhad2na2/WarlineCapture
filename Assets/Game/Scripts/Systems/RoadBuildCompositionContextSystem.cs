@@ -24,9 +24,9 @@ internal sealed class RoadBuildCompositionContextSystem
             source.RoadBuildSessionState,
             source.RoadBuildInputSystem,
             source.RoadBuildInputState,
-            source.BuildingRoadLegacyStorageSystem,
+            source.RoadBuildPlacementStorageSystem,
             source.RoadBuildDependencyState,
-            () => source.BuildingRoadLegacyPlacementState.IsDraggingBuildingPlacement);
+            () => source.RoadBuildPlacementState.IsDraggingBuildingPlacement);
     }
 
     public RoadBuildInteractionContextSystem.Context CreateRoadBuildInteractionContext(RoadBuildCompositionSourceSystem source)
@@ -52,7 +52,7 @@ internal sealed class RoadBuildCompositionContextSystem
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
             () => source.RoadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext(source)),
-            () => source.BuildingRoadLegacyPlacementVisualSystem.HidePlacementOutline(source.BuildingRoadLegacyPlacementVisualState),
+            () => source.RoadBuildPlacementVisualSystem.HidePlacementOutline(source.RoadBuildPlacementVisualState),
             () => source.RoadPreviewSystem.UpdatePreview(
                 CreateRoadPreviewContext(source),
                 source.RoadBuildInputState.IsDrawing,
@@ -61,14 +61,14 @@ internal sealed class RoadBuildCompositionContextSystem
                 source.RoadBuildInputState.DragFirstAxis),
             (Vector2 screenPosition, out Vector2Int cell) => TryGetHoveredCell(source, screenPosition, out cell),
             source.RoadPreviewSystem.ClearPreview,
-            screenPosition => source.BuildingRoadLegacyPlacementSystem.UpdateBuildingPlacement(
-                CreateBuildingRoadLegacyPlacementContext(source),
+            screenPosition => source.RoadBuildBuildingPlacementSystem.UpdateBuildingPlacement(
+                CreateRoadBuildPlacementContext(source),
                 screenPosition),
             path => source.RoadBuildMutationSystem.CreateStroke(CreateRoadBuildMutationContext(source), path),
             path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
-            () => source.BuildingRoadLegacyStorageSystem.HasPendingBuildingPlacement,
-            value => source.BuildingRoadLegacyPlacementSystem.SetDragging(source.BuildingRoadLegacyPlacementState, value),
-            () => source.BuildingRoadLegacyPlacementSystem.SetDragging(source.BuildingRoadLegacyPlacementState, false),
+            () => source.RoadBuildPlacementStorageSystem.HasPendingBuildingPlacement,
+            value => source.RoadBuildBuildingPlacementSystem.SetDragging(source.RoadBuildPlacementState, value),
+            () => source.RoadBuildBuildingPlacementSystem.SetDragging(source.RoadBuildPlacementState, false),
             strokeId => source.RoadBuildMutationSystem.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
     }
 
@@ -93,13 +93,13 @@ internal sealed class RoadBuildCompositionContextSystem
             source.RoadBuildStartupSystem,
             source.RoadBuildStartupState,
             source.RoadRuntimeRootSystem,
-            source.BuildingRoadLegacyPlacementVisualSystem,
-            source.BuildingRoadLegacyPlacementVisualState,
+            source.RoadBuildPlacementVisualSystem,
+            source.RoadBuildPlacementVisualState,
             source.RoadVisualVariantSystem,
             source.RoadPreviewSystem,
             source.RoadChunkVisualSystem,
-            source.BuildingRoadLegacyEcsSystem,
-            source.BuildingRoadLegacyStorageSystem,
+            source.RoadBuildEcsBoundarySystem,
+            source.RoadBuildPlacementStorageSystem,
             source.RoadSpecialVisualSystem,
             source.RoadMinimapEventSystem,
             source.RoadGridProjectionSystem,
@@ -183,11 +183,11 @@ internal sealed class RoadBuildCompositionContextSystem
             () => source.RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }
 
-    private BuildingRoadLegacyContextSystem.Context CreateBuildingRoadLegacyContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)
     {
-        BuildingRoadLegacyGridSystem.State gridState = ConfigureBuildingRoadLegacyGridState(source);
-        return new BuildingRoadLegacyContextSystem.Context(
-            source.BuildingRoadLegacyEcsSystem.TryGetEntityManager,
+        RoadBuildGridQuerySystem.State gridState = ConfigureRoadBuildGridState(source);
+        return new RoadBuildContextSystem.Context(
+            source.RoadBuildEcsBoundarySystem.TryGetEntityManager,
             gridState.TryGetGridData,
             gridState.GetFootprintCenter,
             source.RoadBuildDependencyState.BuildingPlacementInteractionSystem,
@@ -195,34 +195,34 @@ internal sealed class RoadBuildCompositionContextSystem
             source.BuildingSpawnRandomState);
     }
 
-    private BuildingRoadLegacyEcsSystem.Context CreateBuildingRoadLegacyEcsContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildEcsBoundarySystem.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.BuildingRoadLegacyContextSystem.CreateEcsContext(CreateBuildingRoadLegacyContext(source));
+        return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
     }
 
-    private BuildingRoadLegacyGridSystem.Context CreateBuildingRoadLegacyGridContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildGridQuerySystem.Context CreateRoadBuildGridContext(RoadBuildCompositionSourceSystem source)
     {
-        return new BuildingRoadLegacyGridSystem.Context(
+        return new RoadBuildGridQuerySystem.Context(
             source.RoadGridProjectionSystem,
             source.RoadBuildStartupState.WorldCamera,
             source.RoadBuildStartupState.BuildPlaneY);
     }
 
-    private BuildingRoadLegacyGridSystem.State ConfigureBuildingRoadLegacyGridState(RoadBuildCompositionSourceSystem source)
+    private RoadBuildGridQuerySystem.State ConfigureRoadBuildGridState(RoadBuildCompositionSourceSystem source)
     {
-        source.BuildingRoadLegacyGridState.Configure(CreateBuildingRoadLegacyGridContext(source));
-        return source.BuildingRoadLegacyGridState;
+        source.RoadBuildGridState.Configure(CreateRoadBuildGridContext(source));
+        return source.RoadBuildGridState;
     }
 
-    private BuildingRoadLegacyPlacementSystem.Context CreateBuildingRoadLegacyPlacementContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildBuildingPlacementSystem.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceSystem source)
     {
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
-        BuildingRoadLegacyGridSystem.State gridState = ConfigureBuildingRoadLegacyGridState(source);
-        return new BuildingRoadLegacyPlacementSystem.Context(
-            source.BuildingRoadLegacyStorageSystem,
-            source.BuildingRoadLegacyPlacementState,
-            source.BuildingRoadLegacyPlacementVisualSystem,
-            source.BuildingRoadLegacyPlacementVisualState,
+        RoadBuildGridQuerySystem.State gridState = ConfigureRoadBuildGridState(source);
+        return new RoadBuildBuildingPlacementSystem.Context(
+            source.RoadBuildPlacementStorageSystem,
+            source.RoadBuildPlacementState,
+            source.RoadBuildPlacementVisualSystem,
+            source.RoadBuildPlacementVisualState,
             startupState.RuntimeRoots.BuildingRoot,
             startupState.BuildPlaneY,
             startupState.PlacementOutlineWidth,
@@ -257,8 +257,8 @@ internal sealed class RoadBuildCompositionContextSystem
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
         if (startupState.RoadGridSize <= 0f)
             return false;
-        if (!source.BuildingRoadLegacyGridSystem.TryGetGridConfig(
-                CreateBuildingRoadLegacyGridContext(source),
+        if (!source.RoadBuildGridQuerySystem.TryGetGridConfig(
+                CreateRoadBuildGridContext(source),
                 out GridConfig grid))
             return false;
         if (grid.CellSize <= 0f)

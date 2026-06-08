@@ -270,11 +270,11 @@ Acceptance target: no measurable regression in path request throughput, no new G
 
 ## Phase 7: Move The Job Without Changing The Job
 
-22. Complete: Move `PathfindBatchJob` into `UnitPathfindBatchJob.cs`
+22. Complete: Move `PathfindBatchJob` into `UnitPathfindBatchJob.cs`; current location is `Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs`
    - Move the job struct and its private job-local helpers as a mechanical relocation.
    - Do not change field order, scheduling, traversal costs, placement rules, or output format.
    - This is the highest-risk mechanical step; validate immediately after.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindBatchJob.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindBatchJob.cs`; later moved to `Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs` as a path/name-only architecture cleanup.
    - Moved the Burst job, job-local traversal constants, search directions, `TryWritePath`, direct-path helper, traversal-cost helper, scratch-node initialization, fallback segment writer, and square-ring helper into that file.
    - `UnitPathfindingSystem` still constructs `new PathfindBatchJob` and schedules it with `job.Schedule(requestCount, state.Dependency)` unchanged.
 

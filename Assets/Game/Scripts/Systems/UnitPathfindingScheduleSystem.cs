@@ -82,8 +82,8 @@ internal struct UnitPathfindingScheduleSystem
             MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(em, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
                 ? resolvedSurfaceContext
                 : _surfaceReadSystem.CreateFlatFallbackContext();
-            DynamicBlockerData dynamicBlockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            DynamicOccupancyData dynamicOccupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            DynamicBlockerComponent dynamicBlockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            DynamicOccupancyComponent dynamicOccupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeBitArray dynamicBlockers = dynamicBlockerData.Blocked;
             NativeArray<byte> friendlyPassFactionIds = dynamicBlockerData.FriendlyPassFactionIds;
             NativeBitArray occupied = dynamicOccupancyData.Occupied;

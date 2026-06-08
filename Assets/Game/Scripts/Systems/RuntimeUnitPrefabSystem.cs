@@ -9,7 +9,7 @@ internal sealed class RuntimeUnitPrefabSystem
     {
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly Func<BuildingSpawnPrefabSystem.Context> CreateSpawnPrefabContext;
@@ -17,7 +17,7 @@ internal sealed class RuntimeUnitPrefabSystem
         public Context(
             BuildingDefinitionSystem definitionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
             Func<BuildingSpawnPrefabSystem.Context> createSpawnPrefabContext)
@@ -103,9 +103,9 @@ internal sealed class RuntimeUnitPrefabSystem
 
         if (context.RuntimeBuildings != null)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                RuntimeBuildingData building = pair.Value;
+                RuntimeBuildingEntity building = pair.Value;
                 if (building?.ProducedUnitPrefabs == null)
                     continue;
 

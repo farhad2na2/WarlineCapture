@@ -264,7 +264,7 @@ public sealed class SelectionUiQuerySystem
         if (!entityManager.Exists(entity))
             return FocusedUnitUiStatus.Idle;
 
-        if (entityManager.HasComponent<UnitAirState>(entity) && entityManager.GetComponentData<UnitAirState>(entity).ReturningHome != 0)
+        if (entityManager.HasComponent<UnitAirComponent>(entity) && entityManager.GetComponentData<UnitAirComponent>(entity).ReturningHome != 0)
             return FocusedUnitUiStatus.ReturningToBase;
 
         if (entityManager.HasComponent<HoldPositionOrderTag>(entity))

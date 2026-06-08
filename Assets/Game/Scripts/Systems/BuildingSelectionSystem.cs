@@ -10,13 +10,13 @@ internal sealed class BuildingSelectionSystem
     public delegate bool ScreenPositionPredicate(Vector2 screenPosition);
     public delegate bool BuildingDefinitionPredicate(BuildingDefinition definition);
     public delegate void RuntimeAction();
-    public delegate void BuildingHudSelectionAction(RuntimeBuildingData building);
+    public delegate void BuildingHudSelectionAction(RuntimeBuildingEntity building);
     public delegate void CameraFocusAction(Vector3 worldPosition);
 
     public readonly struct Source
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
@@ -31,8 +31,8 @@ internal sealed class BuildingSelectionSystem
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Source(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,
@@ -65,8 +65,8 @@ internal sealed class BuildingSelectionSystem
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
@@ -81,8 +81,8 @@ internal sealed class BuildingSelectionSystem
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,
@@ -148,8 +148,8 @@ internal sealed class BuildingSelectionSystem
     }
 
     public Context CreateContext(
-        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Camera worldCamera,
         TryGetGridDelegate tryGetGrid,
         GetFootprintCenterDelegate getFootprintCenter,
@@ -180,7 +180,7 @@ internal sealed class BuildingSelectionSystem
             shouldUseExpandedSelectionArea));
     }
 
-    public void SelectAndFocusBuilding(Context context, RuntimeBuildingData building)
+    public void SelectAndFocusBuilding(Context context, RuntimeBuildingEntity building)
     {
         if (building == null)
             return;
@@ -195,7 +195,7 @@ internal sealed class BuildingSelectionSystem
         context.SmoothMoveCameraGroundCenterTo?.Invoke(focusWorldPosition);
     }
 
-    public Vector3 ResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingData building)
+    public Vector3 ResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingEntity building)
     {
         if (building?.Instance == null)
             return Vector3.zero;
@@ -213,7 +213,7 @@ internal sealed class BuildingSelectionSystem
         return position;
     }
 
-    public bool TryResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingData building, out Vector3 worldPosition)
+    public bool TryResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingEntity building, out Vector3 worldPosition)
     {
         worldPosition = Vector3.zero;
         if (building == null)
@@ -229,9 +229,9 @@ internal sealed class BuildingSelectionSystem
             return false;
 
         Rect screenRect = new(0f, 0f, screenWidth, screenHeight);
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = pair.Value;
+            RuntimeBuildingEntity building = pair.Value;
             if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
                 continue;
 
@@ -248,9 +248,9 @@ internal sealed class BuildingSelectionSystem
         if (context.WorldCamera == null || context.RuntimeBuildings == null)
             return false;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
                 continue;
 
@@ -278,9 +278,9 @@ internal sealed class BuildingSelectionSystem
             return true;
         }
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null)
                 continue;
 
@@ -320,8 +320,8 @@ internal sealed class BuildingSelectionSystem
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();
         context.ClearFocusedUnit?.Invoke();
-        RuntimeBuildingData selectedBuilding = context.RuntimeBuildings != null &&
-                                               context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building)
+        RuntimeBuildingEntity selectedBuilding = context.RuntimeBuildings != null &&
+                                               context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building)
             ? building
             : null;
         context.ShowHudSelection?.Invoke(selectedBuilding);
@@ -334,13 +334,13 @@ internal sealed class BuildingSelectionSystem
             return false;
 
         int bestBuildingId = 0;
-        RuntimeBuildingData bestBuilding = null;
+        RuntimeBuildingEntity bestBuilding = null;
         float bestDepth = float.MaxValue;
         float bestArea = float.MaxValue;
 
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
                 continue;
 
@@ -376,7 +376,7 @@ internal sealed class BuildingSelectionSystem
         return SelectBuildingCandidate(context, bestBuildingId, min, size);
     }
 
-    private static bool TryGetBuildingScreenRect(Camera camera, RuntimeBuildingData building, out Rect rect, out float depth)
+    private static bool TryGetBuildingScreenRect(Camera camera, RuntimeBuildingEntity building, out Rect rect, out float depth)
     {
         rect = default;
         depth = float.MaxValue;

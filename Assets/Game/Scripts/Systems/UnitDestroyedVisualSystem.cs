@@ -17,7 +17,7 @@ public partial struct UnitDestroyedVisualSystem : ISystem
 
         foreach (var (visualRef, entity) in SystemAPI
                  .Query<RefRO<UnitDestroyedVisualReference>>()
-                 .WithNone<UnitDestroyedVisualInitialized, VehicleWreckState>()
+                 .WithNone<UnitDestroyedVisualInitialized, VehicleWreckComponent>()
                  .WithEntityAccess())
         {
             SetChildVisible(em, visualRef.ValueRO.AliveVisual, true, visualRef.ValueRO.AliveVisibleScale);

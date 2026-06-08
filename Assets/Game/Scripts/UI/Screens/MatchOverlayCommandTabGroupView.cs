@@ -1,29 +1,14 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public sealed class MatchOverlayCommandTabGroupView : MonoBehaviour
 {
-    private static readonly List<MatchOverlayCommandTabGroupView> RegisteredInstances = new();
-
     [SerializeField] private MatchOverlayCommandTabView[] tabs;
     [SerializeField] private int defaultSelectedIndex;
 
     public MatchOverlayCommandTabView[] Tabs => tabs;
     public int DefaultSelectedIndex => defaultSelectedIndex;
-    public static IReadOnlyList<MatchOverlayCommandTabGroupView> Instances => RegisteredInstances;
-
-    private void OnEnable()
-    {
-        if (!RegisteredInstances.Contains(this))
-            RegisteredInstances.Add(this);
-    }
-
-    private void OnDisable()
-    {
-        RegisteredInstances.Remove(this);
-    }
 }
 
 [Serializable]

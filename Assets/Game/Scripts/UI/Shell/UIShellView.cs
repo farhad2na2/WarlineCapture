@@ -7,18 +7,18 @@ public sealed class UIShellView : MonoBehaviour
 {
     [SerializeField] private UIMotionHostView motionHost;
     [SerializeField] private UIShellRegionView[] regions;
-    [SerializeField] private UIShellContentSystem contentSystem;
+    [SerializeField] private UIShellContentView contentSystem;
 
     private readonly Dictionary<UIShellRegionId, UIShellRegionView> regionById = new();
 
     public UIMotionHostView MotionHost => motionHost;
     public IReadOnlyList<UIShellRegionView> Regions => regions;
-    public UIShellContentSystem ContentSystem => contentSystem;
+    public UIShellContentView ContentSystem => contentSystem;
 
     private void Awake()
     {
         if (contentSystem == null)
-            contentSystem = GetComponent<UIShellContentSystem>();
+            contentSystem = GetComponent<UIShellContentView>();
         RebuildRegionLookup();
     }
 
@@ -32,13 +32,13 @@ public sealed class UIShellView : MonoBehaviour
     public void Configure(
         UIMotionHostView host,
         UIShellRegionView[] shellRegions,
-        UIShellContentSystem shellContentSystem)
+        UIShellContentView shellContentSystem)
     {
         Configure(host, shellRegions);
         contentSystem = shellContentSystem;
     }
 
-    public void SetContentSystem(UIShellContentSystem shellContentSystem)
+    public void SetContentSystem(UIShellContentView shellContentSystem)
     {
         contentSystem = shellContentSystem;
     }

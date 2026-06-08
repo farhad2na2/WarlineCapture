@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Custom Game/Visual Registry Config")]
+[CreateAssetMenu(menuName = "Game/Custom Game/Visual Registry Config")]
 public sealed class CustomGameVisualRegistryConfig : ScriptableObject
 {
     [System.Serializable]

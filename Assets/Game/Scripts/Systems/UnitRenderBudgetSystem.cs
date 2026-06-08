@@ -83,7 +83,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         var renderStateEcb = new EntityCommandBuffer(Allocator.Temp);
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>(true);
-        var moveVisualLookup = SystemAPI.GetComponentLookup<UnitMoveVisualState>(true);
+        var moveVisualLookup = SystemAPI.GetComponentLookup<UnitMoveVisualComponent>(true);
 
         using UnitRenderBudgetSnapshotSystem.Snapshot snapshot = _snapshotSystem.Create(_queryContext.UnitQuery, Allocator.Temp);
         NativeArray<Entity> units = snapshot.Units;

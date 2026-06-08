@@ -167,12 +167,12 @@ public sealed class UnitAttackImpactVfxReference : IComponentData
     public GameObject Prefab;
 }
 
-public struct UnitAttackState : IComponentData
+public struct UnitAttackCooldownComponent : IComponentData
 {
     public float CooldownRemaining;
 }
 
-public struct UnitAttackTraceState : IComponentData
+public struct UnitAttackTraceComponent : IComponentData
 {
     public float TimeRemaining;
     public float Phase;
@@ -263,7 +263,7 @@ public struct UnitResourceHaulOrder : IComponentData
 
 public struct RespawnQueueTag : IComponentData { }
 
-public struct RespawnQueueState : IComponentData
+public struct RespawnQueueComponent : IComponentData
 {
     public uint RandomState;
     public int SpawnRadiusCells;

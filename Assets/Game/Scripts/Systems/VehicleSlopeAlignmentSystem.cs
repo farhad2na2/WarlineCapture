@@ -29,7 +29,7 @@ public partial struct VehicleSlopeAlignmentSystem : ISystem
     }
 
     [BurstCompile]
-    [WithNone(typeof(UnitAirMovement), typeof(StaticGridBlocker), typeof(UnitDeathAnimationState))]
+    [WithNone(typeof(UnitAirMovement), typeof(StaticGridBlocker), typeof(UnitDeathAnimationComponent))]
     private partial struct AlignJob : IJobEntity
     {
         public float DeltaTime;

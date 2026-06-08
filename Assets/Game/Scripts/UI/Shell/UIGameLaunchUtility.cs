@@ -8,10 +8,9 @@ public static class UIGameLaunchUtility
 
     public static void StartExistingGameplayAndHideRouter(Component source)
     {
-        AISettingsRuntimeState.ApplyToWorld(World.DefaultGameObjectInjectionWorld);
         QueueMatchLoadAndStart();
 
-        UIRouter router = source != null ? source.GetComponentInParent<UIRouter>() : null;
+        UIRouterView router = source != null ? source.GetComponentInParent<UIRouterView>() : null;
         if (router != null)
             router.gameObject.SetActive(false);
     }

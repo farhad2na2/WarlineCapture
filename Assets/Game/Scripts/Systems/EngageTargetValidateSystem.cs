@@ -21,7 +21,7 @@ public partial struct EngageTargetValidateSystem : ISystem
         var targetHealthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
         var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
-        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirState>();
+        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirComponent>();
 
         // Apply immediately this frame (no ECB system) so UnitEngagementSystem can re-acquire right away.
         // Use an ECB to avoid structural changes while iterating.
@@ -45,7 +45,7 @@ public partial struct EngageTargetValidateSystem : ISystem
 
             if (airStateLookup.HasComponent(entity))
             {
-                UnitAirState airState = airStateLookup[entity];
+                UnitAirComponent airState = airStateLookup[entity];
                 airState.ReturningHome = 1;
                 airStateLookup[entity] = airState;
             }

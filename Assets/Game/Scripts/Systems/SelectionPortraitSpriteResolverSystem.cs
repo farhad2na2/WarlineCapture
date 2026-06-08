@@ -20,7 +20,7 @@ internal static class SelectionPortraitSpriteResolverSystem
         return null;
     }
 
-    public static Sprite ResolveSelectionPortraitSprite(RuntimeBuildingData building)
+    public static Sprite ResolveSelectionPortraitSprite(RuntimeBuildingEntity building)
     {
         if (building == null)
             return null;

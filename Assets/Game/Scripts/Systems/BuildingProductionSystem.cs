@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class BuildingProductionSystem
 {
     public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
-    internal delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingData building, string normalizedBuildingId);
+    internal delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
 
     public enum ProductionTransportMode : byte
     {
@@ -94,7 +94,7 @@ public sealed class BuildingProductionSystem
 
     internal bool TryQueuePlayerUnitFromBuilding(
         QueueContext context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int productionIndex,
         GameObject spawnUnitPrefab,
         EntityManager entityManager,
@@ -103,7 +103,7 @@ public sealed class BuildingProductionSystem
         if (building == null || spawnUnitPrefab == null)
             return false;
 
-        building.PendingProductions ??= new List<RuntimeBuildingData.PendingProduction>();
+        building.PendingProductions ??= new List<RuntimeBuildingEntity.PendingProduction>();
         building.ProducedUnits ??= new List<Entity>();
 
         PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, entityManager);
@@ -130,7 +130,7 @@ public sealed class BuildingProductionSystem
             context.UnitSpawnPrefabsByKey,
             context.TryGetPrefabLocalBounds);
 
-        RuntimeBuildingData.PendingProduction queuedProduction = new();
+        RuntimeBuildingEntity.PendingProduction queuedProduction = new();
         InitializePendingProduction(
             queuedProduction,
             productionIndex,

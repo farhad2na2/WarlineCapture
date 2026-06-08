@@ -97,8 +97,8 @@ public sealed class SelectionTransportCommandRequestSystem
         _gridPathingQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>(),
-            ComponentType.ReadOnly<DynamicOccupancyData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
     }
 
     private RtsSelectionCommandResultElement ProcessBoardTransportRequest(
@@ -185,8 +185,8 @@ public sealed class SelectionTransportCommandRequestSystem
         Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        NativeBitArray blocked = em.GetComponentData<DynamicBlockerData>(gridEntity).Blocked;
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
 
         int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;

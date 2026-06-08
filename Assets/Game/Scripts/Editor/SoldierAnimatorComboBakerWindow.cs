@@ -27,7 +27,7 @@ public sealed class SoldierAnimatorComboBakerWindow : EditorWindow
     [SerializeField] private List<BakeComboDefinition> combos = new();
     [SerializeField] private Vector2 scrollPosition;
 
-    [MenuItem("Tools/WarlineCapture/Soldier Animator Combo Baker")]
+    [MenuItem("Tools/Game/Soldier Animator Combo Baker")]
     public static void Open()
     {
         var window = GetWindow<SoldierAnimatorComboBakerWindow>();

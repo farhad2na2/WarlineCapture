@@ -20,8 +20,8 @@ public static class UnitTransportVisualUtility
 
         ApplyKnownVisualReferences(em, entity, visible);
 
-        if (em.HasComponent<UnitMoveVisualState>(entity))
-            em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        if (em.HasComponent<UnitMoveVisualComponent>(entity))
+            em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
     }
 
     public static void SetPassengerHidden(EntityManager em, Entity entity, EntityCommandBuffer ecb)
@@ -31,8 +31,8 @@ public static class UnitTransportVisualUtility
 
         HideVisualTree(em, entity, ecb, true);
 
-        if (em.HasComponent<UnitMoveVisualState>(entity))
-            em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        if (em.HasComponent<UnitMoveVisualComponent>(entity))
+            em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
     }
 
     private static void HideVisualTree(EntityManager em, Entity entity, EntityCommandBuffer ecb, bool useCommandBuffer)

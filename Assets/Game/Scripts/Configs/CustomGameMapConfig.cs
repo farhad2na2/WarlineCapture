@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Custom Game/Map Config")]
+[CreateAssetMenu(menuName = "Game/Custom Game/Map Config")]
 public sealed class CustomGameMapConfig : ScriptableObject
 {
     [SerializeField, Min(1)] private int gridWidth = 2048;

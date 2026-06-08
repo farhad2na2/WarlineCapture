@@ -6,7 +6,7 @@ using UnityEngine;
 internal sealed class BuildingProductionTransportBridgeSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate void EntityManagerAction(EntityManager entityManager);
 
     public readonly struct Context
@@ -40,7 +40,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
         return GridUtils.WorldToCell(grid, worldPosition);
     }
 
-    public void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingData building, int2 goalCell)
+    public void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingEntity building, int2 goalCell)
     {
         if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
             return;
@@ -67,7 +67,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
             em.AddComponentData(entity, new UnitPathRequest { Goal = goalCell });
     }
 
-    public void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingData building, Vector3 forward)
+    public void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingEntity building, Vector3 forward)
     {
         if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
             return;
@@ -90,7 +90,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
 
     public bool TrySpawnPlayerUnitNearBuilding(
         Context context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int productionIndex,
         int reservedProductionSlotIndex,
         Vector3? overrideWorldPosition,
@@ -101,7 +101,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
             return false;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return false;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
             return false;
 
         context.EnsureEntityQueries?.Invoke(em);

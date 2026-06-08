@@ -76,7 +76,7 @@ public class BuildScript
         
         CreateDirectory(outputDirectory);
         var extension = buildType == "AAB" ? "aab" : "apk";
-        var outputPath = $"{outputDirectory}/WarlineCapture.{extension}";
+        var outputPath = $"{outputDirectory}/{ResolveBuildOutputName()}.{extension}";
         if (File.Exists(outputPath))
         {
             File.Delete(outputPath);
@@ -107,6 +107,19 @@ public class BuildScript
             .Where(x => x.enabled)
             .Select(x => x.path)
             .ToArray();
+    }
+
+    private static string ResolveBuildOutputName()
+    {
+        string productName = PlayerSettings.productName;
+        if (string.IsNullOrWhiteSpace(productName))
+            return "Game";
+
+        char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+        string sanitized = new(productName
+            .Select(character => invalidFileNameChars.Contains(character) ? '_' : character)
+            .ToArray());
+        return string.IsNullOrWhiteSpace(sanitized) ? "Game" : sanitized;
     }
 
     private static void ZipBuild(string path)

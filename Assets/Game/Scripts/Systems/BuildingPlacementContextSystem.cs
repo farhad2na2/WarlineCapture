@@ -14,7 +14,7 @@ internal sealed class BuildingPlacementContextSystem
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewSystem PreviewSystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly Transform BuildingRoot;
         public readonly BuildingPlacementLifecycleSystem.CreatePreviewDelegate CreatePreview;
         public readonly BuildingPlacementLifecycleSystem.DestroyPreviewDelegate DestroyPreview;
@@ -46,7 +46,7 @@ internal sealed class BuildingPlacementContextSystem
             BuildingPlacementInputSystem inputSystem,
             BuildingPlacementPreviewSystem previewSystem,
             BuildingPlacementValidationSystem placementValidationSystem,
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             Transform buildingRoot,
             BuildingPlacementLifecycleSystem.CreatePreviewDelegate createPreview,
             BuildingPlacementLifecycleSystem.DestroyPreviewDelegate destroyPreview,

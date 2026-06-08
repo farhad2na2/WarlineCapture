@@ -27,9 +27,9 @@ public partial struct UnitAirMovementSystem : ISystem
         var ropeDisembarkLookup = SystemAPI.GetComponentLookup<UnitTransportRopeDisembarkRequest>(true);
 
         foreach (var (transform, unitGrid, move, attack, airMovement, airState, entity) in SystemAPI
-                     .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAttack>, RefRO<UnitAirMovement>, RefRW<UnitAirState>>()
+                     .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAttack>, RefRO<UnitAirMovement>, RefRW<UnitAirComponent>>()
                      .WithNone<StaticGridBlocker>()
-                     .WithNone<UnitDeathAnimationState>()
+                     .WithNone<UnitDeathAnimationComponent>()
                      .WithEntityAccess())
         {
             if (move.ValueRO.Speed <= 0.05f)

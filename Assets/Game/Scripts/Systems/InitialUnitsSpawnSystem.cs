@@ -48,7 +48,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         state.RequireForUpdate(_queryContext.GridContextQuery);
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<InitialUnitsSpawnConfig>();
-        state.RequireForUpdate<DynamicOccupancyData>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
@@ -86,7 +86,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
             bool completedInitialSpawn = false;
             NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns = _factionSpawnSnapshotSystem.Create(em, entity, Allocator.Temp);
-            RespawnQueueState queueState = _respawnQueueProjectionSystem.ProjectInitialConfig(em, queueEntity, config, factionSpawns);
+            RespawnQueueComponent queueState = _respawnQueueProjectionSystem.ProjectInitialConfig(em, queueEntity, config, factionSpawns);
 
             InitialSpawnStructuralApplySystem.Context structuralContext = _structuralApplySystem.Create(Allocator.Temp);
             ref EntityCommandBuffer ecb = ref structuralContext.Ecb;

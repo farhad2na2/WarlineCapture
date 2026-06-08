@@ -369,7 +369,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78e1beb792c54b90b07569af70016e47, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIRouter
+  m_EditorClassIdentifier: Assembly-CSharp::UIRouterView
   initialRoute: 1
   contentRoot: {fileID: 5776314590250312925}
   screens: []
@@ -402,7 +402,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eff101f731414281895867d3784428a9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIModalSystem
+  m_EditorClassIdentifier: Assembly-CSharp::UIModalView
   modalOverlay: {fileID: 5274870277464286974}
   placeholderContent: {fileID: 927853368903133120}
   placeholderTitleText: {fileID: 1819444510067328972}
@@ -874,7 +874,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: afea0af8dc894249ad87e0c6a1e44400, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UISafeArea
+  m_EditorClassIdentifier: Assembly-CSharp::UISafeAreaView
   target: {fileID: 758915316925062894}
 --- !u!1 &8401809189672986420
 GameObject:

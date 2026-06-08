@@ -5012,7 +5012,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 580952ab2a0b34229a8dc409343e3998, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UiMotionFeedback
+  m_EditorClassIdentifier: Assembly-CSharp::UIMotionFeedbackView
   motionTarget: {fileID: 0}
   flashGraphic: {fileID: 0}
   playAcceptedPulseOnClick: 1

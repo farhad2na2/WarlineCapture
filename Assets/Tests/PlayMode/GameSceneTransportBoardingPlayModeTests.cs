@@ -137,16 +137,16 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData), typeof(DynamicOccupancyData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = _blockerCounts,
             Blocked = _blocked,
             FriendlyPassFactionIds = _friendlyPassFactionIds
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = _occupied
@@ -168,7 +168,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             typeof(UnitTransportCapacity),
             typeof(UnitSourcePrefabKey),
             typeof(UnitAirMovement),
-            typeof(UnitAirState),
+            typeof(UnitAirComponent),
             typeof(LocalTransform),
             typeof(LocalToWorld));
         em.SetName(entity, TransportHelicopterName);
@@ -178,7 +178,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         em.SetComponentData(entity, new UnitTransportCapacity { SoldierCapacity = 10 });
         em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(TransportHelicopterName) });
         em.SetComponentData(entity, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
-        em.SetComponentData(entity, new UnitAirState
+        em.SetComponentData(entity, new UnitAirComponent
         {
             HomePosition = new float3(cell.x + 0.5f, 0f, cell.y + 0.5f),
             HomeCell = cell,
@@ -200,7 +200,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             typeof(UnitFootprint),
             typeof(UnitMove),
             typeof(UnitMovementBehavior),
-            typeof(UnitMoveVisualState),
+            typeof(UnitMoveVisualComponent),
             typeof(UnitSourcePrefabKey),
             typeof(LocalTransform),
             typeof(LocalToWorld));
@@ -210,7 +210,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
         em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
-        em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(SoldierName) });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new LocalToWorld { Value = float4x4.Translate(position) });
@@ -279,7 +279,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
     {
         Assert.IsFalse(em.HasComponent<Disabled>(passenger));
         Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passenger));
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropState>(passenger), "Passenger should be in rope drop state.");
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(passenger), "Passenger should be in rope drop state.");
         Assert.IsTrue(em.HasComponent<UnitTransportRopeLandingClearance>(passenger), "Passenger should reserve the rope landing point while descending.");
     }
 
@@ -290,13 +290,13 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         EntityManager em,
         Entity passenger)
     {
-        UnitTransportRopeDropState drop = em.GetComponentData<UnitTransportRopeDropState>(passenger);
+        UnitTransportRopeDropComponent drop = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
         world.SetTime(new TimeData(drop.StartedAt + drop.DurationSeconds + 0.1f, 0.1f));
         dropSystem.Update(world.Unmanaged);
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropState>(passenger));
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passenger), "Passenger should disperse after reaching the ground.");
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropComponent>(passenger));
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger), "Passenger should disperse after reaching the ground.");
 
-        UnitTransportRopeDisperseState disperse = em.GetComponentData<UnitTransportRopeDisperseState>(passenger);
+        UnitTransportRopeDisperseComponent disperse = em.GetComponentData<UnitTransportRopeDisperseComponent>(passenger);
         world.SetTime(new TimeData(disperse.StartedAt + disperse.DurationSeconds + 0.1f, 0.1f));
         disperseSystem.Update(world.Unmanaged);
     }
@@ -305,8 +305,8 @@ public sealed class GameSceneTransportBoardingPlayModeTests
     {
         Assert.IsFalse(em.HasComponent<Disabled>(passenger));
         Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passenger));
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropState>(passenger));
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisperseState>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropComponent>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger));
         Assert.IsFalse(em.HasComponent<UnitTransportRopeLandingClearance>(passenger));
     }
 

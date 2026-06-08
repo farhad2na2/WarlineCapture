@@ -25,6 +25,7 @@ public sealed class SelectionHudFeedbackSystem
     }
 
     private BattleHudRuntimeFeedbackView _battleHudView;
+    private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
@@ -32,6 +33,12 @@ public sealed class SelectionHudFeedbackSystem
     public void ResetViewCache()
     {
         _battleHudView = null;
+    }
+
+    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+    {
+        _matchHudSelectionPanelView = view;
+        _matchHudSelectionPanelView?.HideSelection();
     }
 
     public Entity EnsureFeedbackQueue(EntityManager em)
@@ -169,7 +176,7 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueSelection(em, entity, selectionUiQuerySystem);
         ProcessPendingFeedback(em);
-        MatchHudSelectionPanelSystem.SetActiveSelectionPortrait(portraitSprite);
+        _matchHudSelectionPanelView?.SetSelectionPortrait(portraitSprite);
     }
 
     public void ApplySquadSelection(EntityManager em, int selectedCount)
@@ -188,7 +195,7 @@ public sealed class SelectionHudFeedbackSystem
 
     public void ApplyBuildingSelection(Sprite portraitSprite)
     {
-        MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true, portraitSprite);
+        _matchHudSelectionPanelView?.SetSelectionVisible(true, portraitSprite);
     }
 
     public void ClearSelection(EntityManager em)
@@ -226,7 +233,7 @@ public sealed class SelectionHudFeedbackSystem
         BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
         if (view == null ||
             BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
-            _commandTabFeedbackSystem.ClearCommandMode(null);
+            _commandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
     }
 
     public void ClearCommandMode(Context context)
@@ -272,18 +279,18 @@ public sealed class SelectionHudFeedbackSystem
                context.TryGetDefaultEntityManager(out em);
     }
 
-    private static void ApplyFeedback(BattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
+    private void ApplyFeedback(BattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
     {
         switch (feedback.Kind)
         {
             case SelectionHudFeedbackKind.Selection:
             case SelectionHudFeedbackKind.SquadSelection:
                 BattleHudRuntimeFeedbackSystem.ApplySelection(view, feedback.Label.ToString(), feedback.Status.ToString());
-                MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true);
+                _matchHudSelectionPanelView?.SetSelectionVisible(true);
                 break;
             case SelectionHudFeedbackKind.ClearSelection:
                 BattleHudRuntimeFeedbackSystem.ClearSelection(view);
-                MatchHudSelectionPanelSystem.SetActiveSelectionVisible(false);
+                _matchHudSelectionPanelView?.SetSelectionVisible(false);
                 break;
             case SelectionHudFeedbackKind.CommandMode:
                 BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, (TacticalCommandMode)feedback.CommandMode);

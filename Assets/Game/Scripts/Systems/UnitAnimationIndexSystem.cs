@@ -14,7 +14,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<UnitMoveVisualState>();
+        state.RequireForUpdate<UnitMoveVisualComponent>();
         state.RequireForUpdate<UnitHealth>();
     }
 
@@ -27,7 +27,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var animationOrderLookup = SystemAPI.GetBufferLookup<UnitAnimationOrderEntry>(true);
         var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();
-        var deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationState>(true);
+        var deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
         var autoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true);
         var engageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
         var modelInstanceLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
@@ -37,7 +37,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
         int appliedUnits = 0;
 
         foreach (var (moveVisual, health, attackAnimation, resolvedAnimation, entity) in SystemAPI
-                 .Query<RefRO<UnitMoveVisualState>, RefRO<UnitHealth>, RefRW<UnitAttackAnimationState>, RefRW<UnitResolvedAnimationIndex>>()
+                 .Query<RefRO<UnitMoveVisualComponent>, RefRO<UnitHealth>, RefRW<UnitAttackAnimationComponent>, RefRW<UnitResolvedAnimationIndex>>()
                  .WithNone<StaticGridBlocker>()
                  .WithEntityAccess())
         {

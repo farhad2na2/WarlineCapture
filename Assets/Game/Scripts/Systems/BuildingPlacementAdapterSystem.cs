@@ -9,7 +9,7 @@ internal sealed class BuildingPlacementAdapterSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     internal delegate BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSourceDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -38,7 +38,7 @@ internal sealed class BuildingPlacementAdapterSystem
         bool rotateVertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData);
+        DynamicBlockerComponent blockerData);
 
     public bool TryResolveInitialPlacementOrigin(
         BuildingGameplayCompositionSourceSystem source,
@@ -84,7 +84,7 @@ internal sealed class BuildingPlacementAdapterSystem
         Vector2Int footprintCells,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         CreateRuntimeContextSourceDelegate createRuntimeContextSource,
         IsPlacementValidDelegate isPlacementValid)
     {
@@ -118,7 +118,7 @@ internal sealed class BuildingPlacementAdapterSystem
         bool rotateVertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding)
     {

@@ -72,7 +72,7 @@ public sealed class MatchOverlayCommandInputSystem
             _view.CommandWheelStopButton?.onClick.AddListener(OnCommandWheelStopButtonClicked);
 
             Debug.Log(
-                $"WARLINECAPTURE_MATCHHUD_COMMAND_INPUT_BOUND object={_view.name} " +
+                $"MATCHHUD_COMMAND_INPUT_BOUND object={_view.name} " +
                 $"selectBound={_view.SelectButton != null} moveBound={_view.MoveButton != null} attackBound={_view.AttackButton != null} scanBound={_view.ScanButton != null} buildBound={_view.BuildButton != null} holdBound={_view.HoldButton != null} " +
                 $"stopBound={_view.StopButton != null} commandWheelStopBound={_view.CommandWheelStopButton != null} " +
                 $"commandSystemBound={_selectionUiCommandSystem != null}");
@@ -156,12 +156,12 @@ public sealed class MatchOverlayCommandInputSystem
                     : _selectionUiCommandSystem.RequestExitSelectionMode());
 
             Debug.Log(
-                $"WARLINECAPTURE_MATCHHUD_SELECT_CLICK object={_view.name} button={ButtonName(_view.SelectButton)} " +
+                $"MATCHHUD_SELECT_CLICK object={_view.name} button={ButtonName(_view.SelectButton)} " +
                 $"active={IsActive(_view.SelectButton)} interactable={IsInteractable(_view.SelectButton)} " +
                 $"selected={selected} commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
-                Debug.LogWarning("WARLINECAPTURE_MATCHHUD_SELECT_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                Debug.LogWarning("MATCHHUD_SELECT_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
 
         private void OnBuildButtonClicked()
@@ -182,12 +182,12 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestMoveCommandMode();
 
             Debug.Log(
-                $"WARLINECAPTURE_MATCHHUD_MOVE_CLICK object={_view.name} button={ButtonName(_view.MoveButton)} " +
+                $"MATCHHUD_MOVE_CLICK object={_view.name} button={ButtonName(_view.MoveButton)} " +
                 $"active={IsActive(_view.MoveButton)} interactable={IsInteractable(_view.MoveButton)} " +
                 $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
-                Debug.LogWarning("WARLINECAPTURE_MATCHHUD_MOVE_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                Debug.LogWarning("MATCHHUD_MOVE_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
 
         private void OnAttackButtonClicked()
@@ -196,12 +196,12 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestAttackCommandMode();
 
             Debug.Log(
-                $"WARLINECAPTURE_MATCHHUD_ATTACK_CLICK object={_view.name} button={ButtonName(_view.AttackButton)} " +
+                $"MATCHHUD_ATTACK_CLICK object={_view.name} button={ButtonName(_view.AttackButton)} " +
                 $"active={IsActive(_view.AttackButton)} interactable={IsInteractable(_view.AttackButton)} " +
                 $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
-                Debug.LogWarning("WARLINECAPTURE_MATCHHUD_ATTACK_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                Debug.LogWarning("MATCHHUD_ATTACK_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
 
         private void OnScanButtonClicked()
@@ -212,12 +212,12 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestScanCommandMode();
 
             Debug.Log(
-                $"WARLINECAPTURE_MATCHHUD_SCAN_CLICK object={_view.name} button={ButtonName(_view.ScanButton)} " +
+                $"MATCHHUD_SCAN_CLICK object={_view.name} button={ButtonName(_view.ScanButton)} " +
                 $"active={IsActive(_view.ScanButton)} interactable={IsInteractable(_view.ScanButton)} " +
                 $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
-                Debug.LogWarning("WARLINECAPTURE_MATCHHUD_SCAN_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                Debug.LogWarning("MATCHHUD_SCAN_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
 
         private void CloseBuildDrawerIfOpen()

@@ -2024,7 +2024,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8505b7d2fd6644f0f92cbb3d9777cc78, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellContentPresenterView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellContentView
   shellView: {fileID: 1818590231}
   loadingContentPrefab: {fileID: 3981841928839128331, guid: 1e63ba198df9a4dfebad255997466d77, type: 3}
   mainMenuContentPrefab: {fileID: 1175976757770164416, guid: 28a740560e67f41888ea431b45bb7d33, type: 3}

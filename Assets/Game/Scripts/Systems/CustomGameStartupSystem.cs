@@ -231,7 +231,7 @@ public sealed class CustomGameStartupSystem
     {
         RemoveComponentIfPresent<InitialUnitsSpawnConfig>(em, entity);
         RemoveComponentIfPresent<InitialUnitsBlockerChurnConfig>(em, entity);
-        RemoveComponentIfPresent<InitialUnitsBlockerChurnState>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsBlockerChurnComponent>(em, entity);
         RemoveComponentIfPresent<InitialUnitsSpawnProgress>(em, entity);
         RemoveComponentIfPresent<InitialUnitsSpawnInitialized>(em, entity);
         RemoveComponentIfPresent<InitialUnitsFactionSpawnEntry>(em, entity);
@@ -300,14 +300,14 @@ public sealed class CustomGameStartupSystem
         else
             em.AddComponentData(entity, churnConfig);
 
-        InitialUnitsBlockerChurnState churnState = new()
+        InitialUnitsBlockerChurnComponent churnState = new()
         {
             Timer = 0f,
             RandomState = config.RandomSeed,
             BlockerPrefab = Entity.Null
         };
 
-        if (em.HasComponent<InitialUnitsBlockerChurnState>(entity))
+        if (em.HasComponent<InitialUnitsBlockerChurnComponent>(entity))
             em.SetComponentData(entity, churnState);
         else
             em.AddComponentData(entity, churnState);
@@ -353,14 +353,14 @@ public sealed class CustomGameStartupSystem
         else
             em.AddComponentData(entity, churnConfig);
 
-        InitialUnitsBlockerChurnState churnState = new()
+        InitialUnitsBlockerChurnComponent churnState = new()
         {
             Timer = 0f,
             RandomState = initialConfig.RandomSeed,
             BlockerPrefab = Entity.Null
         };
 
-        if (em.HasComponent<InitialUnitsBlockerChurnState>(entity))
+        if (em.HasComponent<InitialUnitsBlockerChurnComponent>(entity))
             em.SetComponentData(entity, churnState);
         else
             em.AddComponentData(entity, churnState);

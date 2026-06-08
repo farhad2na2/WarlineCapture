@@ -1,7 +1,7 @@
 internal sealed class BuildingGameplayCompositionSourceSystem
 {
     internal readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
-    internal readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem = new();
+    internal readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem = new();
     internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem = new();
     internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();

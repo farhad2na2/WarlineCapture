@@ -423,8 +423,8 @@ public sealed class BaseBreachValidationTests
             using EntityQuery gridQuery = em.CreateEntityQuery(typeof(GridConfig));
             Entity gridEntity = gridQuery.GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-            DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             int2 gateCell = new(
                 gateOrigin.x + Mathf.Max(1, gateFootprint.x) / 2,
@@ -538,8 +538,8 @@ public sealed class BaseBreachValidationTests
             using EntityQuery gridQuery = em.CreateEntityQuery(typeof(GridConfig));
             Entity gridEntity = gridQuery.GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-            DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             int2 gateCell = new(
                 actualGateOrigin.x + Mathf.Max(1, actualGateFootprint.x) / 2,
@@ -556,8 +556,8 @@ public sealed class BaseBreachValidationTests
             buildingPlacement.SyncDestroyedRuntimeBuildingCombatEntitiesForTests();
             blockerSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
             grid = em.GetComponentData<GridConfig>(gridEntity);
-            blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
 
             Assert.IsTrue(buildingPlacement.IsRuntimeBuildingDestroyedForTests(gateBuildingId));
@@ -625,7 +625,7 @@ public sealed class BaseBreachValidationTests
             UnitPathRange range = em.GetComponentData<UnitPathRange>(unit);
             using EntityQuery gridQuery = em.CreateEntityQuery(typeof(GridConfig));
             Entity gridEntity = gridQuery.GetSingletonEntity();
-            NativeList<int2> cells = em.GetComponentData<PathPoolData>(gridEntity).Cells;
+            NativeList<int2> cells = em.GetComponentData<PathPoolComponent>(gridEntity).Cells;
             bool pathUsesGate = false;
             for (int i = 0; i < range.Length; i++)
             {
@@ -700,8 +700,8 @@ public sealed class BaseBreachValidationTests
 
             gridEntity = em.CreateEntityQuery(typeof(GridConfig)).GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-            DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             for (int i = 0; i < gateRects.Count; i++)
             {
@@ -735,7 +735,7 @@ public sealed class BaseBreachValidationTests
 
             Assert.IsTrue(em.HasComponent<UnitPathRange>(unit), "Actual initial-base pathfinding should produce a route out of the base.");
             UnitPathRange range = em.GetComponentData<UnitPathRange>(unit);
-            NativeList<int2> cells = em.GetComponentData<PathPoolData>(gridEntity).Cells;
+            NativeList<int2> cells = em.GetComponentData<PathPoolComponent>(gridEntity).Cells;
             Assert.IsTrue(
                 PathUsesAnyRect(cells, range, gateRects),
                 $"Actual initial-base path must leave through one of the friendly road barrier gate footprints, not a wall/corner. start={startCell} goal={goalCell} gates={FormatRects(gateRects)} path={FormatPath(cells, range)}");
@@ -750,9 +750,9 @@ public sealed class BaseBreachValidationTests
             {
                 if (gridEntity != Entity.Null &&
                     em.Exists(gridEntity) &&
-                    em.HasComponent<DynamicOccupancyData>(gridEntity))
+                    em.HasComponent<DynamicOccupancyComponent>(gridEntity))
                 {
-                    DynamicOccupancyData currentOccupancy = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+                    DynamicOccupancyComponent currentOccupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
                     if (currentOccupancy.Occupied.IsCreated)
                     {
                         currentOccupancy.Occupied.Dispose();
@@ -822,8 +822,8 @@ public sealed class BaseBreachValidationTests
 
             gridEntity = em.CreateEntityQuery(typeof(GridConfig)).GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-            DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-            DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+            DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
 
             int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), 0);
@@ -852,7 +852,7 @@ public sealed class BaseBreachValidationTests
 
             Assert.IsTrue(em.HasComponent<UnitPathRange>(attacker), "Actual initial-base attack pathfinding should produce a route to the enemy gate approach.");
             UnitPathRange range = em.GetComponentData<UnitPathRange>(attacker);
-            NativeList<int2> cells = em.GetComponentData<PathPoolData>(gridEntity).Cells;
+            NativeList<int2> cells = em.GetComponentData<PathPoolComponent>(gridEntity).Cells;
             Assert.IsTrue(
                 PathUsesAnyRect(cells, range, playerGateRects),
                 $"Actual attack route must leave through a player road-barrier gate, not a wall/corner. start={startCell} breach={breachCell} playerGates={FormatRects(playerGateRects)} enemyGates={FormatRects(enemyGateRects)} path={FormatPath(cells, range)}");
@@ -867,9 +867,9 @@ public sealed class BaseBreachValidationTests
             {
                 if (gridEntity != Entity.Null &&
                     em.Exists(gridEntity) &&
-                    em.HasComponent<DynamicOccupancyData>(gridEntity))
+                    em.HasComponent<DynamicOccupancyComponent>(gridEntity))
                 {
-                    DynamicOccupancyData currentOccupancy = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+                    DynamicOccupancyComponent currentOccupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
                     if (currentOccupancy.Occupied.IsCreated)
                     {
                         currentOccupancy.Occupied.Dispose();
@@ -1447,7 +1447,7 @@ public sealed class BaseBreachValidationTests
         public bool TryGetRuntimeBuildingDoorOpen01ForTests(int buildingId, out float open01)
         {
             open01 = 0f;
-            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building))
+            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingEntity building))
                 return false;
 
             open01 = building.DoorOpen01;
@@ -1458,7 +1458,7 @@ public sealed class BaseBreachValidationTests
         {
             combatEntity = Entity.Null;
             blockerEntity = Entity.Null;
-            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building))
+            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingEntity building))
                 return false;
 
             combatEntity = building.CombatEntity;
@@ -1468,7 +1468,7 @@ public sealed class BaseBreachValidationTests
 
         public bool IsRuntimeBuildingDestroyedForTests(int buildingId)
         {
-            return TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building) && building.IsDestroyed;
+            return TryGetRuntimeBuilding(buildingId, out RuntimeBuildingEntity building) && building.IsDestroyed;
         }
 
         public int GetRuntimeRoadBarrierGateRectsForTests(byte factionId, List<RectInt> rects, List<int> buildingIds = null)
@@ -1592,7 +1592,7 @@ public sealed class BaseBreachValidationTests
                 out footprint);
         }
 
-        private bool TryGetRuntimeBuilding(int buildingId, out RuntimeBuildingData building)
+        private bool TryGetRuntimeBuilding(int buildingId, out RuntimeBuildingEntity building)
         {
             building = null;
             return _buildingGameplay.RuntimeBuildings != null &&
@@ -1620,21 +1620,21 @@ public sealed class BaseBreachValidationTests
             friendlyPassFactionIds[i] = byte.MaxValue;
 
         pathPool = new NativeList<int2>(1024, Allocator.Persistent);
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData), typeof(DynamicOccupancyData), typeof(PathPoolData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent), typeof(PathPoolComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = blockerCounts,
             Blocked = blocked,
             FriendlyPassFactionIds = friendlyPassFactionIds
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = occupied
         });
-        em.SetComponentData(gridEntity, new PathPoolData { Cells = pathPool });
+        em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
 
         em.AddBuffer<GridWalkable>(gridEntity);
         em.AddBuffer<GridRoad>(gridEntity);

@@ -132,14 +132,14 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
                context.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(context.SpawnContext, prefab, rotateVertical, out footprint);
     }
 
-    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, bool rotateVertical, out RuntimeBuildingData building)
+    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, bool rotateVertical, out RuntimeBuildingEntity building)
     {
         building = null;
         return context.RuntimeSpawnSystem != null &&
                context.RuntimeSpawnSystem.TrySpawnInitialBuilding(context.SpawnContext, definition, preferredOrigin, rotateVertical, out building);
     }
 
-    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, out RuntimeBuildingData building)
+    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, out RuntimeBuildingEntity building)
     {
         building = null;
         return context.RuntimeSpawnSystem != null &&

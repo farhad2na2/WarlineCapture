@@ -21,7 +21,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         BuildingBarrierSystem barrier,
         Func<BuildingBarrierSystem.Context> createBarrierContext,
         BuildingCombatSystem combat,
-        Func<BuildingCombatSystem.Context<RuntimeBuildingData>> createCombatContext,
+        Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
         BuildingUiCommandSystem uiCommand,
         BuildingUiCommandSystem.Context uiCommandContext,
         BuildingUiQuerySystem uiQuery,
@@ -34,7 +34,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         Action<MainMenuPlayUI> bindMainMenu,
         Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
@@ -95,7 +95,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         public readonly BuildingBarrierSystem Barrier;
         public readonly Func<BuildingBarrierSystem.Context> CreateBarrierContext;
         public readonly BuildingCombatSystem Combat;
-        public readonly Func<BuildingCombatSystem.Context<RuntimeBuildingData>> CreateCombatContext;
+        public readonly Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> CreateCombatContext;
         public readonly BuildingUiCommandSystem UiCommand;
         public readonly BuildingUiCommandSystem.Context UiCommandContext;
         public readonly BuildingUiQuerySystem UiQuery;
@@ -108,7 +108,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         private readonly BuildingCitizenPopulationCompositionSystem CitizenPopulationCompositionBridge;
         private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
-        public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
         public readonly Action<MainMenuPlayUI> BindMainMenu;
         public readonly Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
@@ -131,7 +131,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
             BuildingBarrierSystem barrier,
             Func<BuildingBarrierSystem.Context> createBarrierContext,
             BuildingCombatSystem combat,
-            Func<BuildingCombatSystem.Context<RuntimeBuildingData>> createCombatContext,
+            Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
             BuildingUiCommandSystem uiCommand,
             BuildingUiCommandSystem.Context uiCommandContext,
             BuildingUiQuerySystem uiQuery,
@@ -144,7 +144,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
             BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
             CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-            System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             Action<MainMenuPlayUI> bindMainMenu,
             Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,

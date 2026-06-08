@@ -139,7 +139,14 @@ internal sealed class SelectionGameplayStartupSystem
             roadBuildReadState = roadBuildReadModel;
             buildingPlacementInteractionSystem = buildingInteraction;
             buildingPlacementInteractionContext = buildingInteractionContext;
+            mainMenuPlayUi?.ConfigureMatchHudSelectionPanelBinding(BindMatchHudSelectionPanel);
             mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
+        }
+
+        void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+        {
+            selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
+            selectionBuildingInteraction.BindMatchHudSelectionPanel(view);
         }
 
         void BindMatchHudSquadTray(MatchHudSquadTrayView view)
@@ -467,7 +474,7 @@ internal sealed class SelectionGameplayStartupSystem
             BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
             if (view == null ||
                 BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
-                matchOverlayCommandTabFeedbackSystem.ClearCommandMode(null);
+                matchOverlayCommandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
         }
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")

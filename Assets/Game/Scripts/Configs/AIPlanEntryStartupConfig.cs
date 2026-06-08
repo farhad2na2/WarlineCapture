@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/AI Plan Entry Startup")]
+[CreateAssetMenu(menuName = "Game/Config/AI Plan Entry Startup")]
 public sealed class AIPlanEntryStartupConfig : ScriptableObject
 {
     [SerializeField] private List<string> fallbackBuildingIds = new();

@@ -10,9 +10,9 @@ public readonly struct InitialUnitSpawnResetSystem
         bool hasPrefab,
         ref Unity.Mathematics.Random rng)
     {
-        if (hasPrefab && em.HasComponent<UnitIdleWanderState>(prefab))
+        if (hasPrefab && em.HasComponent<UnitIdleWanderComponent>(prefab))
         {
-            ecb.SetComponent(instance, new UnitIdleWanderState
+            ecb.SetComponent(instance, new UnitIdleWanderComponent
             {
                 RandomState = rng.NextUInt(),
                 RetrySeconds = 0f,

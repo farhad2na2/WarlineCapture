@@ -19,7 +19,7 @@ internal sealed class BuildingFactionVisualSystem
         }
     }
 
-    public void CacheBuildingRenderers(RuntimeBuildingData building, Transform visualRoot, Transform destroyedVisual)
+    public void CacheBuildingRenderers(RuntimeBuildingEntity building, Transform visualRoot, Transform destroyedVisual)
     {
         if (building == null || visualRoot == null)
             return;
@@ -51,7 +51,7 @@ internal sealed class BuildingFactionVisualSystem
         building.FactionVisualBaseColors = baseColors.ToArray();
     }
 
-    public void ApplyOwnerFaction(Context context, RuntimeBuildingData building)
+    public void ApplyOwnerFaction(Context context, RuntimeBuildingEntity building)
     {
         if (building == null)
             return;
@@ -66,7 +66,7 @@ internal sealed class BuildingFactionVisualSystem
         ApplyTint(context, building, factionColor);
     }
 
-    public void Clear(Context context, RuntimeBuildingData building)
+    public void Clear(Context context, RuntimeBuildingEntity building)
     {
         if (building?.FactionVisualRenderers == null)
             return;
@@ -74,7 +74,7 @@ internal sealed class BuildingFactionVisualSystem
         ApplyTint(context, building, Color.white, clearTint: true);
     }
 
-    private void ApplyTint(Context context, RuntimeBuildingData building, Color factionColor, bool clearTint = false)
+    private void ApplyTint(Context context, RuntimeBuildingEntity building, Color factionColor, bool clearTint = false)
     {
         Renderer[] renderers = building.FactionVisualRenderers;
         Color[] baseColors = building.FactionVisualBaseColors;

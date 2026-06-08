@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/UI/Loading Tips", fileName = "LoadingTips")]
+[CreateAssetMenu(menuName = "Game/UI/Loading Tips", fileName = "LoadingTips")]
 public sealed class UILoadingTips : ScriptableObject
 {
     [SerializeField] private string[] tips = Array.Empty<string>();

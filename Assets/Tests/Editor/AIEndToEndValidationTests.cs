@@ -255,16 +255,16 @@ public sealed class AIEndToEndValidationTests
         _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData), typeof(DynamicOccupancyData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = _blockerCounts,
             Blocked = _blocked,
             FriendlyPassFactionIds = _friendlyPassFactionIds
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = _occupied

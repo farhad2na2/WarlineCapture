@@ -73,13 +73,13 @@ public static class UnitMidLodGenerator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/WarlineCapture/Rendering/LODs/Generate All Soldier LODs")]
+    [MenuItem("Tools/Game/Rendering/LODs/Generate All Soldier LODs")]
     public static void GenerateAllSoldierLods()
     {
         GenerateSoldierMale02Alt04();
     }
 
-    [MenuItem("Tools/WarlineCapture/Rendering/LODs/Generate All Vehicle LODs")]
+    [MenuItem("Tools/Game/Rendering/LODs/Generate All Vehicle LODs")]
     public static void GenerateAllVehicleLods()
     {
         EnsureOutputFolder();

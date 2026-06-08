@@ -173,7 +173,7 @@ public sealed class RoadGridProjectionSystem
         }
     }
 
-    public bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData)
+    public bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData)
     {
         gridEntity = Entity.Null;
         grid = default;
@@ -190,7 +190,7 @@ public sealed class RoadGridProjectionSystem
         gridEntity = _gridDataQuery.GetSingletonEntity();
         grid = em.GetComponentData<GridConfig>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         return true;
     }
 
@@ -257,7 +257,7 @@ public sealed class RoadGridProjectionSystem
         _gridDataQuery = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridRoad>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         _roadBufferQuery = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadWrite<GridRoad>());

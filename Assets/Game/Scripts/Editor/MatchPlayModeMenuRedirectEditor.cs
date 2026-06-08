@@ -7,7 +7,7 @@ internal static class MatchPlayModeMenuRedirectEditor
 {
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
-    private const string RestoreMatchSceneKey = "WarlineCapture.RestoreMatchSceneAfterPlay";
+    private const string RestoreMatchSceneKey = "Game.RestoreMatchSceneAfterPlay";
 
     static MatchPlayModeMenuRedirectEditor()
     {

@@ -66,7 +66,7 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
                 AddRemovePerInterval = authoring.AddRemovePerInterval
             });
 
-            AddComponent(entity, new InitialUnitsBlockerChurnState
+            AddComponent(entity, new InitialUnitsBlockerChurnComponent
             {
                 Timer = 0f,
                 RandomState = math.max(1u, authoring.RandomSeed),

@@ -9,16 +9,16 @@ internal sealed class BuildingResourceHaulerBridgeSystem
     private static readonly bool VerboseResourceHaulerLogs = false;
 
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate void EnsureEntityQueriesDelegate(EntityManager entityManager);
     public delegate EntityQuery GetEntityQueryDelegate();
-    public delegate bool TryGetRuntimeBuildingDelegate(int id, out RuntimeBuildingData building);
-    public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingData building);
-    public delegate RectInt GetEffectivePlacementRectDelegate(RuntimeBuildingData building, GridConfig grid);
+    public delegate bool TryGetRuntimeBuildingDelegate(int id, out RuntimeBuildingEntity building);
+    public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingEntity building);
+    public delegate RectInt GetEffectivePlacementRectDelegate(RuntimeBuildingEntity building, GridConfig grid);
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
@@ -31,7 +31,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         public readonly GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             ResourceHaulerSystem resourceHaulerSystem,
             FactionResourceSystem factionResourceSystem,
             TryGetEntityManagerDelegate tryGetEntityManager,
@@ -87,7 +87,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
             return false;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return false;
-        if (context.TryGetRuntimeBuilding == null || !context.TryGetRuntimeBuilding(clickedBuildingId, out RuntimeBuildingData clickedBuilding))
+        if (context.TryGetRuntimeBuilding == null || !context.TryGetRuntimeBuilding(clickedBuildingId, out RuntimeBuildingEntity clickedBuilding))
             return false;
 
         context.EnsureEntityQueries?.Invoke(em);
@@ -104,8 +104,8 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
             return false;
 
-        RuntimeBuildingData source = clickedBuilding;
-        RuntimeBuildingData destination = clickedBuilding;
+        RuntimeBuildingEntity source = clickedBuilding;
+        RuntimeBuildingEntity destination = clickedBuilding;
         ResourceHaulerSystem.ResourceHaulKind resourceKind = ResourceHaulerSystem.ResourceHaulKind.Oil;
         if (clickedIsOilSource)
         {
@@ -156,7 +156,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
 
     public bool TryGetRuntimeBuildingApproachCell(
         Context context,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         int2 unitFootprint,
         int2 referenceCell,
         out int2 goal)
@@ -166,11 +166,11 @@ internal sealed class BuildingResourceHaulerBridgeSystem
             return false;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return false;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
             return false;
 
         var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         return TryFindBuildingApproachCell(
             grid,
             walkable,
@@ -183,7 +183,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
             out goal);
     }
 
-    public bool IsRuntimeBuildingApproachCell(Context context, RuntimeBuildingData building, int2 currentCell, int2 unitFootprint)
+    public bool IsRuntimeBuildingApproachCell(Context context, RuntimeBuildingEntity building, int2 currentCell, int2 unitFootprint)
     {
         if (building == null || building.IsDestroyed)
             return false;
@@ -206,8 +206,8 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         ResourceHaulerSystem.ResourceHaulKind resourceKind = (ResourceHaulerSystem.ResourceHaulKind)order.ResourceKind;
 
         if (context.TryGetRuntimeBuilding == null ||
-            !context.TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingData source) ||
-            !context.TryGetRuntimeBuilding(order.DestinationBuildingId, out RuntimeBuildingData destination))
+            !context.TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingEntity source) ||
+            !context.TryGetRuntimeBuilding(order.DestinationBuildingId, out RuntimeBuildingEntity destination))
         {
             em.RemoveComponent<UnitResourceHaulOrder>(entity);
             return;
@@ -238,7 +238,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         }
     }
 
-    private static void UpdateNonePhase(Context context, EntityManager em, Entity entity, RuntimeBuildingData source, ref UnitResourceHaulOrder order)
+    private static void UpdateNonePhase(Context context, EntityManager em, Entity entity, RuntimeBuildingEntity source, ref UnitResourceHaulOrder order)
     {
         if (!TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 goal))
             return;
@@ -252,7 +252,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         EntityManager em,
         GridConfig grid,
         Entity entity,
-        RuntimeBuildingData source,
+        RuntimeBuildingEntity source,
         int2 currentCell,
         int2 footprintSize,
         ref UnitResourceHaulOrder order)
@@ -280,8 +280,8 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         Context context,
         EntityManager em,
         Entity entity,
-        RuntimeBuildingData source,
-        RuntimeBuildingData destination,
+        RuntimeBuildingEntity source,
+        RuntimeBuildingEntity destination,
         ResourceHaulerSystem.ResourceHaulKind resourceKind,
         ref UnitResourceHauler hauler,
         ref UnitResourceHaulOrder order,
@@ -357,7 +357,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         EntityManager em,
         GridConfig grid,
         Entity entity,
-        RuntimeBuildingData destination,
+        RuntimeBuildingEntity destination,
         int2 currentCell,
         int2 footprintSize,
         ref UnitResourceHaulOrder order)
@@ -377,8 +377,8 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         Context context,
         EntityManager em,
         Entity entity,
-        RuntimeBuildingData source,
-        RuntimeBuildingData destination,
+        RuntimeBuildingEntity source,
+        RuntimeBuildingEntity destination,
         ResourceHaulerSystem.ResourceHaulKind resourceKind,
         ref UnitResourceHauler hauler,
         ref UnitResourceHaulOrder order,
@@ -425,7 +425,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         em.SetComponentData(entity, order);
     }
 
-    private static bool IsHaulerAtBuildingApproach(Context context, int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
+    private static bool IsHaulerAtBuildingApproach(Context context, int2 currentCell, int2 footprintSize, RuntimeBuildingEntity building, GridConfig grid)
     {
         if (building?.Definition == null || context.GetEffectivePlacementRect == null)
             return false;
@@ -454,7 +454,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         return 0;
     }
 
-    private static bool TryFindNearestBuilding(Context context, RuntimeBuildingData originBuilding, System.Predicate<RuntimeBuildingData> predicate, out RuntimeBuildingData result)
+    private static bool TryFindNearestBuilding(Context context, RuntimeBuildingEntity originBuilding, System.Predicate<RuntimeBuildingEntity> predicate, out RuntimeBuildingEntity result)
     {
         result = null;
         if (originBuilding == null || predicate == null || context.RuntimeBuildings == null || context.ResolveBuildingFocusWorldPosition == null)
@@ -465,7 +465,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
 
         foreach (var pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingData candidate = pair.Value;
+            RuntimeBuildingEntity candidate = pair.Value;
             if (candidate == null || candidate == originBuilding || candidate.IsDestroyed || !predicate(candidate))
                 continue;
 
@@ -481,17 +481,17 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         return result != null;
     }
 
-    private static bool TryIssueHaulerMoveToBuilding(Context context, EntityManager em, Entity unit, RuntimeBuildingData building, out int2 goal)
+    private static bool TryIssueHaulerMoveToBuilding(Context context, EntityManager em, Entity unit, RuntimeBuildingEntity building, out int2 goal)
     {
         goal = default;
         if (building == null || building.IsDestroyed || !em.Exists(unit) || context.TryGetGridData == null ||
-            !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
+            !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
         {
             return false;
         }
 
         var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         int2 referenceCell = em.GetComponentData<UnitGrid>(unit).Cell;
         int2 unitFootprint = em.HasComponent<UnitFootprint>(unit)
             ? em.GetComponentData<UnitFootprint>(unit).Size

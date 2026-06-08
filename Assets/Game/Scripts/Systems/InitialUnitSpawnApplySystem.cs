@@ -17,10 +17,10 @@ public readonly struct InitialUnitSpawnApplySystem
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitGrid { Cell = cell });
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, LocalTransform.FromPosition(pos));
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitPrevWorldPos { Value = pos });
-        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new Faction { Id = faction });
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitRespawnPrefab { Prefab = Entity.Null });
-        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitAttackState { CooldownRemaining = 0f });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
         return instance;
     }
 

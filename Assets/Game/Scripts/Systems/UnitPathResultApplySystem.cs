@@ -7,7 +7,7 @@ internal struct UnitPathResultApplySystem
     public void Apply(
         ref SystemState state,
         Entity gridEntity,
-        ref PathPoolData pool,
+        ref PathPoolComponent pool,
         NativeArray<Entity> entities,
         NativeArray<UnitPathRequest> requests,
         NativeArray<int2> assignedGoals,

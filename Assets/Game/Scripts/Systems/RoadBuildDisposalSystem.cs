@@ -9,13 +9,13 @@ internal sealed class RoadBuildDisposalSystem
         public readonly RoadBuildStartupSystem StartupSystem;
         public readonly RoadBuildStartupSystem.State StartupState;
         public readonly RoadRuntimeRootSystem RuntimeRootSystem;
-        public readonly BuildingRoadLegacyPlacementVisualSystem PlacementVisualSystem;
-        public readonly BuildingRoadLegacyPlacementVisualSystem.State PlacementVisualState;
+        public readonly RoadBuildPlacementVisualSystem PlacementVisualSystem;
+        public readonly RoadBuildPlacementVisualSystem.State PlacementVisualState;
         public readonly RoadVisualVariantSystem VisualVariantSystem;
         public readonly RoadPreviewSystem PreviewSystem;
         public readonly RoadChunkVisualSystem ChunkVisualSystem;
-        public readonly BuildingRoadLegacyEcsSystem LegacyEcsSystem;
-        public readonly BuildingRoadLegacyStorageSystem LegacyStorageSystem;
+        public readonly RoadBuildEcsBoundarySystem EcsBoundarySystem;
+        public readonly RoadBuildPlacementStorageSystem PlacementStorageSystem;
         public readonly RoadSpecialVisualSystem SpecialVisualSystem;
         public readonly RoadMinimapEventSystem MinimapEventSystem;
         public readonly RoadGridProjectionSystem GridProjectionSystem;
@@ -25,13 +25,13 @@ internal sealed class RoadBuildDisposalSystem
             RoadBuildStartupSystem startupSystem,
             RoadBuildStartupSystem.State startupState,
             RoadRuntimeRootSystem runtimeRootSystem,
-            BuildingRoadLegacyPlacementVisualSystem placementVisualSystem,
-            BuildingRoadLegacyPlacementVisualSystem.State placementVisualState,
+            RoadBuildPlacementVisualSystem placementVisualSystem,
+            RoadBuildPlacementVisualSystem.State placementVisualState,
             RoadVisualVariantSystem visualVariantSystem,
             RoadPreviewSystem previewSystem,
             RoadChunkVisualSystem chunkVisualSystem,
-            BuildingRoadLegacyEcsSystem legacyEcsSystem,
-            BuildingRoadLegacyStorageSystem legacyStorageSystem,
+            RoadBuildEcsBoundarySystem ecsBoundarySystem,
+            RoadBuildPlacementStorageSystem placementStorageSystem,
             RoadSpecialVisualSystem specialVisualSystem,
             RoadMinimapEventSystem minimapEventSystem,
             RoadGridProjectionSystem gridProjectionSystem,
@@ -45,8 +45,8 @@ internal sealed class RoadBuildDisposalSystem
             VisualVariantSystem = visualVariantSystem;
             PreviewSystem = previewSystem;
             ChunkVisualSystem = chunkVisualSystem;
-            LegacyEcsSystem = legacyEcsSystem;
-            LegacyStorageSystem = legacyStorageSystem;
+            EcsBoundarySystem = ecsBoundarySystem;
+            PlacementStorageSystem = placementStorageSystem;
             SpecialVisualSystem = specialVisualSystem;
             MinimapEventSystem = minimapEventSystem;
             GridProjectionSystem = gridProjectionSystem;
@@ -61,11 +61,11 @@ internal sealed class RoadBuildDisposalSystem
         context.VisualVariantSystem.DisposeCachedVisualData();
         context.PreviewSystem.DisposePreview();
         context.ChunkVisualSystem.DisposeChunks();
-        context.LegacyEcsSystem.DisposeRuntimeBuildings(context.LegacyStorageSystem.RuntimeBuildings);
+        context.EcsBoundarySystem.DisposeRuntimeBuildings(context.PlacementStorageSystem.RuntimeBuildings);
         context.SpecialVisualSystem.DisposeVisuals();
         context.MinimapEventSystem.Clear();
         context.GridProjectionSystem.ClearRoadDataInEcs();
         context.RoadTiles.Clear();
-        context.LegacyStorageSystem.Clear();
+        context.PlacementStorageSystem.Clear();
     }
 }

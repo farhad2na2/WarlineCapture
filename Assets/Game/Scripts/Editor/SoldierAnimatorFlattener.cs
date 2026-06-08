@@ -96,13 +96,13 @@ public static class SoldierAnimatorFlattener
         EnsureControllerExists(FemaleAssaultRifleTargetControllerPath, () => GenerateFlatController(FemaleSourceControllerPath, FemaleAssaultRifleTargetControllerPath, WeaponFamily.AssaultRifle, logResult: false));
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male")]
     public static void GenerateMaleFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male All Weapons")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male All Weapons")]
     public static void GenerateMaleAllWeaponsFlatControllersMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleRifleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
@@ -112,43 +112,43 @@ public static class SoldierAnimatorFlattener
         GenerateFlatController(MaleSourceControllerPath, MaleAssaultRifleTargetControllerPath, WeaponFamily.AssaultRifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male Rifle")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male Rifle")]
     public static void GenerateMaleRifleFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleRifleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male Gun")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male Gun")]
     public static void GenerateMaleGunFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleGunTargetControllerPath, WeaponFamily.Gun, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male DualGun")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male DualGun")]
     public static void GenerateMaleDualGunFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleDualGunTargetControllerPath, WeaponFamily.DualGun, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male Bazooka")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male Bazooka")]
     public static void GenerateMaleBazookaFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleBazookaTargetControllerPath, WeaponFamily.Bazooka, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Male AssaultRifle")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Male AssaultRifle")]
     public static void GenerateMaleAssaultRifleFlatControllerMenu()
     {
         GenerateFlatController(MaleSourceControllerPath, MaleAssaultRifleTargetControllerPath, WeaponFamily.AssaultRifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female")]
     public static void GenerateFemaleFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female All Weapons")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female All Weapons")]
     public static void GenerateFemaleAllWeaponsFlatControllersMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleRifleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
@@ -158,44 +158,44 @@ public static class SoldierAnimatorFlattener
         GenerateFlatController(FemaleSourceControllerPath, FemaleAssaultRifleTargetControllerPath, WeaponFamily.AssaultRifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/All Characters All Weapons")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/All Characters All Weapons")]
     public static void GenerateAllCharactersAllWeaponsFlatControllersMenu()
     {
         GenerateMaleAllWeaponsFlatControllersMenu();
         GenerateFemaleAllWeaponsFlatControllersMenu();
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Window")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Window")]
     public static void OpenFlattenerWindow()
     {
         SoldierAnimatorFlattenerWindow.OpenWindow();
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female Rifle")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female Rifle")]
     public static void GenerateFemaleRifleFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleRifleTargetControllerPath, WeaponFamily.Rifle, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female Gun")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female Gun")]
     public static void GenerateFemaleGunFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleGunTargetControllerPath, WeaponFamily.Gun, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female DualGun")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female DualGun")]
     public static void GenerateFemaleDualGunFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleDualGunTargetControllerPath, WeaponFamily.DualGun, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female Bazooka")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female Bazooka")]
     public static void GenerateFemaleBazookaFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleBazookaTargetControllerPath, WeaponFamily.Bazooka, logResult: true);
     }
 
-    [MenuItem("Tools/WarlineCapture/Generate Flat Soldier Animator/Female AssaultRifle")]
+    [MenuItem("Tools/Game/Generate Flat Soldier Animator/Female AssaultRifle")]
     public static void GenerateFemaleAssaultRifleFlatControllerMenu()
     {
         GenerateFlatController(FemaleSourceControllerPath, FemaleAssaultRifleTargetControllerPath, WeaponFamily.AssaultRifle, logResult: true);

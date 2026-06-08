@@ -260,7 +260,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             ecb.Playback(em);
         }
 
-        UnitRenderVisualState state = em.GetComponentData<UnitRenderVisualState>(unit);
+        UnitRenderVisualComponent state = em.GetComponentData<UnitRenderVisualComponent>(unit);
         Assert.AreEqual((byte)UnitRenderVisualKind.Mid, state.Current);
         Assert.AreEqual((byte)UnitRenderVisualKind.Mid, state.Desired);
 
@@ -282,7 +282,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             Assert.AreEqual(UnitRenderVisualKind.Mid, pendingVisual);
         }
 
-        state = em.GetComponentData<UnitRenderVisualState>(unit);
+        state = em.GetComponentData<UnitRenderVisualComponent>(unit);
         Assert.AreEqual((byte)UnitRenderVisualKind.Mid, state.Current);
         Assert.AreEqual((byte)UnitRenderVisualKind.Low, state.Desired);
         Assert.AreEqual(1, visualStateChanges);
@@ -307,7 +307,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             Assert.AreEqual(UnitRenderVisualKind.Detail, forcedVisual);
         }
 
-        state = em.GetComponentData<UnitRenderVisualState>(unit);
+        state = em.GetComponentData<UnitRenderVisualComponent>(unit);
         Assert.AreEqual((byte)UnitRenderVisualKind.Detail, state.Current);
         Assert.AreEqual((byte)UnitRenderVisualKind.Detail, state.Desired);
         Assert.AreEqual(1, visualStateChanges);

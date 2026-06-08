@@ -7,7 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MapSurfaceData", menuName = "WarlineCapture/Map Surface Data")]
+[CreateAssetMenu(fileName = "MapSurfaceData", menuName = "Game/Map Surface Data")]
 public sealed class MapSurfaceDataAsset : ScriptableObject
 {
     private const int CurrentPayloadVersion = 3;

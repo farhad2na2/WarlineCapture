@@ -31,7 +31,7 @@ public sealed class BuildingFactionVisualSystemTests
     [Test]
     public void CacheBuildingRenderersExcludesDestroyedVisual()
     {
-        RuntimeBuildingData building = new();
+        RuntimeBuildingEntity building = new();
         Renderer liveRenderer = CreateRenderer("Live", _root.transform);
         GameObject destroyed = new("Destroyed");
         destroyed.transform.SetParent(_root.transform, false);
@@ -48,7 +48,7 @@ public sealed class BuildingFactionVisualSystemTests
     [Test]
     public void CacheBuildingRenderersExcludesRunwayVisualsForAirportBuildings()
     {
-        RuntimeBuildingData building = new()
+        RuntimeBuildingEntity building = new()
         {
             Definition = new BuildingDefinition { HasRunway = true }
         };
@@ -82,7 +82,7 @@ public sealed class BuildingFactionVisualSystemTests
     public void ApplyOwnerFactionTintsCachedRenderersAndClearRestoresBaseColor()
     {
         Renderer renderer = CreateRenderer("Live", _root.transform);
-        RuntimeBuildingData building = new()
+        RuntimeBuildingEntity building = new()
         {
             Instance = _root,
             HasOwnerFaction = true,

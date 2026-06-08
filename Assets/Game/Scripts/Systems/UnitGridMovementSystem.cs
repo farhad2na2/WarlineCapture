@@ -7,7 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
-[WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationState), typeof(UnitAirMovement))]
+[WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
 public partial struct UnitGridMoveJob : IJobEntity
 {
     private const int VehicleOccupancyPaddingCells = 1;
@@ -613,7 +613,7 @@ public partial struct UnitGridMoveJob : IJobEntity
 }
 
 [BurstCompile]
-[WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationState), typeof(UnitAirMovement))]
+[WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
 public partial struct UnitPathFollowCleanupJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter Ecb;
@@ -666,8 +666,8 @@ public partial struct UnitGridMovementSystem : ISystem
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<UnitPathFollow>();
         state.RequireForUpdate<UnitPathRange>();
-        state.RequireForUpdate<PathPoolData>();
-        state.RequireForUpdate<DynamicOccupancyData>();
+        state.RequireForUpdate<PathPoolComponent>();
+        state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
         state.RequireForUpdate<GridRoadDirt>();
@@ -695,12 +695,12 @@ public partial struct UnitGridMovementSystem : ISystem
         {
             var grid = SystemAPI.GetSingleton<GridConfig>();
             var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-            var pool = state.EntityManager.GetComponentData<PathPoolData>(gridEntity);
+            var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
             var poolArray = pool.Cells.AsArray();
             var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-            var dynamicBlocked = state.EntityManager.GetComponentData<DynamicBlockerData>(gridEntity).Blocked;
-            var friendlyPassFactionIds = state.EntityManager.GetComponentData<DynamicBlockerData>(gridEntity).FriendlyPassFactionIds;
-            var occupied = state.EntityManager.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+            var dynamicBlocked = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+            var friendlyPassFactionIds = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity).FriendlyPassFactionIds;
+            var occupied = state.EntityManager.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
             var roads = SystemAPI.GetBuffer<GridRoad>(gridEntity).AsNativeArray();
             var sidewalks = SystemAPI.GetBuffer<GridRoadSidewalk>(gridEntity).AsNativeArray();
             var dirtRoads = SystemAPI.GetBuffer<GridRoadDirt>(gridEntity).AsNativeArray();

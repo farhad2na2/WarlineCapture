@@ -44,7 +44,7 @@ public sealed class SelectionOrderMarkerSystem
         _gridBlockerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         _attackTargetPreviewQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<LocalTransform>());
@@ -152,7 +152,7 @@ public sealed class SelectionOrderMarkerSystem
 
         int cellIndex = GridUtils.CellToIndex(cell, grid.Width);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         bool blocked = walkable[cellIndex].Value == 0 || (blockerData.Blocked.IsCreated && blockerData.Blocked.IsSet(cellIndex));
 
         if (blocked)

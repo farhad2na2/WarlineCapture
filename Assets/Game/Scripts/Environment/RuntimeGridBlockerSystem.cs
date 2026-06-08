@@ -179,13 +179,13 @@ public sealed class RuntimeGridBlockerSystem
             return;
         }
 
-        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridWalkable> walkable, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridWalkable> walkable, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
             return;
 
         SpawnBlockers(grid, walkable, roads, blockerData);
     }
 
-    private void SpawnBlockers(GridConfig grid, DynamicBuffer<GridWalkable> walkable, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData)
+    private void SpawnBlockers(GridConfig grid, DynamicBuffer<GridWalkable> walkable, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData)
     {
         _readyForDependents = false;
         _runtimeBlockerCellCounts = new int[grid.Width * grid.Height];
@@ -299,15 +299,15 @@ public sealed class RuntimeGridBlockerSystem
 
         if (_dependencyStateEntity == Entity.Null || !em.Exists(_dependencyStateEntity))
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGridBlockerDependencyState>());
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGridBlockerDependencyComponent>());
             _dependencyStateEntity = query.IsEmptyIgnoreFilter
-                ? em.CreateEntity(typeof(RuntimeGridBlockerDependencyState))
+                ? em.CreateEntity(typeof(RuntimeGridBlockerDependencyComponent))
                 : query.GetSingletonEntity();
         }
 
         RuntimeCityReadModelSystem cityReadModel = _cityReadModel;
         bool pendingCity = cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
-        em.SetComponentData(_dependencyStateEntity, new RuntimeGridBlockerDependencyState
+        em.SetComponentData(_dependencyStateEntity, new RuntimeGridBlockerDependencyComponent
         {
             ReadyForDependents = _readyForDependents ? (byte)1 : (byte)0,
             SpawnOnStart = _spawnOnStart ? (byte)1 : (byte)0,
@@ -399,7 +399,7 @@ public sealed class RuntimeGridBlockerSystem
         GridConfig grid,
         DynamicBuffer<GridWalkable> walkable,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         NativeBitArray reserved,
         int startX,
         int startY,
@@ -502,7 +502,7 @@ public sealed class RuntimeGridBlockerSystem
         GridConfig grid,
         DynamicBuffer<GridWalkable> walkable,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         NativeBitArray reserved,
         List<PendingBlockerPlacement> pendingPlacements,
         List<Vector2Int> treeClusterCenters,
@@ -832,7 +832,7 @@ public sealed class RuntimeGridBlockerSystem
         out GridConfig grid,
         out DynamicBuffer<GridWalkable> walkable,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData)
+        out DynamicBlockerComponent blockerData)
     {
         gridEntity = Entity.Null;
         grid = default;
@@ -847,7 +847,7 @@ public sealed class RuntimeGridBlockerSystem
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<GridRoad>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;
 
@@ -855,7 +855,7 @@ public sealed class RuntimeGridBlockerSystem
         grid = em.GetComponentData<GridConfig>(gridEntity);
         walkable = em.GetBuffer<GridWalkable>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         return true;
     }
 

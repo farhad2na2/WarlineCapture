@@ -65,7 +65,7 @@ public enum AIControllerDifficulty : byte
     Hard = 2
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/AI Controller")]
+[CreateAssetMenu(menuName = "Game/Config/AI Controller")]
 public class AIControllerConfig : ScriptableObject
 {
     [Header("Identity")]
@@ -116,7 +116,7 @@ public class AIControllerConfig : ScriptableObject
     public List<string> PreferredVehicleIds => preferredVehicleIds;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Building Placement System")]
+[CreateAssetMenu(menuName = "Game/Config/Building Placement System")]
 public class BuildingPlacementSystemConfig : ScriptableObject
 { [SerializeField] private Camera worldCamera; [SerializeField] private GameObject roadPreviewPrefab; [SerializeField] private GameObject buildingSelectionMarkerPrefab; [Min(0.1f), SerializeField] private float buildButtonPreviewDistanceMultiplier = 1f; [Min(0.1f), SerializeField] private float unitCommandButtonPreviewDistanceMultiplier = 1f; [SerializeField] private List<GameObject> spawnables = new(); [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig; [SerializeField] private InitialUnitsSpawnerAuthoringConfig initialUnitsConfig; [SerializeField] private float buildPlaneY; [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
@@ -134,7 +134,7 @@ public class BuildingPlacementSystemConfig : ScriptableObject
     public Color PlacementInvalidColor => placementInvalidColor;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Road Build System")]
+[CreateAssetMenu(menuName = "Game/Config/Road Build System")]
 public class RoadBuildSystemConfig : ScriptableObject
 { [SerializeField] private Camera worldCamera; [SerializeField] private GameObject straightPrefab; [SerializeField] private GameObject tIntersectionPrefab; [SerializeField] private GameObject intersectionPrefab; [SerializeField] private GameObject endPrefab; [SerializeField] private GameObject cornerPrefab; [SerializeField] private GameObject autobahnPrefab; [SerializeField] private GameObject autobahnConnectPrefab; [SerializeField] private Vector3 gridOrigin = Vector3.zero; [SerializeField] private float buildPlaneY; [SerializeField] private float roadGridSize = 20f; [SerializeField] private int chunkSizeInCells = 8; [SerializeField] private float previewAlpha = 0.65f; [SerializeField] private GameObject soldierBasePrefab; [SerializeField] private Vector2Int soldierBaseFootprintCells = new(20, 20); [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private float placementOutlineWidth = 0.35f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
@@ -159,7 +159,7 @@ public class RoadBuildSystemConfig : ScriptableObject
     public Color PlacementInvalidColor => placementInvalidColor;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/RTS Selection System")]
+[CreateAssetMenu(menuName = "Game/Config/RTS Selection System")]
 public class RTSSelectionSystemConfig : ScriptableObject
 { [SerializeField] private Camera worldCamera; [SerializeField] private GameObject moveOrderMarkerPrefab; [SerializeField, Min(0.01f)] private float orderMarkerVisibleSeconds = 1.25f; [SerializeField] private GameObject attackOrderMarkerPrefab; [SerializeField] private Color selectionFill = new(0.2f, 1f, 0.2f, 0.15f); [SerializeField] private Color selectionBorder = new(0.2f, 1f, 0.2f, 0.95f); [SerializeField] private float dragThresholdPixels = 8f; [SerializeField, Min(0.1f)] private float selectionModeHoldSeconds = 1f; [SerializeField] private float panSensitivity = 0.03f; [SerializeField] private float zoomSpeed = 20f; [SerializeField] private float minZoomHeight = 10f; [SerializeField] private float maxZoomHeight = 45f; [SerializeField] private float normalModeZoomHeight = 24f; [SerializeField] private float buildModeZoomHeight = 100f; [SerializeField] private float normalModePitch = 58f; [SerializeField] private float buildModePitch = 64f; [SerializeField] private float normalModeYaw = 10f; [SerializeField] private float buildModeYaw = 10f; [SerializeField] private float normalModeFieldOfView = 36f; [SerializeField] private float buildModeFieldOfView = 32f; [SerializeField] private float fullscreenIsoZoomHeight = 40f; [SerializeField] private float fullscreenIsoPitch = 82f; [SerializeField] private float fullscreenIsoYaw = 10f; [SerializeField] private float fullscreenIsoOrthographicSize = 24f; [SerializeField] private float zoomTransitionSmoothTime = 0.25f;
 
@@ -190,7 +190,7 @@ public class RTSSelectionSystemConfig : ScriptableObject
     public float ZoomTransitionSmoothTime => zoomTransitionSmoothTime;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Runtime City Spawner")]
+[CreateAssetMenu(menuName = "Game/Config/Runtime City Spawner")]
 public class RuntimeCitySpawnerSystemConfig : ScriptableObject
 { [SerializeField] private bool spawnOnStart = true; [SerializeField] private bool generateBuildings = true; [SerializeField] private uint randomSeed = 24681357; [SerializeField] private int cityCount = 1; [SerializeField] private Vector2Int startCell = new(180, 180); [SerializeField] private int generationYieldInterval; [SerializeField] private int gasStationCount = 3; [SerializeField] private int shopCount = 20; [SerializeField] private int houseCount = 32; [SerializeField] private int otherBuildingCount = 8; [SerializeField] private int cityDecorationBuildingCount = 16; [SerializeField] private int hallPlazaRadiusRoadCells = 2; [SerializeField] private int extraTownRadiusRoadCells = 5; [SerializeField] private int cityMinSpacingRoadCells = 16; [Range(0f, 1f), SerializeField] private float ruralHouseRatio = 0.35f; [SerializeField] private int gasStationMinSpacingRoadCells = 3; [Range(0f, 1f), SerializeField] private float houseWallChance = 0.5f; [SerializeField] private int houseWallMinDistanceCells = 2; [SerializeField] private int houseWallMaxDistanceCells = 4; [SerializeField] private int landmarkMinDistanceFromHallRoadCells = 3; [SerializeField] private int landmarkClearanceCells = 4; [SerializeField] private int autobahnMinLengthRoadCells = 8; [SerializeField] private int autobahnEdgeMarginRoadCells = 3; [SerializeField] private int defaultBuildingMaxHealth = 300; [SerializeField] private GameObject clockTowerPrefab; [SerializeField] private List<GameObject> fountainPrefabs = new(); [SerializeField] private List<GameObject> monumentPrefabs = new(); [SerializeField] private List<GameObject> pillarPrefabs = new(); [SerializeField] private List<GameObject> hallPrefabs = new(); [SerializeField] private List<GameObject> gasStationPrefabs = new(); [SerializeField] private List<GameObject> shopPrefabs = new(); [SerializeField] private List<GameObject> housePrefabs = new(); [SerializeField] private List<GameObject> otherBuildingPrefabs = new(); [SerializeField] private List<GameObject> cityDecorationPrefabs = new(); [SerializeField] private List<GameObject> houseWallPrefabs = new(); [SerializeField] private GameObject houseWallGatePrefab; [SerializeField] private GameObject houseWallPillarPrefab;
 
@@ -233,7 +233,7 @@ public class RuntimeCitySpawnerSystemConfig : ScriptableObject
     public GameObject HouseWallPillarPrefab => houseWallPillarPrefab;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Runtime Decoration Spawner")]
+[CreateAssetMenu(menuName = "Game/Config/Runtime Decoration Spawner")]
 public class RuntimeDecorationSpawnerSystemConfig : ScriptableObject
 { [SerializeField] private bool spawnOnStart = true; [SerializeField] private int decorationCount = 150; [SerializeField] private uint randomSeed = 12345; [Range(0f, 1f), SerializeField] private float treeSpawnRatio = 0.3f; [Min(1), SerializeField] private int treeClusterCount = 5; [Min(1), SerializeField] private int treeClusterSpacingMinCells = 2; [Min(1), SerializeField] private int treeClusterSpacingMaxCells = 5; [Min(0), SerializeField] private int treeClusterDistanceMinCells; [Min(1), SerializeField] private int treeClusterDistanceMaxCells = 12; [SerializeField] private float yPosition; [SerializeField] private List<GameObject> prefabs = new();
 
@@ -250,7 +250,7 @@ public class RuntimeDecorationSpawnerSystemConfig : ScriptableObject
     public List<GameObject> Prefabs => prefabs;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Runtime Grid Blocker System")]
+[CreateAssetMenu(menuName = "Game/Config/Runtime Grid Blocker System")]
 public class RuntimeGridBlockerSystemConfig : ScriptableObject
 { [SerializeField] private bool spawnOnStart = true; [SerializeField] private int blockerCount = 80; [SerializeField] private uint randomSeed = 24680; [Range(0f, 1f), SerializeField] private float treeSpawnRatio = 0.4f; [Min(1), SerializeField] private int treeClusterCount = 6; [Min(1), SerializeField] private int treeClusterSpacingMinCells = 2; [Min(1), SerializeField] private int treeClusterSpacingMaxCells = 6; [Min(0), SerializeField] private int treeClusterDistanceMinCells; [Min(1), SerializeField] private int treeClusterDistanceMaxCells = 14; [SerializeField] private float yPosition; [SerializeField] private List<GameObject> prefabs = new();
 
@@ -267,7 +267,7 @@ public class RuntimeGridBlockerSystemConfig : ScriptableObject
     public List<GameObject> Prefabs => prefabs;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Day Night System")]
+[CreateAssetMenu(menuName = "Game/Config/Day Night System")]
 public class DayNightSystemConfig : ScriptableObject
 { [SerializeField] private float fullDayDurationMinutes = 5f; [SerializeField] private float startHour = 9f; [SerializeField] private Light directionalLight; [SerializeField] private Volume globalVolume; [SerializeField] private float sunYaw = 170f; [SerializeField] private bool animateDirectionalLight; [SerializeField, Range(0f, 24f)] private float nightStartsAtHour = 19f; [SerializeField, Range(0f, 24f)] private float morningStartsAtHour = 6f; [SerializeField, Range(0f, 24f)] private float nightVisionStartHour = 19f; [SerializeField, Range(0f, 24f)] private float nightVisionEndHour = 6f; [SerializeField] private float nightVisionPostExposure = 2.2f; [SerializeField] private Color nightVisionColorFilter = new(0.55f, 1f, 0.58f, 1f); [SerializeField] private float nightVisionTemperature = -80f; [SerializeField] private float nightVisionTint = -55f; [SerializeField, Min(0f)] private float nightVisionBloomIntensity = 0.02f; [SerializeField, Min(0f)] private float nightVisionBloomThreshold = 2f; [SerializeField] private bool affectFog = true; [SerializeField] private bool affectVolume = true; [SerializeField] private bool updateDynamicGI = false; [SerializeField, Min(1f)] private float dynamicGIRefreshIntervalSeconds = 30f;
 
@@ -293,7 +293,7 @@ public class DayNightSystemConfig : ScriptableObject
     public float DynamicGIRefreshIntervalSeconds => dynamicGIRefreshIntervalSeconds;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Attack Trace System")]
+[CreateAssetMenu(menuName = "Game/Config/Unit Attack Trace System")]
 public class UnitAttackTraceSystemConfig : ScriptableObject
 { [SerializeField] private Camera worldCamera; [SerializeField] private float sourceHeightOffset = 0.9f; [SerializeField] private float targetHeightOffset = 0.9f; [SerializeField] private Shader traceShader;
 
@@ -303,7 +303,7 @@ public class UnitAttackTraceSystemConfig : ScriptableObject
     public Shader TraceShader => traceShader;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Game Strings")]
+[CreateAssetMenu(menuName = "Game/Config/Game Strings")]
 public class GameStringsConfig : ScriptableObject
 {
     [SerializeField] private List<GameStringConfigEntry> entries = new();
@@ -311,7 +311,7 @@ public class GameStringsConfig : ScriptableObject
     public List<GameStringConfigEntry> Entries => entries;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Prefab Preview Camera")]
+[CreateAssetMenu(menuName = "Game/Config/Prefab Preview Camera")]
 public class PrefabPreviewCameraConfig : ScriptableObject
 {
     [Header("Character Preview Model")]
@@ -364,7 +364,7 @@ public class PrefabPreviewCameraConfig : ScriptableObject
     public float BuildingTargetHeight => Mathf.Max(0.01f, buildingTargetHeight);
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Grid Authoring")]
+[CreateAssetMenu(menuName = "Game/Config/Grid Authoring")]
 public class GridAuthoringConfig : ScriptableObject
 { [SerializeField] private int width = 16; [SerializeField] private int height = 16; [SerializeField] private float cellSize = 1f; [SerializeField] private Vector3 origin = Vector3.zero; [SerializeField] private Vector2Int[] blockedCells; [SerializeField] private bool drawGrid = true; [SerializeField] private bool drawWhenNotSelected = true; [SerializeField] private bool drawRuntimeDebugInPlayMode = true; [SerializeField] private bool fillWalkableCells; [SerializeField] private bool fillRoadCells = true; [SerializeField] private bool fillSidewalkCells = true; [SerializeField] private float roadCellDebugScale = 0.35f; [SerializeField] private bool fillBuildingCells = true; [SerializeField] private bool fillRuntimeBlockerCells = true; [SerializeField] private bool fillVehicleFootprintCells = true; [SerializeField] private bool drawUnitPaths = true; [SerializeField] private int maxGridLinesPerAxis = 256; [SerializeField] private int maxFilledDebugCells = 250000; [SerializeField] private Color gridLineColor = new(1f, 1f, 1f, 0.15f); [SerializeField] private Color walkableFillColor = new(0.2f, 1f, 0.2f, 0.05f); [SerializeField] private Color roadFillColor = new(0.2f, 0.7f, 1f, 0.28f); [SerializeField] private Color sidewalkFillColor = new(0.2f, 0.85f, 0.25f, 0.5f); [SerializeField] private Color buildingFillColor = new(1f, 0.65f, 0.2f, 0.3f); [SerializeField] private Color runtimeBlockerFillColor = new(0.18f, 0.18f, 0.18f, 0.55f); [SerializeField] private Color vehicleFootprintFillColor = new(0.08f, 0.5f, 0.82f, 0.4f); [SerializeField] private Color unitPathColor = new(0.15f, 1f, 0.9f, 0.9f); [SerializeField] private Color stuckUnitPathColor = new(1f, 0.15f, 0.15f, 0.95f); [SerializeField] private Color blockedFillColor = new(1f, 0.2f, 0.2f, 0.25f);
 
@@ -398,7 +398,7 @@ public class GridAuthoringConfig : ScriptableObject
     public Color BlockedFillColor => blockedFillColor;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Static Grid Blocker Authoring")]
+[CreateAssetMenu(menuName = "Game/Config/Static Grid Blocker Authoring")]
 public class StaticGridBlockerAuthoringConfig : ScriptableObject
 { [SerializeField] private Vector2Int cell = new(5, 5); [SerializeField] private Vector2Int size = new(1, 1);
 
@@ -406,7 +406,7 @@ public class StaticGridBlockerAuthoringConfig : ScriptableObject
     public Vector2Int Size => size;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Building Definition Authoring")]
+[CreateAssetMenu(menuName = "Game/Config/Building Definition Authoring")]
 public class BuildingDefinitionAuthoringConfig : ScriptableObject
 { [SerializeField] private string displayName = "Building";
     [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
@@ -439,7 +439,7 @@ public class BuildingDefinitionAuthoringConfig : ScriptableObject
     public List<BuildingProductionConfigEntry> Productions => productions;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Faction Visual Settings")]
+[CreateAssetMenu(menuName = "Game/Config/Faction Visual Settings")]
 public class FactionVisualSettingsConfig : ScriptableObject
 { [SerializeField] private Color playerColor = new(0.12f, 0.72f, 1f, 1f); [SerializeField] private Color enemyColor = new(1f, 0.35f, 0.2f, 1f); [SerializeField] private Color neutralColor = new(0.82f, 0.82f, 0.82f, 1f); [Range(0f, 1f), SerializeField] private float buildingFactionTintStrength = 0.45f;
 
@@ -449,7 +449,7 @@ public class FactionVisualSettingsConfig : ScriptableObject
     public float BuildingFactionTintStrength => Mathf.Clamp01(buildingFactionTintStrength);
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Health Bar")]
+[CreateAssetMenu(menuName = "Game/Config/Unit Health Bar")]
 public class UnitHealthBarConfig : ScriptableObject
 {
     [Range(0f, 1f), SerializeField] private float defaultFill = 1f;
@@ -457,14 +457,14 @@ public class UnitHealthBarConfig : ScriptableObject
     public float DefaultFill => defaultFill;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Faction Tint Target")]
+[CreateAssetMenu(menuName = "Game/Config/Faction Tint Target")]
 public class FactionTintTargetConfig : ScriptableObject
 { [SerializeField] private Color defaultColor = Color.white;
 
     public Color DefaultColor => defaultColor;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Grid Authoring")]
+[CreateAssetMenu(menuName = "Game/Config/Unit Grid Authoring")]
 public class UnitGridAuthoringConfig : ScriptableObject
 {
     [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private Sprite weaponSprite; [SerializeField] private string weaponDisplayName; [SerializeField] private bool allowIdleWander = true; [SerializeField] private bool autoCalculateFootprint; [SerializeField] private Vector2Int footprintCells = new(1, 1); [SerializeField] private bool usesVehicleMotion; [SerializeField] private bool isAirUnit; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price; [SerializeField] private float productionDurationSeconds = 60f; [SerializeField] private GameObject productionTransportPrefab; [SerializeField] private bool isProductionTransportUnit; [SerializeField] private float productionTransportArrivalSeconds = 5f; [SerializeField] private float productionTransportHoldForNextReadySeconds = 4f; [SerializeField, Min(1)] private int productionTransportMaxConcurrent = 1; [SerializeField] private bool productionTransportRequiresAirportRunway; [SerializeField] private bool productionTransportUsesRunwayLanding; [SerializeField, Min(0)] private int soldierTransportCapacity; [SerializeField, Min(0.01f)] private float runwayTaxiSpeed = 5f; [SerializeField] private float speed = 5f; [SerializeField] private float walkSpeed = 2f; [SerializeField] private float roadSpeedMultiplier = 1.2f; [SerializeField] private float arriveDistance = 0.05f; [SerializeField] private float groundOffset; [Header("Identity")] [SerializeField] private string displayName; [TextArea, SerializeField] private string description; [Header("LOD")] [SerializeField] private GameObject midLodPrefab; [SerializeField] private GameObject lowLodPrefab; [Header("Unit Visuals")] [SerializeField] private GameObject unitSelectionMarkerPrefab; [SerializeField] private GameObject unitHealthBarPrefab; [SerializeField] private bool tintUnitModelRenderers = true; [Header("Vehicle Visuals")] [SerializeField] private GameObject vehicleDestroyedVisualPrefab; [SerializeField] private GameObject vehicleSelectionMarkerPrefab; [SerializeField] private GameObject vehicleHealthBarPrefab; [SerializeField] private bool tintVehicleModelRenderers = true; [Header("Resource Hauler")] [SerializeField, Min(0)] private int resourceHaulerBarrelCapacity; [SerializeField, Min(0.01f)] private float resourceHaulerFillDurationSeconds = 2f; [SerializeField, Min(0.01f)] private float resourceHaulerUnloadDurationSeconds = 1.5f; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [SerializeField] private bool canAttack = true; [SerializeField] private bool allowAutoEngage = true; [SerializeField] private bool usesTurretAim; [SerializeField] private int aggroRangeCells = 6; [SerializeField] private float attackRange = 2f; [SerializeField] private float chaseBreakDistance = 8f; [SerializeField] private float attackCooldownSeconds = 1f; [SerializeField] private int attackDamage = 10; [SerializeField] private int maxHealth = 100; [SerializeField] private GameObject attackImpactPrefab; [SerializeField] private Color attackTraceColor = new(1f, 0.85f, 0.2f, 1f); [SerializeField] private float attackTraceWidth = 0.18f; [SerializeField] private float attackTraceScrollSpeed = 10f; [SerializeField] private float attackTraceDashDensity = 10f; [SerializeField] private float attackTraceVisibleSeconds = 0.08f; [SerializeField] private float idleDelayMinSeconds = 5f; [SerializeField] private float idleDelayMaxSeconds = 7f; [SerializeField] private float idleWanderDistanceMin = 3f; [SerializeField] private float idleWanderDistanceMax = 5f; [SerializeField] private float attackAnimationSeconds = 0.25f; [SerializeField] private float deathAnimationSeconds = 1.25f; [SerializeField] private List<UnitAnimationKind> animationOrder = new();
@@ -579,7 +579,7 @@ public class UnitGridAuthoringConfig : ScriptableObject
     public List<UnitAnimationKind> AnimationOrder => animationOrder;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Grid Test Spawner Authoring")]
+[CreateAssetMenu(menuName = "Game/Config/Grid Test Spawner Authoring")]
 public class InitialUnitsSpawnerAuthoringConfig : ScriptableObject
 {
     [System.Serializable]

@@ -5,13 +5,13 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
 internal sealed class BuildingPlacementVisualUpdateSystem
 {
-    internal delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    internal delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     internal delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
-    internal delegate bool IsPlacementValidDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData);
+    internal delegate bool IsPlacementValidDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData);
     internal delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
     internal delegate BuildingPlacementContextSystem.Source CreatePlacementContextSourceDelegate();
     internal delegate BuildingBarrierSystem.Context CreateBuildingBarrierContextDelegate();
-    internal delegate void SelectAndFocusBuildingDelegate(RuntimeBuildingData building);
+    internal delegate void SelectAndFocusBuildingDelegate(RuntimeBuildingEntity building);
 
     internal readonly struct Context
     {
@@ -99,7 +99,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         if (!BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
             return true;
 
-        return context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) &&
+        return context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) &&
                context.ValidationSystem.AreAllPendingWallRunsValid(
                    placement,
                    context.InputSystem,
@@ -123,7 +123,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         if (placement == null || placement.PreviewInstance == null)
             return;
 
-        if (!context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
+        if (!context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
         {
             placement.IsValid = false;
             context.PreviewSystem.HideOutline();
@@ -200,7 +200,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         BuildingPlacementCommitSystem.CommitRequest request = context.ContextSystem.CreateCommitRequest(placementContextSource, placement);
         BuildingPlacementCommitSystem.CommitContext commitContext = context.ContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
 
-        RuntimeBuildingData building = context.CommitSystem.CommitPlacement(request, commitContext);
+        RuntimeBuildingEntity building = context.CommitSystem.CommitPlacement(request, commitContext);
         context.LifecycleSystem.ReleasePreviewOwnership(placement);
         if (building != null)
             context.SelectAndFocusBuilding(building);
@@ -211,7 +211,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         PlacementState placement,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         bool shouldFollowCamera)
     {
         List<Vector2Int> wallOrigins = placement.HideCurrentWallPreview

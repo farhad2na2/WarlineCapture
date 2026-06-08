@@ -156,15 +156,15 @@ Create:
 
 - `UIRoute.cs`
 - `UIRouter.cs`
-- `WarlineCaptureScreenController.cs`
-- `WarlineCaptureModalController.cs`
-- `UISafeArea.cs`
-- `ScreenRouteSystem.cs`
+- `UIScreenView.cs`
+- `UIModalView.cs`
+- `UISafeAreaView.cs`
+- `UIShellRouteButtonView.cs`
 
 Suggested route enum:
 
 ```csharp
-public enum WarlineCaptureRoute
+public enum UIRoute
 {
     Splash,
     MainMenu,

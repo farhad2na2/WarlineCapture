@@ -59,9 +59,9 @@ public partial struct RuntimeGridDeduplicationSystem : ISystem
 
     private static void DisposeNativeGridData(EntityManager em, Entity entity)
     {
-        if (em.HasComponent<DynamicBlockerData>(entity))
+        if (em.HasComponent<DynamicBlockerComponent>(entity))
         {
-            DynamicBlockerData data = em.GetComponentData<DynamicBlockerData>(entity);
+            DynamicBlockerComponent data = em.GetComponentData<DynamicBlockerComponent>(entity);
             if (data.Counts.IsCreated)
                 data.Counts.Dispose();
             if (data.Blocked.IsCreated)
@@ -70,16 +70,16 @@ public partial struct RuntimeGridDeduplicationSystem : ISystem
                 data.FriendlyPassFactionIds.Dispose();
         }
 
-        if (em.HasComponent<PathPoolData>(entity))
+        if (em.HasComponent<PathPoolComponent>(entity))
         {
-            PathPoolData pool = em.GetComponentData<PathPoolData>(entity);
+            PathPoolComponent pool = em.GetComponentData<PathPoolComponent>(entity);
             if (pool.Cells.IsCreated)
                 pool.Cells.Dispose();
         }
 
-        if (em.HasComponent<DynamicOccupancyData>(entity))
+        if (em.HasComponent<DynamicOccupancyComponent>(entity))
         {
-            DynamicOccupancyData occupancy = em.GetComponentData<DynamicOccupancyData>(entity);
+            DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(entity);
             if (occupancy.Occupied.IsCreated)
                 occupancy.Occupied.Dispose();
         }

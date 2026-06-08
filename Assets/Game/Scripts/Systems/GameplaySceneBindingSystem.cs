@@ -1,7 +1,4 @@
-using Game.Scripts.UI;
 using System.Collections.Generic;
-using Unity.Entities;
-using UnityEngine;
 
 public sealed class GameplaySceneBindingSystem
 {
@@ -16,27 +13,5 @@ public sealed class GameplaySceneBindingSystem
 
             grid.BindRuntimeGridBlockers(runtimeGridBlockers);
         }
-    }
-
-    public void BindGameplayUiRuntimeDependencies(
-        World world,
-        SelectionUiCommandSystem selectionUiCommandSystem,
-        MainMenuPlayUI mainMenuPlayUi = null)
-    {
-        IReadOnlyList<UIShellContentSystem> contentSystems = UIShellContentSystem.Instances;
-        for (int i = 0; i < contentSystems.Count; i++)
-        {
-            UIShellContentSystem contentSystem = contentSystems[i];
-            if (IsLoadedSceneObject(contentSystem))
-                contentSystem.BindGameplayRuntimeDependencies(selectionUiCommandSystem, mainMenuPlayUi);
-        }
-    }
-
-    private bool IsLoadedSceneObject(Component component)
-    {
-        return component != null &&
-            component.gameObject != null &&
-            component.gameObject.scene.IsValid() &&
-            component.gameObject.scene.isLoaded;
     }
 }

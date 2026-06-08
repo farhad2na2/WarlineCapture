@@ -150,10 +150,10 @@ public readonly struct UnitTransportBoardingDiagnosticSystem
     {
         if (!em.Exists(entity) || !em.HasComponent<UnitAirMovement>(entity))
             return "air=none";
-        if (!em.HasComponent<UnitAirState>(entity))
+        if (!em.HasComponent<UnitAirComponent>(entity))
             return "air=missing-state";
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(entity);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
         return $"airborne={airState.Airborne} takeoff={airState.TakeoffRolling} landing={airState.LandingRolling} returning={airState.ReturningHome} rope={(em.HasComponent<UnitTransportRopeDisembarkRequest>(entity) ? 1 : 0)}";
     }
 

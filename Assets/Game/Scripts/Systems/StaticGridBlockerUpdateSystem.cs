@@ -78,14 +78,14 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<DynamicBlockerData>();
+        state.RequireForUpdate<DynamicBlockerComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        var blockerDataRw = SystemAPI.GetComponentRW<DynamicBlockerData>(gridEntity);
+        var blockerDataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
 
         var counts = blockerDataRw.ValueRW.Counts;
         var blocked = blockerDataRw.ValueRW.Blocked;

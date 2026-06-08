@@ -79,10 +79,10 @@ public sealed class SelectedMoveOrderCommandSystem
         Entity gridEntity = gridConfigQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
         NativeBitArray blocked = blockerData.Blocked;
         NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         var reservedGoalCells = new HashSet<int>();
         HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
         var issuedGoals = new int2[entities.Length];

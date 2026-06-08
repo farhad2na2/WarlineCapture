@@ -25,7 +25,7 @@ public sealed class UnitImpostorAtlasEntry
         : DefaultGroundAnchorNormalized;
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Prefab Registry")]
+[CreateAssetMenu(menuName = "Game/Config/Unit Prefab Registry")]
 public class UnitPrefabRegistryAuthoringConfig : ScriptableObject
 {
     [SerializeField] private List<GameObject> unitSpawnPrefabs = new();

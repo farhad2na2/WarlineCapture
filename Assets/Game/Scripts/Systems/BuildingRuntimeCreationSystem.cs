@@ -15,12 +15,12 @@ internal sealed class BuildingRuntimeCreationSystem
     public delegate Entity CreateCombatEntityDelegate(Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation);
     public delegate void RedirectUnitsDelegate(RectInt occupiedRect);
     public delegate void AddDeferredRedirectFootprintDelegate(RectInt occupiedRect);
-    public delegate void RuntimeBuildingAction(RuntimeBuildingData building);
+    public delegate void RuntimeBuildingAction(RuntimeBuildingEntity building);
     public delegate void RuntimeAction();
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly bool DeferSideEffects;
@@ -38,7 +38,7 @@ internal sealed class BuildingRuntimeCreationSystem
         public readonly RuntimeAction RefreshMarkers;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             bool deferSideEffects,
@@ -77,7 +77,7 @@ internal sealed class BuildingRuntimeCreationSystem
     private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();
     private readonly BuildingFoundationVisualSystem _foundationVisualSystem = new();
 
-    public RuntimeBuildingData RegisterRuntimeBuilding(
+    public RuntimeBuildingEntity RegisterRuntimeBuilding(
         Context context,
         BuildingDefinition definition,
         GameObject instance,
@@ -131,7 +131,7 @@ internal sealed class BuildingRuntimeCreationSystem
             context.RedirectUnits?.Invoke(occupiedRect);
         }
 
-        var building = new RuntimeBuildingData
+        var building = new RuntimeBuildingEntity
         {
             Id = buildingId,
             Definition = definition,
@@ -141,7 +141,7 @@ internal sealed class BuildingRuntimeCreationSystem
             BlockerEntity = blockerEntity,
             ProductionSpawnLocalPositions = definition.ProductionSpawnLocalPositions,
             ProducedUnits = new List<Entity>(),
-            PendingProductions = new List<RuntimeBuildingData.PendingProduction>(),
+            PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>(),
             StoredOilBarrels = 0f,
             StoredFuelBarrels = 0f
         };
@@ -186,7 +186,7 @@ internal sealed class BuildingRuntimeCreationSystem
     private static void AttachRuntimeLink(
         BuildingPlacementInteractionSystem interactionSystem,
         BuildingPlacementInteractionSystem.Context interactionContext,
-        RuntimeBuildingData building)
+        RuntimeBuildingEntity building)
     {
         if (interactionSystem == null || building?.Instance == null)
             return;

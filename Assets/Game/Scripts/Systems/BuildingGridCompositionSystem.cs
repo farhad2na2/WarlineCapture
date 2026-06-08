@@ -11,7 +11,7 @@ internal sealed class BuildingGridCompositionSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData)
+        out DynamicBlockerComponent blockerData)
     {
         return source.BuildingGameplayGridDataSystem.TryGetGridData(
             source.BuildingGameplayEcsQuerySystem,

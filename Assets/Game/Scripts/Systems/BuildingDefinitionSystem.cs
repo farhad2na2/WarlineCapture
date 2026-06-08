@@ -456,7 +456,7 @@ internal sealed class BuildingDefinitionSystem
         return value.Trim().ToLowerInvariant();
     }
 
-    public static bool RuntimeBuildingMatchesId(RuntimeBuildingData building, string normalizedBuildingId)
+    public static bool RuntimeBuildingMatchesId(RuntimeBuildingEntity building, string normalizedBuildingId)
     {
         return building?.Definition != null && RuntimeDefinitionMatchesId(building.Definition, normalizedBuildingId);
     }
@@ -504,9 +504,6 @@ internal sealed class BuildingDefinitionSystem
         localBounds = default;
         if (prefab == null)
             return false;
-
-        if (TryGetModelLocalBounds(prefab.transform, out localBounds))
-            return true;
 
         return TryGetLocalBounds(prefab, out localBounds);
     }
@@ -707,41 +704,6 @@ internal sealed class BuildingDefinitionSystem
         return true;
     }
 
-    private static bool TryGetModelLocalBounds(Transform root, out Bounds combinedBounds)
-    {
-        combinedBounds = default;
-        if (root == null)
-            return false;
-
-        Transform modelRoot = root.Find("Model");
-        if (modelRoot == null)
-            return false;
-
-        MeshRenderer[] renderers = modelRoot.GetComponentsInChildren<MeshRenderer>(true);
-        Matrix4x4 worldToLocal = root.worldToLocalMatrix;
-        bool hasBounds = false;
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            MeshRenderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            Bounds localBounds = TransformRendererBounds(worldToLocal * renderer.localToWorldMatrix, renderer.localBounds);
-            if (!hasBounds)
-            {
-                combinedBounds = localBounds;
-                hasBounds = true;
-            }
-            else
-            {
-                combinedBounds.Encapsulate(localBounds);
-            }
-        }
-
-        return hasBounds;
-    }
-
     private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)
     {
         bounds = default;
@@ -784,30 +746,4 @@ internal sealed class BuildingDefinitionSystem
         return hasBounds;
     }
 
-    private static Bounds TransformRendererBounds(Matrix4x4 matrix, Bounds bounds)
-    {
-        Vector3 center = bounds.center;
-        Vector3 extents = bounds.extents;
-
-        Vector3 min = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
-        Vector3 max = new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
-
-        for (int x = -1; x <= 1; x += 2)
-        {
-            for (int y = -1; y <= 1; y += 2)
-            {
-                for (int z = -1; z <= 1; z += 2)
-                {
-                    Vector3 corner = center + Vector3.Scale(extents, new Vector3(x, y, z));
-                    Vector3 transformed = matrix.MultiplyPoint3x4(corner);
-                    min = Vector3.Min(min, transformed);
-                    max = Vector3.Max(max, transformed);
-                }
-            }
-        }
-
-        Bounds transformedBounds = new();
-        transformedBounds.SetMinMax(min, max);
-        return transformedBounds;
-    }
 }

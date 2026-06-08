@@ -31,6 +31,21 @@ public sealed class AIStartupSystem
         AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
+        return Initialize(
+            world,
+            aiControllerConfigs,
+            planEntryConfig,
+            resolveFactionSpawnCell,
+            AISettingsRuntimeState.CurrentSnapshot);
+    }
+
+    public Result Initialize(
+        World world,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig planEntryConfig,
+        TryResolveFactionSpawnCell resolveFactionSpawnCell,
+        AISettingsSnapshot aiSettings)
+    {
         Result result = default;
         if (world == null || !world.IsCreated)
             return result;
@@ -38,19 +53,26 @@ public sealed class AIStartupSystem
         EntityManager em = world.EntityManager;
         if (aiControllerConfigs != null)
         {
-            _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs);
-            AIFactionControlStartupSystem.Result factionControlResult = _factionControlStartupSystem.Initialize(em, aiControllerConfigs);
+            _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
+            AIFactionControlStartupSystem.Result factionControlResult = _factionControlStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
             result = new Result(factionControlResult.HasPlayerAutoMode, factionControlResult.PlayerAutoModeEnabled);
-            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell);
-            EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig);
-            EnsureAISquadPlansInitialized(em, aiControllerConfigs);
-            EnsureAITargetPrioritySettingsInitialized(em, aiControllerConfigs);
+            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell, aiSettings);
+            EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig, aiSettings);
+            EnsureAISquadPlansInitialized(em, aiControllerConfigs, aiSettings);
+            EnsureAITargetPrioritySettingsInitialized(em, aiControllerConfigs, aiSettings);
         }
 
         return result;
     }
 
     public void LogConfigValidation(IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    {
+        LogConfigValidation(aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
+    }
+
+    public void LogConfigValidation(
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
     {
         if (!ShouldQueueAIConfigDiagnostics())
             return;
@@ -99,12 +121,12 @@ public sealed class AIStartupSystem
 
         queuedDiagnostics |= TryEnqueueAIDiagnostic($"[AIConfigSummary] configs={aiControllerConfigs.Count} enabled={enabledCount} playerAuto={playerAutoCount} enemy={enemyCount} result=Ready");
         queuedDiagnostics |= TryEnqueueAIDiagnostic(
-            $"[AISettings] difficulty={AISettingsRuntimeState.Difficulty} startingMoney={AISettingsRuntimeState.StartingMoney} " +
-            $"income={AISettingsRuntimeState.IncomeMultiplier:F2} buildSpeed={AISettingsRuntimeState.BuildSpeed} " +
-            $"productionSpeed={AISettingsRuntimeState.UnitProductionSpeed} groupSize={AISettingsRuntimeState.AttackGroupSize} " +
-            $"attackFrequency={AISettingsRuntimeState.AttackFrequency} aggression={AISettingsRuntimeState.Aggression} " +
-            $"expansion={AISettingsRuntimeState.Expansion} targetPriority={AISettingsRuntimeState.TargetPriority} " +
-            $"playerAuto={(AISettingsRuntimeState.PlayerAutoAIEnabled ? 1 : 0)} enemyCount={AISettingsRuntimeState.EnemyAICount}");
+            $"[AISettings] difficulty={aiSettings.Difficulty} startingMoney={aiSettings.StartingMoney} " +
+            $"income={aiSettings.IncomeMultiplier:F2} buildSpeed={aiSettings.BuildSpeed} " +
+            $"productionSpeed={aiSettings.UnitProductionSpeed} groupSize={aiSettings.AttackGroupSize} " +
+            $"attackFrequency={aiSettings.AttackFrequency} aggression={aiSettings.Aggression} " +
+            $"expansion={aiSettings.Expansion} targetPriority={aiSettings.TargetPriority} " +
+            $"playerAuto={(aiSettings.PlayerAutoAIEnabled ? 1 : 0)} enemyCount={aiSettings.EnemyAICount}");
         FlushQueuedAIDiagnostics(queuedDiagnostics);
     }
 
@@ -164,7 +186,8 @@ public sealed class AIStartupSystem
         EntityManager em,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig planEntryConfig,
-        TryResolveFactionSpawnCell resolveFactionSpawnCell)
+        TryResolveFactionSpawnCell resolveFactionSpawnCell,
+        AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>());
         using var entities = query.ToEntityArray(Allocator.Temp);
@@ -185,7 +208,7 @@ public sealed class AIStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
@@ -206,10 +229,10 @@ public sealed class AIStartupSystem
             em.SetComponentData(planEntity, new AIBuildPlan
             {
                 FactionId = factionId,
-                Enabled = AISettingsRuntimeState.ResolveBuildEnabled(config) ? (byte)1 : (byte)0,
+                Enabled = aiSettings.ResolveBuildEnabled(config) ? (byte)1 : (byte)0,
                 NextBuildIndex = 0,
                 BaseCenterCell = baseCenterCell,
-                BuildIntervalSeconds = AISettingsRuntimeState.ApplyBuildInterval(config.BuildIntervalSeconds, config.Role),
+                BuildIntervalSeconds = aiSettings.ApplyBuildInterval(config.BuildIntervalSeconds, config.Role),
                 LastBuildTime = -999f,
                 LastLogTime = -999f
             });
@@ -223,7 +246,8 @@ public sealed class AIStartupSystem
     private void EnsureAIProductionPlansInitialized(
         EntityManager em,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
-        AIPlanEntryStartupConfig planEntryConfig)
+        AIPlanEntryStartupConfig planEntryConfig,
+        AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIProductionPlan>());
         using var entities = query.ToEntityArray(Allocator.Temp);
@@ -244,7 +268,7 @@ public sealed class AIStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
@@ -262,11 +286,11 @@ public sealed class AIStartupSystem
             em.SetComponentData(planEntity, new AIProductionPlan
             {
                 FactionId = factionId,
-                Enabled = AISettingsRuntimeState.ResolveEnabled(config) ? (byte)1 : (byte)0,
+                Enabled = aiSettings.ResolveEnabled(config) ? (byte)1 : (byte)0,
                 NextUnitIndex = 0,
                 TargetProducedUnits = 3,
                 MaxQueuedUnits = 3,
-                UnitProductionIntervalSeconds = AISettingsRuntimeState.ApplyProductionInterval(config.UnitProductionIntervalSeconds, config.Role),
+                UnitProductionIntervalSeconds = aiSettings.ApplyProductionInterval(config.UnitProductionIntervalSeconds, config.Role),
                 LastProductionTime = -999f,
                 LastLogTime = -999f
             });
@@ -281,7 +305,10 @@ public sealed class AIStartupSystem
         }
     }
 
-    private void EnsureAISquadPlansInitialized(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    private void EnsureAISquadPlansInitialized(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
         using var entities = query.ToEntityArray(Allocator.Temp);
@@ -302,7 +329,7 @@ public sealed class AIStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
@@ -319,23 +346,26 @@ public sealed class AIStartupSystem
                 _ => 8
             };
             int minUnits = Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(2f, 5f, config.Aggression)), 2, maxUnits);
-            maxUnits = AISettingsRuntimeState.ApplyMaxSquadUnits(maxUnits, config.Role);
-            minUnits = AISettingsRuntimeState.ApplyMinSquadUnits(minUnits, maxUnits, config.Role);
+            maxUnits = aiSettings.ApplyMaxSquadUnits(maxUnits, config.Role);
+            minUnits = aiSettings.ApplyMinSquadUnits(minUnits, maxUnits, config.Role);
 
             em.SetComponentData(planEntity, new AISquadPlan
             {
                 FactionId = factionId,
-                Enabled = AISettingsRuntimeState.ResolveEnabled(config) ? (byte)1 : (byte)0,
+                Enabled = aiSettings.ResolveEnabled(config) ? (byte)1 : (byte)0,
                 MinUnits = minUnits,
                 MaxUnits = maxUnits,
-                MaxActiveSquads = AISettingsRuntimeState.ApplyMaxActiveSquads(config.MaxActiveAttackGroups, config.Role),
+                MaxActiveSquads = aiSettings.ApplyMaxActiveSquads(config.MaxActiveAttackGroups, config.Role),
                 NextSquadId = 1,
                 LastLogTime = -999f
             });
         }
     }
 
-    private void EnsureAITargetPrioritySettingsInitialized(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    private void EnsureAITargetPrioritySettingsInitialized(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AITargetPrioritySetting>());
         using var entities = query.ToEntityArray(Allocator.Temp);
@@ -356,7 +386,7 @@ public sealed class AIStartupSystem
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
                 continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
+            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
             byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
@@ -369,18 +399,21 @@ public sealed class AIStartupSystem
             em.SetComponentData(settingEntity, new AITargetPrioritySetting
             {
                 FactionId = factionId,
-                Priority = config.Role == AIControllerRole.Enemy ? (byte)AISettingsRuntimeState.TargetPriority : (byte)AITargetPriority.Balanced
+                Priority = config.Role == AIControllerRole.Enemy ? (byte)aiSettings.TargetPriority : (byte)AITargetPriority.Balanced
             });
         }
     }
 
-    private bool ShouldIncludeAIConfig(AIControllerConfig config, ref int enemyConfigIndex)
+    private static bool ShouldIncludeAIConfig(
+        AIControllerConfig config,
+        ref int enemyConfigIndex,
+        AISettingsSnapshot aiSettings)
     {
         if (config == null || config.Role != AIControllerRole.Enemy)
             return true;
 
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
-        return AISettingsRuntimeState.IsEnemyAIIndexEnabled(currentIndex);
+        return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
     }
 }

@@ -23,8 +23,8 @@ public sealed class BuildingTargetMoveOrderSystem
         _gridPathingQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>(),
-            ComponentType.ReadOnly<DynamicOccupancyData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
     }
 
     public bool TryIssueMoveOrderToBuilding(
@@ -43,8 +43,8 @@ public sealed class BuildingTargetMoveOrderSystem
         Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        NativeBitArray blocked = em.GetComponentData<DynamicBlockerData>(gridEntity).Blocked;
-        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
 
         int2 referenceCell = em.GetComponentData<UnitGrid>(selectedEntities[0]).Cell;
         if (!TryFindBuildingApproachCell(grid, walkable, blocked, occupied, originCell, footprintCells, referenceCell, out int2 goal))

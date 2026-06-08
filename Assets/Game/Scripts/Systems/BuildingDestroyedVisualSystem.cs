@@ -17,7 +17,7 @@ public sealed class BuildingDestroyedVisualSystem
         }
     }
 
-    internal void BeginDestroyedVisual(Context context, RuntimeBuildingData building)
+    internal void BeginDestroyedVisual(Context context, RuntimeBuildingEntity building)
     {
         if (building == null)
             return;
@@ -40,7 +40,7 @@ public sealed class BuildingDestroyedVisualSystem
         building.DestroyedVisualInstance = instance;
     }
 
-    internal void CleanupDestroyedVisual(Context context, RuntimeBuildingData building)
+    internal void CleanupDestroyedVisual(Context context, RuntimeBuildingEntity building)
     {
         if (building?.DestroyedVisualInstance == null)
             return;
@@ -49,7 +49,7 @@ public sealed class BuildingDestroyedVisualSystem
         building.DestroyedVisualInstance = null;
     }
 
-    private static void HideAliveVisuals(Context context, RuntimeBuildingData building)
+    private static void HideAliveVisuals(Context context, RuntimeBuildingEntity building)
     {
         IReadOnlyList<Transform> aliveRoots = building.AliveVisualRootTransforms;
         if (aliveRoots == null)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,27 +12,12 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
             return;
         }
 
-        bool handledConfiguredGroup = false;
-        if (configuredGroups != null)
-        {
-            for (int i = 0; i < configuredGroups.Length; i++)
-            {
-                MatchOverlayCommandTabGroupView group = configuredGroups[i];
-                if (!IsLiveGroup(group))
-                    continue;
-
-                if (TrySelectCommandMode(group, mode))
-                    handledConfiguredGroup = true;
-            }
-        }
-
-        if (handledConfiguredGroup)
+        if (configuredGroups == null)
             return;
 
-        IReadOnlyList<MatchOverlayCommandTabGroupView> groups = MatchOverlayCommandTabGroupView.Instances;
-        for (int i = 0; i < groups.Count; i++)
+        for (int i = 0; i < configuredGroups.Length; i++)
         {
-            MatchOverlayCommandTabGroupView group = groups[i];
+            MatchOverlayCommandTabGroupView group = configuredGroups[i];
             if (!IsLiveGroup(group))
                 continue;
 
@@ -43,28 +27,12 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
 
     public void ClearCommandMode(MatchOverlayCommandTabGroupView[] configuredGroups)
     {
-        bool handledConfiguredGroup = false;
-        if (configuredGroups != null)
-        {
-            for (int i = 0; i < configuredGroups.Length; i++)
-            {
-                MatchOverlayCommandTabGroupView group = configuredGroups[i];
-                if (!IsLiveGroup(group))
-                    continue;
-
-                new MatchOverlayCommandTabVisualSystem(group).Select(null);
-                ClearSelectedUiObjectIfCommandTab(group);
-                handledConfiguredGroup = true;
-            }
-        }
-
-        if (handledConfiguredGroup)
+        if (configuredGroups == null)
             return;
 
-        IReadOnlyList<MatchOverlayCommandTabGroupView> groups = MatchOverlayCommandTabGroupView.Instances;
-        for (int i = 0; i < groups.Count; i++)
+        for (int i = 0; i < configuredGroups.Length; i++)
         {
-            MatchOverlayCommandTabGroupView group = groups[i];
+            MatchOverlayCommandTabGroupView group = configuredGroups[i];
             if (!IsLiveGroup(group))
                 continue;
 

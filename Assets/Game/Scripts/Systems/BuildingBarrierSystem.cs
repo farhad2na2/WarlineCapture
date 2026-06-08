@@ -9,11 +9,11 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 internal sealed class BuildingBarrierSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate void EntityManagerAction(EntityManager entityManager);
     public delegate EntityQuery EntityQueryProvider();
     public delegate bool BuildingDefinitionPredicate(BuildingDefinition definition);
-    public delegate bool RuntimeBuildingApproachCellDelegate(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal);
+    public delegate bool RuntimeBuildingApproachCellDelegate(RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal);
 
     private readonly struct RuntimeBaseBreach
     {
@@ -29,7 +29,7 @@ internal sealed class BuildingBarrierSystem
 
     public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly EntityManagerAction EnsureEntityQueries;
@@ -38,7 +38,7 @@ internal sealed class BuildingBarrierSystem
         public readonly RuntimeBuildingApproachCellDelegate TryGetRuntimeBuildingApproachCell;
 
         public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             EntityManagerAction ensureEntityQueries,
@@ -61,7 +61,7 @@ internal sealed class BuildingBarrierSystem
     private const float BarrierDoorOpenCloseSpeed = 2f;
     private const int BarrierDoorDetectPaddingCells = 8;
 
-    public void RememberOpenBaseBreach(Context context, RuntimeBuildingData building)
+    public void RememberOpenBaseBreach(Context context, RuntimeBuildingEntity building)
     {
         if (building?.Definition == null ||
             !building.HasOwnerFaction ||
@@ -115,7 +115,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -162,7 +162,7 @@ internal sealed class BuildingBarrierSystem
         byte breachedFactionId,
         int2 attackerCell,
         bool preferGate,
-        out RuntimeBuildingData breachBuilding,
+        out RuntimeBuildingEntity breachBuilding,
         out string reason)
     {
         breachBuilding = null;
@@ -178,7 +178,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -232,7 +232,7 @@ internal sealed class BuildingBarrierSystem
         breachPosition = default;
         reason = string.Empty;
 
-        if (TryFindRuntimeBuildingByCombatEntity(context, finalTarget, out RuntimeBuildingData finalBuilding) &&
+        if (TryFindRuntimeBuildingByCombatEntity(context, finalTarget, out RuntimeBuildingEntity finalBuilding) &&
             finalBuilding?.Definition != null &&
             (finalBuilding.Definition.IsWall || IsWallGateDefinition(context, finalBuilding.Definition)))
         {
@@ -245,7 +245,7 @@ internal sealed class BuildingBarrierSystem
         if (HasOpenBaseBreach(context, breachedFactionId, breachedPerimeter))
             return false;
 
-        if (!TryFindBreachBuilding(context, breachedFactionId, attackerCell, preferGate: true, out RuntimeBuildingData breachBuilding, out reason) &&
+        if (!TryFindBreachBuilding(context, breachedFactionId, attackerCell, preferGate: true, out RuntimeBuildingEntity breachBuilding, out reason) &&
             !TryFindBreachBuilding(context, breachedFactionId, attackerCell, preferGate: false, out breachBuilding, out reason))
         {
             return false;
@@ -271,11 +271,11 @@ internal sealed class BuildingBarrierSystem
         breachCell = centerCell;
 
         if (context.TryGetGridData != null &&
-            context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData) &&
-            em.HasComponent<DynamicOccupancyData>(gridEntity))
+            context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) &&
+            em.HasComponent<DynamicOccupancyComponent>(gridEntity))
         {
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-            NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+            NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
             if (TryFindBreachApproachCell(
                     grid,
                     walkable,
@@ -332,7 +332,7 @@ internal sealed class BuildingBarrierSystem
         {
             foreach (var entry in context.RuntimeBuildings)
             {
-                RuntimeBuildingData building = entry.Value;
+                RuntimeBuildingEntity building = entry.Value;
                 if (IsActiveRoadGateBuilding(context, building))
                     UpdateRoadBarrierDoorVisual(context, building, false, deltaTime);
             }
@@ -344,7 +344,7 @@ internal sealed class BuildingBarrierSystem
         {
             foreach (var entry in context.RuntimeBuildings)
             {
-                RuntimeBuildingData building = entry.Value;
+                RuntimeBuildingEntity building = entry.Value;
                 if (IsActiveRoadGateBuilding(context, building))
                     UpdateRoadBarrierDoorVisual(context, building, false, deltaTime);
             }
@@ -357,7 +357,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (!IsActiveRoadGateBuilding(context, building))
                 continue;
 
@@ -377,7 +377,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (!IsActiveRoadGateBuilding(context, building) ||
                 !building.HasOwnerFaction ||
                 building.OwnerFactionId != factionId)
@@ -393,7 +393,7 @@ internal sealed class BuildingBarrierSystem
         return count;
     }
 
-    public bool IsActiveRoadGateBuilding(Context context, RuntimeBuildingData building)
+    public bool IsActiveRoadGateBuilding(Context context, RuntimeBuildingEntity building)
     {
         return building != null &&
                !building.IsDestroyed &&
@@ -401,7 +401,7 @@ internal sealed class BuildingBarrierSystem
                IsWallGateDefinition(context, building.Definition);
     }
 
-    public void UpdateRoadBarrierDoorVisual(Context context, RuntimeBuildingData building, bool shouldOpen, float deltaTime)
+    public void UpdateRoadBarrierDoorVisual(Context context, RuntimeBuildingEntity building, bool shouldOpen, float deltaTime)
     {
         if (building == null || building.IsDestroyed || building.DoorZ == null)
             return;
@@ -413,7 +413,7 @@ internal sealed class BuildingBarrierSystem
         SetBarrierDoorOpen01(building, building.DoorOpen01);
     }
 
-    public void SetBarrierDoorOpen01(RuntimeBuildingData building, float open01)
+    public void SetBarrierDoorOpen01(RuntimeBuildingEntity building, float open01)
     {
         if (building?.DoorZ == null)
             return;
@@ -435,7 +435,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
                 continue;
 
@@ -504,7 +504,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -523,7 +523,7 @@ internal sealed class BuildingBarrierSystem
         return false;
     }
 
-    private static bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingData building)
+    private static bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingEntity building)
     {
         building = null;
         if (combatEntity == Entity.Null || context.RuntimeBuildings == null)
@@ -531,7 +531,7 @@ internal sealed class BuildingBarrierSystem
 
         foreach (var entry in context.RuntimeBuildings)
         {
-            RuntimeBuildingData candidate = entry.Value;
+            RuntimeBuildingEntity candidate = entry.Value;
             if (candidate == null || candidate.CombatEntity != combatEntity)
                 continue;
 
@@ -704,7 +704,7 @@ internal sealed class BuildingBarrierSystem
     }
 
     private static bool HasNearbyFriendlyUnit(
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         NativeArray<Faction> factions,
         NativeArray<UnitGrid> unitGrids,
         NativeArray<UnitFootprint> footprints,

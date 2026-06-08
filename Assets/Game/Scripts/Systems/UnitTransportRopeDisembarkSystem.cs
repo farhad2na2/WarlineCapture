@@ -25,8 +25,8 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerData blockerData = em.HasComponent<DynamicBlockerData>(gridEntity) ? em.GetComponentData<DynamicBlockerData>(gridEntity) : default;
-        DynamicOccupancyData occupancyData = em.HasComponent<DynamicOccupancyData>(gridEntity) ? em.GetComponentData<DynamicOccupancyData>(gridEntity) : default;
+        DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
+        DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
         float now = (float)SystemAPI.Time.ElapsedTime;
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -117,7 +117,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                 });
             }
 
-            UnitTransportRopeDropState dropState = new()
+            UnitTransportRopeDropComponent dropState = new()
             {
                 StartPosition = startPosition,
                 EndPosition = endPosition,
@@ -126,7 +126,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                 DurationSeconds = RopeDropDurationSeconds,
                 HasDisperseCell = (byte)(CellsEqual(shortDisperseCell, dropCell) ? 0 : 1)
             };
-            if (em.HasComponent<UnitTransportRopeDropState>(passenger))
+            if (em.HasComponent<UnitTransportRopeDropComponent>(passenger))
                 ecb.SetComponent(passenger, dropState);
             else
                 ecb.AddComponent(passenger, dropState);
@@ -419,7 +419,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<UnitTransportRopeDropState>();
+        state.RequireForUpdate<UnitTransportRopeDropComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -429,8 +429,8 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerData blockerData = em.HasComponent<DynamicBlockerData>(gridEntity) ? em.GetComponentData<DynamicBlockerData>(gridEntity) : default;
-        DynamicOccupancyData occupancyData = em.HasComponent<DynamicOccupancyData>(gridEntity) ? em.GetComponentData<DynamicOccupancyData>(gridEntity) : default;
+        DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
+        DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
         using EntityQuery liveUnitQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitFootprint>());
@@ -440,7 +440,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
         foreach (var (transform, drop, entity) in
-                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDropState>>()
+                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDropComponent>>()
                      .WithEntityAccess())
         {
             float duration = math.max(0.01f, drop.ValueRO.DurationSeconds);
@@ -463,7 +463,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                     liveEntities,
                     liveGrids,
                     liveFootprints);
-                ecb.RemoveComponent<UnitTransportRopeDropState>(entity);
+                ecb.RemoveComponent<UnitTransportRopeDropComponent>(entity);
             }
         }
 
@@ -526,7 +526,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
             endPosition.y = currentPosition.y;
         float speed = em.HasComponent<UnitMove>(entity) ? math.max(0.1f, em.GetComponentData<UnitMove>(entity).Speed) : 2f;
         float duration = math.max(0.1f, math.distance(currentPosition, endPosition) / speed);
-        UnitTransportRopeDisperseState disperse = new()
+        UnitTransportRopeDisperseComponent disperse = new()
         {
             StartPosition = currentPosition,
             EndPosition = endPosition,
@@ -534,14 +534,14 @@ public partial struct UnitTransportRopeDropSystem : ISystem
             StartedAt = now,
             DurationSeconds = duration
         };
-        if (em.HasComponent<UnitTransportRopeDisperseState>(entity))
+        if (em.HasComponent<UnitTransportRopeDisperseComponent>(entity))
             ecb.SetComponent(entity, disperse);
         else
             ecb.AddComponent(entity, disperse);
         if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
             ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-        if (em.HasComponent<UnitMoveVisualState>(entity))
-            ecb.SetComponent(entity, new UnitMoveVisualState { IsMoving = 1, StillSeconds = 0f });
+        if (em.HasComponent<UnitMoveVisualComponent>(entity))
+            ecb.SetComponent(entity, new UnitMoveVisualComponent { IsMoving = 1, StillSeconds = 0f });
     }
 
     private static bool TryFindFreeDisperseCell(
@@ -732,7 +732,7 @@ public partial struct UnitTransportRopeDisperseSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<UnitTransportRopeDisperseState>();
+        state.RequireForUpdate<UnitTransportRopeDisperseComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -741,7 +741,7 @@ public partial struct UnitTransportRopeDisperseSystem : ISystem
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
         foreach (var (transform, disperse, entity) in
-                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDisperseState>>()
+                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDisperseComponent>>()
                      .WithEntityAccess())
         {
             float duration = math.max(0.01f, disperse.ValueRO.DurationSeconds);
@@ -755,7 +755,7 @@ public partial struct UnitTransportRopeDisperseSystem : ISystem
                 ecb.SetComponent(entity, new UnitGrid { Cell = disperse.ValueRO.EndCell });
             if (state.EntityManager.HasComponent<UnitTransportRopeLandingClearance>(entity))
                 ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-            ecb.RemoveComponent<UnitTransportRopeDisperseState>(entity);
+            ecb.RemoveComponent<UnitTransportRopeDisperseComponent>(entity);
         }
 
         ecb.Playback(state.EntityManager);

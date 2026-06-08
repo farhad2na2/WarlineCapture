@@ -100,8 +100,8 @@ public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
                 }
             }
 
-            UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualState>(unit)
-                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualState>(unit).Current
+            UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualComponent>(unit)
+                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
                 : visualPlanSystem.ResolveDesiredVisualForDiagnostics(
                     isCharacter,
                     detailedUnits.Contains(unit),

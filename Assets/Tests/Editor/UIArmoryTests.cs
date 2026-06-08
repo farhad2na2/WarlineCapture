@@ -14,7 +14,7 @@ public sealed class UIArmoryTests
     public void ArmoryScreen_HasLayeredVisualLockHierarchy()
     {
         GameObject prefab = LoadPrefab();
-        UIScreenSystem controller = prefab.GetComponent<UIScreenSystem>();
+        UIScreenView controller = prefab.GetComponent<UIScreenView>();
         Assert.NotNull(controller);
         Assert.AreEqual(UIRoute.Armory, controller.Route);
         Assert.IsNull(prefab.GetComponent<Image>(), "Armory must not bake the full target image into the screen root.");

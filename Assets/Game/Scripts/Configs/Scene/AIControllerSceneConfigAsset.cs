@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Scene Config/AI Controller")]
+[CreateAssetMenu(menuName = "Game/Scene Config/AI Controller")]
 public sealed class AIControllerSceneConfigAsset : AIControllerConfig
 {
 }

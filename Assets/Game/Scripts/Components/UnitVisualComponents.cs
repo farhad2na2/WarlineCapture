@@ -7,7 +7,7 @@ public struct UnitPrevWorldPos : IComponentData
     public float3 Value;
 }
 
-public struct UnitMoveVisualState : IComponentData
+public struct UnitMoveVisualComponent : IComponentData
 {
     public byte IsMoving; // 0/1
     public float StillSeconds;
@@ -33,14 +33,14 @@ public struct UnitAnimationOrderEntry : IBufferElementData
     public byte Kind;
 }
 
-public struct UnitIdleWanderState : IComponentData
+public struct UnitIdleWanderComponent : IComponentData
 {
     public uint RandomState;
     public float RetrySeconds;
     public float CurrentIdleDelaySeconds;
 }
 
-public struct UnitAttackAnimationState : IComponentData
+public struct UnitAttackAnimationComponent : IComponentData
 {
     public float TimeRemaining;
 }
@@ -50,7 +50,7 @@ public struct UnitResolvedAnimationIndex : IComponentData
     public byte Value;
 }
 
-public struct UnitDeathAnimationState : IComponentData
+public struct UnitDeathAnimationComponent : IComponentData
 {
     public float TimeRemaining;
 }
@@ -134,7 +134,7 @@ public enum UnitRenderVisualKind : byte
     Far = 4
 }
 
-public struct UnitRenderVisualState : IComponentData
+public struct UnitRenderVisualComponent : IComponentData
 {
     public byte Current;
     public byte Desired;
@@ -212,7 +212,7 @@ public struct VehicleDestroyedVisualSpawnRequest : IComponentData
 {
 }
 
-public struct VehicleWreckState : IComponentData
+public struct VehicleWreckComponent : IComponentData
 {
     public float TimeRemaining;
 }

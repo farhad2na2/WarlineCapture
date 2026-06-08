@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using Unity.Entities;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -84,7 +85,7 @@ public sealed class UIQuickCustomTests
     public void QuickCustomPrefab_WiresControllerAndLaunchButton()
     {
         GameObject prefab = LoadQuickCustomPrefab();
-        QuickCustomScreenSystem controller = prefab.GetComponent<QuickCustomScreenSystem>();
+        QuickCustomScreenView controller = prefab.GetComponent<QuickCustomScreenView>();
         Assert.NotNull(controller);
 
         var serializedObject = new SerializedObject(controller);
@@ -104,7 +105,7 @@ public sealed class UIQuickCustomTests
         AssertReference(serializedObject, "resetButton");
         AssertReference(serializedObject, "launchButton");
 
-        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteSystem>());
+        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<UIShellRouteButtonView>());
         Assert.NotNull(prefab.transform.Find("LaunchButton").GetComponent<Button>());
     }
 
@@ -227,7 +228,7 @@ public sealed class UIQuickCustomTests
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         try
         {
-            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
+            QuickCustomScreenView controller = instance.GetComponent<QuickCustomScreenView>();
             Assert.NotNull(controller);
 
             QuickGameConfig config = QuickGameConfig.Defaults;
@@ -269,57 +270,48 @@ public sealed class UIQuickCustomTests
 
         Transform buttonTransform = prefab.transform.Find("ModeCardList/ModeCard_QuickCustom/Button");
         Assert.NotNull(buttonTransform);
-        Assert.IsNull(buttonTransform.GetComponent<UILegacyGameStartSystem>());
+        Assert.IsNull(buttonTransform.GetComponent<UIGameStartButtonView>());
 
-        ScreenRouteSystem routeButton = buttonTransform.GetComponent<ScreenRouteSystem>();
+        UIShellRouteButtonView routeButton = buttonTransform.GetComponent<UIShellRouteButtonView>();
         Assert.NotNull(routeButton);
-        var serializedObject = new SerializedObject(routeButton);
-        Assert.AreEqual((int)UIRoute.QuickCustomSetup, serializedObject.FindProperty("route").enumValueIndex);
+        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, routeButton.Intent);
+        Assert.AreEqual(UIRoute.QuickCustomSetup, routeButton.Route);
     }
 
     [Test]
-    public void MainMenuQuickCustomButtonClick_OpensQuickCustomSetupScreen()
+    public void MainMenuQuickCustomButtonClick_SubmitsShellRouteRequest()
     {
         GameObject mainMenuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath);
-        GameObject quickCustomPrefab = LoadQuickCustomPrefab();
-        GameObject routerRoot = new("UIShellAppCanvas");
         GameObject mainMenu = null;
-        GameObject quickCustom = null;
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World(nameof(MainMenuQuickCustomButtonClick_SubmitsShellRouteRequest));
+        World.DefaultGameObjectInjectionWorld = world;
 
         try
         {
-            UIRouter router = routerRoot.AddComponent<UIRouter>();
+            EntityManager entityManager = world.EntityManager;
+            Entity boundary = entityManager.CreateEntity(typeof(UiShellBoundaryComponent));
+            entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+
             mainMenu = (GameObject)PrefabUtility.InstantiatePrefab(mainMenuPrefab);
-            quickCustom = (GameObject)PrefabUtility.InstantiatePrefab(quickCustomPrefab);
-            mainMenu.transform.SetParent(routerRoot.transform, false);
-            quickCustom.transform.SetParent(routerRoot.transform, false);
-
-            router.ConfigureForTests(
-                new[]
-                {
-                    mainMenu.GetComponent<UIScreenSystem>(),
-                    quickCustom.GetComponent<UIScreenSystem>()
-                },
-                UIRoute.MainMenu);
-
             Button quickCustomButton = mainMenu.transform.Find("ModeCardList/ModeCard_QuickCustom/Button").GetComponent<Button>();
-            ScreenRouteSystem routeButton = quickCustomButton.GetComponent<ScreenRouteSystem>();
+            UIShellRouteButtonView routeButton = quickCustomButton.GetComponent<UIShellRouteButtonView>();
             Assert.NotNull(routeButton);
             InvokeAwake(routeButton);
+            InvokeOnEnable(routeButton);
 
             quickCustomButton.onClick.Invoke();
 
-            Assert.AreEqual(UIRoute.QuickCustomSetup, router.ActiveRoute);
-            Assert.IsFalse(mainMenu.activeSelf);
-            Assert.IsTrue(quickCustom.activeSelf);
+            DynamicBuffer<UiShellRouteRequestComponent> requests = entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, requests[0].Intent);
+            Assert.AreEqual(UIRoute.QuickCustomSetup, requests[0].Route);
         }
         finally
         {
-            if (quickCustom != null)
-                Object.DestroyImmediate(quickCustom);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
             if (mainMenu != null)
                 Object.DestroyImmediate(mainMenu);
-            Object.DestroyImmediate(routerRoot);
         }
     }
 
@@ -332,11 +324,11 @@ public sealed class UIQuickCustomTests
 
         try
         {
-            routerRoot.AddComponent<UIRouter>();
+            routerRoot.AddComponent<UIRouterView>();
             CreateRouterScreen(routerRoot.transform, UIRoute.Match);
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.transform.SetParent(routerRoot.transform, false);
-            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
+            QuickCustomScreenView controller = instance.GetComponent<QuickCustomScreenView>();
             Assert.NotNull(controller);
 
             controller.Bind(QuickGameConfig.Defaults);
@@ -362,12 +354,12 @@ public sealed class UIQuickCustomTests
 
         try
         {
-            routerRoot.AddComponent<UIRouter>();
+            routerRoot.AddComponent<UIRouterView>();
             CreateRouterScreen(routerRoot.transform, UIRoute.Match);
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.transform.SetParent(routerRoot.transform, false);
 
-            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
+            QuickCustomScreenView controller = instance.GetComponent<QuickCustomScreenView>();
             Assert.NotNull(controller);
             InvokeAwake(controller);
 
@@ -429,7 +421,7 @@ public sealed class UIQuickCustomTests
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         try
         {
-            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
+            QuickCustomScreenView controller = instance.GetComponent<QuickCustomScreenView>();
             Assert.NotNull(controller);
 
             QuickGameConfig config = QuickGameConfig.Defaults;
@@ -686,11 +678,18 @@ public sealed class UIQuickCustomTests
         awake.Invoke(behaviour, null);
     }
 
-    private static UIScreenSystem CreateRouterScreen(Transform parent, UIRoute route)
+    private static void InvokeOnEnable(MonoBehaviour behaviour)
+    {
+        MethodInfo onEnable = behaviour.GetType().GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(onEnable, behaviour.GetType().Name);
+        onEnable.Invoke(behaviour, null);
+    }
+
+    private static UIScreenView CreateRouterScreen(Transform parent, UIRoute route)
     {
         GameObject screen = new($"Screen_{route}", typeof(RectTransform));
         screen.transform.SetParent(parent, false);
-        UIScreenSystem controller = screen.AddComponent<UIScreenSystem>();
+        UIScreenView controller = screen.AddComponent<UIScreenView>();
         controller.SetRouteForTests(route);
         return controller;
     }

@@ -287,15 +287,19 @@ public sealed class RtsSelectionInputSystemTests
         string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs");
         string pointerPressed = ExtractMethod(runtimeInput, "HandlePointerPressed");
         string pointerReleased = ExtractMethod(runtimeInput, "HandlePointerReleased");
+        string worldTargetCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleWorldTargetCommand");
 
         Assert.IsFalse(pointerPressed.Contains("TryFocusUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueAttackOrderToClickedUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueBoardTransportOrderToClickedUnit", StringComparison.Ordinal));
-        StringAssert.Contains("Vector2.Distance(input.DragStart, pointerPosition) < context.DragThresholdPixels", pointerReleased);
+        StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);
+        StringAssert.Contains("else if (dragDistance < context.DragThresholdPixels)", pointerReleased);
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
         Assert.IsFalse(pointerReleased.Contains("else if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", StringComparison.Ordinal));
-        StringAssert.Contains("activeMode == TacticalCommandMode.Attack", pointerReleased);
+        StringAssert.Contains("HandleWorldTargetCommand(context, input, activeMode, pointerPosition)", pointerReleased);
+        StringAssert.Contains("activeMode == TacticalCommandMode.Attack", worldTargetCommand);
+        StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
         StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
         StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Scene Config/Initial Units Spawner Authoring")]
+[CreateAssetMenu(menuName = "Game/Scene Config/Initial Units Spawner Authoring")]
 public sealed class InitialUnitsSpawnerAuthoringSceneConfigAsset : InitialUnitsSpawnerAuthoringConfig
 {
     [SerializeField] private GameObject sceneUnitSelectionMarkerPrefab;

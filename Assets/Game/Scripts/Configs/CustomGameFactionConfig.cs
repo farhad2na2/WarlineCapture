@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Custom Game/Faction Config")]
+[CreateAssetMenu(menuName = "Game/Custom Game/Faction Config")]
 public sealed class CustomGameFactionConfig : ScriptableObject
 {
     [System.Serializable]

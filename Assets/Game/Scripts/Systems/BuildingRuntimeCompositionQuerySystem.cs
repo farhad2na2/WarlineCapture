@@ -11,7 +11,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
         GridConfig grid,
         bool rotateVertical);
 
-    public bool IsHouseBuilding(BuildingGameplayCompositionSourceSystem source, RuntimeBuildingData building)
+    public bool IsHouseBuilding(BuildingGameplayCompositionSourceSystem source, RuntimeBuildingEntity building)
     {
         if (building?.Definition == null)
             return false;
@@ -42,7 +42,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
 
     public bool TryResolveBuildingFocusWorldPosition(
         BuildingGameplayCompositionSourceSystem source,
-        RuntimeBuildingData building,
+        RuntimeBuildingEntity building,
         TryGetEntityManagerDelegate tryGetEntityManager,
         out Vector3 worldPosition)
     {
@@ -76,7 +76,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     public bool TryGetRuntimeBuilding(
         BuildingGameplayCompositionSourceSystem source,
         int id,
-        out RuntimeBuildingData building)
+        out RuntimeBuildingEntity building)
     {
         if (source.RuntimeBuildingSystem.TryGetBuilding(id, out building) && building != null && !building.IsDestroyed)
             return true;
@@ -114,7 +114,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
 
         foreach (var entry in source.RuntimeBuildingSystem.Buildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null || building.IsDestroyed)
                 continue;
 

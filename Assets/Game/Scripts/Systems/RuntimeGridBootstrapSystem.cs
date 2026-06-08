@@ -34,12 +34,12 @@ internal sealed class RuntimeGridBootstrapSystem
         EnsureBufferExists<GridRoad>(entityManager, gridEntity);
         EnsureBufferExists<GridRoadSidewalk>(entityManager, gridEntity);
         EnsureBufferExists<GridRoadDirt>(entityManager, gridEntity);
-        if (!entityManager.HasComponent<DynamicBlockerData>(gridEntity))
-            entityManager.AddComponentData(gridEntity, default(DynamicBlockerData));
-        if (!entityManager.HasComponent<PathPoolData>(gridEntity))
-            entityManager.AddComponentData(gridEntity, new PathPoolData { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
-        if (!entityManager.HasComponent<DynamicOccupancyData>(gridEntity))
-            entityManager.AddComponentData(gridEntity, default(DynamicOccupancyData));
+        if (!entityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
+            entityManager.AddComponentData(gridEntity, default(DynamicBlockerComponent));
+        if (!entityManager.HasComponent<PathPoolComponent>(gridEntity))
+            entityManager.AddComponentData(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+        if (!entityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
+            entityManager.AddComponentData(gridEntity, default(DynamicOccupancyComponent));
 
         DynamicBuffer<GridWalkable> walkable = ResizeBuffer<GridWalkable>(entityManager, gridEntity, gridSize);
         DynamicBuffer<GridRoad> roads = ResizeBuffer<GridRoad>(entityManager, gridEntity, gridSize);
@@ -97,7 +97,7 @@ internal sealed class RuntimeGridBootstrapSystem
 
     private static void EnsureDynamicGridStorage(EntityManager entityManager, Entity entity, int gridSize)
     {
-        DynamicBlockerData blockerData = entityManager.GetComponentData<DynamicBlockerData>(entity);
+        DynamicBlockerComponent blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(entity);
         if (blockerData.GridSize != gridSize ||
             !blockerData.Counts.IsCreated ||
             !blockerData.Blocked.IsCreated ||
@@ -120,7 +120,7 @@ internal sealed class RuntimeGridBootstrapSystem
             entityManager.SetComponentData(entity, blockerData);
         }
 
-        DynamicOccupancyData occupancyData = entityManager.GetComponentData<DynamicOccupancyData>(entity);
+        DynamicOccupancyComponent occupancyData = entityManager.GetComponentData<DynamicOccupancyComponent>(entity);
         if (occupancyData.GridSize == gridSize && occupancyData.Occupied.IsCreated)
             return;
 

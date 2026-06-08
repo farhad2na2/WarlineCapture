@@ -28,15 +28,15 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         var lowLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
         var sourceLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
         var displayLookup = SystemAPI.GetComponentLookup<UnitDisplayInfo>(true);
-        var visualStateLookup = SystemAPI.GetComponentLookup<UnitRenderVisualState>(true);
+        var visualStateLookup = SystemAPI.GetComponentLookup<UnitRenderVisualComponent>(true);
         var airLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
-        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirState>(true);
+        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirComponent>(true);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
         using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
         foreach (var (_, entity) in SystemAPI
                      .Query<RefRO<UnitAirMovement>>()
-                     .WithNone<UnitDeathAnimationState>()
+                     .WithNone<UnitDeathAnimationComponent>()
                      .WithEntityAccess()
                      )
         {
@@ -117,7 +117,7 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             foreach (var (sourceKey, entity) in SystemAPI
                          .Query<RefRO<UnitSourcePrefabKey>>()
                          .WithAll<UnitGrid>()
-                         .WithNone<UnitDeathAnimationState>()
+                         .WithNone<UnitDeathAnimationComponent>()
                          .WithEntityAccess())
             {
                 if (!sourceKey.ValueRO.Value.ToString().Contains("Helicopter", System.StringComparison.OrdinalIgnoreCase))
@@ -152,12 +152,12 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
     private static bool ShouldSpinBlades(
         Entity entity,
         ComponentLookup<LocalTransform> transformLookup,
-        ComponentLookup<UnitAirState> airStateLookup)
+        ComponentLookup<UnitAirComponent> airStateLookup)
     {
         if (!airStateLookup.HasComponent(entity))
             return false;
 
-        UnitAirState airState = airStateLookup[entity];
+        UnitAirComponent airState = airStateLookup[entity];
         if (airState.Airborne != 0 ||
             airState.TakeoffRolling != 0 ||
             airState.LandingRolling != 0)
@@ -313,9 +313,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         ComponentLookup<UnitLowLodInstanceReference> lowLookup,
         ComponentLookup<UnitSourcePrefabKey> sourceLookup,
         ComponentLookup<UnitDisplayInfo> displayLookup,
-        ComponentLookup<UnitRenderVisualState> visualStateLookup,
+        ComponentLookup<UnitRenderVisualComponent> visualStateLookup,
         ComponentLookup<UnitAirMovement> airLookup,
-        ComponentLookup<UnitAirState> airStateLookup,
+        ComponentLookup<UnitAirComponent> airStateLookup,
         ComponentLookup<LocalTransform> transformLookup,
         bool shouldSpin,
         int detailRotated,
@@ -348,13 +348,13 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
 
     private static string FormatAirState(
         Entity entity,
-        ComponentLookup<UnitAirState> airStateLookup,
+        ComponentLookup<UnitAirComponent> airStateLookup,
         ComponentLookup<LocalTransform> transformLookup)
     {
         if (!airStateLookup.HasComponent(entity))
             return "<none>";
 
-        UnitAirState airState = airStateLookup[entity];
+        UnitAirComponent airState = airStateLookup[entity];
         float currentY = transformLookup.HasComponent(entity) ? transformLookup[entity].Position.y : float.NaN;
         return $"homeInit={airState.HomeInitialized}:airborne={airState.Airborne}:takeoff={airState.TakeoffRolling}:landing={airState.LandingRolling}:returning={airState.ReturningHome}:y={currentY:F2}:homeY={airState.HomePosition.y:F2}";
     }

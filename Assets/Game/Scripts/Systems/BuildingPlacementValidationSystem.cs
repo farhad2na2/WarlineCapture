@@ -11,12 +11,12 @@ public sealed class BuildingPlacementValidationSystem
 
     internal readonly struct WallValidationContext
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<int, int, int, int, bool> IsRuntimeBlockerCell;
         public readonly Func<GridConfig, Vector2Int, Vector2Int, bool> HasRoadInFootprint;
 
         public WallValidationContext(
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<int, int, int, int, bool> isRuntimeBlockerCell,
             Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint)
         {
@@ -62,7 +62,7 @@ public sealed class BuildingPlacementValidationSystem
     public static void RebuildInvalidPrefix(
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         bool[] roadFootprintMask,
         Func<int, int, int, int, bool> isRuntimeBlockerCell,
         ref int[] invalidPrefix,
@@ -108,7 +108,7 @@ public sealed class BuildingPlacementValidationSystem
         RectInt placementRect,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         bool hasInvalidPrefix,
         int[] invalidPrefix,
         int prefixWidth,
@@ -141,7 +141,7 @@ public sealed class BuildingPlacementValidationSystem
         bool vertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         bool allowExistingWallOverlap,
         Func<int, int, int, int, bool> isRuntimeBlockerCell,
         Func<int, int, bool> isPerpendicularWallOverlapCell,
@@ -207,7 +207,7 @@ public sealed class BuildingPlacementValidationSystem
         GetWallSegmentFootprintDelegate getWallSegmentFootprint,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         WallValidationContext context)
     {
         if (inputSystem == null || getWallSegmentFootprint == null)
@@ -260,7 +260,7 @@ public sealed class BuildingPlacementValidationSystem
         bool vertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         WallValidationContext context,
         GetWallSegmentFootprintDelegate getWallSegmentFootprint)
     {
@@ -304,7 +304,7 @@ public sealed class BuildingPlacementValidationSystem
         bool vertical,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         WallValidationContext context,
         bool allowExistingWallOverlap = false)
     {
@@ -327,7 +327,7 @@ public sealed class BuildingPlacementValidationSystem
         Vector2Int footprintCells,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
+        DynamicBlockerComponent blockerData,
         Func<int, int, int, int, bool> isRuntimeBlockerCell)
     {
         for (int y = originCell.y; y < originCell.y + footprintCells.y; y++)
@@ -357,14 +357,14 @@ public sealed class BuildingPlacementValidationSystem
         return isRuntimeBlockerCell != null && isRuntimeBlockerCell(x, y, width, height);
     }
 
-    private static bool IsLinearWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings, int x, int y)
+    private static bool IsLinearWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings, int x, int y)
     {
         if (runtimeBuildings == null)
             return false;
 
         foreach (var entry in runtimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
                 continue;
 
@@ -378,14 +378,14 @@ public sealed class BuildingPlacementValidationSystem
         return false;
     }
 
-    private static bool IsPerpendicularWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings, int x, int y, bool vertical)
+    private static bool IsPerpendicularWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings, int x, int y, bool vertical)
     {
         if (runtimeBuildings == null)
             return false;
 
         foreach (var entry in runtimeBuildings)
         {
-            RuntimeBuildingData building = entry.Value;
+            RuntimeBuildingEntity building = entry.Value;
             if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
                 continue;
 

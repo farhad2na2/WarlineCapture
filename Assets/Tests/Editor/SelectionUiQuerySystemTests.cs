@@ -66,8 +66,8 @@ public sealed class SelectionUiQuerySystemTests
     [Test]
     public void GetFocusedUnitUiStatus_PrioritizesReturningEngagedAndMovingStates()
     {
-        Entity airUnit = _entityManager.CreateEntity(typeof(UnitAirState));
-        _entityManager.SetComponentData(airUnit, new UnitAirState { ReturningHome = 1 });
+        Entity airUnit = _entityManager.CreateEntity(typeof(UnitAirComponent));
+        _entityManager.SetComponentData(airUnit, new UnitAirComponent { ReturningHome = 1 });
         Entity engagedUnit = _entityManager.CreateEntity(typeof(EngageTarget));
         Entity movingUnit = _entityManager.CreateEntity(typeof(UnitPathRequest));
         Entity holdingUnit = _entityManager.CreateEntity(typeof(HoldPositionOrderTag), typeof(UnitPathRequest));

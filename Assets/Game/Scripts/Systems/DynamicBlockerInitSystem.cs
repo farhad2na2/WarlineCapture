@@ -15,23 +15,23 @@ public partial struct DynamicBlockerInitSystem : ISystem
             return;
 
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        if (!state.EntityManager.HasComponent<DynamicBlockerData>(gridEntity))
+        if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
             return;
 
-        var data = state.EntityManager.GetComponentData<DynamicBlockerData>(gridEntity);
+        var data = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
         if (data.Counts.IsCreated) data.Counts.Dispose();
         if (data.Blocked.IsCreated) data.Blocked.Dispose();
         if (data.FriendlyPassFactionIds.IsCreated) data.FriendlyPassFactionIds.Dispose();
 
-        if (state.EntityManager.HasComponent<PathPoolData>(gridEntity))
+        if (state.EntityManager.HasComponent<PathPoolComponent>(gridEntity))
         {
-            var pool = state.EntityManager.GetComponentData<PathPoolData>(gridEntity);
+            var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
             if (pool.Cells.IsCreated) pool.Cells.Dispose();
         }
 
-        if (state.EntityManager.HasComponent<DynamicOccupancyData>(gridEntity))
+        if (state.EntityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
         {
-            var occ = state.EntityManager.GetComponentData<DynamicOccupancyData>(gridEntity);
+            var occ = state.EntityManager.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             if (occ.Occupied.IsCreated) occ.Occupied.Dispose();
         }
     }
@@ -42,14 +42,14 @@ public partial struct DynamicBlockerInitSystem : ISystem
         int gridSize = grid.Width * grid.Height;
 
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        if (!state.EntityManager.HasComponent<DynamicBlockerData>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, default(DynamicBlockerData));
-        if (!state.EntityManager.HasComponent<PathPoolData>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, new PathPoolData { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
-        if (!state.EntityManager.HasComponent<DynamicOccupancyData>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, default(DynamicOccupancyData));
+        if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
+            state.EntityManager.AddComponentData(gridEntity, default(DynamicBlockerComponent));
+        if (!state.EntityManager.HasComponent<PathPoolComponent>(gridEntity))
+            state.EntityManager.AddComponentData(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+        if (!state.EntityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
+            state.EntityManager.AddComponentData(gridEntity, default(DynamicOccupancyComponent));
 
-        var dataRw = SystemAPI.GetComponentRW<DynamicBlockerData>(gridEntity);
+        var dataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
         ref var data = ref dataRw.ValueRW;
 
         if (data.GridSize == gridSize && data.Counts.IsCreated && data.Blocked.IsCreated && data.FriendlyPassFactionIds.IsCreated)
@@ -66,7 +66,7 @@ public partial struct DynamicBlockerInitSystem : ISystem
         for (int i = 0; i < data.FriendlyPassFactionIds.Length; i++)
             data.FriendlyPassFactionIds[i] = byte.MaxValue;
 
-        var occRw = SystemAPI.GetComponentRW<DynamicOccupancyData>(gridEntity);
+        var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
         ref var occ = ref occRw.ValueRW;
         if (occ.Occupied.IsCreated) occ.Occupied.Dispose();
         occ.GridSize = gridSize;

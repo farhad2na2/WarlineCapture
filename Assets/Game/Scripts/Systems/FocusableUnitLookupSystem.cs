@@ -236,13 +236,13 @@ public sealed class FocusableUnitLookupSystem
         if (hasTransitTag)
         {
             bool groundedIdleAirUnit =
-                em.HasComponent<UnitAirState>(entity) &&
+                em.HasComponent<UnitAirComponent>(entity) &&
                 !em.HasComponent<UnitTarget>(entity) &&
                 !em.HasComponent<EngageTarget>(entity) &&
-                em.GetComponentData<UnitAirState>(entity).Airborne == 0 &&
-                em.GetComponentData<UnitAirState>(entity).ReturningHome == 0 &&
-                em.GetComponentData<UnitAirState>(entity).TakeoffRolling == 0 &&
-                em.GetComponentData<UnitAirState>(entity).LandingRolling == 0;
+                em.GetComponentData<UnitAirComponent>(entity).Airborne == 0 &&
+                em.GetComponentData<UnitAirComponent>(entity).ReturningHome == 0 &&
+                em.GetComponentData<UnitAirComponent>(entity).TakeoffRolling == 0 &&
+                em.GetComponentData<UnitAirComponent>(entity).LandingRolling == 0;
 
             if (!groundedIdleAirUnit)
                 return false;

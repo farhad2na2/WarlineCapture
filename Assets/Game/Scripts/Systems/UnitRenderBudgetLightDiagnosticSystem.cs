@@ -35,8 +35,8 @@ public readonly struct UnitRenderBudgetLightDiagnosticSystem
             if (!em.Exists(unit))
                 continue;
 
-            UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualState>(unit)
-                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualState>(unit).Current
+            UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualComponent>(unit)
+                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
                 : UnitRenderVisualKind.Detail;
             if (activeVisual == UnitRenderVisualKind.Detail)
                 targetDetail++;

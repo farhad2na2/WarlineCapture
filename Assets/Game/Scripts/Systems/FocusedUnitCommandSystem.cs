@@ -24,7 +24,7 @@ public sealed class FocusedUnitCommandSystem
         _queryWorld = world;
         _respawnQueueQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<RespawnQueueTag>(),
-            ComponentType.ReadOnly<RespawnQueueState>());
+            ComponentType.ReadOnly<RespawnQueueComponent>());
         _selectedMoveQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -204,10 +204,10 @@ public sealed class FocusedUnitCommandSystem
             em.SetComponentData(entity, kinematics);
         }
 
-        if (!em.HasComponent<UnitAirState>(entity))
+        if (!em.HasComponent<UnitAirComponent>(entity))
             return;
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(entity);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
         airState.ReturningHome = 0;
         airState.TakeoffRolling = 0;
         airState.LandingRolling = 0;

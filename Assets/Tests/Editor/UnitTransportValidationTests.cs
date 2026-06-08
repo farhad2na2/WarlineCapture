@@ -65,7 +65,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
         Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passenger));
 
-        UnitAirState landedState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent landedState = em.GetComponentData<UnitAirComponent>(transport);
         landedState.Airborne = 0;
         landedState.ReturningHome = 0;
         em.SetComponentData(transport, landedState);
@@ -87,7 +87,7 @@ public sealed class UnitTransportValidationTests
         CreateGrid(em, 16, 16);
 
         Entity transport = CreateTransport(em, new int2(8, 8), air: true, airborne: false, "Unit_Veh_Helicopter_Transport");
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         airState.HomeInitialized = 1;
         airState.HomePosition = new float3(8.5f, 0f, 8.5f);
         airState.Airborne = 0;
@@ -177,7 +177,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransport(em, new int2(4, 4), air: true, airborne: false, "Unit_Veh_Helicopter_Transport");
         em.SetComponentData(transport, new UnitFootprint { Size = new int2(1, 1) });
-        UnitAirState visuallyFlyingAirState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent visuallyFlyingAirState = em.GetComponentData<UnitAirComponent>(transport);
         visuallyFlyingAirState.Airborne = 0;
         visuallyFlyingAirState.HomeInitialized = 1;
         visuallyFlyingAirState.HomePosition = new float3(4.5f, 0f, 4.5f);
@@ -187,8 +187,8 @@ public sealed class UnitTransportValidationTests
         Entity gridEntity = GetGridEntity(em);
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
 
         using EntityQuery liveUnitQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
@@ -224,7 +224,7 @@ public sealed class UnitTransportValidationTests
             "The pickup landing should stay near the selected soldier.");
         Assert.IsTrue(em.HasComponent<UnitTarget>(transport));
         Assert.AreEqual(pickupCell, em.GetComponentData<UnitTarget>(transport).Cell);
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         Assert.AreEqual(1, airState.Airborne, "A helicopter that is physically above the ground must be marked airborne for pickup landing, even if stale flags said grounded.");
         Assert.AreEqual(pickupCell, airState.HomeCell);
 
@@ -251,8 +251,8 @@ public sealed class UnitTransportValidationTests
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkableBuffer = em.GetBuffer<GridWalkable>(gridEntity);
         NativeArray<GridWalkable> walkable = walkableBuffer.AsNativeArray();
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        DynamicOccupancyData occupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
 
         using EntityQuery liveUnitQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
@@ -292,7 +292,7 @@ public sealed class UnitTransportValidationTests
         CreateGrid(em, 16, 16);
 
         Entity transport = CreateTransport(em, new int2(8, 8), air: true, airborne: false, "Unit_Veh_Helicopter_Transport");
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         airState.HomeInitialized = 1;
         airState.HomePosition = new float3(8.5f, 0f, 8.5f);
         airState.Airborne = 0;
@@ -390,7 +390,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, passengers.Length, "Only one passenger should leave per rope interval.");
         Assert.IsFalse(em.HasComponent<Disabled>(passengerA));
         Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passengerA));
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropState>(passengerA));
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(passengerA));
         Assert.IsTrue(em.HasComponent<UnitTransportRopeLandingClearance>(passengerA));
         Assert.IsTrue(em.HasComponent<Disabled>(passengerB));
         float3 firstStart = em.GetComponentData<LocalTransform>(passengerA).Position;
@@ -405,18 +405,18 @@ public sealed class UnitTransportValidationTests
         disembarkSystem.Update(world.Unmanaged);
         passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
         Assert.AreEqual(1, passengers.Length, "The second passenger must not start descending before the first passenger has reached the ground.");
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropState>(passengerB));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropComponent>(passengerB));
 
-        UnitTransportRopeDropState dropState = em.GetComponentData<UnitTransportRopeDropState>(passengerA);
+        UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(passengerA);
         world.SetTime(new TimeData(dropState.StartedAt + dropState.DurationSeconds + 0.1f, 0.1f));
         dropSystem.Update(world.Unmanaged);
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropState>(passengerA));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropComponent>(passengerA));
         Assert.That(em.GetComponentData<LocalTransform>(passengerA).Position.y, Is.EqualTo(dropState.EndPosition.y).Within(0.001f));
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passengerA), "A passenger should receive a direct free-cell disperse after reaching the ground.");
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passengerA), "A passenger should receive a direct free-cell disperse after reaching the ground.");
         Assert.IsFalse(em.HasComponent<UnitTarget>(passengerA), "Rope exit disperse must not depend on pathfinding in the tight landing area.");
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(passengerA));
-        Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualState>(passengerA).IsMoving);
-        UnitTransportRopeDisperseState passengerADisperse = em.GetComponentData<UnitTransportRopeDisperseState>(passengerA);
+        Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualComponent>(passengerA).IsMoving);
+        UnitTransportRopeDisperseComponent passengerADisperse = em.GetComponentData<UnitTransportRopeDisperseComponent>(passengerA);
         int2 passengerATarget = passengerADisperse.EndCell;
         Assert.AreNotEqual(em.GetComponentData<UnitGrid>(passengerA).Cell, passengerATarget);
         Assert.IsFalse(em.HasComponent<UnitTransportRopeLandingClearance>(passengerA), "Starting the move-away should immediately free the rope landing slot for the next passenger.");
@@ -432,21 +432,21 @@ public sealed class UnitTransportValidationTests
         passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
         Assert.AreEqual(0, passengers.Length, "The second passenger should start once the previous passenger has started moving away, without waiting for the full disperse move.");
         Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "The helicopter should keep the rope request active while the second passenger is descending.");
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passengerA), "The first passenger can still be moving away while the second starts descending.");
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passengerA), "The first passenger can still be moving away while the second starts descending.");
         Assert.IsFalse(em.HasComponent<Disabled>(passengerB));
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropState>(passengerB));
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(passengerB));
 
         world.SetTime(new TimeData(passengerADisperse.StartedAt + passengerADisperse.DurationSeconds + 0.1f, 0.1f));
         disperseSystem.Update(world.Unmanaged);
-        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisperseState>(passengerA));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisperseComponent>(passengerA));
         Assert.IsFalse(em.HasComponent<UnitTransportRopeLandingClearance>(passengerA));
         Assert.AreEqual(passengerATarget, em.GetComponentData<UnitGrid>(passengerA).Cell);
 
-        UnitTransportRopeDropState passengerBDropState = em.GetComponentData<UnitTransportRopeDropState>(passengerB);
+        UnitTransportRopeDropComponent passengerBDropState = em.GetComponentData<UnitTransportRopeDropComponent>(passengerB);
         world.SetTime(new TimeData(passengerBDropState.StartedAt + passengerBDropState.DurationSeconds + 0.1f, 0.1f));
         dropSystem.Update(world.Unmanaged);
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passengerB), "Each passenger should receive a direct free-cell disperse after landing.");
-        UnitTransportRopeDisperseState passengerBDisperse = em.GetComponentData<UnitTransportRopeDisperseState>(passengerB);
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passengerB), "Each passenger should receive a direct free-cell disperse after landing.");
+        UnitTransportRopeDisperseComponent passengerBDisperse = em.GetComponentData<UnitTransportRopeDisperseComponent>(passengerB);
         int2 passengerBTarget = passengerBDisperse.EndCell;
         Assert.AreNotEqual(passengerATarget, passengerBTarget, "Consecutive rope exits should target different free cells instead of stacking on one target.");
         Assert.IsFalse(em.HasComponent<UnitTransportRopeLandingClearance>(passengerB), "The final passenger should also free the rope landing slot as soon as it starts moving away.");
@@ -492,7 +492,7 @@ public sealed class UnitTransportValidationTests
         world.SetTime(new TimeData(1d, 0.1f));
         disembarkSystem.Update(world.Unmanaged);
 
-        UnitTransportRopeDropState dropState = em.GetComponentData<UnitTransportRopeDropState>(passenger);
+        UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
         float3 expectedAnchor = transportTransform.Position + new float3(3f, 0f, -2f);
         Assert.That(dropState.StartPosition.x, Is.EqualTo(expectedAnchor.x).Within(0.001f), "Rope drop must start from the helicopter visual center X, not the side/drop cell.");
         Assert.That(dropState.StartPosition.z, Is.EqualTo(expectedAnchor.z).Within(0.001f), "Rope drop must start from the helicopter visual center Z, not the side/drop cell.");
@@ -502,8 +502,8 @@ public sealed class UnitTransportValidationTests
 
         world.SetTime(new TimeData(dropState.StartedAt + dropState.DurationSeconds + 0.1f, 0.1f));
         dropSystem.Update(world.Unmanaged);
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passenger));
-        UnitTransportRopeDisperseState disperseState = em.GetComponentData<UnitTransportRopeDisperseState>(passenger);
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger));
+        UnitTransportRopeDisperseComponent disperseState = em.GetComponentData<UnitTransportRopeDisperseComponent>(passenger);
         int2 disperseTarget = disperseState.EndCell;
         int2 landingCell = GridUtils.WorldToCell(em.GetComponentData<GridConfig>(GetGridEntity(em)), dropState.EndPosition);
         Assert.AreNotEqual(landingCell, disperseTarget, "The post-landing move target should give the passenger somewhere to move away from the rope.");
@@ -512,7 +512,7 @@ public sealed class UnitTransportValidationTests
             12,
             "The post-landing move target should stay near the rope landing cell.");
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(passenger));
-        Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualState>(passenger).IsMoving);
+        Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualComponent>(passenger).IsMoving);
     }
 
     [Test]
@@ -550,19 +550,19 @@ public sealed class UnitTransportValidationTests
             Entity passenger = passengersToDrop[i];
             world.SetTime(new TimeData(time, 0.1f));
             disembarkSystem.Update(world.Unmanaged);
-            Assert.IsTrue(em.HasComponent<UnitTransportRopeDropState>(passenger), $"Passenger {i} should start a rope drop.");
+            Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(passenger), $"Passenger {i} should start a rope drop.");
 
-            UnitTransportRopeDropState dropState = em.GetComponentData<UnitTransportRopeDropState>(passenger);
+            UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
             time = dropState.StartedAt + dropState.DurationSeconds + 0.1f;
             world.SetTime(new TimeData(time, 0.1f));
             dropSystem.Update(world.Unmanaged);
 
-            Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseState>(passenger), $"Passenger {i} should start moving away after landing.");
-            UnitTransportRopeDisperseState disperseState = em.GetComponentData<UnitTransportRopeDisperseState>(passenger);
+            Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger), $"Passenger {i} should start moving away after landing.");
+            UnitTransportRopeDisperseComponent disperseState = em.GetComponentData<UnitTransportRopeDisperseComponent>(passenger);
             Assert.IsTrue(
                 disperseTargets.Add(GridUtils.CellToIndex(disperseState.EndCell, width)),
                 $"Passenger {i} should get a unique free disperse cell instead of stacking on another exited soldier.");
-            Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualState>(passenger).IsMoving, $"Passenger {i} should use the run/move visual while dispersing.");
+            Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualComponent>(passenger).IsMoving, $"Passenger {i} should use the run/move visual while dispersing.");
 
             time = disperseState.StartedAt + disperseState.DurationSeconds + 0.1f;
             world.SetTime(new TimeData(time, 0.1f));
@@ -632,7 +632,7 @@ public sealed class UnitTransportValidationTests
             Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
             Assert.IsFalse(em.HasComponent<Disabled>(passenger));
             Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passenger));
-            Assert.IsTrue(em.HasComponent<UnitTransportRopeDropState>(passenger));
+            Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(passenger));
         }
         finally
         {
@@ -650,7 +650,7 @@ public sealed class UnitTransportValidationTests
         CreateGrid(em, 16, 16);
 
         Entity transport = CreateTransport(em, new int2(8, 8), air: true, airborne: false, "Unit_Veh_Helicopter_Transport");
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         airState.HomeInitialized = 1;
         airState.HomePosition = new float3(8.5f, 0f, 8.5f);
         airState.Airborne = 0;
@@ -704,16 +704,16 @@ public sealed class UnitTransportValidationTests
         _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData), typeof(DynamicOccupancyData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = _blockerCounts,
             Blocked = _blocked,
             FriendlyPassFactionIds = _friendlyPassFactionIds
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = _occupied
@@ -747,7 +747,7 @@ public sealed class UnitTransportValidationTests
         if (air)
         {
             em.AddComponentData(entity, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
-            em.AddComponentData(entity, new UnitAirState
+            em.AddComponentData(entity, new UnitAirComponent
             {
                 HomePosition = new float3(cell.x + 0.5f, 0f, cell.y + 0.5f),
                 HomeCell = cell,
@@ -789,7 +789,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMove),
             typeof(UnitMovementBehavior),
             typeof(UnitTransportPassenger),
-            typeof(UnitMoveVisualState),
+            typeof(UnitMoveVisualComponent),
             typeof(LocalTransform),
             typeof(Disabled));
         em.SetComponentData(entity, new Faction { Id = 0 });
@@ -798,7 +798,7 @@ public sealed class UnitTransportValidationTests
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
         em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
         em.SetComponentData(entity, new UnitTransportPassenger { Transport = transport });
-        em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         em.SetComponentData(entity, LocalTransform.FromPosition(float3.zero));
         em.AddBuffer<UnitTransportHiddenVisualScale>(entity);
         return entity;

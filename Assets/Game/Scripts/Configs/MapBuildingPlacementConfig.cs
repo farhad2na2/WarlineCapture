@@ -52,7 +52,7 @@ public sealed class MapBuildingPlacementConfigEntry
     }
 }
 
-[CreateAssetMenu(menuName = "WarlineCapture/Scene Config/Map Building Placements")]
+[CreateAssetMenu(menuName = "Game/Scene Config/Map Building Placements")]
 public sealed class MapBuildingPlacementConfig : ScriptableObject
 {
     [SerializeField] private bool spawnOnMatchStart = true;

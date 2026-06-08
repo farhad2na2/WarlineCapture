@@ -20,7 +20,7 @@ public sealed class UIDesignedUnavailableRouteTests
         foreach (RouteCase routeCase in Cases)
         {
             GameObject prefab = LoadPrefab(routeCase);
-            UIScreenSystem controller = prefab.GetComponent<UIScreenSystem>();
+            UIScreenView controller = prefab.GetComponent<UIScreenView>();
             Assert.NotNull(controller, routeCase.ScreenName);
             Assert.AreEqual(routeCase.Route, controller.Route, routeCase.ScreenName);
             Assert.IsNull(prefab.GetComponent<Image>(), $"{routeCase.ScreenName} must not bake a full target image into the root.");
@@ -127,7 +127,7 @@ public sealed class UIDesignedUnavailableRouteTests
         Assert.NotNull(target, path);
         Button button = target.GetComponent<Button>();
         Assert.NotNull(button, path);
-        Assert.NotNull(target.GetComponent<UiMotionFeedback>(), path);
+        Assert.NotNull(target.GetComponent<UIMotionFeedbackView>(), path);
     }
 
     private readonly struct RouteCase

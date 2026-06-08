@@ -21,8 +21,8 @@ public partial struct UnitDeathSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var queueEntity = RespawnQueueUtils.GetOrCreateQueue(ref state);
-        var queueState = SystemAPI.GetComponent<RespawnQueueState>(queueEntity);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
+        var queueState = SystemAPI.GetComponent<RespawnQueueComponent>(queueEntity);
         var em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
         double now = SystemAPI.Time.ElapsedTime;
@@ -32,7 +32,7 @@ public partial struct UnitDeathSystem : ISystem
         var deathBeginDurations = new NativeList<float>(Allocator.Temp);
         foreach (var (health, animationSettings, entity) in SystemAPI
                  .Query<RefRO<UnitHealth>, RefRO<UnitAnimationSettings>>()
-                 .WithNone<UnitDeathAnimationState, StaticGridBlocker>()
+                 .WithNone<UnitDeathAnimationComponent, StaticGridBlocker>()
                  .WithEntityAccess())
         {
             if (health.ValueRO.Current > 0)
@@ -45,7 +45,7 @@ public partial struct UnitDeathSystem : ISystem
         for (int i = 0; i < deathBeginEntities.Length; i++)
         {
             Entity entity = deathBeginEntities[i];
-            if (!em.Exists(entity) || em.HasComponent<UnitDeathAnimationState>(entity))
+            if (!em.Exists(entity) || em.HasComponent<UnitDeathAnimationComponent>(entity))
                 continue;
 
             if (!em.HasComponent<GameStatsDeathRecordedTag>(entity))
@@ -59,7 +59,7 @@ public partial struct UnitDeathSystem : ISystem
             if (TryBeginVehicleWreck(em, entity))
                 continue;
 
-            em.AddComponentData(entity, new UnitDeathAnimationState
+            em.AddComponentData(entity, new UnitDeathAnimationComponent
             {
                 TimeRemaining = deathBeginDurations[i]
             });
@@ -69,7 +69,7 @@ public partial struct UnitDeathSystem : ISystem
 
         var finalizeEntities = new NativeList<Entity>(Allocator.Temp);
         foreach (var (health, deathState, entity) in SystemAPI
-                 .Query<RefRO<UnitHealth>, RefRW<UnitDeathAnimationState>>()
+                 .Query<RefRO<UnitHealth>, RefRW<UnitDeathAnimationComponent>>()
                  .WithNone<StaticGridBlocker>()
                  .WithEntityAccess())
         {
@@ -107,10 +107,10 @@ public partial struct UnitDeathSystem : ISystem
             em.RemoveComponent<UnitPathRange>(entity);
         if (em.HasComponent<UnitPathRequest>(entity))
             em.RemoveComponent<UnitPathRequest>(entity);
-        if (em.HasComponent<UnitAttackAnimationState>(entity))
-            em.SetComponentData(entity, new UnitAttackAnimationState { TimeRemaining = 0f });
-        if (em.HasComponent<UnitMoveVisualState>(entity))
-            em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        if (em.HasComponent<UnitAttackAnimationComponent>(entity))
+            em.SetComponentData(entity, new UnitAttackAnimationComponent { TimeRemaining = 0f });
+        if (em.HasComponent<UnitMoveVisualComponent>(entity))
+            em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
 
         if (em.HasComponent<UnitAttachedLightRuntime>(entity))
         {
@@ -139,9 +139,9 @@ public partial struct UnitDeathSystem : ISystem
             return false;
         }
 
-        if (em.HasComponent<UnitAirState>(entity) && em.HasComponent<LocalTransform>(entity))
+        if (em.HasComponent<UnitAirComponent>(entity) && em.HasComponent<LocalTransform>(entity))
         {
-            UnitAirState airState = em.GetComponentData<UnitAirState>(entity);
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
             LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
             float groundedY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
             transform.Position.y = groundedY;
@@ -195,13 +195,13 @@ public partial struct UnitDeathSystem : ISystem
             em.AddComponentData(entity, new GridBlockerSize { Size = footprint });
         }
 
-        if (em.HasComponent<VehicleWreckState>(entity))
+        if (em.HasComponent<VehicleWreckComponent>(entity))
         {
-            em.SetComponentData(entity, new VehicleWreckState { TimeRemaining = VehicleWreckLifetimeSeconds });
+            em.SetComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
         }
         else
         {
-            em.AddComponentData(entity, new VehicleWreckState { TimeRemaining = VehicleWreckLifetimeSeconds });
+            em.AddComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
         }
 
         return true;

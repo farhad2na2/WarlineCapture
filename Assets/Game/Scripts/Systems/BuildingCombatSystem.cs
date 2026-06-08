@@ -252,7 +252,7 @@ public sealed class BuildingCombatSystem
             context.RuntimeBuildingSystem.ClearSelection();
         }
 
-        if (building is RuntimeBuildingData runtimeBuilding)
+        if (building is RuntimeBuildingEntity runtimeBuilding)
             context.DestroyedVisualSystem?.BeginDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         context.RefreshBuildingMarkerVisibility?.Invoke();
         return true;
@@ -285,7 +285,7 @@ public sealed class BuildingCombatSystem
         context.NotifyHomeBuildingDestroyed?.Invoke(buildingId);
         DestroyRuntimeBuildingEntities(context, building);
         context.RuntimeBuildingSystem.RemoveBuilding(buildingId);
-        if (building is RuntimeBuildingData runtimeBuilding)
+        if (building is RuntimeBuildingEntity runtimeBuilding)
             context.DestroyedVisualSystem?.CleanupDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         DestroyRuntimeBuildingObject(context, building.InstanceObject);
         context.RefreshBuildingMarkerVisibility?.Invoke();

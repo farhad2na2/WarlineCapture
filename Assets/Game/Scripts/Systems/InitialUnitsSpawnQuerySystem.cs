@@ -39,8 +39,8 @@ public readonly struct InitialUnitsSpawnQuerySystem
         EntityQuery gridContextQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>(),
-            ComponentType.ReadOnly<DynamicOccupancyData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
 
         EntityQuery pendingInitQuery = state.GetEntityQuery(new EntityQueryDesc
         {

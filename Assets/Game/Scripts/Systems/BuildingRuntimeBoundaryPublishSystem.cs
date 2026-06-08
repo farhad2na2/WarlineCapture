@@ -21,7 +21,7 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
         public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly Func<EntityQuery> GetBoundaryQuery;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
 
         public Context(
             TryGetEntityManagerDelegate tryGetEntityManager,
@@ -36,7 +36,7 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
             BuildingRuntimeQuerySystem.Context runtimeQueryContext,
             FactionResourceSystem factionResourceSystem,
             Func<EntityQuery> getBoundaryQuery,
-            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
             TryGetEntityManager = tryGetEntityManager;
             EnsureEntityQueries = ensureEntityQueries;

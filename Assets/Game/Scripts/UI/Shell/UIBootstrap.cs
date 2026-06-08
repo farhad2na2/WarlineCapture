@@ -21,7 +21,7 @@ public sealed class UIBootstrap : MonoBehaviour
         AppCanvasInstance.name = appCanvasPrefab.name;
         AppCanvasInstance.SetActive(shouldEnableParallelUi);
 
-        if (shouldEnableParallelUi && AppCanvasInstance.TryGetComponent(out UIRouter router))
+        if (shouldEnableParallelUi && AppCanvasInstance.TryGetComponent(out UIRouterView router))
             router.GoTo(parallelStartupRoute, false);
     }
 
@@ -32,7 +32,7 @@ public sealed class UIBootstrap : MonoBehaviour
         if (AppCanvasInstance != null)
         {
             AppCanvasInstance.SetActive(enabled);
-            if (enabled && AppCanvasInstance.TryGetComponent(out UIRouter router))
+            if (enabled && AppCanvasInstance.TryGetComponent(out UIRouterView router))
                 router.GoTo(parallelStartupRoute, false);
         }
     }

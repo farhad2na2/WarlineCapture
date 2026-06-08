@@ -8,7 +8,7 @@ internal sealed class BuildingUiContextSystem
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionRequestSystem ProductionRequestSystem;
         public readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
@@ -38,7 +38,7 @@ internal sealed class BuildingUiContextSystem
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
             BuildingDefinitionSystem definitionSystem,
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionRequestSystem productionRequestSystem,
             Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
@@ -99,7 +99,7 @@ internal sealed class BuildingUiContextSystem
     public Source CreateSource(
         RuntimeResourceSystem runtimeResourceSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionSystem productionSystem,
         BuildingProductionRequestSystem productionRequestSystem,
         Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
@@ -206,7 +206,7 @@ internal sealed class BuildingUiContextSystem
 
     public BuildingUiQuerySystem.Context CreateQueryContext(Source source)
     {
-        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings = source.RuntimeBuildingSystem.Buildings;
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = source.RuntimeBuildingSystem.Buildings;
         return new BuildingUiQuerySystem.Context(
             runtimeBuildings,
             source.GetActiveBuildingId,

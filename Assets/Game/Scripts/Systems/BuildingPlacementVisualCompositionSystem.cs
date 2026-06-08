@@ -15,7 +15,7 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerData blockerData);
+        out DynamicBlockerComponent blockerData);
 
     internal delegate bool IsActivePlacementValidDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -23,7 +23,7 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         Vector2Int footprintCells,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData);
+        DynamicBlockerComponent blockerData);
 
     internal delegate bool TryAlignGateToNearbyWallDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -89,7 +89,7 @@ internal sealed class BuildingPlacementVisualCompositionSystem
             source.BuildingPlacementLifecycleSystem,
             source.BuildingBarrierSystem,
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
             (origin, footprint, grid, roads, blockerData) => isActivePlacementValid(source, origin, footprint, grid, roads, blockerData),

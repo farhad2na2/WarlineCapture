@@ -5,7 +5,7 @@ internal sealed class BuildingGameplayDisposalSystem
 {
     internal readonly struct Source
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementStartupSystem PlacementStartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
@@ -14,7 +14,7 @@ internal sealed class BuildingGameplayDisposalSystem
         public readonly Action ExitBuildMode;
 
         public Source(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementStartupSystem placementStartupSystem,
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementPreviewSystem placementPreviewSystem,
@@ -38,7 +38,7 @@ internal sealed class BuildingGameplayDisposalSystem
 
         if (source.RuntimeBuildingSystem != null)
         {
-            foreach (RuntimeBuildingData building in source.RuntimeBuildingSystem.Buildings.Values)
+            foreach (RuntimeBuildingEntity building in source.RuntimeBuildingSystem.Buildings.Values)
             {
                 if (building == null)
                     continue;

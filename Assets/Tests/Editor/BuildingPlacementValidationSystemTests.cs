@@ -20,7 +20,7 @@ public sealed class BuildingPlacementValidationSystemTests
     {
         CreateRoadBuffer(4, 4, out GridConfig grid, out DynamicBuffer<GridRoad> roads);
         roads[GridUtils.CellToIndex(new Unity.Mathematics.int2(1, 1), grid.Width)] = new GridRoad { Value = 1 };
-        DynamicBlockerData blockerData = default;
+        DynamicBlockerComponent blockerData = default;
 
         Assert.IsFalse(BuildingPlacementValidationSystem.IsPlacementRectValid(
             new RectInt(1, 1, 1, 1),
@@ -56,7 +56,7 @@ public sealed class BuildingPlacementValidationSystemTests
         int blockedIndex = GridUtils.CellToIndex(new Unity.Mathematics.int2(1, 2), grid.Width);
         var blocked = new NativeBitArray(16, Allocator.Persistent);
         blocked.Set(blockedIndex, true);
-        DynamicBlockerData blockerData = new() { GridSize = 16, Blocked = blocked };
+        DynamicBlockerComponent blockerData = new() { GridSize = 16, Blocked = blocked };
 
         try
         {

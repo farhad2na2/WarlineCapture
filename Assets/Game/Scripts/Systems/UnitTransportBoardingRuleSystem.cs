@@ -60,10 +60,10 @@ public readonly struct UnitTransportBoardingRuleSystem
         if (!em.HasComponent<UnitAirMovement>(transport))
             return true;
 
-        if (!em.HasComponent<UnitAirState>(transport) || !em.HasComponent<LocalTransform>(transport))
+        if (!em.HasComponent<UnitAirComponent>(transport) || !em.HasComponent<LocalTransform>(transport))
             return false;
 
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
         float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
         bool physicallyGrounded = transform.Position.y <= groundY + AirBoardingGroundedHeightTolerance;

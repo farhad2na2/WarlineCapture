@@ -215,23 +215,23 @@ public sealed class UnitMovementBlockerValidationTests
             var grid = new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
             Entity gridEntity = em.CreateEntity(
                 typeof(GridConfig),
-                typeof(DynamicBlockerData),
-                typeof(DynamicOccupancyData),
-                typeof(PathPoolData));
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent),
+                typeof(PathPoolComponent));
             em.SetComponentData(gridEntity, grid);
-            em.SetComponentData(gridEntity, new DynamicBlockerData
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
             {
                 GridSize = gridSize,
                 Counts = blockerCounts,
                 Blocked = blocked,
                 FriendlyPassFactionIds = friendlyPassFactionIds
             });
-            em.SetComponentData(gridEntity, new DynamicOccupancyData
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
             {
                 GridSize = gridSize,
                 Occupied = occupied
             });
-            em.SetComponentData(gridEntity, new PathPoolData { Cells = pathPool });
+            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
 
             em.AddBuffer<GridWalkable>(gridEntity);
             em.AddBuffer<GridRoad>(gridEntity);
@@ -333,23 +333,23 @@ public sealed class UnitMovementBlockerValidationTests
             var grid = new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
             Entity gridEntity = em.CreateEntity(
                 typeof(GridConfig),
-                typeof(DynamicBlockerData),
-                typeof(DynamicOccupancyData),
-                typeof(PathPoolData));
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent),
+                typeof(PathPoolComponent));
             em.SetComponentData(gridEntity, grid);
-            em.SetComponentData(gridEntity, new DynamicBlockerData
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
             {
                 GridSize = gridSize,
                 Counts = blockerCounts,
                 Blocked = blocked,
                 FriendlyPassFactionIds = friendlyPassFactionIds
             });
-            em.SetComponentData(gridEntity, new DynamicOccupancyData
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
             {
                 GridSize = gridSize,
                 Occupied = occupied
             });
-            em.SetComponentData(gridEntity, new PathPoolData { Cells = pathPool });
+            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
 
             em.AddBuffer<GridWalkable>(gridEntity);
             em.AddBuffer<GridRoad>(gridEntity);
@@ -440,9 +440,9 @@ public sealed class UnitMovementBlockerValidationTests
         for (int i = 0; i < friendlyPassFactionIds.Length; i++)
             friendlyPassFactionIds[i] = byte.MaxValue;
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = blockerCounts,

@@ -336,13 +336,13 @@ public class GridAuthoring : MonoBehaviour
             return false;
 
         var entityManager = world.EntityManager;
-        var query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<DynamicBlockerData>());
+        var query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<DynamicBlockerComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;
 
         Entity gridEntity = query.GetSingletonEntity();
         var grid = entityManager.GetComponentData<GridConfig>(gridEntity);
-        var blockerData = entityManager.GetComponentData<DynamicBlockerData>(gridEntity);
+        var blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
         if (!blockerData.Blocked.IsCreated)
             return false;
 
@@ -401,13 +401,13 @@ public class GridAuthoring : MonoBehaviour
             return;
 
         var entityManager = world.EntityManager;
-        var gridQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<PathPoolData>());
+        var gridQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<PathPoolComponent>());
         if (gridQuery.IsEmptyIgnoreFilter)
             return;
 
         Entity gridEntity = gridQuery.GetSingletonEntity();
         GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
-        var pathPool = entityManager.GetComponentData<PathPoolData>(gridEntity).Cells.AsArray();
+        var pathPool = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells.AsArray();
 
         var unitQuery = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),

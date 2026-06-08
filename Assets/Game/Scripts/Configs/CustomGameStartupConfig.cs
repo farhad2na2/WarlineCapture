@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "WarlineCapture/Custom Game/Startup Config")]
+[CreateAssetMenu(menuName = "Game/Custom Game/Startup Config")]
 public sealed class CustomGameStartupConfig : ScriptableObject
 {
     [SerializeField] private string gameModeId = "custom.skirmish.quick";

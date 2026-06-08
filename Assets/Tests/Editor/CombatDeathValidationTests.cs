@@ -91,16 +91,16 @@ public sealed class CombatDeathValidationTests
         _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerData), typeof(DynamicOccupancyData));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-        em.SetComponentData(gridEntity, new DynamicBlockerData
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
             GridSize = gridSize,
             Counts = _blockerCounts,
             Blocked = _blocked,
             FriendlyPassFactionIds = _friendlyPassFactionIds
         });
-        em.SetComponentData(gridEntity, new DynamicOccupancyData
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
         {
             GridSize = gridSize,
             Occupied = _occupied
@@ -126,10 +126,10 @@ public sealed class CombatDeathValidationTests
             typeof(UnitFootprint),
             typeof(UnitHealth),
             typeof(UnitRespawnPrefab),
-            typeof(UnitAttackState),
-            typeof(UnitIdleWanderState),
+            typeof(UnitAttackCooldownComponent),
+            typeof(UnitIdleWanderComponent),
             typeof(UnitPrevWorldPos),
-            typeof(UnitMoveVisualState),
+            typeof(UnitMoveVisualComponent),
             typeof(LocalTransform));
         em.SetComponentData(entity, new Faction { Id = 0 });
         em.SetComponentData(entity, new UnitGrid { Cell = new int2(0, 0) });
@@ -156,9 +156,9 @@ public sealed class CombatDeathValidationTests
             typeof(UnitHealth),
             typeof(UnitCombat),
             typeof(UnitAttack),
-            typeof(UnitAttackState),
-            typeof(UnitAttackTraceState),
-            typeof(UnitAttackAnimationState),
+            typeof(UnitAttackCooldownComponent),
+            typeof(UnitAttackTraceComponent),
+            typeof(UnitAttackAnimationComponent),
             typeof(UnitAnimationSettings),
             typeof(UnitRespawnPrefab),
             typeof(LocalTransform));

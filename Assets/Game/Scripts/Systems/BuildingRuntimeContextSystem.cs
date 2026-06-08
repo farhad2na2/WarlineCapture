@@ -7,7 +7,7 @@ internal sealed class BuildingRuntimeContextSystem
 {
     public readonly struct RuntimeSource
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionSlotSystem ProductionSlotSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
@@ -38,7 +38,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
         public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
         public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
-        public readonly BuildingCombatSystem.BuildingAction<RuntimeBuildingData> RememberOpenBaseBreach;
+        public readonly BuildingCombatSystem.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
         public readonly BuildingCombatSystem.BuildingIdAction NotifyHomeBuildingDestroyed;
         public readonly BuildingCombatSystem.ObjectAction DestroyObject;
         public readonly Action RefreshBuildingMarkerVisibility;
@@ -47,7 +47,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly bool EnableDestroyDiagnostics;
 
         public RuntimeSource(
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionSlotSystem productionSlotSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
@@ -78,7 +78,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            BuildingCombatSystem.BuildingAction<RuntimeBuildingData> rememberOpenBaseBreach,
+            BuildingCombatSystem.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
             BuildingCombatSystem.BuildingIdAction notifyHomeBuildingDestroyed,
             BuildingCombatSystem.ObjectAction destroyObject,
             Action refreshBuildingMarkerVisibility,
@@ -143,7 +143,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate PositionBuildingObject;
         public readonly BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
         public readonly BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly Func<bool> IsDeferringSideEffects;
@@ -182,7 +182,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate positionBuildingObject,
             BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
             BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
-            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             Func<bool> isDeferringSideEffects,
@@ -344,7 +344,7 @@ internal sealed class BuildingRuntimeContextSystem
     public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(
         RuntimeSource source,
         BuildingCombatSystem combatSystem,
-        BuildingCombatSystem.Context<RuntimeBuildingData> combatContext,
+        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext,
         Func<float> getTime,
         float destroyedBuildingLifetimeSeconds)
     {
@@ -394,15 +394,15 @@ internal sealed class BuildingRuntimeContextSystem
     {
         return new BuildingPlacementRedirectSystem.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             () => source.RedirectUnitsQuery);
     }
 
-    public BuildingCombatSystem.Context<RuntimeBuildingData> CreateCombatContext(RuntimeSource source)
+    public BuildingCombatSystem.Context<RuntimeBuildingEntity> CreateCombatContext(RuntimeSource source)
     {
-        return new BuildingCombatSystem.Context<RuntimeBuildingData>(
+        return new BuildingCombatSystem.Context<RuntimeBuildingEntity>(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
@@ -430,7 +430,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId,
             BuildingDefinitionSystem.UnitPrefabMatchesId,
             source.TryResolveBuildingFocusWorldPosition,
-            (RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
+            (RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
             {
                 goal = default;
                 return source.ResourceHaulerBridgeSystem != null &&
@@ -441,7 +441,7 @@ internal sealed class BuildingRuntimeContextSystem
                     referenceCell,
                     out goal);
             },
-            (RuntimeBuildingData building, int2 currentCell, int2 unitFootprint) =>
+            (RuntimeBuildingEntity building, int2 currentCell, int2 unitFootprint) =>
                 source.ResourceHaulerBridgeSystem != null &&
                 source.ResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell(
                     CreateResourceHaulerBridgeContext(source),
@@ -474,12 +474,12 @@ internal sealed class BuildingRuntimeContextSystem
         return new BuildingBarrierSystem.Context(
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             () => source.LiveFactionUnitsQuery,
             BuildingBarrierSystem.IsWallGateDefinition,
-            (RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
+            (RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
             {
                 goal = default;
                 return source.ResourceHaulerBridgeSystem != null &&
@@ -496,7 +496,7 @@ internal sealed class BuildingRuntimeContextSystem
     {
         return new BuildingPlacementRedirectSystem.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             source.GetRedirectUnitsQuery);
@@ -509,7 +509,7 @@ internal sealed class BuildingRuntimeContextSystem
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             () => source.HaulerUnitsQuery,

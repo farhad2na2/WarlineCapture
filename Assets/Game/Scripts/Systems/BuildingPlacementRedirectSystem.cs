@@ -8,7 +8,7 @@ using UnityEngine;
 internal sealed class BuildingPlacementRedirectSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate void EnsureEntityQueriesDelegate(EntityManager entityManager);
     public delegate EntityQuery GetRedirectUnitsQueryDelegate();
 
@@ -100,11 +100,11 @@ internal sealed class BuildingPlacementRedirectSystem
             return;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
+        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
             return;
 
         var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
         var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
         var redirectUnits = new NativeList<Entity>(Allocator.Temp);
         var redirectGoals = new NativeList<int2>(Allocator.Temp);
@@ -124,8 +124,8 @@ internal sealed class BuildingPlacementRedirectSystem
             }
 
             NativeArray<int2> pathPool = default;
-            if (em.HasComponent<PathPoolData>(gridEntity))
-                pathPool = em.GetComponentData<PathPoolData>(gridEntity).Cells.AsArray();
+            if (em.HasComponent<PathPoolComponent>(gridEntity))
+                pathPool = em.GetComponentData<PathPoolComponent>(gridEntity).Cells.AsArray();
 
             for (int i = 0; i < units.Length; i++)
             {
@@ -237,8 +237,8 @@ internal sealed class BuildingPlacementRedirectSystem
                     em.SetComponentData(unit, LocalTransform.FromPosition(worldPosition));
                 if (em.HasComponent<UnitPrevWorldPos>(unit))
                     em.SetComponentData(unit, new UnitPrevWorldPos { Value = worldPosition });
-                if (em.HasComponent<UnitMoveVisualState>(unit))
-                    em.SetComponentData(unit, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+                if (em.HasComponent<UnitMoveVisualComponent>(unit))
+                    em.SetComponentData(unit, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
             }
 
             if (wasInsideFootprint)

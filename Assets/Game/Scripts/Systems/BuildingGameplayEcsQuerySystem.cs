@@ -36,7 +36,7 @@ internal sealed class BuildingGameplayEcsQuerySystem
         _gridDataQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridRoad>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
+            ComponentType.ReadOnly<DynamicBlockerComponent>());
         _redirectUnitsQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitGrid>(),

@@ -162,6 +162,13 @@ public class UnitGridAuthoring : MonoBehaviour
     public bool IsAirUnit => isAirUnit;
     public bool CanRequest => canRequest;
     public int Price => Mathf.Max(0, price);
+    public bool ConfiguredAllowIdleWander => config != null ? config.AllowIdleWander : allowIdleWander;
+    public float ConfiguredSpeed => Mathf.Max(0f, config != null ? config.Speed : speed);
+    public int ConfiguredResourceHaulerBarrelCapacity => Mathf.Max(0, config != null ? config.ResourceHaulerBarrelCapacity : resourceHaulerBarrelCapacity);
+    public bool ConfiguredCanAttack => config != null ? config.CanAttack : canAttack;
+    public float ConfiguredAttackRange => Mathf.Max(0f, config != null ? config.AttackRange : attackRange);
+    public int ConfiguredAttackDamage => Mathf.Max(0, config != null ? config.AttackDamage : attackDamage);
+    public int ConfiguredMaxHealth => Mathf.Max(1, config != null ? config.MaxHealth : maxHealth);
     public GameObject MidLodPrefab => config != null ? config.MidLodPrefab : null;
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;

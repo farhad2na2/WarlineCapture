@@ -147,6 +147,14 @@ MonoBehaviour:
   titleText: {fileID: 3560829199116083651}
   typeText: {fileID: 1402168514948368477}
   descriptionText: {fileID: 767883655856220087}
+  healthValueText: {fileID: 6164946090000900888}
+  damageValueText: {fileID: 7539428580299569503}
+  rangeValueText: {fileID: 6494965548946774140}
+  speedValueText: {fileID: 1783895022243016395}
+  moveCapabilityText: {fileID: 1676210828131409421}
+  patrolCapabilityText: {fileID: 6170273593537544025}
+  attackCapabilityText: {fileID: 7303592951289458170}
+  holdCapabilityText: {fileID: 8387823200689860817}
   categoryVisuals:
   - category: 0
     backgroundRoot: {fileID: 7815718410898352299}

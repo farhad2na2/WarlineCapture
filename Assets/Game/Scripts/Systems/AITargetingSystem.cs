@@ -7,10 +7,21 @@ using UnityEngine;
 public partial struct AITargetingSystem : ISystem
 {
     private const float LogIntervalSeconds = 6f;
+    private const float TargetRefreshSeconds = 0.5f;
+    private EntityQuery _squadQuery;
+    private EntityQuery _targetQuery;
+    private EntityQuery _targetPriorityQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private float _nextTargetRefreshTime;
 
     public void OnCreate(ref SystemState state)
     {
+        _squadQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquad>());
+        _targetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        _targetPriorityQuery = state.GetEntityQuery(ComponentType.ReadOnly<AITargetPrioritySetting>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -25,19 +36,18 @@ public partial struct AITargetingSystem : ISystem
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+        if (now < _nextTargetRefreshTime)
+            return;
+
+        _nextTargetRefreshTime = now + TargetRefreshSeconds;
+
         EntityManager em = state.EntityManager;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
-        EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>());
-        using NativeArray<Entity> squads = squadQuery.ToEntityArray(Allocator.Temp);
-        squadQuery.Dispose();
-
-        EntityQuery targetQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>());
-        using NativeArray<Entity> targets = targetQuery.ToEntityArray(Allocator.Temp);
-        targetQuery.Dispose();
+        using NativeArray<Entity> squads = _squadQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<AITargetPrioritySetting> targetPriorities =
+            _targetPriorityQuery.ToComponentDataArray<AITargetPrioritySetting>(Allocator.Temp);
 
         for (int i = 0; i < squads.Length; i++)
         {
@@ -46,7 +56,7 @@ public partial struct AITargetingSystem : ISystem
             if (squad.Purpose != (byte)AISquadPurpose.Attack)
                 continue;
 
-            AITargetPriority priority = ResolveTargetPriority(em, squad.FactionId);
+            AITargetPriority priority = ResolveTargetPriority(targetPriorities, squad.FactionId);
             if (!TrySelectTarget(em, targets, squad, priority, out Entity target, out int2 targetCell, out byte targetFaction, out AITargetKind kind, out int score, out string reason))
             {
                 if (now - squad.LastLogTime >= LogIntervalSeconds)
@@ -170,17 +180,14 @@ public partial struct AITargetingSystem : ISystem
         return AITargetKind.Unit;
     }
 
-    private static AITargetPriority ResolveTargetPriority(EntityManager em, byte factionId)
+    private static AITargetPriority ResolveTargetPriority(NativeArray<AITargetPrioritySetting> settings, byte factionId)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<AITargetPrioritySetting>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AITargetPrioritySetting>(entity))
-                continue;
+        if (!settings.IsCreated)
+            return AITargetPriority.Balanced;
 
-            AITargetPrioritySetting setting = em.GetComponentData<AITargetPrioritySetting>(entity);
+        for (int i = 0; i < settings.Length; i++)
+        {
+            AITargetPrioritySetting setting = settings[i];
             if (setting.FactionId == factionId)
                 return (AITargetPriority)setting.Priority;
         }

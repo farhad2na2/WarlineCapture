@@ -6,8 +6,10 @@ using UnityEngine;
 public partial struct AIFactionControlSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
+    private const float ControlRefreshSeconds = 0.5f;
     private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private float _nextControlRefreshTime;
 
     public void OnCreate(ref SystemState state)
     {
@@ -29,6 +31,11 @@ public partial struct AIFactionControlSystem : ISystem
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+        if (now < _nextControlRefreshTime)
+            return;
+
+        _nextControlRefreshTime = now + ControlRefreshSeconds;
+
         bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
         Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();

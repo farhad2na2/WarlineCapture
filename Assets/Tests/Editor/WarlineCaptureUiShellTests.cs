@@ -50,13 +50,13 @@ public sealed class WarlineCaptureUiShellTests
     };
 
     [Test]
-    public void MatchScene_UsesSceneOwnedCanvasWithoutParallelLegacyBootstrap()
+    public void MatchScene_DoesNotContainLegacyCanvasOrParallelBootstrap()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(MatchScenePath);
-        string legacyCanvasBlock = scene.FindRequiredBlockContaining("m_Name: UI_Canvas");
 
         Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiBootstrap"));
-        StringAssert.Contains("m_IsActive: 1", legacyCanvasBlock);
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_Name: UI_Canvas"));
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView"));
     }
 
     [Test]

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Reflection;
 using Game.Scripts.UI;
 using NUnit.Framework;
@@ -12,52 +11,16 @@ public sealed class SettingsPanelSceneValidationTests
     private const string ScenePath = "Assets/Game/Scenes/Match.unity";
 
     [Test]
-    public void MatchScene_SettingsButtonPanelAndGameplaySpeedDropdownAreWired()
+    public void MatchScene_DoesNotContainLegacyMenuViewSettingsPanel()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
-        string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");
-
-        string settingsButtonId = scene.GetRequiredFieldFileId(menuViewBlock, "buttonSettings");
-        string settingsPanelId = scene.GetRequiredFieldFileId(menuViewBlock, "panelSettings");
-        string gameplaySpeedDropdownId = scene.GetRequiredFieldFileId(menuViewBlock, "gameplaySpeedDropdown");
-
-        Assert.AreEqual("Button_Settings", scene.GetRequiredGameObjectNameForReference(settingsButtonId));
-        Assert.AreEqual("Panel_Settings", scene.GetRequiredGameObjectNameForReference(settingsPanelId));
-        Assert.AreEqual("Dropdown_GameplaySpeed", scene.GetRequiredGameObjectNameForReference(gameplaySpeedDropdownId));
-        Assert.IsFalse(scene.GetRequiredActiveStateForReference(settingsPanelId));
-        Assert.DoesNotThrow(() => scene.FindRequiredBlockContaining("m_Name: Panel_Example_Settings"));
-        scene.AssertPersistentCallsAreEmpty(settingsButtonId, "Button_Settings");
-
-        IReadOnlyList<string> gameplaySpeedOptions = scene.GetDropdownOptionTexts(gameplaySpeedDropdownId);
-        Assert.AreEqual(12, gameplaySpeedOptions.Count);
-        Assert.AreEqual("1x", gameplaySpeedOptions[0]);
-        Assert.AreEqual("1.25x", gameplaySpeedOptions[1]);
-        Assert.AreEqual("1.5x", gameplaySpeedOptions[2]);
-        Assert.AreEqual("10x", gameplaySpeedOptions[11]);
-
-        AssertDropdown(scene, menuViewBlock, "aiDifficultyDropdown", "Dropdown_AIDifficulty", 4, "Easy", "Brutal");
-        AssertDropdown(scene, menuViewBlock, "aiStartingMoneyDropdown", "Dropdown_AIStartingMoney", 3, "Low", "High");
-        AssertDropdown(scene, menuViewBlock, "aiIncomeMultiplierDropdown", "Dropdown_AIIncomeMultiplier", 5, "0.75x", "2x");
-        AssertDropdown(scene, menuViewBlock, "aiBuildSpeedDropdown", "Dropdown_AIBuildSpeed", 3, "Slow", "Fast");
-        AssertDropdown(scene, menuViewBlock, "aiUnitProductionSpeedDropdown", "Dropdown_AIUnitProductionSpeed", 3, "Slow", "Fast");
-        AssertDropdown(scene, menuViewBlock, "aiAttackGroupSizeDropdown", "Dropdown_AIAttackGroupSize", 3, "Small", "Large");
-        AssertDropdown(scene, menuViewBlock, "aiAttackFrequencyDropdown", "Dropdown_AIAttackFrequency", 3, "Rare", "Frequent");
-        AssertDropdown(scene, menuViewBlock, "aiAggressionDropdown", "Dropdown_AIAggression", 3, "Defensive", "Aggressive");
-        AssertDropdown(scene, menuViewBlock, "aiExpansionDropdown", "Dropdown_AIExpansion", 4, "Off", "Fast");
-        AssertDropdown(scene, menuViewBlock, "aiTargetPriorityDropdown", "Dropdown_AITargetPriority", 4, "Balanced", "Production");
-        AssertDropdown(scene, menuViewBlock, "aiPlayerAutoDropdown", "Dropdown_AIPlayerAuto", 2, "Off", "On");
-        AssertDropdown(scene, menuViewBlock, "aiEnemyCountDropdown", "Dropdown_AIEnemyCount", 3, "1", "3");
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView"));
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_Name: UI_Canvas"));
     }
 
     [Test]
-    public void MatchScene_FpsLabelIsWiredAndUpdatedByMenuView()
+    public void MenuView_FpsLabelFormatsValue()
     {
-        SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
-        string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");
-        string fpsTextId = scene.GetRequiredFieldFileId(menuViewBlock, "fpsText");
-
-        Assert.AreEqual("Label_FPS", scene.GetRequiredGameObjectNameForReference(fpsTextId));
-
         var menuViewObject = new GameObject("MenuViewTest");
         var labelObject = new GameObject("FpsLabelTest");
 
@@ -139,21 +102,4 @@ public sealed class SettingsPanelSceneValidationTests
         method.Invoke(target, args);
     }
 
-    private static void AssertDropdown(
-        SceneYamlTestUtility scene,
-        string menuViewBlock,
-        string fieldName,
-        string expectedName,
-        int optionCount,
-        string firstOption,
-        string lastOption)
-    {
-        string dropdownId = scene.GetRequiredFieldFileId(menuViewBlock, fieldName);
-        IReadOnlyList<string> options = scene.GetDropdownOptionTexts(dropdownId);
-
-        Assert.AreEqual(expectedName, scene.GetRequiredGameObjectNameForReference(dropdownId));
-        Assert.AreEqual(optionCount, options.Count);
-        Assert.AreEqual(firstOption, options[0]);
-        Assert.AreEqual(lastOption, options[optionCount - 1]);
-    }
 }

@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public sealed class SelectionOrderMarkerSystem
 {
@@ -26,7 +27,11 @@ public sealed class SelectionOrderMarkerSystem
     private Transform _runtimeRoot;
     private EntityQuery _attackTargetPreviewQuery;
     private readonly List<GameObject> _attackTargetPreviewMarkers = new();
+    private bool _attackTargetPreviewVisible;
+    private int _attackTargetPreviewVisibleCount;
+    private float _nextAttackTargetPreviewUpdateTime;
     private const int MaxAttackTargetPreviewMarkers = 64;
+    private const float AttackTargetPreviewUpdateSeconds = 0.15f;
     private const int ScanMarkerSegments = 72;
 
     public void EnsureEntityQueries(EntityManager em)
@@ -81,6 +86,9 @@ public sealed class SelectionOrderMarkerSystem
         _scanOrderMarker = null;
         _scanOrderMarkerRenderer = null;
         _attackTargetPreviewMarkers.Clear();
+        _attackTargetPreviewVisible = false;
+        _attackTargetPreviewVisibleCount = 0;
+        _nextAttackTargetPreviewUpdateTime = 0f;
         _moveOrderMarkerHideTime = -1f;
         _attackOrderMarkerHideTime = -1f;
         _scanOrderMarkerHideTime = -1f;
@@ -242,14 +250,23 @@ public sealed class SelectionOrderMarkerSystem
     {
         if (!visible || _attackOrderMarkerPrefab == null)
         {
-            HideAttackTargetPreviewMarkers(0);
+            HideAttackTargetPreviewMarkersIfNeeded(0);
+            _attackTargetPreviewVisible = false;
+            _attackTargetPreviewVisibleCount = 0;
             return;
         }
+
+        if (_attackTargetPreviewVisible && Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
+            return;
+
+        _attackTargetPreviewVisible = true;
+        _nextAttackTargetPreviewUpdateTime = Time.unscaledTime + AttackTargetPreviewUpdateSeconds;
 
         EnsureEntityQueries(em);
         if (_attackTargetPreviewQuery.IsEmptyIgnoreFilter)
         {
-            HideAttackTargetPreviewMarkers(0);
+            HideAttackTargetPreviewMarkersIfNeeded(0);
+            _attackTargetPreviewVisibleCount = 0;
             return;
         }
 
@@ -272,11 +289,12 @@ public sealed class SelectionOrderMarkerSystem
                 hasGroundY ? groundY : position.y + 0.05f,
                 position.z);
             marker.transform.rotation = Quaternion.identity;
-            marker.SetActive(true);
+            SetMarkerActive(marker, true);
             markerIndex++;
         }
 
-        HideAttackTargetPreviewMarkers(markerIndex);
+        HideAttackTargetPreviewMarkersIfNeeded(markerIndex);
+        _attackTargetPreviewVisibleCount = markerIndex;
     }
 
     private void CacheMoveOrderMarker()
@@ -293,6 +311,7 @@ public sealed class SelectionOrderMarkerSystem
             if (_runtimeRoot != null)
                 _moveOrderMarker.transform.SetParent(_runtimeRoot, false);
             _moveOrderMarkerRenderers = _moveOrderMarker.GetComponentsInChildren<Renderer>(true);
+            ConfigureMarkerRenderers(_moveOrderMarkerRenderers);
             _moveOrderMarker.SetActive(false);
             return;
         }
@@ -315,6 +334,7 @@ public sealed class SelectionOrderMarkerSystem
             if (_runtimeRoot != null)
                 _attackOrderMarker.transform.SetParent(_runtimeRoot, false);
             _attackOrderMarkerRenderers = _attackOrderMarker.GetComponentsInChildren<Renderer>(true);
+            ConfigureMarkerRenderers(_attackOrderMarkerRenderers);
             _attackOrderMarker.SetActive(false);
             return;
         }
@@ -335,6 +355,7 @@ public sealed class SelectionOrderMarkerSystem
             marker.name = "AttackTargetPreviewMarkerRuntime";
             if (_runtimeRoot != null)
                 marker.transform.SetParent(_runtimeRoot, false);
+            ConfigureMarkerRenderers(marker.GetComponentsInChildren<Renderer>(true));
             marker.SetActive(false);
             _attackTargetPreviewMarkers.Add(marker);
         }
@@ -359,6 +380,11 @@ public sealed class SelectionOrderMarkerSystem
         _scanOrderMarkerRenderer.numCornerVertices = 4;
         _scanOrderMarkerRenderer.numCapVertices = 4;
         _scanOrderMarkerRenderer.alignment = LineAlignment.View;
+        _scanOrderMarkerRenderer.shadowCastingMode = ShadowCastingMode.Off;
+        _scanOrderMarkerRenderer.receiveShadows = false;
+        _scanOrderMarkerRenderer.lightProbeUsage = LightProbeUsage.Off;
+        _scanOrderMarkerRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        _scanOrderMarkerRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
         Shader shader = Shader.Find("Sprites/Default");
         if (shader != null)
             _scanOrderMarkerRenderer.material = new Material(shader);
@@ -367,14 +393,39 @@ public sealed class SelectionOrderMarkerSystem
         _scanOrderMarker.SetActive(false);
     }
 
-    private void HideAttackTargetPreviewMarkers(int startIndex)
+    private void HideAttackTargetPreviewMarkersIfNeeded(int startIndex)
     {
-        for (int i = startIndex; i < _attackTargetPreviewMarkers.Count; i++)
+        int end = Mathf.Min(_attackTargetPreviewVisibleCount, _attackTargetPreviewMarkers.Count);
+        for (int i = startIndex; i < end; i++)
         {
             GameObject marker = _attackTargetPreviewMarkers[i];
-            if (marker != null)
-                marker.SetActive(false);
+            SetMarkerActive(marker, false);
         }
+    }
+
+    private static void ConfigureMarkerRenderers(Renderer[] renderers)
+    {
+        if (renderers == null)
+            return;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null)
+                continue;
+
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off;
+            renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        }
+    }
+
+    private static void SetMarkerActive(GameObject marker, bool active)
+    {
+        if (marker != null && marker.activeSelf != active)
+            marker.SetActive(active);
     }
 
     private bool TryGetMarkerGroundY(EntityManager em, out float y)

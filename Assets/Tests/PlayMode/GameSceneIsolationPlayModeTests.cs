@@ -1,6 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Threading.Tasks;
-using Game.Scripts.UI;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -29,7 +28,7 @@ public sealed class GameSceneIsolationPlayModeTests
     }
 
     [Test]
-    public async Task GameScene_PlayUsesPromotedDefaultCanvasWithoutOld2DRoute()
+    public async Task GameScene_PlayUsesMatchBootstrapWithoutLegacyCanvasOrOld2DRoute()
     {
         new ActiveMissionSession().Clear();
         Scene defaultScene = EditorSceneManager.LoadSceneInPlayMode(DefaultScenePath, new LoadSceneParameters(LoadSceneMode.Single));
@@ -42,13 +41,8 @@ public sealed class GameSceneIsolationPlayModeTests
         Assert.IsNull(FindSceneComponent<WarlineCaptureUiBootstrap>(defaultScene), "Promoted Match scene must not contain the old 2D public UI bootstrap.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureRouter>(defaultScene), "Promoted Match scene must not load the old 2D/isometric app router.");
 
-        GameObject defaultCanvas = FindRoot(defaultScene, "UI_Canvas");
-        Assert.NotNull(defaultCanvas, "Promoted Match scene must keep the default UI_Canvas root.");
-        Assert.IsTrue(defaultCanvas.activeInHierarchy, "Default UI_Canvas should be active when the scene is played.");
-
-        MenuView menu = FindSceneComponent<MenuView>(defaultScene);
-        Assert.NotNull(menu, "Default UI_Canvas must provide the MenuView used by the promoted prototype.");
-        Assert.NotNull(menu.buttonGame, "Default MenuView must keep the scene-owned Game button.");
+        Assert.IsNull(FindRoot(defaultScene, "UI_Canvas"), "Promoted Match scene must not contain the retired legacy UI_Canvas root.");
+        Assert.IsNull(FindSceneComponent<Game.Scripts.UI.MenuView>(defaultScene), "Promoted Match scene must not contain the retired legacy MenuView.");
 
         MatchSceneView matchScene = FindSceneComponent<MatchSceneView>(defaultScene);
         Assert.NotNull(matchScene, "Promoted Match scene must keep the default MatchSceneView.");
@@ -61,11 +55,11 @@ public sealed class GameSceneIsolationPlayModeTests
         Assert.NotNull(matchScene.DecorationRoot);
         Assert.AreEqual("Decorations", matchScene.DecorationRoot.name);
 
-        menu.buttonGame.onClick.Invoke();
+        matchScene.BeginGameplay();
         for (int frame = 0; frame < 20; frame++)
             await NextFrame();
 
-        Assert.IsTrue(InitialUnitsRuntimeState.PlayRequested, "Default Game button should start the promoted prototype gameplay path.");
+        Assert.IsTrue(InitialUnitsRuntimeState.PlayRequested, "MatchSceneView.BeginGameplay should start the promoted prototype gameplay path.");
         Assert.IsFalse(new ActiveMissionSession().HasActiveMission, "Default Match scene Play must not create a production M01 mission session.");
         Assert.IsFalse(Chapter01M01PlayableRuntime.IsActiveMission(), "Default Match scene Play must not enter the old 2D/isometric M01 runtime.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureUiBootstrap>(defaultScene), "Default Game play must not instantiate the old 2D production UI bootstrap.");

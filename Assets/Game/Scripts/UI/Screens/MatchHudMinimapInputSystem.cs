@@ -23,7 +23,7 @@ public sealed class MatchHudMinimapInputSystem
     private const int MaxMarkers = 256;
     private const int WarmupStaticMapRefreshCount = 1;
     private const float WarmupStaticMapRefreshSeconds = 1f;
-    private const float CameraCenteredMapRefreshSeconds = 0.35f;
+    private const float CameraCenteredMapRefreshSeconds = 0.75f;
     private const float CameraCenteredMapSizeRefreshFraction = 0.08f;
     private const float CameraDragRecaptureDebounceSeconds = 0.45f;
     private const float CameraViewportEdgeRefreshMargin = 0.12f;
@@ -40,6 +40,7 @@ public sealed class MatchHudMinimapInputSystem
     private Texture2D _rasterTexture;
     private Sprite _captureSprite;
     private Color32[] _rasterPixels;
+    private readonly Vector3[] _mapWorldCorners = new Vector3[4];
     private bool _staticMapDirty = true;
     private float _nextStaticMapRetryTime;
     private int _warmupStaticMapRefreshesRemaining;
@@ -312,21 +313,31 @@ public sealed class MatchHudMinimapInputSystem
         EnsureCaptureResources();
         bool captured = worldCamera != null;
 
+        bool readbackMatchesRenderTexture = false;
         if (captured)
+        {
             CaptureMap(renderedGrid, ResolveCaptureMask());
-        if (!captured || IsFlatCapture())
-            DrawRasterMap(renderedGrid, out renderedGrid);
+            readbackMatchesRenderTexture = true;
+        }
 
-        ApplyRenderedMapToView();
+        if (!captured || IsFlatCapture())
+        {
+            DrawRasterMap(renderedGrid, out renderedGrid);
+            readbackMatchesRenderTexture = false;
+        }
+
+        ApplyRenderedMapToView(readbackMatchesRenderTexture);
         return true;
     }
 
-    private void ApplyRenderedMapToView()
+    private void ApplyRenderedMapToView(bool readbackMatchesRenderTexture)
     {
         if (_view == null || _view.MapImage == null)
             return;
 
-        ReadRenderTextureInto(_readbackTexture);
+        if (!readbackMatchesRenderTexture)
+            ReadRenderTextureInto(_readbackTexture);
+
         if (_captureSprite == null)
         {
             _captureSprite = Sprite.Create(
@@ -345,6 +356,11 @@ public sealed class MatchHudMinimapInputSystem
         if (_view == null || _view.MapRect == null)
             return;
 
+        RectTransform markerParent = _view.MarkerRoot != null ? _view.MarkerRoot : _view.MapRect;
+        if (markerParent == null || !TryGetRectInParentSpace(_view.MapRect, markerParent, _mapWorldCorners, out Rect mapRect))
+            return;
+
+        Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
         int markerIndex = 0;
         if (TryGetDefaultEntityManager(out EntityManager em))
         {
@@ -369,31 +385,31 @@ public sealed class MatchHudMinimapInputSystem
                         continue;
 
                     Faction faction = em.GetComponentData<Faction>(entity);
-                    SetMarker(markerIndex, normalized, ResolveMarkerColor(faction.Id));
+                    SetMarker(markerIndex, normalized, ResolveMarkerColor(faction.Id), mapRect, parentTopLeft);
                     markerIndex++;
                 }
             }
         }
 
         for (int i = markerIndex; i < _markerPool.Count; i++)
-            _markerPool[i].gameObject.SetActive(false);
+        {
+            GameObject markerObject = _markerPool[i].gameObject;
+            if (markerObject.activeSelf)
+                markerObject.SetActive(false);
+        }
     }
 
-    private void SetMarker(int index, Vector2 normalized, Color color)
+    private void SetMarker(int index, Vector2 normalized, Color color, Rect mapRect, Vector2 parentTopLeft)
     {
         Image marker = EnsureMarker(index);
         if (marker == null)
             return;
 
         RectTransform rect = marker.rectTransform;
-        RectTransform parent = rect.parent as RectTransform;
-        if (!TryGetRectInParentSpace(_view.MapRect, parent, out Rect mapRect))
-            return;
 
         rect.anchorMin = new Vector2(0f, 1f);
         rect.anchorMax = rect.anchorMin;
         rect.pivot = new Vector2(0.5f, 0.5f);
-        Vector2 parentTopLeft = new(parent.rect.xMin, parent.rect.yMax);
         Vector2 mapPoint = new(
             mapRect.xMin + mapRect.width * Mathf.Clamp01(normalized.x),
             mapRect.yMin + mapRect.height * Mathf.Clamp01(normalized.y));
@@ -401,7 +417,8 @@ public sealed class MatchHudMinimapInputSystem
             mapPoint.x - parentTopLeft.x,
             mapPoint.y - parentTopLeft.y);
         marker.color = color;
-        marker.gameObject.SetActive(true);
+        if (!marker.gameObject.activeSelf)
+            marker.gameObject.SetActive(true);
     }
 
     private Image EnsureMarker(int index)
@@ -426,13 +443,12 @@ public sealed class MatchHudMinimapInputSystem
         return _markerPool[index];
     }
 
-    private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, out Rect rect)
+    private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)
     {
         rect = default;
-        if (source == null || parent == null)
+        if (source == null || parent == null || corners == null || corners.Length < 4)
             return false;
 
-        Vector3[] corners = new Vector3[4];
         source.GetWorldCorners(corners);
         Vector2 min = parent.InverseTransformPoint(corners[0]);
         Vector2 max = min;

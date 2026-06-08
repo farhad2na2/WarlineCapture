@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.UI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,7 +9,6 @@ public sealed class MatchSceneView : MonoBehaviour
     private readonly MatchBootstrapSystem matchBootstrapSystem = new();
 
     [Header("Scene Refs")]
-    [SerializeField] private MenuView menuView;
     [SerializeField] private Camera worldCamera;
     [SerializeField] private Light directionalLight;
     [SerializeField] private Volume globalVolume;
@@ -37,7 +35,6 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
     [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
 
-    public MenuView MenuView => menuView;
     public Camera WorldCamera => worldCamera;
     public Light DirectionalLight => directionalLight;
     public Volume GlobalVolume => globalVolume;

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
-using Game.Scripts.UI;
 
 internal sealed class MatchBootstrapSystem
 {
@@ -33,7 +32,6 @@ internal sealed class MatchBootstrapSystem
     public bool HasSceneView => sceneView != null;
     private MatchSceneView MatchScene => sceneView;
 
-    private MenuView MenuView => MatchScene != null ? MatchScene.MenuView : null;
     public Camera WorldCamera => MatchScene != null ? MatchScene.WorldCamera : null;
     public Light DirectionalLight => MatchScene != null ? MatchScene.DirectionalLight : null;
     public Volume GlobalVolume => MatchScene != null ? MatchScene.GlobalVolume : null;
@@ -187,7 +185,7 @@ internal sealed class MatchBootstrapSystem
     {
         _matchSceneReferenceSystem.Register(sceneView);
         MainMenu = _menuStartupSystem.Initialize(
-            MenuView,
+            null,
             BeginGameplay,
             _bindRoadMainMenu,
             BuildingUiCommand,
@@ -267,7 +265,6 @@ internal sealed class MatchBootstrapSystem
     public void Update()
     {
         UpdateRuntime(
-            MenuView,
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
@@ -331,7 +328,6 @@ internal sealed class MatchBootstrapSystem
     {
         ShutdownRuntime(
             _menuStartupSystem,
-            MenuView,
             BeginGameplay,
             MainMenu,
             _disposeSelection,
@@ -539,7 +535,6 @@ internal sealed class MatchBootstrapSystem
     }
 
     public void UpdateRuntime(
-        MenuView menuView,
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
@@ -559,7 +554,6 @@ internal sealed class MatchBootstrapSystem
         ref bool gameplayStartPending)
     {
         gameplayRuntimeUpdateSystem.Update(
-            menuView,
             gameplayInitialized,
             runtimeGameplayStateSystem,
             performanceDiagnosticsSystem,
@@ -611,7 +605,6 @@ internal sealed class MatchBootstrapSystem
 
     public void ShutdownRuntime(
         MenuStartupSystem menuStartupSystem,
-        MenuView menuView,
         Action gameRequested,
         MainMenuPlayUI mainMenu,
         Action disposeSelection,
@@ -629,7 +622,7 @@ internal sealed class MatchBootstrapSystem
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
     {
         Shutdown();
-        menuStartupSystem?.Shutdown(menuView, gameRequested);
+        menuStartupSystem?.Shutdown(null, gameRequested);
         mainMenu?.Dispose();
         disposeSelection?.Invoke();
         disposeBuildingGameplay?.Invoke();

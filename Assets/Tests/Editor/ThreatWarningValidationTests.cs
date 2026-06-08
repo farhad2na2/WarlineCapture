@@ -19,7 +19,7 @@ public sealed class ThreatWarningValidationTests
         {
             var tests = new ThreatWarningValidationTests();
             tests.ThreatWarningConfigs_AssignDetectorRolesDescriptionsAndStrings();
-            tests.MatchScene_TacticalWarningPanelIsWiredOnMenuView();
+            tests.MatchScene_DoesNotContainLegacyMenuViewWarningPanel();
             tests.ThreatDetectionWarningSystem_GroundRadarWarnsOnlyWhenNewGroundThreatEntersRadius();
             tests.ThreatDetectionWarningSystem_GroundRadarIgnoresEnemySoldiersMovingTowardSensor();
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
@@ -66,26 +66,11 @@ public sealed class ThreatWarningValidationTests
     }
 
     [Test]
-    public void MatchScene_TacticalWarningPanelIsWiredOnMenuView()
+    public void MatchScene_DoesNotContainLegacyMenuViewWarningPanel()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
-        string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");
-
-        string panelGameId = scene.GetRequiredFieldFileId(menuViewBlock, "panelGame");
-        string warningLabelId = scene.GetRequiredFieldFileId(menuViewBlock, "warningLabel");
-        string tacticalWarningPanelId = scene.GetRequiredFieldFileId(menuViewBlock, "tacticalWarningPanel");
-        string tacticalWarningTypeLabelId = scene.GetRequiredFieldFileId(menuViewBlock, "tacticalWarningTypeLabel");
-        string tacticalWarningDescriptionLabelId = scene.GetRequiredFieldFileId(menuViewBlock, "tacticalWarningDescriptionLabel");
-
-        Assert.AreEqual("Panel_Warning", scene.GetRequiredGameObjectNameForReference(tacticalWarningPanelId));
-        Assert.AreEqual("Label_Match_Type", scene.GetRequiredGameObjectNameForReference(tacticalWarningTypeLabelId));
-        Assert.AreEqual("Label_Match_Description", scene.GetRequiredGameObjectNameForReference(tacticalWarningDescriptionLabelId));
-        Assert.IsFalse(scene.GetRequiredActiveStateForReference(tacticalWarningPanelId));
-        Assert.AreEqual(
-            scene.GetRectTransformFileIdForReference(panelGameId),
-            scene.GetRectTransformParentFileIdForReference(tacticalWarningPanelId));
-        Assert.AreNotEqual(warningLabelId, tacticalWarningTypeLabelId);
-        Assert.AreNotEqual(warningLabelId, tacticalWarningDescriptionLabelId);
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView"));
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_Name: UI_Canvas"));
     }
 
     [Test]

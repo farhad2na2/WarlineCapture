@@ -160,8 +160,10 @@ internal sealed class SelectionGameplayStartupSystem
 
         void UpdateSelectionRuntimePhases()
         {
-            ProcessTransportCommandRequests();
-            rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
+            if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
+                ProcessTransportCommandRequests();
+            if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
+                rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
             rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(CreateRuntimeInputContext());
             RefreshFocusedSelectionReadModels();
             rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
@@ -356,11 +358,17 @@ internal sealed class SelectionGameplayStartupSystem
 
         void UpdateAttackTargetPreviewMarkers()
         {
+            if (!explicitAttackTargetModeActive)
+            {
+                selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(default, false);
+                return;
+            }
+
             if (!TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
             EnsureRuntimeSelectionDependencies(em);
-            selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(em, explicitAttackTargetModeActive);
+            selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(em, true);
         }
 
         bool TryGetDefaultEntityManager(out EntityManager em)

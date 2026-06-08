@@ -1,4 +1,3 @@
-using Game.Scripts.UI;
 using System;
 using Unity.Entities;
 using UnityEngine;
@@ -11,7 +10,6 @@ public sealed class GameplayRuntimeUpdateSystem
     private int _loadingGateStartedFrame = -1;
 
     public void Update(
-        MenuView menuView,
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
@@ -34,9 +32,7 @@ public sealed class GameplayRuntimeUpdateSystem
         performanceDiagnosticsSystem.BeginUpdate(gameplayActive);
         bool hadSlowStep = false;
 
-        double stepStart = performanceDiagnosticsSystem.BeginStep();
-        menuView?.SyncInputState();
-        hadSlowStep |= performanceDiagnosticsSystem.EndStep("MenuCanvasInput", stepStart);
+        double stepStart;
         if (gameplayActive)
         {
             GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
@@ -83,10 +79,6 @@ public sealed class GameplayRuntimeUpdateSystem
         }
 
         stepStart = performanceDiagnosticsSystem.BeginStep();
-        menuView?.SyncRuntimeState();
-        hadSlowStep |= performanceDiagnosticsSystem.EndStep("MenuCanvas", stepStart);
-
-        stepStart = performanceDiagnosticsSystem.BeginStep();
         mainMenu?.Update();
         hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
 
@@ -102,7 +94,6 @@ public sealed class GameplayRuntimeUpdateSystem
         {
             gameplayStartPending = false;
             _loadingGateStartedFrame = -1;
-            menuView?.NotifyGameplayReady();
             Debug.Log($"[LoadingGate] ready frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
         }
         else if (gameplayStartPending && ShouldFailOpenLoadingGate(
@@ -114,7 +105,6 @@ public sealed class GameplayRuntimeUpdateSystem
             gameplayStartPending = false;
             _loadingGateStartedFrame = -1;
             runtimeCity?.MarkSpawnedAfterLoadingGateTimeout();
-            menuView?.NotifyGameplayReady();
             Debug.LogError($"[LoadingGate] failOpen frame={Time.frameCount} reason={failOpenReason}");
         }
         else if (gameplayStartPending)
@@ -133,7 +123,6 @@ public sealed class GameplayRuntimeUpdateSystem
         performanceDiagnosticsSystem.EndUpdate(
             gameplayActive,
             hadSlowStep,
-            menuView,
             unitImpostors?.LastDrawnCount ?? 0,
             gameplayInitialized,
             runtimeGameplayStateSystem.PlayRequested);

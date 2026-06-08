@@ -477,6 +477,55 @@ public sealed class RtsSelectionInputSystem
         return _inputStateSystem.TryGetCommandBuffers(out em, out entity, out commandRequests, out commandResults);
     }
 
+    public bool HasPendingExternalSelectionCommandRequests()
+    {
+        if (!TryGetCommandBuffers(out _, out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests, out _))
+            return false;
+
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            switch (commandRequests[i].Kind)
+            {
+                case RtsSelectionCommandIntentKind.FocusUnit:
+                case RtsSelectionCommandIntentKind.SelectAll:
+                case RtsSelectionCommandIntentKind.SelectAllSoldiers:
+                case RtsSelectionCommandIntentKind.SelectAllVehicles:
+                case RtsSelectionCommandIntentKind.EnterSelectionMode:
+                case RtsSelectionCommandIntentKind.ExitSelectionMode:
+                case RtsSelectionCommandIntentKind.DeselectAll:
+                case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
+                case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
+                case RtsSelectionCommandIntentKind.EnterScanTargetMode:
+                case RtsSelectionCommandIntentKind.HoldPosition:
+                case RtsSelectionCommandIntentKind.Stop:
+                case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
+                case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
+                case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool HasPendingTransportCommandRequests()
+    {
+        if (!TryGetCommandBuffers(out _, out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests, out _))
+            return false;
+
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
+            if (kind == RtsSelectionCommandIntentKind.BoardTransport ||
+                kind == RtsSelectionCommandIntentKind.DisembarkTransport)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public bool TryConsumeQueuedMoveOrder(int currentFrame, out Vector2 screenPosition)
     {
         screenPosition = default;

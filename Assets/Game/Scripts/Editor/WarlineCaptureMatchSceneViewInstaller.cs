@@ -13,7 +13,6 @@ public static class WarlineCaptureMatchSceneViewInstaller
 
     private static readonly string[] RequiredMatchSceneFields =
     {
-        "menuView",
         "worldCamera",
         "directionalLight",
         "globalVolume",

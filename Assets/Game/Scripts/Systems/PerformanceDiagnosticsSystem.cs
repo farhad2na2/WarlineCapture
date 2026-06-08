@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.UI;
 using Unity.Entities;
 using Unity.Profiling;
 using Unity.Profiling.LowLevel.Unsafe;
@@ -13,9 +12,9 @@ public sealed class PerformanceDiagnosticsSystem
     private const double FreezeLogThresholdSeconds = 0.15d;
     private const double LowFpsDiagThreshold = 55d;
     private const double FrameRateDiagIntervalSeconds = 2d;
-    private const double FpsUiUpdateIntervalSeconds = 0.25d;
     private const double SlowFrameDiagThresholdSeconds = 0.025d;
     private const double SlowFrameDiagCooldownSeconds = 0.5d;
+    private const double RenderSceneBreakdownDiagIntervalSeconds = 10d;
     private const int MaxAutoProfilerMarkerRecorders = 200;
     private const int MaxTopSystemProfilerMarkers = 8;
     private static readonly string[] PriorityProfilerMarkerNameFragments =
@@ -53,13 +52,12 @@ public sealed class PerformanceDiagnosticsSystem
     private double _suppressFrameGapUntilTimestamp;
     private double _nextFrameRateDiagTimestamp;
     private double _nextSlowFrameDiagTimestamp;
+    private double _nextRenderSceneBreakdownDiagTimestamp;
     private double _frameRateDiagAccumulatedSeconds;
     private double _frameRateDiagUpdateAccumulatedSeconds;
     private double _frameRateDiagMaxUpdateSeconds;
-    private double _fpsUiAccumulatedSeconds;
     private double _frameStartTimestamp;
     private int _frameRateDiagFrames;
-    private int _fpsUiFrames;
     private bool _lastApplicationFocused;
     private bool _applicationPaused;
     private int _lastGcGen0Count;
@@ -165,7 +163,6 @@ public sealed class PerformanceDiagnosticsSystem
     public void EndUpdate(
         bool gameplayActive,
         bool hadSlowStep,
-        MenuView menuView,
         int impostorCount,
         bool gameplayInitialized,
         bool playRequested)
@@ -188,7 +185,6 @@ public sealed class PerformanceDiagnosticsSystem
         }
 
         LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested);
-        UpdateFpsLabel(menuView);
         UpdateFrameRateDiagnostics(gameplayActive, now, impostorCount);
         CaptureGcCounts();
     }
@@ -464,6 +460,7 @@ public sealed class PerformanceDiagnosticsSystem
                 $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
                 $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)}{preGameDetails} " +
                 $"stepStats={BuildStepStatsString()} topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
+            LogRenderSceneBreakdownIfNeeded(now, averageFps);
         }
 
         _frameRateDiagFrames = 0;
@@ -472,22 +469,6 @@ public sealed class PerformanceDiagnosticsSystem
         _frameRateDiagMaxUpdateSeconds = 0d;
         _stepPerfStats.Clear();
         _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
-    }
-
-    private void UpdateFpsLabel(MenuView menuView)
-    {
-        if (menuView == null)
-            return;
-
-        _fpsUiFrames++;
-        _fpsUiAccumulatedSeconds += Time.unscaledDeltaTime;
-        if (_fpsUiAccumulatedSeconds < FpsUiUpdateIntervalSeconds)
-            return;
-
-        double fps = _fpsUiAccumulatedSeconds > 0d ? _fpsUiFrames / _fpsUiAccumulatedSeconds : 0d;
-        menuView.SetFpsLabel(Mathf.RoundToInt((float)fps));
-        _fpsUiFrames = 0;
-        _fpsUiAccumulatedSeconds = 0d;
     }
 
     private long ReadProfilerRecorder(ProfilerRecorder recorder)
@@ -672,6 +653,26 @@ public sealed class PerformanceDiagnosticsSystem
         }
 
         return builder.Length > 0 ? builder.ToString() : "none-active";
+    }
+
+    private void LogRenderSceneBreakdownIfNeeded(double now, double averageFps)
+    {
+        if (averageFps >= LowFpsDiagThreshold || now < _nextRenderSceneBreakdownDiagTimestamp)
+            return;
+        if (!Application.isEditor && !Debug.isDebugBuild)
+            return;
+
+        _nextRenderSceneBreakdownDiagTimestamp = now + RenderSceneBreakdownDiagIntervalSeconds;
+        Debug.Log(BuildRenderSceneBreakdownDiagString());
+    }
+
+    private string BuildRenderSceneBreakdownDiagString()
+    {
+        return
+            $"[RenderSceneDiag] frame={Time.frameCount} source=profilerCounters " +
+            $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
+            $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
+            $"topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}";
     }
 
     private string BuildTopSystemProfilerMarkerString()

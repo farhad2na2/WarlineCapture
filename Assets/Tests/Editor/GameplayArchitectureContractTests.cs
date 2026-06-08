@@ -881,7 +881,6 @@ public sealed class GameplayArchitectureContractTests
 
         string source = File.ReadAllText(MatchSceneViewPath);
         StringAssert.Contains("public sealed class MatchSceneView : MonoBehaviour", source);
-        StringAssert.Contains("private MenuView menuView;", source);
         StringAssert.Contains("private Camera worldCamera;", source);
         StringAssert.Contains("private Light directionalLight;", source);
         StringAssert.Contains("private Volume globalVolume;", source);
@@ -891,6 +890,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private GridAuthoringConfig runtimeGridConfig;", source);
         StringAssert.Contains("public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;", source);
         StringAssert.Contains("private List<AIControllerConfig> aiControllerConfigs", source);
+        Assert.IsFalse(source.Contains("MenuView", StringComparison.Ordinal), "MatchSceneView must not reference the retired Match canvas MenuView.");
         Assert.IsFalse(source.Contains("runtimeGridWidth", StringComparison.Ordinal), "MatchSceneView must not duplicate grid width; use GridAuthoringConfig.");
         Assert.IsFalse(source.Contains("runtimeGridHeight", StringComparison.Ordinal), "MatchSceneView must not duplicate grid height; use GridAuthoringConfig.");
         Assert.IsFalse(source.Contains("runtimeGridCellSize", StringComparison.Ordinal), "MatchSceneView must not duplicate grid cell size; use GridAuthoringConfig.");

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System;
+using Unity.Entities;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,18 +10,65 @@ using UnityEngine.SceneManagement;
 public sealed class UIShellCurrentContentLoadTests
 {
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private World _previousWorld;
+    private World _world;
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent),
+                test => test.MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent(),
+                ref passed);
+            RunValidationStep(
+                nameof(InstalledMatchHudCommandControlsRebindWhenRuntimeDependenciesArrive),
+                test => test.InstalledMatchHudCommandControlsRebindWhenRuntimeDependenciesArrive(),
+                ref passed);
+            RunValidationStep(
+                nameof(ReinstalledMatchHudCommandControlsKeepRuntimeDependencies),
+                test => test.ReinstalledMatchHudCommandControlsKeepRuntimeDependencies(),
+                ref passed);
+            RunValidationStep(
+                nameof(RebindingCommandControlsWithAnotherInputSystemDropsStaleListeners),
+                test => test.RebindingCommandControlsWithAnotherInputSystemDropsStaleListeners(),
+                ref passed);
+
+            Debug.Log($"[UIShellCurrentContentLoadValidation] result=Passed tests={passed}");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UIShellCurrentContentLoadValidation] result=Failed passed={passed}\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
 
     [TearDown]
     public void TearDown()
     {
         BattleHudRuntimeFeedbackSystem.ClearActiveView(BattleHudRuntimeFeedbackSystem.ResolveActiveView());
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        if (_world == null)
+            return;
+
+        if (_world.IsCreated)
+            _world.Dispose();
+        World.DefaultGameObjectInjectionWorld = _previousWorld;
+        _world = null;
+        _previousWorld = null;
     }
 
     [Test]
     public void MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent()
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        MenuBootstrapView bootstrap = FindInScene<MenuBootstrapView>(scene);
+        Assert.NotNull(bootstrap, "Menu scene must contain the menu bootstrap view.");
+        Assert.NotNull(bootstrap.ContentSystem, "Menu bootstrap must serialize the shell content binder.");
+        Assert.NotNull(bootstrap.ShellEcsPresentation, "Menu bootstrap must serialize the shell ECS presentation view.");
+
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
         Assert.NotNull(content.ShellView, "Shell content binder must serialize the shell view.");
@@ -62,6 +112,100 @@ public sealed class UIShellCurrentContentLoadTests
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
     }
 
+    [Test]
+    public void InstalledMatchHudCommandControlsRebindWhenRuntimeDependenciesArrive()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls =
+            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        Assert.NotNull(controls);
+
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem());
+        controls.MoveButton.onClick.Invoke();
+
+        Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+        Assert.AreEqual(1, requests.Length, "Move click must queue after runtime dependencies arrive after HUD install.");
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void ReinstalledMatchHudCommandControlsKeepRuntimeDependencies()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem());
+        int beforeInstallVersion = content.ContentVersion;
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        Assert.Greater(content.ContentVersion, beforeInstallVersion, "Installing Match HUD content must advance the shell content version.");
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls =
+            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        Assert.NotNull(controls);
+
+        controls.MoveButton.onClick.Invoke();
+
+        Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+        Assert.AreEqual(1, requests.Length, "Move click must queue after HUD reinstall when dependencies were already known.");
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void RebindingCommandControlsWithAnotherInputSystemDropsStaleListeners()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls =
+            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        Assert.NotNull(controls);
+
+        var staleInputSystem = new MatchOverlayCommandInputSystem();
+        staleInputSystem.Bind(controls, new SelectionUiCommandSystem());
+        var currentInputSystem = new MatchOverlayCommandInputSystem();
+        currentInputSystem.Bind(controls, new SelectionUiCommandSystem());
+
+        controls.MoveButton.onClick.Invoke();
+
+        Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+        Assert.AreEqual(1, requests.Length, "Rebinding through another input system must not leave stale Move listeners attached.");
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
     private static GameObject AssertRegionHasChild(UIShellView shell, UIShellRegionId regionId)
     {
         Assert.IsTrue(shell.TryGetRegion(regionId, out UIShellRegionView region), $"{regionId} must be registered.");
@@ -89,5 +233,32 @@ public sealed class UIShellCurrentContentLoadTests
         }
 
         return null;
+    }
+
+    private static bool TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests)
+    {
+        var inputState = new RtsSelectionInputSystem();
+        return inputState.TryGetCommandBuffers(
+            out _,
+            out requests,
+            out DynamicBuffer<RtsSelectionCommandResultElement> _);
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<UIShellCurrentContentLoadTests> step,
+        ref int passed)
+    {
+        var test = new UIShellCurrentContentLoadTests();
+        try
+        {
+            step(test);
+            passed++;
+            Debug.Log($"[UIShellCurrentContentLoadValidation] passed={name}");
+        }
+        finally
+        {
+            test.TearDown();
+        }
     }
 }

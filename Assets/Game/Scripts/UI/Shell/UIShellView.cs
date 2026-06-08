@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public sealed class UIShellView : MonoBehaviour
 {
     [SerializeField] private UIMotionHostView motionHost;
     [SerializeField] private UIShellRegionView[] regions;
+    [FormerlySerializedAs("contentPresenter")]
     [SerializeField] private UIShellContentView contentSystem;
 
     private readonly Dictionary<UIShellRegionId, UIShellRegionView> regionById = new();

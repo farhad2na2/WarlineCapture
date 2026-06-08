@@ -103,6 +103,9 @@ internal sealed class MatchBootstrapSystem
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private PerformanceDiagnosticsSystem _performanceDiagnosticsSystem;
+    private bool _mainMenuBaseBindingsApplied;
+    private RuntimeGridBlockerSystem _mainMenuFeatureBoundGridBlockers;
+    private RuntimeCityCompositionSystem _mainMenuFeatureBoundRuntimeCity;
     private bool _gameplayStartPending;
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
@@ -183,7 +186,6 @@ internal sealed class MatchBootstrapSystem
     public void Start()
     {
         _matchSceneReferenceSystem.Register(sceneView);
-        MainMenu = null;
     }
 
     public void BeginGameplay()
@@ -215,6 +217,7 @@ internal sealed class MatchBootstrapSystem
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
+        EnsureMainMenuRuntimeDependencies(resetRuntimeState: true);
         InitializeGameplaySystemsIfNeeded();
         _gameplayStartPending = true;
         _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
@@ -306,6 +309,9 @@ internal sealed class MatchBootstrapSystem
             _performanceDiagnosticsSystem);
 
         MainMenu = null;
+        _mainMenuBaseBindingsApplied = false;
+        _mainMenuFeatureBoundGridBlockers = null;
+        _mainMenuFeatureBoundRuntimeCity = null;
         SelectionUiCommand = null;
         SelectionUiReadModel = null;
         SelectionUiCamera = null;
@@ -496,6 +502,53 @@ internal sealed class MatchBootstrapSystem
             aiPlanEntryConfig,
             tryResolveFactionSpawnCell,
             aiSettings);
+    }
+
+    public MainMenuPlayUI EnsureMainMenuRuntimeDependencies(bool resetRuntimeState = false)
+    {
+        if (SelectionUiCommand == null)
+            return MainMenu;
+
+        if (MainMenu == null)
+            MainMenu = new MainMenuPlayUI();
+
+        MainMenu.Init(SelectionUiCommand, DayNight, SelectionUiCamera, resetRuntimeState);
+        ApplyMainMenuBaseBindings();
+        ApplyMainMenuFeatureBindingsIfReady();
+        return MainMenu;
+    }
+
+    private void ApplyMainMenuBaseBindings()
+    {
+        if (_mainMenuBaseBindingsApplied || MainMenu == null)
+            return;
+
+        _bindRoadMainMenu?.Invoke(MainMenu);
+        _bindBuildingMainMenu?.Invoke(MainMenu);
+        _bindSelectionMainMenu?.Invoke(MainMenu);
+        _mainMenuBaseBindingsApplied = true;
+    }
+
+    private void ApplyMainMenuFeatureBindingsIfReady()
+    {
+        if (!GameplayInitialized || MainMenu == null)
+            return;
+        if (_mainMenuFeatureBoundGridBlockers == RuntimeGridBlockers &&
+            _mainMenuFeatureBoundRuntimeCity == RuntimeCity)
+        {
+            return;
+        }
+
+        _bindRoadGameplayFeatures?.Invoke(MainMenu, RuntimeGridBlockers);
+        _bindBuildingGameplayFeatures?.Invoke(
+            MainMenu,
+            SelectionUiCamera,
+            SelectionBuildingInteraction,
+            RuntimeGridBlockers,
+            RuntimeCity,
+            _citizenPopulationEventSystem);
+        _mainMenuFeatureBoundGridBlockers = RuntimeGridBlockers;
+        _mainMenuFeatureBoundRuntimeCity = RuntimeCity;
     }
 
     private static bool FocusInitialCameraOnConfiguredFactionBase(
@@ -719,6 +772,7 @@ internal sealed class MatchBootstrapSystem
         RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers;
         RuntimeDecorations = gameplaySystems.RuntimeDecorations;
         GameplayInitialized = true;
+        ApplyMainMenuFeatureBindingsIfReady();
     }
 
 }

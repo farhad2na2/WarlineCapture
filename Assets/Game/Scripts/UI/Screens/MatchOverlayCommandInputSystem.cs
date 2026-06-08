@@ -18,6 +18,7 @@ public sealed class MatchOverlayCommandInputSystem
             return;
 
         Unbind(view);
+        ResetCommandControlRuntimeListeners(view);
 
         var binding = new Binding(view, selectionUiCommandSystem, showBuildDrawer, closeBuildDrawer);
         binding.Bind();
@@ -31,6 +32,30 @@ public sealed class MatchOverlayCommandInputSystem
 
         binding.Unbind();
         _bindings.Remove(view);
+    }
+
+    private static void ResetCommandControlRuntimeListeners(MatchOverlayCommandControlsView view)
+    {
+        ClearButtonListeners(view.SelectButton);
+        ClearButtonListeners(view.MoveButton);
+        ClearButtonListeners(view.AttackButton);
+        ClearButtonListeners(view.ScanButton);
+        ClearButtonListeners(view.BuildButton);
+        ClearButtonListeners(view.HoldButton);
+        ClearButtonListeners(view.StopButton);
+        ClearButtonListeners(view.CommandWheelStopButton);
+
+        MatchOverlayCommandTabView[] tabs = view.CommandTabGroup != null ? view.CommandTabGroup.Tabs : null;
+        if (tabs == null)
+            return;
+
+        for (int i = 0; i < tabs.Length; i++)
+            ClearButtonListeners(tabs[i]?.Button);
+    }
+
+    private static void ClearButtonListeners(Button button)
+    {
+        button?.onClick.RemoveAllListeners();
     }
 
     private sealed class Binding
@@ -70,12 +95,6 @@ public sealed class MatchOverlayCommandInputSystem
             _view.HoldButton?.onClick.AddListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.AddListener(OnStopButtonClicked);
             _view.CommandWheelStopButton?.onClick.AddListener(OnCommandWheelStopButtonClicked);
-
-            Debug.Log(
-                $"MATCHHUD_COMMAND_INPUT_BOUND object={_view.name} " +
-                $"selectBound={_view.SelectButton != null} moveBound={_view.MoveButton != null} attackBound={_view.AttackButton != null} scanBound={_view.ScanButton != null} buildBound={_view.BuildButton != null} holdBound={_view.HoldButton != null} " +
-                $"stopBound={_view.StopButton != null} commandWheelStopBound={_view.CommandWheelStopButton != null} " +
-                $"commandSystemBound={_selectionUiCommandSystem != null}");
         }
 
         public void Unbind()
@@ -155,11 +174,6 @@ public sealed class MatchOverlayCommandInputSystem
                     ? _selectionUiCommandSystem.RequestEnterSelectionMode()
                     : _selectionUiCommandSystem.RequestExitSelectionMode());
 
-            Debug.Log(
-                $"MATCHHUD_SELECT_CLICK object={_view.name} button={ButtonName(_view.SelectButton)} " +
-                $"active={IsActive(_view.SelectButton)} interactable={IsInteractable(_view.SelectButton)} " +
-                $"selected={selected} commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
-
             if (!queued)
                 Debug.LogWarning("MATCHHUD_SELECT_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
@@ -181,11 +195,6 @@ public sealed class MatchOverlayCommandInputSystem
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestMoveCommandMode();
 
-            Debug.Log(
-                $"MATCHHUD_MOVE_CLICK object={_view.name} button={ButtonName(_view.MoveButton)} " +
-                $"active={IsActive(_view.MoveButton)} interactable={IsInteractable(_view.MoveButton)} " +
-                $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
-
             if (!queued)
                 Debug.LogWarning("MATCHHUD_MOVE_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
@@ -194,11 +203,6 @@ public sealed class MatchOverlayCommandInputSystem
         {
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestAttackCommandMode();
-
-            Debug.Log(
-                $"MATCHHUD_ATTACK_CLICK object={_view.name} button={ButtonName(_view.AttackButton)} " +
-                $"active={IsActive(_view.AttackButton)} interactable={IsInteractable(_view.AttackButton)} " +
-                $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
                 Debug.LogWarning("MATCHHUD_ATTACK_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
@@ -210,11 +214,6 @@ public sealed class MatchOverlayCommandInputSystem
             _tabVisualSystem?.Select(_scanCommandTab);
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestScanCommandMode();
-
-            Debug.Log(
-                $"MATCHHUD_SCAN_CLICK object={_view.name} button={ButtonName(_view.ScanButton)} " +
-                $"active={IsActive(_view.ScanButton)} interactable={IsInteractable(_view.ScanButton)} " +
-                $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
 
             if (!queued)
                 Debug.LogWarning("MATCHHUD_SCAN_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
@@ -320,21 +319,6 @@ public sealed class MatchOverlayCommandInputSystem
         {
             _view.CommandWheelPanel?.Close();
             _selectionUiCommandSystem?.RequestStop();
-        }
-
-        private static string ButtonName(Button button)
-        {
-            return button != null ? button.name : "null";
-        }
-
-        private static bool IsActive(Button button)
-        {
-            return button != null && button.gameObject.activeInHierarchy;
-        }
-
-        private static bool IsInteractable(Button button)
-        {
-            return button != null && button.interactable;
         }
 
         private readonly struct TabButtonBinding

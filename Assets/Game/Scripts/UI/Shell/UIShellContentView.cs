@@ -14,6 +14,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private MainMenuPlayUI _mainMenuPlayUi;
     private GameObject _buildDrawerPopupInstance;
+    private int _contentVersion;
 
     public UIShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
@@ -21,6 +22,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public GameObject ArmoryContentPrefab => armoryContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
+    public int ContentVersion => _contentVersion;
 
     public void Configure(
         UIShellView view,
@@ -276,6 +278,7 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject instance = Instantiate(prefab, contentRoot, false);
         instance.name = prefab.name;
         Stretch(instance.GetComponent<RectTransform>());
+        MarkContentChanged();
         return instance;
     }
 
@@ -292,16 +295,28 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject instance = Instantiate(source, contentRoot, false);
         instance.name = source.name;
         Stretch(instance.GetComponent<RectTransform>());
+        MarkContentChanged();
         return instance;
     }
 
     private void ClearRegion(UIShellRegionId regionId)
     {
         if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
+        {
             ClearChildren(contentRoot);
+            MarkContentChanged();
+        }
 
         if (regionId == UIShellRegionId.PopupLayer)
             _buildDrawerPopupInstance = null;
+    }
+
+    private void MarkContentChanged()
+    {
+        unchecked
+        {
+            _contentVersion++;
+        }
     }
 
     private bool TryGetRegionContentRoot(UIShellRegionId regionId, out RectTransform contentRoot)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public sealed class MenuBootstrapView : MonoBehaviour
@@ -8,7 +9,9 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [SerializeField] private Camera uiCamera;
     [SerializeField] private Canvas uiCanvas;
     [SerializeField] private UIShellView shellView;
+    [FormerlySerializedAs("shellEcsBridge")]
     [SerializeField] private UIShellEcsPresentationSystem shellEcsPresentation;
+    [FormerlySerializedAs("contentPresenter")]
     [SerializeField] private UIShellContentView contentSystem;
     [SerializeField] private UIRouterView router;
 

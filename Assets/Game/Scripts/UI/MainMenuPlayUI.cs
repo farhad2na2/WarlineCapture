@@ -14,10 +14,15 @@ public sealed class MainMenuPlayUI
     public void Init(
         SelectionUiCommandSystem selectionUiCommandSystem,
         DayNightSystem dayNightSystem,
-        SelectionUiCameraSystem selectionUiCameraSystem = null)
+        SelectionUiCameraSystem selectionUiCameraSystem = null,
+        bool resetRuntimeState = true)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _selectionUiCameraSystem = selectionUiCameraSystem;
+
+        if (!resetRuntimeState)
+            return;
+
         _runtimeGameplayStateSystem.PlayRequested = false;
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.BuildModeActive = false;

@@ -11,6 +11,7 @@ internal sealed class MenuBootstrapSystem
     private readonly MatchStartSystem matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem performanceDiagnosticsReferenceSystem = new();
+    private readonly MatchSceneReferenceSystem matchSceneReferenceSystem = new();
 
     private EntityQuery boundaryQuery;
     private World cachedWorld;
@@ -28,6 +29,10 @@ internal sealed class MenuBootstrapSystem
     private float activeLoadingStartedAt;
     private UIRoute activeLoadingRoute;
     private bool matchLoadQueuedForCurrentRoute;
+    private MatchSceneView boundMatchRuntimeView;
+    private SelectionUiCommandSystem boundSelectionUiCommand;
+    private MainMenuPlayUI boundMainMenu;
+    private int boundContentVersion = -1;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
 
@@ -67,7 +72,10 @@ internal sealed class MenuBootstrapSystem
         _ = unscaledDeltaTime;
         if (!initialized)
             Initialize(view);
-        if (view == null || !TryGetWorldEntityManager(out EntityManager entityManager))
+        if (view == null)
+            return;
+
+        if (!TryGetWorldEntityManager(out EntityManager entityManager))
             return;
 
         sceneLifecycleSystem.Update(entityManager);
@@ -80,6 +88,7 @@ internal sealed class MenuBootstrapSystem
         ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
         QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
+        BindMatchRuntimeUi(view, shellState);
     }
 
     public void Shutdown(MenuBootstrapView view)
@@ -93,6 +102,7 @@ internal sealed class MenuBootstrapSystem
         deferredMatchLoadFrame = -1;
         ResetLoadingMinimumWindow();
         matchLoadQueuedForCurrentRoute = false;
+        ClearBoundMatchRuntimeUi();
         if (!diagnosticsInitialized)
             return;
 
@@ -272,6 +282,54 @@ internal sealed class MenuBootstrapSystem
             Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
         else
             Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
+    }
+
+    private void BindMatchRuntimeUi(MenuBootstrapView view, UiShellStateComponent shellState)
+    {
+        if (shellState.ActiveRoute != UIRoute.Match)
+        {
+            ClearBoundMatchRuntimeUi();
+            return;
+        }
+
+        if (view == null || view.ContentSystem == null)
+            return;
+
+        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(
+                World.DefaultGameObjectInjectionWorld,
+                out MatchSceneView matchScene))
+        {
+            return;
+        }
+
+        MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
+        MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
+        SelectionUiCommandSystem selectionUiCommand = matchBootstrap.SelectionUiCommand;
+        if (selectionUiCommand == null)
+            return;
+
+        int contentVersion = view.ContentSystem.ContentVersion;
+        if (boundMatchRuntimeView == matchScene &&
+            boundSelectionUiCommand == selectionUiCommand &&
+            boundMainMenu == mainMenu &&
+            boundContentVersion == contentVersion)
+        {
+            return;
+        }
+
+        view.ContentSystem.BindGameplayRuntimeDependencies(selectionUiCommand, mainMenu);
+        boundMatchRuntimeView = matchScene;
+        boundSelectionUiCommand = selectionUiCommand;
+        boundMainMenu = mainMenu;
+        boundContentVersion = contentVersion;
+    }
+
+    private void ClearBoundMatchRuntimeUi()
+    {
+        boundMatchRuntimeView = null;
+        boundSelectionUiCommand = null;
+        boundMainMenu = null;
+        boundContentVersion = -1;
     }
 
     private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)

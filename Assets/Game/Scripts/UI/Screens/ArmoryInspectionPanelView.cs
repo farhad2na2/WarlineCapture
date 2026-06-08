@@ -6,6 +6,7 @@ public sealed class ArmoryInspectionPanelView : MonoBehaviour
 {
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text typeText;
+    [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private ArmoryCatalogCategoryVisualSet[] categoryVisuals;
 
     public void Bind(ArmoryCatalogItem model)
@@ -14,13 +15,25 @@ public sealed class ArmoryInspectionPanelView : MonoBehaviour
             titleText.text = model.DisplayName;
 
         if (typeText != null)
-            typeText.text = ArmoryCatalogCategoryFormatter.Format(model.Category);
+            typeText.text = model.TypeLabel;
+
+        if (descriptionText != null)
+            descriptionText.text = model.Description;
 
         BindCategoryVisuals(model.Category, model.InspectionPortrait);
     }
 
     public void Clear()
     {
+        if (titleText != null)
+            titleText.text = string.Empty;
+
+        if (typeText != null)
+            typeText.text = string.Empty;
+
+        if (descriptionText != null)
+            descriptionText.text = string.Empty;
+
         if (categoryVisuals == null)
             return;
 

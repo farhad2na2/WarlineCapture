@@ -144,8 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2908584223c354c99bb48e8d15766558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArmoryInspectionPanelView
-  titleText: {fileID: 0}
-  typeText: {fileID: 0}
+  titleText: {fileID: 3560829199116083651}
+  typeText: {fileID: 1402168514948368477}
+  descriptionText: {fileID: 767883655856220087}
   categoryVisuals:
   - category: 0
     backgroundRoot: {fileID: 7815718410898352299}

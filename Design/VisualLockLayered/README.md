@@ -51,6 +51,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `SCN-07_LoadoutSquadPrep` | Squad/support/gear setup. | Uses prefab-catalog roster, lock reasons, role descriptions, Armory detail links. |
 | `SCN-08_RTSBattleHUD` | 3D operation battle HUD. | Objective tracker, squad tray, command bar, minimap, threat feed over one 3D map. Target and V01 layer pack generated. |
 | `SCN-09_BuildDrawer` | Build/produce drawer. | Building, vehicle, and soldier production over the active 3D match HUD. Target and V01 layer pack generated. |
+| `SCN-10_SupportPopup` | In-match support popup. | Opens from the SCN-08 Support button; shows tactical/logistics/evac support abilities, selected support detail, cost/cooldown/charges, and target handoff over the unchanged 3D match HUD. Imagegen V03 target generated; final production layer extraction pending. |
 | `SCN-10_UnitCommandWheel` | Unit context command wheel. | Move, attack, hold, board, disembark, support, breach, scan, defend, cancel as available. |
 | `SCN-11_OperationsDashboard` | District operations command. | District state, warnings, raids, resources, consequences. |
 | `SCN-12_DistrictDetailActions` | District action detail. | Patrol, scan, aid, raid, repair, evacuate, build outpost with civilian/infrastructure consequences. |

@@ -34,10 +34,10 @@ The generated pack contains separate source groups for no-UI command-base backgr
 
 ## Design Source
 
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
-- `Design/WarlineCapture_UIUX_Runtime_Optimization_Plan.md`
-- `Design/WarlineCapture_Audio_Design_Guidelines.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/UIUX_MainMenu_Visual_Contract.md`
+- `Design/UIUX_Runtime_Optimization_Plan.md`
+- `Design/Audio_Design_Guidelines.md`
 - `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
 - `Design/VisualLockLayered/SCN-13_SkirmishSetup/reference/SCN-13_SkirmishSetup_Landscape_Target.png`
 

@@ -3,7 +3,7 @@
 Use the active `VisualLockLayered V15 3D Green-Screen Workflow` for target-lock references. This prompt defines the missing POP-05 result-state references. Do not generate implementation layers until the references are approved.
 
 Surface id: `POP-05_MissionResult`
-Canonical spec: `Design/WarlineCapture_Mission_Result_State_Spec.md`
+Canonical spec: `Design/Mission_Result_State_Spec.md`
 Existing victory reference: `reference/POP-05_MissionResult_Landscape_Target.png`
 Canonical size: `2400 x 1080`
 

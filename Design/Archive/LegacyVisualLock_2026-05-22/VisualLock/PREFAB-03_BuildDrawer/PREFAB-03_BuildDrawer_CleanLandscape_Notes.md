@@ -1,7 +1,7 @@
 # PREFAB-03 Build Drawer Visual Target
 
 - Canvas: 1672 x 941.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/PREFAB-03_build_drawer.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/PREFAB-03_build_drawer.jpg`.
 - Target type: reusable panel.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
 - This is not a crop, upscale, padding pass, or pixel promotion of the source JPG.

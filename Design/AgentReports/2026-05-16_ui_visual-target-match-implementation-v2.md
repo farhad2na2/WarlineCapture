@@ -7,7 +7,7 @@ P0 visual target-match implementation v2 for `SCN-02_MainMenu` and `POP-05_Missi
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`

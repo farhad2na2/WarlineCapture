@@ -14,9 +14,9 @@ Files changed:
 
 Contracts touched:
 - `PREFAB-04_AssistantButton`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/Art_Asset_Requirements_Register.csv`
 
 User-visible behavior:
 The assistant button visual target now presents the ARIA entry point in an actual WarlineCapture match HUD/gameplay context instead of a flat state-board panel. The target shows a premium chrome ARIA button cluster with idle, recommendation, critical, takeover/control, and muted states, with waveform/radio identity marks and non-color-only state cues.
@@ -29,7 +29,7 @@ Validation run:
 - Produced and inspected a side-by-side style contact sheet at `Design/VisualLock/PREFAB-04_AssistantButton/PREFAB-04_AssistantButton_Style_ContactSheet.png`.
 - Confirmed image dimensions and pixel variance with Pillow.
 - Validated `PREFAB-04_AssistantButton_Target_State_Manifest.json` with `python3 -m json.tool`.
-- Checked `aria.icon.waveform` and `aria.button.state_set` rows in `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`.
+- Checked `aria.icon.waveform` and `aria.button.state_set` rows in `Design/Art_Asset_Requirements_Register.csv`.
 
 Validation result:
 Passed. The replacement target is 1672x941, uses a visibly WarlineCapture match HUD/gameplay background, is not a wireframe or deterministic flat UI sheet, and keeps the assistant button as the first-read subject. The style contact sheet shows alignment with the accepted WarlineCapture family: dark military RTS chrome, cyan edge lighting, restrained amber accents, Oxanium-style typography, dense tactical HUD language, and compatible bevel/frame proportions. The five states are labeled and differentiated by shape/iconography as well as color. The asset-register rows remain `missing` / `not_reviewed` / `not_started`.

@@ -6,13 +6,13 @@ Task: Cross-link the large-scale grid movement design into FTUE, M01, and Chapte
 
 Files changed:
 
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Chapter01_Tactical_Production_Implementation_Plan.md`
 
 Contracts touched:
 
-- Added `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md` as a referenced design input for FTUE, M01, and Chapter 1 tactical production.
+- Added `Design/LargeScale_Grid_Movement_Design.md` as a referenced design input for FTUE, M01, and Chapter 1 tactical production.
 - Added explicit notes that the movement design clarifies acceptance/readability requirements and does not add extra M01 or early FTUE steps.
 
 User-visible behavior:
@@ -22,9 +22,9 @@ User-visible behavior:
 
 Validation run:
 
-- `rg -n "WarlineCapture_LargeScale_Grid_Movement_Design|Movement scope note|Movement teaching note|large-scale grid movement" Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
-- `git diff -- Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
-- `git status --short Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
+- `rg -n "WarlineCapture_LargeScale_Grid_Movement_Design|Movement scope note|Movement teaching note|large-scale grid movement" Design/FTUE_And_Command_Assistant_Design.md Design/M01_FirstContact_Production_Contract.md Design/Chapter01_Tactical_Production_Implementation_Plan.md`
+- `git diff -- Design/FTUE_And_Command_Assistant_Design.md Design/M01_FirstContact_Production_Contract.md Design/Chapter01_Tactical_Production_Implementation_Plan.md`
+- `git status --short Design/FTUE_And_Command_Assistant_Design.md Design/M01_FirstContact_Production_Contract.md Design/Chapter01_Tactical_Production_Implementation_Plan.md`
 
 Validation result:
 

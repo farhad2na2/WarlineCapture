@@ -12,8 +12,8 @@ Implement `GameUI` scene Step 2 by adding shell region views and the initial she
 
 - `Assets/Game/Scenes/GameUI.unity`
 - `Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs.meta`
+- `Assets/Game/Scripts/UI/Shell/UIShellRegionView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellRegionView.cs.meta`
 - `Design/AgentReports/2026-05-24_ui_gameui-scene-step2.md`
 
 ## Contracts touched

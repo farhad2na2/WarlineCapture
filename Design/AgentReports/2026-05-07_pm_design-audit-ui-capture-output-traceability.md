@@ -4,7 +4,7 @@ Docs reviewed:
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentReports/2026-05-07_pm_design-audit-qa-capture-matrix.md`
 - `Design/AgentReports/2026-05-07_pm_qa-hci-m01-watcher-smoke-regression-review.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 Finding:
 - The active UI task now locks the first capture matrix to `1920x1080` and `2400x1080`, with required states for match start, squad selected, move, attack, invalid recovery, assistant open, assistant takeover/Stop, and result popup.
 - It does not specify a destination folder, file naming convention, or contact-sheet/manifest format for the generated evidence.

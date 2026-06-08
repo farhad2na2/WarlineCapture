@@ -18,13 +18,13 @@ PM/user approval is required before any routing to lane task files.
 
 ## Evidence Base Used
 
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/Tactical_UI_Missing_Parts_Work_Order.md`
 - `Design/README.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 ## Audit Boundaries (So Claims Are Verifiable)
 
@@ -99,13 +99,13 @@ Decision key:
 | Surface | Decision | Why | Minimum change intent before approval-to-dispatch |
 |---|---|---|---|
 | `SCN-01` Splash | Keep As-Is | No active critical-path disagreement in current design audits. | Maintain existing loading status readability and nonblocking route transition checks. |
-| `SCN-02` Main Menu | Revise | `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md` flags a P1 mismatch: top strip third resource appears as gem-style visual while canonical resource is `Command Authority`; same audit flags Persistent Operation subtitle wording drift from city-operation framing. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md` requires explicit DesignedUnavailable states for non-live routes. | Definition of "clear enough": in a static screenshot, a reviewer must identify all three top-strip resources as `Credits`, `Materials`, `Command Authority` with no alternate gem term/icon semantics; each non-live route (`Inbox/Store/Events/Ranking/Command Feed`) must show explicit DesignedUnavailable state copy (no inert click). Acceptance: one 16:9 + one 20:9 capture + route-state checklist pass. |
+| `SCN-02` Main Menu | Revise | `UIUX_Mockup_Target_Alignment_Audit.md` flags a P1 mismatch: top strip third resource appears as gem-style visual while canonical resource is `Command Authority`; same audit flags Persistent Operation subtitle wording drift from city-operation framing. `UIUX_Gameplay_Element_Alignment.md` requires explicit DesignedUnavailable states for non-live routes. | Definition of "clear enough": in a static screenshot, a reviewer must identify all three top-strip resources as `Credits`, `Materials`, `Command Authority` with no alternate gem term/icon semantics; each non-live route (`Inbox/Store/Events/Ranking/Command Feed`) must show explicit DesignedUnavailable state copy (no inert click). Acceptance: one 16:9 + one 20:9 capture + route-state checklist pass. |
 | `SCN-03` Commander Profile | Revise | FTUE design requires commander identity visibility/edit path (`POP-11`) and profile surfaces as entry points. Current recommendation depends on that linkage for consistency. | Add explicit profile entry into `POP-11`; ensure commander portrait/name updates reflect in Main Menu/Profile; define locked vs available identity cosmetics states. Acceptance: focused route test from Main Menu profile shortcut and persisted reload check. |
 | `SCN-04` Settings | Keep As-Is | Not current critical-path blocker. | Maintain accessibility visibility and explicit unsupported states. |
-| `SCN-05` Saga Map | Revise | `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md` identifies stale chapter-content examples in target inventory and requires mission/scenario/map binding accuracy. | Node states must show locked/current/completed/replayable distinctly; selected node panel must expose mission + scenario/map identity fields. Acceptance: screenshot with Chapter 1 five-node state + data-binding checklist. |
+| `SCN-05` Saga Map | Revise | `UIUX_Mockup_Target_Alignment_Audit.md` identifies stale chapter-content examples in target inventory and requires mission/scenario/map binding accuracy. | Node states must show locked/current/completed/replayable distinctly; selected node panel must expose mission + scenario/map identity fields. Acceptance: screenshot with Chapter 1 five-node state + data-binding checklist. |
 | `SCN-06` Mission Briefing | Revise | Same audit flags stale mission examples and calls out required Level/Map binding plus objective/star/reward/intel clarity. | "Clear enough" definition: reviewer can answer mission goal, star conditions, enemy threat, and reward set in <10 seconds without opening subpanels. Acceptance: comprehension test checklist + canonical field presence (`Mission`, `ScenarioSetup`, `Level/Map`, objectives, stars, enemy intel, rewards). |
 | `SCN-07` Loadout | Revise | Alignment docs require explicit mission restrictions and non-inert lock states; route-ready exists but mission-specific clarity is marked as follow-up. | For any disabled slot/unit, show exact reason (`Locked`, `MissionBanned`, `RequiresUnlock`, etc.). Acceptance: lock-state matrix screenshots + one focused test for each reason type. |
-| `SCN-08` Battle HUD | Revise (High) | `WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md` explicitly lists missing/high-priority elements (`SelectedEntityPanel`, `CommandModeBanner`, `WorldCommandMarkerLayer`, `InvalidCommandToast`, `MinimapCameraBridge`). | Must prove direct+explicit command flows (select/move/attack), marker correctness, invalid reason feedback, and bounded minimap camera jumps. Acceptance: M01 capture set + focused tests per listed `ElementId`. |
+| `SCN-08` Battle HUD | Revise (High) | `Tactical_UI_Missing_Parts_Work_Order.md` explicitly lists missing/high-priority elements (`SelectedEntityPanel`, `CommandModeBanner`, `WorldCommandMarkerLayer`, `InvalidCommandToast`, `MinimapCameraBridge`). | Must prove direct+explicit command flows (select/move/attack), marker correctness, invalid reason feedback, and bounded minimap camera jumps. Acceptance: M01 capture set + focused tests per listed `ElementId`. |
 | `SCN-09` Build Drawer | Revise (High) | Work order requires `BuildDrawer.ItemAvailabilityReason`; alignment rules prohibit silent inert controls. | Every unavailable item row must render exact reason label; mission-banned build path must map to reason code (for M01: `MissionDoesNotAllowBuild`). Acceptance: unavailable-state screenshot matrix + interaction test. |
 | `SCN-10` Command Wheel | Revise (High) | Work order requires explicit segments and hints (`AttackModeSegment`, `MoveModeSegment`, `TargetHint`, `DisabledReason`). | Mode entry/exit state must be visible; expected target type must be readable before click; disabled segments must expose reasons. Acceptance: command-wheel state capture sheet + segment behavior tests. |
 | `SCN-11` Operation Dashboard | Revise | `UIUX_Mockup_Target_Alignment_Audit` marks as designed-unavailable shell pending live binding; readiness score for live-ops depends on this becoming actionable. | Add severity hierarchy and next-action clarity for at least one full day loop. Acceptance: one day-loop walkthrough showing warning -> action -> delta explanation. |

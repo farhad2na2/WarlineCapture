@@ -14,7 +14,7 @@ P0 bind M01 v17 clean animation baked-shadow package and regenerate runtime proo
 
 # Contracts touched
 - `Design/Architecture/gameplay_solid_ecs_contract.md`: followed. V17 binding is in the existing ECS/runtime sprite asset resolver and presentation path; no bootstrap mission policy, scene-start replacement, or new static gameplay facade was added.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`: preserved contracted mission/map/unit ids.
+- `Design/M01_FirstContact_Production_Contract.md`: preserved contracted mission/map/unit ids.
 - PM acceptance: `Design/AgentReports/2026-05-18_pm_art-atlas-m01-v17-accepted-gameplay-binding.md`.
 - Art handoff: `Design/AgentReports/2026-05-18_art-atlas_m01-v17-clean-animation-baked-shadow-handoff.md`.
 

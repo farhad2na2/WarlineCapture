@@ -6,7 +6,7 @@ End SCN-02 Main Menu UI iteration and report exact Art/Atlas needs for target-lo
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_CardArt.spriteatlas`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_FramesChrome.spriteatlas`

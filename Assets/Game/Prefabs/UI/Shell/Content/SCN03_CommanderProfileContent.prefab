@@ -2153,7 +2153,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 5
   pushHistory: 1
@@ -5072,7 +5072,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 2
   pushHistory: 0
@@ -9599,7 +9599,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 1
   pushHistory: 0
@@ -10178,7 +10178,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 5
   pushHistory: 1
@@ -14488,7 +14488,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 1
   pushHistory: 0
@@ -17508,7 +17508,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 14
   pushHistory: 0
@@ -23824,7 +23824,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 7
   pushHistory: 0
@@ -24079,7 +24079,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 14
   pushHistory: 0
@@ -27876,7 +27876,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 14
   pushHistory: 0

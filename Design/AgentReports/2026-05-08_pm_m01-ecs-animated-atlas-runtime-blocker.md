@@ -14,7 +14,7 @@ Files changed:
 
 Contracts touched:
 - None changed. Existing contracts already require runtime entity ids and Chapter 1 unit atlas presentation:
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
   - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 
 User-visible behavior:
@@ -27,7 +27,7 @@ Validation run:
 Validation result:
 - Needs fixes / not final accepted. Prior `SpriteRenderer` reports were accepted only as implementation/review evidence for the current M01 slice, not as final approval for runtime unit presentation.
 - `M01_SpriteRenderer_CloseCapture.png` is explicitly review-art evidence, not final art/runtime approval.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md` defines `unit.player.rifle_squad_01` and `unit.enemy.patrol_01` as runtime sprite/entity rows backed by the Chapter 1 units atlas.
+- `Design/M01_FirstContact_Production_Contract.md` defines `unit.player.rifle_squad_01` and `unit.enemy.patrol_01` as runtime sprite/entity rows backed by the Chapter 1 units atlas.
 - The user's expectation upgrades this from known follow-up to active Gate 4 blocker: visible public M01 units must not look like design-target SpriteRenderer proxies.
 
 Known gaps:

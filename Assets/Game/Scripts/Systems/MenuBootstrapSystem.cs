@@ -26,7 +26,7 @@ internal sealed class MenuBootstrapSystem
     private int deferredMatchLoadFrame = -1;
     private int activeLoadingSequenceId = -1;
     private float activeLoadingStartedAt;
-    private WarlineCaptureRoute activeLoadingRoute;
+    private UIRoute activeLoadingRoute;
     private bool matchLoadQueuedForCurrentRoute;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
@@ -151,7 +151,7 @@ internal sealed class MenuBootstrapSystem
         if (loading.IsComplete != 0)
             return;
 
-        if (shellState.ActiveRoute == WarlineCaptureRoute.Match)
+        if (shellState.ActiveRoute == UIRoute.Match)
         {
             UpdateMatchLoadingProgress(entityManager, boundary);
             return;
@@ -228,12 +228,12 @@ internal sealed class MenuBootstrapSystem
     {
         activeLoadingSequenceId = -1;
         activeLoadingStartedAt = 0f;
-        activeLoadingRoute = WarlineCaptureRoute.Splash;
+        activeLoadingRoute = UIRoute.Splash;
     }
 
     private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
     {
-        if (shellState.ActiveRoute != WarlineCaptureRoute.Match)
+        if (shellState.ActiveRoute != UIRoute.Match)
         {
             deferredMatchLoadFrame = -1;
             matchLoadQueuedForCurrentRoute = false;
@@ -278,7 +278,7 @@ internal sealed class MenuBootstrapSystem
     {
         CaptureUiPresentationMode(uiCamera, uiCanvas);
 
-        if (shellState.ActiveRoute == WarlineCaptureRoute.Match)
+        if (shellState.ActiveRoute == UIRoute.Match)
         {
             if (uiCanvas != null)
             {
@@ -416,7 +416,7 @@ internal sealed class MenuBootstrapSystem
         entityManager.SetComponentData(boundary, new UiShellStateComponent
         {
             CurrentMode = UiShellMode.None,
-            ActiveRoute = WarlineCaptureRoute.Splash,
+            ActiveRoute = UIRoute.Splash,
             Phase = UiShellTransitionPhase.Idle,
             TransitionSequenceId = 0,
             IsTransitionRunning = 0

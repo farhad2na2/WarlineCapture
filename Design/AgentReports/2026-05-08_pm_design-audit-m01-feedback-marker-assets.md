@@ -2,9 +2,9 @@ Status: needs fixes
 Topic:
 M01 Gate 4 route captures depend on missing feedback marker assets
 Docs reviewed:
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/Art_Asset_Requirements_Register.csv`
+- `Design/M01_FirstContact_Production_Contract.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/qa-hci_current.md`

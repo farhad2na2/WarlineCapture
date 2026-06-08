@@ -6,7 +6,7 @@ SCN-02 MainMenu target-match cleanup iteration after user feedback that the prio
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_FramesChrome.spriteatlas`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_IconsButtons.spriteatlas`
@@ -40,7 +40,7 @@ SCN-02 MainMenu target-match cleanup iteration after user feedback that the prio
 - 20:9 compare: `python3 Tools/UI/compare_ui_capture_to_target.py --target Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_20x9_Target.png --capture Design/AgentReports/Captures/SCN-02_MainMenu_ImageGenFlatCleanPass_20x9.png --out Design/AgentReports/Captures/SCN-02_MainMenu_ImageGenFlatCleanPass_20x9_vs_Target_Comparison.png --label SCN-02_MainMenu_ImageGenFlatCleanPass_20x9`
 - Focused tests: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -runTests -testPlatform EditMode -testFilter WarlineCaptureUiMainMenuTests -testResults /private/tmp/warlinecapture-ui-scn02-imagegen-flat-clean-tests-results.xml -logFile /private/tmp/warlinecapture-ui-scn02-imagegen-flat-clean-tests.log`
 - Forbidden runtime target scan: `rg -n "TargetRoot|TargetSlice|target_slice|TargetMatchComposite|SCN02_MainMenu_Landscape_TargetComposite|SCN-02_MainMenu_Landscape_Target|layers_contact_sheet|scn02_complete_production_sprites_contact_sheet|MainMenu_Landscape_Visual_Target" Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat`
-- Whitespace validation: `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_FramesChrome.spriteatlas Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_IconsButtons.spriteatlas Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_CardArt.spriteatlas`
+- Whitespace validation: `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/UIMainMenuTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_FramesChrome.spriteatlas Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_IconsButtons.spriteatlas Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_CardArt.spriteatlas`
 
 # Validation result
 - Unity prefab rebuild passed.

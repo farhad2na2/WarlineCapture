@@ -1,0 +1,2916 @@
+{
+  "schemaVersion": "0.1",
+  "date": "2026-05-05",
+  "purpose": "Visual-only companion catalog for combat entities, abilities, and upgrade tracks. It intentionally excludes costs, damage, HP, cooldowns, reward amounts, and unlock economy values.",
+  "sourceDocs": [
+    "Design/2D_Isometric_Art_Bible.md",
+    "Design/2D_Isometric_Production_Direction.md",
+    "Design/Combat_Catalog_And_Upgrade_Design.md"
+  ],
+  "balanceConfig": "Design/BalanceConfigs/Combat_Balance_Config_v0_1.json",
+  "separationRules": {
+    "noBalanceValuesAllowed": [
+      "credits",
+      "materials",
+      "fuel",
+      "hp",
+      "damage",
+      "range",
+      "cooldown",
+      "productionSeconds",
+      "upgradeCost"
+    ],
+    "crossReferenceKey": "visualCatalogId",
+    "runtimeArtRule": "World art, UI icons, portraits, VFX, and audio cues are replaceable without changing balance config IDs."
+  },
+  "entries": [
+    {
+      "visualCatalogId": "visual.ability.aid.convoy",
+      "entityId": "ability.aid_convoy",
+      "entityKind": "operationAbility",
+      "displayName": "Aid Convoy",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.aid_convoy_Icon.png",
+      "vfxCueId": "vfx.ability.aid_convoy",
+      "audioCueId": "sfx.ability.aid_convoy",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Aid Convoy: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.breach.charge",
+      "entityId": "ability.breach_charge",
+      "entityKind": "supportAbility",
+      "displayName": "Breach Charge",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.breach_charge_Icon.png",
+      "vfxCueId": "vfx.ability.breach_charge",
+      "audioCueId": "sfx.ability.breach_charge",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Breach Charge: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.casualty.stabilize",
+      "entityId": "ability.casualty_stabilize",
+      "entityKind": "supportAbility",
+      "displayName": "Casualty Stabilize",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.casualty_stabilize_Icon.png",
+      "vfxCueId": "vfx.ability.casualty_stabilize",
+      "audioCueId": "sfx.ability.casualty_stabilize",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Casualty Stabilize: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.drone.scan",
+      "entityId": "ability.drone_scan",
+      "entityKind": "supportAbility",
+      "displayName": "Drone Scan",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.drone_scan_Icon.png",
+      "vfxCueId": "vfx.ability.drone_scan",
+      "audioCueId": "sfx.ability.drone_scan",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Drone Scan: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.evacuation.corridor",
+      "entityId": "ability.evacuation_corridor",
+      "entityKind": "supportAbility",
+      "displayName": "Evacuation Corridor",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.evacuation_corridor_Icon.png",
+      "vfxCueId": "vfx.ability.evacuation_corridor",
+      "audioCueId": "sfx.ability.evacuation_corridor",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Evacuation Corridor: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.field.repair",
+      "entityId": "ability.field_repair",
+      "entityKind": "supportAbility",
+      "displayName": "Field Repair",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.field_repair_Icon.png",
+      "vfxCueId": "vfx.ability.field_repair",
+      "audioCueId": "sfx.ability.field_repair",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Field Repair: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.harbor.patrol",
+      "entityId": "ability.harbor_patrol",
+      "entityKind": "supportAbility",
+      "displayName": "Harbor Patrol",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.harbor_patrol_Icon.png",
+      "vfxCueId": "vfx.ability.harbor_patrol",
+      "audioCueId": "sfx.ability.harbor_patrol",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Harbor Patrol: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.harbor.scan",
+      "entityId": "ability.harbor_scan",
+      "entityKind": "supportAbility",
+      "displayName": "Harbor Scan",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.harbor_scan_Icon.png",
+      "vfxCueId": "vfx.ability.harbor_scan",
+      "audioCueId": "sfx.ability.harbor_scan",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Harbor Scan: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.naval.fire.support",
+      "entityId": "ability.naval_fire_support",
+      "entityKind": "supportAbility",
+      "displayName": "Naval Fire Support",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.naval_fire_support_Icon.png",
+      "vfxCueId": "vfx.ability.naval_fire_support",
+      "audioCueId": "sfx.ability.naval_fire_support",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Naval Fire Support: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.operation.supply.route",
+      "entityId": "ability.operation_supply_route",
+      "entityKind": "operationAbility",
+      "displayName": "Supply Route",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.operation_supply_route_Icon.png",
+      "vfxCueId": "vfx.ability.operation_supply_route",
+      "audioCueId": "sfx.ability.operation_supply_route",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Supply Route: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.precision.strike",
+      "entityId": "ability.precision_strike",
+      "entityKind": "supportAbility",
+      "displayName": "Precision Strike",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.precision_strike_Icon.png",
+      "vfxCueId": "vfx.ability.precision_strike",
+      "audioCueId": "sfx.ability.precision_strike",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Precision Strike: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.produce.unit",
+      "entityId": "ability.produce_unit",
+      "entityKind": "buildingAbility",
+      "displayName": "Produce Unit",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.produce_unit_Icon.png",
+      "vfxCueId": "vfx.ability.produce_unit",
+      "audioCueId": "sfx.ability.produce_unit",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Produce Unit: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.radar.ping",
+      "entityId": "ability.radar_ping",
+      "entityKind": "supportAbility",
+      "displayName": "Radar Ping",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.radar_ping_Icon.png",
+      "vfxCueId": "vfx.ability.radar_ping",
+      "audioCueId": "sfx.ability.radar_ping",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Radar Ping: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.rally.order",
+      "entityId": "ability.rally_order",
+      "entityKind": "supportAbility",
+      "displayName": "Rally Order",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.rally_order_Icon.png",
+      "vfxCueId": "vfx.ability.rally_order",
+      "audioCueId": "sfx.ability.rally_order",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Rally Order: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.readiness.boost",
+      "entityId": "ability.readiness_boost",
+      "entityKind": "operationAbility",
+      "displayName": "Readiness Boost",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.readiness_boost_Icon.png",
+      "vfxCueId": "vfx.ability.readiness_boost",
+      "audioCueId": "sfx.ability.readiness_boost",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Readiness Boost: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.repair.convoy",
+      "entityId": "ability.repair_convoy",
+      "entityKind": "operationAbility",
+      "displayName": "Repair Convoy",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.repair_convoy_Icon.png",
+      "vfxCueId": "vfx.ability.repair_convoy",
+      "audioCueId": "sfx.ability.repair_convoy",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Repair Convoy: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.smoke.screen",
+      "entityId": "ability.smoke_screen",
+      "entityKind": "supportAbility",
+      "displayName": "Smoke Screen",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.smoke_screen_Icon.png",
+      "vfxCueId": "vfx.ability.smoke_screen",
+      "audioCueId": "sfx.ability.smoke_screen",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Smoke Screen: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.ability.supply.drop",
+      "entityId": "ability.supply_drop",
+      "entityKind": "supportAbility",
+      "displayName": "Supply Drop",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.supply_drop_Icon.png",
+      "vfxCueId": "vfx.ability.supply_drop",
+      "audioCueId": "sfx.ability.supply_drop",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Supply Drop: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.building.airport",
+      "entityId": "Building_Airport",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Airport",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Airport_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Airport_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Airport_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Airport_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Airport: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.ammunition.depot",
+      "entityId": "Building_Ammunition_Depot",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Ammunition Depot",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Ammunition_Depot_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Ammunition_Depot_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Ammunition_Depot_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Ammunition_Depot_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Ammunition Depot: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.barrack",
+      "entityId": "Building_Barrack",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Barracks",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Barrack_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Barrack_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Barrack_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Barrack_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Barracks: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.coastalradar",
+      "entityId": "Building_CoastalRadar",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Coastal Radar Station",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_CoastalRadar.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_CoastalRadar_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CoastalRadar_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CoastalRadar_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CoastalRadar_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Coastal Radar Station: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.commandpost",
+      "entityId": "Building_CommandPost",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Forward Command Post",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_CommandPost.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_CommandPost_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CommandPost_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CommandPost_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_CommandPost_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Forward Command Post: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.dock",
+      "entityId": "Building_Dock",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Logistics Dock",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_Dock.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Dock_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Dock_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Dock_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Dock_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Logistics Dock: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.fieldworkshop",
+      "entityId": "Building_FieldWorkshop",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Field Workshop",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_FieldWorkshop.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_FieldWorkshop_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_FieldWorkshop_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_FieldWorkshop_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_FieldWorkshop_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Field Workshop: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.fuel.bladder",
+      "entityId": "Building_Fuel_Bladder",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Fuel Bladder",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Fuel_Bladder_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Fuel_Bladder_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Fuel_Bladder_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Fuel_Bladder_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Fuel Bladder: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.guardtower",
+      "entityId": "Building_GuardTower",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Guard Tower",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_GuardTower_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Guard Tower: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.guardtower.big",
+      "entityId": "Building_GuardTower_Big",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Heavy Guard Tower",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_GuardTower_Big.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_GuardTower_Big_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Big_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Big_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_GuardTower_Big_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Heavy Guard Tower: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.hall.01",
+      "entityId": "Building_Hall_01",
+      "entityKind": "building",
+      "socketType": "CivicSocket",
+      "displayName": "City Hall",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Hall_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Hall_01_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Hall_01_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Hall_01_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Hall_01_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "City Hall: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.helipad",
+      "entityId": "Building_Helipad",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Helipad",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Helipad.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Helipad_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Helipad_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Helipad_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Helipad_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Helipad: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.house.01",
+      "entityId": "Building_House_01",
+      "entityKind": "building",
+      "socketType": "CivicSocket",
+      "displayName": "House",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_House_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_House_01_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_House_01_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_House_01_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_House_01_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "House: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.medicalstation",
+      "entityId": "Building_MedicalStation",
+      "entityKind": "building",
+      "socketType": "CivicSocket",
+      "displayName": "Medical Station",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_MedicalStation.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_MedicalStation_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_MedicalStation_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_MedicalStation_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_MedicalStation_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Medical Station: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.navalyard",
+      "entityId": "Building_NavalYard",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Naval Yard",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Buildings/Building_NavalYard.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_NavalYard_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_NavalYard_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_NavalYard_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_NavalYard_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Naval Yard: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.oilpump",
+      "entityId": "Building_OilPump",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Oil Pump",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_OilPump_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_OilPump_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_OilPump_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_OilPump_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Oil Pump: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.refinery",
+      "entityId": "Building_Refinery",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Oil Refinery",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Refinery_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Oil Refinery: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.refinery.big",
+      "entityId": "Building_Refinery_Big",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Large Oil Refinery",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Refinery_Big.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Refinery_Big_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Big_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Big_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Refinery_Big_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Large Oil Refinery: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.road.barrier",
+      "entityId": "Building_Road_Barrier",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Road Barrier",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Road_Barrier_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Road_Barrier_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Road_Barrier_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Road_Barrier_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Road Barrier: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.satelite.dish",
+      "entityId": "Building_Satelite_Dish",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Satellite Dish",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Satelite_Dish_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Satelite_Dish_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Satelite_Dish_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Satelite_Dish_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Satellite Dish: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.shop.01",
+      "entityId": "Building_Shop_01",
+      "entityKind": "building",
+      "socketType": "CivicSocket",
+      "displayName": "Shop",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Shop_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Shop_01_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_01_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_01_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_01_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Shop: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.shop.02",
+      "entityId": "Building_Shop_02",
+      "entityKind": "building",
+      "socketType": "CivicSocket",
+      "displayName": "Market Shop",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_Shop_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_Shop_02_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_02_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_02_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_Shop_02_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Market Shop: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.building.watertank",
+      "entityId": "Building_WaterTank",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Water Tank",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Building_WaterTank_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_WaterTank_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_WaterTank_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Building_WaterTank_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Water Tank: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.skill.attack",
+      "entityId": "skill.attack",
+      "entityKind": "unitCommand",
+      "displayName": "Attack",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.attack_Icon.png",
+      "vfxCueId": "vfx.skill.attack",
+      "audioCueId": "sfx.skill.attack",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Attack: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.breach.gate",
+      "entityId": "skill.breach_gate",
+      "entityKind": "unitCommand",
+      "displayName": "Breach Gate",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.breach_gate_Icon.png",
+      "vfxCueId": "vfx.skill.breach_gate",
+      "audioCueId": "sfx.skill.breach_gate",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Breach Gate: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.focus.fire",
+      "entityId": "skill.focus_fire",
+      "entityKind": "unitCommand",
+      "displayName": "Focus Fire",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.focus_fire_Icon.png",
+      "vfxCueId": "vfx.skill.focus_fire",
+      "audioCueId": "sfx.skill.focus_fire",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Focus Fire: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.hold.position",
+      "entityId": "skill.hold_position",
+      "entityKind": "unitCommand",
+      "displayName": "Hold Position",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.hold_position_Icon.png",
+      "vfxCueId": "vfx.skill.hold_position",
+      "audioCueId": "sfx.skill.hold_position",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Hold Position: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.load.transport",
+      "entityId": "skill.load_transport",
+      "entityKind": "unitCommand",
+      "displayName": "Load Transport",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.load_transport_Icon.png",
+      "vfxCueId": "vfx.skill.load_transport",
+      "audioCueId": "sfx.skill.load_transport",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Load Transport: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.move",
+      "entityId": "skill.move",
+      "entityKind": "unitCommand",
+      "displayName": "Move",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.move_Icon.png",
+      "vfxCueId": "vfx.skill.move",
+      "audioCueId": "sfx.skill.move",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Move: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.rope.disembark",
+      "entityId": "skill.rope_disembark",
+      "entityKind": "unitCommand",
+      "displayName": "Rope Disembark",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.rope_disembark_Icon.png",
+      "vfxCueId": "vfx.skill.rope_disembark",
+      "audioCueId": "sfx.skill.rope_disembark",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Rope Disembark: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.stop",
+      "entityId": "skill.stop",
+      "entityKind": "unitCommand",
+      "displayName": "Stop",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.stop_Icon.png",
+      "vfxCueId": "vfx.skill.stop",
+      "audioCueId": "sfx.skill.stop",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Stop: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.skill.unload.transport",
+      "entityId": "skill.unload_transport",
+      "entityKind": "unitCommand",
+      "displayName": "Unload Transport",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/skill.unload_transport_Icon.png",
+      "vfxCueId": "vfx.skill.unload_transport",
+      "audioCueId": "sfx.skill.unload_transport",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Unload Transport: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+    },
+    {
+      "visualCatalogId": "visual.tent.contractor",
+      "entityId": "Tent_Contractor",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Contractor Tent",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Tent_Contractor.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Tent_Contractor_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Contractor_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Contractor_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Contractor_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Contractor Tent: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.tent.expert",
+      "entityId": "Tent_Expert",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Expert Tent",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Tent_Expert.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Tent_Expert_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Expert_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Expert_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Expert_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Expert Tent: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.tent.portaloo",
+      "entityId": "Tent_Portaloo",
+      "entityKind": "building",
+      "socketType": "ResourceSocket",
+      "displayName": "Portable Toilet",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Tent_Portaloo.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Tent_Portaloo_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Portaloo_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Portaloo_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Portaloo_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Portable Toilet: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.tent.refugee",
+      "entityId": "Tent_Refugee",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Refugee Tent",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Tent_Refugee.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Tent_Refugee_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Refugee_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Refugee_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Refugee_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Refugee Tent: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.tent.regular",
+      "entityId": "Tent_Regular",
+      "entityKind": "building",
+      "socketType": "ProductionSocket",
+      "displayName": "Soldier Tent",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Tent_Regular.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Tent_Regular_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Regular_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Regular_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Tent_Regular_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Soldier Tent: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.bombsuit.male.01",
+      "entityId": "Unit_Chr_Bombsuit_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Bomb Suit Specialist",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Bombsuit_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Bombsuit_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Bombsuit_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.bombsuit.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Bomb Suit Specialist: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.civilian.female.01",
+      "entityId": "Unit_Chr_Civilian_Female_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Civilian Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Civilian_Female_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Civilian_Female_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.civilian.female.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Civilian Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.civilian.female.02",
+      "entityId": "Unit_Chr_Civilian_Female_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Civilian Female II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Civilian_Female_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Civilian_Female_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.civilian.female.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Civilian Female II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.civilian.male.01",
+      "entityId": "Unit_Chr_Civilian_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Civilian Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Civilian_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Civilian_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.civilian.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Civilian Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.civilian.male.02",
+      "entityId": "Unit_Chr_Civilian_Male_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Civilian Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Civilian_Male_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Civilian_Male_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.civilian.male.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Civilian Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.contractor.female.01",
+      "entityId": "Unit_Chr_Contractor_Female_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Security Contractor Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Female_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Contractor_Female_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Contractor_Female_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.contractor.female.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Security Contractor Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.contractor.male.01",
+      "entityId": "Unit_Chr_Contractor_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Security Contractor Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Contractor_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Contractor_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.contractor.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Security Contractor Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.contractor.male.02",
+      "entityId": "Unit_Chr_Contractor_Male_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Security Contractor Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Contractor_Male_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Contractor_Male_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.contractor.male.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Security Contractor Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.ghillie.male.01",
+      "entityId": "Unit_Chr_Ghillie_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Ghillie Rocketeer",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Ghillie_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Ghillie_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Ghillie_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.ghillie.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Ghillie Rocketeer: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.female.01",
+      "entityId": "Unit_Chr_Insurgent_Female_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Rifleman Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Female_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Female_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.female.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Rifleman Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.female.02",
+      "entityId": "Unit_Chr_Insurgent_Female_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Sidearm Fighter Female II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Female_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Female_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.female.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Sidearm Fighter Female II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.male.01",
+      "entityId": "Unit_Chr_Insurgent_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Rocketeer Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Rocketeer Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.male.02",
+      "entityId": "Unit_Chr_Insurgent_Male_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Gunner Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Male_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Male_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.male.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Gunner Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.male.03",
+      "entityId": "Unit_Chr_Insurgent_Male_03",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Raider Male III",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_03.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Male_03_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Male_03_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.male.03",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Raider Male III: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.male.04",
+      "entityId": "Unit_Chr_Insurgent_Male_04",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Sniper Male IV",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_04.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Male_04_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Male_04_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.male.04",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Sniper Male IV: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.insurgent.male.05",
+      "entityId": "Unit_Chr_Insurgent_Male_05",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Insurgent Rifleman Male V",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_05.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Insurgent_Male_05_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Insurgent_Male_05_Portrait.png",
+      "animationSetId": "anim.unit.chr.insurgent.male.05",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Insurgent Rifleman Male V: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.leader.male.01",
+      "entityId": "Unit_Chr_Leader_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Field Commander",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Leader_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Leader_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Leader_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.leader.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Field Commander: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.pilot.female.01",
+      "entityId": "Unit_Chr_Pilot_Female_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Pilot Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Female_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Pilot_Female_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Pilot_Female_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.pilot.female.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Pilot Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.pilot.male.01",
+      "entityId": "Unit_Chr_Pilot_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Pilot Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Pilot_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Pilot_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.pilot.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Pilot Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.01",
+      "entityId": "Unit_Chr_Soldier_Female_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Marksman Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Marksman Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.01.alt.01",
+      "entityId": "Unit_Chr_Soldier_Female_01_Alt_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_01_Alt_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_01_Alt_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.01.alt.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.01.alt.02",
+      "entityId": "Unit_Chr_Soldier_Female_01_Alt_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Marksman Female II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_01_Alt_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_01_Alt_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.01.alt.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Marksman Female II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.02",
+      "entityId": "Unit_Chr_Soldier_Female_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Female II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Female II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.02.alt.01",
+      "entityId": "Unit_Chr_Soldier_Female_02_Alt_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Female I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_02_Alt_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_02_Alt_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.02.alt.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Female I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.female.02.alt.02",
+      "entityId": "Unit_Chr_Soldier_Female_02_Alt_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Assault Breacher Female II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Female_02_Alt_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Female_02_Alt_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.female.02.alt.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Assault Breacher Female II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.01",
+      "entityId": "Unit_Chr_Soldier_Male_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Heavy Gunner Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Heavy Gunner Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.01.alt.01",
+      "entityId": "Unit_Chr_Soldier_Male_01_Alt_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Marksman Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_01_Alt_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_01_Alt_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.01.alt.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Marksman Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.01.alt.02",
+      "entityId": "Unit_Chr_Soldier_Male_01_Alt_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Advanced Rifleman Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_01_Alt_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_01_Alt_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.01.alt.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Advanced Rifleman Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.02",
+      "entityId": "Unit_Chr_Soldier_Male_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.02.alt.01",
+      "entityId": "Unit_Chr_Soldier_Male_02_Alt_01",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Sidearm Specialist Male I",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_02_Alt_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_02_Alt_01_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.02.alt.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Sidearm Specialist Male I: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.02.alt.02",
+      "entityId": "Unit_Chr_Soldier_Male_02_Alt_02",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Male II",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_02_Alt_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_02_Alt_02_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.02.alt.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Male II: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.02.alt.03",
+      "entityId": "Unit_Chr_Soldier_Male_02_Alt_03",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Sidearm Specialist Male III",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_03.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_02_Alt_03_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_02_Alt_03_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.02.alt.03",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Sidearm Specialist Male III: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.chr.soldier.male.02.alt.04",
+      "entityId": "Unit_Chr_Soldier_Male_02_Alt_04",
+      "entityKind": "character",
+      "domain": "ground",
+      "displayName": "Rifleman Male IV",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Chr_Soldier_Male_02_Alt_04_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Chr_Soldier_Male_02_Alt_04_Portrait.png",
+      "animationSetId": "anim.unit.chr.soldier.male.02.alt.04",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Rifleman Male IV: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.coastal.cutter",
+      "entityId": "Unit_Sea_Coastal_Cutter",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Coastal Cutter",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Coastal_Cutter.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Coastal_Cutter_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Coastal_Cutter_Portrait.png",
+      "animationSetId": "anim.unit.sea.coastal.cutter",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Coastal Cutter: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.drone.boat",
+      "entityId": "Unit_Sea_Drone_Boat",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Drone Survey Boat",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Drone_Boat.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Drone_Boat_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Drone_Boat_Portrait.png",
+      "animationSetId": "anim.unit.sea.drone.boat",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Drone Survey Boat: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.interceptor.boat",
+      "entityId": "Unit_Sea_Interceptor_Boat",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Fast Interceptor Boat",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Interceptor_Boat.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Interceptor_Boat_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Interceptor_Boat_Portrait.png",
+      "animationSetId": "anim.unit.sea.interceptor.boat",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Fast Interceptor Boat: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.landing.craft",
+      "entityId": "Unit_Sea_Landing_Craft",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Landing Craft",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Landing_Craft.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Landing_Craft_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Landing_Craft_Portrait.png",
+      "animationSetId": "anim.unit.sea.landing.craft",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Landing Craft: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.missile.craft",
+      "entityId": "Unit_Sea_Missile_Craft",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Missile Patrol Craft",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Missile_Craft.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Missile_Craft_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Missile_Craft_Portrait.png",
+      "animationSetId": "anim.unit.sea.missile.craft",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Missile Patrol Craft: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.sea.patrol.boat",
+      "entityId": "Unit_Sea_Patrol_Boat",
+      "entityKind": "seaVehicle",
+      "domain": "sea",
+      "displayName": "Harbor Patrol Boat",
+      "visualProductionStatus": "needsProductionAsset",
+      "worldAssetPath": "Assets/Game/Art/Generated/2DISO/Units/Sea/Unit_Sea_Patrol_Boat.png",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Sea_Patrol_Boat_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Sea_Patrol_Boat_Portrait.png",
+      "animationSetId": "anim.unit.sea.patrol.boat",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Harbor Patrol Boat: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.apc.fast",
+      "entityId": "Unit_Veh_APC_Fast",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Fast APC",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Fast.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_APC_Fast_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_APC_Fast_Portrait.png",
+      "animationSetId": "anim.unit.veh.apc.fast",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Fast APC: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.apc.heavy",
+      "entityId": "Unit_Veh_APC_Heavy",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Heavy APC",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Heavy.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_APC_Heavy_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_APC_Heavy_Portrait.png",
+      "animationSetId": "anim.unit.veh.apc.heavy",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Heavy APC: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.apc.slow",
+      "entityId": "Unit_Veh_APC_Slow",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Armored APC",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Slow.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_APC_Slow_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_APC_Slow_Portrait.png",
+      "animationSetId": "anim.unit.veh.apc.slow",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Armored APC: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.drone",
+      "entityId": "Unit_Veh_Drone",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Recon Drone",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Drone_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Drone_Portrait.png",
+      "animationSetId": "anim.unit.veh.drone",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Recon Drone: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.helicopter.attack",
+      "entityId": "Unit_Veh_Helicopter_Attack",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Attack Helicopter",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Helicopter_Attack_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Helicopter_Attack_Portrait.png",
+      "animationSetId": "anim.unit.veh.helicopter.attack",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Attack Helicopter: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.helicopter.attack.small",
+      "entityId": "Unit_Veh_Helicopter_Attack_Small",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Light Attack Helicopter",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Helicopter_Attack_Small_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Helicopter_Attack_Small_Portrait.png",
+      "animationSetId": "anim.unit.veh.helicopter.attack.small",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Light Attack Helicopter: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.helicopter.transport",
+      "entityId": "Unit_Veh_Helicopter_Transport",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Transport Helicopter",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Helicopter_Transport_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Helicopter_Transport_Portrait.png",
+      "animationSetId": "anim.unit.veh.helicopter.transport",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Transport Helicopter: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.jet.01",
+      "entityId": "Unit_Veh_Jet_01",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Strike Jet",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Jet_01_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Jet_01_Portrait.png",
+      "animationSetId": "anim.unit.veh.jet.01",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Strike Jet: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.jet.02",
+      "entityId": "Unit_Veh_Jet_02",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Fighter Jet",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_02.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Jet_02_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Jet_02_Portrait.png",
+      "animationSetId": "anim.unit.veh.jet.02",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Fighter Jet: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.light.armored.car",
+      "entityId": "Unit_Veh_Light_Armored_Car",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Light Armored Car",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Light_Armored_Car_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Light_Armored_Car_Portrait.png",
+      "animationSetId": "anim.unit.veh.light.armored.car",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Light Armored Car: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.missle.launcher.air",
+      "entityId": "Unit_Veh_Missle_Launcher_Air",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Air Missile Launcher",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Air.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Missle_Launcher_Air_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Missle_Launcher_Air_Portrait.png",
+      "animationSetId": "anim.unit.veh.missle.launcher.air",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Air Missile Launcher: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.missle.launcher.ground",
+      "entityId": "Unit_Veh_Missle_Launcher_Ground",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Ground Missile Launcher",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Ground.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Missle_Launcher_Ground_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Missle_Launcher_Ground_Portrait.png",
+      "animationSetId": "anim.unit.veh.missle.launcher.ground",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Ground Missile Launcher: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.plane.transport",
+      "entityId": "Unit_Veh_Plane_Transport",
+      "entityKind": "vehicle",
+      "domain": "air",
+      "displayName": "Transport Plane",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Plane_Transport_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Plane_Transport_Portrait.png",
+      "animationSetId": "anim.unit.veh.plane.transport",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Transport Plane: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.radar.tank",
+      "entityId": "Unit_Veh_Radar_Tank",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Radar Tank",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Radar_Tank.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Radar_Tank_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Radar_Tank_Portrait.png",
+      "animationSetId": "anim.unit.veh.radar.tank",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Radar Tank: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.tank.usa",
+      "entityId": "Unit_Veh_Tank_USA",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Battle Tank",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Tank_USA_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Tank_USA_Portrait.png",
+      "animationSetId": "anim.unit.veh.tank.usa",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Battle Tank: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.truck.canopy",
+      "entityId": "Unit_Veh_Truck_Canopy",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Canopy Truck",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Truck_Canopy_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Truck_Canopy_Portrait.png",
+      "animationSetId": "anim.unit.veh.truck.canopy",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Canopy Truck: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.truck.tanker",
+      "entityId": "Unit_Veh_Truck_Tanker",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Tanker Truck",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Truck_Tanker_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Truck_Tanker_Portrait.png",
+      "animationSetId": "anim.unit.veh.truck.tanker",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Tanker Truck: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.unit.veh.truck.tray",
+      "entityId": "Unit_Veh_Truck_Tray",
+      "entityKind": "vehicle",
+      "domain": "ground",
+      "displayName": "Cargo Truck",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Unit_Veh_Truck_Tray_Icon.png",
+      "portraitPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Portraits/Unit_Veh_Truck_Tray_Portrait.png",
+      "animationSetId": "anim.unit.veh.truck.tray",
+      "silhouetteRules": [
+        "readableAtMobileZoom",
+        "distinctFromSameFamily",
+        "factionTintDoesNotCoverWeaponReadability"
+      ],
+      "artBrief": "Cargo Truck: premium 2D isometric WarlineCapture runtime entity, clean tactical silhouette, separate shadow/contact decal, no baked UI labels."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.air.drone.sensor",
+      "entityId": "upgrade.air.drone_sensor",
+      "entityKind": "upgradeTrack",
+      "displayName": "Drone Sensor Array",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.air.drone_sensor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.drone_sensor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.drone_sensor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.drone_sensor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.drone_sensor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Drone Sensor Array: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.air.helicopter.avionics",
+      "entityId": "upgrade.air.helicopter_avionics",
+      "entityKind": "upgradeTrack",
+      "displayName": "Helicopter Avionics",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.air.helicopter_avionics_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.helicopter_avionics_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.helicopter_avionics_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.helicopter_avionics_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.helicopter_avionics_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Helicopter Avionics: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.air.jet.weapons",
+      "entityId": "upgrade.air.jet_weapons",
+      "entityKind": "upgradeTrack",
+      "displayName": "Jet Weapons Package",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.air.jet_weapons_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.jet_weapons_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.jet_weapons_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.jet_weapons_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.jet_weapons_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Jet Weapons Package: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.air.transport.aircraft",
+      "entityId": "upgrade.air.transport_aircraft",
+      "entityKind": "upgradeTrack",
+      "displayName": "Transport Aircraft Safety",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.air.transport_aircraft_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.transport_aircraft_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.transport_aircraft_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.transport_aircraft_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.air.transport_aircraft_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Transport Aircraft Safety: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.air.operations",
+      "entityId": "upgrade.building.air_operations",
+      "entityKind": "upgradeTrack",
+      "displayName": "Air Operations Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.air_operations_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.air_operations_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.air_operations_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.air_operations_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.air_operations_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Air Operations Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.armory.supply",
+      "entityId": "upgrade.building.armory_supply",
+      "entityKind": "upgradeTrack",
+      "displayName": "Armory Supply Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.armory_supply_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.armory_supply_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.armory_supply_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.armory_supply_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.armory_supply_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Armory Supply Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.base.defense",
+      "entityId": "upgrade.building.base_defense",
+      "entityKind": "upgradeTrack",
+      "displayName": "Base Defense Hardening",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.base_defense_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.base_defense_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.base_defense_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.base_defense_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.base_defense_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Base Defense Hardening: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.civic.support",
+      "entityId": "upgrade.building.civic_support",
+      "entityKind": "upgradeTrack",
+      "displayName": "Civic Support Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.civic_support_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.civic_support_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.civic_support_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.civic_support_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.civic_support_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Civic Support Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.command.post",
+      "entityId": "upgrade.building.command_post",
+      "entityKind": "upgradeTrack",
+      "displayName": "Command Post Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.command_post_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.command_post_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.command_post_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.command_post_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.command_post_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Command Post Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.infrastructure",
+      "entityId": "upgrade.building.infrastructure",
+      "entityKind": "upgradeTrack",
+      "displayName": "Infrastructure Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.infrastructure_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.infrastructure_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.infrastructure_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.infrastructure_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.infrastructure_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Infrastructure Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.medical.support",
+      "entityId": "upgrade.building.medical_support",
+      "entityKind": "upgradeTrack",
+      "displayName": "Medical Support Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.medical_support_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.medical_support_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.medical_support_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.medical_support_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.medical_support_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Medical Support Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.naval.operations",
+      "entityId": "upgrade.building.naval_operations",
+      "entityKind": "upgradeTrack",
+      "displayName": "Naval Operations Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.naval_operations_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.naval_operations_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.naval_operations_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.naval_operations_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.naval_operations_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Naval Operations Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.resource.chain",
+      "entityId": "upgrade.building.resource_chain",
+      "entityKind": "upgradeTrack",
+      "displayName": "Resource Chain Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.resource_chain_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.resource_chain_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.resource_chain_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.resource_chain_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.resource_chain_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Resource Chain Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.sensor.network",
+      "entityId": "upgrade.building.sensor_network",
+      "entityKind": "upgradeTrack",
+      "displayName": "Sensor Network Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.sensor_network_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.sensor_network_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.sensor_network_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.sensor_network_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.sensor_network_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Sensor Network Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.training.facilities",
+      "entityId": "upgrade.building.training_facilities",
+      "entityKind": "upgradeTrack",
+      "displayName": "Training Facility Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.training_facilities_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.training_facilities_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.training_facilities_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.training_facilities_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.training_facilities_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Training Facility Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.building.vehicle.workshop",
+      "entityId": "upgrade.building.vehicle_workshop",
+      "entityKind": "upgradeTrack",
+      "displayName": "Vehicle Workshop Expansion",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.building.vehicle_workshop_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.vehicle_workshop_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.vehicle_workshop_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.vehicle_workshop_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.building.vehicle_workshop_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Vehicle Workshop Expansion: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.enemy.irregular.escalation",
+      "entityId": "upgrade.enemy.irregular_escalation",
+      "entityKind": "upgradeTrack",
+      "displayName": "Irregular Threat Escalation",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.enemy.irregular_escalation_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.irregular_escalation_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.irregular_escalation_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.irregular_escalation_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.irregular_escalation_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Irregular Threat Escalation: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.enemy.rocketeer.escalation",
+      "entityId": "upgrade.enemy.rocketeer_escalation",
+      "entityKind": "upgradeTrack",
+      "displayName": "Enemy Rocketeer Escalation",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.enemy.rocketeer_escalation_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.rocketeer_escalation_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.rocketeer_escalation_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.rocketeer_escalation_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.rocketeer_escalation_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Enemy Rocketeer Escalation: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.enemy.sniper.escalation",
+      "entityId": "upgrade.enemy.sniper_escalation",
+      "entityKind": "upgradeTrack",
+      "displayName": "Enemy Sniper Escalation",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.enemy.sniper_escalation_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.sniper_escalation_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.sniper_escalation_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.sniper_escalation_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.enemy.sniper_escalation_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Enemy Sniper Escalation: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.sea.cutter.command",
+      "entityId": "upgrade.sea.cutter_command",
+      "entityKind": "upgradeTrack",
+      "displayName": "Cutter Command Systems",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.sea.cutter_command_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.cutter_command_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.cutter_command_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.cutter_command_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.cutter_command_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Cutter Command Systems: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.sea.drone.boat.sensor",
+      "entityId": "upgrade.sea.drone_boat_sensor",
+      "entityKind": "upgradeTrack",
+      "displayName": "Drone Boat Sensor",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.sea.drone_boat_sensor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.drone_boat_sensor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.drone_boat_sensor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.drone_boat_sensor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.drone_boat_sensor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Drone Boat Sensor: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.sea.landing.craft.armor",
+      "entityId": "upgrade.sea.landing_craft_armor",
+      "entityKind": "upgradeTrack",
+      "displayName": "Landing Craft Armor",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.sea.landing_craft_armor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.landing_craft_armor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.landing_craft_armor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.landing_craft_armor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.landing_craft_armor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Landing Craft Armor: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.sea.missile.fire.control",
+      "entityId": "upgrade.sea.missile_fire_control",
+      "entityKind": "upgradeTrack",
+      "displayName": "Naval Missile Control",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.sea.missile_fire_control_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.missile_fire_control_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.missile_fire_control_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.missile_fire_control_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.missile_fire_control_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Naval Missile Control: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.sea.patrol.hull",
+      "entityId": "upgrade.sea.patrol_hull",
+      "entityKind": "upgradeTrack",
+      "displayName": "Patrol Hull Upgrade",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.sea.patrol_hull_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.patrol_hull_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.patrol_hull_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.patrol_hull_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.sea.patrol_hull_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Patrol Hull Upgrade: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.aircrew.survival",
+      "entityId": "upgrade.unit.aircrew_survival",
+      "entityKind": "upgradeTrack",
+      "displayName": "Aircrew Survival Training",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.aircrew_survival_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.aircrew_survival_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.aircrew_survival_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.aircrew_survival_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.aircrew_survival_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Aircrew Survival Training: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.breacher.hazard",
+      "entityId": "upgrade.unit.breacher_hazard",
+      "entityKind": "upgradeTrack",
+      "displayName": "Breach And Hazard Kit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.breacher_hazard_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.breacher_hazard_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.breacher_hazard_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.breacher_hazard_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.breacher_hazard_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Breach And Hazard Kit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.civilian.safety",
+      "entityId": "upgrade.unit.civilian_safety",
+      "entityKind": "upgradeTrack",
+      "displayName": "Civilian Safety Protocol",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.civilian_safety_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.civilian_safety_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.civilian_safety_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.civilian_safety_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.civilian_safety_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Civilian Safety Protocol: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.close.security",
+      "entityId": "upgrade.unit.close_security",
+      "entityKind": "upgradeTrack",
+      "displayName": "Close Security Drill",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.close_security_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.close_security_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.close_security_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.close_security_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.close_security_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Close Security Drill: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.contractor.security",
+      "entityId": "upgrade.unit.contractor_security",
+      "entityKind": "upgradeTrack",
+      "displayName": "Contractor Security Drill",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.contractor_security_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.contractor_security_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.contractor_security_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.contractor_security_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.contractor_security_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Contractor Security Drill: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.general.training",
+      "entityId": "upgrade.unit.general_training",
+      "entityKind": "upgradeTrack",
+      "displayName": "General Training",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.general_training_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.general_training_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.general_training_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.general_training_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.general_training_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "General Training: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.marksman.recon",
+      "entityId": "upgrade.unit.marksman_recon",
+      "entityKind": "upgradeTrack",
+      "displayName": "Marksman Recon Optics",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.marksman_recon_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.marksman_recon_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.marksman_recon_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.marksman_recon_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.marksman_recon_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Marksman Recon Optics: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.rifleline",
+      "entityId": "upgrade.unit.rifleline",
+      "entityKind": "upgradeTrack",
+      "displayName": "Rifleline Training",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.rifleline_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rifleline_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rifleline_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rifleline_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rifleline_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Rifleline Training: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.rocketeer.antiarmor",
+      "entityId": "upgrade.unit.rocketeer_antiarmor",
+      "entityKind": "upgradeTrack",
+      "displayName": "Anti-Armor Rocket Kit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.rocketeer_antiarmor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rocketeer_antiarmor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rocketeer_antiarmor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rocketeer_antiarmor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.rocketeer_antiarmor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Anti-Armor Rocket Kit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.unit.suppression.infantry",
+      "entityId": "upgrade.unit.suppression_infantry",
+      "entityKind": "upgradeTrack",
+      "displayName": "Suppression Infantry Kit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.unit.suppression_infantry_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.suppression_infantry_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.suppression_infantry_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.suppression_infantry_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.unit.suppression_infantry_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Suppression Infantry Kit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.apc.armor",
+      "entityId": "upgrade.vehicle.apc_armor",
+      "entityKind": "upgradeTrack",
+      "displayName": "APC Armor Package",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.apc_armor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.apc_armor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.apc_armor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.apc_armor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.apc_armor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "APC Armor Package: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.armored.car",
+      "entityId": "upgrade.vehicle.armored_car",
+      "entityKind": "upgradeTrack",
+      "displayName": "Armored Car Recon Kit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.armored_car_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.armored_car_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.armored_car_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.armored_car_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.armored_car_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Armored Car Recon Kit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.battle.tank",
+      "entityId": "upgrade.vehicle.battle_tank",
+      "entityKind": "upgradeTrack",
+      "displayName": "Battle Tank Retrofit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.battle_tank_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.battle_tank_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.battle_tank_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.battle_tank_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.battle_tank_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Battle Tank Retrofit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.logistics.trucks",
+      "entityId": "upgrade.vehicle.logistics_trucks",
+      "entityKind": "upgradeTrack",
+      "displayName": "Logistics Truck Retrofit",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.logistics_trucks_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.logistics_trucks_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.logistics_trucks_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.logistics_trucks_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.logistics_trucks_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Logistics Truck Retrofit: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.missile.fire.control",
+      "entityId": "upgrade.vehicle.missile_fire_control",
+      "entityKind": "upgradeTrack",
+      "displayName": "Missile Fire Control",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.missile_fire_control_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.missile_fire_control_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.missile_fire_control_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.missile_fire_control_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.missile_fire_control_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Missile Fire Control: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.upgrade.vehicle.radar.sensor",
+      "entityId": "upgrade.vehicle.radar_sensor",
+      "entityKind": "upgradeTrack",
+      "displayName": "Ground Sensor Suite",
+      "visualProductionStatus": "needsProductionAsset",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/UpgradeIcons/upgrade.vehicle.radar_sensor_Icon.png",
+      "tierBadgePaths": [
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.radar_sensor_T1.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.radar_sensor_T2.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.radar_sensor_T3.png",
+        "Assets/Game/Art/UI/Generated/CombatCatalog/TierBadges/upgrade.vehicle.radar_sensor_T4.png"
+      ],
+      "silhouetteRules": [
+        "tierNumberLayerSeparate",
+        "worksOnDarkAndLightPanels",
+        "noStatTextBakedIntoIcon"
+      ],
+      "artBrief": "Ground Sensor Suite: reusable upgrade icon and four tier badges; all costs and stat deltas remain in balance config."
+    },
+    {
+      "visualCatalogId": "visual.wall.dirt.straight",
+      "entityId": "Wall_Dirt_Straight",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Dirt Wall",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Wall_Dirt_Straight_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Dirt_Straight_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Dirt_Straight_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Dirt_Straight_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Dirt Wall: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    },
+    {
+      "visualCatalogId": "visual.wall.fence.straight",
+      "entityId": "Wall_Fence_Straight",
+      "entityKind": "building",
+      "socketType": "DefenseSocket",
+      "displayName": "Fence Wall",
+      "visualProductionStatus": "implementedRuntimeReference",
+      "worldAssetPath": "Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab",
+      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/Icons/Wall_Fence_Straight_Icon.png",
+      "damageStatePaths": [
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Fence_Straight_Intact.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Fence_Straight_Damaged.png",
+        "Assets/Game/Art/Generated/2DISO/Buildings/Wall_Fence_Straight_Destroyed.png"
+      ],
+      "silhouetteRules": [
+        "socketFootprintVisible",
+        "damageStatesDoNotChangeGameplayFootprint",
+        "selectionRingAnchorVisible"
+      ],
+      "artBrief": "Fence Wall: premium 2D isometric socketed building, intact/damaged/destroyed states, no gameplay stats baked into art."
+    }
+  ]
+}

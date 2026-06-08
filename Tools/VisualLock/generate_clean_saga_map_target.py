@@ -17,7 +17,7 @@ from PIL import Image, ImageEnhance, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parents[2]
-REF = ROOT / "Design" / "WarlineCapture_UIUX_Codex_Package" / "warlinecapture_uiux_spec_assets" / "SCN-05_saga_map.jpg"
+REF = ROOT / "Design" / "UIUX_Codex_Package" / "uiux_spec_assets" / "SCN-05_saga_map.jpg"
 OUT_DIR = ROOT / "Design" / "VisualLock" / "SCN-05_SagaMap"
 OUT_PATH = OUT_DIR / "SCN-05_SagaMap_Landscape_Target.png"
 NOTES_PATH = OUT_DIR / "SCN-05_SagaMap_CleanLandscape_Notes.md"
@@ -59,7 +59,7 @@ def write_notes() -> None:
                 "# SCN-05 Saga Map Visual Target",
                 "",
                 "- Canvas: 1672 x 941.",
-                "- Source: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-05_saga_map.jpg`.",
+                "- Source: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-05_saga_map.jpg`.",
                 "- The playable screen area is upscaled with original aspect ratio preserved.",
                 "- No UI components are redrawn or redesigned in this target.",
                 "- Use this target for exact layout, silhouettes, shadows, borders, back icon, route curves, and spacing.",

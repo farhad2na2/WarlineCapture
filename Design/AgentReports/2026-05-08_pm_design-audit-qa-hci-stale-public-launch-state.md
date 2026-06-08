@@ -6,7 +6,7 @@ Docs reviewed:
 - `Design/AgentTasks/qa-hci_current.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/gameplay_current.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentReports/2026-05-08_pm_public-launch-brown-tiny-world-rejection.md`
 - `Design/AgentReports/2026-05-08_pm_public-launch-ownership-split.md`
 

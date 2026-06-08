@@ -23,10 +23,10 @@ Reject the board-only Gameplay VisualLock package as insufficient and route Art/
 
 ## Contracts touched
 
-- `Design/WarlineCapture_Tactical_Map_AI_Workflow.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
+- `Design/Tactical_Map_AI_Workflow.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Chapter01_Tactical_Production_Implementation_Plan.md`
 - `Design/VisualReferences/2DIsometricProduction/GoldenAssets/README.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 

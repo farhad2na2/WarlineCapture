@@ -232,7 +232,7 @@ Codex needs tool permission to stop the stuck Unity validation process after rep
 
 Every completed pass must write a report under `Design/AgentReports/` using the format in:
 
-`Design/WarlineCapture_Agent_Coordination_Workflow.md`
+`Design/Agent_Coordination_Workflow.md`
 
 Required timing:
 

@@ -8,8 +8,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "Design" / "WarlineCapture_Project_State_Source.json"
-OUTPUT = ROOT / "Design" / "WarlineCapture_Project_State_Dashboard.md"
+SOURCE = ROOT / "Design" / "Project_State_Source.json"
+OUTPUT = ROOT / "Design" / "Project_State_Dashboard.md"
 
 
 STATUS_LABELS = {
@@ -82,7 +82,7 @@ def render_summary(data: dict) -> list[str]:
     lines = [
         "# WarlineCapture Project State Dashboard",
         "",
-        f"Generated from `Design/WarlineCapture_Project_State_Source.json` on `{data.get('lastUpdated', 'unknown')}`.",
+        f"Generated from `Design/Project_State_Source.json` on `{data.get('lastUpdated', 'unknown')}`.",
         "",
         "> Do not manually edit this dashboard. Update the JSON source and run `python3 Tools/ProjectState/generate_project_state_dashboard.py`.",
         "",

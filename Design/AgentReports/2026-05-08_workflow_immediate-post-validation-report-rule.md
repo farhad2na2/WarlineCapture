@@ -5,7 +5,7 @@ Task:
 Add an immediate post-validation reporting rule so agents do not finish validation and then sit idle without a handoff.
 
 Files changed:
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/AUTO_CONTINUE.md`
 - `Design/AgentTasks/README.md`
 - `Design/AgentReports/2026-05-08_workflow_immediate-post-validation-report-rule.md`

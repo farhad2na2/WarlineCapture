@@ -73,11 +73,11 @@ Variant implementation pack:
 
 ## Design Source
 
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`
-- `Design/WarlineCapture_Economy_Reward_Design.md`
-- `Design/WarlineCapture_Mission_Result_State_Spec.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/SagaChapters/Saga_Chapter01_First_Response.md`
+- `Design/Economy_Reward_Design.md`
+- `Design/Mission_Result_State_Spec.md`
 - Gameplay scene references: `Assets/Game/Scenes/Demo.unity` and `Assets/Game/Scenes/Demo2.unity`
 
 ## Target Prompt Summary

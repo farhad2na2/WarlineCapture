@@ -6,8 +6,8 @@ Reviewed handoff:
 `Design/AgentReports/2026-05-08_ui_m01-public-launch-path.md`
 
 Files reviewed:
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureGameLaunchUtility.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiQuickCustomTests.cs`
+- `Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs`
+- `Assets/Tests/Editor/UIQuickCustomTests.cs`
 - `Assets/Tests/PlayMode/Chapter01M01PlayModeValidationTests.cs`
 
 Finding:

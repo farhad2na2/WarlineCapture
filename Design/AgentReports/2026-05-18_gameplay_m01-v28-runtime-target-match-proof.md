@@ -20,7 +20,7 @@ P0 M01 V28 soldier runtime binding and target-match proof.
 
 # Contracts touched
 - `Design/Architecture/gameplay_solid_ecs_contract.md`: followed. V28 binding is in the existing ECS/runtime sprite asset resolver and presentation system. No bootstrap mission policy, scene-start replacement, or static gameplay facade was added.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`: M01 mission/map/unit ids preserved.
+- `Design/M01_FirstContact_Production_Contract.md`: M01 mission/map/unit ids preserved.
 - PM dispatch: `Design/AgentReports/2026-05-18_pm_art-atlas-m01-v28-accepted-gameplay-binding.md`.
 - Art handoff: `Design/AgentReports/2026-05-18_art-atlas_m01-v28-target-scale-hard-shadow-full-baked-atlases.md`.
 

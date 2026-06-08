@@ -7,7 +7,7 @@ SCN-02 Main Menu hybrid source pass after PM/user review: use approved generated
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/settings_button_frame.png`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/left_nav_row_frame.png`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/mode_card_frame_large.png`

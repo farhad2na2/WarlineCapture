@@ -2,7 +2,7 @@
   "surface": "PREFAB-04_AssistantButton",
   "reference": "reference/PREFAB-04_AssistantButton_Landscape_Target.png",
   "sourceBackground": "Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png",
-  "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+  "source": "Design/FTUE_And_Command_Assistant_Design.md",
   "status": "flat-panel-popup-target",
   "requiresSeparatedLayerPack": false,
   "requiredControls": [

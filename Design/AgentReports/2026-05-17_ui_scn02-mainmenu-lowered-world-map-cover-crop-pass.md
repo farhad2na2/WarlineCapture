@@ -7,7 +7,7 @@ SCN-02 Main Menu target-match iteration after PM/user review: fix incorrect blue
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/main_menu_background_tactical_map.png`
 - `Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds/main_menu_background_tactical_map.png`
 - `Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/main_menu_background_tactical_map.png`

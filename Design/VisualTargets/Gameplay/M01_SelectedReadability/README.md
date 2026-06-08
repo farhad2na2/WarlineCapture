@@ -34,7 +34,7 @@ UI/HUD visual targets remain in:
 
 Gameplay targets must visually align with the existing UI target language without becoming UI targets:
 
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 
 ## Required Package

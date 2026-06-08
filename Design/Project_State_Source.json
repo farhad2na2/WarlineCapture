@@ -1,0 +1,377 @@
+{
+  "schemaVersion": "0.1",
+  "lastUpdated": "2026-05-21",
+  "purpose": "Source of truth for the overall WarlineCapture plan/state dashboard. Update this file first, then regenerate Design/Project_State_Dashboard.md with Tools/ProjectState/generate_project_state_dashboard.py.",
+  "rules": [
+    "Do not manually edit the generated dashboard except to replace it from this source.",
+    "When a plan, milestone, or dependency changes, update this source and regenerate the dashboard.",
+    "Percent complete is a pragmatic planning estimate, not a build metric."
+  ],
+  "statusLegend": {
+    "done": "Complete enough for the current milestone.",
+    "in_progress": "Active work is happening or the next step is already started.",
+    "on_hold": "Intentionally waiting on another milestone or decision.",
+    "blocked": "Cannot move without a missing input, approval, asset, or technical fix.",
+    "planned": "Known work, not started."
+  },
+  "completionForecast": {
+    "lastEstimateDate": "2026-05-21",
+    "currentOverallPercent": 33,
+    "estimated100PercentDate": "2027-03-31",
+    "targetRangeStart": "2027-02-28",
+    "targetRangeEnd": "2027-05-31",
+    "confidence": "low",
+    "updateCadence": "weekly, plus after major accepted milestone reports",
+    "basis": "Updated after the accepted 3D single-map design redirection. Forecast remains range-based given remaining dependency risk across 3D operation-map validation, M01-M05 gameplay, UI visual lock, QA/HCI, balance, audio, store, and release hardening.",
+    "rules": [
+      "Do not treat this as a committed ship date.",
+      "Move the date only after accepted agent reports materially change weighted completion or unblock a roadmap stage.",
+      "Increase confidence only after at least three regular updates show a stable completion-rate trend.",
+      "Keep a range when confidence is low; replace with a narrower date only when the playable vertical slice and asset pipeline are stable."
+    ]
+  },
+  "roadmapStages": [
+    {
+      "id": "stage.foundation",
+      "title": "Foundation",
+      "status": "done",
+      "percentComplete": 75,
+      "summary": "Core RTS simulation, Unity project structure, design docs, and first UI/visual systems exist."
+    },
+    {
+      "id": "stage.visual_direction",
+      "title": "Visual Direction Lock",
+      "status": "in_progress",
+      "percentComplete": 41,
+      "summary": "3D single-map direction, command-base menu style, operation-map metadata, validation scenes, and review captures are being formalized."
+    },
+    {
+      "id": "stage.asset_vertical_slice",
+      "title": "Asset Vertical Slice",
+      "status": "in_progress",
+      "percentComplete": 8,
+      "dependsOn": ["plan.3d_operation_map_validation"],
+      "summary": "3D world gameplay asset validation is being redirected around existing prefab configs, large operation maps, and command-base UI render needs."
+    },
+    {
+      "id": "stage.playable_vertical_slice",
+      "title": "Playable Vertical Slice",
+      "status": "in_progress",
+      "percentComplete": 18,
+      "dependsOn": ["plan.3d_operation_map_validation", "plan.3d_world_gameplay_assets", "plan.command_ui_render_assets"],
+      "summary": "M01 integrated playable route is underway; the next playable-slice planning pass must align captures, UI, and QA/HCI expectations to the 3D single-map direction."
+    },
+    {
+      "id": "stage.production_scale",
+      "title": "Production Scale",
+      "status": "planned",
+      "percentComplete": 8,
+      "dependsOn": ["stage.playable_vertical_slice"],
+      "summary": "Scale validated pipelines across large 3D operation maps, Campaign/Operations/Skirmish modes, UI surfaces, economy, balance, and content."
+    }
+  ],
+  "plans": [
+    {
+      "id": "plan.core_simulation",
+      "title": "Core RTS Simulation",
+      "area": "Gameplay",
+      "status": "done",
+      "percentComplete": 74,
+      "weight": 12,
+      "ownerDoc": "Design/GAME_DESIGN_REFERENCE.md",
+      "summary": "Grid RTS simulation has units, buildings, resources, roads, production, AI, combat, transport, radar warnings, minimap, and Android build support.",
+      "done": [
+        "Core unit/building/resource/road systems exist.",
+        "AI economy, build, production, squad, targeting, and combat systems exist.",
+        "Transport, base breach, radar warnings, minimap, runtime stats, and Android support exist.",
+        "M01 EditMode playable runtime slice is accepted with focused test coverage and stable runtime ids.",
+        "Assistant typed-command hooks are accepted for selection, move, and attack via the command executor boundary."
+      ],
+      "inProgress": [
+        "Aligning existing runtime simulation with the new 3D single-map presentation and operation-map metadata direction."
+      ],
+      "onHold": [],
+      "next": [
+        "Bind metadata-backed 3D operation-map data to movement/pathing probes.",
+        "Validate gameplay layers over the selected 3D operation-map direction."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "plan.3d_operation_map_validation",
+      "title": "3D Operation Map Validation",
+      "area": "Art/Runtime",
+      "status": "in_progress",
+      "percentComplete": 29,
+      "weight": 14,
+      "ownerDoc": "Design/3D_SingleMap_Gameplay_Direction.md",
+      "summary": "The active direction is 3D single-map operation play; validation must prove large 3D maps, many units, camera states, metadata overlays, and mobile performance.",
+      "done": [
+        "The 3D single-map direction is documented and accepted.",
+        "Existing Unity runtime already supports grid movement, base building, production, AI, combat, transport, warnings, minimap, and Android build support.",
+        "Prefab config catalog exists under Assets/Game/Configs/Prefabs for units, civilians, hostile variants, vehicles, aircraft, buildings, barriers, and support structures."
+      ],
+      "inProgress": [
+        "Audit and cleanup of stale superseded-direction references."
+      ],
+      "onHold": [
+        "Production-scale 3D map expansion waits for a focused validation plan and PM acceptance."
+      ],
+      "next": [
+        "Define a 3D operation-map validation plan for camera states, metadata overlays, many-unit performance, and civilian readability.",
+        "Select or build the first large 3D town/base validation scene using existing prefab catalog assets."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "plan.3d_world_gameplay_assets",
+      "title": "3D World Gameplay Assets",
+      "area": "Art/Runtime",
+      "status": "in_progress",
+      "percentComplete": 14,
+      "weight": 12,
+      "ownerDoc": "Assets/Game/Configs/Prefabs",
+      "summary": "Existing prefab config assets provide the canonical unit/building roster for 3D gameplay; production work must validate these assets in large 3D operation maps.",
+      "done": [
+        "Prefab config catalog includes soldiers, civilians, insurgents, contractors, pilots, ground vehicles, aircraft, missiles, military buildings, civilian buildings, utilities, and barriers.",
+        "Display names and descriptions exist in config assets and are now design-canonical for UI/tooltips/briefings."
+      ],
+      "inProgress": [],
+      "onHold": [
+        "New asset generation should wait until the 3D operation-map validation target is approved."
+      ],
+      "next": [
+        "Audit which prefab configs already have production-ready 3D presentation.",
+        "Validate infantry, civilian, hostile, vehicle, aircraft, and building readability in the first large 3D operation scene.",
+        "Define missing 3D asset states, LODs, selection markers, damage states, and VFX requirements."
+      ],
+      "dependsOn": ["plan.3d_operation_map_validation"]
+    },
+    {
+      "id": "plan.command_ui_render_assets",
+      "title": "Command UI Render Assets",
+      "area": "UI/Art",
+      "status": "on_hold",
+      "percentComplete": 5,
+      "weight": 10,
+      "ownerDoc": "Design/UIUX_MainMenu_Visual_Contract.md",
+      "summary": "UI render assets must align to the command-base menu style and 3D operation-map content, starting with SCN-02B MainMenuAlt.",
+      "done": [
+        "SCN-02B MainMenuAlt layered command-base package exists.",
+        "Main Menu visual contract now points to the command-base target."
+      ],
+      "inProgress": [],
+      "onHold": [
+        "Broad UI render refresh waits on prioritized screen-by-screen target updates."
+      ],
+      "next": [
+        "Promote command-base render language across Campaign, Operations, Skirmish, Store, Commander, and HUD-adjacent screens.",
+        "Validate UI renders inside target Canvas captures, not just standalone PNGs."
+      ],
+      "dependsOn": ["plan.3d_operation_map_validation"]
+    },
+    {
+      "id": "plan.ui_visual_lock",
+      "title": "UI Visual Lock And Canvas Conversion",
+      "area": "UI",
+      "status": "in_progress",
+      "percentComplete": 45,
+      "weight": 12,
+      "ownerDoc": "Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md",
+      "summary": "UI target docs, layered workflow, prefab builders, and several generated UI assets/prefabs exist, but many surfaces still need layer-pack validation and rendered capture comparison.",
+      "done": [
+        "UI/UX specs and target-to-canvas workflow exist.",
+        "VisualLock and VisualLockLayered folders exist for multiple screens/popups.",
+        "Several UI prefabs and generated assets are present.",
+        "UI audit readiness report now separates interaction audit from final visual-lock acceptance and records the current full EditMode gate.",
+        "PREFAB-04 assistant button target lock and production prefab are accepted for the M01 HUD entry surface.",
+        "Assistant runtime binding (live panel data, typed Do It, result-flow Stop, takeover/release visibility) is accepted with focused tests."
+      ],
+      "inProgress": [
+        "Layer-pack gate and target-vs-capture requirements are being tightened.",
+        "Popup and tactical HUD continuation work is underway.",
+        "Integrated M01 capture matrix (16:9/20:9) is in progress for QA/HCI Gate 4 readability sign-off."
+      ],
+      "onHold": [
+        "Gameplay-facing UI content art should wait for command-base/3D operation render target updates."
+      ],
+      "next": [
+        "Use layer-pack gate before more prefab implementation.",
+        "Bind approved UI render assets into squad tray, mission briefing, reward unlock, mode cards, and build drawer.",
+        "Run rendered capture comparisons for target surfaces."
+      ],
+      "dependsOn": ["plan.command_ui_render_assets"]
+    },
+    {
+      "id": "plan.game_modes_progression",
+      "title": "Game Modes, Missions, Progression",
+      "area": "Product/Gameplay",
+      "status": "planned",
+      "percentComplete": 40,
+      "weight": 10,
+      "ownerDoc": "Design/Gameplay_Features_Detailed_Spec.md",
+      "summary": "Campaign, Operations, Skirmish, objectives, rewards, progression, and mission grammar are specified but need cleanup around the 3D single-map direction.",
+      "done": [
+        "Mode direction and gameplay feature specs exist.",
+        "Mission/content grammar and campaign chapter docs exist.",
+        "Economy/reward design exists.",
+        "Chapter 1 mission configs, objective/result scoring, reward grants, campaign node binding/unlocks, Mission Briefing reward previews, Mission Result reward rows, and initial Operations persistence-backed state are implemented.",
+        "Operation action simulation now records operation supplies, completed action count, and pending event rows for dashboard and future Inbox/End-of-Day surfaces.",
+        "Operation actions now use a configurable cost/delta/event layer and block supply-gated actions when operation supplies are too low.",
+        "Operation action tuning now loads from the authored Resources-backed OperationActionConfigSet asset while preserving code defaults as a fallback.",
+        "Operation district-specific action modifiers now provide the first authored district consequence and event-copy layer.",
+        "Inbox, Events, and Command Feed route shells now bind to the saved Operation event ledger at runtime while preserving visual-lock fallback text.",
+        "Operation event ledger entries now carry typed category, severity, district, action, day, and unread metadata for future filters and report surfaces.",
+        "Scan actions now create saved intel evidence archive rows, and POP-08 Intel Reveal reads the latest evidence for the selected district.",
+        "OperationIntelArchive now provides shared latest/count/read helpers, POP-08 marks viewed evidence read, and Inbox, Events, and Command Feed route shells display evidence confidence/read metadata.",
+        "Operations district state now includes trust, security, infrastructure, enemy influence, heat, and civilian risk metrics; authored actions and district modifiers can mutate those secondary consequences.",
+        "OperationDistrictEventRule now provides authored heat, civilian-risk, and enemy-influence threshold alerts with source metric/value metadata in the saved event ledger.",
+        "Raid confirmation and End Day reports now bind secondary Operation metrics directly instead of using stability/threat proxy labels.",
+        "Operations authored action tables now cover Repair, Evacuate, and Build Outpost in addition to Patrol, Scan, Aid, and Raid, including district-specific modifiers and typed event categories.",
+        "District Detail now exposes a six-action Operation ActionGrid that binds Patrol, Drone Scan, Raid, Repair, Evacuate, and Build Outpost to live OperationService state.",
+        "Operation dashboard and district detail cards now share a secondary-metric text contract for trust, security, infrastructure, enemy influence, heat, civilian risk, stability, and intel.",
+        "RewardService now grants Operation rewards into saved Operation state, including operation supplies and targeted district trust, security, intel, and infrastructure.",
+        "Mission Briefing, generated fallback reward previews, and Mission Result reward rows now display Operation rewards with readable labels and district targets.",
+        "Every Chapter 1 mission now carries an authored Operation outcome reward: operation supply plus targeted North Bridge, Old Market, or Port Breach metric gains.",
+        "Operations-launched mission sessions now prioritize Operations reward rows in Mission Briefing and Mission Result, while Campaign-launched sessions keep default reward ordering.",
+        "ProgressionService now provides the first commander XP table, derived commander level updates, and account combat-stat accumulation from mission results.",
+        "RewardTrackService now provides fixed commander-level reward milestones, persisted claimed-node ids, eligibility checks, and first claim grants.",
+        "MissionHistoryService now archives recent local mission result summaries into saved profile data for the Commander Profile history tab.",
+        "CommanderProfileScreenController now binds saved profile wallet, level, unlock, win/loss, combat-total, saved recent mission report data, reward-track eligibility, claimable reward-track row buttons with modal detail/claim feedback, local tab content, and a first-claim CTA into SCN-03 Commander Profile."
+      ],
+      "inProgress": [
+        "Aligning mission/map ids and UI surfaces with the 3D operation-map direction.",
+        "Final visual-lock presentation for every secondary metric."
+      ],
+      "onHold": [
+        "Production mission validation waits for the 3D playable vertical slice."
+      ],
+      "next": [
+        "Build Chapter 1 vertical slice against the selected 3D operation-map validation target.",
+        "Wire objectives/results/rewards into UI surfaces with real content art.",
+        "Create final visual-lock layouts for every secondary metric."
+      ],
+      "dependsOn": ["stage.playable_vertical_slice", "plan.ui_visual_lock"]
+    },
+    {
+      "id": "plan.balance_probe",
+      "title": "Balance And Automated Probes",
+      "area": "QA/Gameplay",
+      "status": "planned",
+      "percentComplete": 20,
+      "weight": 7,
+      "ownerDoc": "Design/Balancing_Automated_Test_Plan.md",
+      "summary": "Balance config and report writer/test direction exist, but large-scale gameplay probes need the playable vertical slice.",
+      "done": [
+        "Balance config exists.",
+        "Balance report/test concepts exist.",
+        "First opt-in Skirmish compatibility probe, report writer, menu runner, and documented RunAll entry point exist.",
+        "Shared BalanceProbeDefinition and BalanceMetricSample types now support both QuickCustom_Default_Medium and QuickCustom_Hard_Swarm.",
+        "Chapter 1 mission reward configs now have a normal data-sanity gate for unique ids, positive amounts, required targets, and first-clear duplicate fallbacks."
+      ],
+      "inProgress": [],
+      "onHold": [
+        "Large 3D operation-map stress and economy probes wait on the playable validation target."
+      ],
+      "next": [
+        "Run opt-in movement/combat/economy probes after 3D operation-map runtime binding.",
+        "Classify reports and feed findings back into balance config."
+      ],
+      "dependsOn": ["stage.playable_vertical_slice"]
+    },
+    {
+      "id": "plan.monetization_store",
+      "title": "Monetization And Store",
+      "area": "Product/UI",
+      "status": "planned",
+      "percentComplete": 18,
+      "weight": 5,
+      "ownerDoc": "Design/Monetization/Monetization_Strategy.md",
+      "summary": "Monetization principles, store catalog, and visual targets exist; production store UI and economy sanity checks are later work.",
+      "done": [
+        "Strategy, store catalog, and visual targets exist."
+      ],
+      "inProgress": [],
+      "onHold": [
+        "Store production waits on core UI visual-lock and economy/reward pipeline maturity."
+      ],
+      "next": [
+        "Bind store catalog to safe economy data.",
+        "Create layered store UI and validate rendered captures."
+      ],
+      "dependsOn": ["plan.ui_visual_lock", "plan.game_modes_progression"]
+    },
+    {
+      "id": "plan.audio",
+      "title": "Audio",
+      "area": "Audio",
+      "status": "planned",
+      "percentComplete": 18,
+      "weight": 4,
+      "ownerDoc": "Design/Audio_Design_Guidelines.md",
+      "summary": "Audio direction and generation tooling exist, but production event integration is incomplete.",
+      "done": [
+        "Audio guideline doc exists.",
+        "Audio generation helper exists."
+      ],
+      "inProgress": [],
+      "onHold": [
+        "Final cues wait on locked gameplay/UI event lists."
+      ],
+      "next": [
+        "Prioritize first vertical-slice cues for UI, movement, combat, construction, destruction, and alerts."
+      ],
+      "dependsOn": ["stage.playable_vertical_slice", "plan.ui_visual_lock"]
+    },
+    {
+      "id": "plan.marketing",
+      "title": "Marketing Assets",
+      "area": "Marketing",
+      "status": "in_progress",
+      "percentComplete": 35,
+      "weight": 4,
+      "ownerDoc": "Design/Marketing/README.md",
+      "summary": "Sample video and generative concept workflows exist; final marketing should wait for approved visual/gameplay slice.",
+      "done": [
+        "Sample video workflow exists.",
+        "Generative cinematic shot plan exists."
+      ],
+      "inProgress": [
+        "Marketing concepts track current design direction."
+      ],
+      "onHold": [
+        "Final marketing captures wait on approved playable visual slice."
+      ],
+      "next": [
+        "Refresh marketing visuals after the 3D operation-map slice looks and plays close to target."
+      ],
+      "dependsOn": ["stage.playable_vertical_slice"]
+    },
+    {
+      "id": "plan.build_release",
+      "title": "Build, Test, Release",
+      "area": "Engineering",
+      "status": "in_progress",
+      "percentComplete": 45,
+      "weight": 8,
+      "ownerDoc": "README.md",
+      "summary": "Unity version, packages, Android support, and tests exist; release hardening depends on vertical-slice completion.",
+      "done": [
+        "Unity project is set up.",
+        "Android build support exists.",
+        "EditMode/PlayMode tests exist."
+      ],
+      "inProgress": [
+        "Maintaining batch Unity validation for generated scenes and tests."
+      ],
+      "onHold": [
+        "Release hardening waits on playable vertical slice scope."
+      ],
+      "next": [
+        "Keep CI/build validation green as art/runtime/UI integrations land.",
+        "Add targeted tests for new asset bindings and map adapters."
+      ],
+      "dependsOn": ["stage.playable_vertical_slice"]
+    }
+  ]
+}

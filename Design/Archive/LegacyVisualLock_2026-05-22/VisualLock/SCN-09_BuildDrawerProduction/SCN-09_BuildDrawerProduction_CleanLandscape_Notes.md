@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-09_BuildDrawerProduction/SCN-09_BuildDrawerProduction_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-09_build_drawer_production.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-09_build_drawer_production.jpg`.
 - Recreate in Unity as a real drawer overlay with separate category tabs, item cards, queue rows, capacity bar, and action buttons.
 
 ## Implementation Notes

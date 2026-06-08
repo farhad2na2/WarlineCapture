@@ -12,8 +12,8 @@ Implement `GameUI` scene Step 3 by adding the runtime UI motion host.
 
 - `Assets/Game/Scenes/GameUI.unity`
 - `Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs.meta`
+- `Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs.meta`
 - `Design/AgentReports/2026-05-24_ui_gameui-scene-step3.md`
 
 ## Contracts touched

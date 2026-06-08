@@ -1,7 +1,7 @@
 Status: accepted
 Topic: Waiting/blocker ownership rule
 Docs reviewed:
-- Design/WarlineCapture_Agent_Coordination_Workflow.md
+- Design/Agent_Coordination_Workflow.md
 - Design/AgentTasks/AUTO_CONTINUE.md
 - Design/AgentTasks/ui_current.md
 - Design/AgentTasks/qa-hci_current.md
@@ -10,7 +10,7 @@ The workflow allowed agents to report waiting/blocked/idle without proving wheth
 Why it matters:
 The PM assistant is supposed to catch and unblock these cases. A required ownership check makes the deadlock visible immediately: if the waiting lane owns the missing file/report/asset, it must continue or report a concrete technical blocker instead of waiting.
 Recommended fix:
-Done. `Design/WarlineCapture_Agent_Coordination_Workflow.md` and `Design/AgentTasks/AUTO_CONTINUE.md` now require every waiting/blocked/idle report to name the waiting lane, exact deliverable, owner of next action, and whether fallback work is possible. Reports that wait on a same-lane deliverable should be marked `needs fixes`.
+Done. `Design/Agent_Coordination_Workflow.md` and `Design/AgentTasks/AUTO_CONTINUE.md` now require every waiting/blocked/idle report to name the waiting lane, exact deliverable, owner of next action, and whether fallback work is possible. Reports that wait on a same-lane deliverable should be marked `needs fixes`.
 Affected lanes:
 All lanes
 Needs user decision:

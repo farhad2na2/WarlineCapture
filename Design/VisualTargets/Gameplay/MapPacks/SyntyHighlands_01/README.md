@@ -33,5 +33,5 @@ This pack is a 2024x2024 top-down Synty/POLYGON-style terrain and mask set for t
 - Keep city/base reserves clear during tree/rock spawning unless a later designer-authored zone overrides it.
 - Use editor-time generation first, save generated metadata, and validate with debug overlays before runtime use.
 
-See `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` for thresholds and sampling rules.
+See `Design/3D_Operation_Map_Texture_Mask_Workflow.md` for thresholds and sampling rules.
 

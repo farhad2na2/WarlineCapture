@@ -5,7 +5,7 @@ Task:
 Record QA/HCI's Unity batchmode licensing solution and propagate it to all active lane instructions.
 
 Files changed:
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/AUTO_CONTINUE.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/ui_current.md`

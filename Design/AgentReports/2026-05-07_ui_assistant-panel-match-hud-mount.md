@@ -16,8 +16,8 @@ Contracts touched:
 - `PREFAB-05_AssistantPanel`
 - `AssistantPanelController`
 - `Screen_MatchOverlay`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
 
 User-visible behavior:
 The match HUD now has a live `ARIA` assistant entry button on the left rail between the objective tracker and threat feed. Tapping it toggles a placeholder-bound assistant panel through `AssistantPanelController` and `AssistantPanelView`. Show Me, Do It, and Stop remain UI callback seams only; this pass does not execute gameplay typed intents.

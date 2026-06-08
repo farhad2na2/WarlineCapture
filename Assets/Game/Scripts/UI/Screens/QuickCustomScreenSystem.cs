@@ -2,28 +2,28 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
+public sealed class QuickCustomScreenSystem : UIScreenSystem
 {
     [SerializeField] private TMP_Dropdown presetDropdown;
     [SerializeField] private TMP_Dropdown enemyTypeDropdown;
-    [SerializeField] private WarlineCaptureSegmentedControlView enemyCountStepper;
-    [SerializeField] private WarlineCaptureSegmentedControlView difficultySegmented;
-    [SerializeField] private WarlineCaptureSegmentedControlView startingMoneySegmented;
-    [SerializeField] private WarlineCaptureSliderRowView startingMoneySlider;
-    [SerializeField] private WarlineCaptureSliderRowView incomeMultiplierSlider;
-    [SerializeField] private WarlineCaptureSegmentedControlView buildSpeedSegmented;
-    [SerializeField] private WarlineCaptureSliderRowView buildSpeedSlider;
-    [SerializeField] private WarlineCaptureSegmentedControlView unitProductionSpeedSegmented;
-    [SerializeField] private WarlineCaptureSegmentedControlView attackGroupSizeSegmented;
-    [SerializeField] private WarlineCaptureSegmentedControlView attackFrequencySegmented;
-    [SerializeField] private WarlineCaptureSegmentedControlView aggressionSegmented;
-    [SerializeField] private WarlineCaptureSliderRowView aggressionSlider;
-    [SerializeField] private WarlineCaptureSegmentedControlView expansionSegmented;
+    [SerializeField] private UISegmentedControlView enemyCountStepper;
+    [SerializeField] private UISegmentedControlView difficultySegmented;
+    [SerializeField] private UISegmentedControlView startingMoneySegmented;
+    [SerializeField] private UISliderRowView startingMoneySlider;
+    [SerializeField] private UISliderRowView incomeMultiplierSlider;
+    [SerializeField] private UISegmentedControlView buildSpeedSegmented;
+    [SerializeField] private UISliderRowView buildSpeedSlider;
+    [SerializeField] private UISegmentedControlView unitProductionSpeedSegmented;
+    [SerializeField] private UISegmentedControlView attackGroupSizeSegmented;
+    [SerializeField] private UISegmentedControlView attackFrequencySegmented;
+    [SerializeField] private UISegmentedControlView aggressionSegmented;
+    [SerializeField] private UISliderRowView aggressionSlider;
+    [SerializeField] private UISegmentedControlView expansionSegmented;
     [SerializeField] private TMP_Dropdown targetPriorityDropdown;
-    [SerializeField] private WarlineCaptureToggleRowView playerAutoToggle;
+    [SerializeField] private UIToggleRowView playerAutoToggle;
     [SerializeField] private TMP_Dropdown winConditionDropdown;
-    [SerializeField] private WarlineCaptureToggleRowView fogOfWarToggle;
-    [SerializeField] private WarlineCaptureToggleRowView intelRevealToggle;
+    [SerializeField] private UIToggleRowView fogOfWarToggle;
+    [SerializeField] private UIToggleRowView intelRevealToggle;
     [SerializeField] private TMP_Dropdown startingResourcesDropdown;
     [SerializeField] private TMP_InputField seedInput;
     [SerializeField] private TMP_Text mapNameText;
@@ -126,7 +126,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
     public void LaunchMatch()
     {
         ApplyCurrentConfigToRuntime();
-        WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
+        UIGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
     }
 
     private void WireEvents()
@@ -201,7 +201,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
             : Mathf.Clamp(fallback, 1, 3);
     }
 
-    private void WireSegment(WarlineCaptureSegmentedControlView view, string[] labels)
+    private void WireSegment(UISegmentedControlView view, string[] labels)
     {
         if (view?.SegmentButtons == null)
             return;
@@ -215,12 +215,12 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         }
     }
 
-    private static void BindSegment(WarlineCaptureSegmentedControlView view, string[] labels, int selectedIndex)
+    private static void BindSegment(UISegmentedControlView view, string[] labels, int selectedIndex)
     {
         view?.Bind(labels, Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, labels.Length - 1)));
     }
 
-    private static int GetSelectedSegment(WarlineCaptureSegmentedControlView view, int fallback)
+    private static int GetSelectedSegment(UISegmentedControlView view, int fallback)
     {
         if (view?.SegmentButtons == null || view.SegmentButtons.Length == 0)
             return fallback;
@@ -235,7 +235,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         return fallback;
     }
 
-    private static float GetSliderValue(WarlineCaptureSliderRowView row, float fallback)
+    private static float GetSliderValue(UISliderRowView row, float fallback)
     {
         return row != null && row.Slider != null ? row.Slider.value : fallback;
     }
@@ -264,7 +264,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         }
     }
 
-    private static AIStartingMoneySetting ReadStartingMoneySlider(WarlineCaptureSliderRowView row)
+    private static AIStartingMoneySetting ReadStartingMoneySlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 33f)
@@ -273,7 +273,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         return value > 67f ? AIStartingMoneySetting.High : AIStartingMoneySetting.Normal;
     }
 
-    private static void BindSpeedSlider(WarlineCaptureSliderRowView row, string label, AISpeedSetting setting)
+    private static void BindSpeedSlider(UISliderRowView row, string label, AISpeedSetting setting)
     {
         if (row == null)
             return;
@@ -297,7 +297,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         }
     }
 
-    private static AISpeedSetting ReadSpeedSlider(WarlineCaptureSliderRowView row)
+    private static AISpeedSetting ReadSpeedSlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 33f)
@@ -323,7 +323,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
             aggressionSlider.ValueText.text = $"{Mathf.RoundToInt(value)}%";
     }
 
-    private static AIAggressionSetting ReadAggressionSlider(WarlineCaptureSliderRowView row)
+    private static AIAggressionSetting ReadAggressionSlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 38f)
@@ -332,7 +332,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         return value > 62f ? AIAggressionSetting.Aggressive : AIAggressionSetting.Balanced;
     }
 
-    private static bool GetToggleValue(WarlineCaptureToggleRowView row, bool fallback)
+    private static bool GetToggleValue(UIToggleRowView row, bool fallback)
     {
         return row != null && row.Toggle != null ? row.Toggle.isOn : fallback;
     }

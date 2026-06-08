@@ -3,7 +3,7 @@ Task: Reviewed waiting-state integration contracts, the landed UI assistant runt
 Files changed:
 - `Design/AgentReports/2026-05-07_support-ftue_integration-support-watch.md`
 Contracts touched:
-- Reviewed `Design/AgentTasks/support-ftue_current.md`, `Design/AgentTasks/ui_current.md`, `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`, `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`, and `Design/AgentReports/2026-05-07_pm_support-ftue_live-assistant-context-provider-review.md`.
+- Reviewed `Design/AgentTasks/support-ftue_current.md`, `Design/AgentTasks/ui_current.md`, `Design/AssistantPanel_M01_Implementation_Contract.md`, `Design/AssistantRuntime_M01_Wiring_Plan.md`, and `Design/AgentReports/2026-05-07_pm_support-ftue_live-assistant-context-provider-review.md`.
 - Reviewed `Design/AgentReports/2026-05-07_ui_assistant-runtime-binding.md` after it landed.
 - Reviewed `Design/AgentReports/2026-05-07_pm_ui-assistant-runtime-binding-review.md` after PM review landed.
 - Reviewed `Design/AgentReports/2026-05-07_ui_assistant-runtime-binding-fix.md` after the UI takeover/result-flow fix report landed.

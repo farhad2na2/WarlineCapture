@@ -13,7 +13,7 @@ WarlineCapture is a grid-based real-time strategy game about building and defend
 Active presentation direction:
 
 - Full 3D single-map mobile RTS.
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md` is the current source of truth for gameplay/art direction.
+- `Design/3D_SingleMap_Gameplay_Direction.md` is the current source of truth for gameplay/art direction.
 - Missions and operations should resolve to one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as camera/UI layers on the same world.
 - Unit and building display names/descriptions should come from `Assets/Game/Configs/Prefabs`.
 - Older 2D isometric references and imported 2DISO assets are historical or migration material unless PM explicitly reopens that direction.
@@ -431,7 +431,7 @@ Building production families:
 
 Design implication: production is already grouped by intuitive facility type. Future tech trees can build on this by adding prerequisites such as Airport before jets, Fuel Bladder before armored vehicles, or Oil Refinery before missile launchers.
 
-Canonical progression, upgrade tiers, support abilities, design-ready naval units, and balance/visual config separation now live in `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`, `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`, and `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json`.
+Canonical progression, upgrade tiers, support abilities, design-ready naval units, and balance/visual config separation now live in `Combat_Catalog_And_Upgrade_Design.md`, `BalanceConfigs/Combat_Balance_Config_v0_1.json`, and `VisualConfigs/Combat_Visual_Config_v0_1.json`.
 
 ## Current Balance Shape
 
@@ -489,7 +489,7 @@ These are natural extension points for future ChatGPT/design sessions:
 - Building design:
   - Active guard towers.
   - Power/water/fuel dependencies.
-  - Runtime implementation of the catalog upgrade tracks already designed in `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`.
+  - Runtime implementation of the catalog upgrade tracks already designed in `Combat_Catalog_And_Upgrade_Design.md`.
   - Walls with armor types and breach tools.
 - UI/UX:
   - AI debug panel with current plans, target scores, squad states, and economy.

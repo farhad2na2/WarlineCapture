@@ -4,7 +4,7 @@ M01 tactical world must remain ECS source-of-truth, not standalone SpriteRendere
 
 Docs updated:
 - `Design/AgentTasks/gameplay_current.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 Decision:
 Gameplay must preserve WarlineCapture as an ECS-first tactical project. Only Canvas UI is allowed to be non-ECS GameObjects. The M01 world under the HUD must be driven by ECS entities/components, authored tactical metadata, and mission runtime systems. `SpriteRenderer` and GameObject presentation objects are allowed only as ECS-driven visual objects for ECS entities.

@@ -1,9 +1,9 @@
 Status: advisory
 Topic: M01 contract asset ids are not all traceable as asset-register rows
 Docs reviewed:
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/Art_Asset_Requirements_Register.csv`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 Finding:

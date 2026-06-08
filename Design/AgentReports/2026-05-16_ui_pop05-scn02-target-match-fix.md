@@ -7,7 +7,7 @@ POP-05 / SCN-02 target-match fix after PM visual rejection of `2026-05-16_ui_pop
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`

@@ -13,8 +13,8 @@ Files changed:
 - Design/AgentReports/2026-05-07_ui_assistant-runtime-binding-fix.md
 
 Contracts touched:
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md: preserved the typed assistant boundary; Show Me remains preview/focus state, Do It remains routed through CommandIntentExecutor, and Stop is bounded to assistant-owned state.
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: completed the UI handoff validation for WarlineCaptureAssistantService presentation data, AssistantContextProvider-style context evaluation, CommandIntentExecutor execution, visible ownership state, and player-input release.
+- Design/AssistantPanel_M01_Implementation_Contract.md: preserved the typed assistant boundary; Show Me remains preview/focus state, Do It remains routed through CommandIntentExecutor, and Stop is bounded to assistant-owned state.
+- Design/AssistantRuntime_M01_Wiring_Plan.md: completed the UI handoff validation for WarlineCaptureAssistantService presentation data, AssistantContextProvider-style context evaluation, CommandIntentExecutor execution, visible ownership state, and player-input release.
 - M01 assistant ids: added focused validation for M01.ResultExplain so ARIA Stop dismisses assistant explanation/control only and does not close or acknowledge POP-05_MissionResult.
 - Asset register rows were not advanced; no separated asset row was marked complete.
 

@@ -13,7 +13,7 @@ Contracts touched:
 - Documentation source-of-truth hierarchy only.
 - Root README remains the concise project entry point.
 - `Design/README.md` remains the complete design index.
-- `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md` is now marked as a pending PM/user premise proposal, not an accepted canonical product premise.
+- `Design/Command_Offensive_Premise_Alignment.md` is now marked as a pending PM/user premise proposal, not an accepted canonical product premise.
 - M01 critical-path scope, Gate 4 criteria, lane ownership, validation requirements, PM commit/push ownership, and runtime contracts were preserved.
 
 User-visible behavior:
@@ -32,7 +32,7 @@ Validation run:
 Validation result:
 - Passed for the focused documentation fix.
 - Root README no longer says the product direction is "preparing and executing command operations against hostile factions embedded in civilian districts."
-- Root README no longer lists `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md` as a high-priority canonical design source; it is separated under `Pending PM/user premise decision`.
+- Root README no longer lists `Design/Command_Offensive_Premise_Alignment.md` as a high-priority canonical design source; it is separated under `Pending PM/user premise decision`.
 - `Design/README.md` still indexes the command-premise doc, but marks it as pending and non-canonical until PM/user explicitly accepts it.
 - PM/Designer heartbeat paths, `designer_current.md`, `M01_CRITICAL_PATH.md`, and PM commit/push ownership remain referenced.
 - No source/runtime files were modified by this Designer pass. Git status still shows unrelated pre-existing runtime/source changes from other lanes; those were not touched or reverted.

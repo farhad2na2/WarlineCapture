@@ -4,8 +4,8 @@ Date: 2026-05-08
 
 ## Inputs reviewed
 
-- `Design/WarlineCapture_Project_State_Source.json`
-- `Design/WarlineCapture_Project_State_Dashboard.md`
+- `Design/Project_State_Source.json`
+- `Design/Project_State_Dashboard.md`
 - `Design/AgentReports/` (focus: 2026-05-08 updates)
 - Active lane files under `Design/AgentTasks/` (notably `M01_CRITICAL_PATH.md`, `ui_current.md`, `qa-hci_current.md`, `support-ftue_current.md`, `gameplay_current.md`)
 
@@ -13,7 +13,7 @@ Date: 2026-05-08
 
 - Old overall percent (as of 2026-05-07): **33%**
 - New overall percent (as of 2026-05-08): **33%**
-- Decision: **no change** to `Design/WarlineCapture_Project_State_Source.json` because there were **no newly accepted milestone completions** that justify updating plan/stage `percentComplete`.
+- Decision: **no change** to `Design/Project_State_Source.json` because there were **no newly accepted milestone completions** that justify updating plan/stage `percentComplete`.
 
 ## Completion forecast
 

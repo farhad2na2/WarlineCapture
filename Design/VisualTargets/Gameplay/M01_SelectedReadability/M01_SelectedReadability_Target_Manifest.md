@@ -19,7 +19,7 @@ Approval: Legacy 2D/isometric gameplay reference only. Superseded by the active 
 
 ## Source References Used
 
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 - Built-in image generation output copied into this package as `M01_SelectedReadability_AAA_Isometric_AI_Source.png`.
 - Prompt intent: AAA true-isometric RTS M01 selected-readability gameplay mockup with orthographic/isometric camera feel, parallel 2:1 ground-plane axes, consistent soldiers, grounded selection rings, amber move marker, red hostile markers, no HUD, no text, no yellow square, no giant green marker, no buried/floating/squashed soldiers, and no cinematic perspective convergence.

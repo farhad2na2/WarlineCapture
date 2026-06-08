@@ -14,8 +14,8 @@ AI-generated status does not make an asset approved. Every asset still needs War
 
 ## Updated Documents
 
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/2D_Isometric_Production_Direction.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 ## Agent Instruction
 

@@ -4,7 +4,7 @@
 - Canonical target: `Design/VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png`.
 - Layered package: `Design/VisualLockLayered/SCN-19_Armory`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture dark graphite, cyan edge, amber CTA military RTS UI style.
-- Gameplay source: `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`, `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`, and `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json`.
+- Gameplay source: `Combat_Catalog_And_Upgrade_Design.md`, `BalanceConfigs/Combat_Balance_Config_v0_1.json`, and `VisualConfigs/Combat_Visual_Config_v0_1.json`.
 
 ## Implementation Notes
 

@@ -8,7 +8,7 @@ QA/HCI and UI validated the M01 slice through editor tooling, route-driven captu
 The task wording allowed "player-route automation" or "equivalent route-driven harness" to count as route evidence. That left a gap: the harness could route to `WarlineCaptureRoute.Match` while the public launch buttons still entered the legacy 3D gameplay stack.
 
 What changed:
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md` now has a Public Launch Path Smoke Rule.
+- `Design/Agent_Coordination_Workflow.md` now has a Public Launch Path Smoke Rule.
 - `Design/AgentTasks/M01_CRITICAL_PATH.md` now requires public launch path proof before Gate 4 can pass.
 - `Design/AgentTasks/qa-hci_current.md` now blocks manual HCI/balance QA until a public M01 production launch path is verified.
 

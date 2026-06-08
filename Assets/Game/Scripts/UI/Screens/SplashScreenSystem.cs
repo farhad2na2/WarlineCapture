@@ -2,14 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class SplashScreenSystem : WarlineCaptureScreenSystem
+public sealed class SplashScreenSystem : UIScreenSystem
 {
     [SerializeField] private Image logoImage;
     [SerializeField] private Image loadingBarFill;
     [SerializeField] private TMP_Text percentText;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private TMP_Text tipText;
-    [SerializeField] private WarlineCaptureLoadingTips loadingTips;
+    [SerializeField] private UILoadingTips loadingTips;
     [SerializeField] private string defaultStatusText = "LOADING ASSETS...";
 
     private bool _loadComplete;
@@ -28,7 +28,7 @@ public sealed class SplashScreenSystem : WarlineCaptureScreenSystem
         base.Hide();
     }
 
-    public void Bind(WarlineCaptureLoadingTips tips)
+    public void Bind(UILoadingTips tips)
     {
         loadingTips = tips;
         RefreshTip();

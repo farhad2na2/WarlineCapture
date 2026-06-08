@@ -23,7 +23,7 @@ Validation run:
 - Read `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`.
 - Read `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`.
 - Read `Design/AgentTasks/M01_CRITICAL_PATH.md`.
-- Read `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`.
+- Read `Design/M01_FirstContact_Production_Contract.md`.
 - Reviewed `Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_scale_contract.asset`.
 - Reviewed `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/Manifests/Unit_Chr_Soldier_Male_02_FullSetup_Manifest.json`.
 - Checked generated 2DISO marker/VFX art paths under `Assets/Game/Art/Generated/2DISO`.

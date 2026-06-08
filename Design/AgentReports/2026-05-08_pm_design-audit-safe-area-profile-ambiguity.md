@@ -5,8 +5,8 @@ Docs reviewed:
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/qa-hci_current.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `Design/WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+- `Design/UIUX_Implementation_High_Level_Spec.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
 Finding:
 The active UI task requires route-driven capture/safe-area tooling and says UI may use simulated safe-area/cutout assumptions if true device capture is unavailable. QA/HCI then waits for explicit safe-area/device assumptions. However, no active task or contract defines the exact simulated device profiles, inset values, notch/cutout shape, or pass/fail clearance threshold QA should use for Gate 4.
 Why it matters:

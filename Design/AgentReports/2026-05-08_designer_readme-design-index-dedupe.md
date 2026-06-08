@@ -13,8 +13,8 @@ Files reviewed but not edited in this pass:
 - `Design/AgentTasks/README.md`
 - `Design/AgentTasks/pm_heartbeat.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Designer_Role_And_Documentation_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
 - `Design/AgentReports/2026-05-08_pm_designer-docs-readme-optimization-review.md`
 
@@ -35,12 +35,12 @@ Validation run:
 - `sed -n '1,220p' Design/AgentTasks/README.md`
 - `sed -n '1,220p' Design/AgentTasks/pm_heartbeat.md`
 - `sed -n '1,230p' Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `sed -n '1,220p' Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-- `sed -n '1,260p' Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `sed -n '1,220p' Design/Designer_Role_And_Documentation_Workflow.md`
+- `sed -n '1,260p' Design/Agent_Coordination_Workflow.md`
 - `sed -n '1,220p' Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
 - `sed -n '1,220p' Design/AgentReports/2026-05-08_pm_designer-docs-readme-optimization-review.md`
 - `wc -l README.md Design/README.md`
-- `rg -n "Design/README|designer_current|designer_heartbeat|pm_heartbeat|M01_CRITICAL_PATH|commit/push|ready to expand|VisualLock|SCN-|POP-|PREFAB-|Source Of Truth" README.md Design/README.md Design/AgentTasks/README.md Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `rg -n "Design/README|designer_current|designer_heartbeat|pm_heartbeat|M01_CRITICAL_PATH|commit/push|ready to expand|VisualLock|SCN-|POP-|PREFAB-|Source Of Truth" README.md Design/README.md Design/AgentTasks/README.md Design/Agent_Coordination_Workflow.md`
 - `test -f` checks for every root README source-of-truth link added or preserved in the edited sections.
 - `git status --short README.md Design/README.md Design/AgentReports/2026-05-08_designer_readme-design-index-dedupe.md Assets/Game/Scripts Assets/Tests`
 - `git diff -- README.md`

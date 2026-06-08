@@ -15,9 +15,9 @@ The video may be more cinematic than the actual 2D isometric gameplay, but it mu
 
 ## Files
 
-- `WarlineCapture_Generative_Cinematic_Brief.md` - creative direction, constraints, and approval criteria.
-- `WarlineCapture_Generative_Cinematic_Shots.json` - API-ready shot prompts, negative prompts, durations, and QA tags.
-- `WarlineCapture_Generative_Cinematic_QA.md` - validation checklist for generated clips and assembled trailers.
+- `Generative_Cinematic_Brief.md` - creative direction, constraints, and approval criteria.
+- `Generative_Cinematic_Shots.json` - API-ready shot prompts, negative prompts, durations, and QA tags.
+- `Generative_Cinematic_QA.md` - validation checklist for generated clips and assembled trailers.
 - `Outputs/` - generated job plans, provider manifests, downloaded clips, QA reports, and assembled drafts.
 
 ## Runner
@@ -42,7 +42,7 @@ The runner writes a manifest and QA report so the agent can verify that jobs fin
 - Do not show readable UI text unless it is part of a final editable title card.
 - Do not show deprecated or unapproved economy terms.
 - Do not imply paid victory, sold mission stars, or direct Operation metric purchases.
-- Use the concept language from `Design/WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`.
-- Use resource and reward rules from `Design/WarlineCapture_Economy_Reward_Design.md`.
-- Use monetization guardrails from `Design/Monetization/WarlineCapture_Monetization_Strategy.md`.
-- Use visual tone from `Design/WarlineCapture_2D_Isometric_Production_Direction.md` and `Design/WarlineCapture_2D_Isometric_Art_Bible.md`.
+- Use the concept language from `Design/AAA_Mobile_Game_Design_Document_v0_1.md`.
+- Use resource and reward rules from `Design/Economy_Reward_Design.md`.
+- Use monetization guardrails from `Design/Monetization/Monetization_Strategy.md`.
+- Use visual tone from `Design/2D_Isometric_Production_Direction.md` and `Design/2D_Isometric_Art_Bible.md`.

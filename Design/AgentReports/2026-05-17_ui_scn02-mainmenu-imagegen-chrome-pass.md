@@ -6,7 +6,7 @@ SCN-02 Main Menu v2 imagegen-only clean chrome iteration after user rejected the
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/ImageGenHollow/`
 - `Assets/Game/Art/UI/Generated/MainMenu/ImageGenClean/` (first imagegen source attempt retained for audit; runtime uses `ImageGenHollow/FramesTrimmed`)

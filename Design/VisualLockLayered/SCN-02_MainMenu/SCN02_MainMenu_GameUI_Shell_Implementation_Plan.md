@@ -59,7 +59,7 @@ Use these active target sources:
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layer_manifest.json`
 - `Design/VisualLockLayered/SCN-02_MainMenu/README.md`
-- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/UIUX_MainMenu_Visual_Contract.md`
 
 The reference PNG is only for visual comparison. It must not be cut, cropped, masked, or used as implementation sprite art. Implementation sprites must come from `layers/` and the approved source data described by `layer_manifest.json`.
 

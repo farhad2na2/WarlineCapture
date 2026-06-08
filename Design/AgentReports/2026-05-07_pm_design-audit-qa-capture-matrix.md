@@ -5,7 +5,7 @@ Docs reviewed:
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/AgentReports/2026-05-07_qa-hci_m01-validation-plan.md`
 - `Design/AgentReports/2026-05-07_pm_qa-hci-validation-plan-review.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 Finding:
 - The QA/HCI plan and critical path correctly require 16:9 and 20:9 captures, plus checks for selected squad, enemy patrol, objective tracker, command feedback, assistant panel, result popup, and minimap.
 - The exact final capture matrix is still not pinned to concrete resolutions, safe-area assumptions, orientation, and required per-state screenshots. The accepted QA plan itself lists this as an open question.

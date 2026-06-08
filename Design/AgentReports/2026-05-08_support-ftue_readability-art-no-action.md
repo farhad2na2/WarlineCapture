@@ -19,7 +19,7 @@ Validation run:
 - Read `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`.
 - Checked whether `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md` exists.
 - Checked whether `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md` exists.
-- Reviewed `Design/WarlineCapture_Agent_Coordination_Workflow.md` for the required report format and waiting ownership wording.
+- Reviewed `Design/Agent_Coordination_Workflow.md` for the required report format and waiting ownership wording.
 
 Validation result:
 No Support/FTUE action is assigned. The Gameplay handoff reports public first-control readability, four-soldier squad rendering, selected-marker clarity, and focused PlayMode validation. The Art/Atlas handoff reports temporary-art approval requirements and unresolved final art/VFX gaps. Neither report assigns a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, or FTUE behavior issue.

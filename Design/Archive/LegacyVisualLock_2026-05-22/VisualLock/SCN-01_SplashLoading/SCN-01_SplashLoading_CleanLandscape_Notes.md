@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-01_SplashLoading/SCN-01_SplashLoading_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted Main Menu, Saga, and Settings visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-01_splash_loading.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-01_splash_loading.jpg`.
 - Do not use this PNG as a baked Unity UI background. Recreate it with a separable background image, logo/emblem, loading bar, status text, tip text, and HUD frame assets.
 
 ## Implementation Notes

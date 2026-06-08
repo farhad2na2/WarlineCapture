@@ -12,8 +12,8 @@ Implement `GameUI` Step 5 by adding the Unity shell view and ECS bridge view.
 
 - `Assets/Game/Scenes/GameUI.unity`
 - `Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs.meta`
+- `Assets/Game/Scripts/UI/Shell/UIShellView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellView.cs.meta`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs.meta`
 - `Design/AgentReports/2026-05-24_ui_gameui-scene-step5.md`

@@ -18,8 +18,8 @@ Files changed:
 
 Contracts touched:
 - No source contract changed. The reset enforces the existing product intent from:
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-  - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
+  - `Design/FTUE_And_Command_Assistant_Design.md`
   - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 
 User-visible behavior:

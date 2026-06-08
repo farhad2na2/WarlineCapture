@@ -32,7 +32,7 @@ WarlineCapture is being built around three major modes on one shared 3D operatio
 3. `Skirmish`
    Fast replayable battles using existing AI and economy knobs: enemy count, difficulty, resources, build/production speed, aggression, target priority, map seed, and win condition. Internal systems can keep Quick Custom naming where needed, but player-facing UI should move toward Skirmish.
 
-The active production direction is full 3D single-map mobile RTS. Each mission or operation should play on one large 3D town/base map containing soldiers, civilians, hostile cells, vehicles, aircraft, buildings, objectives, deployment zones, and metadata-backed command layers. Planning, briefing, minimap, threat alerts, and deployment are UI/camera overlays over that same world, not separate strategic and tactical maps. The active source-of-truth doc is `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`; superseded 2.5D isometric and strategic/tactical split design docs have been moved out of the active design index.
+The active production direction is full 3D single-map mobile RTS. Each mission or operation should play on one large 3D town/base map containing soldiers, civilians, hostile cells, vehicles, aircraft, buildings, objectives, deployment zones, and metadata-backed command layers. Planning, briefing, minimap, threat alerts, and deployment are UI/camera overlays over that same world, not separate strategic and tactical maps. The active source-of-truth doc is `Design/3D_SingleMap_Gameplay_Direction.md`; superseded 2.5D isometric and strategic/tactical split design docs have been moved out of the active design index.
 
 ## Source Of Truth
 
@@ -42,29 +42,29 @@ Key project documents:
 
 - `Design/README.md`
   Complete design map for product direction, design docs, visual locks, 3D single-map direction, audio, monetization, marketing, and update rules.
-- `Design/WarlineCapture_Project_State_Source.json`
+- `Design/Project_State_Source.json`
   Machine-readable project state. Update this before regenerating dashboard output.
-- `Design/WarlineCapture_Project_State_Dashboard.md`
+- `Design/Project_State_Dashboard.md`
   Generated project-state dashboard. Regenerate with `python3 Tools/ProjectState/generate_project_state_dashboard.py`; do not edit by hand.
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
   PM workflow for handoffs, validation gates, cross-lane contracts, lane ownership, and commit/push rules.
-- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+- `Design/Designer_Role_And_Documentation_Workflow.md`
   Designer workflow for README/design-index clarity, terminology alignment, source-of-truth hierarchy, and documentation pruning.
 
 Core design reading order starts in `Design/README.md`. The current high-priority design sources are:
 
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
-- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
-- `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md`
-- `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
-- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
-- `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
-- `Design/WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
+- `Design/LargeScale_Grid_Movement_Design.md`
+- `Design/3D_Operation_Map_Texture_Mask_Workflow.md`
+- `Design/Skirmish_Mode_Implementation_Spec.md`
+- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/Match_Selection_Implementation_Spec.md`
+- `Design/Field_Logistics_Oil_Fuel_Design.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+- `Design/UIUX_MainMenu_Visual_Contract.md`
 
 ## Design Documentation Tree
 
@@ -72,54 +72,54 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 
 - [Design Index](Design/README.md)
   - [Game Design Reference](Design/GAME_DESIGN_REFERENCE.md)
-    - [AAA Mobile Game Design](Design/WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md)
-    - [3D Single-Map Gameplay Direction](Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md)
-    - [Gameplay North Star And Content Grammar](Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md)
-    - [Command Offensive Premise Alignment](Design/WarlineCapture_Command_Offensive_Premise_Alignment.md)
-    - [AAA Mobile Technical Targets](Design/WarlineCapture_AAA_Mobile_Technical_Targets.md)
+    - [AAA Mobile Game Design](Design/AAA_Mobile_Game_Design_Document_v0_1.md)
+    - [3D Single-Map Gameplay Direction](Design/3D_SingleMap_Gameplay_Direction.md)
+    - [Gameplay North Star And Content Grammar](Design/Gameplay_North_Star_And_Content_Grammar.md)
+    - [Command Offensive Premise Alignment](Design/Command_Offensive_Premise_Alignment.md)
+    - [AAA Mobile Technical Targets](Design/AAA_Mobile_Technical_Targets.md)
   - Product Gameplay
-    - [Large-Scale Grid Movement Design](Design/WarlineCapture_LargeScale_Grid_Movement_Design.md)
-    - [3D Operation Map Texture/Mask Workflow](Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md)
-    - [Skirmish Mode Implementation Spec](Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md)
-    - [Match HUD And Gameplay Implementation Spec](Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md)
-    - [Match Selection Implementation Spec](Design/WarlineCapture_Match_Selection_Implementation_Spec.md)
-    - [Mission Result State Spec](Design/WarlineCapture_Mission_Result_State_Spec.md)
-    - [Level And Mission Content Plan](Design/WarlineCapture_Level_And_Mission_Content_Plan.md)
-      - [Chapter 1: First Response](Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md)
-      - [Chapter 2: Broken Grid](Design/SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md)
-      - [Chapter 3: Hidden Network](Design/SagaChapters/WarlineCapture_Saga_Chapter03_Hidden_Network.md)
-      - [Chapter 4: Air And Armor](Design/SagaChapters/WarlineCapture_Saga_Chapter04_Air_And_Armor.md)
-      - [Chapter 5: Citywide Command](Design/SagaChapters/WarlineCapture_Saga_Chapter05_Citywide_Command.md)
-    - [M01 First Contact Production Contract](Design/WarlineCapture_M01_FirstContact_Production_Contract.md)
-    - [FTUE And Command Assistant Design](Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md)
+    - [Large-Scale Grid Movement Design](Design/LargeScale_Grid_Movement_Design.md)
+    - [3D Operation Map Texture/Mask Workflow](Design/3D_Operation_Map_Texture_Mask_Workflow.md)
+    - [Skirmish Mode Implementation Spec](Design/Skirmish_Mode_Implementation_Spec.md)
+    - [Match HUD And Gameplay Implementation Spec](Design/Match_HUD_And_Gameplay_Implementation_Spec.md)
+    - [Match Selection Implementation Spec](Design/Match_Selection_Implementation_Spec.md)
+    - [Mission Result State Spec](Design/Mission_Result_State_Spec.md)
+    - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
+      - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)
+      - [Chapter 2: Broken Grid](Design/SagaChapters/Saga_Chapter02_Broken_Grid.md)
+      - [Chapter 3: Hidden Network](Design/SagaChapters/Saga_Chapter03_Hidden_Network.md)
+      - [Chapter 4: Air And Armor](Design/SagaChapters/Saga_Chapter04_Air_And_Armor.md)
+      - [Chapter 5: Citywide Command](Design/SagaChapters/Saga_Chapter05_Citywide_Command.md)
+    - [M01 First Contact Production Contract](Design/M01_FirstContact_Production_Contract.md)
+    - [FTUE And Command Assistant Design](Design/FTUE_And_Command_Assistant_Design.md)
   - Systems And Economy
-    - [Combat Catalog And Upgrade Design](Design/WarlineCapture_Combat_Catalog_And_Upgrade_Design.md)
-      - [Combat Balance Config](Design/BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json)
-      - [Combat Visual Config](Design/VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json)
-    - [Field Logistics Oil And Fuel Design](Design/WarlineCapture_Field_Logistics_Oil_Fuel_Design.md)
-    - [Economy And Reward Design](Design/WarlineCapture_Economy_Reward_Design.md)
-    - [Balancing Automated Test Plan](Design/WarlineCapture_Balancing_Automated_Test_Plan.md)
+    - [Combat Catalog And Upgrade Design](Design/Combat_Catalog_And_Upgrade_Design.md)
+      - [Combat Balance Config](Design/BalanceConfigs/Combat_Balance_Config_v0_1.json)
+      - [Combat Visual Config](Design/VisualConfigs/Combat_Visual_Config_v0_1.json)
+    - [Field Logistics Oil And Fuel Design](Design/Field_Logistics_Oil_Fuel_Design.md)
+    - [Economy And Reward Design](Design/Economy_Reward_Design.md)
+    - [Balancing Automated Test Plan](Design/Balancing_Automated_Test_Plan.md)
   - UI/UX And Visual Targets
-    - [UI/UX Gameplay Element Alignment](Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md)
-    - [UI/UX Implementation High-Level Spec](Design/WarlineCapture_UIUX_Implementation_High_Level_Spec.md)
-      - [UI/UX Implementation Detailed Spec](Design/WarlineCapture_UIUX_Implementation_Detailed_Spec.md)
-      - [Mockup To Canvas Conversion Plan](Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md)
-      - [Target To Canvas Workflow Guide](Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md)
-    - [Main Menu Visual Contract](Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md)
-    - [UI/UX Runtime Optimization Plan](Design/WarlineCapture_UIUX_Runtime_Optimization_Plan.md)
-    - [Visual Feedback And VFX Recommendations](Design/WarlineCapture_Visual_Feedback_VFX_Recommendations.md)
+    - [UI/UX Gameplay Element Alignment](Design/UIUX_Gameplay_Element_Alignment.md)
+    - [UI/UX Implementation High-Level Spec](Design/UIUX_Implementation_High_Level_Spec.md)
+      - [UI/UX Implementation Detailed Spec](Design/UIUX_Implementation_Detailed_Spec.md)
+      - [Mockup To Canvas Conversion Plan](Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md)
+      - [Target To Canvas Workflow Guide](Design/UIUX_Target_To_Canvas_Workflow_Guide.md)
+    - [Main Menu Visual Contract](Design/UIUX_MainMenu_Visual_Contract.md)
+    - [UI/UX Runtime Optimization Plan](Design/UIUX_Runtime_Optimization_Plan.md)
+    - [Visual Feedback And VFX Recommendations](Design/Visual_Feedback_VFX_Recommendations.md)
   - Production Support
-    - [Art Asset Requirements Register](Design/WarlineCapture_Art_Asset_Requirements_Register.md)
-    - [Audio Design Guidelines](Design/WarlineCapture_Audio_Design_Guidelines.md)
-    - [Monetization Strategy](Design/Monetization/WarlineCapture_Monetization_Strategy.md)
-      - [Store Catalog](Design/Monetization/WarlineCapture_Monetization_Store_Catalog.md)
-      - [Monetization Visual Targets](Design/Monetization/WarlineCapture_Monetization_Visual_Targets.md)
+    - [Art Asset Requirements Register](Design/Art_Asset_Requirements_Register.md)
+    - [Audio Design Guidelines](Design/Audio_Design_Guidelines.md)
+    - [Monetization Strategy](Design/Monetization/Monetization_Strategy.md)
+      - [Store Catalog](Design/Monetization/Monetization_Store_Catalog.md)
+      - [Monetization Visual Targets](Design/Monetization/Monetization_Visual_Targets.md)
     - [Marketing Workflow](Design/Marketing/README.md)
   - Project Operations
-    - [Project State Source](Design/WarlineCapture_Project_State_Source.json)
-      - [Project State Dashboard](Design/WarlineCapture_Project_State_Dashboard.md)
-    - [Agent Coordination Workflow](Design/WarlineCapture_Agent_Coordination_Workflow.md)
-    - [Designer Role And Documentation Workflow](Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md)
+    - [Project State Source](Design/Project_State_Source.json)
+      - [Project State Dashboard](Design/Project_State_Dashboard.md)
+    - [Agent Coordination Workflow](Design/Agent_Coordination_Workflow.md)
+    - [Designer Role And Documentation Workflow](Design/Designer_Role_And_Documentation_Workflow.md)
     - [Agent Task Board](Design/AgentTasks/README.md)
 
 Do not duplicate the full `Design` inventory here. Visual-lock target notes, layered packages, production references, audio, monetization, marketing, art-generation, balance, and implementation-plan inventories are owned by `Design/README.md`.
@@ -133,8 +133,8 @@ AI-native development case-study materials for this project live under `Slides/`
 
 ## Project Status Snapshot
 
-Current generated tracker: `Design/WarlineCapture_Project_State_Dashboard.md`.
-Source file: `Design/WarlineCapture_Project_State_Source.json`.
+Current generated tracker: `Design/Project_State_Dashboard.md`.
+Source file: `Design/Project_State_Source.json`.
 
 ![Progress Tracker](Design/Progress_Tracker.png)
 
@@ -156,7 +156,7 @@ Current high-level blockers:
 
 Current premise direction:
 
-- `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
+- `Design/Command_Offensive_Premise_Alignment.md`
   Accepted proactive command-operation framing: the player is a field commander preparing and executing operations against fictional hostile cells embedded in civilian towns.
 
 ## Agent And Contributor Entry Points
@@ -169,7 +169,7 @@ Active work is routed through the PM-controlled task board in `Design/AgentTasks
 - Designer heartbeat: `Design/AgentTasks/designer_heartbeat.md`
 - Designer current task: `Design/AgentTasks/designer_current.md`
 
-When continuing lane work, read the lane current-task file first and write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the handoff template in `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+When continuing lane work, read the lane current-task file first and write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the handoff template in `Design/Agent_Coordination_Workflow.md`.
 
 Current production lock:
 
@@ -229,7 +229,7 @@ Current UI execution rule:
 - Skirmish-style numeric controls use a minus/value/plus stepper, not a generic equal-width segmented control. Large CTA labels such as `LAUNCH MISSION` stay Bold.
 - Do not use text placeholders for mockup icons. Add proper replaceable icon sprites and keep them separate from panel/background art.
 - Phase work should proceed screen by screen: target match, real canvas, navigation, runtime data, capture comparison, tests, then optimization.
-- The reusable operational workflow for converting target UI references into real layered Canvas prefabs is saved in `Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`.
+- The reusable operational workflow for converting target UI references into real layered Canvas prefabs is saved in `Design/UIUX_Target_To_Canvas_Workflow_Guide.md`.
 
 ## Gameplay Roadmap Summary
 
@@ -255,7 +255,7 @@ Highest-priority gameplay systems:
 
 Recommended gameplay implementation order:
 
-1. Skirmish gameplay config and launch payload, using `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md` as the active implementation contract. Runtime internals may keep QuickCustom naming until migration.
+1. Skirmish gameplay config and launch payload, using `Design/Skirmish_Mode_Implementation_Spec.md` as the active implementation contract. Runtime internals may keep QuickCustom naming until migration.
 2. `GameBootstrap.BeginGameplay(GameLaunchPayload payload)` while preserving the current no-argument path.
 3. Objective Manager with the first objective types.
 4. Mission result, star scoring, and rewards.

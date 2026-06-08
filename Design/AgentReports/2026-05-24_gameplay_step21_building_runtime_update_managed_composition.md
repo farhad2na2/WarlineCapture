@@ -38,7 +38,7 @@ Known gaps
 
 Cross-lane impacts
 - No scene files changed.
-- Worktree has unrelated UI-lane changes in WarlineCaptureGameUiSceneBuilder.cs, WarlineCaptureShellEcsBridgeView.cs, WarlineCaptureShellView.cs, and Design/AgentReports/2026-05-24_ui_gameui-scene-step4.md; this Gameplay step did not modify them.
+- Worktree has unrelated UI-lane changes in WarlineCaptureGameUiSceneBuilder.cs, WarlineCaptureShellEcsBridgeView.cs, UIShellView.cs, and Design/AgentReports/2026-05-24_ui_gameui-scene-step4.md; this Gameplay step did not modify them.
 
 Next recommended task
 - Step 22: remove GameBootstrap's public BuildingPlacementSystem exposure by replacing external access with narrower public boundaries, starting with BuildingRuntimeUpdate, BuildingUiCommandSystem/BuildingUiQuerySystem, BuildingPlacementInteractionSystem, and runtime city/query contexts where still needed.

@@ -5,7 +5,7 @@ Split public M01 launch blocker ownership between UI canvas and Gameplay world
 Docs reviewed:
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/gameplay_current.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 Finding:
 The public M01 launch blocker had become a blended UI/GamePlay task, which allowed both lanes to work on the same visible failure without a crisp ownership split. The correct split is:
@@ -30,4 +30,4 @@ Needs user decision:
 No.
 
 Next task update needed:
-Done in `Design/AgentTasks/ui_current.md`, `Design/AgentTasks/gameplay_current.md`, and `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+Done in `Design/AgentTasks/ui_current.md`, `Design/AgentTasks/gameplay_current.md`, and `Design/Agent_Coordination_Workflow.md`.

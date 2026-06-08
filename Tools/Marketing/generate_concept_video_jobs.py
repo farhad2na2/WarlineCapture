@@ -25,11 +25,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SHOT_PACKAGE = ROOT / "Design" / "Marketing" / "GenerativeVideoConcepts" / "WarlineCapture_Generative_Cinematic_Shots.json"
+SHOT_PACKAGE = ROOT / "Design" / "Marketing" / "GenerativeVideoConcepts" / "Generative_Cinematic_Shots.json"
 OUTPUT_DIR = ROOT / "Design" / "Marketing" / "GenerativeVideoConcepts" / "Outputs"
-JOB_PLAN_PATH = OUTPUT_DIR / "WarlineCapture_Generative_Cinematic_JobPlan.json"
-QA_REPORT_PATH = OUTPUT_DIR / "WarlineCapture_Generative_Cinematic_QA_Report.md"
-STORYBOARD_PATH = OUTPUT_DIR / "WarlineCapture_Generative_Cinematic_Storyboard.png"
+JOB_PLAN_PATH = OUTPUT_DIR / "Generative_Cinematic_JobPlan.json"
+QA_REPORT_PATH = OUTPUT_DIR / "Generative_Cinematic_QA_Report.md"
+STORYBOARD_PATH = OUTPUT_DIR / "Generative_Cinematic_Storyboard.png"
 
 OPENAI_VIDEO_ENDPOINT = "https://api.openai.com/v1/videos"
 BLOCKED_ECONOMY_TERMS = ("Token", "Command Tokens", "Intel Keys", "loot box", "pay to win")

@@ -22,8 +22,8 @@ Create the user-reviewable M01 gameplay visual target package before final selec
 
 ## Contracts touched
 
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/README.md`
 
 ## User-visible behavior

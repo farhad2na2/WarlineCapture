@@ -8,10 +8,10 @@ Files changed:
 
 - `README.md`
 - `Design/README.md`
-- `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/Command_Offensive_Premise_Alignment.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/LargeScale_Grid_Movement_Design.md`
 
 Contracts touched:
 
@@ -28,9 +28,9 @@ User-visible behavior:
 
 Validation run:
 
-- `rg -n "Command_Offensive|hostile factions|embedded|stabiliz|keeping the city alive|keep the city" README.md Design/README.md Design/WarlineCapture_Command_Offensive_Premise_Alignment.md Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
-- `git diff -- README.md Design/README.md Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_LargeScale_Grid_Movement_Design.md Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
-- `git status --short README.md Design/README.md Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md Design/WarlineCapture_LargeScale_Grid_Movement_Design.md Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
+- `rg -n "Command_Offensive|hostile factions|embedded|stabiliz|keeping the city alive|keep the city" README.md Design/README.md Design/Command_Offensive_Premise_Alignment.md Design/Gameplay_North_Star_And_Content_Grammar.md Design/FTUE_And_Command_Assistant_Design.md Design/LargeScale_Grid_Movement_Design.md`
+- `git diff -- README.md Design/README.md Design/Gameplay_North_Star_And_Content_Grammar.md Design/FTUE_And_Command_Assistant_Design.md Design/LargeScale_Grid_Movement_Design.md Design/Command_Offensive_Premise_Alignment.md`
+- `git status --short README.md Design/README.md Design/Gameplay_North_Star_And_Content_Grammar.md Design/FTUE_And_Command_Assistant_Design.md Design/LargeScale_Grid_Movement_Design.md Design/Command_Offensive_Premise_Alignment.md`
 
 Validation result:
 

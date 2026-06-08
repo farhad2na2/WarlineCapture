@@ -14,7 +14,7 @@ They must not be accepted if they are state boards, wireframes, deterministic pl
 
 ## Files Updated
 
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/README.md`
 
 ## Cross-Lane Impact

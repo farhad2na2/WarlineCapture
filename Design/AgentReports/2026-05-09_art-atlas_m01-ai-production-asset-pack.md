@@ -24,10 +24,10 @@ Create the ready-to-implement M01 AI-generated production asset pack under the r
 ## Contracts touched
 
 - `Design/AgentTasks/art-atlas_current.md`
-- `Design/WarlineCapture_Tactical_Map_AI_Workflow.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
+- `Design/Tactical_Map_AI_Workflow.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Chapter01_Tactical_Production_Implementation_Plan.md`
 - `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png`
 - `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_StrategicMap_Target.png`
 - `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_PlayerRifleSquad_Atlas_Target.png`

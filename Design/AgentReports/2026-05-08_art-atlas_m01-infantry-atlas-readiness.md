@@ -20,7 +20,7 @@ Validation run:
 - Read `Design/AgentReports/2026-05-08_pm_qa-hci-gate4-focused-rerun-review.md`.
 - Read `Design/AgentTasks/gameplay_current.md`.
 - Read `Design/AgentTasks/M01_CRITICAL_PATH.md`.
-- Checked `Design/WarlineCapture_M01_FirstContact_Production_Contract.md` for M01 unit, marker, projectile/VFX, and selected-state requirements.
+- Checked `Design/M01_FirstContact_Production_Contract.md` for M01 unit, marker, projectile/VFX, and selected-state requirements.
 - Reviewed relevant handoffs:
   - `Design/AgentReports/2026-05-08_gameplay_m01-final-atlas-runtime-blocker.md`
   - `Design/AgentReports/2026-05-08_pm_gameplay-m01-ecs-atlas-presentation-review.md`

@@ -255,7 +255,7 @@ The contact sheets must show frames in numeric order from M01-00 through M01-11 
 - Art/Atlas mockup images exist only after Designer approval.
 - User approves the mockup images before Gameplay implementation or project import begins.
 - Approved captures match the Designer report and `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`.
-- When implemented later, contract ids, mission ids, scenario ids, level ids, ARIA intent ids, and command reason codes match `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`.
+- When implemented later, contract ids, mission ids, scenario ids, level ids, ARIA intent ids, and command reason codes match `Design/M01_FirstContact_Production_Contract.md`.
 - When implemented later, UI feedback routes through `BattleHudGameplayBridge`; no direct screen-coordinate scripting or raw overlay calls.
 - When implemented later, every rejected command uses a canonical reason code and clears cleanly.
 - When implemented later, tactical maps do not bake units, markers, HUD, minimap, or tutorial UI.

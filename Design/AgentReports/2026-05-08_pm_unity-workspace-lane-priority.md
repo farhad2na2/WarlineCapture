@@ -4,7 +4,7 @@ Dedicated Unity workspace priority per agent lane
 
 Docs updated:
 - `Design/AgentTasks/AUTO_CONTINUE.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/qa-hci_current.md`

@@ -6,7 +6,7 @@ P0 visual target-match implementation v5 for `SCN-02_MainMenu` and `POP-05_Missi
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/`
@@ -58,7 +58,7 @@ P0 visual target-match implementation v5 for `SCN-02_MainMenu` and `POP-05_Missi
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -runTests -testPlatform EditMode -testFilter WarlineCaptureUiMainMenuTests -testResults /private/tmp/warlinecapture-ui-mainmenu-tests-v5-results-rerun2.xml -logFile /private/tmp/warlinecapture-ui-mainmenu-tests-v5-rerun2.log`
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -runTests -testPlatform EditMode -testFilter WarlineCaptureUiComponentPrefabTests -testResults /private/tmp/warlinecapture-ui-component-tests-v5-results-rerun2.xml -logFile /private/tmp/warlinecapture-ui-component-tests-v5-rerun2.log`
 - Hygiene:
-  - `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab Design/AgentReports/Captures/SCN-02_MainMenu_VisualTargetMatchImplementationV5_1672x941.png Design/AgentReports/Captures/POP-05_MissionResult_VisualTargetMatchImplementationV5_1672x941.png`
+  - `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/UIMainMenuTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab Design/AgentReports/Captures/SCN-02_MainMenu_VisualTargetMatchImplementationV5_1672x941.png Design/AgentReports/Captures/POP-05_MissionResult_VisualTargetMatchImplementationV5_1672x941.png`
 
 # Validation result
 - SCN-02 capture: `Design/AgentReports/Captures/SCN-02_MainMenu_VisualTargetMatchImplementationV5_1672x941.png`

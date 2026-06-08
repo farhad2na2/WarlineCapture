@@ -8,8 +8,8 @@ Files changed:
 
 - `README.md`
 - `Design/README.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
-- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
+- `Design/Designer_Role_And_Documentation_Workflow.md`
 
 Contracts touched:
 
@@ -25,9 +25,9 @@ User-visible behavior:
 
 Validation run:
 
-- `rg -n "WarlineCapture_Designer_Role|designer_current|designer_heartbeat|Designer" README.md Design/README.md Design/WarlineCapture_Agent_Coordination_Workflow.md Design/AgentTasks/README.md`
-- `test -f Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md && test -f Design/AgentTasks/designer_current.md && test -f Design/AgentTasks/designer_heartbeat.md`
-- `git status --short README.md Design/README.md Design/WarlineCapture_Agent_Coordination_Workflow.md Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md Design/AgentTasks/README.md`
+- `rg -n "WarlineCapture_Designer_Role|designer_current|designer_heartbeat|Designer" README.md Design/README.md Design/Agent_Coordination_Workflow.md Design/AgentTasks/README.md`
+- `test -f Design/Designer_Role_And_Documentation_Workflow.md && test -f Design/AgentTasks/designer_current.md && test -f Design/AgentTasks/designer_heartbeat.md`
+- `git status --short README.md Design/README.md Design/Agent_Coordination_Workflow.md Design/Designer_Role_And_Documentation_Workflow.md Design/AgentTasks/README.md`
 
 Validation result:
 

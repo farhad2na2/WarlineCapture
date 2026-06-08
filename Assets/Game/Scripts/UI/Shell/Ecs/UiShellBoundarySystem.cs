@@ -20,7 +20,7 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
         {
             CurrentMode = UiShellMode.None,
-            ActiveRoute = WarlineCaptureRoute.Splash,
+            ActiveRoute = UIRoute.Splash,
             Phase = UiShellTransitionPhase.Idle,
             TransitionSequenceId = 0,
             IsTransitionRunning = 0

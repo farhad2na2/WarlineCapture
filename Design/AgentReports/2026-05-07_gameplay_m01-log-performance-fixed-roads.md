@@ -10,14 +10,14 @@ Files changed:
 - Assets/Game/Scripts/Bootstrap/GameBootstrap.cs
 - Assets/Game/Scripts/TacticalMaps/Chapter01TacticalAssetManifest.cs
 - Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_asset_manifest.asset
-- Assets/Game/Data/TacticalMaps/Chapter01/WarlineCapture_M01_Legacy_Runtime_Guardrails.md
-- Assets/Game/Data/TacticalMaps/Chapter01/WarlineCapture_M01_Legacy_Runtime_Guardrails.md.meta
+- Assets/Game/Data/TacticalMaps/Chapter01/M01_Legacy_Runtime_Guardrails.md
+- Assets/Game/Data/TacticalMaps/Chapter01/M01_Legacy_Runtime_Guardrails.md.meta
 - Assets/Tests/Editor/Campaign/Chapter01M01PlayableRuntimeTests.cs
 - Assets/Tests/Editor/Chapter01TacticalRuntimeBindingTests.cs
 - Assets/Tests/Editor/Chapter01LegacyRuntimeGuardrailTests.cs
 - Assets/Tests/Editor/Chapter01LegacyRuntimeGuardrailTests.cs.meta
 - Assets/Tests/PlayMode/Chapter01M01PlayModeValidationTests.cs
-- Design/WarlineCapture_M01_Legacy_Runtime_Guardrails.md
+- Design/M01_Legacy_Runtime_Guardrails.md
 - Design/AgentReports/2026-05-07_gameplay_m01-log-performance-fixed-roads.md
 Contracts touched:
 - M01 fixed tactical missions bypass `RuntimeCitySpawnerSystem` random city/road generation.

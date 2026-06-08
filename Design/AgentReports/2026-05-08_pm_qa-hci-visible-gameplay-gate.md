@@ -9,7 +9,7 @@ Finding:
 QA/HCI was allowed to over-trust route state, component checks, Test Runner XML, and prefab/editor captures. That let a public launch path appear technically validated while the user still saw the old visible prototype scene.
 
 PM action:
-- Added a `Visible Gameplay HCI Gate` section to `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+- Added a `Visible Gameplay HCI Gate` section to `Design/Agent_Coordination_Workflow.md`.
 - Updated `Design/AgentTasks/qa-hci_current.md` so QA/HCI cannot accept route-only, XML-only, component-only, or inactive-legacy-UI evidence as manual readiness.
 - Added minimum visible gameplay/HCI checks: visible scene correctness, objective clarity, unit selection, move/attack feedback, invalid-input recovery, camera framing, and obvious freeze/input-stall review.
 

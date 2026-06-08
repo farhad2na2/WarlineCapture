@@ -31,9 +31,9 @@ Goal from `Design/AgentTasks/gameplay_current.md`: keep the restored loading/mai
   - Runtime soldiers remain ECS entities/components/systems.
   - No direct scene startup replacement was reintroduced.
   - Capture command buffer reads ECS runtime quad data; it does not paste mockup pixels or instantiate scene-only soldiers.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
   - Preserved `IsoMapId: iso.ch01.district_edge_01`.
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
   - Improved visible soldier count and formation readability.
   - Still needs final scale/background/UI polish before full visual acceptance.
 

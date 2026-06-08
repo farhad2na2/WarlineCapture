@@ -4642,7 +4642,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84f4bd07782a14c68bb08addf4f99e3d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCapturePopupFrameView
+  m_EditorClassIdentifier: Assembly-CSharp::UIPopupFrameView
   scrim: {fileID: 8708064041390433009}
   frame: {fileID: 4334627759633869147}
   header: {fileID: 8329629939125509710}
@@ -4998,7 +4998,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Selected
   selectWithEventSystem: 1
 --- !u!114 &2362926489201154378

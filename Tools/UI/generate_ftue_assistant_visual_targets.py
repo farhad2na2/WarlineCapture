@@ -369,7 +369,7 @@ def write_visual_lock(surface: str, img: Image.Image, source_base: str, purpose:
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/{surface}/{surface}_Landscape_Target.png`.
 - Source background: `{source_base}` blurred and dimmed for panel/popup presentation.
-- Source design: `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`.
+- Source design: `Design/FTUE_And_Command_Assistant_Design.md`.
 - Purpose: {purpose}
 - Direction: focused high-quality panel/popup target over WarlineCapture UI context. This is not a new gameplay HUD layout.
 - Layering: flat mockup reference only; no new sliced/layered art pack is required for this visual target pass.
@@ -382,14 +382,14 @@ def write_visual_lock(surface: str, img: Image.Image, source_base: str, purpose:
 
 - Match WarlineCapture's dark military RTS HUD language, Oxanium typography, cyan edge light, and restrained amber action accents.
 - Keep labels readable in the target. Unity implementation should use live TMP text.
-- ARIA and commander portrait/icon art shown here is placeholder visual-lock content until approved in `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`.
+- ARIA and commander portrait/icon art shown here is placeholder visual-lock content until approved in `Design/Art_Asset_Requirements_Register.csv`.
 """
     (out / f"{surface}_CleanLandscape_Notes.md").write_text(notes, encoding="utf-8")
     manifest = {
         "surfaceId": surface,
         "target": str(target.relative_to(ROOT)),
         "sourceBackground": source_base,
-        "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+        "source": "Design/FTUE_And_Command_Assistant_Design.md",
         "purpose": purpose,
         "controls": controls,
         "canvas": {"width": WIDTH, "height": HEIGHT},
@@ -419,7 +419,7 @@ This folder keeps a reference copy for the WarlineCapture visual-lock index.
 
 - Reference target: `reference/{surface}_Landscape_Target.png`
 - Source background: `{source_base}` blurred and dimmed for panel/popup context.
-- Source design: `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+- Source design: `Design/FTUE_And_Command_Assistant_Design.md`
 - Purpose: {purpose}
 
 This target is a flat high-quality panel/popup mockup. It does not require a new sliced layer pack for this design pass.
@@ -455,7 +455,7 @@ Rules:
         "surface": surface,
         "reference": f"reference/{surface}_Landscape_Target.png",
         "sourceBackground": source_base,
-        "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+        "source": "Design/FTUE_And_Command_Assistant_Design.md",
         "status": "flat-panel-popup-target",
         "requiresSeparatedLayerPack": False,
         "requiredControls": controls,

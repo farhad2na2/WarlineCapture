@@ -4,7 +4,7 @@ Lane: PM
 Task: Prevent lane agents from deleting auto-continue heartbeats when a current task is complete, stale, blocked, or waiting for refresh.
 Files changed:
 - `Design/AgentTasks/AUTO_CONTINUE.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentReports/2026-05-08_pm_workflow-heartbeat-deletion-guard.md`
 Contracts touched:
 - Agent auto-continue protocol

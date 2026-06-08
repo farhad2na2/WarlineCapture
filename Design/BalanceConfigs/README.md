@@ -6,7 +6,7 @@ This folder contains design-facing machine-readable balance configs. These files
 
 ## Files
 
-- `WarlineCapture_Combat_Balance_Config_v0_1.json` - canonical combat catalog for units, buildings, skills, abilities, and upgrade tracks.
+- `Combat_Balance_Config_v0_1.json` - canonical combat catalog for units, buildings, skills, abilities, and upgrade tracks.
 
 ## Rules
 

@@ -15,4 +15,4 @@ Cross-lane notices:
 Tracking updates:
 - No dashboard update.
 Next task:
-- PM should refresh the support lane task. Recommended next support task: convert open questions from `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md` into a short cross-lane checklist and keep it updated as gameplay/UI implement the runtime pieces.
+- PM should refresh the support lane task. Recommended next support task: convert open questions from `AssistantRuntime_M01_Wiring_Plan.md` into a short cross-lane checklist and keep it updated as gameplay/UI implement the runtime pieces.

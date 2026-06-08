@@ -8,11 +8,11 @@ Files changed:
 - Design/AgentReports/2026-05-07_qa-hci_m01-validation-plan.md
 
 Contracts touched:
-- Design/WarlineCapture_Agent_Coordination_Workflow.md
-- Design/WarlineCapture_M01_FirstContact_Production_Contract.md
-- Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md
+- Design/Agent_Coordination_Workflow.md
+- Design/M01_FirstContact_Production_Contract.md
+- Design/FTUE_And_Command_Assistant_Design.md
+- Design/AssistantPanel_M01_Implementation_Contract.md
+- Design/AssistantRuntime_M01_Wiring_Plan.md
 - Design/AgentReports/2026-05-07_gameplay_m01-playable-runtime.md
 - Design/AgentReports/2026-05-07_pm_ui-assistant-presentation-review.md
 - Design/AgentReports/2026-05-07_pm_support-runtime-wiring-review.md
@@ -106,7 +106,7 @@ Automated smoke tests:
 - EditMode `WarlineCaptureCampaignObjectiveTests`: run when objective/result rules change.
 - EditMode `BattleHudGameplayBridgeConnectionTests`: run when command feedback or reason mappings change.
 - EditMode `WarlineCaptureUiAssistantPanelControllerTests` and `WarlineCaptureUiAssistantPanelTests`: run when assistant panel binding, callbacks, or view fields change.
-- Future assistant runtime tests from `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`: recommendation provider, context provider, typed intents, invalid recovery, control ownership, and replay suppression.
+- Future assistant runtime tests from `AssistantRuntime_M01_Wiring_Plan.md`: recommendation provider, context provider, typed intents, invalid recovery, control ownership, and replay suppression.
 
 Manual playthrough checks:
 

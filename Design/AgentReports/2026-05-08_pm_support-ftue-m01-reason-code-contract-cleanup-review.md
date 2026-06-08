@@ -5,9 +5,9 @@ needs fixes
 Reason:
 The documentation cleanup correctly makes the M01 design contracts agree on the production-contract reason-code names, but it does not yet make the runnable project agree. `BattleHudGameplayBridge.TacticalCommandReasonCode`, gameplay/UI runtime call sites, and focused tests still use legacy aliases such as `InvalidTarget`, `BlockedRoute`, `OutOfRange`, and `BuildModeUnavailable`.
 Validation accepted:
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md` now names the M01 production-contract reason codes.
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md` now uses the same canonical M01 recovery table.
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` now states the earlier aliases are deprecated for M01 Gate 4 assertions.
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md` now names the M01 production-contract reason codes.
+- `Design/AssistantRuntime_M01_Wiring_Plan.md` now uses the same canonical M01 recovery table.
+- `Design/AssistantPanel_M01_Implementation_Contract.md` now states the earlier aliases are deprecated for M01 Gate 4 assertions.
 Validation still needed:
 - Update or map `TacticalCommandReasonCode` in runtime code so the canonical M01 values exist and display the production-contract player-facing strings.
 - Update M01 assistant/runtime/gameplay call sites and tests that still emit/assert `InvalidTarget`, `BlockedRoute`, `OutOfRange`, or `BuildModeUnavailable`.

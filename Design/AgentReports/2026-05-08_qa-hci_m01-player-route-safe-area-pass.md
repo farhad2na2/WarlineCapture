@@ -10,8 +10,8 @@ Files changed:
 Contracts touched:
 - Design/AgentTasks/qa-hci_current.md: completed the active QA/HCI player-route/safe-area report without editing AgentTasks.
 - Design/AgentTasks/M01_CRITICAL_PATH.md: Gate 4 remains not accepted because safe-area/device or route-driven capture evidence is still missing.
-- Design/WarlineCapture_M01_FirstContact_Production_Contract.md: validated the automated route coverage for M01 runtime spawn, selection, attack, result readiness, survival guard, and build rejection.
-- Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md, Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md, and Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: validated assistant typed runtime binding, player-input release, Stop behavior, and result-flow Stop behavior through focused EditMode tests.
+- Design/M01_FirstContact_Production_Contract.md: validated the automated route coverage for M01 runtime spawn, selection, attack, result readiness, survival guard, and build rejection.
+- Design/FTUE_And_Command_Assistant_Design.md, Design/AssistantPanel_M01_Implementation_Contract.md, and Design/AssistantRuntime_M01_Wiring_Plan.md: validated assistant typed runtime binding, player-input release, Stop behavior, and result-flow Stop behavior through focused EditMode tests.
 - No runtime API, prefab path, route id, mission id, data schema, source design contract, asset row, or production source file was changed.
 
 User-visible behavior:

@@ -12,14 +12,14 @@ When there is no new agent handoff to review, audit WarlineCapture design docs f
 
 Prioritize docs that active agents depend on:
 
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md`
-- `Design/WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md`
+- `Design/Tactical_UI_Missing_Parts_Work_Order.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/Art_Asset_Requirements_Register.csv`
 - active lane tasks under `Design/AgentTasks/`
 
 ## What To Look For

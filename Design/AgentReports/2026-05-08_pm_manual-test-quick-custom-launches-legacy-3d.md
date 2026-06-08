@@ -14,7 +14,7 @@ Confirmed user paths:
 
 Code trace:
 - `Assets/Game/Scripts/UI/Screens/QuickCustomScreenController.cs` calls `WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this)` from `LaunchMission()`.
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureGameLaunchUtility.cs` re-enables the legacy `UI_Canvas`, calls `MenuView.RequestGameStart()` or `GameBootstrap.BeginGameplay()`, and disables the `WarlineCaptureRouter`.
+- `Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs` re-enables the legacy `UI_Canvas`, calls `MenuView.RequestGameStart()` or `GameBootstrap.BeginGameplay()`, and disables the `WarlineCaptureRouter`.
 - `Assets/Game/Prefabs/UI/Screens/Screen_SagaMap.prefab` contains M01 mission node metadata for `saga.ch01.m01.first_contact` and routes campaign flow through the router.
 - `Assets/Game/Prefabs/UI/Screens/Screen_MissionBriefing.prefab` has a route button to `LoadoutSquadPrep` plus `ActiveMissionSessionButton` using the active mission. The user confirms this campaign/manual path also ends in the legacy 3D experience.
 

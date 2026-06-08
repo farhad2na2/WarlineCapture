@@ -28,7 +28,7 @@
   },
   "rules": [
     "TMP text remains live text; no product labels, prices, amounts, or tab labels are baked into reusable sprites.",
-    "Store products grant only canonical reward types from WarlineCapture_Economy_Reward_Design.md.",
+    "Store products grant only canonical reward types from Economy_Reward_Design.md.",
     "Do not include Tokens, Intel Keys, SagaStars, or direct Operation metric grants.",
     "Frames, fills, icons, card states, and content art remain separate Image objects."
   ],

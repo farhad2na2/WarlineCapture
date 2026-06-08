@@ -9,7 +9,7 @@ Purpose: prepare `Game_Terrain4` for mask-based map dressing using `SyntyHighlan
 Validated references:
 - Source scene: `Assets/Game/Scenes/Game_Terrain3.unity`
 - Target scene: `Assets/Game/Scenes/Game_Terrain4.unity`
-- Workflow doc: `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md`
+- Workflow doc: `Design/3D_Operation_Map_Texture_Mask_Workflow.md`
 - Map pack: `Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01`
 - Prefab catalog: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_mask_dressing_prefab_catalog.json`
 - Foundation snapshot: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_island_foundation_snapshot.json`

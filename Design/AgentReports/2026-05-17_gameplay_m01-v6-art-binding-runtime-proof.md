@@ -15,7 +15,7 @@ P0 bind accepted M01 Art v6/v5 assets and regenerate runtime target-match proof.
 
 # Contracts touched
 - `Design/Architecture/gameplay_solid_ecs_contract.md`: followed. Runtime soldier presentation remains ECS data plus ECS systems; editor code only captures proof; no bootstrap route policy or scene-start replacement was added.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`: preserved contracted M01 ids, including `iso.ch01.district_edge_01`, `unit.player.rifle_squad_01`, and `unit.enemy.patrol_01`.
+- `Design/M01_FirstContact_Production_Contract.md`: preserved contracted M01 ids, including `iso.ch01.district_edge_01`, `unit.player.rifle_squad_01`, and `unit.enemy.patrol_01`.
 - PM Art acceptance: `Design/AgentReports/2026-05-17_pm_art-atlas-m01-v6-accepted-gameplay-binding.md`.
 
 # User-visible behavior

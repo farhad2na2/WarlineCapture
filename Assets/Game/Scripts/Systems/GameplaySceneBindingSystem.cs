@@ -23,10 +23,10 @@ public sealed class GameplaySceneBindingSystem
         SelectionUiCommandSystem selectionUiCommandSystem,
         MainMenuPlayUI mainMenuPlayUi = null)
     {
-        IReadOnlyList<WarlineCaptureShellContentSystem> contentSystems = WarlineCaptureShellContentSystem.Instances;
+        IReadOnlyList<UIShellContentSystem> contentSystems = UIShellContentSystem.Instances;
         for (int i = 0; i < contentSystems.Count; i++)
         {
-            WarlineCaptureShellContentSystem contentSystem = contentSystems[i];
+            UIShellContentSystem contentSystem = contentSystems[i];
             if (IsLoadedSceneObject(contentSystem))
                 contentSystem.BindGameplayRuntimeDependencies(selectionUiCommandSystem, mainMenuPlayUi);
         }

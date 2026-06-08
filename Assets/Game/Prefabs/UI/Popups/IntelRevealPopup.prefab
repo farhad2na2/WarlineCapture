@@ -536,7 +536,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Normal
   selectWithEventSystem: 0
 --- !u!114 &911962657574660573
@@ -1359,7 +1359,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Normal
   selectWithEventSystem: 0
 --- !u!114 &1480317060749341262
@@ -1981,7 +1981,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Selected
   selectWithEventSystem: 1
 --- !u!114 &8819110577864037376
@@ -2161,7 +2161,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Normal
   selectWithEventSystem: 0
 --- !u!114 &1661258246500990727
@@ -2628,7 +2628,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Normal
   selectWithEventSystem: 0
 --- !u!114 &3003673764902308994
@@ -3096,7 +3096,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc17ed5b45979427d8a5170270cf1b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureButtonAnimationState
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAnimationState
   initialStateName: Normal
   selectWithEventSystem: 0
 --- !u!114 &71402511748461521
@@ -3686,7 +3686,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84f4bd07782a14c68bb08addf4f99e3d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCapturePopupFrameView
+  m_EditorClassIdentifier: Assembly-CSharp::UIPopupFrameView
   scrim: {fileID: 4936401822594551625}
   frame: {fileID: 3147886220361840423}
   header: {fileID: 3165470230406124848}

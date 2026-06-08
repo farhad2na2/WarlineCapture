@@ -8,7 +8,7 @@ Docs reviewed:
 - Design/AgentReports/2026-05-08_gameplay_m01-public-launch-path.md
 - Design/AgentReports/2026-05-08_ui_m01-public-launch-path.md
 - Design/AgentReports/2026-05-08_support-ftue_gate4-current-wait.md
-- Design/WarlineCapture_Agent_Coordination_Workflow.md
+- Design/Agent_Coordination_Workflow.md
 
 Finding:
 Three lane reports are present and use the required handoff fields. Gameplay reports a substantive public M01 launch fix and now has assigned-workspace validation from `/Users/farhad/Projects/WarlineCapture-CodexUnity1`: `Chapter01M01PlayModeValidationTests` passed 5/5 with results at `/private/tmp/warlinecapture-m01-public-launch-results-codexunity1.xml`. UI has assigned-workspace validation from `/Users/farhad/Projects/WarlineCapture-CodexUnity2`: `Chapter01M01PlayModeValidationTests` passed 5/5 with regenerated public-launch captures. Visual inspection of `Design/AgentReports/Captures/2026-05-08_m01-public-launch/campaign-public-m01.png` shows HUD/canvas over authored M01 terrain/units rather than route-only, camera-only, flat brown, or legacy 3D evidence. QA/HCI's assigned validation workspace `/Users/farhad/Projects/WarlineCapture-CodexUnity3` exists as a plain sibling Unity project copy.

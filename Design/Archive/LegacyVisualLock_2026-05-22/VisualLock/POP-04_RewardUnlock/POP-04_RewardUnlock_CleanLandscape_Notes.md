@@ -1,7 +1,7 @@
 # POP-04 Reward Unlock Visual Target
 
 - Canvas: 1672 x 941.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/POP-04_reward_unlock.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/POP-04_reward_unlock.jpg`.
 - Target type: popup.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
 - This is not a crop, upscale, padding pass, or pixel promotion of the source JPG.

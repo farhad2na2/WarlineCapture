@@ -3,7 +3,7 @@
   "target": "Design/VisualLock/PREFAB-04_AssistantButton/PREFAB-04_AssistantButton_Landscape_Target.png",
   "styleContactSheet": "Design/VisualLock/PREFAB-04_AssistantButton/PREFAB-04_AssistantButton_Style_ContactSheet.png",
   "sourceBackground": "blurred WarlineCapture match HUD/gameplay context with objective tracker, threat feed, resource bar, command bar, squad tray, minimap, and isometric battlefield visible",
-  "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+  "source": "Design/FTUE_And_Command_Assistant_Design.md",
   "purpose": "AAA target-lock mockup for the persistent ARIA assistant button in real Match Overlay context.",
   "controls": [
     {

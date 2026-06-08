@@ -21,7 +21,7 @@ No runtime behavior changed. The Designer lane is accepted as a documentation/pr
 
 Validation run:
 - Reviewed `Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`.
-- Checked Designer references in `README.md`, `Design/README.md`, `Design/WarlineCapture_Agent_Coordination_Workflow.md`, and `Design/AgentTasks/README.md`.
+- Checked Designer references in `README.md`, `Design/README.md`, `Design/Agent_Coordination_Workflow.md`, and `Design/AgentTasks/README.md`.
 - Reviewed the current diff for `README.md` and confirmed it is documentation-only.
 
 Validation result:

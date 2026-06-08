@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-10_UnitCommandWheel/SCN-10_UnitCommandWheel_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-10_unit_command_wheel.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-10_unit_command_wheel.jpg`.
 - Recreate in Unity as a live battle overlay with real radial buttons and contextual selected-unit data.
 
 ## Implementation Notes

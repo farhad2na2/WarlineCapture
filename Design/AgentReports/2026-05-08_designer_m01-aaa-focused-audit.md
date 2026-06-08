@@ -15,8 +15,8 @@ Contracts touched:
 Sources reviewed:
 
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/LargeScale_Grid_Movement_Design.md`
 - `Design/AgentReports/2026-05-08_gameplay_m01-public-launch-path.md`
 - `Design/AgentReports/2026-05-08_ui_m01-public-launch-path.md`
 - `Design/AgentReports/2026-05-08_pm_public-launch-handoff-workspace-review.md`

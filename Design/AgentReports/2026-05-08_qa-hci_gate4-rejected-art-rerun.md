@@ -17,8 +17,8 @@ Files changed:
 Contracts touched:
 - Validation only. No product contract was edited by QA/HCI.
 - Validated against:
-  - `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+  - `Design/M01_Metric_Scale_Readability_Contract.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
   - `Design/AgentTasks/M01_CRITICAL_PATH.md`
   - `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
   - `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`

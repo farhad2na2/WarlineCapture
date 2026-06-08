@@ -4,8 +4,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public sealed class ScreenRouteSystem : MonoBehaviour
 {
-    [SerializeField] private WarlineCaptureRouter router;
-    [SerializeField] private WarlineCaptureRoute route;
+    [SerializeField] private UIRouter router;
+    [SerializeField] private UIRoute route;
     [SerializeField] private bool useBackNavigation;
 
     private Button _button;
@@ -25,7 +25,7 @@ public sealed class ScreenRouteSystem : MonoBehaviour
     private void HandleClick()
     {
         if (router == null)
-            router = GetComponentInParent<WarlineCaptureRouter>();
+            router = GetComponentInParent<UIRouter>();
 
         if (router == null)
             return;

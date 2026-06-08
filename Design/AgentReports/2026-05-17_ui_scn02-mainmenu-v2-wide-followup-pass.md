@@ -6,8 +6,8 @@ SCN-02 Main Menu follow-up pass to improve target match after the v2 placement h
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureAspectVariantSwitcher.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureAspectVariantSwitcher.cs.meta`
+- `Assets/Game/Scripts/UI/Shell/UIAspectVariantSwitcher.cs`
+- `Assets/Game/Scripts/UI/Shell/UIAspectVariantSwitcher.cs.meta`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_CardArt.spriteatlas`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_FramesChrome.spriteatlas`

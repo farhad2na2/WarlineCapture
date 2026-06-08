@@ -90,7 +90,7 @@ public struct UiShellBoundaryComponent : IComponentData
 public struct UiShellStateComponent : IComponentData
 {
     public UiShellMode CurrentMode;
-    public WarlineCaptureRoute ActiveRoute;
+    public UIRoute ActiveRoute;
     public UiShellTransitionPhase Phase;
     public int TransitionSequenceId;
     public byte IsTransitionRunning;
@@ -115,14 +115,14 @@ public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
 
 public struct UiShellRouteRequestComponent : IBufferElementData
 {
-    public WarlineCaptureRoute Route;
+    public UIRoute Route;
     public UiShellRouteIntent Intent;
     public byte PushHistory;
 }
 
 public struct UiShellRouteHistoryComponent : IBufferElementData
 {
-    public WarlineCaptureRoute Route;
+    public UIRoute Route;
 }
 
 public struct UiShellPopupRequestComponent : IBufferElementData
@@ -136,7 +136,7 @@ public struct UiShellPresentationCommandComponent : IBufferElementData
 {
     public UiShellCommandKind Kind;
     public UiShellRegionId Region;
-    public WarlineCaptureRoute Route;
+    public UIRoute Route;
     public UiShellMode TargetMode;
     public int SequenceId;
 }

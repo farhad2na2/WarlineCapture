@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-13_QuickCustomGameSetup/SCN-13_QuickCustomGameSetup_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-13_quick_custom_game_setup.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-13_quick_custom_game_setup.jpg`.
 - Recreate in Unity as real form controls, not a baked setup screen image.
 
 ## Implementation Notes

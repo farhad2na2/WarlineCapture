@@ -51,10 +51,10 @@ Restored/reverted v2 drift:
   - Preserved bootstrap as composition/runtime entry instead of adding mission-specific scene-startup policy.
   - Added validation coverage for removed scene-startup installer folder.
   - Runtime soldier state remains ECS data/system-driven; no flattened mockup PNG is used as runtime soldier source.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
   - Preserved `IsoMapId: iso.ch01.district_edge_01`.
   - Runtime map path continues to use the contracted M01 tactical map id.
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
   - Still partially unmet in v3 proof because world soldier presentation is not visible in the captured frame.
 
 ## User-visible behavior

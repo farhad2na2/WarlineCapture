@@ -14,8 +14,8 @@ Files changed:
 - `Design/AgentTasks/README.md`
 - `Design/AgentTasks/AUTO_CONTINUE.md`
 - `Design/README.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
-- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
+- `Design/Designer_Role_And_Documentation_Workflow.md`
 
 Contracts touched:
 - Agent lane ownership.
@@ -31,8 +31,8 @@ Validation run:
 - Read `Design/README.md`.
 - Read `Design/AgentTasks/README.md`.
 - Read `Design/AgentTasks/AUTO_CONTINUE.md`.
-- Read `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
-- Read existing `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md` and wired it into the lane.
+- Read `Design/Agent_Coordination_Workflow.md`.
+- Read existing `Design/Designer_Role_And_Documentation_Workflow.md` and wired it into the lane.
 - Searched for Designer/Art/Atlas lane references across updated coordination files.
 
 Validation result:

@@ -3,8 +3,8 @@ Topic: Manual test found M01 tactical ground/map upside down under soldiers
 Docs reviewed:
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/qa-hci_current.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/2D_Isometric_Production_Direction.md`
 
 Finding:
 The user manually tested the current public M01 launch view and reported that the world/ground map under the soldiers is upside down. This is a Gameplay-owned blocker because the tactical world under the HUD, map loader output, camera/world orientation, metadata anchors, and ECS-backed world presentation belong to the Gameplay lane.

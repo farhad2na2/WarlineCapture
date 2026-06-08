@@ -9,7 +9,7 @@ Goal: Build a high-quality large `Game_Terrain4` operation map by using the exis
 Source references:
 - `Assets/Game/Scenes/Game_Terrain3.unity` - source example model groups under `Island`.
 - `Assets/Game/Scenes/Game_Terrain4.unity` - target scene; generated content belongs under root `Island`.
-- `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` - mask sampling and gameplay rules.
+- `Design/3D_Operation_Map_Texture_Mask_Workflow.md` - mask sampling and gameplay rules.
 - `Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/` - `base_visual`, `blocker_mask`, `tree_density_mask`, `rock_density_mask`, and `height_mask`.
 
 Completion rule: leave each step unchecked until the implementation for that step is completed and validated. When the whole task is complete, every item below should be checked.

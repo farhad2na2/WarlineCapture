@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-06_MissionBriefing/SCN-06_MissionBriefing_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-06_mission_briefing.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-06_mission_briefing.jpg`.
 - Recreate in Unity as separate mission image, objectives, star goals, enemy intel, rewards, and CTA parts.
 
 ## Implementation Notes

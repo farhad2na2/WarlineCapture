@@ -10,11 +10,11 @@ Files changed:
 Contracts touched:
 - Design/AgentTasks/M01_CRITICAL_PATH.md
 - Design/AgentTasks/qa-hci_current.md
-- Design/WarlineCapture_Agent_Coordination_Workflow.md
-- Design/WarlineCapture_M01_FirstContact_Production_Contract.md
-- Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md
+- Design/Agent_Coordination_Workflow.md
+- Design/M01_FirstContact_Production_Contract.md
+- Design/FTUE_And_Command_Assistant_Design.md
+- Design/AssistantPanel_M01_Implementation_Contract.md
+- Design/AssistantRuntime_M01_Wiring_Plan.md
 - Design/AgentReports/2026-05-07_qa-hci_m01-validation-plan.md
 - Design/AgentReports/2026-05-07_pm_qa-hci-validation-plan-review.md
 - Design/AgentReports/2026-05-07_gameplay_m01-playmode-validation.md

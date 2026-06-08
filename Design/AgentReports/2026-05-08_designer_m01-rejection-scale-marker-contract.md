@@ -5,8 +5,8 @@ Task:
 Refresh the M01 visual/scale/readability contract after the user rejected the selected-readability pass and identified repeated issues with renderer-wrapper visuals, marker size, selection affordance, animation pose/state, and process coverage.
 
 Files changed:
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
 Contracts touched:
@@ -21,12 +21,12 @@ Validation run:
 - `sed -n '1,260p' Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
 - `sed -n '1,220p' Design/AgentTasks/designer_pm_message.md`
 - `sed -n '1,220p' Design/AgentTasks/user_feedback_review_gate.md`
-- `sed -n '1,280p' Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `sed -n '1,240p' Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-- `rg -n "1\\.8m|2\\.3m|0\\.15|0\\.2|two soldier footsteps|foot pixels|body/formation|crouched|sitting|idle animation|MeshRenderer|MeshFilter|SpriteRenderer|placeholder|User Feedback Regression|repeated feedback" Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `sed -n '1,280p' Design/M01_FirstContact_Production_Contract.md`
+- `sed -n '1,240p' Design/M01_Metric_Scale_Readability_Contract.md`
+- `rg -n "1\\.8m|2\\.3m|0\\.15|0\\.2|two soldier footsteps|foot pixels|body/formation|crouched|sitting|idle animation|MeshRenderer|MeshFilter|SpriteRenderer|placeholder|User Feedback Regression|repeated feedback" Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md`
 - `test -f` checks for required PM report, designer PM message, user feedback gate, and M01 contract files.
-- `git diff -- Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `git status --short Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md Assets/Game/Scripts Assets/Tests`
+- `git diff -- Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md`
+- `git status --short Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md Assets/Game/Scripts Assets/Tests`
 
 Validation result:
 - Passed for documentation/contract coverage.
@@ -48,7 +48,7 @@ Known gaps:
 - QA/HCI still owns the rejection-aware validation matrix and must not request user review until the feedback items are fixed, blocked with owners, or waived by the user.
 
 Cross-lane impacts:
-- Gameplay, Art/Atlas, UI, and QA/HCI should use `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md` as the rejection-informed visual checklist.
+- Gameplay, Art/Atlas, UI, and QA/HCI should use `Design/M01_Metric_Scale_Readability_Contract.md` as the rejection-informed visual checklist.
 - PM should enforce `Design/AgentTasks/user_feedback_review_gate.md` before asking the user for another selected-readability review.
 - Support/FTUE has no immediate action unless later QA/HCI finds a concrete assistant or FTUE issue.
 

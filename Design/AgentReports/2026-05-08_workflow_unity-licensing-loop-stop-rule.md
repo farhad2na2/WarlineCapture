@@ -5,7 +5,7 @@ Task:
 Add a Unity licensing-loop stop rule so agents do not repeatedly ask for approval while validation is stuck before tests start.
 
 Files changed:
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/AUTO_CONTINUE.md`
 - `Design/AgentReports/2026-05-08_workflow_unity-licensing-loop-stop-rule.md`
 

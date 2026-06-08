@@ -768,14 +768,14 @@ New planned files:
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellTransitionCompleteComponent.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellRegionView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellContentView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureLoadingView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCapturePopupLayerView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellButtonRequestView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionService.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellMotionConfig.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellScreenConfig.cs`

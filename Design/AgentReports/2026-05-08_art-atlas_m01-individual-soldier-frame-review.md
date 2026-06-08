@@ -20,7 +20,7 @@ Validation run:
 - Read `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`.
 - Read `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`.
 - Read `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`.
-- Read `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`.
+- Read `Design/M01_Metric_Scale_Readability_Contract.md`.
 - Reviewed `Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_asset_manifest.asset`.
 - Reviewed `Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_scale_contract.asset`.
 - Reviewed `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/Manifests/Unit_Chr_Soldier_Male_02_FullSetup_Manifest.json`.

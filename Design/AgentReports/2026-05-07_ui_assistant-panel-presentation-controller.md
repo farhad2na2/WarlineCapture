@@ -15,8 +15,8 @@ Files changed:
 Contracts touched:
 - `PREFAB-05_AssistantPanel`
 - `AssistantPanelView.BindRecommendation(title, body, chips, canShow, canExecute, canStop)`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
 
 User-visible behavior:
 The project now has an `AssistantPanelController` presentation shell that can instantiate, show, hide, and bind the ARIA assistant panel with contract-safe recommendation data. Show Me, Do It, and Stop are exposed as callback seams that pass the active recommendation id, but they do not execute gameplay or final ARIA typed intents yet.

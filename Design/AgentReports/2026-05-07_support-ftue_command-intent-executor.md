@@ -6,7 +6,7 @@ Files changed:
 - `Assets/Game/Scripts/Tutorial/Assistant/WarlineCaptureAssistantService.cs`
 - `Assets/Tests/Editor/Tutorial/CommandIntentExecutorTests.cs`
 - `Assets/Tests/Editor/Tutorial/CommandIntentExecutorTests.cs.meta`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
 Contracts touched:
 - M01 assistant runtime wiring contract now marks gameplay typed hooks as accepted and the command intent executor boundary as implemented.
 - `WarlineCaptureAssistantService.ExecuteCurrentDoIt(CommandIntentExecutor)` exposes a service-level execution handoff without direct UI hierarchy dependency.
@@ -17,7 +17,7 @@ User-visible behavior:
 - `Stop` clears assistant preview/takeover session state only and does not issue gameplay commands.
 - M01 build attempts still reject with the existing mission build-lock reason.
 Validation run:
-- `git diff --check -- Assets/Game/Scripts/Tutorial Assets/Tests/Editor/Tutorial Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `git diff --check -- Assets/Game/Scripts/Tutorial Assets/Tests/Editor/Tutorial Design/AssistantRuntime_M01_Wiring_Plan.md`
 - `rg -n "\.Find\(|FindObject|GetComponentInChildren|Screen\.|mousePosition|anchoredPosition|NameText|SelectedEntityPanel|Button" Assets/Game/Scripts/Tutorial/Assistant/CommandIntentExecutor.cs Assets/Game/Scripts/Tutorial/Assistant/WarlineCaptureAssistantService.cs`
 - Unity EditMode `CommandIntentExecutorTests` with results at `/private/tmp/warlinecapture-command-intent-executor-results.xml`
 - Unity EditMode `M01AssistantRuntimeTests` with results at `/private/tmp/warlinecapture-m01-assistant-runtime-results.xml`

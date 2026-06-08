@@ -340,7 +340,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 2
   regionRoot: {fileID: 192328447}
   contentRoot: {fileID: 1958930000}
@@ -1033,7 +1033,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 1
   regionRoot: {fileID: 1009183429}
   contentRoot: {fileID: 1342943534}
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 0
   regionRoot: {fileID: 1199507512}
   contentRoot: {fileID: 714399790}
@@ -1280,7 +1280,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 6
   regionRoot: {fileID: 1334896000}
   contentRoot: {fileID: 154807129}
@@ -1613,7 +1613,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 3
   regionRoot: {fileID: 1581662441}
   contentRoot: {fileID: 1757834266}
@@ -1716,7 +1716,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 7
   regionRoot: {fileID: 1634352076}
   contentRoot: {fileID: 1597346706}
@@ -2009,7 +2009,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1d7a014920c1417eb08b8bdd9c17f62, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureGameUiSmokeDriverView
+  m_EditorClassIdentifier: Assembly-CSharp::UIGameUiSmokeDriverView
   playOnStart: 0
   loadingDurationSeconds: 2
   stableHoldSeconds: 0.25
@@ -2057,7 +2057,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c89a23447e44653a35fe6f347b33e8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellView
   motionHost: {fileID: 1818590232}
   regions:
   - {fileID: 1634352077}
@@ -2080,7 +2080,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 421ffb8ffe9a842a69cd65b8da1eb8c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiMotionHostView
+  m_EditorClassIdentifier: Assembly-CSharp::UIMotionHostView
   defaultDurationSeconds: 0.26
   defaultEnterEase: 2
   defaultExitEase: 1
@@ -2134,7 +2134,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 4
   regionRoot: {fileID: 1833058601}
   contentRoot: {fileID: 624026605}
@@ -2290,7 +2290,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRegionView
   regionId: 5
   regionRoot: {fileID: 2106161135}
   contentRoot: {fileID: 1107882281}

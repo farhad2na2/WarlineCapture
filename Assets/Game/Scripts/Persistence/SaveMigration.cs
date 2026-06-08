@@ -2,9 +2,9 @@ public static class SaveMigration
 {
     public const int CurrentVersion = 1;
 
-    public static WarlineCaptureSaveData Migrate(WarlineCaptureSaveData saveData)
+    public static SaveDataModel Migrate(SaveDataModel saveData)
     {
-        WarlineCaptureSaveData data = saveData ?? new WarlineCaptureSaveData();
+        SaveDataModel data = saveData ?? new SaveDataModel();
         data.saveVersion = CurrentVersion;
         data.profile ??= new PlayerProfileSaveData();
         data.settings ??= new SettingsSaveData();

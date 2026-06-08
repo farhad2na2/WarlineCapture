@@ -10,8 +10,8 @@ Files changed:
 Contracts touched:
 - Design/AgentTasks/qa-hci_current.md: completed the assigned QA/HCI readiness report without editing AgentTasks.
 - Design/AgentTasks/M01_CRITICAL_PATH.md: reviewed Gate 4 criteria and left Gate 4 unaccepted because human/player-route and safe-area/device validation remain open.
-- Design/WarlineCapture_M01_FirstContact_Production_Contract.md: reviewed M01 select, move, attack, objective, result, Build rejection, marker, capture, and 16:9/20:9 readability requirements.
-- Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md, Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md, and Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: reviewed typed ARIA Show Me / Do It / Stop, ownership, cancellation, and M01 recommendation requirements.
+- Design/M01_FirstContact_Production_Contract.md: reviewed M01 select, move, attack, objective, result, Build rejection, marker, capture, and 16:9/20:9 readability requirements.
+- Design/FTUE_And_Command_Assistant_Design.md, Design/AssistantPanel_M01_Implementation_Contract.md, and Design/AssistantRuntime_M01_Wiring_Plan.md: reviewed typed ARIA Show Me / Do It / Stop, ownership, cancellation, and M01 recommendation requirements.
 - No runtime API, prefab path, data schema, asset row, route id, or production source file was changed.
 
 User-visible behavior:

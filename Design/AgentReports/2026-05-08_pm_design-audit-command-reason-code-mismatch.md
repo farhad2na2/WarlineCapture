@@ -2,10 +2,10 @@ Status: needs fixes
 Topic:
 M01 command rejection reason codes are inconsistent across contracts
 Docs reviewed:
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
 Finding:
 The M01 production contract defines reason codes such as `TargetOutOfBounds`, `TargetBlocked`, `TargetUnreachable`, `TargetNotEnemy`, `TargetNotAttackable`, `CommandUnavailable`, `MissionDoesNotAllowBuild`, and `CameraJumpUnavailable`. The gameplay/UI integration handoff defines a different set: `InvalidTarget`, `BlockedRoute`, `OutOfRange`, `InsufficientResources`, `BuildModeUnavailable`, `AbilityOnCooldown`, and `TransportUnavailable`. The assistant runtime recovery table also references `BlockedRoute`, `InsufficientResources`, `AbilityOnCooldown`, and `TransportUnavailable`.
 Why it matters:

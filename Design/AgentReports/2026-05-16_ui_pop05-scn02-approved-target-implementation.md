@@ -8,7 +8,7 @@ Files changed:
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs`
 - `Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/**`

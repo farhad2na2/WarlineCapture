@@ -2,7 +2,7 @@
   "surfaceId": "PREFAB-06_TutorialCard",
   "target": "Design/VisualLock/PREFAB-06_TutorialCard/PREFAB-06_TutorialCard_Landscape_Target.png",
   "sourceBackground": "Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png",
-  "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+  "source": "Design/FTUE_And_Command_Assistant_Design.md",
   "purpose": "High-quality FTUE tutorial card over blurred Match Overlay context.",
   "controls": [
     "TutorialBody",

@@ -38,11 +38,11 @@ The generated pack contains separate source groups for battlefield art, HUD fram
 
 ## Design Source
 
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
-- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
-- `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
+- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/Match_Selection_Implementation_Spec.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/Skirmish_Mode_Implementation_Spec.md`
 - `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
 - Gameplay scene references: `Assets/Game/Scenes/Demo.unity` and `Assets/Game/Scenes/Demo2.unity`
 - Unit/building naming source: `Assets/Game/Configs/Prefabs`

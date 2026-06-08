@@ -6,9 +6,9 @@ SCN-02 Main Menu production-sprite implementation from accepted Art/Atlas packag
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureAspectVariantSwitcher.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureAspectVariantSwitcher.cs.meta`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Game/Scripts/UI/Shell/UIAspectVariantSwitcher.cs`
+- `Assets/Game/Scripts/UI/Shell/UIAspectVariantSwitcher.cs.meta`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/**`
 - `Assets/Game/Art/UI/Generated/MainMenu/Atlases/MainMenu_UI_CardArt.spriteatlas`

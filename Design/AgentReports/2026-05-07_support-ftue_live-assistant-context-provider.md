@@ -7,7 +7,7 @@ Files changed:
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureMatchResultFlow.cs`
 - `Assets/Tests/Editor/Tutorial/AssistantContextProviderTests.cs`
 - `Assets/Tests/Editor/Tutorial/AssistantContextProviderTests.cs.meta`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
 Contracts touched:
 - `AssistantContextProvider.BuildContext(TutorialSessionState)` now maps live M01 mission ids, route/match state, objective visibility, ECS runtime entities, selected squad state, move anchor availability, enemy patrol state, latest command result, session move/attack completion, and typed-command readiness.
 - `BattleHudGameplayBridge` now exposes `CurrentCommandMode`, `LastCommandResult`, and `HasLastCommandResult` while preserving existing tactical feedback behavior.
@@ -19,7 +19,7 @@ User-visible behavior:
 - Invalid-command recovery can use the latest accepted/rejected tactical command result from the gameplay bridge.
 - Result explanation can detect an active mission result popup through a typed runtime property.
 Validation run:
-- `git diff --check -- Assets/Game/Scripts/Tutorial Assets/Game/Scripts/UI/Components/BattleHudGameplayBridge.cs Assets/Game/Scripts/UI/Shell/WarlineCaptureMatchResultFlow.cs Assets/Tests/Editor/Tutorial Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `git diff --check -- Assets/Game/Scripts/Tutorial Assets/Game/Scripts/UI/Components/BattleHudGameplayBridge.cs Assets/Game/Scripts/UI/Shell/WarlineCaptureMatchResultFlow.cs Assets/Tests/Editor/Tutorial Design/AssistantRuntime_M01_Wiring_Plan.md`
 - `rg -n "\.Find\(|GetComponentInChildren|Screen\.|mousePosition|anchoredPosition|NameText|SelectedEntityPanel|Button" Assets/Game/Scripts/Tutorial/Assistant/AssistantContextProvider.cs Assets/Game/Scripts/Tutorial/Assistant/CommandIntentExecutor.cs`
 - Unity EditMode `AssistantContextProviderTests` in `/Users/farhad/Projects/WarlineCapture-CodexUnity2`, results `/private/tmp/warlinecapture-assistant-context-provider-results.xml`
 - Unity EditMode `M01AssistantRuntimeTests` in `/Users/farhad/Projects/WarlineCapture-CodexUnity2`, results `/private/tmp/warlinecapture-m01-assistant-runtime-results.xml`

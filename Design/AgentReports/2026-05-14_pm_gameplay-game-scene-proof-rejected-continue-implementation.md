@@ -14,7 +14,7 @@ The report and comparison image are useful because they prove the runtime no lon
 ## Rejection Reasons
 
 - Camera/framing does not match the approved M01-01 composition.
-- Runtime is using the wrong/old battlefield background. The approved M01-01 mockup background is the visual lock source. `Design/WarlineCapture_M01_FirstContact_Production_Contract.md` still owns the production ids, including `IsoMapId: iso.ch01.district_edge_01`; do not invent a new mission/map id without updating the contract. Fix stale source art/content behind the contracted M01 map path so the runtime background matches the approved target.
+- Runtime is using the wrong/old battlefield background. The approved M01-01 mockup background is the visual lock source. `Design/M01_FirstContact_Production_Contract.md` still owns the production ids, including `IsoMapId: iso.ch01.district_edge_01`; do not invent a new mission/map id without updating the contract. Fix stale source art/content behind the contracted M01 map path so the runtime background matches the approved target.
 - The correction must follow `Design/Architecture/gameplay_solid_ecs_contract.md`: runtime behavior in ECS data/systems, scene/bootstrap only for composition, no mission-specific behavior in bootstrap/root scene glue, no static logging spread, and no scene-only hacks.
 - Soldier placement/count/readability do not match the target lower-left player squad and upper-right enemy patrol layout.
 - ECS animation proof is not enough unless the visible runtime soldiers match the target composition.

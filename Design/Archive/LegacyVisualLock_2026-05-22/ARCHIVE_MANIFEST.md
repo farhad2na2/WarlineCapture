@@ -18,7 +18,7 @@ Active replacement folders:
 
 Active rules:
 
-- New UI targets must use the 3D single-map direction in `../../WarlineCapture_3D_SingleMap_Gameplay_Direction.md`.
-- New menu targets must use the command-base direction from `../../WarlineCapture_UIUX_MainMenu_Visual_Contract.md`.
+- New UI targets must use the 3D single-map direction in `../../3D_SingleMap_Gameplay_Direction.md`.
+- New menu targets must use the command-base direction from `../../UIUX_MainMenu_Visual_Contract.md`.
 - New gameplay-facing screens must use 3D operation-map captures, metadata-backed minimap/planning views, and prefab-catalog unit/building display data.
 - Do not restore old 2D/isometric, Saga/Quick Custom player-facing, or old tactical/strategic split visual targets into active folders.

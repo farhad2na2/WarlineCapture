@@ -16,7 +16,7 @@ P0 M01 v17 runtime soldier direction verification after user rejection.
 
 # Contracts touched
 - `Design/Architecture/gameplay_solid_ecs_contract.md`: diagnostic override is editor-only and does not add bootstrap mission policy.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`: M01 mission/map/unit ids remain unchanged.
+- `Design/M01_FirstContact_Production_Contract.md`: M01 mission/map/unit ids remain unchanged.
 - `Design/AgentReports/2026-05-18_pm_art-atlas-m01-v17-accepted-gameplay-binding.md`: v17 binding remains accepted only as a package-binding proof, not visual direction approval.
 
 # User-visible behavior

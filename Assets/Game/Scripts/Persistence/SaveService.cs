@@ -19,9 +19,9 @@ public sealed class SaveService
         return new SaveService(new JsonSaveRepository(Application.persistentDataPath));
     }
 
-    public WarlineCaptureSaveData LoadProject()
+    public SaveDataModel LoadProject()
     {
-        var data = new WarlineCaptureSaveData
+        var data = new SaveDataModel
         {
             profile = LoadProfile(),
             settings = LoadSettings(),
@@ -31,9 +31,9 @@ public sealed class SaveService
         return SaveMigration.Migrate(data);
     }
 
-    public void SaveProject(WarlineCaptureSaveData data)
+    public void SaveProject(SaveDataModel data)
     {
-        WarlineCaptureSaveData migrated = SaveMigration.Migrate(data);
+        SaveDataModel migrated = SaveMigration.Migrate(data);
         SaveProfile(migrated.profile);
         SaveSettings(migrated.settings);
         SaveQuickGame(migrated.quickGame);

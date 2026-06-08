@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
+  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 15
   pushHistory: 0

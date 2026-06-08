@@ -2,24 +2,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class SettingsScreenSystem : WarlineCaptureScreenSystem
+public sealed class SettingsScreenSystem : UIScreenSystem
 {
-    [SerializeField] private WarlineCaptureSliderRowView masterVolumeRow;
-    [SerializeField] private WarlineCaptureSliderRowView musicVolumeRow;
-    [SerializeField] private WarlineCaptureSliderRowView sfxVolumeRow;
-    [SerializeField] private WarlineCaptureSegmentedControlView graphicsQualityControl;
-    [SerializeField] private WarlineCaptureSegmentedControlView frameRateControl;
-    [SerializeField] private WarlineCaptureSliderRowView cameraSensitivityRow;
-    [SerializeField] private WarlineCaptureToggleRowView threatWarningsRow;
-    [SerializeField] private WarlineCaptureToggleRowView highContrastRow;
-    [SerializeField] private WarlineCaptureToggleRowView largeTextRow;
+    [SerializeField] private UISliderRowView masterVolumeRow;
+    [SerializeField] private UISliderRowView musicVolumeRow;
+    [SerializeField] private UISliderRowView sfxVolumeRow;
+    [SerializeField] private UISegmentedControlView graphicsQualityControl;
+    [SerializeField] private UISegmentedControlView frameRateControl;
+    [SerializeField] private UISliderRowView cameraSensitivityRow;
+    [SerializeField] private UIToggleRowView threatWarningsRow;
+    [SerializeField] private UIToggleRowView highContrastRow;
+    [SerializeField] private UIToggleRowView largeTextRow;
     [SerializeField] private TMP_Dropdown colorblindModeDropdown;
     [SerializeField] private TMP_Dropdown languageDropdown;
     [SerializeField] private Button resetButton;
     [SerializeField] private Button applyButton;
-    [SerializeField] private WarlineCaptureUiAccessibilityApplier accessibilityApplier;
+    [SerializeField] private UIAccessibilityApplier accessibilityApplier;
 
-    private WarlineCaptureSettingsModel _model;
+    private UISettingsModel _model;
     private bool _hasLoaded;
 
     private void Awake()
@@ -47,7 +47,7 @@ public sealed class SettingsScreenSystem : WarlineCaptureScreenSystem
         ApplyVisualPreferences(_model);
     }
 
-    public void Bind(WarlineCaptureSettingsModel model)
+    public void Bind(UISettingsModel model)
     {
         _model = model;
 
@@ -131,11 +131,11 @@ public sealed class SettingsScreenSystem : WarlineCaptureScreenSystem
         _model.Notifications.ThreatWarnings = GetToggleValue(threatWarningsRow, _model.Notifications.ThreatWarnings);
         _model.Accessibility.HighContrastUi = GetToggleValue(highContrastRow, _model.Accessibility.HighContrastUi);
         _model.Accessibility.LargeText = GetToggleValue(largeTextRow, _model.Accessibility.LargeText);
-        _model.Accessibility.ColorblindMode = (WarlineCaptureColorblindMode)GetDropdownValue(colorblindModeDropdown, (int)_model.Accessibility.ColorblindMode);
-        _model.Localization.Language = (WarlineCaptureLanguage)GetDropdownValue(languageDropdown, (int)_model.Localization.Language);
+        _model.Accessibility.ColorblindMode = (UIColorblindMode)GetDropdownValue(colorblindModeDropdown, (int)_model.Accessibility.ColorblindMode);
+        _model.Localization.Language = (UILanguage)GetDropdownValue(languageDropdown, (int)_model.Localization.Language);
     }
 
-    private void ApplyVisualPreferences(WarlineCaptureSettingsModel model)
+    private void ApplyVisualPreferences(UISettingsModel model)
     {
         accessibilityApplier?.Apply(model);
     }
@@ -147,36 +147,36 @@ public sealed class SettingsScreenSystem : WarlineCaptureScreenSystem
     private void OnThreatWarningsChanged(bool value) => _model.Notifications.ThreatWarnings = value;
     private void OnHighContrastChanged(bool value) => _model.Accessibility.HighContrastUi = value;
     private void OnLargeTextChanged(bool value) => _model.Accessibility.LargeText = value;
-    private void OnGraphicsQualityChanged(int index) => _model.Graphics.Quality = (WarlineCaptureGraphicsQuality)index;
-    private void OnFrameRateChanged(int index) => _model.Graphics.FrameRateMode = (WarlineCaptureFrameRateMode)index;
-    private void OnColorblindModeChanged(int value) => _model.Accessibility.ColorblindMode = (WarlineCaptureColorblindMode)value;
-    private void OnLanguageChanged(int value) => _model.Localization.Language = (WarlineCaptureLanguage)value;
+    private void OnGraphicsQualityChanged(int index) => _model.Graphics.Quality = (UIGraphicsQuality)index;
+    private void OnFrameRateChanged(int index) => _model.Graphics.FrameRateMode = (UIFrameRateMode)index;
+    private void OnColorblindModeChanged(int value) => _model.Accessibility.ColorblindMode = (UIColorblindMode)value;
+    private void OnLanguageChanged(int value) => _model.Localization.Language = (UILanguage)value;
 
-    private static void AddSliderListener(WarlineCaptureSliderRowView row, UnityEngine.Events.UnityAction<float> action)
+    private static void AddSliderListener(UISliderRowView row, UnityEngine.Events.UnityAction<float> action)
     {
         if (row != null && row.Slider != null)
             row.Slider.onValueChanged.AddListener(action);
     }
 
-    private static void RemoveSliderListener(WarlineCaptureSliderRowView row, UnityEngine.Events.UnityAction<float> action)
+    private static void RemoveSliderListener(UISliderRowView row, UnityEngine.Events.UnityAction<float> action)
     {
         if (row != null && row.Slider != null)
             row.Slider.onValueChanged.RemoveListener(action);
     }
 
-    private static void AddToggleListener(WarlineCaptureToggleRowView row, UnityEngine.Events.UnityAction<bool> action)
+    private static void AddToggleListener(UIToggleRowView row, UnityEngine.Events.UnityAction<bool> action)
     {
         if (row != null && row.Toggle != null)
             row.Toggle.onValueChanged.AddListener(action);
     }
 
-    private static void RemoveToggleListener(WarlineCaptureToggleRowView row, UnityEngine.Events.UnityAction<bool> action)
+    private static void RemoveToggleListener(UIToggleRowView row, UnityEngine.Events.UnityAction<bool> action)
     {
         if (row != null && row.Toggle != null)
             row.Toggle.onValueChanged.RemoveListener(action);
     }
 
-    private static void AddSegmentListeners(WarlineCaptureSegmentedControlView control, System.Action<int> action)
+    private static void AddSegmentListeners(UISegmentedControlView control, System.Action<int> action)
     {
         if (control?.SegmentButtons == null)
             return;
@@ -190,12 +190,12 @@ public sealed class SettingsScreenSystem : WarlineCaptureScreenSystem
         }
     }
 
-    private static float GetSliderValue(WarlineCaptureSliderRowView row, float fallback)
+    private static float GetSliderValue(UISliderRowView row, float fallback)
     {
         return row != null && row.Slider != null ? row.Slider.value : fallback;
     }
 
-    private static bool GetToggleValue(WarlineCaptureToggleRowView row, bool fallback)
+    private static bool GetToggleValue(UIToggleRowView row, bool fallback)
     {
         return row != null && row.Toggle != null ? row.Toggle.isOn : fallback;
     }

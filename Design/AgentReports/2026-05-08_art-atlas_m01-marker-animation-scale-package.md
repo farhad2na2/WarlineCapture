@@ -11,8 +11,8 @@ Contracts touched:
 - No source/runtime contract files changed by Art/Atlas.
 - Art/Atlas accepts the updated Designer rejection contract as the current art review bar:
   - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
-  - `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+  - `Design/M01_Metric_Scale_Readability_Contract.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
 
 User-visible behavior:
 No runtime behavior changed by Art/Atlas in this pass. This report defines the art/frame/marker package Gameplay should implement before PM asks for another selected-readability review.
@@ -23,7 +23,7 @@ Validation run:
 - Read `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`.
 - Read `Design/AgentTasks/art-atlas_pm_message.md`.
 - Read `Design/AgentTasks/user_feedback_review_gate.md`.
-- Read `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`.
+- Read `Design/M01_FirstContact_Production_Contract.md`.
 - Read `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`.
 - Read `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`.
 - Reviewed `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/Manifests/Unit_Chr_Soldier_Male_02_FullSetup_Manifest.json`.

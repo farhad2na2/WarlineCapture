@@ -34,10 +34,10 @@ Held and not touched: `POP-11`, `POP-10`, `SCN-11`, `SCN-12`, `POP-06`, Operatio
 ## Source References Used
 
 - `Design/VisualLockLayered/README.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/UIUX_Mockup_Target_Alignment_Audit.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 - Current routed packages under `Design/VisualLockLayered/POP-05_MissionResult/` and `Design/VisualLockLayered/SCN-02_MainMenu/`
 
 ## Imagegen Confirmation

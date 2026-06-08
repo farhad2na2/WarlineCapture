@@ -3,8 +3,8 @@ Topic: PREFAB-05 Assistant Panel UI/support dependency
 Docs reviewed:
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/support-ftue_current.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md`
 Finding:
 The UI lane is assigned to start the `PREFAB-05_AssistantPanel` Unity Canvas prefab while the support/FTUE lane is assigned to write the detailed implementation contract for the same surface. If UI goes beyond shell/hierarchy/chrome before the support contract lands, it may invent data fields, recommendation ids, Show Me / Do It semantics, or runtime binding names.
 Why it matters:

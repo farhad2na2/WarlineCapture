@@ -4,7 +4,7 @@ Date: 2026-05-24
 
 This folder contains active 3D operation-map image packs for gameplay generation. A pack contains a visible terrain plate plus masks for blockers, tree density, rock density, and height.
 
-Use `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` before implementing or consuming these images.
+Use `Design/3D_Operation_Map_Texture_Mask_Workflow.md` before implementing or consuming these images.
 
 ## Active Packs
 

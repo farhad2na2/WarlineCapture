@@ -25,7 +25,7 @@ Contracts touched:
   - `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
   - `Design/AgentReports/2026-05-08_pm_gameplay-m01-ecs-visual-marker-animation-reset-review.md`
   - `Design/AgentTasks/user_feedback_review_gate.md`
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
 
 User-visible behavior:
 - Public M01 launch paths still reach the production M01 route and result flow.

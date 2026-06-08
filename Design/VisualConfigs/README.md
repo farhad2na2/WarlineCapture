@@ -6,7 +6,7 @@ This folder contains visual-only companion configs. These files own art and pres
 
 ## Files
 
-- `WarlineCapture_Combat_Visual_Config_v0_1.json` - visual companion for the combat catalog in `../BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`.
+- `Combat_Visual_Config_v0_1.json` - visual companion for the combat catalog in `../BalanceConfigs/Combat_Balance_Config_v0_1.json`.
 
 ## Rules
 

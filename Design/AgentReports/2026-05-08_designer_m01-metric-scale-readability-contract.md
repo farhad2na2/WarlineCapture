@@ -5,8 +5,8 @@ Task:
 Define a concise M01 tactical metric scale/readability contract after the temporary Gate 4 art rejection, so Art/Atlas, Gameplay, and QA/HCI do not guess scale, selection, movement, or public unit-presentation rules.
 
 Files changed:
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
 - `Design/README.md`
 - `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
 
@@ -27,12 +27,12 @@ Validation run:
 - `sed -n '1,240p' Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
 - `sed -n '1,220p' Design/AgentTasks/designer_pm_message.md`
 - `sed -n '1,220p' Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `sed -n '1,320p' Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `sed -n '1,260p' Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `rg -n "M01_Metric|1\\.8m|2\\.3m|0\\.10|SpriteRenderer|selection|run animation|ECS|atlas-backed|tiny decor|door" Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/README.md`
+- `sed -n '1,320p' Design/M01_FirstContact_Production_Contract.md`
+- `sed -n '1,260p' Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `rg -n "M01_Metric|1\\.8m|2\\.3m|0\\.10|SpriteRenderer|selection|run animation|ECS|atlas-backed|tiny decor|door" Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md Design/README.md`
 - `test -f` checks for the new contract and required input docs/reports.
-- `git diff -- Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/README.md`
-- `git status --short Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md Design/WarlineCapture_M01_FirstContact_Production_Contract.md Design/README.md Assets/Game/Scripts Assets/Tests`
+- `git diff -- Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md Design/README.md`
+- `git status --short Design/M01_Metric_Scale_Readability_Contract.md Design/M01_FirstContact_Production_Contract.md Design/README.md Assets/Game/Scripts Assets/Tests`
 
 Validation result:
 - Passed for documentation/contract clarity.
@@ -49,7 +49,7 @@ Known gaps:
 - QA/HCI still needs to rerun Gate 4 after Art/Atlas and Gameplay handoffs are complete.
 
 Cross-lane impacts:
-- Art/Atlas should use `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md` for asset scale/readability recommendations.
+- Art/Atlas should use `Design/M01_Metric_Scale_Readability_Contract.md` for asset scale/readability recommendations.
 - Gameplay should use it for runtime scale, selected-state treatment, movement speed, and atlas move/run validation.
 - QA/HCI should use it as the visual/readability checklist for the next public M01 rerun.
 - UI and Support/FTUE have no immediate action unless later QA/HCI finds concrete HUD, assistant, or FTUE regressions.

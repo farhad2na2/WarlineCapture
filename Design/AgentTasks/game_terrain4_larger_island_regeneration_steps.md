@@ -10,7 +10,7 @@ Source references:
 - `Assets/Game/Scenes/Game_Terrain3.unity` - source island prefab examples.
 - `Assets/Game/Scenes/Game_Terrain4.unity` - regenerated target scene.
 - `Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/` - current 2024x2024 map pack.
-- `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` - sampling and gameplay rules.
+- `Design/3D_Operation_Map_Texture_Mask_Workflow.md` - sampling and gameplay rules.
 
 ## Steps
 

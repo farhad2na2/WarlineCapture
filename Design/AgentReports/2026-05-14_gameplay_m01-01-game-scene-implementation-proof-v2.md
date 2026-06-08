@@ -33,8 +33,8 @@ Implement and prove the actual `Game.unity` M01-01 tactical-start/no-selection s
 ## Contracts touched
 
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
 - Runtime map id preserved: `iso.ch01.district_edge_01`
 - Runtime background source now resolves through the contracted map path to `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_a_source.png`
 

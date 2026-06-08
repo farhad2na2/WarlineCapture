@@ -125,7 +125,7 @@ Audit targets:
 - `Assets/Game/Scripts/Systems/UnitImpostorRenderSystem.cs`
 - `Assets/Game/Scripts/Authorings/InitialUnitsSpawnerAuthoring.cs`
 - `Assets/Game/Scripts/Authorings/UnitPrefabRegistryAuthoring.cs`
-- `Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs`
+- `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`
 
 Deliverable:
 
@@ -151,7 +151,7 @@ Current SubScene dependencies and replacement owners:
 | `InitialUnitsSpawnSystem` requires `InitialUnitsSpawnConfig`. | `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs`. | Runtime unit spawning waits for the config singleton and buffers. This is valid ECS runtime behavior, but Custom Game must create the config without a SubScene bake. | `CustomGameStartupSystem` remains the producer; `InitialUnitsSpawnSystem` remains the consumer. |
 | `RuntimeUnitPrefabSystem` can resolve live unit preview from `UnitSourcePrefabKey`. | `Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs`. | Existing runtime code already has a source-key fallback for unit preview prefab lookup. | Reuse this source-key direction for Custom Game visual/runtime data. |
 | `UnitImpostorRenderSystem` receives `UnitPrefabRegistryAuthoringConfig`. | `Assets/Game/Scripts/Systems/UnitImpostorRenderSystem.cs`. | Runtime visual rendering can use authored registry config and `UnitSourcePrefabKey`. | Step 8 should validate visible units through source-key or model counts, not through SubScene prefab candidates. |
-| `BuildingPlacementSystemConfig` currently stores initial units and unit prefab registry config references. | `Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs`. | Custom Game startup data is mixed into building placement config, which is not a clean game-mode boundary. | Step 2 creates dedicated Custom Game config contracts. Building placement config can temporarily feed migration but should not be the long-term owner. |
+| `BuildingPlacementSystemConfig` currently stores initial units and unit prefab registry config references. | `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`. | Custom Game startup data is mixed into building placement config, which is not a clean game-mode boundary. | Step 2 creates dedicated Custom Game config contracts. Building placement config can temporarily feed migration but should not be the long-term owner. |
 | Validation/tests reference scene config assets directly. | `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`, `Assets/Tests/Editor/BaseBreachValidationTests.cs`, and transport playmode tests. | Existing tests validate the scene-authored initial roster. | Step 7 should add Custom Game tests proving equivalent runtime ECS data is created without SubScene. Existing legacy tests can remain until retired by later cleanup. |
 
 Audit conclusion:

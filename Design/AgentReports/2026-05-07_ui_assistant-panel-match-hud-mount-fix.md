@@ -15,8 +15,8 @@ Contracts touched:
 - `PREFAB-05_AssistantPanel`
 - `Screen_MatchOverlay`
 - `AssistantPanelController`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
 
 User-visible behavior:
 The match HUD capture path now produces visible artifacts when run with a real graphics device. The assistant panel prefab root now uses a fixed centered 660x620 rect, so the panel stays inside `AssistantPanelDock` when opened from the ARIA entry button instead of expanding across core HUD surfaces.

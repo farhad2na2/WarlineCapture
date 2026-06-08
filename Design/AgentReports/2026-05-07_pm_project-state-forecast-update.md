@@ -4,7 +4,7 @@ Date: 2026-05-07
 
 ## Summary
 
-Updated `Design/WarlineCapture_Project_State_Source.json` and regenerated `Design/WarlineCapture_Project_State_Dashboard.md` to reflect newly accepted M01 milestone slices (Gameplay/UI/Support gates) and the current Gate 4 (QA/HCI) blocker state.
+Updated `Design/Project_State_Source.json` and regenerated `Design/Project_State_Dashboard.md` to reflect newly accepted M01 milestone slices (Gameplay/UI/Support gates) and the current Gate 4 (QA/HCI) blocker state.
 
 ## Overall Completion (Weighted)
 
@@ -38,7 +38,7 @@ No forecast date/range movement yet because the remaining critical-path risk is 
 
 ## Source Changes Made
 
-- `Design/WarlineCapture_Project_State_Source.json`
+- `Design/Project_State_Source.json`
   - Updated `completionForecast.currentOverallPercent` to 33 and refreshed forecast basis text (date/range/confidence unchanged).
   - Roadmap: `stage.playable_vertical_slice` moved to `in_progress` and updated summary to reflect accepted gates + Gate 4 pending.
   - Plans:

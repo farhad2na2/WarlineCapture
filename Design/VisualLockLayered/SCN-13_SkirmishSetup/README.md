@@ -34,8 +34,8 @@ The generated pack contains separate source groups for parent frames, child icon
 
 ## Design Source
 
-- `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/Skirmish_Mode_Implementation_Spec.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
 - `Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V22OneGo_2400x1080.png`
 

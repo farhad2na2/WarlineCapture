@@ -6,12 +6,12 @@ Files changed:
 - Assets/Game/Scenes/GameUI.unity
 - Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs
 - Assets/Game/Scripts/Editor/WarlineCaptureGameUiContentPrefabBuilder.cs
-- Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs
-- Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs
-- Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs
+- Assets/Game/Scripts/UI/Shell/UIShellRegionView.cs
+- Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs
+- Assets/Game/Scripts/UI/Shell/UIShellView.cs
 - Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs
 - Assets/Game/Scripts/UI/Shell/WarlineCaptureShellContentPresenterView.cs
-- Assets/Game/Scripts/UI/Shell/WarlineCaptureGameUiSmokeDriverView.cs
+- Assets/Game/Scripts/UI/Shell/UIGameUiSmokeDriverView.cs
 - Assets/Game/Scripts/UI/Shell/Ecs/UiShellComponents.cs
 - Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs
 - Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs

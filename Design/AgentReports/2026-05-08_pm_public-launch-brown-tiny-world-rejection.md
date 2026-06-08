@@ -36,4 +36,4 @@ Needs user decision:
 No. This is an implementation and validation quality issue.
 
 Next task update needed:
-Done in `Design/AgentTasks/gameplay_current.md`, `Design/AgentTasks/ui_current.md`, and `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+Done in `Design/AgentTasks/gameplay_current.md`, `Design/AgentTasks/ui_current.md`, and `Design/Agent_Coordination_Workflow.md`.

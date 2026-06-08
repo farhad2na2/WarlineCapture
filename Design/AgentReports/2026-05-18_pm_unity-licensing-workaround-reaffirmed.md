@@ -18,7 +18,7 @@ Unity licensing/client handshake loops are a known Codex sandbox/workspace issue
 - `Design/AgentReports/2026-05-07_pm_unity-workspace-allocation-update.md`
 - `Design/AgentReports/2026-05-07_pm_persistent-unity-approval-instruction.md`
 - `Design/AgentTasks/AUTO_CONTINUE.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 ## Mandatory Agent Behavior
 

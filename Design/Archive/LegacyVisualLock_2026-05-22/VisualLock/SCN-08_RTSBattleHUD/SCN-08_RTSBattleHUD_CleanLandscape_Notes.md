@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-08_rts_battle_hud.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-08_rts_battle_hud.jpg`.
 - Recreate in Unity as battlefield camera content plus separate HUD prefabs, not as one baked overlay image.
 
 ## Implementation Notes

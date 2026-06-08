@@ -6,7 +6,7 @@ P0 visual target-match implementation v4 for `SCN-02_MainMenu` and `POP-05_Missi
 
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
 - `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`
@@ -71,7 +71,7 @@ P0 visual target-match implementation v4 for `SCN-02_MainMenu` and `POP-05_Missi
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -runTests -testPlatform EditMode -testFilter WarlineCaptureUiMainMenuTests -testResults /private/tmp/warlinecapture-ui-mainmenu-tests-v4-results.xml -logFile /private/tmp/warlinecapture-ui-mainmenu-tests-v4.log`
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -runTests -testPlatform EditMode -testFilter WarlineCaptureUiComponentPrefabTests -testResults /private/tmp/warlinecapture-ui-component-prefab-tests-v4-results.xml -logFile /private/tmp/warlinecapture-ui-component-prefab-tests-v4.log`
 - Hygiene:
-  - `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`
+  - `git diff --check -- Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs Assets/Tests/Editor/UIMainMenuTests.cs Assets/Tests/Editor/WarlineCaptureUiComponentPrefabTests.cs Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`
 
 # Validation result
 - No-placeholder/fallback runtime asset scan: no matches.

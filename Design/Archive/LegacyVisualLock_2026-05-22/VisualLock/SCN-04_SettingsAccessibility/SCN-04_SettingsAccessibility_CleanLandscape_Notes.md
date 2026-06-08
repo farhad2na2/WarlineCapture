@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-04_SettingsAccessibility/SCN-04_SettingsAccessibility_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the same workflow that produced the accepted Main Menu and Saga targets.
-- Source references: original Settings mockup under `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets` plus the accepted `MainMenu_Landscape_Visual_Target`.
+- Source references: original Settings mockup under `Design/UIUX_Codex_Package/uiux_spec_assets` plus the accepted `MainMenu_Landscape_Visual_Target`.
 - Do not use `Assets/Game/Textures/Backgrounds` as a visual source for this target.
 - Do not treat this PNG as a baked UI background for Unity implementation. Recreate it as split canvas sections, 9-sliced panels, buttons, sliders, toggles, dropdowns, labels, and replaceable icons.
 

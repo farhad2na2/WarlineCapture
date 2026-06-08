@@ -7,7 +7,7 @@ SCN-02 Main Menu focused target-match iteration after PM/user review: center the
 # Files changed
 - `Assets/Game/Scripts/Editor/WarlineCaptureUiPhase1PrefabBuilder.cs`
 - `Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab`
-- `Assets/Tests/Editor/WarlineCaptureUiMainMenuTests.cs`
+- `Assets/Tests/Editor/UIMainMenuTests.cs`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/settings_button_frame.png`
 - `Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/settings_button_frame.png`
 - `Design/AgentReports/Captures/SCN-02_MainMenu_CleanMatchPassR8_SettingsCentered_1672x941.png`

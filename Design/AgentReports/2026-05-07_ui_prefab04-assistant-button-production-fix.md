@@ -19,9 +19,9 @@ Files changed:
 - Design/AgentReports/2026-05-07_ui_prefab04-assistant-button-production-fix.md
 
 Contracts touched:
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md: preserved typed-intent boundary; no gameplay execution logic added to UI.
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: retained state-ready assistant entry for later runtime binding.
-- Design/WarlineCapture_Art_Asset_Requirements_Register.csv: no status advancement; PM review remains required before approving generated assistant assets.
+- Design/AssistantPanel_M01_Implementation_Contract.md: preserved typed-intent boundary; no gameplay execution logic added to UI.
+- Design/AssistantRuntime_M01_Wiring_Plan.md: retained state-ready assistant entry for later runtime binding.
+- Design/Art_Asset_Requirements_Register.csv: no status advancement; PM review remains required before approving generated assistant assets.
 
 User-visible behavior:
 The closed ARIA HUD entry is now wider and more readable in 16:9 and 20:9. The waveform, ARIA label, live state text, and right-side cue have separated visual zones so they no longer compete or crowd each other. The open assistant panel behavior remains unchanged.

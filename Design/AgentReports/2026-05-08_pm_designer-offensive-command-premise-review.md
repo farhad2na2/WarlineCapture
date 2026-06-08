@@ -16,7 +16,7 @@ User-visible behavior:
 
 Validation run:
 - Reviewed the Designer handoff.
-- Reviewed the diff for `README.md`, `Design/README.md`, `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`, `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`, `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`, and `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`.
+- Reviewed the diff for `README.md`, `Design/README.md`, `Design/Gameplay_North_Star_And_Content_Grammar.md`, `Design/FTUE_And_Command_Assistant_Design.md`, `Design/LargeScale_Grid_Movement_Design.md`, and `Design/Command_Offensive_Premise_Alignment.md`.
 - Checked current lane priorities in `Design/AgentTasks/*_current.md`.
 
 Validation result:

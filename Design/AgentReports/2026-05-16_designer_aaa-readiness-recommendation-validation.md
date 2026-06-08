@@ -8,13 +8,13 @@ Owner of next action: PM/user
 ## Sources Reviewed
 
 - `Design/AgentReports/2026-05-10_pm_aaa-readiness-recommendation-approval.md`
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
-- `Design/WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/UIUX_Mockup_Target_Alignment_Audit.md`
+- `Design/Tactical_UI_Missing_Parts_Work_Order.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/VisualLockLayered/README.md`
 - Existing `Design/VisualLockLayered/` package READMEs for SCN-03, SCN-05, SCN-06, SCN-07, SCN-08, SCN-09, SCN-10, SCN-11, SCN-12, POP-01, POP-03, POP-05, POP-10, and POP-11.
 
@@ -76,9 +76,9 @@ Player-facing problem: The Main Menu is the player's first hub. Current design e
 
 Source evidence:
 
-- `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`: resource strip must bind to canonical resources; Main Menu route buttons must expose `DesignedUnavailable` states for Inbox, Store, Events, Ranking, and Command Feed when non-live.
-- `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`: Main Menu top resource should read Credits, Materials, Command Authority; Persistent Operation copy should frame district/city operation pressure, not broad global war.
-- `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`: main mode fantasy is Saga Campaign, Persistent Operation, and Quick Custom, with city pressure and district consequence.
+- `UIUX_Gameplay_Element_Alignment.md`: resource strip must bind to canonical resources; Main Menu route buttons must expose `DesignedUnavailable` states for Inbox, Store, Events, Ranking, and Command Feed when non-live.
+- `UIUX_Mockup_Target_Alignment_Audit.md`: Main Menu top resource should read Credits, Materials, Command Authority; Persistent Operation copy should frame district/city operation pressure, not broad global war.
+- `Gameplay_North_Star_And_Content_Grammar.md`: main mode fantasy is Saga Campaign, Persistent Operation, and Quick Custom, with city pressure and district consequence.
 
 Exact target-lock layered mockup change needed:
 
@@ -115,9 +115,9 @@ Player-facing problem: The result screen is where tactical victory becomes progr
 
 Source evidence:
 
-- `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`: result must expose objectives, stars, rewards, and district/civilian consequences.
-- `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`: POP-05 needs canonical rewards and a visible civilian/district consequence row.
-- `WarlineCapture_M01_FirstContact_Production_Contract.md`: result must use `saga.ch01.m01.first_contact`, `scenario.ch01.m01.first_contact`, `level.ch01.district_edge_01`, `iso.ch01.district_edge_01`, objective completion, stars/rewards, and squad survival.
+- `Gameplay_North_Star_And_Content_Grammar.md`: result must expose objectives, stars, rewards, and district/civilian consequences.
+- `UIUX_Mockup_Target_Alignment_Audit.md`: POP-05 needs canonical rewards and a visible civilian/district consequence row.
+- `M01_FirstContact_Production_Contract.md`: result must use `saga.ch01.m01.first_contact`, `scenario.ch01.m01.first_contact`, `level.ch01.district_edge_01`, `iso.ch01.district_edge_01`, objective completion, stars/rewards, and squad survival.
 
 Exact target-lock layered mockup change needed:
 
@@ -157,9 +157,9 @@ Player-facing problem: ARIA takeover is trust-critical. If control ownership is 
 
 Source evidence:
 
-- `WarlineCapture_FTUE_And_Command_Assistant_Design.md`: takeover requires explicit `Do It`, visible ownership banner, cancel/resume affordance, and instant yield on player input.
-- `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`: assistant surfaces must bind to tutorial/recommendation state and expose control ownership.
-- `WarlineCapture_M01_FirstContact_Production_Contract.md`: ARIA M01 actions must use typed ids and command intents, not screen coordinates.
+- `FTUE_And_Command_Assistant_Design.md`: takeover requires explicit `Do It`, visible ownership banner, cancel/resume affordance, and instant yield on player input.
+- `UIUX_Gameplay_Element_Alignment.md`: assistant surfaces must bind to tutorial/recommendation state and expose control ownership.
+- `M01_FirstContact_Production_Contract.md`: ARIA M01 actions must use typed ids and command intents, not screen coordinates.
 
 Exact target-lock layered mockup change needed:
 
@@ -197,9 +197,9 @@ Player-facing problem: The player is the Field Commander, separate from ARIA. Co
 
 Source evidence:
 
-- `WarlineCapture_FTUE_And_Command_Assistant_Design.md`: first launch flow includes Commander Identity; first version needs name, portrait, default frame, confirm/cancel.
-- `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`: POP-11 must bind to profile save data, commander portrait/frame/title config, unlock state, and cosmetic ownership.
-- `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`: the player fantasy is Field Commander making city operation decisions.
+- `FTUE_And_Command_Assistant_Design.md`: first launch flow includes Commander Identity; first version needs name, portrait, default frame, confirm/cancel.
+- `UIUX_Gameplay_Element_Alignment.md`: POP-11 must bind to profile save data, commander portrait/frame/title config, unlock state, and cosmetic ownership.
+- `Gameplay_North_Star_And_Content_Grammar.md`: the player fantasy is Field Commander making city operation decisions.
 
 Exact target-lock layered mockup change needed:
 
@@ -237,9 +237,9 @@ Player-facing problem: Operation should feel like a district pressure rhythm, no
 
 Source evidence:
 
-- `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`: Operation loop is Day Start -> Warnings -> Actions -> Resolution -> End Day -> Drift/Escalation.
-- `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`: SCN-11, SCN-12, POP-06 must bind to Operation state, district metrics, warnings, action availability, and day summary.
-- `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`: SCN-11/SCN-12 are designed-unavailable shells until live binding.
+- `Gameplay_North_Star_And_Content_Grammar.md`: Operation loop is Day Start -> Warnings -> Actions -> Resolution -> End Day -> Drift/Escalation.
+- `UIUX_Gameplay_Element_Alignment.md`: SCN-11, SCN-12, POP-06 must bind to Operation state, district metrics, warnings, action availability, and day summary.
+- `UIUX_Mockup_Target_Alignment_Audit.md`: SCN-11/SCN-12 are designed-unavailable shells until live binding.
 
 Exact target-lock layered mockup change needed:
 

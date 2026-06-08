@@ -30,7 +30,7 @@ Files changed:
 Contracts touched:
 - Fulfilled the UI-owned handoff requested by Design/AgentTasks/ui_current.md without editing AgentTasks.
 - Added editor-only menu command `WarlineCapture/UI/Capture M01 Route Safe Area Matrix`.
-- Capture path now instantiates `WarlineCaptureAppCanvas.prefab`, routes through `WarlineCaptureRouter` to `WarlineCaptureRoute.Match`, then configures the same eight M01 states.
+- Capture path now instantiates `UIShellAppCanvas.prefab`, routes through `WarlineCaptureRouter` to `WarlineCaptureRoute.Match`, then configures the same eight M01 states.
 - Safe-area evidence is simulated by insetting `SafeAreaRoot` before route capture; production `WarlineCaptureSafeArea` runtime behavior was not changed.
 - No runtime UI API, prefab route id, gameplay command API, asset-register status, or production source contract was changed.
 
@@ -56,7 +56,7 @@ Safe-area assumptions:
 - The simulated outer margins are visible in the captures and represent excluded cutout/rounded-corner regions. This is not real Android/device validation.
 
 Capture route:
-- The captures instantiate `WarlineCaptureAppCanvas.prefab`.
+- The captures instantiate `UIShellAppCanvas.prefab`.
 - `WarlineCaptureRouter.Initialize()` and `WarlineCaptureRouter.GoTo(WarlineCaptureRoute.Match, false)` drive the visible route.
 - Match state presentation reuses the accepted M01 HUD state configuration for match start, squad selected, move feedback, attack feedback, invalid command recovery, assistant open, assistant takeover/Stop, and result popup.
 

@@ -17,9 +17,9 @@ This package follows the proven `SCN-08_RTSBattleHUD` one-go layer export workfl
 ## Alignment Requirements
 
 - Remove `Tokens`, `120 Tokens`, and `Intel Keys`.
-- Use only canonical resources/rewards from `WarlineCapture_Economy_Reward_Design.md`.
+- Use only canonical resources/rewards from `Economy_Reward_Design.md`.
 - Store grants must be deterministic and must not directly grant SagaStars or Operation metric deltas.
-- Product content follows `Design/Monetization/WarlineCapture_Monetization_Store_Catalog.md`.
+- Product content follows `Design/Monetization/Monetization_Store_Catalog.md`.
 - TMP text remains live text in Unity; reusable sprites must not bake labels or values.
 
 ## Generated Assets

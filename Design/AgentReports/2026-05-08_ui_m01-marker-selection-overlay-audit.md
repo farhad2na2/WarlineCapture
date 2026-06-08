@@ -29,7 +29,7 @@ Audit and fix UI ownership for the rejected M01 target/selection overlay issues:
   - `Design/AgentTasks/ui_current.md`
   - `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
   - `Design/AgentTasks/user_feedback_review_gate.md`
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
 - Inspected ownership paths:
   - `Assets/Game/Scripts/UI/Components/BattleHudGameplayBridge.cs`
   - `Assets/Game/Scripts/UI/Components/BattleHudTacticalFeedbackController.cs`

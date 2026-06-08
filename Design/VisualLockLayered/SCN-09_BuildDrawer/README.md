@@ -33,9 +33,9 @@ The V01 pack contains separate chrome, building thumbnails, and icons. Parent pa
 
 ## Design Source
 
-- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
-- `Design/WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/Field_Logistics_Oil_Fuel_Design.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 - Building and unit config source: `Assets/Game/Configs/Prefabs`
 

@@ -23,7 +23,7 @@ Agents should wire references explicitly through serialized fields, prefab build
 
 ## Files Changed
 
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 - `Design/AgentTasks/README.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/ui_current.md`

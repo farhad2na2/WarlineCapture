@@ -4,7 +4,7 @@
 - Canonical target: `Design/VisualLock/POP-09_AbilityUpgradeDetail/POP-09_AbilityUpgradeDetail_Landscape_Target.png`.
 - Layered package: `Design/VisualLockLayered/POP-09_AbilityUpgradeDetail`.
 - Direction: generated AAA popup target using the accepted WarlineCapture dark graphite, cyan edge, amber CTA military RTS UI style.
-- Gameplay source: ability and upgrade availability specs in `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`.
+- Gameplay source: ability and upgrade availability specs in `BalanceConfigs/Combat_Balance_Config_v0_1.json`.
 
 ## Implementation Notes
 

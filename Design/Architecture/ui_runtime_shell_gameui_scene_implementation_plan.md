@@ -37,10 +37,10 @@ New runtime scripts:
 
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellComponents.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellRegionView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs`
-- `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs`
+- `Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellButtonRequestView.cs`
 
 New configs/prefabs:

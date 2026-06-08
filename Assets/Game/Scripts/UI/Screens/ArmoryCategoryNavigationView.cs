@@ -82,7 +82,7 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
         if (button == null)
             return;
 
-        WarlineCaptureShellRouteButtonView routeButton = button.GetComponent<WarlineCaptureShellRouteButtonView>();
+        UIShellRouteButtonView routeButton = button.GetComponent<UIShellRouteButtonView>();
         if (routeButton != null)
             routeButton.enabled = false;
     }

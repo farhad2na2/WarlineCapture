@@ -20,10 +20,10 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "Design" / "Marketing" / "SampleVideo"
-VIDEO_PATH = OUT_DIR / "WarlineCapture_Sample_Marketing_Video.mp4"
-PREVIEW_PATH = OUT_DIR / "WarlineCapture_Sample_Marketing_Video_Preview.png"
-MANIFEST_PATH = OUT_DIR / "WarlineCapture_Sample_Marketing_Video_Manifest.json"
-QA_PATH = OUT_DIR / "WarlineCapture_Sample_Marketing_Video_QA.md"
+VIDEO_PATH = OUT_DIR / "Sample_Marketing_Video.mp4"
+PREVIEW_PATH = OUT_DIR / "Sample_Marketing_Video_Preview.png"
+MANIFEST_PATH = OUT_DIR / "Sample_Marketing_Video_Manifest.json"
+QA_PATH = OUT_DIR / "Sample_Marketing_Video_QA.md"
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -360,9 +360,9 @@ def build_video() -> dict:
         "durationSeconds": round(total_frames / FPS, 2),
         "frameCount": total_frames,
         "sourceDocs": [
-            "Design/WarlineCapture_Economy_Reward_Design.md",
-            "Design/Monetization/WarlineCapture_Monetization_Strategy.md",
-            "Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md",
+            "Design/Economy_Reward_Design.md",
+            "Design/Monetization/Monetization_Strategy.md",
+            "Design/UIUX_Gameplay_Element_Alignment.md",
         ],
         "sourceImages": [scene.source for scene in SCENES],
         "scenes": [scene.__dict__ for scene in SCENES],

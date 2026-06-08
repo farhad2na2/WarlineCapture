@@ -4,9 +4,9 @@ Docs reviewed:
 - `Design/AgentTasks/pm_design-audit.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/qa-hci_current.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
+- `Design/Agent_Coordination_Workflow.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/2D_Isometric_Production_Direction.md`
 - `Design/AgentReports/2026-05-08_pm_gameplay-m01-ground-orientation-review.md`
 
 Finding:

@@ -15,9 +15,9 @@ public static class SettingsService
     private const string ColorblindModeKey = Prefix + "Accessibility.ColorblindMode";
     private const string LanguageKey = Prefix + "Localization.Language";
 
-    public static event System.Action<WarlineCaptureSettingsModel> RuntimeApplied;
+    public static event System.Action<UISettingsModel> RuntimeApplied;
 
-    public static WarlineCaptureSettingsModel Defaults => new()
+    public static UISettingsModel Defaults => new()
     {
         Audio = new AudioSettingsModel
         {
@@ -27,8 +27,8 @@ public static class SettingsService
         },
         Graphics = new GraphicsSettingsModel
         {
-            Quality = WarlineCaptureGraphicsQuality.High,
-            FrameRateMode = WarlineCaptureFrameRateMode.Sixty
+            Quality = UIGraphicsQuality.High,
+            FrameRateMode = UIFrameRateMode.Sixty
         },
         Controls = new ControlsSettingsModel
         {
@@ -42,18 +42,18 @@ public static class SettingsService
         {
             HighContrastUi = false,
             LargeText = false,
-            ColorblindMode = WarlineCaptureColorblindMode.Off
+            ColorblindMode = UIColorblindMode.Off
         },
         Localization = new LocalizationSettingsModel
         {
-            Language = WarlineCaptureLanguage.English
+            Language = UILanguage.English
         }
     };
 
-    public static WarlineCaptureSettingsModel Load()
+    public static UISettingsModel Load()
     {
-        WarlineCaptureSettingsModel defaults = Defaults;
-        return new WarlineCaptureSettingsModel
+        UISettingsModel defaults = Defaults;
+        return new UISettingsModel
         {
             Audio = new AudioSettingsModel
             {
@@ -87,7 +87,7 @@ public static class SettingsService
         };
     }
 
-    public static void Save(WarlineCaptureSettingsModel model)
+    public static void Save(UISettingsModel model)
     {
         PlayerPrefs.SetFloat(MasterVolumeKey, Mathf.Clamp(model.Audio.MasterVolume, 0f, 100f));
         PlayerPrefs.SetFloat(MusicVolumeKey, Mathf.Clamp(model.Audio.MusicVolume, 0f, 100f));
@@ -103,21 +103,21 @@ public static class SettingsService
         PlayerPrefs.Save();
     }
 
-    public static WarlineCaptureSettingsModel ResetToDefaults()
+    public static UISettingsModel ResetToDefaults()
     {
-        WarlineCaptureSettingsModel defaults = Defaults;
+        UISettingsModel defaults = Defaults;
         Save(defaults);
         return defaults;
     }
 
-    public static void ApplyRuntime(WarlineCaptureSettingsModel model)
+    public static void ApplyRuntime(UISettingsModel model)
     {
         AudioListener.volume = Mathf.Clamp01(model.Audio.MasterVolume / 100f);
         Application.targetFrameRate = model.Graphics.FrameRateMode switch
         {
-            WarlineCaptureFrameRateMode.Thirty => 30,
-            WarlineCaptureFrameRateMode.Sixty => 60,
-            WarlineCaptureFrameRateMode.OneTwenty => 120,
+            UIFrameRateMode.Thirty => 30,
+            UIFrameRateMode.Sixty => 60,
+            UIFrameRateMode.OneTwenty => 120,
             _ => -1
         };
 

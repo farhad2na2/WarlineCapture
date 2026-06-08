@@ -15,9 +15,9 @@ Files changed:
 - Design/AgentReports/2026-05-07_ui_assistant-runtime-binding.md
 
 Contracts touched:
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md: preserved the typed assistant boundary; UI does not execute gameplay through hierarchy, HUD text, or screen coordinates.
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: consumed `WarlineCaptureAssistantService`, `AssistantContextProvider`, and `CommandIntentExecutor` through the accepted runtime handoff.
-- Design/WarlineCapture_Art_Asset_Requirements_Register.csv: not advanced; asset rows remain pending until runtime binding and final integration are PM-reviewed.
+- Design/AssistantPanel_M01_Implementation_Contract.md: preserved the typed assistant boundary; UI does not execute gameplay through hierarchy, HUD text, or screen coordinates.
+- Design/AssistantRuntime_M01_Wiring_Plan.md: consumed `WarlineCaptureAssistantService`, `AssistantContextProvider`, and `CommandIntentExecutor` through the accepted runtime handoff.
+- Design/Art_Asset_Requirements_Register.csv: not advanced; asset rows remain pending until runtime binding and final integration are PM-reviewed.
 
 User-visible behavior:
 The match HUD assistant entry now evaluates live M01 assistant context, drives `AssistantButtonView.SetState(...)` from typed recommendation/readiness/control state, and opens the assistant panel with `WarlineCaptureAssistantService.CreatePresentationData()` instead of the old placeholder. `Show Me` sets assistant-owned preview state only, `Do It` routes through `CommandIntentExecutor`, and `Stop` clears assistant-owned preview/takeover state.

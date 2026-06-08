@@ -21,9 +21,9 @@ Files changed:
 - Assets/Tests/Editor/WarlineCaptureUiMatchOverlayTests.cs
 
 Contracts touched:
-- Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md: preserved typed-intent boundary; no gameplay execution logic added to UI.
-- Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md: prefab now exposes visual states for future runtime binding.
-- Design/WarlineCapture_Art_Asset_Requirements_Register.csv: referenced `aria.icon.waveform` and `aria.button.state_set`; rows intentionally left `missing` / `not_reviewed` / `not_started` pending PM approval.
+- Design/AssistantPanel_M01_Implementation_Contract.md: preserved typed-intent boundary; no gameplay execution logic added to UI.
+- Design/AssistantRuntime_M01_Wiring_Plan.md: prefab now exposes visual states for future runtime binding.
+- Design/Art_Asset_Requirements_Register.csv: referenced `aria.icon.waveform` and `aria.button.state_set`; rows intentionally left `missing` / `not_reviewed` / `not_started` pending PM approval.
 
 User-visible behavior:
 The match HUD ARIA entry now uses `PREFAB-04_AssistantButton` instead of the old inline text-only chrome button. The reusable prefab has transparent separated art, live TMP labels, animated button transition support, and five visual states: idle, recommendation, critical, takeover/control, and muted.

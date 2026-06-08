@@ -62,7 +62,7 @@ Use:
 - `Design/VisualLockLayered/SCN-02_MainMenu/layers/`
 - `Design/VisualLockLayered/SCN-02_MainMenu/layer_manifest.json`
 - `Design/VisualLockLayered/SCN-02_MainMenu/README.md`
-- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/UIUX_MainMenu_Visual_Contract.md`
 
 Do not use:
 

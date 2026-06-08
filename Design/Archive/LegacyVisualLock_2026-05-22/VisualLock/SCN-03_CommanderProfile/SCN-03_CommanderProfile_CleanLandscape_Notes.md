@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted Main Menu, Saga, and Settings visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-03_commander_profile.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-03_commander_profile.jpg`.
 - Do not use this PNG as a baked Unity UI background. Recreate it with separate profile portrait, tabs, stat tiles, reward track nodes, icon buttons, and 9-sliced panels.
 
 ## Implementation Notes

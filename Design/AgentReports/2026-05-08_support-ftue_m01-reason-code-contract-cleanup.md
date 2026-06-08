@@ -1,23 +1,23 @@
 Lane: Support/FTUE
 Task: Aligned M01 invalid-command and assistant recovery documentation to the canonical production-contract reason-code enum.
 Files changed:
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
 - `Design/AgentReports/2026-05-08_support-ftue_m01-reason-code-contract-cleanup.md`
 Contracts touched:
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md`
-- `Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
+- `Design/Gameplay_UI_Integration_Handoff_Spec.md`
+- `Design/AssistantRuntime_M01_Wiring_Plan.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
 - `Design/AgentReports/2026-05-08_pm_design-audit-command-reason-code-mismatch.md`
 User-visible behavior:
 - No runtime behavior changed.
 - M01 invalid-command recovery docs now consistently use the production-contract reason codes for UI, ARIA, and QA Gate 4 assertions.
 Validation run:
 - Documentation grep for stale aliases and canonical reason-code references:
-  - `rg -n "InvalidTarget|BlockedRoute|OutOfRange|InsufficientResources|BuildModeUnavailable|AbilityOnCooldown|TransportUnavailable" Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-  - `rg -n "TargetOutOfBounds|TargetBlocked|TargetUnreachable|TargetNotEnemy|TargetNotAttackable|CommandUnavailable|MissionDoesNotAllowBuild|CameraJumpUnavailable|NoSelection" Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+  - `rg -n "InvalidTarget|BlockedRoute|OutOfRange|InsufficientResources|BuildModeUnavailable|AbilityOnCooldown|TransportUnavailable" Design/Gameplay_UI_Integration_Handoff_Spec.md Design/AssistantRuntime_M01_Wiring_Plan.md Design/AssistantPanel_M01_Implementation_Contract.md`
+  - `rg -n "TargetOutOfBounds|TargetBlocked|TargetUnreachable|TargetNotEnemy|TargetNotAttackable|CommandUnavailable|MissionDoesNotAllowBuild|CameraJumpUnavailable|NoSelection" Design/Gameplay_UI_Integration_Handoff_Spec.md Design/AssistantRuntime_M01_Wiring_Plan.md Design/AssistantPanel_M01_Implementation_Contract.md`
 Validation result:
 - The active M01 assistant/handoff contracts now list canonical reason codes: `NoSelection`, `TargetOutOfBounds`, `TargetBlocked`, `TargetUnreachable`, `TargetNotEnemy`, `TargetNotAttackable`, `CommandUnavailable`, `MissionDoesNotAllowBuild`, and `CameraJumpUnavailable`.
 - Earlier aliases remain only in explicit deprecation/out-of-scope notes and are no longer the active M01 recovery table.

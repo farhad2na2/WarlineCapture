@@ -19,7 +19,7 @@ No runtime behavior changed. The new movement design clarifies how the README ph
 
 Validation run:
 - Reviewed `Design/AgentReports/2026-05-08_designer_large-scale-grid-movement-design.md`.
-- Reviewed `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`.
+- Reviewed `Design/LargeScale_Grid_Movement_Design.md`.
 - Compared the handoff against `Design/AgentTasks/designer_current.md`.
 
 Validation result:

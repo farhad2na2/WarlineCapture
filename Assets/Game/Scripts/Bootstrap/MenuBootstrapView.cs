@@ -7,26 +7,26 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
     [SerializeField] private Camera uiCamera;
     [SerializeField] private Canvas uiCanvas;
-    [SerializeField] private WarlineCaptureShellView shellView;
-    [SerializeField] private WarlineCaptureShellEcsPresentationSystem shellEcsPresentation;
-    [SerializeField] private WarlineCaptureShellContentSystem contentSystem;
-    [SerializeField] private WarlineCaptureRouter router;
+    [SerializeField] private UIShellView shellView;
+    [SerializeField] private UIShellEcsPresentationSystem shellEcsPresentation;
+    [SerializeField] private UIShellContentSystem contentSystem;
+    [SerializeField] private UIRouter router;
 
     public Camera UiCamera => uiCamera;
     public Canvas UiCanvas => uiCanvas;
-    public WarlineCaptureShellView ShellView => shellView;
-    public WarlineCaptureShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
-    public WarlineCaptureShellContentSystem ContentSystem => contentSystem;
-    public WarlineCaptureRouter Router => router;
+    public UIShellView ShellView => shellView;
+    public UIShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
+    public UIShellContentSystem ContentSystem => contentSystem;
+    public UIRouter Router => router;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
 
     public void Configure(
         Camera configuredUiCamera,
         Canvas configuredUiCanvas,
-        WarlineCaptureShellView configuredShellView,
-        WarlineCaptureShellEcsPresentationSystem configuredShellEcsPresentation,
-        WarlineCaptureShellContentSystem configuredContentSystem,
-        WarlineCaptureRouter configuredRouter)
+        UIShellView configuredShellView,
+        UIShellEcsPresentationSystem configuredShellEcsPresentation,
+        UIShellContentSystem configuredContentSystem,
+        UIRouter configuredRouter)
     {
         uiCamera = configuredUiCamera;
         uiCanvas = configuredUiCanvas;

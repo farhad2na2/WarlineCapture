@@ -1,7 +1,7 @@
 Lane: Workflow
 Task: Add persistent file-based completion report rule for Codex task close-out.
 Files changed:
-- Design/WarlineCapture_Agent_Coordination_Workflow.md
+- Design/Agent_Coordination_Workflow.md
 - Design/AgentReports/2026-05-07_workflow_completion-report-file-rule.md
 Contracts touched: Agent completion reporting workflow; required report file path convention.
 User-visible behavior: Future task close-outs should include a saved Markdown report under Design/AgentReports and mention that file in the final response.

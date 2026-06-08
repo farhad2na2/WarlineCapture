@@ -18,20 +18,20 @@ Updated the design source of truth to return WarlineCapture to a full 3D single-
 
 ## Key Files Updated
 
-- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/README.md`
 - `README.md`
-- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
-- `Design/WarlineCapture_2D_Isometric_Art_Bible.md`
-- `Design/WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
-- `Design/WarlineCapture_MacroTile_Terrain_Production_Plan.md`
-- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/Gameplay_North_Star_And_Content_Grammar.md`
+- `Design/Command_Offensive_Premise_Alignment.md`
+- `Design/Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/2D_Isometric_Production_Direction.md`
+- `Design/2D_Isometric_Art_Bible.md`
+- `Design/2D_Isometric_Implementation_Validation_Plan.md`
+- `Design/MacroTile_Terrain_Production_Plan.md`
+- `Design/UIUX_MainMenu_Visual_Contract.md`
 
 ## Follow-Up Needed
 
-- UI agent should regenerate/update visual targets for the menu surfaces listed in `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`.
+- UI agent should regenerate/update visual targets for the menu surfaces listed in `3D_SingleMap_Gameplay_Direction.md`.
 - Gameplay/PM should decide when M01 can expand beyond the current infantry-only playable-slice gate.
 - Project-state dashboard may need regeneration after PM updates the project-state JSON.

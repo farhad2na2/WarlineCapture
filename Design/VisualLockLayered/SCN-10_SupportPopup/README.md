@@ -43,6 +43,6 @@ Current separated layers are a clean placeholder layer pack for implementation p
 
 ## Design Source
 
-- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
 - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 - `Design/VisualLockLayered/SCN-09_BuildDrawer/README.md`

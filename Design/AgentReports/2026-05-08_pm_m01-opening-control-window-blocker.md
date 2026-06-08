@@ -15,8 +15,8 @@ Files changed:
 Contracts touched:
 - None changed. Existing contracts already require this behavior before M02:
   - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-  - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-  - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+  - `Design/M01_FirstContact_Production_Contract.md`
+  - `Design/FTUE_And_Command_Assistant_Design.md`
 
 User-visible behavior:
 - Current observed behavior is not acceptable for M01: the enemy can shoot and kill player units immediately after launch, before the player understands they have soldiers or can order movement.
@@ -28,7 +28,7 @@ Validation run:
 Validation result:
 - Needs fixes. This was planned before M02, not after.
 - `Design/AgentTasks/M01_CRITICAL_PATH.md` blocks M02-M05 expansion until Gate 4 has no blocker findings.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md` defines the M01 teaching goal as select, move, attack, read objective, and finish result.
+- `Design/M01_FirstContact_Production_Contract.md` defines the M01 teaching goal as select, move, attack, read objective, and finish result.
 - The same contract states the enemy patrol should patrol or hold along `route.enemy_patrol_01` until engaged.
 - The user-observed immediate death prevents the select/move teaching goal and should fail Gate 4.
 

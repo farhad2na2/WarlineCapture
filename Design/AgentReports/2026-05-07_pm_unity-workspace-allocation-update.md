@@ -21,7 +21,7 @@ Linked into the new workspace:
 Updated:
 
 - `Design/AgentTasks/AUTO_CONTINUE.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
+- `Design/Agent_Coordination_Workflow.md`
 
 ## Policy
 

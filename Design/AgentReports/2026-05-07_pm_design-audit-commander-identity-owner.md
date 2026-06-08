@@ -1,9 +1,9 @@
 Status: advisory
 Topic: Commander Identity screen is defined but has no active lane owner
 Docs reviewed:
-- `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
-- `Design/WarlineCapture_Art_Asset_Requirements_Register.csv`
+- `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/Art_Asset_Requirements_Register.md`
+- `Design/Art_Asset_Requirements_Register.csv`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/support-ftue_current.md`

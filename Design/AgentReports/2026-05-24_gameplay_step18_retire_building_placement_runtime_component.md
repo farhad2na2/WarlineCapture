@@ -36,7 +36,7 @@ Validation result
 - Passed: AIProductionValidationTests, 1 total, 1 passed, 0 failed.
 - Passed: production source has no BuildingPlacementRuntimeComponent references.
 - Passed: focused diff whitespace check for Step 18 files.
-- Note: repository-wide git status still includes unrelated UI lane changes in Assets/Game/Scenes/GameUI.unity, Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs.meta, and Design/AgentReports/2026-05-24_ui_gameui-scene-step3.md.
+- Note: repository-wide git status still includes unrelated UI lane changes in Assets/Game/Scenes/GameUI.unity, Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs.meta, and Design/AgentReports/2026-05-24_ui_gameui-scene-step3.md.
 
 Known gaps
 - BuildingPlacementSystem still exists as the compatibility facade and is currently 2474 lines.

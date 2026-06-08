@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-12_DistrictDetailActions/SCN-12_DistrictDetailActions_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-12_district_detail_actions.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-12_district_detail_actions.jpg`.
 - Recreate in Unity as separate district image, stat rows, intel panels, activity rows, and action buttons.
 
 ## Implementation Notes

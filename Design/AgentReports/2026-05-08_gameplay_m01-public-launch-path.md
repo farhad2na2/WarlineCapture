@@ -21,7 +21,7 @@ Files changed:
 - Assets/Game/Scripts/Systems/UnitModelSpawnSystem.cs
 - Assets/Game/Scripts/TacticalMaps/TacticalMapRuntimeLoader.cs
 - Assets/Game/Scripts/UI/RTSSelectionSystem.cs
-- Assets/Game/Scripts/UI/Shell/WarlineCaptureRouter.cs
+- Assets/Game/Scripts/UI/Shell/UIRouter.cs
 - Assets/Tests/PlayMode/Chapter01M01PlayModeValidationTests.cs
 - Design/AgentReports/Captures/2026-05-08_m01-public-launch/campaign-public-m01.png
 - Design/AgentReports/Captures/2026-05-08_m01-public-launch/campaign-public-m01-20x9.png

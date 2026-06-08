@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-07_LoadoutSquadPrep/SCN-07_LoadoutSquadPrep_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-07_loadout_squad_prep.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-07_loadout_squad_prep.jpg`.
 - Recreate in Unity as separate unit cards, support slots, gear cards, mission summary, and deploy CTA.
 
 ## Implementation Notes

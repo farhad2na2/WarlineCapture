@@ -3,7 +3,7 @@
 - Canvas: 1672 x 941.
 - Canonical target: `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png`.
 - Direction: generated AAA landscape target using the accepted WarlineCapture visual-lock style.
-- Source reference: `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/SCN-11_operation_dashboard.jpg`.
+- Source reference: `Design/UIUX_Codex_Package/uiux_spec_assets/SCN-11_operation_dashboard.jpg`.
 - Recreate in Unity as modular strategic-map UI with real district hit areas and data-bound metric panels.
 
 ## Implementation Notes

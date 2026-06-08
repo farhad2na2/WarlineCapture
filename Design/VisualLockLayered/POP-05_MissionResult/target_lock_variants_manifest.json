@@ -1,6 +1,6 @@
 {
   "surface": "POP-05_MissionResult",
-  "canonicalSpec": "Design/WarlineCapture_Mission_Result_State_Spec.md",
+  "canonicalSpec": "Design/Mission_Result_State_Spec.md",
   "sharedLayerPack": "layer_manifest.json",
   "variantLayerPack": "generated_variants_v01/layer_manifest.json",
   "canonicalSize": {

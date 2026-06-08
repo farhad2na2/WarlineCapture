@@ -12,7 +12,7 @@ Files changed:
 - `Design/AgentReports/2026-05-07_ui_assistant-panel-contract-alignment.md`
 
 Contracts touched:
-- `Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+- `Design/AssistantPanel_M01_Implementation_Contract.md`
 - `PREFAB-05_AssistantPanel`
 - `AssistantPanelView.BindRecommendation`
 - `AssistantPanelView.SetActionAvailability`
@@ -36,4 +36,4 @@ Cross-lane impacts:
 Support/FTUE can now bind M01 recommendation text, chips, and action availability without relying on child-path writes or baked text. Gameplay/FTUE still need the future controller/service to translate live M01 context into these view calls.
 
 Next recommended task:
-Implement the assistant panel presentation controller and first M01 recommendation producer using typed ids from `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`.
+Implement the assistant panel presentation controller and first M01 recommendation producer using typed ids from `AssistantPanel_M01_Implementation_Contract.md`.

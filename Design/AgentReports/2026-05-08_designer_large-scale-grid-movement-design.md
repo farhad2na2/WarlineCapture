@@ -6,7 +6,7 @@ Task: Evaluate the README `large-scale grid-based movement` promise and create a
 
 Files changed:
 
-- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/LargeScale_Grid_Movement_Design.md`
 - `Design/README.md`
 - `README.md`
 
@@ -23,9 +23,9 @@ User-visible behavior:
 
 Validation run:
 
-- `rg -n "LargeScale_Grid_Movement|large-scale grid|large-scale movement|Large-Scale Grid" README.md Design/README.md Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
-- `test -f Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
-- `git status --short README.md Design/README.md Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `rg -n "LargeScale_Grid_Movement|large-scale grid|large-scale movement|Large-Scale Grid" README.md Design/README.md Design/LargeScale_Grid_Movement_Design.md`
+- `test -f Design/LargeScale_Grid_Movement_Design.md`
+- `git status --short README.md Design/README.md Design/LargeScale_Grid_Movement_Design.md`
 
 Validation result:
 

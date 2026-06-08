@@ -2,8 +2,8 @@ Status: needs fixes
 Topic:
 Project state dashboard has stale Gate 4 blocker language
 Docs reviewed:
-- `Design/WarlineCapture_Project_State_Source.json`
-- `Design/WarlineCapture_Project_State_Dashboard.md`
+- `Design/Project_State_Source.json`
+- `Design/Project_State_Dashboard.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/qa-hci_current.md`
@@ -12,7 +12,7 @@ The project state source and generated dashboard still describe the Playable Ver
 Why it matters:
 The dashboard is the user-facing progress and forecast tracker. If it names an already accepted blocker, agents and PM planning can over-focus on completed work, underestimate the safe-area/device evidence gap, and make the current 33% forecast basis harder to interpret.
 Recommended fix:
-After the next accepted milestone or explicit PM state update, update `Design/WarlineCapture_Project_State_Source.json` so the Playable Vertical Slice summary and UI Visual Lock next/in-progress text name the current blocker: `Design/AgentReports/2026-05-08_ui_m01-route-driven-capture-safe-area-tooling.md` followed by `Design/AgentReports/2026-05-08_qa-hci_m01-player-route-safe-area-rerun.md`. Then regenerate `Design/WarlineCapture_Project_State_Dashboard.md` with `Tools/ProjectState/generate_project_state_dashboard.py`.
+After the next accepted milestone or explicit PM state update, update `Design/Project_State_Source.json` so the Playable Vertical Slice summary and UI Visual Lock next/in-progress text name the current blocker: `Design/AgentReports/2026-05-08_ui_m01-route-driven-capture-safe-area-tooling.md` followed by `Design/AgentReports/2026-05-08_qa-hci_m01-player-route-safe-area-rerun.md`. Then regenerate `Design/Project_State_Dashboard.md` with `Tools/ProjectState/generate_project_state_dashboard.py`.
 Affected lanes:
 - PM
 - UI

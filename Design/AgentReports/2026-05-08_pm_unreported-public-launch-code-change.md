@@ -6,7 +6,7 @@ Source:
 PM heartbeat review of workspace state after routing the public M01 launch blocker to Gameplay/UI.
 
 Finding:
-`Assets/Game/Scripts/UI/Shell/WarlineCaptureGameLaunchUtility.cs` has an uncommitted code change that appears to route `saga.ch01.m01.first_contact` through a new `StartM01ProductionRoute` path. No matching Gameplay or UI completion report has landed yet:
+`Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs` has an uncommitted code change that appears to route `saga.ch01.m01.first_contact` through a new `StartM01ProductionRoute` path. No matching Gameplay or UI completion report has landed yet:
 - Missing `Design/AgentReports/2026-05-08_gameplay_m01-public-launch-path.md`
 - Missing `Design/AgentReports/2026-05-08_ui_m01-public-launch-path.md`
 

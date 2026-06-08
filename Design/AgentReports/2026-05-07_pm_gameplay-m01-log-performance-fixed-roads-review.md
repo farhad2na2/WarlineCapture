@@ -12,7 +12,7 @@ Validation accepted:
 - `Chapter01M01PlayableRuntimeTests`: 8/8 passed in `/private/tmp/warlinecapture-m01-playable-results.xml`.
 - `Chapter01M01PlayModeValidationTests`: 3/3 passed in `/private/tmp/warlinecapture-m01-log-cleanup-playmode-results.xml`.
 - PlayMode log comparison supports the report claim that the prior `RuntimeCitySpawner=1350.3ms` hitch and broad `InitialBase` spawn are gone.
-- Guardrail audit exists at `Design/WarlineCapture_M01_Legacy_Runtime_Guardrails.md`.
+- Guardrail audit exists at `Design/M01_Legacy_Runtime_Guardrails.md`.
 
 Validation still needed:
 - Player/device or non-headless confirmation for the Unity Entities Graphics/resource-GC `NullReferenceException` before treating it as fully harmless.

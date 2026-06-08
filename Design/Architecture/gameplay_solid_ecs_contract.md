@@ -10,6 +10,8 @@ Runtime gameplay code must not introduce singleton access patterns. `static Inst
 
 Domain gameplay runtime types must be named for ECS, not application-layer patterns. New domain gameplay types should end in `Entity`, `Component`, or `System`. Canvas/reference UI types may end in `View`. ScriptableObject data may end in `Config`. Unity conversion-edge types may end in `Authoring` or `Baker`.
 
+Source asset filenames must not start with the project/product name. Use feature or domain prefixes such as `UI`, `Gameplay`, `Unit`, `Building`, `Vehicle`, `Config`, `Save`, `Audio`, or `Brand`, and preserve Unity `.meta` files during renames. The full naming rule is tracked in `Design/Architecture/file_naming_architecture_contract.md`.
+
 Faction identity is centralized in `FactionIdentitySystem`: faction `0` is neutral/non-commandable, faction `1` is the player, and faction `2+` is hostile/AI by default. Gameplay code must not hard-code `Faction.Id == 0` as player control or `Faction.Id != 0` as enemy control; it must use `FactionIdentitySystem` helpers so neutral authored map buildings and units remain non-commandable.
 
 ## Responsibilities

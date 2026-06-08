@@ -42,10 +42,10 @@ Not touched by Gameplay:
   - Runtime presentation stays in ECS data/components/systems.
   - Editor proof code remains editor tooling.
   - No M01-specific scene startup replacement was added.
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/M01_FirstContact_Production_Contract.md`
   - Kept `IsoMapId: iso.ch01.district_edge_01`.
   - Did not invent a replacement mission/map id.
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/M01_Metric_Scale_Readability_Contract.md`
   - Soldier rendering remains ECS/runtime presentation, not pasted target pixels.
 - Visual lock source notes:
   - `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/SourceNotes.md` states Art/UI still needs to produce or approve a clean no-HUD/no-unit camera plate or runtime terrain capture matching `CameraLock_M01_DefaultStart.json`.

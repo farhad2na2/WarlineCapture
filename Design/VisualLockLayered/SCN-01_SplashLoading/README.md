@@ -33,8 +33,8 @@ This screen is the shared WarlineCapture loading surface. It appears on app star
 
 ## Design Source
 
-- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+- `Design/UIUX_Gameplay_Element_Alignment.md`
+- `Design/UIUX_Implementation_Detailed_Spec.md`
 - `Design/VisualLockLayered/SCN-02_MainMenu/README.md`
 - `Design/VisualLockLayered/README.md`
 

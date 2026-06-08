@@ -10,8 +10,8 @@ Files changed:
 Contracts touched:
 - Design/AgentTasks/qa-hci_current.md: continued the active QA/HCI rerun after the UI handoff landed; no task files were edited.
 - Design/AgentReports/2026-05-08_ui_m01-route-driven-capture-safe-area-tooling.md: consumed the UI route-driven capture and safe-area tooling handoff.
-- Design/WarlineCapture_M01_FirstContact_Production_Contract.md, Design/WarlineCapture_Gameplay_UI_Integration_Handoff_Spec.md, Design/WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md, and Design/WarlineCapture_AssistantPanel_M01_Implementation_Contract.md: checked current command reason-code expectations against runtime/code evidence.
-- Design/WarlineCapture_Art_Asset_Requirements_Register.md and Design/WarlineCapture_Art_Asset_Requirements_Register.csv: checked M01 marker/VFX asset status.
+- Design/M01_FirstContact_Production_Contract.md, Design/Gameplay_UI_Integration_Handoff_Spec.md, Design/AssistantRuntime_M01_Wiring_Plan.md, and Design/AssistantPanel_M01_Implementation_Contract.md: checked current command reason-code expectations against runtime/code evidence.
+- Design/Art_Asset_Requirements_Register.md and Design/Art_Asset_Requirements_Register.csv: checked M01 marker/VFX asset status.
 - No runtime API, prefab path, route id, mission id, data schema, source contract, asset row, or production source file was changed by QA/HCI.
 
 User-visible behavior:
@@ -116,7 +116,7 @@ Can my lane still continue fallback work? no. QA/HCI consumed the available UI h
 - Affected lane: gameplay / UI / support-FTUE.
 - Reproduction steps:
   1. Run `rg -n "enum TacticalCommandReasonCode|InvalidTarget|BlockedRoute|OutOfRange|BuildModeUnavailable|InsufficientResources|AbilityOnCooldown|TransportUnavailable" Assets/Game/Scripts Assets/Tests -g '*.cs'`.
-  2. Compare results to the canonical M01 reason codes in `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`.
+  2. Compare results to the canonical M01 reason codes in `Design/M01_FirstContact_Production_Contract.md`.
 - Expected: M01 runtime/code either emits canonical names (`TargetOutOfBounds`, `TargetBlocked`, `TargetUnreachable`, `TargetNotEnemy`, `TargetNotAttackable`, `CommandUnavailable`, `MissionDoesNotAllowBuild`, `CameraJumpUnavailable`, `NoSelection`) or documents an explicit mapping for QA assertions.
 - Actual: Runtime/test code still defines and asserts legacy aliases including `InvalidTarget`, `BlockedRoute`, `OutOfRange`, `BuildModeUnavailable`, `InsufficientResources`, `AbilityOnCooldown`, and `TransportUnavailable`. The UI handoff does not state whether the invalid-command capture uses legacy or canonical runtime reason codes.
 - Blocks next milestone: yes for invalid-command recovery Gate 4 acceptance.
@@ -140,7 +140,7 @@ Can my lane still continue fallback work? no. QA/HCI consumed the available UI h
 - Severity: Major for final visual readability/art approval.
 - Affected lane: art-design / UI / gameplay.
 - Reproduction steps:
-  1. Run `rg -n "marker.selection.ring|marker.move.destination|marker.attack.target|vfx.unit.destroyed.small" Design/WarlineCapture_Art_Asset_Requirements_Register.md Design/WarlineCapture_Art_Asset_Requirements_Register.csv`.
+  1. Run `rg -n "marker.selection.ring|marker.move.destination|marker.attack.target|vfx.unit.destroyed.small" Design/Art_Asset_Requirements_Register.md Design/Art_Asset_Requirements_Register.csv`.
   2. Review the route-driven squad selected, move feedback, attack feedback, and result/objective states.
 - Expected: Gate 4 final visual readability has approved or explicitly temporary marker/VFX evidence for selection, move destination, attack target, and destroyed feedback.
 - Actual: Screenshot evidence is readable enough for current route review, but asset rows remain `missing`, `not_reviewed`, and `not_started`; UI report only explicitly calls out `vfx.unit.destroyed.small`.

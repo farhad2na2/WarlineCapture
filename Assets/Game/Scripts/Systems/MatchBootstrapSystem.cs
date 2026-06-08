@@ -7,14 +7,14 @@ using Unity.Mathematics;
 
 internal sealed class MatchBootstrapSystem
 {
+    private delegate bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell);
+
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
-    private readonly MissionStartupSystem _missionStartupSystem = new();
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
-    private readonly MenuStartupSystem _menuStartupSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
     private readonly MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem = new();
@@ -37,7 +37,6 @@ internal sealed class MatchBootstrapSystem
     public Volume GlobalVolume => MatchScene != null ? MatchScene.GlobalVolume : null;
     public CombinedMeshBaker DecorationCombinedMeshBaker => MatchScene != null ? MatchScene.DecorationCombinedMeshBaker : null;
     public Transform DecorationRoot => MatchScene != null ? MatchScene.DecorationRoot : null;
-    private GameObject[] LegacyVisualRootsDisabledForM01 => MatchScene != null ? MatchScene.LegacyVisualRootsDisabledForM01 : Array.Empty<GameObject>();
 
     public RTSSelectionSystemConfig RtsSelectionConfig => MatchScene != null ? MatchScene.RtsSelectionConfig : null;
     public RoadBuildSystemConfig RoadBuildConfig => MatchScene != null ? MatchScene.RoadBuildConfig : null;
@@ -184,28 +183,7 @@ internal sealed class MatchBootstrapSystem
     public void Start()
     {
         _matchSceneReferenceSystem.Register(sceneView);
-        MainMenu = _menuStartupSystem.Initialize(
-            null,
-            BeginGameplay,
-            _bindRoadMainMenu,
-            BuildingUiCommand,
-            _buildingUiCommandContext,
-            BuildingUiQuery,
-            _buildingUiQueryContext,
-            _buildingPlacementInteraction,
-            _buildingPlacementInteractionContext,
-            _bindBuildingMainMenu,
-            _bindSelectionMainMenu,
-            SelectionUiCommand,
-            SelectionUiReadModel,
-            SelectionUiCamera,
-            SelectionScreenMarkers,
-            DayNight,
-            _citizenPopulationReadModel,
-            WorldCamera,
-            _gameplaySceneBindingSystem,
-            World.DefaultGameObjectInjectionWorld,
-            Debug.LogException);
+        MainMenu = null;
     }
 
     public void BeginGameplay()
@@ -222,26 +200,10 @@ internal sealed class MatchBootstrapSystem
             BuildingPlacementConfig,
             _aiStartupSystem,
             AIControllerConfigs);
-        if (new ActiveMissionSession().HasActiveMission)
-        {
-            LogRuntimeEcsBootstrapState("beforeMissionInit");
-            _missionStartupSystem.Initialize(
-                World.DefaultGameObjectInjectionWorld,
-                WorldCamera,
-                DayNight,
-                LegacyVisualRootsDisabledForM01);
-            LogRuntimeEcsBootstrapState("afterMissionInit");
-        }
-        else
-        {
-            _missionStartupSystem.ApplySkirmishSceneDefaults(DayNight, LegacyVisualRootsDisabledForM01);
-            _customGameStartupSystem.InitializeFromLegacyConfigs(
-                World.DefaultGameObjectInjectionWorld,
-                BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
-                BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
-            Debug.Log("[SkirmishStart] Mission startup skipped because no active mission session is set.");
-            LogRuntimeEcsBootstrapState("skirmishMissionSkipped");
-        }
+        _customGameStartupSystem.InitializeFromLegacyConfigs(
+            World.DefaultGameObjectInjectionWorld,
+            BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
+            BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
         AIStartupSystem.Result aiStartupResult = InitializeAiStartupConfig(
             World.DefaultGameObjectInjectionWorld,
             _aiStartupSystem,
@@ -254,10 +216,9 @@ internal sealed class MatchBootstrapSystem
         _gameplayStartPending = true;
         _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
         _runtimeGameplayStateSystem.ResetForGameplayStart();
-        _missionStartupSystem.FocusInitialCamera(
+        FocusInitialCameraOnConfiguredFactionBase(
             World.DefaultGameObjectInjectionWorld,
             SelectionUiCamera,
-            WorldCamera,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
             0);
     }
@@ -268,7 +229,6 @@ internal sealed class MatchBootstrapSystem
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
-            _missionStartupSystem,
             _roadRuntimeUpdate,
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,
@@ -327,8 +287,6 @@ internal sealed class MatchBootstrapSystem
     public void OnDestroy()
     {
         ShutdownRuntime(
-            _menuStartupSystem,
-            BeginGameplay,
             MainMenu,
             _disposeSelection,
             _disposeBuildingGameplay,
@@ -534,11 +492,40 @@ internal sealed class MatchBootstrapSystem
             tryResolveFactionSpawnCell);
     }
 
+    private static bool FocusInitialCameraOnConfiguredFactionBase(
+        World world,
+        SelectionUiCameraSystem selectionUiCameraSystem,
+        TryResolveFactionSpawnCell resolveFactionSpawnCell,
+        byte fallbackFactionId)
+    {
+        if (selectionUiCameraSystem == null ||
+            resolveFactionSpawnCell == null ||
+            !resolveFactionSpawnCell(fallbackFactionId, out int2 spawnCell))
+        {
+            return false;
+        }
+
+        Vector3 focusWorldPosition = new(spawnCell.x, 0f, spawnCell.y);
+        if (world != null && world.IsCreated)
+        {
+            EntityManager em = world.EntityManager;
+            using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            if (!gridQuery.IsEmptyIgnoreFilter)
+            {
+                Entity gridEntity = gridQuery.GetSingletonEntity();
+                GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+                focusWorldPosition = GridUtils.CellToWorldCenter(grid, spawnCell);
+            }
+        }
+
+        selectionUiCameraSystem.FollowCameraGroundCenterTo(focusWorldPosition);
+        return true;
+    }
+
     public void UpdateRuntime(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
-        MissionStartupSystem missionStartupSystem,
         Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
@@ -557,7 +544,6 @@ internal sealed class MatchBootstrapSystem
             gameplayInitialized,
             runtimeGameplayStateSystem,
             performanceDiagnosticsSystem,
-            missionStartupSystem,
             roadBuildRuntimeUpdate,
             buildingRuntimeUpdate,
             buildingRuntimeUpdateContext,
@@ -604,8 +590,6 @@ internal sealed class MatchBootstrapSystem
     }
 
     public void ShutdownRuntime(
-        MenuStartupSystem menuStartupSystem,
-        Action gameRequested,
         MainMenuPlayUI mainMenu,
         Action disposeSelection,
         Action disposeBuildingGameplay,
@@ -622,7 +606,6 @@ internal sealed class MatchBootstrapSystem
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
     {
         Shutdown();
-        menuStartupSystem?.Shutdown(null, gameRequested);
         mainMenu?.Dispose();
         disposeSelection?.Invoke();
         disposeBuildingGameplay?.Invoke();
@@ -697,58 +680,6 @@ internal sealed class MatchBootstrapSystem
     {
         if (!em.HasBuffer<T>(entity))
             em.AddBuffer<T>(entity);
-    }
-
-    private static void LogRuntimeEcsBootstrapState(string phase)
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-        {
-            Debug.LogWarning($"[RuntimeVisualDiag] phase={phase} world=missing");
-            return;
-        }
-
-        EntityManager em = world.EntityManager;
-        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        using EntityQuery initialSpawnQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
-        using EntityQuery registryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>());
-        using EntityQuery prefabCandidateQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>());
-        using EntityQuery unitQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
-        using EntityQuery modelQuery = em.CreateEntityQuery(new EntityQueryDesc
-        {
-            Any = new[]
-            {
-                ComponentType.ReadOnly<UnitModelInstanceReference>(),
-                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
-            }
-        });
-        using EntityQuery sourceKeyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
-        using EntityQuery sourceKeyFallbackVisualQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
-            ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
-            ComponentType.Exclude<UnitModelInstanceReference>(),
-            ComponentType.Exclude<UnitDetailedVisualReference>(),
-            ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
-            ComponentType.Exclude<MissionRuntimeEntityId>());
-        using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<MissionRuntimeEntityId>(),
-            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
-            ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
-            ComponentType.Exclude<UnitModelInstanceReference>(),
-            ComponentType.Exclude<UnitDetailedVisualReference>());
-        string activeMissionId = new ActiveMissionSession().ActiveMissionId;
-        int hasActiveMission = new ActiveMissionSession().HasActiveMission ? 1 : 0;
-        int isFirstContactMission = activeMissionId == ChapterOneMissionCatalog.FirstContactMissionId ? 1 : 0;
-
-        Debug.Log(
-            $"[RuntimeVisualDiag] phase={phase} " +
-            $"activeMission={hasActiveMission} mission={activeMissionId} isM01={isFirstContactMission} " +
-            $"gridConfigs={gridQuery.CalculateEntityCount()} initialSpawnConfigs={initialSpawnQuery.CalculateEntityCount()} " +
-            $"unitRegistries={registryQuery.CalculateEntityCount()} prefabCandidates={prefabCandidateQuery.CalculateEntityCount()} " +
-            $"units={unitQuery.CalculateEntityCount()} " +
-            $"sourceKeys={sourceKeyQuery.CalculateEntityCount()} sourceKeyFallbackVisuals={sourceKeyFallbackVisualQuery.CalculateEntityCount()} models={modelQuery.CalculateEntityCount()} " +
-            $"missionFallbackVisuals={missionFallbackVisualQuery.CalculateEntityCount()}");
     }
 
     private void InitializeGameplaySystemsIfNeeded()

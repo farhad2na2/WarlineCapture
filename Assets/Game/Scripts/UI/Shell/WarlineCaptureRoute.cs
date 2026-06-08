@@ -11,10 +11,5 @@ public enum WarlineCaptureRoute
     Events,
     Ranking,
     CommandFeed,
-    SagaMap,
-    MissionBriefing,
-    LoadoutSquadPrep,
-    CommanderProfile,
-    OperationDashboard,
-    DistrictDetail
+    LoadoutSquadPrep
 }

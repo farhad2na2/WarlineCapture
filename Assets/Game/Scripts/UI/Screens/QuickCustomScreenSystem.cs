@@ -49,7 +49,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
     private void OnDestroy()
     {
         if (launchButton != null)
-            launchButton.onClick.RemoveListener(LaunchMission);
+            launchButton.onClick.RemoveListener(LaunchMatch);
 
         if (resetButton != null)
             resetButton.onClick.RemoveListener(ResetToDefaults);
@@ -123,17 +123,16 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
         ReadConfigFromControls().ApplyToRuntimeState();
     }
 
-    public void LaunchMission()
+    public void LaunchMatch()
     {
         ApplyCurrentConfigToRuntime();
-        new ActiveMissionSession().Clear();
         WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
     }
 
     private void WireEvents()
     {
         if (launchButton != null)
-            launchButton.onClick.AddListener(LaunchMission);
+            launchButton.onClick.AddListener(LaunchMatch);
 
         if (resetButton != null)
             resetButton.onClick.AddListener(ResetToDefaults);

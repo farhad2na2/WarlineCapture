@@ -3,8 +3,10 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
 {
-    private const bool EnableDiagnostics = false;
-    private const double FreezeLogThresholdSeconds = 0.05d;
+    private const bool EnableDiagnostics = true;
+    private const double SlowLogThresholdSeconds = 0.01d;
+    private const double SlowLogCooldownSeconds = 1d;
+    private double _nextSlowLogAt;
 
     public readonly struct Context
     {
@@ -70,10 +72,12 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
 
     public void LogIfSlow(Context context, Timing timing)
     {
-        double elapsed = Time.realtimeSinceStartupAsDouble - timing.Start;
-        if (!EnableDiagnostics || elapsed < FreezeLogThresholdSeconds)
+        double now = Time.realtimeSinceStartupAsDouble;
+        double elapsed = now - timing.Start;
+        if (!EnableDiagnostics || elapsed < SlowLogThresholdSeconds || now < _nextSlowLogAt || !Application.isFocused)
             return;
 
+        _nextSlowLogAt = now + SlowLogCooldownSeconds;
         double afterProductions = Math.Max(timing.AfterProductions, timing.Start);
         double afterResources = Math.Max(timing.AfterResources, afterProductions);
         double afterHaulers = Math.Max(timing.AfterHaulers, afterResources);

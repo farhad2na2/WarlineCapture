@@ -16,7 +16,6 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private Transform decorationRoot;
     [SerializeField] private Transform mapBuildingAuthoringRoot;
     [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
-    [SerializeField] private GameObject[] legacyVisualRootsDisabledForM01 = Array.Empty<GameObject>();
 
     [Header("Configs")]
     [SerializeField] private RTSSelectionSystemConfig rtsSelectionConfig;
@@ -42,8 +41,6 @@ public sealed class MatchSceneView : MonoBehaviour
     public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
     public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;
     public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
-    public GameObject[] LegacyVisualRootsDisabledForM01 => legacyVisualRootsDisabledForM01;
-
     public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
     public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
     public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;

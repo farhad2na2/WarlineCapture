@@ -13,7 +13,6 @@ public sealed class GameplayRuntimeUpdateSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
-        MissionStartupSystem missionStartupSystem,
         Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
@@ -35,12 +34,6 @@ public sealed class GameplayRuntimeUpdateSystem
         double stepStart;
         if (gameplayActive)
         {
-            GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
-
-            stepStart = performanceDiagnosticsSystem.BeginStep();
-            missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld);
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionRuntime", stepStart);
-
             stepStart = performanceDiagnosticsSystem.BeginStep();
             roadBuildRuntimeUpdate?.Invoke();
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
@@ -52,10 +45,6 @@ public sealed class GameplayRuntimeUpdateSystem
             stepStart = performanceDiagnosticsSystem.BeginStep();
             selectionRuntimeUpdate?.Invoke();
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
-
-            stepStart = performanceDiagnosticsSystem.BeginStep();
-            missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(World.DefaultGameObjectInjectionWorld, worldCamera);
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionCamera", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
             runtimeCity?.Update(Time.frameCount);
@@ -116,9 +105,6 @@ public sealed class GameplayRuntimeUpdateSystem
                 runtimeGridBlockers,
                 runtimeDecorations);
         }
-
-        if (gameplayActive)
-            WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene();
 
         performanceDiagnosticsSystem.EndUpdate(
             gameplayActive,

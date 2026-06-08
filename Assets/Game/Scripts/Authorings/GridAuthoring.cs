@@ -7,8 +7,11 @@ using System.Collections.Generic;
 [DisallowMultipleComponent]
 public class GridAuthoring : MonoBehaviour
 {
+    private static readonly List<GridAuthoring> RegisteredInstances = new();
+
     [SerializeField] private GridAuthoringConfig config;
     private RuntimeGridBlockerSystem _runtimeGridBlockers;
+    public static IReadOnlyList<GridAuthoring> Instances => RegisteredInstances;
     public int Width => config != null ? config.Width : 16;
     public int Height => config != null ? config.Height : 16;
     public float CellSize => config != null ? config.CellSize : 1f;
@@ -45,6 +48,17 @@ public class GridAuthoring : MonoBehaviour
     public void BindRuntimeGridBlockers(RuntimeGridBlockerSystem runtimeGridBlockers)
     {
         _runtimeGridBlockers = runtimeGridBlockers;
+    }
+
+    private void OnEnable()
+    {
+        if (!RegisteredInstances.Contains(this))
+            RegisteredInstances.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        RegisteredInstances.Remove(this);
     }
 
     private class GridBaker : Baker<GridAuthoring>

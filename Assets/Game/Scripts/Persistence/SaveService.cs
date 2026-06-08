@@ -4,8 +4,6 @@ using UnityEngine;
 public sealed class SaveService
 {
     public const string ProfileFileName = "profile.json";
-    public const string SagaFileName = "saga.json";
-    public const string OperationFileName = "operation.json";
     public const string SettingsFileName = "settings.json";
     public const string QuickGameFileName = "quickgame.json";
 
@@ -26,8 +24,6 @@ public sealed class SaveService
         var data = new WarlineCaptureSaveData
         {
             profile = LoadProfile(),
-            saga = LoadSaga(),
-            operation = LoadOperation(),
             settings = LoadSettings(),
             quickGame = LoadQuickGame()
         };
@@ -39,8 +35,6 @@ public sealed class SaveService
     {
         WarlineCaptureSaveData migrated = SaveMigration.Migrate(data);
         SaveProfile(migrated.profile);
-        SaveSaga(migrated.saga);
-        SaveOperation(migrated.operation);
         SaveSettings(migrated.settings);
         SaveQuickGame(migrated.quickGame);
     }
@@ -48,20 +42,6 @@ public sealed class SaveService
     public PlayerProfileSaveData LoadProfile()
     {
         return _repository.Load<PlayerProfileSaveData>(ProfileFileName);
-    }
-
-    public SagaSaveData LoadSaga()
-    {
-        return _repository.Load<SagaSaveData>(SagaFileName);
-    }
-
-    public OperationSaveData LoadOperation()
-    {
-        WarlineCaptureSaveData migrated = SaveMigration.Migrate(new WarlineCaptureSaveData
-        {
-            operation = _repository.Load<OperationSaveData>(OperationFileName)
-        });
-        return migrated.operation;
     }
 
     public SettingsSaveData LoadSettings()
@@ -77,16 +57,6 @@ public sealed class SaveService
     public void SaveProfile(PlayerProfileSaveData data)
     {
         _repository.Save(ProfileFileName, data);
-    }
-
-    public void SaveSaga(SagaSaveData data)
-    {
-        _repository.Save(SagaFileName, data);
-    }
-
-    public void SaveOperation(OperationSaveData data)
-    {
-        _repository.Save(OperationFileName, data);
     }
 
     public void SaveSettings(SettingsSaveData data)

@@ -4,14 +4,14 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
 {
+    private static readonly List<WarlineCaptureShellContentSystem> RegisteredInstances = new();
+
     [SerializeField] private WarlineCaptureShellView shellView;
     [SerializeField] private GameObject loadingContentPrefab;
     [SerializeField] private GameObject mainMenuContentPrefab;
-    [SerializeField] private GameObject commanderProfileContentPrefab;
     [SerializeField] private GameObject armoryContentPrefab;
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
-    [SerializeField] private GameObject resultPopupPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private MainMenuPlayUI _mainMenuPlayUi;
@@ -19,30 +19,25 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
     public WarlineCaptureShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
     public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
-    public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
     public GameObject ArmoryContentPrefab => armoryContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
-    public GameObject ResultPopupPrefab => resultPopupPrefab;
+    public static IReadOnlyList<WarlineCaptureShellContentSystem> Instances => RegisteredInstances;
 
     public void Configure(
         WarlineCaptureShellView view,
         GameObject loadingPrefab,
         GameObject mainMenuPrefab,
-        GameObject commanderProfilePrefab,
         GameObject armoryPrefab,
         GameObject matchHudPrefab,
-        GameObject buildDrawerPrefab,
-        GameObject popupPrefab)
+        GameObject buildDrawerPrefab)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
         mainMenuContentPrefab = mainMenuPrefab;
-        commanderProfileContentPrefab = commanderProfilePrefab;
         armoryContentPrefab = armoryPrefab;
         matchHudContentPrefab = matchHudPrefab;
         buildDrawerPopupPrefab = buildDrawerPrefab;
-        resultPopupPrefab = popupPrefab;
     }
 
     public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandComponent> commands)
@@ -63,9 +58,6 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
                 case UiShellCommandKind.EnterMatchHud:
                     InstallMatchHud();
                     break;
-                case UiShellCommandKind.ShowPopup:
-                    InstallResultPopup();
-                    break;
             }
         }
     }
@@ -77,6 +69,17 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         BindMatchHudCommandControlsInRegion();
         BindMatchHudMinimapInRegion();
         BindMatchHudSquadTrayInRegion();
+    }
+
+    private void OnEnable()
+    {
+        if (!RegisteredInstances.Contains(this))
+            RegisteredInstances.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        RegisteredInstances.Remove(this);
     }
 
     private void InstallLoading()
@@ -104,12 +107,6 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
 
     public void InstallMenuRouteBody(WarlineCaptureRoute route)
     {
-        if (route == WarlineCaptureRoute.CommanderProfile)
-        {
-            InstallCommanderProfileBody();
-            return;
-        }
-
         if (route == WarlineCaptureRoute.Armory)
         {
             InstallArmoryBody();
@@ -117,17 +114,6 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         }
 
         InstallMainMenuBody();
-    }
-
-    private void InstallCommanderProfileBody()
-    {
-        InstallSection(commanderProfileContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
-        InstallSection(commanderProfileContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
-        InstallSection(commanderProfileContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
-        InstallSection(commanderProfileContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
-        InstallSection(commanderProfileContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
-        InstallSection(commanderProfileContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
-        ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }
 
     private void InstallArmoryBody()
@@ -252,22 +238,6 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         MatchHudSquadTrayView view = footer.GetComponentInChildren<MatchHudSquadTrayView>(true);
         if (view != null)
             _mainMenuPlayUi?.BindMatchHudSquadTray(view);
-    }
-
-    private void InstallResultPopup()
-    {
-        GameObject popup = InstallRoot(resultPopupPrefab, WarlineCaptureShellRegionId.PopupLayer);
-        if (popup == null)
-            return;
-
-        RectTransform frame = popup.transform.Find("PopupFrame") as RectTransform;
-        if (frame == null)
-            return;
-
-        frame.anchorMin = new Vector2(0.5f, 0.5f);
-        frame.anchorMax = new Vector2(0.5f, 0.5f);
-        frame.pivot = new Vector2(0.5f, 0.5f);
-        frame.anchoredPosition = Vector2.zero;
     }
 
     public GameObject InstallBuildDrawerPopup()

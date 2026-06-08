@@ -44,8 +44,6 @@ public partial struct UnitAttackSystem : ISystem
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         var predictedHealth = new System.Collections.Generic.Dictionary<Entity, int>(64);
         var aggregatedEffects = new System.Collections.Generic.Dictionary<Entity, AggregatedTargetEffect>(64);
-        bool m01OpeningProtectionActive = IsM01OpeningProtectionActive(em);
-
         foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
                      .Query<RefRW<EngageTarget>, RefRW<UnitAttackState>, RefRW<UnitAttackTraceState>, RefRW<UnitAttackAnimationState>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
                      .WithNone<StaticGridBlocker>()
@@ -53,8 +51,6 @@ public partial struct UnitAttackSystem : ISystem
                      .WithEntityAccess())
         {
             if (em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-                continue;
-            if (em.HasComponent<MissionRuntimeOpeningControlProtection>(entity))
                 continue;
 
             ref var engageRw = ref engage.ValueRW;
@@ -154,8 +150,6 @@ public partial struct UnitAttackSystem : ISystem
             AggregatedTargetEffect pending = pair.Value;
             if (!em.Exists(target) || !em.HasComponent<UnitHealth>(target))
                 continue;
-            if (m01OpeningProtectionActive && em.HasComponent<MissionRuntimeCommandSquadTag>(target))
-                continue;
 
             UnitHealth health = em.GetComponentData<UnitHealth>(target);
             if (health.Current <= 0)
@@ -214,15 +208,6 @@ public partial struct UnitAttackSystem : ISystem
 
         ecb.Playback(em);
         ecb.Dispose();
-    }
-
-    private static bool IsM01OpeningProtectionActive(EntityManager em)
-    {
-        if (!Chapter01M01PlayableRuntime.IsActiveMission())
-            return false;
-
-        EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MissionRuntimeOpeningControlProtection>());
-        return !query.IsEmptyIgnoreFilter;
     }
 
     private static float GetCombatRadius(int2 footprintSize, float cellSize)

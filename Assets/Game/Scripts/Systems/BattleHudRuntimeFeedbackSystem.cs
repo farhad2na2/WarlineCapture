@@ -48,8 +48,8 @@ public sealed class BattleHudRuntimeFeedbackSystem
 
     public static BattleHudRuntimeFeedbackView ResolveActiveView()
     {
-        BattleHudRuntimeFeedbackView[] views = Resources.FindObjectsOfTypeAll<BattleHudRuntimeFeedbackView>();
-        for (int i = 0; i < views.Length; i++)
+        IReadOnlyList<BattleHudRuntimeFeedbackView> views = BattleHudRuntimeFeedbackView.Instances;
+        for (int i = 0; i < views.Count; i++)
         {
             BattleHudRuntimeFeedbackView view = views[i];
             if (view == null ||
@@ -60,7 +60,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
             return view;
         }
 
-        for (int i = 0; i < views.Length; i++)
+        for (int i = 0; i < views.Count; i++)
         {
             BattleHudRuntimeFeedbackView view = views[i];
             if (view == null || !view.gameObject.scene.IsValid())
@@ -206,7 +206,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
     public static void SetWorldMarkersVisible(BattleHudRuntimeFeedbackView view, bool visible)
     {
         // The HUD marker layer is a static art-preview surface. Live targeting feedback
-        // must come from grounded runtime markers so fixed screen-space art cannot cover M01 units.
+        // must come from grounded runtime markers so fixed screen-space art cannot cover units.
         ResolveTacticalFeedback(view ?? ResolveActiveView())?.SetWorldMarkersVisible(false);
     }
 

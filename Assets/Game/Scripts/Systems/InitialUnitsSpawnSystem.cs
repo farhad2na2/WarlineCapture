@@ -28,7 +28,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private InitialSpawnReservationSystem _reservationSystem;
     private InitialUnitSpawnCellSystem _unitSpawnCellSystem;
     private InitialAirPlatformSpawnSystem _airPlatformSpawnSystem;
-    private InitialMissionRosterSystem _missionRosterSystem;
     private InitialUnitSourceKeySystem _sourceKeySystem;
     private InitialUnitSpawnBatchSystem _unitSpawnBatchSystem;
     private InitialUnitSpawnApplySystem _unitSpawnApplySystem;
@@ -63,7 +62,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         if (!startupGate.IsActionable)
             return;
 
-        bool useM01CompactRuntime = startupGate.UseM01CompactRuntime;
         var queueEntity = _respawnQueueProjectionSystem.GetOrCreateQueue(ref state);
         var em = state.EntityManager;
         Entity boundaryEntity = startupGate.BoundaryEntity;
@@ -96,12 +94,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             if (progress.InitialBuildingsSpawned == 0)
             {
                 bool allInitialBuildingsSpawned = false;
-                if (_missionRosterSystem.ShouldSkipInitialBuildingRequests(useM01CompactRuntime))
-                {
-                    progress.InitialBuildingsSpawned = 1;
-                    em.SetComponentData(entity, progress);
-                }
-                else if (boundaryEntity != Entity.Null)
+                if (boundaryEntity != Entity.Null)
                 {
                     if (!_gridContextSystem.TryGetGridConfig(state.EntityManager, _queryContext.GridContextQuery, out GridConfig baseGrid))
                     {
@@ -172,8 +165,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> customGameSourceSpawns = hasCustomGameSourceSpawns
                 ? em.GetBuffer<CustomGameFactionUnitSourceSpawnEntry>(entity)
                 : default;
-            if (useM01CompactRuntime)
-                _missionRosterSystem.ApplyM01CompactUnitRoster(unitSpawns, unitProgress);
             int remainingBatch = InitialSpawnBatchSize;
             for (int unitIndex = 0; unitIndex < unitSpawns.Length && remainingBatch > 0; unitIndex++)
             {
@@ -253,7 +244,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 em,
                 ecb,
                 config,
-                useM01CompactRuntime,
                 InitialBlockerBatchSize,
                 progress.BlockersSpawned,
                 grid,

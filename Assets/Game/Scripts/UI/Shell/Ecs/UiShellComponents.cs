@@ -36,7 +36,6 @@ public enum UiShellRouteIntent
 
 public enum UiShellPopupKind
 {
-    MissionResult,
     ThreatAlert,
     Pause,
     RewardUnlock
@@ -46,15 +45,6 @@ public enum UiShellPopupIntent
 {
     Show,
     Hide
-}
-
-public enum UiMissionResultState
-{
-    VictoryComplete,
-    PartialSuccess,
-    DefeatFailed,
-    Withdrawn,
-    SimulationResolved
 }
 
 public enum ArmoryCatalogCategory
@@ -121,13 +111,6 @@ public struct UiShellArmoryCategoryComponent : IComponentData
 public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
 {
     public ArmoryCatalogCategory Category;
-}
-
-public struct UiShellMissionResultComponent : IComponentData
-{
-    public UiMissionResultState ResultState;
-    public int RewardsPayloadId;
-    public WarlineCaptureRoute ReturnRoute;
 }
 
 public struct UiShellRouteRequestComponent : IBufferElementData

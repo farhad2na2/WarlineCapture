@@ -49,7 +49,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private readonly Dictionary<Material, BatchState> _batchByMaterial = new();
     private World _cachedWorld;
     private EntityQuery _query;
-    private EntityQuery _missionFallbackQuery;
     private EntityQuery _sourceKeyFallbackQuery;
     private int _renderLayer;
     private bool _initialized;
@@ -58,7 +57,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     public int LastDrawnCount { get; private set; }
     public int LastCulledCandidateCount { get; private set; }
     public int LastSourceKeyFallbackCandidateCount { get; private set; }
-    public int LastMissionFallbackCandidateCount { get; private set; }
 
     public void Init(Camera camera, int renderLayer, UnitPrefabRegistryAuthoringConfig registryConfig)
     {
@@ -82,7 +80,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         LastDrawnCount = 0;
         LastCulledCandidateCount = 0;
         LastSourceKeyFallbackCandidateCount = 0;
-        LastMissionFallbackCandidateCount = 0;
         if (!_initialized || _camera == null)
             return;
 
@@ -93,7 +90,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         ResetBatches();
         LastCulledCandidateCount = DrawQuery(GetOrCreateCulledQuery(world), skipVisibleRenderableUnits: true);
         LastSourceKeyFallbackCandidateCount = DrawQuery(GetOrCreateSourceKeyFallbackQuery(world), skipRenderableUnits: true);
-        LastMissionFallbackCandidateCount = DrawQuery(GetOrCreateMissionFallbackQuery(world), skipRenderableUnits: true);
         FlushBatches();
     }
 
@@ -104,7 +100,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             try
             {
                 _query.Dispose();
-                _missionFallbackQuery.Dispose();
                 _sourceKeyFallbackQuery.Dispose();
             }
             catch (System.NullReferenceException)
@@ -136,7 +131,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         LastDrawnCount = 0;
         LastCulledCandidateCount = 0;
         LastSourceKeyFallbackCandidateCount = 0;
-        LastMissionFallbackCandidateCount = 0;
     }
 
     private void RebuildPrefabLookup(UnitPrefabRegistryAuthoringConfig registryConfig)
@@ -178,7 +172,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         if (_hasQuery)
         {
             _query.Dispose();
-            _missionFallbackQuery.Dispose();
             _sourceKeyFallbackQuery.Dispose();
         }
 
@@ -199,19 +192,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 ComponentType.ReadOnly<StaticGridBlocker>(),
             }
         });
-        _missionFallbackQuery = CreateMissionFallbackQuery(world);
         _sourceKeyFallbackQuery = CreateSourceKeyFallbackQuery(world);
         _hasQuery = true;
         return _query;
-    }
-
-    private EntityQuery GetOrCreateMissionFallbackQuery(World world)
-    {
-        if (_cachedWorld == world && _hasQuery)
-            return _missionFallbackQuery;
-
-        GetOrCreateCulledQuery(world);
-        return _missionFallbackQuery;
     }
 
     private EntityQuery GetOrCreateSourceKeyFallbackQuery(World world)
@@ -221,29 +204,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
 
         GetOrCreateCulledQuery(world);
         return _sourceKeyFallbackQuery;
-    }
-
-    private EntityQuery CreateMissionFallbackQuery(World world)
-    {
-        return world.EntityManager.CreateEntityQuery(new EntityQueryDesc
-        {
-            All = new[]
-            {
-                ComponentType.ReadOnly<MissionRuntimeEntityId>(),
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.ReadOnly<UnitSourcePrefabKey>(),
-            },
-            None = new[]
-            {
-                ComponentType.ReadOnly<UnitTransportPassenger>(),
-                ComponentType.ReadOnly<Disabled>(),
-                ComponentType.ReadOnly<StaticGridBlocker>(),
-                ComponentType.ReadOnly<UnitModelInstanceReference>(),
-                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
-                ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
-            }
-        });
     }
 
     private EntityQuery CreateSourceKeyFallbackQuery(World world)
@@ -264,7 +224,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 ComponentType.ReadOnly<UnitModelInstanceReference>(),
                 ComponentType.ReadOnly<UnitDetailedVisualReference>(),
                 ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
-                ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             }
         });
     }

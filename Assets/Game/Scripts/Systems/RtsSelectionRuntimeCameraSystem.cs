@@ -546,14 +546,6 @@ public sealed class RtsSelectionRuntimeCameraSystem
     {
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         RtsCameraSystem camera = context.CameraSystem;
-        if (Chapter01M01PlayableRuntime.IsActiveMission())
-        {
-            SetCameraWasPlayRequested(context, runtime.PlayRequested);
-            SetCameraWasBuildModeActive(context, runtime.BuildModeActive);
-            SetCameraZoomTransitionActive(context, false);
-            return;
-        }
-
         if (!camera.WasPlayRequested && runtime.PlayRequested)
         {
             Vector3 focusWorldPosition = context.WorldCamera != null ? camera.GetCameraGroundCenterWorld(context.WorldCamera) : Vector3.zero;

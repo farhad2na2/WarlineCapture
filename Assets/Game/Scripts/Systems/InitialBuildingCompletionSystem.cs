@@ -35,8 +35,7 @@ public readonly struct InitialBuildingCompletionSystem
             if (request.Status == BuildingRuntimeSpawnRequest.Succeeded)
             {
                 if (FactionIdentitySystem.IsPlayerControlled(request.FactionId) &&
-                    request.EntryIndex == initialBaseCoreRequestEntryIndex &&
-                    !Chapter01M01PlayableRuntime.IsActiveMission())
+                    request.EntryIndex == initialBaseCoreRequestEntryIndex)
                 {
                     Vector3 coreFocus = GetFootprintCenterWorld(
                         new Vector2Int(request.ActualOrigin.x, request.ActualOrigin.y),

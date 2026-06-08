@@ -36,9 +36,6 @@ public sealed class BuildDrawerPanelSystem : MonoBehaviour
 
     public void Open()
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return;
-
         if (drawerRoot != null)
             drawerRoot.SetActive(true);
         ApplyBuildMode();
@@ -57,9 +54,6 @@ public sealed class BuildDrawerPanelSystem : MonoBehaviour
             return;
 
         bool shouldOpen = !drawerRoot.activeSelf;
-        if (shouldOpen && new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return;
-
         drawerRoot.SetActive(shouldOpen);
         if (shouldOpen)
             ApplyBuildMode();

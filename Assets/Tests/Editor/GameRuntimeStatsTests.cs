@@ -33,17 +33,17 @@ public sealed class GameRuntimeStatsTests
     }
 
     [Test]
-    public void Snapshot_AccumulatesMissionObjectiveStats()
+    public void Snapshot_AccumulatesMatchObjectiveStats()
     {
-        GameRuntimeStats.RecordMissionElapsed(42.9f);
-        GameRuntimeStats.RecordMissionElapsed(17.2f);
+        GameRuntimeStats.RecordMatchElapsed(42.9f);
+        GameRuntimeStats.RecordMatchElapsed(17.2f);
         GameRuntimeStats.RecordCiviliansProtected(3);
         GameRuntimeStats.RecordCapturedOrDestroyedBuilding();
         GameRuntimeStats.RecordCapturedOrDestroyedBuilding();
 
         GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
 
-        Assert.AreEqual(60, snapshot.MissionElapsedSeconds);
+        Assert.AreEqual(60, snapshot.MatchElapsedSeconds);
         Assert.AreEqual(3, snapshot.CiviliansProtected);
         Assert.AreEqual(2, snapshot.CapturedOrDestroyedBuildings);
     }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public enum TacticalCommandReasonCode
     TargetNotEnemy,
     TargetNotAttackable,
     CommandUnavailable,
-    MissionDoesNotAllowBuild,
+    BuildUnavailable,
     CameraJumpUnavailable,
     ScanUnavailable,
     ScanCooldown,
@@ -75,13 +76,13 @@ public static class TacticalCommandFeedbackText
         return reasonCode switch
         {
             TacticalCommandReasonCode.NoSelection => "Select a squad first.",
-            TacticalCommandReasonCode.TargetOutOfBounds => "Target is outside the mission area.",
+            TacticalCommandReasonCode.TargetOutOfBounds => "Target is outside the playable area.",
             TacticalCommandReasonCode.TargetBlocked => "Route is blocked.",
             TacticalCommandReasonCode.TargetUnreachable => "Target is unreachable.",
             TacticalCommandReasonCode.TargetNotEnemy => "Select a hostile target.",
             TacticalCommandReasonCode.TargetNotAttackable => "Target cannot be attacked.",
             TacticalCommandReasonCode.CommandUnavailable => "Command unavailable.",
-            TacticalCommandReasonCode.MissionDoesNotAllowBuild => "Building unlocks in the next mission.",
+            TacticalCommandReasonCode.BuildUnavailable => "Building unavailable.",
             TacticalCommandReasonCode.CameraJumpUnavailable => "Camera focus unavailable.",
             TacticalCommandReasonCode.ScanUnavailable => "Scan unavailable.",
             TacticalCommandReasonCode.ScanCooldown => "Scan cooling down.",
@@ -105,6 +106,8 @@ public static class TacticalCommandFeedbackText
 [DisallowMultipleComponent]
 public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 {
+    private static readonly List<BattleHudRuntimeFeedbackView> RegisteredInstances = new();
+
     [SerializeField] private BattleHudTacticalFeedbackSystem tacticalFeedback;
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
     [SerializeField] private GameObject feedbackPanel;
@@ -114,10 +117,22 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
+    public static IReadOnlyList<BattleHudRuntimeFeedbackView> Instances => RegisteredInstances;
 
     private void Awake()
     {
         HideFeedbackMessage();
+    }
+
+    private void OnEnable()
+    {
+        if (!RegisteredInstances.Contains(this))
+            RegisteredInstances.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        RegisteredInstances.Remove(this);
     }
 
     public void ShowFeedbackMessage(string message)

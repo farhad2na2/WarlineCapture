@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -29,8 +30,8 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
         if (handledConfiguredGroup)
             return;
 
-        MatchOverlayCommandTabGroupView[] groups = Resources.FindObjectsOfTypeAll<MatchOverlayCommandTabGroupView>();
-        for (int i = 0; i < groups.Length; i++)
+        IReadOnlyList<MatchOverlayCommandTabGroupView> groups = MatchOverlayCommandTabGroupView.Instances;
+        for (int i = 0; i < groups.Count; i++)
         {
             MatchOverlayCommandTabGroupView group = groups[i];
             if (!IsLiveGroup(group))
@@ -60,8 +61,8 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
         if (handledConfiguredGroup)
             return;
 
-        MatchOverlayCommandTabGroupView[] groups = Resources.FindObjectsOfTypeAll<MatchOverlayCommandTabGroupView>();
-        for (int i = 0; i < groups.Length; i++)
+        IReadOnlyList<MatchOverlayCommandTabGroupView> groups = MatchOverlayCommandTabGroupView.Instances;
+        for (int i = 0; i < groups.Count; i++)
         {
             MatchOverlayCommandTabGroupView group = groups[i];
             if (!IsLiveGroup(group))

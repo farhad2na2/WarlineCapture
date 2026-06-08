@@ -457,7 +457,6 @@ public sealed class InitialUnitsSpawnFocusedTests
                     BlockerCount = 5,
                     SpawnRadiusCells = 0
                 },
-                useM01CompactRuntime: false,
                 initialBlockerBatchSize: 2,
                 blockersSpawned: 0,
                 grid,

@@ -89,7 +89,7 @@ public sealed class WarlineCaptureUiMainMenuTests
             "ModeCardList/ModeCard_Saga/BodyText",
             "ModeCardList/ModeCard_Operation",
             "ModeCardList/ModeCard_Operation/OperationWarningIcon",
-            "ModeCardList/ModeCard_Operation/DistrictPressureRow",
+            "ModeCardList/ModeCard_Operation/SectorPressureRow",
             "ModeCardList/ModeCard_Operation/CityRiskRow",
             "ModeCardList/ModeCard_QuickCustom",
             "ModeCardList/ModeCard_QuickCustom/ArtClip",
@@ -131,7 +131,7 @@ public sealed class WarlineCaptureUiMainMenuTests
         AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust", "92,860");
         AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel", "2,715");
         AssertText(prefab, "ModeCardList/ModeCard_Saga/SubtitleText", "Chapter 1: First Contact");
-        AssertText(prefab, "ModeCardList/ModeCard_Operation/SubtitleText", "District pressure rising");
+        AssertText(prefab, "ModeCardList/ModeCard_Operation/SubtitleText", "Sector pressure rising");
         AssertText(prefab, "ModeCardList/ModeCard_QuickCustom/SubtitleText", "Skirmish setup route available.");
         AssertText(prefab, "DeployCommandButton/LabelText", "DEPLOY COMMAND");
         AssertText(prefab, "WideAspectOnlyRoot/CommandFeedTitleText", "Command Feed");
@@ -209,10 +209,7 @@ public sealed class WarlineCaptureUiMainMenuTests
         AssertRoute(prefab, "LeftNav/EventsButton", WarlineCaptureRoute.Events);
         AssertRoute(prefab, "LeftNav/RankingButton", WarlineCaptureRoute.Ranking);
         AssertRoute(prefab, "LeftNav/CommandFeedRouteButton", WarlineCaptureRoute.CommandFeed);
-        AssertRoute(prefab, "ModeCardList/ModeCard_Saga/Button", WarlineCaptureRoute.SagaMap);
         AssertRoute(prefab, "ModeCardList/ModeCard_QuickCustom/Button", WarlineCaptureRoute.QuickCustomSetup);
-        AssertRoute(prefab, "ModeCardList/ModeCard_Operation/Button", WarlineCaptureRoute.OperationDashboard);
-        AssertRoute(prefab, "DeployCommandButton", WarlineCaptureRoute.SagaMap);
 
         AssertNoActivePlaceholderModalButtons(prefab);
     }

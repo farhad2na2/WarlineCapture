@@ -12,7 +12,7 @@ public static class GameRuntimeStats
         public readonly int SoldiersOrdered;
         public readonly int AmmoOrdered;
         public readonly int BuildingsBuilt;
-        public readonly int MissionElapsedSeconds;
+        public readonly int MatchElapsedSeconds;
         public readonly int CiviliansProtected;
         public readonly int CapturedOrDestroyedBuildings;
         public readonly int OwnSoldiersDead;
@@ -25,7 +25,7 @@ public static class GameRuntimeStats
             int soldiersOrdered,
             int ammoOrdered,
             int buildingsBuilt,
-            int missionElapsedSeconds,
+            int matchElapsedSeconds,
             int civiliansProtected,
             int capturedOrDestroyedBuildings,
             int ownSoldiersDead,
@@ -37,7 +37,7 @@ public static class GameRuntimeStats
             SoldiersOrdered = soldiersOrdered;
             AmmoOrdered = ammoOrdered;
             BuildingsBuilt = buildingsBuilt;
-            MissionElapsedSeconds = missionElapsedSeconds;
+            MatchElapsedSeconds = matchElapsedSeconds;
             CiviliansProtected = civiliansProtected;
             CapturedOrDestroyedBuildings = capturedOrDestroyedBuildings;
             OwnSoldiersDead = ownSoldiersDead;
@@ -51,7 +51,7 @@ public static class GameRuntimeStats
     private static int _soldiersOrdered;
     private static int _ammoOrdered;
     private static int _buildingsBuilt;
-    private static float _missionElapsedSeconds;
+    private static float _matchElapsedSeconds;
     private static int _civiliansProtected;
     private static int _capturedOrDestroyedBuildings;
     private static int _ownSoldiersDead;
@@ -65,7 +65,7 @@ public static class GameRuntimeStats
         _soldiersOrdered = 0;
         _ammoOrdered = 0;
         _buildingsBuilt = 0;
-        _missionElapsedSeconds = 0f;
+        _matchElapsedSeconds = 0f;
         _civiliansProtected = 0;
         _capturedOrDestroyedBuildings = 0;
         _ownSoldiersDead = 0;
@@ -81,7 +81,7 @@ public static class GameRuntimeStats
             _soldiersOrdered,
             _ammoOrdered,
             _buildingsBuilt,
-            Mathf.Max(0, Mathf.FloorToInt(_missionElapsedSeconds)),
+            Mathf.Max(0, Mathf.FloorToInt(_matchElapsedSeconds)),
             _civiliansProtected,
             _capturedOrDestroyedBuildings,
             _ownSoldiersDead,
@@ -105,10 +105,10 @@ public static class GameRuntimeStats
         _buildingsBuilt++;
     }
 
-    public static void RecordMissionElapsed(float seconds)
+    public static void RecordMatchElapsed(float seconds)
     {
         if (seconds > 0f)
-            _missionElapsedSeconds += seconds;
+            _matchElapsedSeconds += seconds;
     }
 
     public static void RecordCiviliansProtected(int count = 1)

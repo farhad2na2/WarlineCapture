@@ -172,9 +172,7 @@ public sealed class ScanIntelCommandSystem
             return false;
 
         byte factionId = em.GetComponentData<Faction>(entity).Id;
-        return FactionIdentitySystem.IsHostileToPlayer(factionId) ||
-               em.HasComponent<MissionRuntimeEnemyPatrolTag>(entity) ||
-               em.HasComponent<MissionRuntimeObjectiveTarget>(entity);
+        return FactionIdentitySystem.IsHostileToPlayer(factionId);
     }
 
     private static void RevealEntity(EntityManager em, Entity entity, int2 cell, float3 position, int frame)

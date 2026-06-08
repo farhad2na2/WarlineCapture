@@ -53,9 +53,6 @@ internal sealed class BuildingPlacementSessionSystem
 
     public void BeginPlacement(Context context, BuildingDefinition definition)
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return;
-
         context.LifecycleSystem?.Begin(definition, context.CreateBeginContext());
     }
 

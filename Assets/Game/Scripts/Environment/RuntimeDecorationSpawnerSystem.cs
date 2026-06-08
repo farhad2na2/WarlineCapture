@@ -166,13 +166,6 @@ public sealed class RuntimeDecorationSpawnerSystem
     {
         if (!_spawnOnStart || _spawned || _combinePending)
             return;
-        if (Chapter01M01PlayableRuntime.IsActiveMission())
-        {
-            _combinePending = false;
-            _combineAfterFrames = -1;
-            _spawned = true;
-            return;
-        }
         if (HasPendingCityGeneration())
             return;
         if (_gridBlockers != null && !_gridBlockers.DependentsReadyForPlacement)

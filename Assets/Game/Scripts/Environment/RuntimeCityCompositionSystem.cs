@@ -181,7 +181,7 @@ public sealed class RuntimeCityCompositionSystem
             _runtimeCityLifecycleSystem.IsSpawned,
             cityCount,
             _runtimeGameplayStateSystem.PlayRequested,
-            Chapter01M01PlayableRuntime.IsActiveMission(),
+            false,
             generateBuildings,
             _runtimeCityRoadBuildBridgeSystem.HasRoadRuntimeGenerationSystem,
             _runtimeCitySpawnBridgeSystem.HasSpawnSystem,

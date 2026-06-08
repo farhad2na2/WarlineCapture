@@ -24,7 +24,6 @@ public readonly struct InitialBlockerSpawnSystem
         EntityManager em,
         EntityCommandBuffer ecb,
         InitialUnitsSpawnConfig config,
-        bool useM01CompactRuntime,
         int initialBlockerBatchSize,
         int blockersSpawned,
         GridConfig grid,
@@ -35,7 +34,7 @@ public readonly struct InitialBlockerSpawnSystem
         bool enableDiagnostics,
         ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
     {
-        int blockerTargetCount = useM01CompactRuntime ? 0 : config.BlockerCount;
+        int blockerTargetCount = config.BlockerCount;
         int blockersToSpawn = math.min(initialBlockerBatchSize, math.max(0, blockerTargetCount - blockersSpawned));
         int spawnedForLog = 0;
 

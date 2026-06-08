@@ -107,7 +107,6 @@ public partial struct UnitEngagementSystem : ISystem
         var pathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
-        var openingProtectionLookup = SystemAPI.GetComponentLookup<MissionRuntimeOpeningControlProtection>(true);
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
@@ -125,7 +124,6 @@ public partial struct UnitEngagementSystem : ISystem
             PathFollowLookup = pathFollowLookup,
             PathRequestLookup = pathRequestLookup,
             HoldPositionLookup = holdPositionLookup,
-            OpeningProtectionLookup = openingProtectionLookup,
             Ecb = ecb
         }.ScheduleParallel(buildHandle);
 
@@ -169,8 +167,6 @@ public partial struct UnitEngagementSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
         [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
         [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
-        [ReadOnly] public ComponentLookup<MissionRuntimeOpeningControlProtection> OpeningProtectionLookup;
-
         public EntityCommandBuffer.ParallelWriter Ecb;
 
         public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in UnitGrid selfGrid, in Faction selfFaction, in UnitCombat combat, in UnitAttack attack, in LocalTransform selfTransform)
@@ -178,8 +174,6 @@ public partial struct UnitEngagementSystem : ISystem
             if (combat.CanAttack == 0)
                 return;
             if (combat.AutoEngage == 0)
-                return;
-            if (OpeningProtectionLookup.HasComponent(entity))
                 return;
 
             bool hasActiveManualMove =

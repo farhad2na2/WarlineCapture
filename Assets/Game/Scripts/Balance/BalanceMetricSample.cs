@@ -33,7 +33,7 @@ public readonly struct BalanceMetricSample
         EnemySoldiersDead = Mathf.Max(0, enemySoldiersDead);
     }
 
-    public GameRuntimeStats.Snapshot ToSnapshot(int missionElapsedSeconds = 0)
+    public GameRuntimeStats.Snapshot ToSnapshot(int matchElapsedSeconds = 0)
     {
         return new GameRuntimeStats.Snapshot(
             OilExtracted,
@@ -42,7 +42,7 @@ public readonly struct BalanceMetricSample
             SoldiersOrdered,
             AmmoOrdered,
             BuildingsBuilt,
-            missionElapsedSeconds,
+            matchElapsedSeconds,
             0,
             0,
             OwnSoldiersDead,

@@ -324,16 +324,14 @@ public sealed class WarlineCaptureUiQuickCustomTests
     }
 
     [Test]
-    public void QuickCustomLaunchMission_StartsSkirmishWithoutMissionSession()
+    public void QuickCustomLaunchMatch_HidesRouter()
     {
         GameObject prefab = LoadQuickCustomPrefab();
-        GameObject legacyCanvas = new("UI_Canvas");
         GameObject routerRoot = new("WarlineCaptureAppCanvas");
         GameObject instance = null;
 
         try
         {
-            legacyCanvas.SetActive(false);
             routerRoot.AddComponent<WarlineCaptureRouter>();
             CreateRouterScreen(routerRoot.transform, WarlineCaptureRoute.Match);
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
@@ -342,34 +340,28 @@ public sealed class WarlineCaptureUiQuickCustomTests
             Assert.NotNull(controller);
 
             controller.Bind(QuickGameConfig.Defaults);
-            controller.LaunchMission();
+            controller.LaunchMatch();
 
-            Assert.IsTrue(legacyCanvas.activeSelf);
             Assert.IsFalse(routerRoot.activeSelf);
-            Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
         }
         finally
         {
             AISettingsRuntimeState.ResetDefaults();
-            new ActiveMissionSession().Clear();
             if (instance != null)
                 Object.DestroyImmediate(instance);
             Object.DestroyImmediate(routerRoot);
-            Object.DestroyImmediate(legacyCanvas);
         }
     }
 
     [Test]
-    public void QuickCustomLaunchButtonClick_StartsSkirmishWithoutMissionSession()
+    public void QuickCustomLaunchButtonClick_HidesRouter()
     {
         GameObject prefab = LoadQuickCustomPrefab();
-        GameObject legacyCanvas = new("UI_Canvas");
         GameObject routerRoot = new("WarlineCaptureAppCanvas");
         GameObject instance = null;
 
         try
         {
-            legacyCanvas.SetActive(false);
             routerRoot.AddComponent<WarlineCaptureRouter>();
             CreateRouterScreen(routerRoot.transform, WarlineCaptureRoute.Match);
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
@@ -383,18 +375,14 @@ public sealed class WarlineCaptureUiQuickCustomTests
             Assert.NotNull(launchButton);
             launchButton.onClick.Invoke();
 
-            Assert.IsTrue(legacyCanvas.activeSelf);
             Assert.IsFalse(routerRoot.activeSelf);
-            Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
         }
         finally
         {
             AISettingsRuntimeState.ResetDefaults();
-            new ActiveMissionSession().Clear();
             if (instance != null)
                 Object.DestroyImmediate(instance);
             Object.DestroyImmediate(routerRoot);
-            Object.DestroyImmediate(legacyCanvas);
         }
     }
 

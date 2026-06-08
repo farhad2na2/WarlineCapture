@@ -2,7 +2,6 @@ using System.Collections;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
@@ -32,25 +31,6 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
     {
         if (playOnStart)
             Play();
-    }
-
-    private void Update()
-    {
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard == null || !keyboard.escapeKey.wasPressedThisFrame)
-            return;
-
-        if (!TryGetState(out UiShellStateComponent state))
-            return;
-
-        if (state.CurrentMode != UiShellMode.MatchHud ||
-            state.Phase != UiShellTransitionPhase.MatchHudReady ||
-            state.IsTransitionRunning != 0)
-        {
-            return;
-        }
-
-        EnqueuePopup(UiShellPopupIntent.Show);
     }
 
     public void Play()
@@ -128,20 +108,6 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
             Intent = intent,
             Route = route,
             PushHistory = 0
-        });
-    }
-
-    private void EnqueuePopup(UiShellPopupIntent intent)
-    {
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return;
-
-        DynamicBuffer<UiShellPopupRequestComponent> requests = entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
-        requests.Add(new UiShellPopupRequestComponent
-        {
-            PopupKind = UiShellPopupKind.MissionResult,
-            Intent = intent,
-            PayloadId = 0
         });
     }
 

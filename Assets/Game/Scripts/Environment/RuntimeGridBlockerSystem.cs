@@ -168,12 +168,6 @@ public sealed class RuntimeGridBlockerSystem
     {
         if (!_spawnOnStart || _spawned || _spawnFinalizing)
             return;
-        if (Chapter01M01PlayableRuntime.IsActiveMission())
-        {
-            _readyForDependents = true;
-            _spawned = true;
-            return;
-        }
         if (HasPendingCityGeneration())
             return;
 

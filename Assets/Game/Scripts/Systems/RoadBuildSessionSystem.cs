@@ -126,9 +126,6 @@ public sealed class RoadBuildSessionSystem
 
     public bool ActivateRoadBuildMode(Context context)
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return false;
-
         context.RuntimeGameplayStateSystem.BuildModeActive = true;
         context.RuntimeGameplayStateSystem.SelectionModeActive = false;
         context.ApplyBuildCommandMode?.Invoke();
@@ -145,9 +142,6 @@ public sealed class RoadBuildSessionSystem
 
     public bool ActivateSoldierBaseMode(Context context)
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return false;
-
         context.RuntimeGameplayStateSystem.BuildModeActive = true;
         context.RuntimeGameplayStateSystem.SelectionModeActive = false;
         context.ApplyBuildCommandMode?.Invoke();

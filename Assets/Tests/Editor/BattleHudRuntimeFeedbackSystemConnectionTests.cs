@@ -107,7 +107,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         BattleHudRuntimeFeedbackSystem.SetWorldMarkersVisible(view, true);
         Assert.IsFalse(
             markerLayer.gameObject.activeSelf,
-            "Live gameplay must not surface fixed screen-space marker preview art over M01 units.");
+            "Live gameplay must not surface fixed screen-space marker preview art over scripted-start units.");
     }
 
     [Test]

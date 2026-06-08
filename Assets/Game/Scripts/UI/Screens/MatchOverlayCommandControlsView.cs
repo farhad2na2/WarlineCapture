@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public sealed class MatchOverlayCommandControlsView : MonoBehaviour
 {
+    private static readonly List<MatchOverlayCommandControlsView> RegisteredInstances = new();
+
     [SerializeField] private Button selectButton;
     [SerializeField] private Button moveButton;
     [SerializeField] private Button attackButton;
@@ -26,4 +29,16 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public CommandWheelPanelSystem CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
+    public static IReadOnlyList<MatchOverlayCommandControlsView> Instances => RegisteredInstances;
+
+    private void OnEnable()
+    {
+        if (!RegisteredInstances.Contains(this))
+            RegisteredInstances.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        RegisteredInstances.Remove(this);
+    }
 }

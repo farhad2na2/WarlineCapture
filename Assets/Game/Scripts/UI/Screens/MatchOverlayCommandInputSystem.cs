@@ -166,13 +166,6 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnBuildButtonClicked()
         {
-            if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            {
-                _tabVisualSystem?.Select(null);
-                _buildDrawerOpen = false;
-                return;
-            }
-
             if (_showBuildDrawer != null)
                 _showBuildDrawer.Invoke();
             else

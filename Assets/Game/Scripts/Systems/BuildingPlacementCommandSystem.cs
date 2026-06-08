@@ -52,9 +52,6 @@ internal sealed class BuildingPlacementCommandSystem
 
     public bool BeginPlacementForConfiguredSpawnable(Context context, GameObject prefab)
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return false;
-
         if (context.DefinitionSystem == null ||
             !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out BuildingDefinition definition))
         {
@@ -98,9 +95,6 @@ internal sealed class BuildingPlacementCommandSystem
 
     private static void BeginConfiguredPlacement(Context context, BuildingDefinition definition, string missingPrefabWarning)
     {
-        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
-            return;
-
         if (definition == null || definition.Prefab == null)
         {
             context.LogWarning?.Invoke(missingPrefabWarning);

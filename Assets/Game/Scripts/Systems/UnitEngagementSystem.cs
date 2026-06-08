@@ -106,6 +106,7 @@ public partial struct UnitEngagementSystem : ISystem
         var manualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true);
         var pathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
+        var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
         var openingProtectionLookup = SystemAPI.GetComponentLookup<MissionRuntimeOpeningControlProtection>(true);
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
@@ -123,6 +124,7 @@ public partial struct UnitEngagementSystem : ISystem
             ManualMoveLookup = manualMoveLookup,
             PathFollowLookup = pathFollowLookup,
             PathRequestLookup = pathRequestLookup,
+            HoldPositionLookup = holdPositionLookup,
             OpeningProtectionLookup = openingProtectionLookup,
             Ecb = ecb
         }.ScheduleParallel(buildHandle);
@@ -166,6 +168,7 @@ public partial struct UnitEngagementSystem : ISystem
         [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
         [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
         [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
         [ReadOnly] public ComponentLookup<MissionRuntimeOpeningControlProtection> OpeningProtectionLookup;
 
         public EntityCommandBuffer.ParallelWriter Ecb;
@@ -183,15 +186,21 @@ public partial struct UnitEngagementSystem : ISystem
                 ManualMoveLookup.HasComponent(entity) &&
                 (PathFollowLookup.HasComponent(entity) || PathRequestLookup.HasComponent(entity));
 
-            int scanRangeCells = math.max(0, combat.AggroRangeCells);
-            if (Grid.CellSize > 1e-6f && attack.Range > 0f)
-                scanRangeCells = math.max(scanRangeCells, (int)math.ceil(attack.Range / Grid.CellSize));
+            bool holdingPosition = HoldPositionLookup.HasComponent(entity);
+            int attackRangeCells = Grid.CellSize > 1e-6f && attack.Range > 0f
+                ? (int)math.ceil(attack.Range / Grid.CellSize)
+                : 0;
+            int scanRangeCells = holdingPosition
+                ? attackRangeCells
+                : math.max(math.max(0, combat.AggroRangeCells), attackRangeCells);
 
             if (scanRangeCells <= 0)
                 return;
 
-            float maxDist = scanRangeCells * Grid.CellSize;
-            if (attack.Range > 0f)
+            float maxDist = holdingPosition && attack.Range > 0f
+                ? attack.Range
+                : scanRangeCells * Grid.CellSize;
+            if (!holdingPosition && attack.Range > 0f)
                 maxDist = math.max(maxDist, attack.Range);
             float maxDistSq = maxDist * maxDist;
 
@@ -204,20 +213,25 @@ public partial struct UnitEngagementSystem : ISystem
                 if (!hasActiveManualMove && IsValidRetaliationTarget(recent.Attacker, selfFaction.Id))
                 {
                     float3 recentPos = TransformLookup[recent.Attacker].Position;
-                    int2 recentCell = GridUtils.WorldToCell(Grid, recentPos);
-                    Ecb.AddComponent(sortKey, entity, new EngageTarget
+                    float3 recentDelta = recentPos - selfTransform.Position;
+                    recentDelta.y = 0f;
+                    if (!holdingPosition || math.lengthsq(recentDelta) <= maxDistSq)
                     {
-                        Target = recent.Attacker,
-                        Cell = recentCell,
-                        Position = recentPos,
-                        IsCommanded = 0
-                    });
-                    Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
-                    Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
-                    Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-                    Ecb.RemoveComponent<UnitPathRequest>(sortKey, entity);
-                    Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
-                    return;
+                        int2 recentCell = GridUtils.WorldToCell(Grid, recentPos);
+                        Ecb.AddComponent(sortKey, entity, new EngageTarget
+                        {
+                            Target = recent.Attacker,
+                            Cell = recentCell,
+                            Position = recentPos,
+                            IsCommanded = 0
+                        });
+                        Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
+                        Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
+                        Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
+                        Ecb.RemoveComponent<UnitPathRequest>(sortKey, entity);
+                        Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
+                        return;
+                    }
                 }
 
                 Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);

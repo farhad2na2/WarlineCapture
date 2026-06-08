@@ -18,6 +18,10 @@ public struct ManualMoveOrderTag : IComponentData
 {
 }
 
+public struct HoldPositionOrderTag : IComponentData
+{
+}
+
 public struct ManualMoveGroupMemberTag : IComponentData
 {
 }

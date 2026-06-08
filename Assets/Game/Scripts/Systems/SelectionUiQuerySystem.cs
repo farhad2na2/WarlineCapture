@@ -267,13 +267,15 @@ public sealed class SelectionUiQuerySystem
         if (entityManager.HasComponent<UnitAirState>(entity) && entityManager.GetComponentData<UnitAirState>(entity).ReturningHome != 0)
             return FocusedUnitUiStatus.ReturningToBase;
 
+        if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
+            return FocusedUnitUiStatus.Idle;
+
         if (entityManager.HasComponent<EngageTarget>(entity))
             return FocusedUnitUiStatus.Engaged;
 
         if (entityManager.HasComponent<UnitTarget>(entity) ||
             entityManager.HasComponent<UnitPathRequest>(entity) ||
-            entityManager.HasComponent<UnitPathFollow>(entity) ||
-            entityManager.HasComponent<ManualMoveOrderTag>(entity))
+            entityManager.HasComponent<UnitPathFollow>(entity))
         {
             return FocusedUnitUiStatus.Moving;
         }
@@ -380,7 +382,9 @@ public sealed class SelectionUiQuerySystem
             parts.Add($"HP {health.Current}/{health.Max}");
         }
 
-        if (entityManager.HasComponent<EngageTarget>(entity))
+        if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
+            parts.Add("HOLDING");
+        else if (entityManager.HasComponent<EngageTarget>(entity))
             parts.Add("ENGAGED");
         else if (entityManager.HasComponent<UnitTarget>(entity) || entityManager.HasComponent<UnitPathRequest>(entity) || entityManager.HasComponent<UnitPathFollow>(entity))
             parts.Add("MOVING");

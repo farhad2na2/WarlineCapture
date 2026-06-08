@@ -218,6 +218,42 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void SelectionUiCommandSystem_HoldButtonQueuesHoldAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestHoldPosition());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.HoldPosition, requests[0].Kind);
+    }
+
+    [Test]
+    public void SelectionUiCommandSystem_StopButtonQueuesStopAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestStop());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Stop, requests[0].Kind);
+    }
+
+    [Test]
     public void QueueMoveOrder_ConsumesOnlyAtOrAfterExecutionFrame()
     {
         var inputSystem = new RtsSelectionInputSystem();

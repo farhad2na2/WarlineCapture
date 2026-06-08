@@ -42,6 +42,7 @@ public sealed class UnitMoveOrderSystem
         result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRange>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity) ? 1 : 0;
 
         if (!entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
         {
@@ -90,6 +91,7 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
         RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
+        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
 
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
 
@@ -106,6 +108,7 @@ public sealed class UnitMoveOrderSystem
     {
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
+        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
         if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
             entityManager.AddComponent<ManualMoveOrderTag>(entity);
     }
@@ -118,6 +121,7 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
         RemoveComponentIfPresent<ManualMoveOrderTag>(entityManager, entity);
         RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
+        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
         RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
     }
 

@@ -115,6 +115,15 @@ public sealed class FocusedUnitCommandSystem
         bool clearEngageTarget,
         UnitMoveOrderSystem moveOrderSystem)
     {
+        return IssueImmediateSelectedUnitOrder(em, clearEngageTarget, false, moveOrderSystem);
+    }
+
+    public bool IssueImmediateSelectedUnitOrder(
+        EntityManager em,
+        bool clearEngageTarget,
+        bool holdPosition,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
         EnsureEntityQueries(em);
         using var selectedEntities = _selectedMoveQuery.ToEntityArray(Allocator.Temp);
         if (selectedEntities.Length == 0)
@@ -135,6 +144,33 @@ public sealed class FocusedUnitCommandSystem
             moveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
             if (clearEngageTarget)
                 moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
+            if (holdPosition)
+            {
+                if (!em.HasComponent<HoldPositionOrderTag>(entity))
+                    em.AddComponent<HoldPositionOrderTag>(entity);
+                if (em.HasComponent<UnitCombat>(entity))
+                {
+                    UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
+                    if (combat.CanAttack != 0)
+                    {
+                        combat.AutoEngage = 1;
+                        em.SetComponentData(entity, combat);
+                    }
+                }
+            }
+            else
+            {
+                moveOrderSystem.RemoveComponentIfPresent<HoldPositionOrderTag>(em, entity);
+                if (clearEngageTarget && em.HasComponent<UnitCombat>(entity))
+                {
+                    UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
+                    if (combat.CanAttack != 0)
+                    {
+                        combat.AutoEngage = 0;
+                        em.SetComponentData(entity, combat);
+                    }
+                }
+            }
             if (!em.HasComponent<ManualMoveOrderTag>(entity))
                 em.AddComponent<ManualMoveOrderTag>(entity);
         }

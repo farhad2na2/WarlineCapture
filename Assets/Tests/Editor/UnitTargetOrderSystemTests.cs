@@ -54,6 +54,7 @@ public sealed class UnitTargetOrderSystemTests
         Entity target = CreateTarget(new int2(7, 8), new float3(7.5f, 0f, 8.5f));
         _entityManager.AddComponent<ManualMoveOrderTag>(attacker);
         _entityManager.AddComponent<AutoWanderMoveTag>(attacker);
+        _entityManager.AddComponent<HoldPositionOrderTag>(attacker);
         _entityManager.AddComponent<UnitPathFollow>(attacker);
         _entityManager.AddComponent<UnitPathRange>(attacker);
         _entityManager.AddComponentData(attacker, new UnitPathRequest { Goal = new int2(1, 1) });
@@ -80,6 +81,7 @@ public sealed class UnitTargetOrderSystemTests
         Assert.AreEqual(1, engageTarget.IsCommanded);
         Assert.IsFalse(_entityManager.HasComponent<ManualMoveOrderTag>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<AutoWanderMoveTag>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathFollow>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(attacker));
@@ -140,6 +142,7 @@ public sealed class UnitTargetOrderSystemTests
         var targetOrderSystem = new UnitTargetOrderSystem();
         Entity attacker = CreateAttacker();
         Entity target = CreateTarget(new int2(2, 3), new float3(2.5f, 0f, 3.5f));
+        _entityManager.AddComponent<HoldPositionOrderTag>(attacker);
 
         targetOrderSystem.IssueDirectAttackTarget(_entityManager, attacker, target, new int2(2, 3), new float3(2.5f, 0f, 3.5f));
 
@@ -147,6 +150,7 @@ public sealed class UnitTargetOrderSystemTests
         Assert.AreEqual(target, engageTarget.Target);
         Assert.AreEqual(new int2(2, 3), engageTarget.Cell);
         Assert.AreEqual(1, engageTarget.IsCommanded);
+        Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(attacker));
     }
 
     private Entity CreateAttacker()

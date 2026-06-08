@@ -111,7 +111,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
     }
 
     [Test]
-    public void SelectionSystems_HoldAndStopPublishCommandModesAndClearOrders()
+    public void SelectionSystems_HoldAndStopClearCommandModesAndOrders()
     {
         EntityManager em = _world.EntityManager;
         Entity unit = CreatePlayerUnit(em, "Bravo Squad", new int2(7, 8), 100);
@@ -120,22 +120,27 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
 
         Assert.IsTrue(FocusUnit(em, unit, state));
         Assert.IsTrue(IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Hold));
-        AssertText("CommandModeBanner/ModeText", "HOLD POSITION");
+        Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         Assert.IsFalse(_overlay.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(1, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        StringAssert.Contains("HOLDING", TextAt("SelectedEntityPanel/StatusText"));
 
         AddActiveOrderComponents(em, unit);
         Assert.IsTrue(IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Stop));
-        AssertText("CommandModeBanner/ModeText", "STOP ORDER");
+        Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
     }
 
     [Test]
@@ -160,25 +165,30 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
 
         holdButton.onClick.Invoke();
         ProcessSelectionUiCommandRequests(em);
-        AssertText("CommandModeBanner/ModeText", "HOLD POSITION");
+        Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         Assert.IsFalse(_overlay.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(1, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        StringAssert.Contains("HOLDING", TextAt("SelectedEntityPanel/StatusText"));
 
         AddActiveOrderComponents(em, unit);
         stopButton.onClick.Invoke();
         ProcessSelectionUiCommandRequests(em);
-        AssertText("CommandModeBanner/ModeText", "STOP ORDER");
+        Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
     }
 
     [Test]
@@ -224,7 +234,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         controls.CommandWheelStopButton.onClick.Invoke();
         ProcessSelectionUiCommandRequests(em);
 
-        AssertText("CommandModeBanner/ModeText", "STOP ORDER");
+        Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         Assert.IsFalse(wheel.IsOpen);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
@@ -348,9 +358,18 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         bool issued = new FocusedUnitCommandSystem().IssueImmediateSelectedUnitOrder(
             em,
             clearEngageTarget,
+            mode == TacticalCommandMode.Hold,
             new UnitMoveOrderSystem());
         if (issued)
+        {
             ApplyHudCommandMode(em, mode);
+            ApplyHudCommandResult(em, TacticalCommandResult.Success());
+            ClearHudCommandMode(em);
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+            if (selectedEntities.Length > 0)
+                ApplyHudSelection(em, selectedEntities[0]);
+        }
         return issued;
     }
 

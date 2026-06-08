@@ -664,31 +664,34 @@ internal sealed class SelectionGameplayStartupSystem
 
         void IssueHoldPositionOrder()
         {
-            IssueImmediateSelectedUnitOrder(TacticalCommandMode.Hold, clearEngageTarget: true);
+            IssueImmediateSelectedUnitOrder(TacticalCommandMode.Hold, clearEngageTarget: true, holdPosition: true);
         }
 
         void IssueStopOrder()
         {
-            IssueImmediateSelectedUnitOrder(TacticalCommandMode.Stop, clearEngageTarget: true);
+            IssueImmediateSelectedUnitOrder(TacticalCommandMode.Stop, clearEngageTarget: true, holdPosition: false);
         }
 
-        bool IssueImmediateSelectedUnitOrder(TacticalCommandMode mode, bool clearEngageTarget)
+        bool IssueImmediateSelectedUnitOrder(TacticalCommandMode mode, bool clearEngageTarget, bool holdPosition)
         {
             selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode);
 
             if (!TryGetDefaultEntityManager(out EntityManager em))
             {
                 selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
                 return false;
             }
 
             bool issued = focusedUnitCommandSystem.IssueImmediateSelectedUnitOrder(
                 em,
                 clearEngageTarget,
+                holdPosition,
                 unitMoveOrderSystem);
             if (!issued)
             {
                 selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
                 return false;
             }
 
@@ -696,6 +699,11 @@ internal sealed class SelectionGameplayStartupSystem
             SetCameraDragging(false);
             selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
             selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            focusedUnitLifecycleSystem.RefreshFocusedUnit(
+                em,
+                selectionStateSystem,
+                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity));
             return true;
         }
 

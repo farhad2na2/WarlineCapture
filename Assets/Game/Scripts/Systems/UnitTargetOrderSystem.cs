@@ -131,6 +131,7 @@ public sealed class UnitTargetOrderSystem
                 entityManager.RemoveComponent<ManualMoveOrderTag>(entity);
             if (entityManager.HasComponent<AutoWanderMoveTag>(entity))
                 entityManager.RemoveComponent<AutoWanderMoveTag>(entity);
+            RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
 
             Entity engageTarget = targetEntity;
             int2 engageCell = targetCell;
@@ -223,6 +224,7 @@ public sealed class UnitTargetOrderSystem
     {
         RemoveIfPresent<ManualMoveOrderTag>(entityManager, sourceEntity);
         RemoveIfPresent<AutoWanderMoveTag>(entityManager, sourceEntity);
+        RemoveIfPresent<HoldPositionOrderTag>(entityManager, sourceEntity);
         RemoveIfPresent<UnitPathFollow>(entityManager, sourceEntity);
         RemoveIfPresent<UnitPathRange>(entityManager, sourceEntity);
         RemoveIfPresent<UnitPathRequest>(entityManager, sourceEntity);
@@ -250,6 +252,7 @@ public sealed class UnitTargetOrderSystem
         RemoveIfPresent<UnitPathRange>(entityManager, entity);
         RemoveIfPresent<ManualMoveOrderTag>(entityManager, entity);
         RemoveIfPresent<AutoWanderMoveTag>(entityManager, entity);
+        RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
     }
 
     public TacticalCommandResult ValidateAttackSource(EntityManager entityManager, Entity entity)

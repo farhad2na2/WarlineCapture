@@ -70,10 +70,15 @@ public sealed class SelectionUiQuerySystemTests
         _entityManager.SetComponentData(airUnit, new UnitAirState { ReturningHome = 1 });
         Entity engagedUnit = _entityManager.CreateEntity(typeof(EngageTarget));
         Entity movingUnit = _entityManager.CreateEntity(typeof(UnitPathRequest));
+        Entity holdingUnit = _entityManager.CreateEntity(typeof(HoldPositionOrderTag), typeof(UnitPathRequest));
+        Entity manualGuardUnit = _entityManager.CreateEntity(typeof(ManualMoveOrderTag));
 
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase, _querySystem.GetFocusedUnitUiStatus(_entityManager, airUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged, _querySystem.GetFocusedUnitUiStatus(_entityManager, engagedUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Moving, _querySystem.GetFocusedUnitUiStatus(_entityManager, movingUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
+        StringAssert.Contains("HOLDING", _querySystem.ResolveHudSelectionStatus(_entityManager, holdingUnit));
     }
 
     [Test]

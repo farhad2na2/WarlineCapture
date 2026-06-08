@@ -66,7 +66,8 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitPathFollow),
             typeof(UnitPathRange),
             typeof(EngageTarget),
-            typeof(AutoWanderMoveTag));
+            typeof(AutoWanderMoveTag),
+            typeof(HoldPositionOrderTag));
         int2 goal = new(4, 5);
 
         moveOrderSystem.IssueImmediateMoveCommand(_entityManager, unit, goal);
@@ -78,6 +79,7 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
         Assert.IsFalse(_entityManager.HasComponent<AutoWanderMoveTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
     }
 
     [Test]
@@ -116,6 +118,7 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitPathRange),
             typeof(ManualMoveOrderTag),
             typeof(AutoWanderMoveTag),
+            typeof(HoldPositionOrderTag),
             typeof(EngageTarget));
 
         moveOrderSystem.ClearMovementOrderComponents(_entityManager, unit);
@@ -126,6 +129,7 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<AutoWanderMoveTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
     }
 }

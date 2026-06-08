@@ -33,6 +33,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var staticBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true);
+        var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
 
         var handle = new EngagedMoveJob
         {
@@ -46,7 +47,8 @@ public partial struct UnitEngagedMovementSystem : ISystem
             DeltaTime = SystemAPI.Time.DeltaTime,
             FootprintLookup = footprintLookup,
             HealthLookup = healthLookup,
-            StaticBlockerLookup = staticBlockerLookup
+            StaticBlockerLookup = staticBlockerLookup,
+            HoldPositionLookup = holdPositionLookup
         }.ScheduleParallel(state.Dependency);
 
         state.Dependency = handle;
@@ -70,8 +72,10 @@ public partial struct UnitEngagedMovementSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitFootprint> FootprintLookup;
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
         [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticBlockerLookup;
+        [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
 
         public void Execute(
+            Entity entity,
             ref LocalTransform transform,
             ref UnitGrid selfGrid,
             ref EngageTarget engage,
@@ -104,6 +108,8 @@ public partial struct UnitEngagedMovementSystem : ISystem
                 return;
             }
 
+            bool holdingPosition = HoldPositionLookup.HasComponent(entity);
+
             // Keep UnitGrid in sync for engaged units so occupancy reflects actual positions (prevents "pushing").
             int2 selfWorldCell = GridUtils.WorldToCell(Grid, transform.Position);
             if (GridUtils.InBounds(selfWorldCell, Grid.Width, Grid.Height))
@@ -122,6 +128,16 @@ public partial struct UnitEngagedMovementSystem : ISystem
             float chaseLeash = math.max(
                 math.max(0f, combat.ChaseBreakDistance),
                 math.max(0, combat.AggroRangeCells) * Grid.CellSize);
+
+            if (holdingPosition && distSq > effectiveAttackRange * effectiveAttackRange)
+            {
+                engage.Target = Entity.Null;
+                engage.Cell = default;
+                engage.Position = default;
+                engage.IsCommanded = 0;
+                vehicleKinematics.CurrentSpeed = 0f;
+                return;
+            }
 
             if (engage.IsCommanded == 0 && chaseLeash > 0f && dist > chaseLeash)
             {

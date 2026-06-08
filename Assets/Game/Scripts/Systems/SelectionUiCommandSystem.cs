@@ -57,11 +57,13 @@ public sealed class SelectionUiCommandSystem
 
     public bool RequestHoldPosition()
     {
+        CaptureUiClickSequence();
         return Queue(RtsSelectionCommandIntentKind.HoldPosition);
     }
 
     public bool RequestStop()
     {
+        CaptureUiClickSequence();
         return Queue(RtsSelectionCommandIntentKind.Stop);
     }
 

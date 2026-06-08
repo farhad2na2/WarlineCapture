@@ -326,6 +326,18 @@ public partial struct UnitAttackSystem : ISystem
         if (targetCombat.CanAttack == 0 || targetCombat.AutoEngage == 0 || hasActiveManualMove)
             return;
 
+        if (em.HasComponent<HoldPositionOrderTag>(target) &&
+            em.HasComponent<LocalTransform>(target) &&
+            em.HasComponent<UnitAttack>(target))
+        {
+            float3 holdPosition = em.GetComponentData<LocalTransform>(target).Position;
+            float3 delta = attackerPosition - holdPosition;
+            delta.y = 0f;
+            float attackRange = math.max(0f, em.GetComponentData<UnitAttack>(target).Range);
+            if (attackRange <= 0f || math.lengthsq(delta) > attackRange * attackRange)
+                return;
+        }
+
         if (em.HasComponent<EngageTarget>(target))
         {
             EngageTarget currentEngage = em.GetComponentData<EngageTarget>(target);

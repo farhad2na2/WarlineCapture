@@ -14,7 +14,11 @@ public partial struct UiShellBoundarySystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         if (!boundaryQuery.IsEmptyIgnoreFilter)
+        {
+            Entity existingBoundary = boundaryQuery.GetSingletonEntity();
+            EnsureMatchIntroComponent(ref state, existingBoundary);
             return;
+        }
 
         Entity boundary = state.EntityManager.CreateEntity(typeof(UiShellBoundaryComponent));
         state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
@@ -31,6 +35,14 @@ public partial struct UiShellBoundarySystem : ISystem
             Status = new FixedString64Bytes("Starting"),
             IsComplete = 0
         });
+        state.EntityManager.AddComponentData(boundary, new MatchIntroTransitionComponent
+        {
+            State = MatchIntroTransitionStateKind.Inactive,
+            Progress01 = 0f,
+            InputLocked = 0,
+            SequenceId = 0,
+            Status = new FixedString64Bytes("Inactive")
+        });
         state.EntityManager.AddComponentData(boundary, new UiShellArmoryCategoryComponent
         {
             Category = ArmoryCatalogCategory.Characters
@@ -41,5 +53,20 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+    }
+
+    private static void EnsureMatchIntroComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<MatchIntroTransitionComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, new MatchIntroTransitionComponent
+        {
+            State = MatchIntroTransitionStateKind.Inactive,
+            Progress01 = 0f,
+            InputLocked = 0,
+            SequenceId = 0,
+            Status = new FixedString64Bytes("Inactive")
+        });
     }
 }

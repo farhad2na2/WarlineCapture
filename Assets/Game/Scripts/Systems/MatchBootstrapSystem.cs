@@ -24,6 +24,7 @@ internal sealed class MatchBootstrapSystem
 
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
+    private readonly VisualQualitySettingsSystem _visualQualitySettingsSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
@@ -48,6 +49,7 @@ internal sealed class MatchBootstrapSystem
     public Camera WorldCamera => MatchScene != null ? MatchScene.WorldCamera : null;
     public Light DirectionalLight => MatchScene != null ? MatchScene.DirectionalLight : null;
     public Volume GlobalVolume => MatchScene != null ? MatchScene.GlobalVolume : null;
+    public VisualQualityProfileAsset VisualQualityProfile => MatchScene != null ? MatchScene.VisualQualityProfile : null;
     public CombinedMeshBaker DecorationCombinedMeshBaker => MatchScene != null ? MatchScene.DecorationCombinedMeshBaker : null;
     public Transform DecorationRoot => MatchScene != null ? MatchScene.DecorationRoot : null;
 
@@ -123,6 +125,7 @@ internal sealed class MatchBootstrapSystem
     private bool _gameplayStartRequested;
     private bool _gameplayStartComplete;
     private bool _managedRuntimeInitialized;
+    private bool _visualQualitySettingsInitialized;
     private GameplayStartStep _gameplayStartStep;
     private AISettingsSnapshot _pendingAiSettingsSnapshot;
     private AIStartupSystem.Result _pendingAiStartupResult;
@@ -190,6 +193,7 @@ internal sealed class MatchBootstrapSystem
             MainMenu,
             UnitImpostors,
             ref _gameplayStartPending);
+        _visualQualitySettingsSystem.Update();
     }
 
     public void OnApplicationFocus(bool hasFocus)
@@ -249,6 +253,7 @@ internal sealed class MatchBootstrapSystem
             _mapSurfaceRuntimeBootstrapSystem,
             _runtimeCameraReferenceSystem,
             _performanceDiagnosticsSystem);
+        _visualQualitySettingsSystem.Dispose();
 
         MainMenu = null;
         _mainMenuBaseBindingsApplied = false;
@@ -299,6 +304,7 @@ internal sealed class MatchBootstrapSystem
         _gameplayStartRequested = false;
         _gameplayStartComplete = false;
         _managedRuntimeInitialized = false;
+        _visualQualitySettingsInitialized = false;
         _gameplayStartStep = GameplayStartStep.Idle;
         _gameplayStartProgress01 = 0f;
         _gameplayStartStatus = "Waiting for match scene";
@@ -792,6 +798,8 @@ internal sealed class MatchBootstrapSystem
         if (_managedRuntimeInitialized)
             return;
 
+        InitializeVisualQualitySettingsIfNeeded();
+
         ManagedGameplayStartupSystem.Result managedSystems = InitializeManagedRuntime(
             DayNightConfig,
             FactionVisualConfig,
@@ -855,6 +863,15 @@ internal sealed class MatchBootstrapSystem
         EnsureBuildingRuntimeBoundaryEntity();
         _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
+    }
+
+    private void InitializeVisualQualitySettingsIfNeeded()
+    {
+        if (_visualQualitySettingsInitialized)
+            return;
+
+        _visualQualitySettingsSystem.Initialize(VisualQualityProfile, WorldCamera, DirectionalLight, GlobalVolume);
+        _visualQualitySettingsInitialized = true;
     }
 
     private void InitializeGameplaySystemsIfNeeded()

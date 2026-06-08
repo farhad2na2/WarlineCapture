@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public sealed class UIShellCurrentContentLoadTests
 {
@@ -33,6 +34,10 @@ public sealed class UIShellCurrentContentLoadTests
             RunValidationStep(
                 nameof(RebindingCommandControlsWithAnotherInputSystemDropsStaleListeners),
                 test => test.RebindingCommandControlsWithAnotherInputSystemDropsStaleListeners(),
+                ref passed);
+            RunValidationStep(
+                nameof(MenuSceneShellSerializesMatchIntroCurtain),
+                test => test.MenuSceneShellSerializesMatchIntroCurtain(),
                 ref passed);
 
             Debug.Log($"[UIShellCurrentContentLoadValidation] result=Passed tests={passed}");
@@ -204,6 +209,36 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
         Assert.AreEqual(1, requests.Length, "Rebinding through another input system must not leave stale Move listeners attached.");
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void MenuSceneShellSerializesMatchIntroCurtain()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellView shell = FindInScene<UIShellView>(scene);
+        Assert.NotNull(shell, "Menu scene must contain the shell view.");
+        Assert.NotNull(shell.MatchIntroCurtain, "Shell view must serialize the Match intro curtain.");
+        Assert.NotNull(shell.MatchIntroCurtain.Root, "Match intro curtain must serialize its root.");
+        Assert.NotNull(shell.MatchIntroCurtain.CanvasGroup, "Match intro curtain must serialize its CanvasGroup.");
+
+        Assert.IsFalse(shell.MatchIntroCurtain.Root.activeSelf, "Curtain should start inactive until Match loading starts.");
+        Assert.That(shell.MatchIntroCurtain.CanvasGroup.alpha, Is.EqualTo(0f).Within(0.0001f));
+        Assert.IsFalse(shell.MatchIntroCurtain.CanvasGroup.interactable);
+        Assert.IsFalse(shell.MatchIntroCurtain.CanvasGroup.blocksRaycasts);
+
+        Image curtainImage = shell.MatchIntroCurtain.Root.GetComponent<Image>();
+        Assert.NotNull(curtainImage, "Curtain should render through a serialized Image component.");
+        Assert.IsFalse(curtainImage.raycastTarget, "Curtain image must not block HUD or shell input.");
+        Assert.That(curtainImage.color.r, Is.EqualTo(0f).Within(0.0001f));
+        Assert.That(curtainImage.color.g, Is.EqualTo(0f).Within(0.0001f));
+        Assert.That(curtainImage.color.b, Is.EqualTo(0f).Within(0.0001f));
+        Assert.That(curtainImage.color.a, Is.EqualTo(1f).Within(0.0001f));
+
+        Assert.IsTrue(shell.TryGetRegion(UIShellRegionId.MenuBackgroundRegion, out UIShellRegionView background));
+        Assert.IsTrue(shell.TryGetRegion(UIShellRegionId.HeaderRegion, out UIShellRegionView header));
+        int curtainIndex = shell.MatchIntroCurtain.Root.transform.GetSiblingIndex();
+        Assert.Greater(curtainIndex, background.RegionRoot.GetSiblingIndex(), "Curtain should draw above menu/world background.");
+        Assert.Less(curtainIndex, header.RegionRoot.GetSiblingIndex(), "HUD regions should draw above the curtain.");
     }
 
     private static GameObject AssertRegionHasChild(UIShellView shell, UIShellRegionId regionId)

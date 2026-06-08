@@ -200,6 +200,23 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void SelectionUiCommandSystem_MoveButtonDoesNotQueueWhileGameplayInputLocked()
+    {
+        var commandSystem = new SelectionUiCommandSystem(() => true);
+
+        Assert.IsFalse(commandSystem.RequestMoveCommandMode());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_AttackButtonQueuesEnterAttackTargetModeAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();

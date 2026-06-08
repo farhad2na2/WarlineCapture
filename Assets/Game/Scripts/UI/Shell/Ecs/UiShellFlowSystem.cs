@@ -10,6 +10,7 @@ public partial struct UiShellFlowSystem : ISystem
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+            ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
             ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
             ComponentType.ReadWrite<UiShellRouteHistoryComponent>(),
             ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
@@ -24,18 +25,20 @@ public partial struct UiShellFlowSystem : ISystem
         Entity boundary = boundaryQuery.GetSingletonEntity();
         UiShellStateComponent shellState = state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
         UiShellLoadingProgressComponent loading = state.EntityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        MatchIntroTransitionComponent matchIntro = state.EntityManager.GetComponentData<MatchIntroTransitionComponent>(boundary);
         DynamicBuffer<UiShellRouteRequestComponent> routeRequests = state.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
         DynamicBuffer<UiShellRouteHistoryComponent> routeHistory = state.EntityManager.GetBuffer<UiShellRouteHistoryComponent>(boundary);
         DynamicBuffer<UiShellPopupRequestComponent> popupRequests = state.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
         DynamicBuffer<UiShellPresentationCommandComponent> commands = state.EntityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
         DynamicBuffer<UiShellTransitionCompleteComponent> completions = state.EntityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary);
 
-        ConsumeCompletions(ref shellState, completions);
+        ConsumeCompletions(ref shellState, ref matchIntro, completions);
         completions.Clear();
 
         if (shellState.IsTransitionRunning != 0)
         {
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
 
@@ -46,6 +49,7 @@ public partial struct UiShellFlowSystem : ISystem
             shellState.ActiveRoute = UIRoute.MainMenu;
             shellState.Phase = UiShellTransitionPhase.EnteringMenu;
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
 
@@ -53,12 +57,13 @@ public partial struct UiShellFlowSystem : ISystem
         {
             ProcessPopupRequest(ref shellState, commands, popupRequest);
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
 
         if (TryConsumeRouteRequest(routeRequests, out UiShellRouteRequestComponent routeRequest))
         {
-            ProcessRouteRequest(ref shellState, commands, routeHistory, routeRequest);
+            ProcessRouteRequest(ref shellState, ref matchIntro, commands, routeHistory, routeRequest);
             if (routeRequest.Intent == UiShellRouteIntent.EnterMatch ||
                 routeRequest.Intent == UiShellRouteIntent.ReturnToMainMenu)
             {
@@ -66,6 +71,7 @@ public partial struct UiShellFlowSystem : ISystem
                 state.EntityManager.SetComponentData(boundary, loading);
             }
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
 
@@ -77,6 +83,13 @@ public partial struct UiShellFlowSystem : ISystem
                 AppendCommand(commands, shellState, UiShellCommandKind.EnterMatchHud, UiShellRegionId.None, UIRoute.Match, UiShellMode.MatchHud);
                 shellState.CurrentMode = UiShellMode.MatchHud;
                 shellState.Phase = UiShellTransitionPhase.EnteringMatchHud;
+                SetMatchIntro(
+                    ref matchIntro,
+                    MatchIntroTransitionStateKind.EnteringHud,
+                    0.66f,
+                    inputLocked: true,
+                    shellState.TransitionSequenceId,
+                    "Entering HUD");
             }
             else
             {
@@ -85,16 +98,20 @@ public partial struct UiShellFlowSystem : ISystem
                 shellState.CurrentMode = UiShellMode.MainMenu;
                 shellState.ActiveRoute = UIRoute.MainMenu;
                 shellState.Phase = UiShellTransitionPhase.EnteringMenu;
+                SetMatchIntroInactive(ref matchIntro);
             }
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
 
         state.EntityManager.SetComponentData(boundary, shellState);
+        state.EntityManager.SetComponentData(boundary, matchIntro);
     }
 
     private static void ProcessRouteRequest(
         ref UiShellStateComponent shellState,
+        ref MatchIntroTransitionComponent matchIntro,
         DynamicBuffer<UiShellPresentationCommandComponent> commands,
         DynamicBuffer<UiShellRouteHistoryComponent> routeHistory,
         UiShellRouteRequestComponent request)
@@ -108,6 +125,13 @@ public partial struct UiShellFlowSystem : ISystem
                 shellState.CurrentMode = UiShellMode.Loading;
                 shellState.ActiveRoute = UIRoute.Match;
                 shellState.Phase = UiShellTransitionPhase.ShowingLoading;
+                SetMatchIntro(
+                    ref matchIntro,
+                    MatchIntroTransitionStateKind.WaitingForWorldReady,
+                    0f,
+                    inputLocked: true,
+                    shellState.TransitionSequenceId,
+                    "Waiting for world");
                 break;
             case UiShellRouteIntent.ReturnToMainMenu:
                 routeHistory.Clear();
@@ -117,13 +141,16 @@ public partial struct UiShellFlowSystem : ISystem
                 shellState.CurrentMode = UiShellMode.Loading;
                 shellState.ActiveRoute = UIRoute.MainMenu;
                 shellState.Phase = UiShellTransitionPhase.ShowingLoading;
+                SetMatchIntroInactive(ref matchIntro);
                 break;
             case UiShellRouteIntent.BackMenuRoute:
+                SetMatchIntroInactive(ref matchIntro);
                 ProcessMenuRouteRequest(ref shellState, commands, PopRouteHistory(routeHistory, request.Route));
                 break;
             default:
                 if (request.PushHistory != 0)
                     PushRouteHistory(routeHistory, shellState.ActiveRoute, request.Route);
+                SetMatchIntroInactive(ref matchIntro);
                 ProcessMenuRouteRequest(ref shellState, commands, request.Route);
                 break;
         }
@@ -265,6 +292,7 @@ public partial struct UiShellFlowSystem : ISystem
 
     private static void ConsumeCompletions(
         ref UiShellStateComponent shellState,
+        ref MatchIntroTransitionComponent matchIntro,
         DynamicBuffer<UiShellTransitionCompleteComponent> completions)
     {
         for (int i = 0; i < completions.Length; i++)
@@ -275,6 +303,17 @@ public partial struct UiShellFlowSystem : ISystem
 
             shellState.IsTransitionRunning = 0;
             shellState.Phase = CompletionPhase(completion.Kind);
+            if (completion.Kind == UiShellCommandKind.EnterMatchHud &&
+                matchIntro.State != MatchIntroTransitionStateKind.Inactive)
+            {
+                SetMatchIntro(
+                    ref matchIntro,
+                    MatchIntroTransitionStateKind.Complete,
+                    1f,
+                    inputLocked: false,
+                    completion.SequenceId,
+                    "Intro complete");
+            }
         }
     }
 
@@ -301,5 +340,31 @@ public partial struct UiShellFlowSystem : ISystem
         loading.Progress01 = 0f;
         loading.Status = new Unity.Collections.FixedString64Bytes(status);
         loading.IsComplete = 0;
+    }
+
+    private static void SetMatchIntroInactive(ref MatchIntroTransitionComponent matchIntro)
+    {
+        SetMatchIntro(
+            ref matchIntro,
+            MatchIntroTransitionStateKind.Inactive,
+            0f,
+            inputLocked: false,
+            0,
+            "Inactive");
+    }
+
+    private static void SetMatchIntro(
+        ref MatchIntroTransitionComponent matchIntro,
+        MatchIntroTransitionStateKind state,
+        float progress01,
+        bool inputLocked,
+        int sequenceId,
+        string status)
+    {
+        matchIntro.State = state;
+        matchIntro.Progress01 = UnityEngine.Mathf.Clamp01(progress01);
+        matchIntro.InputLocked = inputLocked ? (byte)1 : (byte)0;
+        matchIntro.SequenceId = sequenceId;
+        matchIntro.Status = new Unity.Collections.FixedString64Bytes(status);
     }
 }

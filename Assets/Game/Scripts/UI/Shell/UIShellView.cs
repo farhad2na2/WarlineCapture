@@ -10,12 +10,14 @@ public sealed class UIShellView : MonoBehaviour
     [SerializeField] private UIShellRegionView[] regions;
     [FormerlySerializedAs("contentPresenter")]
     [SerializeField] private UIShellContentView contentSystem;
+    [SerializeField] private MatchIntroCurtainView matchIntroCurtain;
 
     private readonly Dictionary<UIShellRegionId, UIShellRegionView> regionById = new();
 
     public UIMotionHostView MotionHost => motionHost;
     public IReadOnlyList<UIShellRegionView> Regions => regions;
     public UIShellContentView ContentSystem => contentSystem;
+    public MatchIntroCurtainView MatchIntroCurtain => matchIntroCurtain;
 
     private void Awake()
     {
@@ -43,6 +45,11 @@ public sealed class UIShellView : MonoBehaviour
     public void SetContentSystem(UIShellContentView shellContentSystem)
     {
         contentSystem = shellContentSystem;
+    }
+
+    public void SetMatchIntroCurtain(MatchIntroCurtainView curtain)
+    {
+        matchIntroCurtain = curtain;
     }
 
     public bool TryGetRegion(UIShellRegionId id, out UIShellRegionView region)
@@ -83,7 +90,7 @@ public sealed class UIShellView : MonoBehaviour
         switch (command.Kind)
         {
             case UiShellCommandKind.ShowLoading:
-                AddShowLoadingSteps(transitionId, steps);
+                AddShowLoadingSteps(command.Route, transitionId, steps);
                 break;
             case UiShellCommandKind.ExitLoading:
                 AddExitLoadingSteps(transitionId, steps);
@@ -112,10 +119,15 @@ public sealed class UIShellView : MonoBehaviour
         }
     }
 
-    private void AddShowLoadingSteps(int transitionId, List<UIMotionStep> steps)
+    private void AddShowLoadingSteps(UIRoute route, int transitionId, List<UIMotionStep> steps)
     {
         if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
             return;
+
+        if (route == UIRoute.Match)
+            matchIntroCurtain?.ShowOpaque();
+        else
+            matchIntroCurtain?.SetVisible(false);
 
         loading.ResetVisualState();
         loading.CanvasGroup.alpha = 1f;
@@ -213,6 +225,7 @@ public sealed class UIShellView : MonoBehaviour
         if (background != null && background.CanvasGroup != null)
             background.CanvasGroup.alpha = 0f;
 
+        matchIntroCurtain?.ShowOpaque();
         PrimeOffscreen(header);
         PrimeOffscreen(left);
         PrimeOffscreen(right);
@@ -223,6 +236,7 @@ public sealed class UIShellView : MonoBehaviour
             RegionEnterFactory(left, transitionId),
             RegionEnterFactory(right, transitionId),
             RegionEnterFactory(footer, transitionId)));
+        AddMatchIntroCurtainFadeOutStep(steps, transitionId);
     }
 
     private void AddExitMatchHudSteps(int transitionId, List<UIMotionStep> steps)
@@ -294,6 +308,21 @@ public sealed class UIShellView : MonoBehaviour
             return;
 
         steps.Add(UIMotionStep.Single(RegionAlphaFactory(region, alpha, ease, transitionId)));
+    }
+
+    private void AddMatchIntroCurtainFadeOutStep(List<UIMotionStep> steps, int transitionId)
+    {
+        if (matchIntroCurtain == null || matchIntroCurtain.CanvasGroup == null)
+            return;
+
+        steps.Add(UIMotionStep.Single(
+            motionHost.AlphaStep(
+                matchIntroCurtain.CanvasGroup,
+                0f,
+                motionHost.DefaultDurationSeconds,
+                motionHost.DefaultExitEase,
+                transitionId)));
+        steps.Add(UIMotionStep.Single(() => HideMatchIntroCurtainRoutine()));
     }
 
     private Func<System.Collections.IEnumerator> RegionEnterFactory(UIShellRegionView region, int transitionId)
@@ -412,6 +441,12 @@ public sealed class UIShellView : MonoBehaviour
 
     private static System.Collections.IEnumerator EmptyStep()
     {
+        yield break;
+    }
+
+    private System.Collections.IEnumerator HideMatchIntroCurtainRoutine()
+    {
+        matchIntroCurtain?.HideIfTransparent();
         yield break;
     }
 }

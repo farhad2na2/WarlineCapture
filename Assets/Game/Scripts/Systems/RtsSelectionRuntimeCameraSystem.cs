@@ -4,6 +4,11 @@ using UnityEngine;
 
 public sealed class RtsSelectionRuntimeCameraSystem
 {
+    private const float MatchIntroZoomOutHeightOffset = 8f;
+    private const float MatchIntroFieldOfViewOffset = 5f;
+    private const float MatchIntroSettleSmoothTime = 1.1f;
+    private const float MatchIntroZoomEpsilon = 0.1f;
+
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate bool IsPointerOverGameplayUiAction(Vector2 screenPosition, out string source);
 
@@ -441,6 +446,9 @@ public sealed class RtsSelectionRuntimeCameraSystem
             float targetPitch = camera.WasBuildModeActive ? context.BuildModePitch : context.NormalModePitch;
             float targetYaw = camera.WasBuildModeActive ? context.BuildModeYaw : context.NormalModeYaw;
             float targetFieldOfView = camera.WasBuildModeActive ? context.BuildModeFieldOfView : context.NormalModeFieldOfView;
+            float smoothTime = IsCameraAtMatchIntroZoomOut(context)
+                ? Mathf.Max(context.ZoomTransitionSmoothTime, MatchIntroSettleSmoothTime)
+                : context.ZoomTransitionSmoothTime;
 
             if (!context.TryGetDefaultEntityManager(out EntityManager em))
                 return;
@@ -451,7 +459,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
                 targetPitch,
                 targetYaw,
                 targetFieldOfView,
-                context.ZoomTransitionSmoothTime,
+                smoothTime,
                 completeTransitionOnArrive: true);
             ProcessCameraRequests(context, em);
             return;
@@ -551,12 +559,17 @@ public sealed class RtsSelectionRuntimeCameraSystem
             Vector3 focusWorldPosition = context.WorldCamera != null ? camera.GetCameraGroundCenterWorld(context.WorldCamera) : Vector3.zero;
             if (context.TryGetDefaultEntityManager(out EntityManager em))
             {
+                float introHeight = Mathf.Clamp(
+                    context.NormalModeZoomHeight + MatchIntroZoomOutHeightOffset,
+                    context.MinZoomHeight,
+                    context.MaxZoomHeight);
+                float introFieldOfView = Mathf.Max(1f, context.NormalModeFieldOfView + MatchIntroFieldOfViewOffset);
                 context.CameraRequestSystem.QueueApplyPerspectiveModeInstant(
                     em,
-                    context.NormalModeZoomHeight,
+                    introHeight,
                     context.NormalModePitch,
                     context.NormalModeYaw,
-                    context.NormalModeFieldOfView);
+                    introFieldOfView);
                 if (context.WorldCamera != null)
                     context.CameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
                 context.CameraRequestSystem.QueueResetTransitionVelocities(em);
@@ -564,12 +577,20 @@ public sealed class RtsSelectionRuntimeCameraSystem
             }
 
             SetCameraWasPlayRequested(context, true);
-            SetCameraWasBuildModeActive(context, runtime.BuildModeActive);
-            SetCameraZoomTransitionActive(context, runtime.BuildModeActive);
+            SetCameraWasBuildModeActive(context, false);
+            SetCameraZoomTransitionActive(context, IsMatchIntroComplete(context));
             return;
         }
 
         SetCameraWasPlayRequested(context, runtime.PlayRequested);
+
+        if (!camera.IsZoomTransitionActive &&
+            IsCameraAtMatchIntroZoomOut(context) &&
+            IsMatchIntroComplete(context))
+        {
+            SetCameraZoomTransitionActive(context, true);
+            return;
+        }
 
         if (camera.WasBuildModeActive == runtime.BuildModeActive)
             return;
@@ -594,6 +615,33 @@ public sealed class RtsSelectionRuntimeCameraSystem
         context.CameraRequestSystem.QueueClearSmoothFocusTarget(em);
         ProcessCameraRequests(context, em);
         runtime.InitialCameraFocusRequested = false;
+    }
+
+    private static bool IsCameraAtMatchIntroZoomOut(Context context)
+    {
+        Camera worldCamera = context.WorldCamera;
+        if (worldCamera == null)
+            return false;
+
+        return worldCamera.transform.position.y > context.NormalModeZoomHeight + MatchIntroZoomEpsilon ||
+               worldCamera.fieldOfView > context.NormalModeFieldOfView + MatchIntroZoomEpsilon;
+    }
+
+    private static bool IsMatchIntroComplete(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            return true;
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<MatchIntroTransitionComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return true;
+
+        MatchIntroTransitionComponent matchIntro =
+            em.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
+        return matchIntro.State == MatchIntroTransitionStateKind.Complete &&
+               matchIntro.InputLocked == 0;
     }
 
     private void UpdateSmoothCameraFocus(Context context)

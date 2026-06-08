@@ -71,7 +71,10 @@ internal sealed class SelectionGameplayStartupSystem
         var rtsSelectionPointerTargetCommandContextSystem = new RtsSelectionPointerTargetCommandContextSystem();
         var rtsCameraSystem = new RtsCameraSystem();
         var rtsCameraRequestSystem = new RtsCameraRequestSystem();
-        var selectionUiCommand = new SelectionUiCommandSystem();
+        World cachedMatchIntroWorld = null;
+        EntityQuery matchIntroLockQuery = default;
+        bool hasMatchIntroLockQuery = false;
+        var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
         var selectionScreenMarkers = new SelectionScreenMarkerSystem();
@@ -206,7 +209,8 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessSelectionRectangleRequests,
                 ClearSelectionCommandMode,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
-                BuildClickDebugSummary);
+                BuildClickDebugSummary,
+                IsMatchIntroGameplayInputLocked);
         }
 
         RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
@@ -387,6 +391,29 @@ internal sealed class SelectionGameplayStartupSystem
 
             em = world.EntityManager;
             return true;
+        }
+
+        bool IsMatchIntroGameplayInputLocked()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            if (cachedMatchIntroWorld != world || !hasMatchIntroLockQuery)
+            {
+                cachedMatchIntroWorld = world;
+                matchIntroLockQuery = world.EntityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+                    ComponentType.ReadOnly<MatchIntroTransitionComponent>());
+                hasMatchIntroLockQuery = true;
+            }
+
+            if (matchIntroLockQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            MatchIntroTransitionComponent matchIntro =
+                world.EntityManager.GetComponentData<MatchIntroTransitionComponent>(matchIntroLockQuery.GetSingletonEntity());
+            return matchIntro.InputLocked != 0;
         }
 
         void EnsureRuntimeSelectionDependencies(EntityManager em)

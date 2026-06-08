@@ -5,6 +5,12 @@ public sealed class SelectionUiCommandSystem
 {
     private readonly RtsSelectionInputSystem _inputSystem = new();
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
+    private readonly System.Func<bool> _isGameplayInputLocked;
+
+    public SelectionUiCommandSystem(System.Func<bool> isGameplayInputLocked = null)
+    {
+        _isGameplayInputLocked = isGameplayInputLocked;
+    }
 
     public void CaptureUiClickSequence()
     {
@@ -85,6 +91,9 @@ public sealed class SelectionUiCommandSystem
 
     public bool RequestFocusedTransportDisembark()
     {
+        if (IsGameplayInputLocked())
+            return false;
+
         if (!TryReadFocusedUnit(out Entity focusedUnit))
             return false;
 
@@ -93,7 +102,15 @@ public sealed class SelectionUiCommandSystem
 
     private bool Queue(RtsSelectionCommandIntentKind kind)
     {
+        if (IsGameplayInputLocked())
+            return false;
+
         return _inputSystem.QueueCommandIntentRequest(kind, Time.frameCount);
+    }
+
+    private bool IsGameplayInputLocked()
+    {
+        return _isGameplayInputLocked?.Invoke() == true;
     }
 
     private bool TryReadFocusedUnit(out Entity focusedUnit)

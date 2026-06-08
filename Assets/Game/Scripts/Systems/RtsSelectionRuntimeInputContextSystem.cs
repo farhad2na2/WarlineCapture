@@ -27,7 +27,8 @@ public sealed class RtsSelectionRuntimeInputContextSystem
         Action processSelectionRectangleRequests,
         Action clearCommandMode,
         Action<string> logClickDiagnostic,
-        Func<Vector2, string> buildClickDebugSummary)
+        Func<Vector2, string> buildClickDebugSummary,
+        Func<bool> isGameplayInputLocked)
     {
         return new RtsSelectionRuntimeInputSystem.Context(
             runtimeGameplayStateSystem,
@@ -54,6 +55,7 @@ public sealed class RtsSelectionRuntimeInputContextSystem
             processSelectionRectangleRequests,
             clearCommandMode,
             logClickDiagnostic,
-            buildClickDebugSummary);
+            buildClickDebugSummary,
+            isGameplayInputLocked);
     }
 }

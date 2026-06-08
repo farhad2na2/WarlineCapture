@@ -34,6 +34,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly Action ClearCommandMode;
         public readonly Action<string> LogClickDiagnostic;
         public readonly Func<Vector2, string> BuildClickDebugSummary;
+        public readonly Func<bool> IsGameplayInputLocked;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -60,7 +61,8 @@ public sealed class RtsSelectionRuntimeInputSystem
             Action processSelectionRectangleRequests,
             Action clearCommandMode,
             Action<string> logClickDiagnostic,
-            Func<Vector2, string> buildClickDebugSummary)
+            Func<Vector2, string> buildClickDebugSummary,
+            Func<bool> isGameplayInputLocked)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
@@ -87,11 +89,21 @@ public sealed class RtsSelectionRuntimeInputSystem
             ClearCommandMode = clearCommandMode;
             LogClickDiagnostic = logClickDiagnostic;
             BuildClickDebugSummary = buildClickDebugSummary;
+            IsGameplayInputLocked = isGameplayInputLocked;
         }
     }
 
     public void ProcessQueuedMoveOrder(Context context)
     {
+        if (IsGameplayInputLocked(context))
+        {
+            context.InputSystem.ClearQueuedMoveOrder();
+            int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
+            if (removedMoveCommands > 0)
+                context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=IntroInputLocked removed={removedMoveCommands} frame={Time.frameCount}");
+            return;
+        }
+
         if (!context.InputSystem.TryConsumeQueuedMoveOrder(Time.frameCount, out Vector2 screenPosition))
             return;
 
@@ -132,6 +144,20 @@ public sealed class RtsSelectionRuntimeInputSystem
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
             return;
+
+        if (IsGameplayInputLocked(context))
+        {
+            if (pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame)
+                context.LogClickDiagnostic?.Invoke($"worldInputBlocked reason=IntroInputLocked pressed={pointer.WasPressedThisFrame} released={pointer.WasReleasedThisFrame} pos={pointer.Position} frame={Time.frameCount}");
+
+            input.ClearQueuedMoveOrder();
+            input.ClearPendingMoveCommandRequests();
+            input.ClearPointerReleaseState();
+            input.SelectionModeHoldArmed = false;
+            runtime.SuppressNextWorldClick = true;
+            context.SetCameraDragging?.Invoke(false);
+            return;
+        }
 
         if (input.IgnoreUiClickUntilRelease)
         {
@@ -602,6 +628,11 @@ public sealed class RtsSelectionRuntimeInputSystem
                Mathf.Abs(a.y - b.y) < 0.5f &&
                Mathf.Abs(a.width - b.width) < 0.5f &&
                Mathf.Abs(a.height - b.height) < 0.5f;
+    }
+
+    private static bool IsGameplayInputLocked(Context context)
+    {
+        return context.IsGameplayInputLocked?.Invoke() == true;
     }
 
     private static Rect GetScreenRect(Vector2 a, Vector2 b)

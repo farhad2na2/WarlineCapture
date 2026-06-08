@@ -12,6 +12,7 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private Camera worldCamera;
     [SerializeField] private Light directionalLight;
     [SerializeField] private Volume globalVolume;
+    [SerializeField] private VisualQualityProfileAsset visualQualityProfile;
     [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
     [SerializeField] private Transform decorationRoot;
     [SerializeField] private Transform mapBuildingAuthoringRoot;
@@ -37,6 +38,7 @@ public sealed class MatchSceneView : MonoBehaviour
     public Camera WorldCamera => worldCamera;
     public Light DirectionalLight => directionalLight;
     public Volume GlobalVolume => globalVolume;
+    public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
     public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
     public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
     public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;

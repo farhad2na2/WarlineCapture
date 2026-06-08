@@ -17,7 +17,9 @@ public static class MatchRuntimeShellSmokeValidation
     private const string ErrorCountKey = "MatchRuntimeShellSmokeValidation.ErrorCount";
     private const string RequireFrameDiagKey = "MatchRuntimeShellSmokeValidation.RequireFrameDiag";
     private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
+    private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
     private const double TimeoutSeconds = 120d;
+    private const double StableFrameDiagObservationSeconds = 4d;
 
     private enum Phase
     {
@@ -57,6 +59,7 @@ public static class MatchRuntimeShellSmokeValidation
             SessionState.SetInt(ErrorCountKey, 0);
             SessionState.SetBool(RequireFrameDiagKey, requireFrameDiag);
             SessionState.EraseString(FrameDiagKey);
+            SessionState.EraseFloat(ReadyAtKey);
 
             RegisterCallbacks();
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
@@ -103,7 +106,10 @@ public static class MatchRuntimeShellSmokeValidation
 
         Phase phase = (Phase)SessionState.GetInt(PhaseKey, (int)Phase.Idle);
         if (phase == Phase.WaitingForPlayMode)
+        {
+            EnsurePlayModeRequested();
             return;
+        }
 
         if (phase == Phase.WaitingForShellReady)
         {
@@ -134,6 +140,31 @@ public static class MatchRuntimeShellSmokeValidation
                 return;
             }
 
+            int frameDiagErrorCount = SessionState.GetInt(ErrorCountKey, 0);
+            if (frameDiagErrorCount > 0)
+            {
+                IsMatchRuntimeReady(out string errorStatus);
+                Finish(false, $"Match runtime stayed ready but logged {frameDiagErrorCount} runtime error(s). status={errorStatus}");
+                return;
+            }
+
+            float readyAt = SessionState.GetFloat(ReadyAtKey, 0f);
+            if (readyAt <= 0f)
+            {
+                SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                return;
+            }
+
+            if (EditorApplication.timeSinceStartup - readyAt >= StableFrameDiagObservationSeconds)
+            {
+                IsMatchRuntimeReady(out string readyStatus);
+                IsGameplayStableForFrameDiag(out string stableStatus);
+                Finish(
+                    true,
+                    $"No low-FPS FrameRateDiag emitted during stable observation window. {readyStatus} stable={stableStatus}");
+                return;
+            }
+
             return;
         }
 
@@ -153,6 +184,7 @@ public static class MatchRuntimeShellSmokeValidation
         if (SessionState.GetBool(RequireFrameDiagKey, false))
         {
             Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady waitingFrameRateDiag {status}");
+            SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForFrameDiag);
             return;
         }
@@ -192,6 +224,15 @@ public static class MatchRuntimeShellSmokeValidation
         return true;
     }
 
+    private static void EnsurePlayModeRequested()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        EditorApplication.EnterPlaymode();
+    }
+
     private static bool IsMatchRuntimeReady(out string status)
     {
         status = "waiting";
@@ -201,18 +242,28 @@ public static class MatchRuntimeShellSmokeValidation
         if (!TryGetRuntimeGameplayState(out RuntimeGameplayStateComponent runtimeState))
             return false;
 
+        if (!TryGetMatchIntroState(out MatchIntroTransitionComponent matchIntro))
+            return false;
+
         bool matchSceneLoaded = IsSceneLoaded(MatchSceneName);
         bool hudLoaded = LoadedScenesContainMatchHudContent();
+        bool curtainHidden = IsMatchIntroCurtainHidden();
         status =
             $"mode={shellState.CurrentMode} route={shellState.ActiveRoute} phase={shellState.Phase} " +
             $"transition={shellState.IsTransitionRunning} playRequested={runtimeState.PlayRequested} " +
-            $"matchSceneLoaded={(matchSceneLoaded ? 1 : 0)} hudLoaded={(hudLoaded ? 1 : 0)}";
+            $"matchIntro={matchIntro.State} inputLocked={matchIntro.InputLocked} " +
+            $"matchSceneLoaded={(matchSceneLoaded ? 1 : 0)} hudLoaded={(hudLoaded ? 1 : 0)} " +
+            $"curtainHidden={(curtainHidden ? 1 : 0)}";
 
         return shellState.CurrentMode == UiShellMode.MatchHud &&
                shellState.ActiveRoute == UIRoute.Match &&
+               shellState.IsTransitionRunning == 0 &&
                runtimeState.PlayRequested != 0 &&
+               matchIntro.State == MatchIntroTransitionStateKind.Complete &&
+               matchIntro.InputLocked == 0 &&
                matchSceneLoaded &&
-               hudLoaded;
+               hudLoaded &&
+               curtainHidden;
     }
 
     private static bool TryGetShellState(out UiShellStateComponent shellState)
@@ -249,6 +300,24 @@ public static class MatchRuntimeShellSmokeValidation
         return true;
     }
 
+    private static bool TryGetMatchIntroState(out MatchIntroTransitionComponent matchIntro)
+    {
+        matchIntro = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<MatchIntroTransitionComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        matchIntro = entityManager.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
+        return true;
+    }
+
     private static bool IsSceneLoaded(string sceneName)
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
@@ -274,6 +343,30 @@ public static class MatchRuntimeShellSmokeValidation
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsMatchIntroCurtainHidden()
+    {
+        for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
+        {
+            Scene scene = SceneManager.GetSceneAt(sceneIndex);
+            if (!scene.isLoaded)
+                continue;
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+            {
+                MatchIntroCurtainView curtain = roots[rootIndex].GetComponentInChildren<MatchIntroCurtainView>(true);
+                if (curtain == null)
+                    continue;
+
+                bool rootHidden = curtain.Root == null || !curtain.Root.activeSelf;
+                bool transparent = curtain.CanvasGroup == null || curtain.CanvasGroup.alpha <= 0.001f;
+                return rootHidden && transparent;
             }
         }
 
@@ -318,6 +411,15 @@ public static class MatchRuntimeShellSmokeValidation
         if (condition != null &&
             (condition.Contains("[MatchRuntimeShellSmokeValidation] result=Failed", StringComparison.Ordinal) ||
              condition.Contains("[Licensing::", StringComparison.Ordinal)))
+        {
+            return;
+        }
+
+        if (condition != null &&
+            stackTrace != null &&
+            condition.StartsWith("ArgumentOutOfRangeException", StringComparison.Ordinal) &&
+            (stackTrace.Contains("UnityEditor.Search.SearchDatabase", StringComparison.Ordinal) ||
+             stackTrace.Contains("UnityEditor.Search.SearchInit", StringComparison.Ordinal)))
         {
             return;
         }
@@ -393,5 +495,6 @@ public static class MatchRuntimeShellSmokeValidation
         SessionState.EraseInt(ErrorCountKey);
         SessionState.EraseBool(RequireFrameDiagKey);
         SessionState.EraseString(FrameDiagKey);
+        SessionState.EraseFloat(ReadyAtKey);
     }
 }

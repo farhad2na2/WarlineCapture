@@ -25,6 +25,16 @@ public enum UiShellTransitionPhase
     HidingPopup
 }
 
+public enum MatchIntroTransitionStateKind : byte
+{
+    Inactive,
+    WaitingForWorldReady,
+    ExitingLoading,
+    EnteringHud,
+    FadingCurtain,
+    Complete
+}
+
 public enum UiShellRouteIntent
 {
     OpenMenuRoute,
@@ -101,6 +111,15 @@ public struct UiShellLoadingProgressComponent : IComponentData
     public float Progress01;
     public FixedString64Bytes Status;
     public byte IsComplete;
+}
+
+public struct MatchIntroTransitionComponent : IComponentData
+{
+    public MatchIntroTransitionStateKind State;
+    public float Progress01;
+    public byte InputLocked;
+    public int SequenceId;
+    public FixedString64Bytes Status;
 }
 
 public struct UiShellArmoryCategoryComponent : IComponentData

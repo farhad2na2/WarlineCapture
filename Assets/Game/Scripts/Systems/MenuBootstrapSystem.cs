@@ -517,6 +517,7 @@ internal sealed class MenuBootstrapSystem
             ComponentType.ReadOnly<UiShellBoundaryComponent>(),
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+            ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
             ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
             ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
             ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
@@ -542,6 +543,14 @@ internal sealed class MenuBootstrapSystem
             Progress01 = 0f,
             Status = new FixedString64Bytes("Starting"),
             IsComplete = 0
+        });
+        entityManager.SetComponentData(boundary, new MatchIntroTransitionComponent
+        {
+            State = MatchIntroTransitionStateKind.Inactive,
+            Progress01 = 0f,
+            InputLocked = 0,
+            SequenceId = 0,
+            Status = new FixedString64Bytes("Inactive")
         });
     }
 

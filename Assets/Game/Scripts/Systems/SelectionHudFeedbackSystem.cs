@@ -119,7 +119,8 @@ public sealed class SelectionHudFeedbackSystem
         {
             Kind = SelectionHudFeedbackKind.CommandResult,
             CommandAccepted = result.Accepted ? (byte)1 : (byte)0,
-            ReasonCode = (int)result.ReasonCode
+            ReasonCode = (int)result.ReasonCode,
+            Message = ToFixed64(result.Message)
         });
     }
 
@@ -292,8 +293,8 @@ public sealed class SelectionHudFeedbackSystem
                 break;
             case SelectionHudFeedbackKind.CommandResult:
                 BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, feedback.CommandAccepted != 0
-                    ? TacticalCommandResult.Success()
-                    : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode));
+                    ? TacticalCommandResult.Success(feedback.Message.ToString())
+                    : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode, feedback.Message.ToString()));
                 break;
             case SelectionHudFeedbackKind.WorldMarkersVisible:
                 BattleHudRuntimeFeedbackSystem.SetWorldMarkersVisible(view, feedback.Visible != 0);

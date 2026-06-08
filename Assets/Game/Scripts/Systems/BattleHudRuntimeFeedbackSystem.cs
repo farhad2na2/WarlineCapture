@@ -189,7 +189,10 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (result.Accepted)
         {
             ResolveTacticalFeedback(view)?.HideInvalidCommand();
-            view.HideFeedbackMessage();
+            if (string.IsNullOrWhiteSpace(result.Message))
+                view.HideFeedbackMessage();
+            else
+                view.ShowFeedbackMessage(result.Message);
             return;
         }
 

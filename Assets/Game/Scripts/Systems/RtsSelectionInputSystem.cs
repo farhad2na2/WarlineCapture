@@ -413,6 +413,17 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueScanCommandRequest(Vector2 screenPosition, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            Frame = frame,
+            ScreenPosition = ToFloat2(screenPosition),
+            HasScreenPosition = 1
+        });
+    }
+
     public bool QueueBoardTransportCommandRequest(Vector2 screenPosition, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement

@@ -10,7 +10,8 @@ public enum TacticalCommandMode
     Hold,
     Stop,
     Build,
-    Special
+    Special,
+    Scan
 }
 
 public enum TacticalCommandReasonCode
@@ -24,7 +25,10 @@ public enum TacticalCommandReasonCode
     TargetNotAttackable,
     CommandUnavailable,
     MissionDoesNotAllowBuild,
-    CameraJumpUnavailable
+    CameraJumpUnavailable,
+    ScanUnavailable,
+    ScanCooldown,
+    InsufficientResources
 }
 
 public readonly struct TacticalCommandResult
@@ -40,7 +44,7 @@ public readonly struct TacticalCommandResult
         Message = message;
     }
 
-    public static TacticalCommandResult Success() => new(true, TacticalCommandReasonCode.None, string.Empty);
+    public static TacticalCommandResult Success(string message = "") => new(true, TacticalCommandReasonCode.None, message);
 
     public static TacticalCommandResult Rejected(TacticalCommandReasonCode reasonCode, string message = "")
     {
@@ -59,6 +63,7 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Attack => "ATTACK ORDER",
             TacticalCommandMode.Hold => "HOLD POSITION",
             TacticalCommandMode.Stop => "STOP ORDER",
+            TacticalCommandMode.Scan => "SCAN ORDER",
             TacticalCommandMode.Build => "BUILD MODE",
             TacticalCommandMode.Special => "SPECIAL ORDER",
             _ => string.Empty
@@ -78,6 +83,9 @@ public static class TacticalCommandFeedbackText
             TacticalCommandReasonCode.CommandUnavailable => "Command unavailable.",
             TacticalCommandReasonCode.MissionDoesNotAllowBuild => "Building unlocks in the next mission.",
             TacticalCommandReasonCode.CameraJumpUnavailable => "Camera focus unavailable.",
+            TacticalCommandReasonCode.ScanUnavailable => "Scan unavailable.",
+            TacticalCommandReasonCode.ScanCooldown => "Scan cooling down.",
+            TacticalCommandReasonCode.InsufficientResources => "Insufficient resources.",
             _ => string.Empty
         };
     }
@@ -88,6 +96,7 @@ public static class TacticalCommandFeedbackText
         {
             TacticalCommandMode.Move => "Choose destination",
             TacticalCommandMode.Attack => "TAP TARGET",
+            TacticalCommandMode.Scan => "TAP SCAN AREA",
             _ => string.Empty
         };
     }

@@ -863,15 +863,19 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         GameObject rail = CreateTopLeftMainMenuRect("CommandRail", parent, new Rect(1670f, -34f, 1820f, 244f));
         AddMatchHudSpriteCentered(rail.transform, "Frame", "scn08_command_bar_rail_frame.png", Vector2.zero, new Vector2(1820f, 244f), false);
         Button selectButton = AddCommandButton(rail.transform, "Select", "scn08_command_select_cursor.png", "SELECT", -700f, false);
-        AddCommandButton(rail.transform, "Move", "scn08_command_move_chevrons.png", "MOVE", -500f, true);
-        AddCommandButton(rail.transform, "Attack", "scn08_command_attack_crosshair.png", "ATTACK", -300f, false);
+        Button moveButton = AddCommandButton(rail.transform, "Move", "scn08_command_move_chevrons.png", "MOVE", -500f, true);
+        Button attackButton = AddCommandButton(rail.transform, "Attack", "scn08_command_attack_crosshair.png", "ATTACK", -300f, false);
         Button holdButton = AddCommandButton(rail.transform, "Hold", "scn08_command_hold_shield.png", "HOLD", -100f, false);
         Button stopButton = AddCommandButton(rail.transform, "Stop", "scn08_command_stop_hand.png", "STOP", 100f, false);
-        AddCommandButton(rail.transform, "Build", "scn08_icon_build_tools.png", "BUILD", 300f, false);
-        AddCommandButton(rail.transform, "Scan", "scn08_command_scan_radar.png", "SCAN", 500f, false);
+        Button buildButton = AddCommandButton(rail.transform, "Build", "scn08_icon_build_tools.png", "BUILD", 300f, false);
+        Button scanButton = AddCommandButton(rail.transform, "Scan", "scn08_command_scan_radar.png", "SCAN", 500f, false);
         AddCommandButton(rail.transform, "Support", "scn08_icon_support_parachute.png", "SUPPORT", 700f, false);
 
         SetSerializedObject(commandControls, "selectButton", selectButton);
+        SetSerializedObject(commandControls, "moveButton", moveButton);
+        SetSerializedObject(commandControls, "attackButton", attackButton);
+        SetSerializedObject(commandControls, "scanButton", scanButton);
+        SetSerializedObject(commandControls, "buildButton", buildButton);
         SetSerializedObject(commandControls, "holdButton", holdButton);
         SetSerializedObject(commandControls, "stopButton", stopButton);
     }

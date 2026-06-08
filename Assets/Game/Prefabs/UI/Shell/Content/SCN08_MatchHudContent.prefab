@@ -15202,6 +15202,7 @@ MonoBehaviour:
   selectButton: {fileID: 1800108208000010001}
   moveButton: {fileID: 1800108208000011003}
   attackButton: {fileID: 1800108208000011006}
+  scanButton: {fileID: 1800108208000011012}
   buildButton: {fileID: 1800108208000011009}
   holdButton: {fileID: 1800108208000010003}
   stopButton: {fileID: 1800108208000010002}

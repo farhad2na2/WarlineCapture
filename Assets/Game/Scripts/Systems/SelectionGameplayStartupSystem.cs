@@ -86,6 +86,8 @@ internal sealed class SelectionGameplayStartupSystem
         var unitTargetOrderSystem = new UnitTargetOrderSystem();
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
         var selectionAttackCommandRequestSystem = new SelectionAttackCommandRequestSystem();
+        var scanIntelCommandSystem = new ScanIntelCommandSystem();
+        var selectionScanCommandRequestSystem = new SelectionScanCommandRequestSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
         var selectionHudFeedbackSystem = new SelectionHudFeedbackSystem();
         var matchOverlayCommandTabFeedbackSystem = new MatchOverlayCommandTabFeedbackSystem();
@@ -183,6 +185,11 @@ internal sealed class SelectionGameplayStartupSystem
                 pointerPosition => IsPointerOverUI(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                 TryIssueAttackOrderToClickedUnit,
+                TryIssueScanOrder,
+                selectionOrderMarkerSystem,
+                TryGetDefaultEntityManager,
+                TryGetClickedCell,
+                visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
                 TryIssueBoardTransportOrderToClickedUnit,
                 QueueFocusUnitCommand,
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
@@ -220,9 +227,11 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionOrderMarkerSystem,
                 selectionMoveCommandRequestSystem,
                 selectionAttackCommandRequestSystem,
+                selectionScanCommandRequestSystem,
                 selectionTransportCommandRequestSystem,
                 selectedMoveOrderCommandSystem,
                 attackOrderCommandSystem,
+                scanIntelCommandSystem,
                 transportBoardingCommandSystem,
                 unitMoveOrderSystem,
                 unitTargetOrderSystem,
@@ -244,6 +253,7 @@ internal sealed class SelectionGameplayStartupSystem
                 SetCameraDragging,
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
                 TryGetClickedUnitEntity,
+                TryGetClickedCell,
                 TryGetClickedCell,
                 TryGetClickedUnitEntity,
                 TryGetClickedUnitEntity,
@@ -312,6 +322,7 @@ internal sealed class SelectionGameplayStartupSystem
                 RequestMoveOrderScreenMarker,
                 SetCameraDragging,
                 ProcessAttackCommandRequests,
+                ProcessScanCommandRequests,
                 ProcessTransportCommandRequests,
                 ProcessMoveCommandRequests,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
@@ -486,6 +497,11 @@ internal sealed class SelectionGameplayStartupSystem
                 explicitAttackTargetModeActive);
         }
 
+        bool ProcessScanCommandRequests()
+        {
+            return rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(CreateCommandResultFlushContext());
+        }
+
         bool ProcessTransportCommandRequests()
         {
             return rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(CreateCommandResultFlushContext());
@@ -517,6 +533,11 @@ internal sealed class SelectionGameplayStartupSystem
         bool TryIssueAttackOrderToClickedUnit(Vector2 screenPosition)
         {
             return rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
+        }
+
+        bool TryIssueScanOrder(Vector2 screenPosition)
+        {
+            return rtsSelectionPointerTargetCommandSystem.TryIssueScanOrder(CreatePointerTargetCommandContext(), screenPosition);
         }
 
         bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)

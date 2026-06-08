@@ -1,8 +1,12 @@
 using System;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class RtsSelectionRuntimeInputSystem
 {
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
+
     public readonly struct Context
     {
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
@@ -17,6 +21,11 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly Func<Vector2, bool> IsPointerOverAnyUi;
         public readonly Func<Vector2, bool> IsPointerOverGameplayUi;
         public readonly Func<Vector2, bool> TryIssueAttackOrderToClickedUnit;
+        public readonly Func<Vector2, bool> TryIssueScanOrder;
+        public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
+        public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
+        public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
+        public readonly Action<bool> SetHudWorldMarkersVisible;
         public readonly Func<Vector2, bool> TryIssueBoardTransportOrderToClickedUnit;
         public readonly Func<Vector2, bool> TryFocusUnit;
         public readonly Action<Vector2> PanCamera;
@@ -39,6 +48,11 @@ public sealed class RtsSelectionRuntimeInputSystem
             Func<Vector2, bool> isPointerOverAnyUi,
             Func<Vector2, bool> isPointerOverGameplayUi,
             Func<Vector2, bool> tryIssueAttackOrderToClickedUnit,
+            Func<Vector2, bool> tryIssueScanOrder,
+            SelectionOrderMarkerSystem orderMarkerSystem,
+            TryGetEntityManagerDelegate tryGetDefaultEntityManager,
+            SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
+            Action<bool> setHudWorldMarkersVisible,
             Func<Vector2, bool> tryIssueBoardTransportOrderToClickedUnit,
             Func<Vector2, bool> tryFocusUnit,
             Action<Vector2> panCamera,
@@ -60,6 +74,11 @@ public sealed class RtsSelectionRuntimeInputSystem
             IsPointerOverAnyUi = isPointerOverAnyUi;
             IsPointerOverGameplayUi = isPointerOverGameplayUi;
             TryIssueAttackOrderToClickedUnit = tryIssueAttackOrderToClickedUnit;
+            TryIssueScanOrder = tryIssueScanOrder;
+            OrderMarkerSystem = orderMarkerSystem;
+            TryGetDefaultEntityManager = tryGetDefaultEntityManager;
+            TryGetScanClickedCell = tryGetScanClickedCell;
+            SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
             TryIssueBoardTransportOrderToClickedUnit = tryIssueBoardTransportOrderToClickedUnit;
             TryFocusUnit = tryFocusUnit;
             PanCamera = panCamera;
@@ -190,6 +209,13 @@ public sealed class RtsSelectionRuntimeInputSystem
         if (runtime.SelectionModeActive)
             return;
 
+        if (input.HasActiveWorldTargetCommandMode(out _))
+        {
+            context.SetCameraDragging?.Invoke(false);
+            input.SelectionModeHoldArmed = false;
+            return;
+        }
+
         if (!input.PointerPressedOverUi)
         {
             context.SetCameraDragging?.Invoke(true);
@@ -233,6 +259,13 @@ public sealed class RtsSelectionRuntimeInputSystem
         else if (context.GetCameraDragging?.Invoke() == true && frameDelta.sqrMagnitude > 0f)
         {
             context.PanCamera?.Invoke(frameDelta);
+        }
+
+        if (!input.PointerPressedOverUi &&
+            input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode) &&
+            activeMode == TacticalCommandMode.Scan)
+        {
+            UpdateScanTargetPreview(context, pointerPosition);
         }
 
         if (dragDistance >= context.DragThresholdPixels)
@@ -438,9 +471,44 @@ public sealed class RtsSelectionRuntimeInputSystem
             return true;
         }
 
+        if (activeMode == TacticalCommandMode.Scan)
+        {
+            if (context.TryIssueScanOrder == null)
+            {
+                input.ClearActiveCommandMode();
+                context.ClearCommandMode?.Invoke();
+                return false;
+            }
+
+            context.TryIssueScanOrder.Invoke(pointerPosition);
+            return true;
+        }
+
         input.ClearActiveCommandMode();
         context.ClearCommandMode?.Invoke();
         return false;
+    }
+
+    private static void UpdateScanTargetPreview(Context context, Vector2 pointerPosition)
+    {
+        if (context.OrderMarkerSystem == null ||
+            context.TryGetDefaultEntityManager == null ||
+            context.TryGetScanClickedCell == null ||
+            !context.TryGetDefaultEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        if (!context.TryGetScanClickedCell(pointerPosition, em, out int2 cell, out Vector3 worldPoint))
+            return;
+
+        context.OrderMarkerSystem.ShowScanOrderMarker(
+            em,
+            cell,
+            worldPoint,
+            ScanIntelCommandSystem.DefaultScanRadiusCells,
+            visibleSeconds: 0.2f);
+        context.SetHudWorldMarkersVisible?.Invoke(true);
     }
 
     private static bool HandlePersistentMoveTargetDoubleClick(

@@ -256,6 +256,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
                kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode ||
                kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode ||
+               kind == RtsSelectionCommandIntentKind.EnterScanTargetMode ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
@@ -293,6 +294,9 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
                 EnterAttackTargetMode(context);
+                return true;
+            case RtsSelectionCommandIntentKind.EnterScanTargetMode:
+                EnterScanTargetMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
                 context.InputSystem.ClearActiveCommandMode();
@@ -440,6 +444,37 @@ public sealed class RtsSelectionFocusCommandSystem
         context.SetHudWorldMarkersVisible?.Invoke(true);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Attack);
         context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
+    private static void EnterScanTargetMode(Context context)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterScanTargetMode");
+        context.InputSystem.ClearQueuedMoveOrder();
+        context.InputSystem.ClearPendingMoveCommandRequests();
+
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.ArmCommandMode(
+            TacticalCommandMode.Scan,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
+        context.LogSelectionDiagnostic?.Invoke($"scanModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
     }
 
     private static bool TryHasSelectedMovableUnit(Context context)

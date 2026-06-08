@@ -34,7 +34,9 @@ public enum RtsSelectionCommandIntentKind : byte
     ReturnToBase,
     DestroyFocusedUnit,
     ToggleAttackTargetMode,
-    CancelAttackTargetMode
+    CancelAttackTargetMode,
+    EnterScanTargetMode,
+    Scan
 }
 
 public struct RtsSelectionInputRequestQueueComponent : IComponentData
@@ -114,4 +116,6 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public byte HasTargetCell;
     public byte HasWorldPosition;
     public byte ShowWorldMarkers;
+    public int RevealedCount;
+    public int RadiusCells;
 }

@@ -111,6 +111,7 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
             TacticalCommandMode.Attack => "Attack",
             TacticalCommandMode.Hold => "Hold",
             TacticalCommandMode.Stop => "Stop",
+            TacticalCommandMode.Scan => "Scan",
             TacticalCommandMode.Build => "Build",
             _ => string.Empty
         };

@@ -11,6 +11,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
     private readonly List<RtsSelectionCommandResultElement> _moveCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _attackCommandResultScratch = new();
+    private readonly List<RtsSelectionCommandResultElement> _scanCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _transportCommandResultScratch = new();
 
     public readonly struct Context
@@ -20,9 +21,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
         public readonly SelectionMoveCommandRequestSystem MoveCommandRequestSystem;
         public readonly SelectionAttackCommandRequestSystem AttackCommandRequestSystem;
+        public readonly SelectionScanCommandRequestSystem ScanCommandRequestSystem;
         public readonly SelectionTransportCommandRequestSystem TransportCommandRequestSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
         public readonly AttackOrderCommandSystem AttackOrderCommandSystem;
+        public readonly ScanIntelCommandSystem ScanIntelCommandSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitMoveOrderSystem UnitMoveOrderSystem;
         public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
@@ -50,6 +53,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly Action<SelectionStateSystem> ClearFocusedUnit;
         public readonly SelectedMoveOrderCommandSystem.ClickedUnitResolver TryGetMoveClickedUnitEntity;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetMoveClickedCell;
+        public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate TryGetAttackClickedUnitEntity;
         public readonly TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate TryGetTransportClickedUnitEntity;
         public readonly TransportBoardingCommandSystem.TryGetClickedCellDelegate TryGetTransportClickedCell;
@@ -60,9 +64,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
             SelectionOrderMarkerSystem orderMarkerSystem,
             SelectionMoveCommandRequestSystem moveCommandRequestSystem,
             SelectionAttackCommandRequestSystem attackCommandRequestSystem,
+            SelectionScanCommandRequestSystem scanCommandRequestSystem,
             SelectionTransportCommandRequestSystem transportCommandRequestSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
             AttackOrderCommandSystem attackOrderCommandSystem,
+            ScanIntelCommandSystem scanIntelCommandSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitMoveOrderSystem unitMoveOrderSystem,
             UnitTargetOrderSystem unitTargetOrderSystem,
@@ -90,6 +96,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             Action<SelectionStateSystem> clearFocusedUnit,
             SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetMoveClickedUnitEntity,
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
+            SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
             AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
             TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
             TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
@@ -99,9 +106,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
             OrderMarkerSystem = orderMarkerSystem;
             MoveCommandRequestSystem = moveCommandRequestSystem;
             AttackCommandRequestSystem = attackCommandRequestSystem;
+            ScanCommandRequestSystem = scanCommandRequestSystem;
             TransportCommandRequestSystem = transportCommandRequestSystem;
             SelectedMoveOrderCommandSystem = selectedMoveOrderCommandSystem;
             AttackOrderCommandSystem = attackOrderCommandSystem;
+            ScanIntelCommandSystem = scanIntelCommandSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitMoveOrderSystem = unitMoveOrderSystem;
             UnitTargetOrderSystem = unitTargetOrderSystem;
@@ -129,6 +138,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ClearFocusedUnit = clearFocusedUnit;
             TryGetMoveClickedUnitEntity = tryGetMoveClickedUnitEntity;
             TryGetMoveClickedCell = tryGetMoveClickedCell;
+            TryGetScanClickedCell = tryGetScanClickedCell;
             TryGetAttackClickedUnitEntity = tryGetAttackClickedUnitEntity;
             TryGetTransportClickedUnitEntity = tryGetTransportClickedUnitEntity;
             TryGetTransportClickedCell = tryGetTransportClickedCell;
@@ -139,6 +149,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     {
         context.OrderMarkerSystem.UpdateMoveOrderMarkerVisibility(context.SetHudWorldMarkersVisible);
         context.OrderMarkerSystem.UpdateAttackOrderMarkerVisibility(context.SetHudWorldMarkersVisible);
+        context.OrderMarkerSystem.UpdateScanOrderMarkerVisibility(context.SetHudWorldMarkersVisible);
     }
 
     public void ProcessMoveCommandRequests(Context context)
@@ -269,6 +280,62 @@ public sealed class RtsSelectionCommandResultFlushSystem
         return issued;
     }
 
+    public bool ProcessScanCommandRequests(Context context)
+    {
+        EnsureFeedbackQueue(context);
+
+        if (!context.InputSystem.TryGetCommandBuffers(
+                out EntityManager em,
+                out Entity commandEntity,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
+        {
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
+            return false;
+        }
+
+        context.EnsureEntityQueries?.Invoke(em);
+        context.ScanCommandRequestSystem.ProcessPendingRequests(
+            em,
+            commandEntity,
+            commandRequests,
+            commandResults,
+            context.GridConfigQuery,
+            context.ScanIntelCommandSystem,
+            context.TryGetScanClickedCell);
+
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DrainResults(commandResults, RtsSelectionCommandIntentKind.Scan, _scanCommandResultScratch);
+
+        bool issued = false;
+        for (int i = 0; i < _scanCommandResultScratch.Count; i++)
+        {
+            RtsSelectionCommandResultElement result = _scanCommandResultScratch[i];
+            if (result.Accepted == 0)
+            {
+                if (result.HasCommandResult != 0)
+                    context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                continue;
+            }
+
+            bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
+            if (clearInputCommandMode)
+                context.InputSystem.ClearActiveCommandMode();
+            if (result.HasWorldPosition != 0)
+                context.OrderMarkerSystem.ShowScanOrderMarker(em, result.TargetCell, result.WorldPosition, result.RadiusCells);
+            context.SetCameraDragging?.Invoke(false);
+            if (clearInputCommandMode)
+                context.ClearHudCommandMode?.Invoke();
+            if (result.HasCommandResult != 0)
+                context.ApplyHudCommandResult?.Invoke(ToScanCommandResult(result));
+            if (result.ShowWorldMarkers != 0)
+                context.SetHudWorldMarkersVisible?.Invoke(true);
+            issued = true;
+        }
+
+        return issued || _scanCommandResultScratch.Count > 0;
+    }
+
     public bool ProcessTransportCommandRequests(Context context)
     {
         EnsureFeedbackQueue(context);
@@ -376,5 +443,16 @@ public sealed class RtsSelectionCommandResultFlushSystem
         return result.Accepted != 0
             ? TacticalCommandResult.Success()
             : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+    }
+
+    private static TacticalCommandResult ToScanCommandResult(RtsSelectionCommandResultElement result)
+    {
+        if (result.Accepted == 0)
+            return TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+
+        string contacts = result.RevealedCount == 1
+            ? "1 CONTACT"
+            : $"{result.RevealedCount} CONTACTS";
+        return TacticalCommandResult.Success($"SCAN COMPLETE: {contacts}");
     }
 }

@@ -42,6 +42,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly Action<Vector2> RequestMoveOrderScreenMarker;
         public readonly Action<bool> SetCameraDragging;
         public readonly Func<bool> ProcessAttackCommandRequests;
+        public readonly Func<bool> ProcessScanCommandRequests;
         public readonly Func<bool> ProcessTransportCommandRequests;
         public readonly Action ProcessMoveCommandRequests;
         public readonly Action<string> LogSelectionDiagnostic;
@@ -78,6 +79,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             Action<Vector2> requestMoveOrderScreenMarker,
             Action<bool> setCameraDragging,
             Func<bool> processAttackCommandRequests,
+            Func<bool> processScanCommandRequests,
             Func<bool> processTransportCommandRequests,
             Action processMoveCommandRequests,
             Action<string> logSelectionDiagnostic,
@@ -113,6 +115,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             RequestMoveOrderScreenMarker = requestMoveOrderScreenMarker;
             SetCameraDragging = setCameraDragging;
             ProcessAttackCommandRequests = processAttackCommandRequests;
+            ProcessScanCommandRequests = processScanCommandRequests;
             ProcessTransportCommandRequests = processTransportCommandRequests;
             ProcessMoveCommandRequests = processMoveCommandRequests;
             LogSelectionDiagnostic = logSelectionDiagnostic;
@@ -157,6 +160,22 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         }
 
         return context.ProcessAttackCommandRequests?.Invoke() == true;
+    }
+
+    public bool TryIssueScanOrder(Context context, Vector2 screenPosition)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
+        context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={Time.frameCount}");
+
+        if (!context.InputSystem.QueueScanCommandRequest(screenPosition, Time.frameCount))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
+            return false;
+        }
+
+        return context.ProcessScanCommandRequests?.Invoke() == true;
     }
 
     public bool TryIssueBoardTransportOrderToClickedUnit(Context context, Vector2 screenPosition)

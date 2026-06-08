@@ -6,6 +6,7 @@ internal sealed class MenuBootstrapSystem
 {
     private const int DeferredMatchLoadVisibleFrames = 2;
     private const float MinimumLoadingVisibleSeconds = 2f;
+    private const float MatchReadyHoldSeconds = 0.75f;
 
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSystem matchStartSystem = new();
@@ -28,6 +29,8 @@ internal sealed class MenuBootstrapSystem
     private int activeLoadingSequenceId = -1;
     private float activeLoadingStartedAt;
     private UIRoute activeLoadingRoute;
+    private int activeMatchReadySequenceId = -1;
+    private float activeMatchReadyStartedAt;
     private bool matchLoadQueuedForCurrentRoute;
     private MatchSceneView boundMatchRuntimeView;
     private SelectionUiCommandSystem boundSelectionUiCommand;
@@ -101,6 +104,7 @@ internal sealed class MenuBootstrapSystem
         performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
         deferredMatchLoadFrame = -1;
         ResetLoadingMinimumWindow();
+        ResetMatchReadyHoldWindow();
         matchLoadQueuedForCurrentRoute = false;
         ClearBoundMatchRuntimeUi();
         if (!diagnosticsInitialized)
@@ -139,9 +143,17 @@ internal sealed class MenuBootstrapSystem
         entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
         {
             Progress01 = Mathf.Clamp01(progress01),
-            Status = new FixedString64Bytes(status),
+            Status = new FixedString64Bytes(ToFixed64Status(status)),
             IsComplete = complete ? (byte)1 : (byte)0
         });
+    }
+
+    private static string ToFixed64Status(string status)
+    {
+        const int MaxAsciiChars = 60;
+        if (string.IsNullOrEmpty(status))
+            return "Loading";
+        return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
     }
 
     private void UpdateActualLoadingProgress(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
@@ -192,11 +204,21 @@ internal sealed class MenuBootstrapSystem
 
         if (!IsMatchStartComplete(entityManager))
         {
+            if (TryGetMatchStartProgress(entityManager, out MatchStartProgressComponent progress))
+            {
+                float startupProgress = 0.90f + (Mathf.Clamp01(progress.Progress01) * 0.09f);
+                string status = progress.Status.Length == 0 ? "Starting match" : progress.Status.ToString();
+                SetLoading(entityManager, boundary, startupProgress, false, status);
+                return;
+            }
+
             SetLoading(entityManager, boundary, 0.95f, false, "Starting match");
             return;
         }
 
-        SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Match ready");
+        TrackMatchReadyHoldWindow();
+        bool readyToExitLoading = IsMinimumLoadingWindowElapsed() && IsMatchReadyHoldWindowElapsed();
+        SetLoading(entityManager, boundary, 1f, readyToExitLoading, "Match ready");
     }
 
     private void UpdateMenuLoadingProgress(EntityManager entityManager, Entity boundary)
@@ -239,6 +261,28 @@ internal sealed class MenuBootstrapSystem
         activeLoadingSequenceId = -1;
         activeLoadingStartedAt = 0f;
         activeLoadingRoute = UIRoute.Splash;
+        ResetMatchReadyHoldWindow();
+    }
+
+    private void TrackMatchReadyHoldWindow()
+    {
+        if (activeMatchReadySequenceId == activeLoadingSequenceId)
+            return;
+
+        activeMatchReadySequenceId = activeLoadingSequenceId;
+        activeMatchReadyStartedAt = Time.unscaledTime;
+    }
+
+    private bool IsMatchReadyHoldWindowElapsed()
+    {
+        return activeMatchReadySequenceId == activeLoadingSequenceId &&
+            Time.unscaledTime - activeMatchReadyStartedAt >= MatchReadyHoldSeconds;
+    }
+
+    private void ResetMatchReadyHoldWindow()
+    {
+        activeMatchReadySequenceId = -1;
+        activeMatchReadyStartedAt = 0f;
     }
 
     private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
@@ -428,6 +472,20 @@ internal sealed class MenuBootstrapSystem
 
         MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
         return queue.HasStarted != 0 && queue.IsStartPending == 0;
+    }
+
+    private static bool TryGetMatchStartProgress(EntityManager entityManager, out MatchStartProgressComponent progress)
+    {
+        progress = default;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchStartBoundaryComponent>(),
+            ComponentType.ReadOnly<MatchStartProgressComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        progress = entityManager.GetComponentData<MatchStartProgressComponent>(entity);
+        return true;
     }
 
     private static bool IsMatchSceneLoaded(EntityManager entityManager)

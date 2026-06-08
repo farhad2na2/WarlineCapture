@@ -7,8 +7,9 @@ public enum MatchStartStatusKind : byte
     Queued = 1,
     WaitingForMatchLoaded = 2,
     WaitingForRuntimeContent = 3,
-    Started = 4,
-    Failed = 5
+    Starting = 4,
+    Started = 5,
+    Failed = 6
 }
 
 public struct MatchStartBoundaryComponent : IComponentData
@@ -22,6 +23,12 @@ public struct MatchStartQueueComponent : IComponentData
     public byte IsStartPending;
     public byte HasStarted;
     public MatchStartStatusKind LastStatus;
+}
+
+public struct MatchStartProgressComponent : IComponentData
+{
+    public float Progress01;
+    public FixedString64Bytes Status;
 }
 
 public struct MatchStartRequestElement : IBufferElementData

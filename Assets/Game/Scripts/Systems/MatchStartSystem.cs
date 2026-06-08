@@ -65,8 +65,9 @@ public sealed class MatchStartSystem
             return;
         }
 
-        if (!TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message))
+        if (!TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01))
         {
+            SetProgress(em, entity, progress01, message);
             EnqueueResultIfStatusChanged(em, entity, ref queue, waitStatus, message);
             return;
         }
@@ -75,6 +76,7 @@ public sealed class MatchStartSystem
         queue.HasStarted = 1;
         queue.LastStatus = MatchStartStatusKind.Started;
         em.SetComponentData(entity, queue);
+        SetProgress(em, entity, 1f, message);
         EnqueueResult(em, entity, queue.ActiveRequestId, MatchStartStatusKind.Started, message);
     }
 
@@ -102,6 +104,7 @@ public sealed class MatchStartSystem
         _matchStartEntity = em.CreateEntity(typeof(MatchStartBoundaryComponent), typeof(MatchStartQueueComponent));
         em.SetName(_matchStartEntity, "MatchStartBoundary");
         EnsureBuffers(em, _matchStartEntity);
+        EnsureProgress(em, _matchStartEntity);
         return _matchStartEntity;
     }
 
@@ -111,6 +114,19 @@ public sealed class MatchStartSystem
             em.AddBuffer<MatchStartRequestElement>(entity);
         if (!em.HasBuffer<MatchStartResultElement>(entity))
             em.AddBuffer<MatchStartResultElement>(entity);
+        EnsureProgress(em, entity);
+    }
+
+    private static void EnsureProgress(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<MatchStartProgressComponent>(entity))
+        {
+            em.AddComponentData(entity, new MatchStartProgressComponent
+            {
+                Progress01 = 0f,
+                Status = new FixedString64Bytes("Waiting for match")
+            });
+        }
     }
 
     private static bool IsMatchLoaded()
@@ -119,8 +135,9 @@ public sealed class MatchStartSystem
         return scene.IsValid() && scene.isLoaded;
     }
 
-    private bool TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message)
+    private bool TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01)
     {
+        progress01 = 0f;
         if (!_matchSceneReferenceSystem.TryGetLoadedMatchSceneView(World.DefaultGameObjectInjectionWorld, out MatchSceneView matchScene))
         {
             waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
@@ -132,15 +149,29 @@ public sealed class MatchStartSystem
             !IsUnitPrefabRegistryReady(World.DefaultGameObjectInjectionWorld))
         {
             waitStatus = MatchStartStatusKind.WaitingForRuntimeContent;
-            message = "Waiting for Match subscene unit prefab registry before gameplay start.";
+            message = "Waiting for unit prefab registry";
+            progress01 = 0.05f;
             return false;
         }
 
         try
         {
-            matchScene.BeginGameplay();
+            if (!matchScene.GameplayStartRequested)
+                matchScene.BeginGameplay();
+
+            if (!matchScene.GameplayStartComplete)
+            {
+                waitStatus = MatchStartStatusKind.Starting;
+                message = string.IsNullOrEmpty(matchScene.GameplayStartStatus)
+                    ? "Starting match gameplay."
+                    : matchScene.GameplayStartStatus;
+                progress01 = matchScene.GameplayStartProgress01;
+                return false;
+            }
+
             waitStatus = MatchStartStatusKind.Started;
-            message = $"Gameplay start invoked from loaded Match scene. scene={matchScene.gameObject.scene.name}";
+            message = $"Gameplay start completed from loaded Match scene. scene={matchScene.gameObject.scene.name}";
+            progress01 = 1f;
             return true;
         }
         catch (Exception exception)
@@ -148,6 +179,7 @@ public sealed class MatchStartSystem
             Debug.LogException(exception);
             waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
             message = exception.Message;
+            progress01 = 0f;
             return false;
         }
     }
@@ -195,6 +227,24 @@ public sealed class MatchStartSystem
             Status = status,
             Message = new FixedString128Bytes(message ?? string.Empty)
         });
+    }
+
+    private static void SetProgress(EntityManager em, Entity entity, float progress01, string status)
+    {
+        EnsureProgress(em, entity);
+        em.SetComponentData(entity, new MatchStartProgressComponent
+        {
+            Progress01 = Mathf.Clamp01(progress01),
+            Status = new FixedString64Bytes(ToFixed64Status(status))
+        });
+    }
+
+    private static string ToFixed64Status(string status)
+    {
+        const int MaxAsciiChars = 60;
+        if (string.IsNullOrEmpty(status))
+            return "Starting match";
+        return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
     }
 
     private static void EnqueueResultIfStatusChanged(

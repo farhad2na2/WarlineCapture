@@ -58,6 +58,10 @@ public sealed class MatchSceneView : MonoBehaviour
     public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
     internal MatchBootstrapSystem MatchBootstrap => matchBootstrapSystem;
+    public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
+    public bool GameplayStartComplete => matchBootstrapSystem.GameplayStartComplete;
+    public float GameplayStartProgress01 => matchBootstrapSystem.GameplayStartProgress01;
+    public string GameplayStartStatus => matchBootstrapSystem.GameplayStartStatus;
 
     public void BeginGameplay()
     {

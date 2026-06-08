@@ -389,7 +389,7 @@ public sealed class SelectionUiQuerySystem
         else if (entityManager.HasComponent<UnitTarget>(entity) || entityManager.HasComponent<UnitPathRequest>(entity) || entityManager.HasComponent<UnitPathFollow>(entity))
             parts.Add("MOVING");
         else
-            parts.Add("READY");
+            parts.Add("IDLE");
 
         return string.Join(" / ", parts);
     }

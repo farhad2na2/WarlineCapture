@@ -40,9 +40,14 @@ public sealed class UnitMoveOrderSystem
         result.StructuralRemoves += RemoveComponentIfPresent<EngageTarget>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRange>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity) ? 1 : 0;
+        result.StructuralRemoves += RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity) ? 1 : 0;
 
         if (!entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
         {
@@ -90,8 +95,14 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
+        RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity);
+        RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity);
         RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
         RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
+        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
+        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
 
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
 
@@ -109,6 +120,10 @@ public sealed class UnitMoveOrderSystem
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
         RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
+        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
+        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
         if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
             entityManager.AddComponent<ManualMoveOrderTag>(entity);
     }
@@ -119,10 +134,17 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<UnitPathRequest>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
+        RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity);
+        RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity);
         RemoveComponentIfPresent<ManualMoveOrderTag>(entityManager, entity);
+        RemoveComponentIfPresent<ManualMoveGroupMemberTag>(entityManager, entity);
         RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
         RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
         RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
+        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
+        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
+        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
     }
 
     public bool RemoveComponentIfPresent<T>(EntityManager entityManager, Entity entity)

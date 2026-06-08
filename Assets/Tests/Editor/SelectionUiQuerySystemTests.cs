@@ -79,6 +79,7 @@ public sealed class SelectionUiQuerySystemTests
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
         StringAssert.Contains("HOLDING", _querySystem.ResolveHudSelectionStatus(_entityManager, holdingUnit));
+        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, manualGuardUnit));
     }
 
     [Test]

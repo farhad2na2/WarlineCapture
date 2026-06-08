@@ -127,12 +127,6 @@ public sealed class UnitTargetOrderSystem
             if (!ValidateAttackSource(entityManager, entity).Accepted)
                 continue;
 
-            if (entityManager.HasComponent<ManualMoveOrderTag>(entity))
-                entityManager.RemoveComponent<ManualMoveOrderTag>(entity);
-            if (entityManager.HasComponent<AutoWanderMoveTag>(entity))
-                entityManager.RemoveComponent<AutoWanderMoveTag>(entity);
-            RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
-
             Entity engageTarget = targetEntity;
             int2 engageCell = targetCell;
             float3 engagePosition = targetTransform.Position;
@@ -155,10 +149,9 @@ public sealed class UnitTargetOrderSystem
                 issuedBreachOrder = true;
             }
 
+            ClearInterruptedOrderComponents(entityManager, entity, removeEngageTarget: issuedBreachOrder);
             if (issuedBreachOrder)
             {
-                if (entityManager.HasComponent<EngageTarget>(entity))
-                    entityManager.RemoveComponent<EngageTarget>(entity);
                 SetOrAdd(entityManager, entity, new UnitTarget { Cell = engageCell });
                 SetOrAdd(entityManager, entity, new UnitPathRequest { Goal = engageCell });
                 if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
@@ -193,19 +186,6 @@ public sealed class UnitTargetOrderSystem
                 };
                 SetOrAdd(entityManager, entity, breachOrder);
             }
-            else if (entityManager.HasComponent<BaseBreachOrder>(entity))
-            {
-                entityManager.RemoveComponent<BaseBreachOrder>(entity);
-            }
-
-            RemoveIfPresent<UnitPathFollow>(entityManager, entity);
-            RemoveIfPresent<UnitPathRange>(entityManager, entity);
-            if (!issuedBreachOrder)
-            {
-                RemoveIfPresent<UnitPathRequest>(entityManager, entity);
-                RemoveIfPresent<UnitTarget>(entityManager, entity);
-            }
-
             issuedCount++;
         }
 
@@ -222,14 +202,7 @@ public sealed class UnitTargetOrderSystem
         int2 targetCell,
         float3 targetPosition)
     {
-        RemoveIfPresent<ManualMoveOrderTag>(entityManager, sourceEntity);
-        RemoveIfPresent<AutoWanderMoveTag>(entityManager, sourceEntity);
-        RemoveIfPresent<HoldPositionOrderTag>(entityManager, sourceEntity);
-        RemoveIfPresent<UnitPathFollow>(entityManager, sourceEntity);
-        RemoveIfPresent<UnitPathRange>(entityManager, sourceEntity);
-        RemoveIfPresent<UnitPathRequest>(entityManager, sourceEntity);
-        RemoveIfPresent<UnitTarget>(entityManager, sourceEntity);
-        RemoveIfPresent<BaseBreachOrder>(entityManager, sourceEntity);
+        ClearInterruptedOrderComponents(entityManager, sourceEntity, removeEngageTarget: false);
 
         SetOrAdd(
             entityManager,
@@ -245,14 +218,7 @@ public sealed class UnitTargetOrderSystem
 
     public void ClearCommandedAttackOrderComponents(EntityManager entityManager, Entity entity)
     {
-        RemoveIfPresent<EngageTarget>(entityManager, entity);
-        RemoveIfPresent<UnitTarget>(entityManager, entity);
-        RemoveIfPresent<UnitPathRequest>(entityManager, entity);
-        RemoveIfPresent<UnitPathFollow>(entityManager, entity);
-        RemoveIfPresent<UnitPathRange>(entityManager, entity);
-        RemoveIfPresent<ManualMoveOrderTag>(entityManager, entity);
-        RemoveIfPresent<AutoWanderMoveTag>(entityManager, entity);
-        RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
+        ClearInterruptedOrderComponents(entityManager, entity, removeEngageTarget: true);
     }
 
     public TacticalCommandResult ValidateAttackSource(EntityManager entityManager, Entity entity)
@@ -387,5 +353,28 @@ public sealed class UnitTargetOrderSystem
     {
         if (entityManager.HasComponent<T>(entity))
             entityManager.RemoveComponent<T>(entity);
+    }
+
+    private static void ClearInterruptedOrderComponents(
+        EntityManager entityManager,
+        Entity entity,
+        bool removeEngageTarget)
+    {
+        RemoveIfPresent<ManualMoveOrderTag>(entityManager, entity);
+        RemoveIfPresent<ManualMoveGroupMemberTag>(entityManager, entity);
+        RemoveIfPresent<AutoWanderMoveTag>(entityManager, entity);
+        RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
+        RemoveIfPresent<UnitPathFollow>(entityManager, entity);
+        RemoveIfPresent<UnitPathRange>(entityManager, entity);
+        RemoveIfPresent<UnitPathRequest>(entityManager, entity);
+        RemoveIfPresent<UnitPathRetryCooldown>(entityManager, entity);
+        RemoveIfPresent<UnitLongDistanceMove>(entityManager, entity);
+        RemoveIfPresent<UnitTarget>(entityManager, entity);
+        RemoveIfPresent<BaseBreachOrder>(entityManager, entity);
+        RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
+        RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
+        RemoveIfPresent<UnitResourceHaulOrder>(entityManager, entity);
+        if (removeEngageTarget)
+            RemoveIfPresent<EngageTarget>(entityManager, entity);
     }
 }

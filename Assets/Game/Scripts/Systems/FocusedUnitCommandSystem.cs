@@ -135,15 +135,7 @@ public sealed class FocusedUnitCommandSystem
             if (!em.Exists(entity))
                 continue;
 
-            moveOrderSystem.RemoveComponentIfPresent<UnitTarget>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<UnitPathRequest>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<UnitPathFollow>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<UnitPathRange>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
-            moveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
-            if (clearEngageTarget)
-                moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
+            ClearImmediateOrderComponents(em, entity, clearEngageTarget, moveOrderSystem);
             if (holdPosition)
             {
                 if (!em.HasComponent<HoldPositionOrderTag>(entity))
@@ -176,6 +168,52 @@ public sealed class FocusedUnitCommandSystem
         }
 
         return true;
+    }
+
+    private static void ClearImmediateOrderComponents(
+        EntityManager em,
+        Entity entity,
+        bool clearEngageTarget,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        moveOrderSystem.RemoveComponentIfPresent<UnitTarget>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitPathRequest>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitPathFollow>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitPathRange>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitLongDistanceMove>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<ManualMoveGroupMemberTag>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitTransportBoardingTarget>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(em, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitResourceHaulOrder>(em, entity);
+        if (clearEngageTarget)
+            moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
+
+        StopRuntimeMotion(em, entity);
+    }
+
+    private static void StopRuntimeMotion(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<UnitVehicleKinematics>(entity))
+        {
+            UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(entity);
+            kinematics.CurrentSpeed = 0f;
+            kinematics.StallSeconds = 0f;
+            em.SetComponentData(entity, kinematics);
+        }
+
+        if (!em.HasComponent<UnitAirState>(entity))
+            return;
+
+        UnitAirState airState = em.GetComponentData<UnitAirState>(entity);
+        airState.ReturningHome = 0;
+        airState.TakeoffRolling = 0;
+        airState.LandingRolling = 0;
+        airState.AttackRunActive = 0;
+        airState.ReturnApproachInitialized = 0;
+        em.SetComponentData(entity, airState);
     }
 
     private static MissileLauncherTargetMode ResolveMissileLauncherTargetMode(EntityManager em, Entity launcher)

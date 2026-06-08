@@ -59,6 +59,13 @@ public sealed class UnitTargetOrderSystemTests
         _entityManager.AddComponent<UnitPathRange>(attacker);
         _entityManager.AddComponentData(attacker, new UnitPathRequest { Goal = new int2(1, 1) });
         _entityManager.AddComponentData(attacker, new UnitTarget { Cell = new int2(1, 1) });
+        _entityManager.AddComponentData(attacker, new UnitPathRetryCooldown { ResumeFrame = 9 });
+        _entityManager.AddComponentData(attacker, new UnitLongDistanceMove { FinalGoal = new int2(2, 2) });
+        _entityManager.AddComponent<ManualMoveGroupMemberTag>(attacker);
+        _entityManager.AddComponentData(attacker, new BaseBreachOrder { FinalTarget = Entity.Null, FinalCell = new int2(3, 3) });
+        _entityManager.AddComponentData(attacker, new UnitTransportBoardingTarget { Transport = Entity.Null, Goal = new int2(4, 4) });
+        _entityManager.AddComponentData(attacker, new UnitTransportRopeDisembarkRequest { ReferenceCell = new int2(5, 5) });
+        _entityManager.AddComponentData(attacker, new UnitResourceHaulOrder { SourceBuildingId = 1, DestinationBuildingId = 2, TargetCell = new int2(6, 6), Phase = 1 });
 
         NativeArray<Entity> selected = new(1, Allocator.Temp);
         UnitTargetOrderSystem.AttackOrderIssueResult result;
@@ -86,6 +93,13 @@ public sealed class UnitTargetOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRetryCooldown>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitLongDistanceMove>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveGroupMemberTag>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<BaseBreachOrder>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(attacker));
     }
 
     [Test]
@@ -143,6 +157,7 @@ public sealed class UnitTargetOrderSystemTests
         Entity attacker = CreateAttacker();
         Entity target = CreateTarget(new int2(2, 3), new float3(2.5f, 0f, 3.5f));
         _entityManager.AddComponent<HoldPositionOrderTag>(attacker);
+        _entityManager.AddComponentData(attacker, new UnitResourceHaulOrder { SourceBuildingId = 1, DestinationBuildingId = 2, TargetCell = new int2(6, 6), Phase = 1 });
 
         targetOrderSystem.IssueDirectAttackTarget(_entityManager, attacker, target, new int2(2, 3), new float3(2.5f, 0f, 3.5f));
 
@@ -151,6 +166,7 @@ public sealed class UnitTargetOrderSystemTests
         Assert.AreEqual(new int2(2, 3), engageTarget.Cell);
         Assert.AreEqual(1, engageTarget.IsCommanded);
         Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(attacker));
+        Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(attacker));
     }
 
     private Entity CreateAttacker()

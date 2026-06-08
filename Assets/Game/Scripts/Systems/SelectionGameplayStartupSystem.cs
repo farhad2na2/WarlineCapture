@@ -696,6 +696,17 @@ internal sealed class SelectionGameplayStartupSystem
             }
 
             explicitAttackTargetModeActive = false;
+            rtsSelectionInputSystem.ClearActiveCommandMode();
+            rtsSelectionInputSystem.ClearQueuedMoveOrder();
+            rtsSelectionInputSystem.ClearPendingMoveCommandRequests();
+            runtimeGameplayStateSystem.SelectionModeActive = false;
+            runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+            rtsSelectionInputSystem.IsDraggingSelection = false;
+            buildingPlacementInteractionSystem?.ExitBuildMode(buildingPlacementInteractionContext);
+            buildingPlacementInteractionSystem?.CancelBuildingPlacement(buildingPlacementInteractionContext);
+            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                buildingPlacementInteractionContext,
+                $"SelectionUiCommandSystem.{mode}");
             SetCameraDragging(false);
             selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
             selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());

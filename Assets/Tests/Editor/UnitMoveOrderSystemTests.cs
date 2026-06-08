@@ -67,7 +67,12 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitPathRange),
             typeof(EngageTarget),
             typeof(AutoWanderMoveTag),
-            typeof(HoldPositionOrderTag));
+            typeof(HoldPositionOrderTag),
+            typeof(UnitPathRetryCooldown),
+            typeof(UnitLongDistanceMove),
+            typeof(BaseBreachOrder),
+            typeof(UnitTransportBoardingTarget),
+            typeof(UnitResourceHaulOrder));
         int2 goal = new(4, 5);
 
         moveOrderSystem.IssueImmediateMoveCommand(_entityManager, unit, goal);
@@ -80,6 +85,11 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
         Assert.IsFalse(_entityManager.HasComponent<AutoWanderMoveTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRetryCooldown>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitLongDistanceMove>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
     }
 
     [Test]
@@ -116,10 +126,17 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitPathRequest),
             typeof(UnitPathFollow),
             typeof(UnitPathRange),
+            typeof(UnitPathRetryCooldown),
+            typeof(UnitLongDistanceMove),
             typeof(ManualMoveOrderTag),
+            typeof(ManualMoveGroupMemberTag),
             typeof(AutoWanderMoveTag),
             typeof(HoldPositionOrderTag),
-            typeof(EngageTarget));
+            typeof(EngageTarget),
+            typeof(BaseBreachOrder),
+            typeof(UnitTransportBoardingTarget),
+            typeof(UnitTransportRopeDisembarkRequest),
+            typeof(UnitResourceHaulOrder));
 
         moveOrderSystem.ClearMovementOrderComponents(_entityManager, unit);
 
@@ -127,10 +144,17 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRetryCooldown>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitLongDistanceMove>(unit));
         Assert.IsFalse(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<AutoWanderMoveTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
     }
 }
 #endif

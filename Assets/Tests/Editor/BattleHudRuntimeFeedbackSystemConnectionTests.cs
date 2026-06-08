@@ -127,8 +127,16 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitPathRetryCooldown>(unit));
+        Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(unit));
+        Assert.IsFalse(em.HasComponent<ManualMoveGroupMemberTag>(unit));
+        Assert.IsFalse(em.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(unit));
         Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(0f, em.GetComponentData<UnitVehicleKinematics>(unit).CurrentSpeed);
         Assert.AreEqual(1, em.GetComponentData<UnitCombat>(unit).AutoEngage);
         StringAssert.Contains("HOLDING", TextAt("SelectedEntityPanel/StatusText"));
 
@@ -138,9 +146,18 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitPathRetryCooldown>(unit));
+        Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(unit));
+        Assert.IsFalse(em.HasComponent<ManualMoveGroupMemberTag>(unit));
+        Assert.IsFalse(em.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(unit));
         Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(0f, em.GetComponentData<UnitVehicleKinematics>(unit).CurrentSpeed);
         Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        StringAssert.Contains("IDLE", TextAt("SelectedEntityPanel/StatusText"));
     }
 
     [Test]
@@ -172,6 +189,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(unit));
         Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
         Assert.AreEqual(1, em.GetComponentData<UnitCombat>(unit).AutoEngage);
@@ -186,9 +204,11 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRange>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(unit));
         Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
         Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        StringAssert.Contains("IDLE", TextAt("SelectedEntityPanel/StatusText"));
     }
 
     [Test]
@@ -295,6 +315,13 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         SetComponent(em, entity, new UnitPathRequest { Goal = new int2(10, 10) });
         SetComponent(em, entity, new UnitPathFollow { PathIndex = 0 });
         SetComponent(em, entity, new UnitPathRange { Start = 0, Length = 2 });
+        SetComponent(em, entity, new UnitPathRetryCooldown { ResumeFrame = 20 });
+        SetComponent(em, entity, new UnitLongDistanceMove { FinalGoal = new int2(11, 11) });
+        SetComponent(em, entity, new UnitTransportBoardingTarget { Transport = Entity.Null, Goal = new int2(12, 12) });
+        SetComponent(em, entity, new UnitTransportRopeDisembarkRequest { ReferenceCell = new int2(13, 13) });
+        SetComponent(em, entity, new UnitResourceHaulOrder { SourceBuildingId = 1, DestinationBuildingId = 2, TargetCell = new int2(14, 14), Phase = 1 });
+        SetComponent(em, entity, new BaseBreachOrder { FinalTarget = Entity.Null, FinalCell = new int2(15, 15), Stage = BaseBreachOrder.StageMovingToFinalTarget });
+        SetComponent(em, entity, new UnitVehicleKinematics { CurrentSpeed = 5f, StallSeconds = 2f });
         SetComponent(em, entity, new EngageTarget
         {
             Target = Entity.Null,
@@ -304,6 +331,8 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         });
         if (!em.HasComponent<AutoWanderMoveTag>(entity))
             em.AddComponent<AutoWanderMoveTag>(entity);
+        if (!em.HasComponent<ManualMoveGroupMemberTag>(entity))
+            em.AddComponent<ManualMoveGroupMemberTag>(entity);
     }
 
     private static bool FocusUnit(EntityManager em, Entity entity, SelectionStateSystem state)

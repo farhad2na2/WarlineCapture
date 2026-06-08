@@ -364,6 +364,47 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellMatchHudContent_AttackControlQueuesExplicitAttackMode()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ShellMatchHudContent_AttackControlQueuesExplicitAttackMode");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.AttackButton);
+
+            var inputBinding = new MatchOverlayCommandInputSystem();
+            inputBinding.Bind(view, new SelectionUiCommandSystem());
+
+            view.AttackButton.onClick.Invoke();
+
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out _));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(RtsSelectionCommandIntentKind.EnterAttackTargetMode, requests[0].Kind);
+            Assert.AreNotEqual(RtsSelectionCommandIntentKind.Attack, requests[0].Kind);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
     public void ShellMatchHudContent_FooterMinimapViewIsSerialized()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);

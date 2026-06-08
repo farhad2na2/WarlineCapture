@@ -250,14 +250,17 @@ public sealed class RtsSelectionCommandResultFlushSystem
             if (result.Accepted == 0)
                 continue;
 
+            bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Attack);
+            bool clearHudCommandMode = clearInputCommandMode || explicitAttackTargetModeActive;
+            if (clearInputCommandMode)
+                context.InputSystem.ClearActiveCommandMode();
             if (result.HasWorldPosition != 0)
                 context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.WorldPosition);
             if (result.EmitScreenMarker != 0)
                 context.RequestAttackOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
-            context.ClearCurrentSelection?.Invoke(em, "AttackOrderIssued");
-            context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
             context.SetCameraDragging?.Invoke(false);
-            context.ClearHudCommandMode?.Invoke();
+            if (clearHudCommandMode)
+                context.ClearHudCommandMode?.Invoke();
             if (result.ShowWorldMarkers != 0)
                 context.SetHudWorldMarkersVisible?.Invoke(true);
             issued = true;

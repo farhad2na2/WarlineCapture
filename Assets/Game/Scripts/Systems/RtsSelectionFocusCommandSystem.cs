@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionFocusCommandSystem
@@ -254,6 +255,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
                kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode ||
+               kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
@@ -288,6 +290,9 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
                 EnterMoveTargetMode(context);
+                return true;
+            case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
+                EnterAttackTargetMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
                 context.InputSystem.ClearActiveCommandMode();
@@ -396,6 +401,47 @@ public sealed class RtsSelectionFocusCommandSystem
         context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
     }
 
+    private static void EnterAttackTargetMode(Context context)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterAttackTargetMode");
+        context.InputSystem.ClearQueuedMoveOrder();
+        context.InputSystem.ClearPendingMoveCommandRequests();
+
+        if (!TryHasSelectedAttackCapableUnit(context, out TacticalCommandReasonCode rejectionReason))
+        {
+            context.InputSystem.ClearActiveCommandMode();
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
+            context.SetCameraDragging?.Invoke(false);
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=False reason={rejectionReason} frame={Time.frameCount}");
+            return;
+        }
+
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetExplicitAttackTargetModeActive?.Invoke(true);
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(true);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Attack);
+        context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
     private static bool TryHasSelectedMovableUnit(Context context)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
@@ -424,5 +470,54 @@ public sealed class RtsSelectionFocusCommandSystem
         }
 
         return false;
+    }
+
+    private static bool TryHasSelectedAttackCapableUnit(
+        Context context,
+        out TacticalCommandReasonCode rejectionReason)
+    {
+        rejectionReason = TacticalCommandReasonCode.NoSelection;
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        context.EnsureEntityQueries?.Invoke(em);
+        bool hasSelected = false;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity entity = selectedEntities[i];
+            if (!em.Exists(entity))
+                continue;
+
+            hasSelected = true;
+            if (IsSelectedAttackCapableUnit(em, entity))
+                return true;
+        }
+
+        rejectionReason = hasSelected
+            ? TacticalCommandReasonCode.TargetNotAttackable
+            : TacticalCommandReasonCode.NoSelection;
+        return false;
+    }
+
+    private static bool IsSelectedAttackCapableUnit(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<Faction>(entity) ||
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !em.HasComponent<UnitMove>(entity) ||
+            !em.HasComponent<UnitCombat>(entity) ||
+            !em.HasComponent<UnitAttack>(entity) ||
+            !em.HasComponent<LocalTransform>(entity) ||
+            em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
+        {
+            return false;
+        }
+
+        return !em.HasComponent<UnitHealth>(entity) ||
+               em.GetComponentData<UnitHealth>(entity).Current > 0;
     }
 }

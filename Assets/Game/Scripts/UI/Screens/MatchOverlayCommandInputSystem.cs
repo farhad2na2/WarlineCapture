@@ -63,6 +63,7 @@ public sealed class MatchOverlayCommandInputSystem
 
             _view.SelectButton?.onClick.AddListener(OnSelectButtonClicked);
             _view.MoveButton?.onClick.AddListener(OnMoveButtonClicked);
+            _view.AttackButton?.onClick.AddListener(OnAttackButtonClicked);
             _view.BuildButton?.onClick.AddListener(OnBuildButtonClicked);
             _view.HoldButton?.onClick.AddListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.AddListener(OnStopButtonClicked);
@@ -70,7 +71,7 @@ public sealed class MatchOverlayCommandInputSystem
 
             Debug.Log(
                 $"WARLINECAPTURE_MATCHHUD_COMMAND_INPUT_BOUND object={_view.name} " +
-                $"selectBound={_view.SelectButton != null} moveBound={_view.MoveButton != null} buildBound={_view.BuildButton != null} holdBound={_view.HoldButton != null} " +
+                $"selectBound={_view.SelectButton != null} moveBound={_view.MoveButton != null} attackBound={_view.AttackButton != null} buildBound={_view.BuildButton != null} holdBound={_view.HoldButton != null} " +
                 $"stopBound={_view.StopButton != null} commandWheelStopBound={_view.CommandWheelStopButton != null} " +
                 $"commandSystemBound={_selectionUiCommandSystem != null}");
         }
@@ -81,6 +82,7 @@ public sealed class MatchOverlayCommandInputSystem
 
             _view.SelectButton?.onClick.RemoveListener(OnSelectButtonClicked);
             _view.MoveButton?.onClick.RemoveListener(OnMoveButtonClicked);
+            _view.AttackButton?.onClick.RemoveListener(OnAttackButtonClicked);
             _view.BuildButton?.onClick.RemoveListener(OnBuildButtonClicked);
             _view.HoldButton?.onClick.RemoveListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.RemoveListener(OnStopButtonClicked);
@@ -188,6 +190,20 @@ public sealed class MatchOverlayCommandInputSystem
 
             if (!queued)
                 Debug.LogWarning("WARLINECAPTURE_MATCHHUD_MOVE_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+        }
+
+        private void OnAttackButtonClicked()
+        {
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestAttackCommandMode();
+
+            Debug.Log(
+                $"WARLINECAPTURE_MATCHHUD_ATTACK_CLICK object={_view.name} button={ButtonName(_view.AttackButton)} " +
+                $"active={IsActive(_view.AttackButton)} interactable={IsInteractable(_view.AttackButton)} " +
+                $"commandSystemBound={_selectionUiCommandSystem != null} queued={queued} frame={Time.frameCount}");
+
+            if (!queued)
+                Debug.LogWarning("WARLINECAPTURE_MATCHHUD_ATTACK_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
         }
 
         private void CloseBuildDrawerIfOpen()

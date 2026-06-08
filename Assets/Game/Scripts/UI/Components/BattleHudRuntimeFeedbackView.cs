@@ -87,7 +87,7 @@ public static class TacticalCommandFeedbackText
         return mode switch
         {
             TacticalCommandMode.Move => "Choose destination",
-            TacticalCommandMode.Attack => "Choose target",
+            TacticalCommandMode.Attack => "TAP TARGET",
             _ => string.Empty
         };
     }

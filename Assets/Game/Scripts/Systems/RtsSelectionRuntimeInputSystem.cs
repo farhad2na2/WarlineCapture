@@ -356,12 +356,6 @@ public sealed class RtsSelectionRuntimeInputSystem
                     if (attackIssued)
                         context.SetExplicitAttackTargetModeActive?.Invoke(false);
                 }
-                else if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true)
-                {
-                    context.LogClickDiagnostic?.Invoke($"clickAttack result=True pos={pointerPosition}");
-                    runtime.SuppressNextWorldClick = false;
-                    LogOneClickDebug(context, pointerPosition, "Attack");
-                }
                 else if (context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition) == true)
                 {
                     context.LogClickDiagnostic?.Invoke($"clickBoardTransport result=True pos={pointerPosition}");
@@ -425,6 +419,22 @@ public sealed class RtsSelectionRuntimeInputSystem
 
             input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
             context.IssueMoveOrder.Invoke(pointerPosition);
+            return true;
+        }
+
+        if (activeMode == TacticalCommandMode.Attack)
+        {
+            if (context.TryIssueAttackOrderToClickedUnit == null)
+            {
+                input.ClearActiveCommandMode();
+                context.SetExplicitAttackTargetModeActive?.Invoke(false);
+                context.ClearCommandMode?.Invoke();
+                return false;
+            }
+
+            bool attackIssued = context.TryIssueAttackOrderToClickedUnit.Invoke(pointerPosition);
+            if (attackIssued)
+                context.SetExplicitAttackTargetModeActive?.Invoke(false);
             return true;
         }
 

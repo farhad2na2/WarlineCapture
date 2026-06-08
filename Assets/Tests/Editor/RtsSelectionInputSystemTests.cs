@@ -200,6 +200,24 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void SelectionUiCommandSystem_AttackButtonQueuesEnterAttackTargetModeAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestAttackCommandMode());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterAttackTargetMode, requests[0].Kind);
+    }
+
+    [Test]
     public void QueueMoveOrder_ConsumesOnlyAtOrAfterExecutionFrame()
     {
         var inputSystem = new RtsSelectionInputSystem();
@@ -240,6 +258,8 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("Vector2.Distance(input.DragStart, pointerPosition) < context.DragThresholdPixels", pointerReleased);
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
+        Assert.IsFalse(pointerReleased.Contains("else if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", StringComparison.Ordinal));
+        StringAssert.Contains("activeMode == TacticalCommandMode.Attack", pointerReleased);
         StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
         StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);

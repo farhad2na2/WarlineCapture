@@ -163,6 +163,7 @@ internal sealed class SelectionGameplayStartupSystem
             rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(CreateRuntimeInputContext());
             RefreshFocusedSelectionReadModels();
             rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
+            UpdateAttackTargetPreviewMarkers();
 
             if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(CreateRuntimeCameraContext()))
                 rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(CreateRuntimeInputContext());
@@ -340,6 +341,15 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem);
+        }
+
+        void UpdateAttackTargetPreviewMarkers()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return;
+
+            EnsureRuntimeSelectionDependencies(em);
+            selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(em, explicitAttackTargetModeActive);
         }
 
         bool TryGetDefaultEntityManager(out EntityManager em)

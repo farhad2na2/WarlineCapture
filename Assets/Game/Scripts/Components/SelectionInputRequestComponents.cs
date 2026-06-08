@@ -28,6 +28,7 @@ public enum RtsSelectionCommandIntentKind : byte
     ExitSelectionMode,
     DeselectAll,
     EnterMoveTargetMode,
+    EnterAttackTargetMode,
     HoldPosition,
     Stop,
     ReturnToBase,

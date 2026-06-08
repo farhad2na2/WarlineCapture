@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class SelectionOrderMarkerSystem
@@ -18,6 +21,9 @@ public sealed class SelectionOrderMarkerSystem
     private GameObject _attackOrderMarkerPrefab;
     private float _orderMarkerVisibleSeconds = 1.25f;
     private Transform _runtimeRoot;
+    private EntityQuery _attackTargetPreviewQuery;
+    private readonly List<GameObject> _attackTargetPreviewMarkers = new();
+    private const int MaxAttackTargetPreviewMarkers = 64;
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -30,6 +36,9 @@ public sealed class SelectionOrderMarkerSystem
             ComponentType.ReadOnly<GridConfig>(),
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<DynamicBlockerData>());
+        _attackTargetPreviewQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<LocalTransform>());
     }
 
     public void Initialize(
@@ -53,11 +62,17 @@ public sealed class SelectionOrderMarkerSystem
             UnityEngine.Object.Destroy(_moveOrderMarker);
         if (_attackOrderMarker != null)
             UnityEngine.Object.Destroy(_attackOrderMarker);
+        for (int i = 0; i < _attackTargetPreviewMarkers.Count; i++)
+        {
+            if (_attackTargetPreviewMarkers[i] != null)
+                UnityEngine.Object.Destroy(_attackTargetPreviewMarkers[i]);
+        }
 
         _moveOrderMarker = null;
         _moveOrderMarkerRenderers = null;
         _attackOrderMarker = null;
         _attackOrderMarkerRenderers = null;
+        _attackTargetPreviewMarkers.Clear();
         _moveOrderMarkerHideTime = -1f;
         _attackOrderMarkerHideTime = -1f;
     }
@@ -168,6 +183,47 @@ public sealed class SelectionOrderMarkerSystem
         _attackOrderMarkerHideTime = Time.time + _orderMarkerVisibleSeconds;
     }
 
+    public void UpdateAttackTargetPreviewMarkers(EntityManager em, bool visible)
+    {
+        if (!visible || _attackOrderMarkerPrefab == null)
+        {
+            HideAttackTargetPreviewMarkers(0);
+            return;
+        }
+
+        EnsureEntityQueries(em);
+        if (_attackTargetPreviewQuery.IsEmptyIgnoreFilter)
+        {
+            HideAttackTargetPreviewMarkers(0);
+            return;
+        }
+
+        bool hasGroundY = TryGetMarkerGroundY(em, out float groundY);
+        int markerIndex = 0;
+        using NativeArray<Entity> targets = _attackTargetPreviewQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < targets.Length && markerIndex < MaxAttackTargetPreviewMarkers; i++)
+        {
+            Entity target = targets[i];
+            if (!IsValidAttackPreviewTarget(em, target))
+                continue;
+
+            GameObject marker = EnsureAttackTargetPreviewMarker(markerIndex);
+            if (marker == null)
+                continue;
+
+            float3 position = em.GetComponentData<LocalTransform>(target).Position;
+            marker.transform.position = new Vector3(
+                position.x,
+                hasGroundY ? groundY : position.y + 0.05f,
+                position.z);
+            marker.transform.rotation = Quaternion.identity;
+            marker.SetActive(true);
+            markerIndex++;
+        }
+
+        HideAttackTargetPreviewMarkers(markerIndex);
+    }
+
     private void CacheMoveOrderMarker()
     {
         _moveOrderMarkerPropertyBlock = new MaterialPropertyBlock();
@@ -210,5 +266,63 @@ public sealed class SelectionOrderMarkerSystem
 
         _attackOrderMarker = null;
         _attackOrderMarkerRenderers = null;
+    }
+
+    private GameObject EnsureAttackTargetPreviewMarker(int index)
+    {
+        while (_attackTargetPreviewMarkers.Count <= index)
+        {
+            UnityEngine.Object markerInstance = UnityEngine.Object.Instantiate((UnityEngine.Object)_attackOrderMarkerPrefab);
+            GameObject marker = markerInstance as GameObject;
+            if (marker == null)
+                return null;
+
+            marker.name = "AttackTargetPreviewMarkerRuntime";
+            if (_runtimeRoot != null)
+                marker.transform.SetParent(_runtimeRoot, false);
+            marker.SetActive(false);
+            _attackTargetPreviewMarkers.Add(marker);
+        }
+
+        return _attackTargetPreviewMarkers[index];
+    }
+
+    private void HideAttackTargetPreviewMarkers(int startIndex)
+    {
+        for (int i = startIndex; i < _attackTargetPreviewMarkers.Count; i++)
+        {
+            GameObject marker = _attackTargetPreviewMarkers[i];
+            if (marker != null)
+                marker.SetActive(false);
+        }
+    }
+
+    private bool TryGetMarkerGroundY(EntityManager em, out float y)
+    {
+        y = 0.05f;
+        if (_gridBlockerQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+        y = grid.Origin.y + 0.05f;
+        return true;
+    }
+
+    private static bool IsValidAttackPreviewTarget(EntityManager em, Entity target)
+    {
+        if (target == Entity.Null ||
+            !em.Exists(target) ||
+            !em.HasComponent<Faction>(target) ||
+            !em.HasComponent<LocalTransform>(target))
+        {
+            return false;
+        }
+
+        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(target).Id))
+            return false;
+
+        return !em.HasComponent<UnitHealth>(target) ||
+               em.GetComponentData<UnitHealth>(target).Current > 0;
     }
 }

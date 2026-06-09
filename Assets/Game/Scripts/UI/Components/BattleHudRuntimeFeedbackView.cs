@@ -123,6 +123,7 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     private void OnEnable()
     {
         BattleHudRuntimeFeedbackSystem.SetActiveView(this);
+        BattleHudRuntimeFeedbackSystem.ClearCommandMode(this);
     }
 
     private void OnDisable()

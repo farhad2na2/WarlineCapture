@@ -223,6 +223,15 @@ public sealed class UIShellCurrentContentLoadTests
 
         var mainMenu = new MainMenuPlayUI();
         content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenu);
+        Assert.AreNotEqual(
+            quickRail.BuildButton.gameObject,
+            EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null,
+            "Right quick rail Build button must not start in Unity selected state after Match HUD binding.");
+        Assert.AreNotEqual(
+            TacticalCommandMode.Build,
+            BattleHudRuntimeFeedbackSystem.GetState().CurrentCommandMode,
+            "Build command mode must not be active by default when the Match HUD loads.");
+
         Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);
         Assert.IsTrue(
             mainMenu.IsPointerOverAnyGameplayUi(buttonCenter, out string gameplayUiSource),

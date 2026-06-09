@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -18,6 +19,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     {
         InstallBuildButtonListener();
         BindToParentShellContentIfNeeded();
+        ClearBuildButtonSelection();
     }
 
     private void OnDisable()
@@ -30,6 +32,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         _buildCommandClicked = buildCommandClicked;
         _selectionUiCommandSystem = selectionUiCommandSystem;
         InstallBuildButtonListener();
+        ClearBuildButtonSelection();
     }
 
     public void UnbindBuildCommand()
@@ -87,6 +90,16 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         buildButton.onClick.RemoveListener(OnBuildButtonClicked);
         buildButton.onClick.AddListener(OnBuildButtonClicked);
         _buildButtonListenerInstalled = true;
+    }
+
+    private void ClearBuildButtonSelection()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || buildButton == null)
+            return;
+
+        if (eventSystem.currentSelectedGameObject == buildButton.gameObject)
+            eventSystem.SetSelectedGameObject(null);
     }
 
     private void UninstallBuildButtonListener()

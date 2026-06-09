@@ -7,6 +7,7 @@ public sealed class MainMenuPlayUI
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private SelectionUiCameraSystem _selectionUiCameraSystem;
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
+    private MatchHudRightQuickRailView _matchHudRightQuickRailView;
     private MatchHudMinimapView _matchHudMinimapView;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
@@ -37,6 +38,7 @@ public sealed class MainMenuPlayUI
     {
         _matchHudMinimapInputSystem.Dispose();
         _matchHudCommandControlsView = null;
+        _matchHudRightQuickRailView = null;
         _matchHudMinimapView = null;
         _matchHudSelectionPanelView = null;
         _matchHudSquadTrayView?.Unbind();
@@ -69,6 +71,11 @@ public sealed class MainMenuPlayUI
     public void BindMatchHudCommandControls(MatchOverlayCommandControlsView commandControlsView)
     {
         _matchHudCommandControlsView = commandControlsView;
+    }
+
+    public void BindMatchHudRightQuickRail(MatchHudRightQuickRailView rightQuickRailView)
+    {
+        _matchHudRightQuickRailView = rightQuickRailView;
     }
 
     public void ConfigureMatchHudSelectionPanelBinding(System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel)
@@ -104,6 +111,12 @@ public sealed class MainMenuPlayUI
         if (_matchHudCommandControlsView != null && _matchHudCommandControlsView.ContainsScreenPoint(screenPosition))
         {
             source = "MatchHudCommandControls";
+            return true;
+        }
+
+        if (_matchHudRightQuickRailView != null && _matchHudRightQuickRailView.ContainsScreenPoint(screenPosition))
+        {
+            source = "MatchHudRightQuickRail";
             return true;
         }
 

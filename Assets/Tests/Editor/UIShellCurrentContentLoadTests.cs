@@ -8,6 +8,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -209,8 +210,30 @@ public sealed class UIShellCurrentContentLoadTests
         MatchHudRightQuickRailView quickRail = matchRight.GetComponent<MatchHudRightQuickRailView>();
         Assert.NotNull(quickRail, "RightContent must own MatchHudRightQuickRailView for serialized quick rail button bindings.");
         Assert.NotNull(quickRail.BuildButton, "Right quick rail Build button must be serialized.");
+        Canvas.ForceUpdateCanvases();
+        AssertButtonHasInteractiveRect(
+            quickRail.BuildButton,
+            "Right quick rail Build button must have a non-zero rect after layout so live pointer clicks can hit it.");
+        AssertButtonHasRaycastableHitTarget(
+            quickRail.BuildButton,
+            "Right quick rail Build button must have a raycastable hit target so live pointer clicks fire.");
+        AssertButtonTargetGraphicHasInteractiveRect(
+            quickRail.BuildButton,
+            "Right quick rail Build button target graphic must have a non-zero rect after layout.");
 
-        quickRail.BuildButton.onClick.Invoke();
+        var mainMenu = new MainMenuPlayUI();
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenu);
+        Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);
+        Assert.IsTrue(
+            mainMenu.IsPointerOverAnyGameplayUi(buttonCenter, out string gameplayUiSource),
+            "Runtime UI hit filter must treat the moved Build button as gameplay UI.");
+        Assert.AreEqual(
+            "MatchHudRightQuickRail",
+            gameplayUiSource,
+            "Runtime UI hit filter should identify the moved Build button as the right quick rail.");
+
+        quickRail.UnbindBuildCommand();
+        AssertPointerClickDispatchesToButton(scene, quickRail.BuildButton);
 
         GameObject popup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
         Assert.AreEqual("SCN09_BuildDrawerPopup", popup.name);
@@ -219,8 +242,18 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(closeTransform, "Build drawer popup must expose its close button at BuildDrawerRoot/DrawerFrame/CloseButton.");
         Button closeButton = closeTransform.GetComponent<Button>();
         Assert.NotNull(closeButton, "Build drawer close object must be a Button.");
+        Canvas.ForceUpdateCanvases();
+        AssertButtonHasInteractiveRect(
+            closeButton,
+            "Build drawer close button must have a non-zero rect after layout so live pointer clicks can hit it.");
+        AssertButtonHasRaycastableHitTarget(
+            closeButton,
+            "Build drawer close button must have a raycastable hit target so live pointer clicks fire.");
+        AssertButtonTargetGraphicHasInteractiveRect(
+            closeButton,
+            "Build drawer close button target graphic must have a non-zero rect after layout.");
 
-        closeButton.onClick.Invoke();
+        AssertPointerClickDispatchesToButtonRoot(scene, closeButton);
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
     }
@@ -333,6 +366,90 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(shell.TryGetRegion(regionId, out UIShellRegionView region), $"{regionId} must be registered.");
         Assert.NotNull(region.ContentRoot, $"{regionId} must have a content root.");
         Assert.AreEqual(0, region.ContentRoot.childCount, $"{regionId} should be empty for the installed Match HUD.");
+    }
+
+    private static void AssertButtonHasRaycastableHitTarget(Button button, string message)
+    {
+        Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            Graphic graphic = graphics[i];
+            if (graphic != null && graphic.raycastTarget)
+                return;
+        }
+
+        Assert.Fail(message);
+    }
+
+    private static void AssertButtonHasInteractiveRect(Button button, string message)
+    {
+        RectTransform rectTransform = button.transform as RectTransform;
+        Assert.NotNull(rectTransform, message);
+        Rect rect = rectTransform.rect;
+        Assert.Greater(rect.width, 1f, message);
+        Assert.Greater(rect.height, 1f, message);
+    }
+
+    private static void AssertButtonTargetGraphicHasInteractiveRect(Button button, string message)
+    {
+        Assert.NotNull(button.targetGraphic, message);
+        Rect rect = button.targetGraphic.rectTransform.rect;
+        Assert.Greater(rect.width, 1f, message);
+        Assert.Greater(rect.height, 1f, message);
+    }
+
+    private static void AssertPointerClickDispatchesToButton(Scene scene, Button button)
+    {
+        EventSystem eventSystem = FindInScene<EventSystem>(scene);
+        Assert.NotNull(eventSystem, "Menu scene must contain an EventSystem for UI pointer validation.");
+        Assert.NotNull(button.targetGraphic, "Build button must have a target graphic for pointer dispatch.");
+
+        var pointerEvent = new PointerEventData(eventSystem)
+        {
+            button = PointerEventData.InputButton.Left
+        };
+
+        bool handled = ExecuteEvents.ExecuteHierarchy(
+            button.targetGraphic.gameObject,
+            pointerEvent,
+            ExecuteEvents.pointerClickHandler);
+        Assert.IsTrue(handled, "Pointer click on Build button target graphic must dispatch to the parent Button.");
+    }
+
+    private static void AssertPointerClickDispatchesToButtonRoot(Scene scene, Button button)
+    {
+        EventSystem eventSystem = FindInScene<EventSystem>(scene);
+        Assert.NotNull(eventSystem, "Menu scene must contain an EventSystem for UI pointer validation.");
+
+        var pointerEvent = new PointerEventData(eventSystem)
+        {
+            button = PointerEventData.InputButton.Left
+        };
+
+        bool handled = ExecuteEvents.Execute(
+            button.gameObject,
+            pointerEvent,
+            ExecuteEvents.pointerClickHandler);
+        Assert.IsTrue(handled, "Pointer click on Button root must dispatch to the close Button.");
+    }
+
+    private static Vector2 GetButtonTargetGraphicCenterScreenPoint(Button button)
+    {
+        Assert.NotNull(button.targetGraphic, "Button must have a target graphic for screen point calculation.");
+        RectTransform rectTransform = button.targetGraphic.rectTransform;
+        Camera eventCamera = ResolveEventCamera(button);
+        return RectTransformUtility.WorldToScreenPoint(
+            eventCamera,
+            rectTransform.TransformPoint(rectTransform.rect.center));
+    }
+
+    private static Camera ResolveEventCamera(Component component)
+    {
+        Canvas canvas = component != null ? component.GetComponentInParent<Canvas>() : null;
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            return null;
+
+        return canvas.worldCamera;
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

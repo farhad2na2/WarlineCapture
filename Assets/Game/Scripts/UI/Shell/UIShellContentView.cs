@@ -16,8 +16,8 @@ public sealed class UIShellContentView : MonoBehaviour
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private MatchHudRightQuickRailView _rightQuickRailView;
     private Button _rightQuickRailBuildButton;
-    private UnityAction _rightQuickRailBuildButtonListener;
     private Button _buildDrawerPopupCloseButton;
     private UnityAction _buildDrawerPopupCloseButtonListener;
     private GameObject _buildDrawerPopupInstance;
@@ -78,8 +78,8 @@ public sealed class UIShellContentView : MonoBehaviour
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindMatchHudSelectionPanelInRegion();
-        BindMatchHudRightQuickRailInRegion();
         BindMatchHudCommandControlsInRegion();
+        BindMatchHudRightQuickRailInRegion();
         BindMatchHudRuntimeFeedbackInRegion();
         BindMatchHudMinimapInRegion();
         BindMatchHudSquadTrayInRegion();
@@ -96,6 +96,21 @@ public sealed class UIShellContentView : MonoBehaviour
 
         view = contentRoot.GetChild(0).GetComponent<MatchHudSelectionPanelView>();
         return view != null;
+    }
+
+    public bool TryBindMatchHudRightQuickRailView(MatchHudRightQuickRailView view)
+    {
+        if (view == null || view.BuildButton == null)
+            return false;
+
+        if (_rightQuickRailView != null && _rightQuickRailView != view)
+            _rightQuickRailView.UnbindBuildCommand();
+
+        _rightQuickRailView = view;
+        _rightQuickRailBuildButton = view.BuildButton;
+        _rightQuickRailView.BindBuildCommand(OpenBuildDrawerFromRightQuickRail, _selectionUiCommandSystem);
+        _mainMenuPlayUi?.BindMatchHudRightQuickRail(view);
+        return true;
     }
 
     private void InstallLoading()
@@ -164,9 +179,9 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
         BindMatchHudSelectionPanel(left);
         GameObject right = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
-        BindMatchHudRightQuickRail(right);
         GameObject footer = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
         BindMatchHudCommandControls(footer);
+        BindMatchHudRightQuickRail(right);
         BindMatchHudRuntimeFeedback(footer);
         BindMatchHudMinimap(footer);
         BindMatchHudSquadTray(footer);
@@ -228,27 +243,65 @@ public sealed class UIShellContentView : MonoBehaviour
             return;
 
         MatchHudRightQuickRailView view = rightContent.GetComponent<MatchHudRightQuickRailView>();
-        if (view == null || view.BuildButton == null)
+        if (view == null)
             return;
 
-        _rightQuickRailBuildButton = view.BuildButton;
-        _rightQuickRailBuildButtonListener = OpenBuildDrawerFromRightQuickRail;
-        _rightQuickRailBuildButton.onClick.AddListener(_rightQuickRailBuildButtonListener);
+        if (view.BuildButton == null)
+        {
+            Debug.LogWarning(
+                $"Right quick rail build command is missing its Button reference on {rightContent.name}.");
+            return;
+        }
+
+        TryBindMatchHudRightQuickRailView(view);
+
+        if (!HasRaycastableGraphic(_rightQuickRailBuildButton))
+        {
+            Debug.LogWarning("Right quick rail build command has no raycastable Graphic target.");
+        }
     }
 
     private void UnbindRightQuickRailBuildButton()
     {
-        if (_rightQuickRailBuildButton != null && _rightQuickRailBuildButtonListener != null)
-            _rightQuickRailBuildButton.onClick.RemoveListener(_rightQuickRailBuildButtonListener);
-
+        _rightQuickRailView?.UnbindBuildCommand();
+        _mainMenuPlayUi?.BindMatchHudRightQuickRail(null);
+        _rightQuickRailView = null;
         _rightQuickRailBuildButton = null;
-        _rightQuickRailBuildButtonListener = null;
     }
 
     private void OpenBuildDrawerFromRightQuickRail()
     {
-        InstallBuildDrawerPopup();
+        _selectionUiCommandSystem?.CaptureUiClickSequence();
+        if (_buildDrawerPopupInstance != null)
+        {
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            return;
+        }
+
+        GameObject popup = InstallBuildDrawerPopup();
+        if (popup == null)
+        {
+            Debug.LogWarning("Build drawer popup could not be installed.");
+            return;
+        }
+
         BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
+    }
+
+    private static bool HasRaycastableGraphic(Button button)
+    {
+        if (button == null)
+            return false;
+
+        Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            Graphic graphic = graphics[i];
+            if (graphic != null && graphic.raycastTarget)
+                return true;
+        }
+
+        return false;
     }
 
     private void BindMatchHudRuntimeFeedbackInRegion()
@@ -358,10 +411,14 @@ public sealed class UIShellContentView : MonoBehaviour
 
         UIPopupCloseView closeView = popup.GetComponent<UIPopupCloseView>();
         if (closeView == null || closeView.CloseButton == null)
+        {
+            Debug.LogWarning("Build drawer popup is missing its close button binding.");
             return;
+        }
 
         _buildDrawerPopupCloseButton = closeView.CloseButton;
         _buildDrawerPopupCloseButtonListener = CloseBuildDrawerPopup;
+        _buildDrawerPopupCloseButton.onClick.RemoveListener(_buildDrawerPopupCloseButtonListener);
         _buildDrawerPopupCloseButton.onClick.AddListener(_buildDrawerPopupCloseButtonListener);
     }
 

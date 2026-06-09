@@ -33,8 +33,14 @@ internal sealed class BuildingUiCompositionSystem
             () => Time.time,
             source.RuntimeBuildingSystem.HasSelectedBuilding,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
+            () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement,
+            () => source.BuildingPlacementLifecycleSystem.CanConfirmBuildingPlacement,
             () => source.BuildingPlacementQuerySystem.GetPlacementStatusText(source.BuildingPlacementLifecycleSystem.ActivePlacement),
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
+            () => source.BuildingPlacementLifecycleSystem.ActivePlacementCost,
+            () => source.BuildingPlacementLifecycleSystem.ActivePlacement?.Definition != null
+                ? source.BuildingPlacementLifecycleSystem.ActivePlacement.Definition.ProductionDurationSeconds
+                : 0f,
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
             (out int current, out int max) => source.BuildingPlacementQuerySystem.TryGetSelectedBuildingHealth(

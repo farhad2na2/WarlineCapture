@@ -12,6 +12,7 @@ public sealed class MainMenuPlayUI
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
     private BuildDrawerView _buildDrawerView;
+    private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
@@ -45,6 +46,7 @@ public sealed class MainMenuPlayUI
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = null;
         _buildDrawerView = null;
+        _buildPlacementConfirmationBarView = null;
         _bindMatchHudSelectionPanel = null;
         _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
@@ -113,6 +115,11 @@ public sealed class MainMenuPlayUI
         _buildDrawerView = buildDrawerView;
     }
 
+    public void BindBuildPlacementConfirmationBar(BuildPlacementConfirmationBarView buildPlacementConfirmationBarView)
+    {
+        _buildPlacementConfirmationBarView = buildPlacementConfirmationBarView;
+    }
+
     public bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
 
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)
@@ -120,6 +127,13 @@ public sealed class MainMenuPlayUI
         if (_buildDrawerView != null && _buildDrawerView.ContainsScreenPoint(screenPosition))
         {
             source = "BuildDrawer";
+            return true;
+        }
+
+        if (_buildPlacementConfirmationBarView != null &&
+            _buildPlacementConfirmationBarView.ContainsScreenPoint(screenPosition))
+        {
+            source = "BuildPlacementConfirmationBar";
             return true;
         }
 

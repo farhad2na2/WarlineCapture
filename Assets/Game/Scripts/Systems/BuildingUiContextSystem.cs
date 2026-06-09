@@ -18,8 +18,12 @@ internal sealed class BuildingUiContextSystem
         public readonly Func<float> GetNow;
         public readonly Func<bool> HasSelectedBuilding;
         public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<bool> HasPendingBuildingPlacement;
+        public readonly Func<bool> CanConfirmBuildingPlacement;
         public readonly Func<string> GetPlacementStatusText;
         public readonly Func<string> GetSelectedBuildingLabel;
+        public readonly Func<int> GetActivePlacementCost;
+        public readonly Func<float> GetActivePlacementDurationSeconds;
         public readonly Func<string> GetSelectedBuildingDisplayName;
         public readonly Func<string> GetSelectedBuildingDescription;
         public readonly BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
@@ -48,8 +52,12 @@ internal sealed class BuildingUiContextSystem
             Func<float> getNow,
             Func<bool> hasSelectedBuilding,
             Func<bool> hasActiveBuilding,
+            Func<bool> hasPendingBuildingPlacement,
+            Func<bool> canConfirmBuildingPlacement,
             Func<string> getPlacementStatusText,
             Func<string> getSelectedBuildingLabel,
+            Func<int> getActivePlacementCost,
+            Func<float> getActivePlacementDurationSeconds,
             Func<string> getSelectedBuildingDisplayName,
             Func<string> getSelectedBuildingDescription,
             BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
@@ -77,8 +85,12 @@ internal sealed class BuildingUiContextSystem
             GetNow = getNow;
             HasSelectedBuilding = hasSelectedBuilding;
             HasActiveBuilding = hasActiveBuilding;
+            HasPendingBuildingPlacement = hasPendingBuildingPlacement;
+            CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
             GetPlacementStatusText = getPlacementStatusText;
             GetSelectedBuildingLabel = getSelectedBuildingLabel;
+            GetActivePlacementCost = getActivePlacementCost;
+            GetActivePlacementDurationSeconds = getActivePlacementDurationSeconds;
             GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
             GetSelectedBuildingDescription = getSelectedBuildingDescription;
             TryGetSelectedBuildingHealth = tryGetSelectedBuildingHealth;
@@ -109,8 +121,12 @@ internal sealed class BuildingUiContextSystem
         Func<float> getNow,
         Func<bool> hasSelectedBuilding,
         Func<bool> hasActiveBuilding,
+        Func<bool> hasPendingBuildingPlacement,
+        Func<bool> canConfirmBuildingPlacement,
         Func<string> getPlacementStatusText,
         Func<string> getSelectedBuildingLabel,
+        Func<int> getActivePlacementCost,
+        Func<float> getActivePlacementDurationSeconds,
         Func<string> getSelectedBuildingDisplayName,
         Func<string> getSelectedBuildingDescription,
         BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
@@ -139,8 +155,12 @@ internal sealed class BuildingUiContextSystem
             getNow,
             hasSelectedBuilding,
             hasActiveBuilding,
+            hasPendingBuildingPlacement,
+            canConfirmBuildingPlacement,
             getPlacementStatusText,
             getSelectedBuildingLabel,
+            getActivePlacementCost,
+            getActivePlacementDurationSeconds,
             getSelectedBuildingDisplayName,
             getSelectedBuildingDescription,
             tryGetSelectedBuildingHealth,
@@ -184,6 +204,11 @@ internal sealed class BuildingUiContextSystem
                         source.GetFrameCount?.Invoke() ?? 0,
                         out requiredBuildingDisplayName)
                     : InvalidCampRequest(out requiredBuildingDisplayName),
+            source.HasPendingBuildingPlacement,
+            source.CanConfirmBuildingPlacement,
+            source.GetPlacementStatusText,
+            source.GetActivePlacementCost,
+            source.GetActivePlacementDurationSeconds,
             productionIndex => source.ProductionRequestSystem?.CreateUnitFromSelectedBuilding(
                 source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
                 source.GetActiveBuildingId?.Invoke(),

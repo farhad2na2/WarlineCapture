@@ -92,6 +92,10 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(content.MainMenuContentPrefab, "Main menu content prefab must be assigned.");
         Assert.NotNull(content.ArmoryContentPrefab, "Armory content prefab must be assigned.");
         Assert.NotNull(content.MatchHudContentPrefab, "Match HUD content prefab must be assigned.");
+        Assert.NotNull(content.BuildPlacementConfirmationBarPrefab, "Build placement confirmation bar prefab must be assigned.");
+        Assert.NotNull(
+            content.BuildPlacementConfirmationBarPrefab.GetComponent<BuildPlacementConfirmationBarView>(),
+            "Build placement confirmation bar prefab must own BuildPlacementConfirmationBarView.");
 
         content.PrepareForCommandSequence(new[]
         {
@@ -125,6 +129,12 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
         Assert.NotNull(matchFooter.GetComponentInChildren<MatchHudMinimapView>(true));
         Assert.NotNull(matchFooter.GetComponentInChildren<MatchHudSquadTrayView>(true));
+        BuildPlacementConfirmationBarView placementBar =
+            content.ShellView.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
+        Assert.NotNull(placementBar, "Match HUD install must instantiate the build placement confirmation bar.");
+        CanvasGroup placementBarCanvasGroup = placementBar.GetComponent<CanvasGroup>();
+        Assert.NotNull(placementBarCanvasGroup, "Build placement confirmation bar must have a CanvasGroup visibility gate.");
+        Assert.IsFalse(placementBarCanvasGroup.blocksRaycasts, "Build placement confirmation bar must start hidden and non-blocking.");
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
     }

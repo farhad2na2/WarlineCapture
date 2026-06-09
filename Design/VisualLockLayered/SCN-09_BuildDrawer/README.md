@@ -10,6 +10,7 @@ Date: 2026-05-22
 - Latest single-action queue reference: `reference/SCN-09_BuildDrawer_SingleActionQueue_OnExistingMatchHUD_TargetLock_V03.png`
 - Latest popup-only source: `generated_one_go/source/SCN-09_BuildDrawer_SingleActionQueue_PopupPanel_V02.png`
 - Build placement mode reference: `reference/SCN-09_BuildPlacementMode_TargetLock_V01.png`
+- Build placement implementation spec: `Design/SCN09_Build_Placement_Mode_Implementation_Spec.md`
 - Canonical layout context: `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
 - Canonical size: `2400 x 1080`
 

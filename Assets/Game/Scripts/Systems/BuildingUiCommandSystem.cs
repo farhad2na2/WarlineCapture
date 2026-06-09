@@ -67,6 +67,11 @@ public sealed class BuildingUiCommandSystem
         public readonly Func<GameObject, bool> IsConfiguredSpawnablePrefab;
         public readonly GetCampRequestFailureDelegate GetCampRequestFailure;
         public readonly TryRequestCampItemDelegate TryRequestCampItem;
+        public readonly Func<bool> HasPendingBuildingPlacement;
+        public readonly Func<bool> CanConfirmBuildingPlacement;
+        public readonly Func<string> GetPlacementStatusText;
+        public readonly Func<int> GetActivePlacementCost;
+        public readonly Func<float> GetActivePlacementDurationSeconds;
         public readonly CreateSelectedBuildingUnitDelegate CreateSelectedBuildingUnit;
         public readonly CreateBuildingUnitDelegate CreateBuildingUnit;
         public readonly Action DeleteSelectedBuilding;
@@ -87,6 +92,11 @@ public sealed class BuildingUiCommandSystem
             Func<GameObject, bool> isConfiguredSpawnablePrefab,
             GetCampRequestFailureDelegate getCampRequestFailure,
             TryRequestCampItemDelegate tryRequestCampItem,
+            Func<bool> hasPendingBuildingPlacement,
+            Func<bool> canConfirmBuildingPlacement,
+            Func<string> getPlacementStatusText,
+            Func<int> getActivePlacementCost,
+            Func<float> getActivePlacementDurationSeconds,
             CreateSelectedBuildingUnitDelegate createSelectedBuildingUnit,
             CreateBuildingUnitDelegate createBuildingUnit,
             Action deleteSelectedBuilding,
@@ -106,6 +116,11 @@ public sealed class BuildingUiCommandSystem
             IsConfiguredSpawnablePrefab = isConfiguredSpawnablePrefab;
             GetCampRequestFailure = getCampRequestFailure;
             TryRequestCampItem = tryRequestCampItem;
+            HasPendingBuildingPlacement = hasPendingBuildingPlacement;
+            CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
+            GetPlacementStatusText = getPlacementStatusText;
+            GetActivePlacementCost = getActivePlacementCost;
+            GetActivePlacementDurationSeconds = getActivePlacementDurationSeconds;
             CreateSelectedBuildingUnit = createSelectedBuildingUnit;
             CreateBuildingUnit = createBuildingUnit;
             DeleteSelectedBuilding = deleteSelectedBuilding;
@@ -175,6 +190,33 @@ public sealed class BuildingUiCommandSystem
             return CampRequestFailure.InvalidSelection;
 
         return context.TryRequestCampItem(prefab, price, out requiredBuildingDisplayName, focusProducerOnSuccess);
+    }
+
+    public bool HasPendingBuildingPlacement(Context context)
+    {
+        return context.HasPendingBuildingPlacement != null &&
+               context.HasPendingBuildingPlacement();
+    }
+
+    public bool CanConfirmBuildingPlacement(Context context)
+    {
+        return context.CanConfirmBuildingPlacement != null &&
+               context.CanConfirmBuildingPlacement();
+    }
+
+    public string PlacementStatusText(Context context)
+    {
+        return context.GetPlacementStatusText?.Invoke() ?? string.Empty;
+    }
+
+    public int ActivePlacementCost(Context context)
+    {
+        return Mathf.Max(0, context.GetActivePlacementCost?.Invoke() ?? 0);
+    }
+
+    public float ActivePlacementDurationSeconds(Context context)
+    {
+        return Mathf.Max(0f, context.GetActivePlacementDurationSeconds?.Invoke() ?? 0f);
     }
 
     public void DeleteSelectedBuilding(Context context)

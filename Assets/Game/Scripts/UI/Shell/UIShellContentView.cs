@@ -12,6 +12,7 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject armoryContentPrefab;
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
+    [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private BuildingUiCommandSystem _buildingUiCommandSystem;
@@ -21,6 +22,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private MatchHudRightQuickRailView _rightQuickRailView;
+    private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private Button _rightQuickRailBuildButton;
     private Button _buildDrawerPopupCloseButton;
     private UnityAction _buildDrawerPopupCloseButtonListener;
@@ -33,6 +35,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public GameObject ArmoryContentPrefab => armoryContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
+    public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
     public int ContentVersion => _contentVersion;
 
     public void Configure(
@@ -41,7 +44,8 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject mainMenuPrefab,
         GameObject armoryPrefab,
         GameObject matchHudPrefab,
-        GameObject buildDrawerPrefab)
+        GameObject buildDrawerPrefab,
+        GameObject buildPlacementConfirmationPrefab = null)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
@@ -49,6 +53,8 @@ public sealed class UIShellContentView : MonoBehaviour
         armoryContentPrefab = armoryPrefab;
         matchHudContentPrefab = matchHudPrefab;
         buildDrawerPopupPrefab = buildDrawerPrefab;
+        if (buildPlacementConfirmationPrefab != null)
+            buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
     }
 
     public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandComponent> commands)
@@ -91,6 +97,7 @@ public sealed class UIShellContentView : MonoBehaviour
         BindMatchHudRuntimeFeedbackInRegion();
         BindMatchHudMinimapInRegion();
         BindMatchHudSquadTrayInRegion();
+        BindBuildPlacementConfirmationBarInRegion();
     }
 
     internal void BindBuildDrawerRuntimeQueries(
@@ -202,6 +209,7 @@ public sealed class UIShellContentView : MonoBehaviour
         BindMatchHudRuntimeFeedback(footer);
         BindMatchHudMinimap(footer);
         BindMatchHudSquadTray(footer);
+        BindBuildPlacementConfirmationBar(footer);
         ClearRegion(UIShellRegionId.MiddleRegion);
     }
 
@@ -351,6 +359,15 @@ public sealed class UIShellContentView : MonoBehaviour
             _mainMenuPlayUi?.BindMatchHudSquadTray(view);
     }
 
+    private void BindBuildPlacementConfirmationBarInRegion()
+    {
+        RectTransform contentRoot = shellView != null ? shellView.transform as RectTransform : null;
+        if (contentRoot == null)
+            return;
+
+        BindBuildPlacementConfirmationBar(contentRoot.gameObject);
+    }
+
     private void BindMatchHudCommandControls(GameObject footer)
     {
         if (footer == null)
@@ -398,6 +415,23 @@ public sealed class UIShellContentView : MonoBehaviour
             _mainMenuPlayUi?.BindMatchHudSquadTray(view);
     }
 
+    private void BindBuildPlacementConfirmationBar(GameObject footer)
+    {
+        RectTransform parent = shellView != null ? shellView.transform as RectTransform : null;
+        if (parent == null)
+            parent = footer != null ? footer.transform as RectTransform : null;
+        if (parent == null)
+            return;
+
+        _buildPlacementConfirmationBarView = BuildPlacementConfirmationBarView.Ensure(buildPlacementConfirmationBarPrefab, parent);
+        if (_buildPlacementConfirmationBarView == null)
+            return;
+
+        _buildPlacementConfirmationBarView.transform.SetAsLastSibling();
+        _buildPlacementConfirmationBarView?.BindRuntimeCommands(_buildingUiCommandSystem, _buildingUiCommandContext);
+        _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
+    }
+
     public GameObject InstallBuildDrawerPopup()
     {
         UnbindBuildDrawerPopupCloseButton();
@@ -421,7 +455,10 @@ public sealed class UIShellContentView : MonoBehaviour
             MarkContentChanged();
         }
 
-        BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
+        bool hasActivePlacement = _buildingUiCommandSystem != null &&
+                                  _buildingUiCommandSystem.HasPendingBuildingPlacement(_buildingUiCommandContext);
+        if (!hasActivePlacement)
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
     }
 
     private void BindBuildDrawerPopupInputBlocker(GameObject popup)
@@ -523,6 +560,11 @@ public sealed class UIShellContentView : MonoBehaviour
 
         if (regionId == UIShellRegionId.PopupLayer)
             _buildDrawerPopupInstance = null;
+        if (regionId == UIShellRegionId.FooterRegion)
+        {
+            _buildPlacementConfirmationBarView = null;
+            _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(null);
+        }
     }
 
     private void MarkContentChanged()

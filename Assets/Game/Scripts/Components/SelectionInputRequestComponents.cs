@@ -36,7 +36,8 @@ public enum RtsSelectionCommandIntentKind : byte
     ToggleAttackTargetMode,
     CancelAttackTargetMode,
     EnterScanTargetMode,
-    Scan
+    Scan,
+    BoardNearestSoldiers
 }
 
 public struct RtsSelectionInputRequestQueueComponent : IComponentData

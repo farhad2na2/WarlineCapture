@@ -39,6 +39,8 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action IssueHoldPositionOrder;
         public readonly Action IssueStopOrder;
         public readonly Action DestroyFocusedUnit;
+        public readonly Action ReturnFocusedSelectionToBase;
+        public readonly Action BoardFocusedTransport;
         public readonly Func<Vector2, bool> TryFocusScreenPosition;
         public readonly Func<bool> IssueFocusedMissileLauncherRadarAttack;
         public readonly Func<bool> ArmFocusedAttackTargetMode;
@@ -72,6 +74,8 @@ public sealed class RtsSelectionFocusCommandSystem
             Action issueHoldPositionOrder,
             Action issueStopOrder,
             Action destroyFocusedUnit,
+            Action returnFocusedSelectionToBase,
+            Action boardFocusedTransport,
             Func<Vector2, bool> tryFocusScreenPosition,
             Func<bool> issueFocusedMissileLauncherRadarAttack,
             Func<bool> armFocusedAttackTargetMode,
@@ -104,6 +108,8 @@ public sealed class RtsSelectionFocusCommandSystem
             IssueHoldPositionOrder = issueHoldPositionOrder;
             IssueStopOrder = issueStopOrder;
             DestroyFocusedUnit = destroyFocusedUnit;
+            ReturnFocusedSelectionToBase = returnFocusedSelectionToBase;
+            BoardFocusedTransport = boardFocusedTransport;
             TryFocusScreenPosition = tryFocusScreenPosition;
             IssueFocusedMissileLauncherRadarAttack = issueFocusedMissileLauncherRadarAttack;
             ArmFocusedAttackTargetMode = armFocusedAttackTargetMode;
@@ -260,6 +266,8 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
+               kind == RtsSelectionCommandIntentKind.ReturnToBase ||
+               kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
                kind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode ||
                kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
     }
@@ -308,6 +316,14 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
                 context.DestroyFocusedUnit?.Invoke();
+                return true;
+            case RtsSelectionCommandIntentKind.ReturnToBase:
+                context.InputSystem.ClearActiveCommandMode();
+                context.ReturnFocusedSelectionToBase?.Invoke();
+                return true;
+            case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
+                context.InputSystem.ClearActiveCommandMode();
+                context.BoardFocusedTransport?.Invoke();
                 return true;
             case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 if (context.IssueFocusedMissileLauncherRadarAttack == null ||

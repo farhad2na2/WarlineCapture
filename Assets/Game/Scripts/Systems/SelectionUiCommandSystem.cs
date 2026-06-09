@@ -81,7 +81,20 @@ public sealed class SelectionUiCommandSystem
 
     public bool RequestDestroyFocusedUnit()
     {
+        CaptureUiClickSequence();
         return Queue(RtsSelectionCommandIntentKind.DestroyFocusedUnit);
+    }
+
+    public bool RequestReturnToBase()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.ReturnToBase);
+    }
+
+    public bool RequestBoardNearestSoldiers()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.BoardNearestSoldiers);
     }
 
     public bool RequestFocusedAttackOrTargetMode()

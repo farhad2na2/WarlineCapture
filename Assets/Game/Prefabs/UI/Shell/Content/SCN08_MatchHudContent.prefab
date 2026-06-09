@@ -9052,7 +9052,7 @@ GameObject:
   - component: {fileID: 6600212225770850540}
   - component: {fileID: 4131120325443246946}
   m_Layer: 0
-  m_Name: WarningIcon
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9072,9 +9072,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2874349315110505643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -316, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 92.5, y: 0}
   m_SizeDelta: {x: 82, y: 82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6600212225770850540
@@ -11678,7 +11678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1263407290690638556
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11697,7 +11697,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 400, y: 417.6}
-  m_SizeDelta: {x: 800, y: 165}
+  m_SizeDelta: {x: 995.9, y: 165}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &6640286235389043067
 GameObject:
@@ -11984,6 +11984,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MatchHudSelectionPanelView
   selectedSquadPanel: {fileID: 6100291839165307813}
   selectedPortraitImage: {fileID: 6802404043073543796}
+  titleText: {fileID: 2144751127138404243}
+  subtitleText: {fileID: 5979615600717039321}
+  currentOrderText: {fileID: 1570030766290541719}
+  healthFillImage: {fileID: 1319373431749157917}
+  healthText: {fileID: 8927774244331386765}
+  badgeRoot: {fileID: 1828840445894984643}
+  badgeImage: {fileID: 1170440116487612402}
+  returnAction: {fileID: 1800108208000012103}
+  destroyAction: {fileID: 1800108208000012113}
+  boardAction: {fileID: 1800108208000012123}
 --- !u!1 &6764696033042498354
 GameObject:
   m_ObjectHideFlags: 0
@@ -15869,10 +15879,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2874349315110505643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 62.8, y: -7.69}
-  m_SizeDelta: {x: 612.2, y: 44}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 537.7, y: 26.405}
+  m_SizeDelta: {x: 781.8, y: 112.19}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1241117759840839869
 CanvasRenderer:
@@ -15929,8 +15939,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15968,7 +15978,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 13.208435, z: 0, w: -41.439575}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

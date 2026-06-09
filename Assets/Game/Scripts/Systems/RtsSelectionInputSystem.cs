@@ -498,7 +498,9 @@ public sealed class RtsSelectionInputSystem
                 case RtsSelectionCommandIntentKind.EnterScanTargetMode:
                 case RtsSelectionCommandIntentKind.HoldPosition:
                 case RtsSelectionCommandIntentKind.Stop:
+                case RtsSelectionCommandIntentKind.ReturnToBase:
                 case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
+                case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
                 case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
                     return true;

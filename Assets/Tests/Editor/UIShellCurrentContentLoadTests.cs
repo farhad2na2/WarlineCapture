@@ -93,9 +93,10 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(content.ArmoryContentPrefab, "Armory content prefab must be assigned.");
         Assert.NotNull(content.MatchHudContentPrefab, "Match HUD content prefab must be assigned.");
         Assert.NotNull(content.BuildPlacementConfirmationBarPrefab, "Build placement confirmation bar prefab must be assigned.");
-        Assert.NotNull(
-            content.BuildPlacementConfirmationBarPrefab.GetComponent<BuildPlacementConfirmationBarView>(),
-            "Build placement confirmation bar prefab must own BuildPlacementConfirmationBarView.");
+        BuildPlacementConfirmationBarView placementBarPrefabView =
+            content.BuildPlacementConfirmationBarPrefab.GetComponent<BuildPlacementConfirmationBarView>();
+        Assert.NotNull(placementBarPrefabView, "Build placement confirmation bar prefab must own BuildPlacementConfirmationBarView.");
+        AssertPlacementBarSpritesAssigned(placementBarPrefabView);
 
         content.PrepareForCommandSequence(new[]
         {
@@ -532,5 +533,29 @@ public sealed class UIShellCurrentContentLoadTests
         {
             test.TearDown();
         }
+    }
+
+    private static void AssertPlacementBarSpritesAssigned(BuildPlacementConfirmationBarView view)
+    {
+        SerializedObject serialized = new(view);
+        AssertSerializedReference(serialized, "panelFrameSprite");
+        AssertSerializedReference(serialized, "statusChipSprite");
+        AssertSerializedReference(serialized, "secondaryButtonSprite");
+        AssertSerializedReference(serialized, "goldActionButtonSprite");
+        AssertSerializedReference(serialized, "squareButtonSprite");
+        AssertSerializedReference(serialized, "instructionStripSprite");
+        AssertSerializedReference(serialized, "creditsIconSprite");
+        AssertSerializedReference(serialized, "timeIconSprite");
+        AssertSerializedReference(serialized, "cancelIconSprite");
+        AssertSerializedReference(serialized, "rotateIconSprite");
+        AssertSerializedReference(serialized, "confirmIconSprite");
+        AssertSerializedReference(serialized, "infoIconSprite");
+    }
+
+    private static void AssertSerializedReference(SerializedObject serialized, string propertyName)
+    {
+        SerializedProperty property = serialized.FindProperty(propertyName);
+        Assert.NotNull(property, $"{propertyName} must exist on BuildPlacementConfirmationBarView.");
+        Assert.NotNull(property.objectReferenceValue, $"{propertyName} must be assigned on the placement bar prefab.");
     }
 }

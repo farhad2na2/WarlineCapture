@@ -402,6 +402,7 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         UnbindBuildDrawerPopupCloseButton();
         _buildDrawerPopupInstance = InstallRoot(buildDrawerPopupPrefab, UIShellRegionId.PopupLayer);
+        BindBuildDrawerPopupInputBlocker(_buildDrawerPopupInstance);
         BindBuildDrawerPopupCloseButton(_buildDrawerPopupInstance);
         BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
         return _buildDrawerPopupInstance;
@@ -410,6 +411,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public void CloseBuildDrawerPopup()
     {
         UnbindBuildDrawerPopupCloseButton();
+        _mainMenuPlayUi?.BindBuildDrawer(null);
         GameObject popup = _buildDrawerPopupInstance;
         _buildDrawerPopupInstance = null;
 
@@ -420,6 +422,12 @@ public sealed class UIShellContentView : MonoBehaviour
         }
 
         BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
+    }
+
+    private void BindBuildDrawerPopupInputBlocker(GameObject popup)
+    {
+        BuildDrawerView view = popup != null ? popup.GetComponent<BuildDrawerView>() : null;
+        _mainMenuPlayUi?.BindBuildDrawer(view);
     }
 
     private void BindBuildDrawerPopupCloseButton(GameObject popup)
@@ -502,7 +510,10 @@ public sealed class UIShellContentView : MonoBehaviour
         if (regionId == UIShellRegionId.RightRegion)
             UnbindRightQuickRailBuildButton();
         else if (regionId == UIShellRegionId.PopupLayer)
+        {
             UnbindBuildDrawerPopupCloseButton();
+            _mainMenuPlayUi?.BindBuildDrawer(null);
+        }
 
         if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
         {

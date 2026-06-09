@@ -63,6 +63,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 nameof(BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail),
                 test => test.BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail(),
                 ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput),
+                test => test.BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput(),
+                ref passed);
 
             Debug.Log($"[BuildDrawerCatalogQueryValidation] result=Passed tests={passed}");
             EditorApplication.Exit(0);
@@ -516,6 +520,51 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         Assert.AreSame(airportSprite, activeRows[0].ThumbnailImage.sprite, "Selecting another building must not mutate the first card thumbnail.");
         Assert.AreSame(barracksSprite, activeRows[1].ThumbnailImage.sprite);
+    }
+
+    [Test]
+    public void BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject canvasObject = new GameObject("Test Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        _createdObjects.Add(canvasObject);
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+        canvasRect.sizeDelta = new Vector2(1920f, 1080f);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect, false);
+        _createdObjects.Add(instance);
+        RectTransform instanceRect = instance.transform as RectTransform;
+        Assert.NotNull(instanceRect);
+        instanceRect.anchorMin = Vector2.zero;
+        instanceRect.anchorMax = Vector2.one;
+        instanceRect.offsetMin = Vector2.zero;
+        instanceRect.offsetMax = Vector2.zero;
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        Assert.NotNull(view);
+
+        GameObject drawerRoot = GetSerializedReference<GameObject>(new SerializedObject(view), "drawerRoot");
+        Assert.NotNull(drawerRoot, "Build drawer must serialize the root rect used to block world input.");
+        RectTransform drawerRect = drawerRoot.transform as RectTransform;
+        Assert.NotNull(drawerRect);
+
+        Vector2 drawerCenter = RectTransformUtility.WorldToScreenPoint(
+            null,
+            drawerRect.TransformPoint(drawerRect.rect.center));
+        Assert.IsTrue(view.ContainsScreenPoint(drawerCenter), "Drawer view must contain its own center point.");
+
+        MainMenuPlayUI mainMenu = new MainMenuPlayUI();
+        mainMenu.BindBuildDrawer(view);
+        Assert.IsTrue(mainMenu.IsPointerOverAnyGameplayUi(drawerCenter, out string source));
+        Assert.AreEqual("BuildDrawer", source);
+        Assert.IsTrue(mainMenu.IsPointerOverPlacementUi(drawerCenter), "Build drawer must block placement input as well as selection input.");
+
+        mainMenu.BindBuildDrawer(null);
+        Assert.IsFalse(mainMenu.IsPointerOverAnyGameplayUi(drawerCenter, out _));
     }
 
     private T CreateAsset<T>() where T : ScriptableObject

@@ -11,6 +11,7 @@ public sealed class MainMenuPlayUI
     private MatchHudMinimapView _matchHudMinimapView;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
+    private BuildDrawerView _buildDrawerView;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
@@ -43,6 +44,7 @@ public sealed class MainMenuPlayUI
         _matchHudSelectionPanelView = null;
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = null;
+        _buildDrawerView = null;
         _bindMatchHudSelectionPanel = null;
         _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
@@ -106,8 +108,19 @@ public sealed class MainMenuPlayUI
         _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
     }
 
+    public void BindBuildDrawer(BuildDrawerView buildDrawerView)
+    {
+        _buildDrawerView = buildDrawerView;
+    }
+
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)
     {
+        if (_buildDrawerView != null && _buildDrawerView.ContainsScreenPoint(screenPosition))
+        {
+            source = "BuildDrawer";
+            return true;
+        }
+
         if (_matchHudCommandControlsView != null && _matchHudCommandControlsView.ContainsScreenPoint(screenPosition))
         {
             source = "MatchHudCommandControls";
@@ -138,7 +151,7 @@ public sealed class MainMenuPlayUI
 
     public bool IsPointerOverPlacementUi(Vector2 screenPosition)
     {
-        return false;
+        return IsPointerOverAnyGameplayUi(screenPosition, out _);
     }
 
     public bool IsPointerOverSelectionCancelUi(Vector2 screenPosition)

@@ -66,6 +66,17 @@ public sealed class BuildDrawerView : MonoBehaviour
     public Button RushButton => rushButton;
     public Button ClearButton => clearButton;
 
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        RectTransform rect = drawerRoot != null
+            ? drawerRoot.transform as RectTransform
+            : transform as RectTransform;
+        if (rect == null || !rect.gameObject.activeInHierarchy)
+            return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, null);
+    }
+
     public void ApplyTabVisuals(BuildDrawerCategory selectedCategory, int[] counts, bool[] enabledStates)
     {
         if (tabs == null)

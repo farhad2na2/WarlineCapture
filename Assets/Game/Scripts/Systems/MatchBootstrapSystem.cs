@@ -92,6 +92,8 @@ internal sealed class MatchBootstrapSystem
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
     public bool GameplayInitialized { get; private set; }
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
+    public BuildingUiCommandSystem.Context BuildingUiCommandContext => _buildingUiCommandContext;
+    public BuildingUiQuerySystem.Context BuildingUiQueryContext => _buildingUiQueryContext;
     private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawn;
     private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
     private BuildingUiCommandSystem.Context _buildingUiCommandContext;

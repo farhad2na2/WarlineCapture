@@ -55,6 +55,7 @@ public sealed class BuildingUiCommandSystem
     public delegate CampRequestFailure TryRequestCampItemDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
     public delegate void CreateSelectedBuildingUnitDelegate(int productionIndex);
     public delegate void CreateBuildingUnitDelegate(int buildingId, int productionIndex);
+    public delegate bool CancelProductionDelegate(int buildingId, int pendingProductionIndex);
 
     public readonly struct Context
     {
@@ -73,6 +74,7 @@ public sealed class BuildingUiCommandSystem
         public readonly Action CancelBuildingPlacement;
         public readonly Action FocusLastCampProductionRequest;
         public readonly Action ArmNextProductionFromUi;
+        public readonly CancelProductionDelegate CancelProduction;
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
 
@@ -92,6 +94,7 @@ public sealed class BuildingUiCommandSystem
             Action cancelBuildingPlacement,
             Action focusLastCampProductionRequest,
             Action armNextProductionFromUi,
+            CancelProductionDelegate cancelProduction,
             Action<string> clearSelectedBuilding,
             Action exitBuildMode)
         {
@@ -110,6 +113,7 @@ public sealed class BuildingUiCommandSystem
             CancelBuildingPlacement = cancelBuildingPlacement;
             FocusLastCampProductionRequest = focusLastCampProductionRequest;
             ArmNextProductionFromUi = armNextProductionFromUi;
+            CancelProduction = cancelProduction;
             ClearSelectedBuilding = clearSelectedBuilding;
             ExitBuildMode = exitBuildMode;
         }
@@ -236,6 +240,12 @@ public sealed class BuildingUiCommandSystem
     public void ArmNextProductionFromUi(Context context)
     {
         context.ArmNextProductionFromUi?.Invoke();
+    }
+
+    public bool CancelProduction(Context context, int buildingId, int pendingProductionIndex)
+    {
+        return context.CancelProduction != null &&
+               context.CancelProduction(buildingId, pendingProductionIndex);
     }
 
     public bool ConfirmBuildingPlacement(Context context)

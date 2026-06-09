@@ -14,6 +14,10 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
+    private BuildingUiCommandSystem _buildingUiCommandSystem;
+    private BuildingUiCommandSystem.Context _buildingUiCommandContext;
+    private BuildingUiQuerySystem _buildingUiQuerySystem;
+    private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private MatchHudRightQuickRailView _rightQuickRailView;
@@ -72,9 +76,13 @@ public sealed class UIShellContentView : MonoBehaviour
     public void BindGameplayRuntimeDependencies(
         SelectionUiCommandSystem selectionUiCommandSystem,
         MainMenuPlayUI mainMenuPlayUi = null,
-        System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel = null)
+        System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel = null,
+        BuildingUiCommandSystem buildingUiCommandSystem = null,
+        BuildingUiCommandSystem.Context buildingUiCommandContext = default)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _buildingUiCommandSystem = buildingUiCommandSystem;
+        _buildingUiCommandContext = buildingUiCommandContext;
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindMatchHudSelectionPanelInRegion();
@@ -83,6 +91,15 @@ public sealed class UIShellContentView : MonoBehaviour
         BindMatchHudRuntimeFeedbackInRegion();
         BindMatchHudMinimapInRegion();
         BindMatchHudSquadTrayInRegion();
+    }
+
+    internal void BindBuildDrawerRuntimeQueries(
+        BuildingUiQuerySystem buildingUiQuerySystem,
+        BuildingUiQuerySystem.Context buildingUiQueryContext)
+    {
+        _buildingUiQuerySystem = buildingUiQuerySystem;
+        _buildingUiQueryContext = buildingUiQueryContext;
+        BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
     }
 
     public bool TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView view)
@@ -386,6 +403,7 @@ public sealed class UIShellContentView : MonoBehaviour
         UnbindBuildDrawerPopupCloseButton();
         _buildDrawerPopupInstance = InstallRoot(buildDrawerPopupPrefab, UIShellRegionId.PopupLayer);
         BindBuildDrawerPopupCloseButton(_buildDrawerPopupInstance);
+        BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
         return _buildDrawerPopupInstance;
     }
 
@@ -420,6 +438,24 @@ public sealed class UIShellContentView : MonoBehaviour
         _buildDrawerPopupCloseButtonListener = CloseBuildDrawerPopup;
         _buildDrawerPopupCloseButton.onClick.RemoveListener(_buildDrawerPopupCloseButtonListener);
         _buildDrawerPopupCloseButton.onClick.AddListener(_buildDrawerPopupCloseButtonListener);
+    }
+
+    private void BindBuildDrawerRuntimeCommands(GameObject popup)
+    {
+        if (popup == null)
+            return;
+
+        BuildDrawerCatalogPresenterView presenter = popup.GetComponent<BuildDrawerCatalogPresenterView>();
+        if (presenter == null)
+            return;
+
+        presenter.BindRuntimeCommands(
+            _buildingUiCommandSystem,
+            _buildingUiCommandContext,
+            CloseBuildDrawerPopup);
+        presenter.BindRuntimeQueries(
+            _buildingUiQuerySystem,
+            _buildingUiQueryContext);
     }
 
     private void UnbindBuildDrawerPopupCloseButton()

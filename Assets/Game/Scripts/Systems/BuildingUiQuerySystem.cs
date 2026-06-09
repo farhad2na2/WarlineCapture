@@ -98,22 +98,36 @@ public sealed class BuildingUiQuerySystem
     public readonly struct PendingProductionUiEntry
     {
         public readonly int BuildingId;
+        public readonly int PendingProductionIndex;
         public readonly GameObject Prefab;
         public readonly float RemainingSeconds;
         public readonly float DurationSeconds;
         public readonly float Progress01;
         public readonly float StartedAt;
         public readonly float ReadyAt;
+        public readonly string ProducerDisplayName;
 
         public PendingProductionUiEntry(int buildingId, GameObject prefab, float remainingSeconds, float durationSeconds, float progress01, float startedAt, float readyAt)
+            : this(buildingId, -1, prefab, remainingSeconds, durationSeconds, progress01, startedAt, readyAt, string.Empty)
+        {
+        }
+
+        public PendingProductionUiEntry(int buildingId, GameObject prefab, float remainingSeconds, float durationSeconds, float progress01, float startedAt, float readyAt, string producerDisplayName)
+            : this(buildingId, -1, prefab, remainingSeconds, durationSeconds, progress01, startedAt, readyAt, producerDisplayName)
+        {
+        }
+
+        public PendingProductionUiEntry(int buildingId, int pendingProductionIndex, GameObject prefab, float remainingSeconds, float durationSeconds, float progress01, float startedAt, float readyAt, string producerDisplayName)
         {
             BuildingId = buildingId;
+            PendingProductionIndex = pendingProductionIndex;
             Prefab = prefab;
             RemainingSeconds = remainingSeconds;
             DurationSeconds = durationSeconds;
             Progress01 = progress01;
             StartedAt = startedAt;
             ReadyAt = readyAt;
+            ProducerDisplayName = producerDisplayName ?? string.Empty;
         }
     }
 
@@ -327,25 +341,33 @@ public sealed class BuildingUiQuerySystem
         IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
         BuildingProductionSystem productionSystem,
         float now,
-        List<PendingProductionUiEntry> entries)
+        List<PendingProductionUiEntry> entries,
+        string producerDisplayName = "")
     {
         if (pendingProductions == null || productionSystem == null || entries == null)
             return;
 
+        int pendingIndex = 0;
         foreach (BuildingProductionSystem.IPendingProduction pending in pendingProductions)
         {
             if (pending == null || pending.Prefab == null)
+            {
+                pendingIndex++;
                 continue;
+            }
 
             BuildingProductionSystem.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, false);
             entries.Add(new PendingProductionUiEntry(
                 buildingId,
+                pendingIndex,
                 pending.Prefab,
                 progress.RemainingSeconds,
                 progress.DurationSeconds,
                 progress.Progress01,
                 pending.StartedAt,
-                pending.ReadyAt));
+                pending.ReadyAt,
+                producerDisplayName));
+            pendingIndex++;
         }
     }
 
@@ -380,7 +402,18 @@ public sealed class BuildingUiQuerySystem
                 building.PendingProductions,
                 context.ProductionSystem,
                 now,
-                entries);
+                entries,
+                ResolveProducerDisplayName(pair.Key, building));
         }
+    }
+
+    private static string ResolveProducerDisplayName(int buildingId, RuntimeBuildingEntity building)
+    {
+        string displayName = building != null && building.Definition != null
+            ? building.Definition.DisplayName
+            : string.Empty;
+        return string.IsNullOrWhiteSpace(displayName)
+            ? $"Building {buildingId}"
+            : displayName;
     }
 }

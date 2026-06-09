@@ -200,8 +200,25 @@ internal sealed class BuildingUiContextSystem
             () => source.ProductionRequestSystem?.FocusLastCampProductionRequest(
                 source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default),
             () => source.ProductionRequestSystem?.ArmNextProductionFromUi(source.GetFrameCount?.Invoke() ?? 0),
+            (buildingId, pendingProductionIndex) => CancelProduction(source, buildingId, pendingProductionIndex),
             source.ClearSelectedBuilding,
             source.ExitBuildMode);
+    }
+
+    private static bool CancelProduction(Source source, int buildingId, int pendingProductionIndex)
+    {
+        if (source.RuntimeBuildingSystem == null ||
+            source.ProductionSystem == null ||
+            !source.RuntimeBuildingSystem.Buildings.TryGetValue(buildingId, out RuntimeBuildingEntity building) ||
+            building == null ||
+            building.PendingProductions == null ||
+            pendingProductionIndex < 0 ||
+            pendingProductionIndex >= building.PendingProductions.Count)
+        {
+            return false;
+        }
+
+        return source.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex);
     }
 
     public BuildingUiQuerySystem.Context CreateQueryContext(Source source)

@@ -233,76 +233,76 @@ Existing systems to integrate with:
 
 Use this checklist as the progress tracker. Mark a step complete only after its done criteria are verified.
 
-- [ ] Step 01 - Prefab reference inventory
+- [x] Step 01 - Prefab reference inventory
   - Inspect the existing `SCN09_BuildDrawerPopup` hierarchy and identify the exact serialized references needed for tabs, item templates, detail panel, queue rows, primary CTA, close button, and optional controls.
   - Done when the implementation knows every reference path and no prefab rebuild is required.
 
-- [ ] Step 02 - Add serialized view components
+- [x] Step 02 - Add serialized view components
   - Add view classes for the existing popup hierarchy, such as `BuildDrawerView`, `BuildDrawerTabView`, `BuildDrawerItemView`, and `BuildDrawerQueueItemView`.
   - These classes should expose serialized references only and should not perform gameplay logic.
   - Done when the scripts compile and can represent the existing prefab without hierarchy search.
 
-- [ ] Step 03 - Wire existing prefab references in place
+- [x] Step 03 - Wire existing prefab references in place
   - Add the new view components and assign serialized fields on the existing prefab.
   - Preserve current hierarchy, art, layout, and `.meta` files.
   - Done when Unity prefab validation reports no missing script/reference fields.
 
-- [ ] Step 04 - Build requestable-only catalog read model
+- [x] Step 04 - Build requestable-only catalog read model
   - Read buildings from configured spawnables and units from the unit prefab registry.
   - Include only configs where `CanRequest` is true.
   - Done when non-requestable civilians, enemy entries, static-only items, and debug entries are absent from the drawer data.
 
-- [ ] Step 05 - Categorize requestable catalog entries
+- [x] Step 05 - Categorize requestable catalog entries
   - Split entries into Buildings, Vehicles, Aircrafts, and Soldiers.
   - Use existing config signals first: `BuildingDefinitionAuthoring`, `UnitGridAuthoring.IsAirUnit`, vehicle motion/footprint, transport capacity, and identity fallback only where needed.
   - Done when each requestable entry appears in exactly one drawer tab.
 
-- [ ] Step 06 - Bind category tabs
+- [x] Step 06 - Bind category tabs
   - Bind tab click, selected state, item count/availability, and disabled reason.
   - Selected tab visuals use the existing `BuildingsTab / Frame` visual; unselected tab visuals use the existing `VehiclesTab / Frame` visual.
   - Done when switching tabs updates the visible catalog without leaking world input.
 
-- [ ] Step 07 - Bind catalog item views
+- [x] Step 07 - Bind catalog item views
   - Pool/reuse item views under `LeftPanel / Scroll View / Viewport / Content`.
   - Bind thumbnail, name, type/role, short description, cost, time, footprint, requirements, disabled reason, and affordability.
   - Done when all visible item cards are config-backed and no static placeholder item text remains.
 
-- [ ] Step 08 - Bind item selection visuals
+- [x] Step 08 - Bind item selection visuals
   - Clicking an item selects/previews it without issuing a gameplay command.
   - Selected unit/building item views set `ItemView / Frame` to `Assets/Game/Art/UI/Panels/scn09_build_card_frame_selected_check.png`.
   - Unselected item views restore the normal frame sprite.
   - Done when exactly one item per category selection shows the selected frame.
 
-- [ ] Step 09 - Bind selected item detail panel
+- [x] Step 09 - Bind selected item detail panel
   - Bind large preview, thumbnail, name, type label, full description, cost rows, time, placement/footprint, and requirements.
   - Done when selecting any catalog item fully updates the right/detail panel from config data.
 
-- [ ] Step 10 - Bind primary action button
+- [x] Step 10 - Bind primary action button
   - Identify the canonical current CTA (`BuildButton` or `OrderButton`) and disable/hide the duplicate if needed.
   - Bind labels: Buildings `PLACE`, Vehicles `PRODUCE`, Aircrafts `PRODUCE`, Soldiers `RECRUIT`.
   - Bind enabled state and typed disabled reasons.
   - Done when no item means disabled, valid item means actionable, and invalid item explains why.
 
-- [ ] Step 11 - Route primary action requests
+- [x] Step 11 - Route primary action requests
   - Buildings enter placement mode through the placement boundary.
   - Vehicles/Aircrafts enqueue production through the production request boundary.
   - Soldiers enqueue recruitment through the production request boundary.
   - Done when UI emits typed requests and never mutates gameplay state directly.
 
-- [ ] Step 12 - Bind production queue panel
+- [x] Step 12 - Bind production queue panel
   - Bind empty, active, queued, progress, ETA, producer, queue capacity, and cancelable states.
   - Done when active/queued production reflects runtime state and the empty message shows only when no queue exists.
 
-- [ ] Step 13 - Bind secondary queue controls
+- [x] Step 13 - Bind secondary queue controls
   - Wire `CancelButton` to typed cancel requests.
   - Keep `RushButton` and `ClearButton` disabled with reason text unless their gameplay rules are confirmed.
   - Done when secondary buttons never silently fail.
 
-- [ ] Step 14 - Add focused tests
+- [x] Step 14 - Add focused tests
   - Cover requestable filtering, category assignment, tab selected/unselected visuals, item selected frame, CTA label rules, disabled reasons, and request emission.
   - Done when focused EditMode tests pass.
 
-- [ ] Step 15 - Final Unity validation
+- [x] Step 15 - Final Unity validation
   - Run prefab serialization validation and a compile/test pass.
   - Verify no missing references, no hierarchy-search regressions, and no prefab rebuild churn.
   - Done when validation passes and this document has progress notes updated.
@@ -310,6 +310,17 @@ Use this checklist as the progress tracker. Mark a step complete only after its 
 ## Progress Notes
 
 - 2026-06-09: Planning document created. No implementation started.
+- 2026-06-09: Step 01 complete. Existing popup surfaces inventoried: `BuildDrawerRoot / DrawerFrame`, `LeftPanel / Tabs`, `BuildingsTab`, `VehiclesTab`, `AircraftsTab`, `SoldiersTab`, `LeftPanel / Scroll View / Viewport / Content`, item templates `ItemView*`, detail images/texts (`Preview`, `Thumb`, `Name`, `Role`, `Description`, costs, time, placement, requirements), CTA buttons (`BuildButton`, `OrderButton`), queue surfaces (`ProductionPanel`, `ProductionPanelActive`, `ProductionItemView*`, `ProductionActiveItemView`, `NoProduction`, `Slider`, progress/time/count texts), queue controls (`CancelButton`, `RushButton`, `ClearButton`), and shell close binding through `UIPopupCloseView`. No prefab rebuild is required.
+- 2026-06-09: Step 02 complete. Added serialized-only `BuildDrawerCategory`, `BuildDrawerView`, `BuildDrawerTabView`, `BuildDrawerItemView`, and `BuildDrawerQueueItemView` scripts with stable `.meta` files. Shadow Unity batch compile passed via `/private/tmp/warlinecapture-builddrawer-step02-shadow-compile.log`.
+- 2026-06-09: Step 03 complete. Wired `BuildDrawerView` onto the existing popup root, added tab/item/queue view components in place, assigned selected tab frame, normal tab frame, selected item frame, item template, queue templates, CTA buttons, close button, and available detail/queue fields. Added Button components only to existing tab and item roots that lacked them, using their existing frame images as target graphics. Temporary editor binder was removed after use. Shadow Unity prefab import/compile passed via `/private/tmp/warlinecapture-builddrawer-step03-final-compile.log`.
+- 2026-06-09: Steps 04 and 05 complete. Added `BuildDrawerCatalogQuerySystem` with `BuildDrawerCatalogItem` and formatter rules. The catalog includes only `CanRequest` building/unit configs and categorizes requestable entries into Buildings, Vehicles, Aircrafts, and Soldiers. Added focused tests for requestable filtering, category assignment, action labels, and `CollectAll`. Shadow Unity focused validation passed via `/private/tmp/warlinecapture-builddrawer-step04-05-focused.log`.
+- 2026-06-09: Steps 06 and 07 complete. Added `BuildDrawerCatalogPresenterView` to bind category tabs, requestable counts, selected/normal tab visuals, and config-backed catalog rows. Static placeholder rows are hidden behind the template/pool path, and visible item rows now come from the requestable catalog. Shadow Unity focused validation, including the real `SCN09_BuildDrawerPopup` prefab, passed via `/private/tmp/warlinecapture-builddrawer-step06-07-focused.log`.
+- 2026-06-09: Steps 08, 09, and 10 complete. Item clicks now only select/preview drawer entries, selected rows swap to `scn09_build_card_frame_selected_check.png`, the detail panel binds the selected config name/type/description/cost/time/placement/requirements and portraits, and the primary CTA label is category-derived (`PLACE`, `PRODUCE`, `RECRUIT`). `BuildButton` is the canonical CTA when both button references exist; `OrderButton` is hidden as the duplicate. Shadow Unity focused validation passed via `/private/tmp/warlinecapture-builddrawer-step08-10-final-focused.log`.
+- 2026-06-09: Step 11 complete. `MatchBootstrapSystem` exposes the existing `BuildingUiCommandSystem.Context`, `MenuBootstrapSystem` passes it to `UIShellContentView`, and installed build drawer popups bind the presenter to the runtime command boundary. Primary CTA clicks now route through `BuildingUiCommandSystem.TryRequestCampItem`; building `PLACE` enters placement mode and closes the drawer, while unit `PRODUCE`/`RECRUIT` keeps the drawer open for queue feedback. Focused routing validation passed via `/private/tmp/warlinecapture-builddrawer-step11-focused.log`.
+- 2026-06-09: Step 12 complete. The build drawer now binds friendly pending production from `BuildingUiQuerySystem.GetFriendlyPendingProductionUiEntries`, displays empty/active/queued states, binds active/queued row names from the same catalog resolver as the item list, and updates summary progress/time/count. The read model carries producer names; the current prefab queue item components do not expose per-row producer text fields, so producer display is available when a field is later assigned. Focused prefab validation passed via `/private/tmp/warlinecapture-builddrawer-step12-focused.log`.
+- 2026-06-09: Step 13 complete. Added a typed production cancel boundary to `BuildingUiCommandSystem` and implemented it in `BuildingUiContextSystem` using validated building id plus pending production index. The drawer Cancel button now routes active production cancellation through that boundary; Rush and Clear remain disabled because their gameplay rules are not defined. Focused validation passed via `/private/tmp/warlinecapture-builddrawer-step13-focused.log`.
+- 2026-06-09: Step 14 complete. `BuildDrawerCatalogQuerySystemTests.RunFocusedValidation` now covers requestable filtering, category assignment, action labels, real popup tab/item binding, selected item frame swapping, detail/CTA binding, primary action request routing, production queue snapshot binding, and cancel request routing.
+- 2026-06-09: Step 15 complete. Final static checks passed (`git diff --check` and no forbidden build drawer hierarchy-search calls), and final shadow Unity focused validation passed via `/private/tmp/warlinecapture-builddrawer-final-focused.log` with 10 checks.
 
 ## Acceptance Criteria
 

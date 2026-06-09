@@ -700,6 +700,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5048718759012919223}
+  - component: {fileID: 4584244588215778945}
   m_Layer: 0
   m_Name: AircraftsTab
   m_TagString: Untagged
@@ -727,6 +728,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4584244588215778945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229788297225951043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 406957023927418}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &314899820100237205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +1110,7 @@ GameObject:
   - component: {fileID: 3622116938683129815}
   - component: {fileID: 6207412389868893944}
   - component: {fileID: 4101652076719669944}
+  - component: {fileID: -6494335887273454535}
   m_Layer: 0
   m_Name: ProductionItemView
   m_TagString: Untagged
@@ -1134,6 +1180,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-6494335887273454535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607124506182318451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8153a36649cd4ecda6539314892708eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerQueueItemView
+  cancelButton: {fileID: 0}
+  thumbnailImage: {fileID: 0}
+  progressSlider: {fileID: 0}
+  nameText: {fileID: 7451705404617807608}
+  producerText: {fileID: 0}
+  timeText: {fileID: 7759102824305716547}
+  percentageText: {fileID: 0}
 --- !u!1 &634054408292088410
 GameObject:
   m_ObjectHideFlags: 0
@@ -2849,7 +2914,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3076,7 +3141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3238,6 +3303,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4549165313873888120}
+  - component: {fileID: 1841251358444769226}
   m_Layer: 0
   m_Name: VehiclesTab
   m_TagString: Untagged
@@ -3265,6 +3331,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1841251358444769226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551486602305731841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 28831779764429513}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1560194325099179326
 GameObject:
   m_ObjectHideFlags: 0
@@ -13084,7 +13194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -13198,7 +13308,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -13585,6 +13695,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5619900943681700930}
+  - component: {fileID: -4499552701994590459}
   m_Layer: 0
   m_Name: SoldiersTab
   m_TagString: Untagged
@@ -13612,6 +13723,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &-4499552701994590459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5392791657470906586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 5619902792880158240}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5488720005864744330
 GameObject:
   m_ObjectHideFlags: 0
@@ -14742,6 +14897,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1828305807978350570}
+  - component: {fileID: -9205153555886113324}
+  - component: {fileID: 4748728101820252328}
   m_Layer: 0
   m_Name: ItemView
   m_TagString: Untagged
@@ -14776,6 +14933,73 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &-9205153555886113324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6012234502472256920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2856c70cb30b42a09d524b26e8aaa7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerItemView
+  selectionButton: {fileID: 4748728101820252328}
+  frameImage: {fileID: 8062961600221708519}
+  thumbnailImage: {fileID: 8613247941276407181}
+  nameText: {fileID: 6687624907053262612}
+  roleText: {fileID: 5303555146183844461}
+  descriptionText: {fileID: 0}
+  creditsCostText: {fileID: 8958608239723865369}
+  suppliesCostText: {fileID: 4128135663024736948}
+  timeText: {fileID: 0}
+  requirementsText: {fileID: 0}
+  disabledOverlay: {fileID: 0}
+--- !u!114 &4748728101820252328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6012234502472256920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 8062961600221708519}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6066193031708309985
 GameObject:
   m_ObjectHideFlags: 0
@@ -15865,6 +16089,8 @@ GameObject:
   - component: {fileID: 6907976355537455476}
   - component: {fileID: 1800108209000000001}
   - component: {fileID: 1800108209000000002}
+  - component: {fileID: 5121146197482808315}
+  - component: {fileID: 2420960382460592093}
   m_Layer: 0
   m_Name: SCN09_BuildDrawerPopup
   m_TagString: Untagged
@@ -15932,6 +16158,91 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIPopupCloseButtonView
   closeView: {fileID: 1800108209000000001}
+--- !u!114 &5121146197482808315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6681354990523575241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ec630e51d642e984bd0e9fe4de9b7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerView
+  drawerRoot: {fileID: 365599260206033633}
+  closeButton: {fileID: 5634950188798638685}
+  tabs:
+  - category: 0
+    button: {fileID: -1993032673680931273}
+    frame: {fileID: 2607681674432693161}
+    labelText: {fileID: 950774964700857745}
+    countText: {fileID: 0}
+    disabledOverlay: {fileID: 0}
+  - category: 1
+    button: {fileID: 1841251358444769226}
+    frame: {fileID: 28831779764429513}
+    labelText: {fileID: 4913908062030873836}
+    countText: {fileID: 0}
+    disabledOverlay: {fileID: 0}
+  - category: 2
+    button: {fileID: 4584244588215778945}
+    frame: {fileID: 406957023927418}
+    labelText: {fileID: 4324422597942589953}
+    countText: {fileID: 0}
+    disabledOverlay: {fileID: 0}
+  - category: 3
+    button: {fileID: -4499552701994590459}
+    frame: {fileID: 5619902792880158240}
+    labelText: {fileID: 570035734042742535}
+    countText: {fileID: 0}
+    disabledOverlay: {fileID: 0}
+  selectedTabFrameSprite: {fileID: 21300000, guid: 5f054c863cf04394baa25471cedf09fd, type: 3}
+  normalTabFrameSprite: {fileID: 21300000, guid: 0ae3d4bbf1fe466bb33f24a2b8367385, type: 3}
+  itemContentRoot: {fileID: 8514639999409668590}
+  itemTemplate: {fileID: -9205153555886113324}
+  selectedItemFrameSprite: {fileID: 21300000, guid: 9e20eb184d13c4230895c2edf429e6eb, type: 3}
+  previewImage: {fileID: 5866987094321382430}
+  thumbnailImage: {fileID: 8613247941276407181}
+  nameText: {fileID: 6030163123476267040}
+  roleText: {fileID: 5303555146183844461}
+  descriptionText: {fileID: 3780550838095816822}
+  creditsCostText: {fileID: 102975984828922229}
+  suppliesCostText: {fileID: 4128135663024736948}
+  productionTimeText: {fileID: 7759102824305716547}
+  placementText: {fileID: 4768099345764799021}
+  requirementsText: {fileID: 3839310995282481432}
+  buildButton: {fileID: 3053134644280615873}
+  orderButton: {fileID: 2164527941063606833}
+  primaryActionLabelText: {fileID: 1922018575489854562}
+  productionPanel: {fileID: 6350925738255562494}
+  productionPanelActive: {fileID: 7669047540276769492}
+  noProductionView: {fileID: 3939773894899571655}
+  queueContentRoot: {fileID: 7571601333741596279}
+  queuedItemTemplate: {fileID: -6494335887273454535}
+  activeItemView: {fileID: -825715202423557114}
+  queueProgressSlider: {fileID: 1793096092308859948}
+  queuePercentageText: {fileID: 2053046144270877260}
+  queueTimeText: {fileID: 7759102824305716547}
+  queueNumbersText: {fileID: 1801588854910804095}
+  cancelButton: {fileID: 31375205807487332}
+  rushButton: {fileID: 8304488592612051803}
+  clearButton: {fileID: 215444099574449444}
+--- !u!114 &2420960382460592093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6681354990523575241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79aa257b201d42dca56557f869b1edb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerCatalogPresenterView
+  view: {fileID: 5121146197482808315}
+  unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
+  buildingPlacementConfig: {fileID: 11400000, guid: b2010000000000000000000000000004, type: 2}
 --- !u!1 &6718956666824274557
 GameObject:
   m_ObjectHideFlags: 0
@@ -16557,7 +16868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -16794,6 +17105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6682780418546061736}
+  - component: {fileID: -1993032673680931273}
   m_Layer: 0
   m_Name: BuildingsTab
   m_TagString: Untagged
@@ -16821,6 +17133,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &-1993032673680931273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7261847415698019176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 2607681674432693161}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7265419065614398011
 GameObject:
   m_ObjectHideFlags: 0
@@ -16907,6 +17263,7 @@ GameObject:
   - component: {fileID: 8816689306331039177}
   - component: {fileID: 7038621096591514294}
   - component: {fileID: 8787076209370956603}
+  - component: {fileID: -825715202423557114}
   m_Layer: 0
   m_Name: ProductionActiveItemView
   m_TagString: Untagged
@@ -16975,6 +17332,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-825715202423557114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7391025429756591876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8153a36649cd4ecda6539314892708eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerQueueItemView
+  cancelButton: {fileID: 31375205807487332}
+  thumbnailImage: {fileID: 0}
+  progressSlider: {fileID: 1793096092308859948}
+  nameText: {fileID: 824172543306937471}
+  producerText: {fileID: 0}
+  timeText: {fileID: 0}
+  percentageText: {fileID: 2053046144270877260}
 --- !u!1 &7401730314474482638
 GameObject:
   m_ObjectHideFlags: 0

@@ -367,7 +367,12 @@ internal sealed class MenuBootstrapSystem
         view.ContentSystem.BindGameplayRuntimeDependencies(
             selectionUiCommand,
             mainMenu,
-            matchBootstrap.BindMatchHudSelectionPanel);
+            matchBootstrap.BindMatchHudSelectionPanel,
+            matchBootstrap.BuildingUiCommand,
+            matchBootstrap.BuildingUiCommandContext);
+        view.ContentSystem.BindBuildDrawerRuntimeQueries(
+            matchBootstrap.BuildingUiQuery,
+            matchBootstrap.BuildingUiQueryContext);
         boundMatchRuntimeView = matchScene;
         boundSelectionUiCommand = selectionUiCommand;
         boundMainMenu = mainMenu;

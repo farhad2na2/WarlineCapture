@@ -17,6 +17,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     private readonly List<BuildDrawerCatalogItem> _items = new();
     private readonly List<BuildDrawerCatalogItem> _countScratch = new();
     private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _pendingProductions = new();
+    private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _clearProductionScratch = new();
     private readonly List<BuildDrawerItemView> _runtimeItems = new();
     private readonly List<BuildDrawerQueueItemView> _runtimeQueueItems = new();
     private readonly List<ButtonBinding> _tabBindings = new();
@@ -34,6 +35,8 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     private UnityAction _primaryActionListener;
     private Button _cancelButton;
     private UnityAction _cancelButtonListener;
+    private Button _clearButton;
+    private UnityAction _clearButtonListener;
     private float _nextQueueRefreshTime;
 
     private void Awake()
@@ -115,6 +118,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         _closeDrawer = closeDrawer;
         WirePrimaryAction();
         WireQueueControls();
+        RefreshQueue();
     }
 
     internal void BindRuntimeQueries(
@@ -166,15 +170,35 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         if (view == null)
             return;
 
-        Button button = view.CancelButton;
-        if (button == null || button == _cancelButton)
-            return;
+        Button button = ResolveProductionCancelButton();
+        if (button != null && button != _cancelButton)
+        {
+            UnwireCancelButton();
+            _cancelButton = button;
+            _cancelButtonListener = OnCancelProductionClicked;
+            _cancelButton.onClick.RemoveListener(_cancelButtonListener);
+            _cancelButton.onClick.AddListener(_cancelButtonListener);
+        }
 
-        UnwireQueueControls();
-        _cancelButton = button;
-        _cancelButtonListener = OnCancelProductionClicked;
-        _cancelButton.onClick.RemoveListener(_cancelButtonListener);
-        _cancelButton.onClick.AddListener(_cancelButtonListener);
+        Button clearButton = view.ClearButton;
+        if (clearButton != null && clearButton != _clearButton)
+        {
+            UnwireClearButton();
+            _clearButton = clearButton;
+            _clearButtonListener = OnClearProductionsClicked;
+            _clearButton.onClick.RemoveListener(_clearButtonListener);
+            _clearButton.onClick.AddListener(_clearButtonListener);
+        }
+    }
+
+    private Button ResolveProductionCancelButton()
+    {
+        if (view == null)
+            return null;
+
+        return view.ActiveItemView != null && view.ActiveItemView.CancelButton != null
+            ? view.ActiveItemView.CancelButton
+            : view.CancelButton;
     }
 
     private void SelectCategory(BuildDrawerCategory category)
@@ -348,6 +372,9 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void OnCancelProductionClicked()
     {
+        Debug.Log(
+            $"BUILD_DRAWER_CANCEL_CLICK queue={_pendingProductions.Count} commandBound={_uiCommandSystem != null} frame={Time.frameCount}");
+
         if (_pendingProductions.Count == 0 ||
             _pendingProductions[0].PendingProductionIndex < 0 ||
             _uiCommandSystem == null)
@@ -363,10 +390,52 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             _uiCommandContext,
             active.BuildingId,
             active.PendingProductionIndex);
+        Debug.Log(
+            $"BUILD_DRAWER_CANCEL_RESULT cancelled={cancelled} building={active.BuildingId} pending={active.PendingProductionIndex} frame={Time.frameCount}");
 
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelled
             ? TacticalCommandResult.Success("PRODUCTION CANCELLED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production cancel unavailable."));
+        Refresh();
+    }
+
+    private void OnClearProductionsClicked()
+    {
+        Debug.Log(
+            $"BUILD_DRAWER_CLEAR_CLICK queue={_pendingProductions.Count} commandBound={_uiCommandSystem != null} frame={Time.frameCount}");
+
+        if (_pendingProductions.Count == 0 || _uiCommandSystem == null)
+        {
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.BuildUnavailable,
+                "Production queue is empty."));
+            return;
+        }
+
+        _clearProductionScratch.Clear();
+        for (int i = 0; i < _pendingProductions.Count; i++)
+        {
+            BuildingUiQuerySystem.PendingProductionUiEntry entry = _pendingProductions[i];
+            if (entry.PendingProductionIndex >= 0)
+                _clearProductionScratch.Add(entry);
+        }
+
+        _clearProductionScratch.Sort(CompareProductionCancelOrder);
+
+        int cancelledCount = 0;
+        for (int i = 0; i < _clearProductionScratch.Count; i++)
+        {
+            BuildingUiQuerySystem.PendingProductionUiEntry entry = _clearProductionScratch[i];
+            if (_uiCommandSystem.CancelProduction(_uiCommandContext, entry.BuildingId, entry.PendingProductionIndex))
+                cancelledCount++;
+        }
+
+        _clearProductionScratch.Clear();
+        Debug.Log(
+            $"BUILD_DRAWER_CLEAR_RESULT cancelled={cancelledCount} frame={Time.frameCount}");
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelledCount > 0
+            ? TacticalCommandResult.Success("PRODUCTION QUEUE CLEARED")
+            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production clear unavailable."));
         Refresh();
     }
 
@@ -440,7 +509,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         view.ApplySecondaryQueueControls(
             _uiCommandSystem != null && active.PendingProductionIndex >= 0,
             false,
-            false);
+            _uiCommandSystem != null && _pendingProductions.Count > 0);
     }
 
     private void BindDetail(BuildDrawerCatalogItem model)
@@ -575,11 +644,26 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void UnwireQueueControls()
     {
+        UnwireCancelButton();
+        UnwireClearButton();
+    }
+
+    private void UnwireCancelButton()
+    {
         if (_cancelButton != null && _cancelButtonListener != null)
             _cancelButton.onClick.RemoveListener(_cancelButtonListener);
 
         _cancelButton = null;
         _cancelButtonListener = null;
+    }
+
+    private void UnwireClearButton()
+    {
+        if (_clearButton != null && _clearButtonListener != null)
+            _clearButton.onClick.RemoveListener(_clearButtonListener);
+
+        _clearButton = null;
+        _clearButtonListener = null;
     }
 
     private void ClearTabBindings()
@@ -661,7 +745,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             FormatRemaining(entry.RemainingSeconds),
             entry.Progress01,
             ResolveQueueThumbnail(entry),
-            false);
+            queueNumber == 1 && _uiCommandSystem != null && entry.PendingProductionIndex >= 0);
     }
 
     private string ResolveQueueDisplayName(BuildingUiQuerySystem.PendingProductionUiEntry entry)
@@ -687,6 +771,17 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     private static string FormatPercent(float progress01)
     {
         return Mathf.RoundToInt(Mathf.Clamp01(progress01) * 100f).ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
+    }
+
+    private static int CompareProductionCancelOrder(
+        BuildingUiQuerySystem.PendingProductionUiEntry left,
+        BuildingUiQuerySystem.PendingProductionUiEntry right)
+    {
+        int buildingComparison = left.BuildingId.CompareTo(right.BuildingId);
+        if (buildingComparison != 0)
+            return buildingComparison;
+
+        return right.PendingProductionIndex.CompareTo(left.PendingProductionIndex);
     }
 
     private static void ApplyBuildDrawerCommandResult(

@@ -74,6 +74,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 test => test.BuildDrawerCancelButton_RoutesActiveProductionCancelRequest(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerClearButton_RoutesAllProductionCancelRequests),
+                test => test.BuildDrawerClearButton_RoutesAllProductionCancelRequests(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail),
                 test => test.BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail(),
                 ref passed);
@@ -690,11 +694,66 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         };
         presenter.ApplyQueueSnapshotForTests(entries);
         Assert.IsTrue(view.CancelButton.interactable);
+        Assert.NotNull(view.ActiveItemView.CancelButton, "Active production row must expose its own cancel button.");
+        Assert.IsTrue(view.ActiveItemView.CancelButton.interactable);
 
-        view.CancelButton.onClick.Invoke();
+        ClickButtonThroughTargetGraphic(view.ActiveItemView.CancelButton, "active production cancel");
 
         Assert.AreEqual(7, cancelledBuildingId);
         Assert.AreEqual(3, cancelledPendingIndex);
+    }
+
+    [Test]
+    public void BuildDrawerClearButton_RoutesAllProductionCancelRequests()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+        Assert.NotNull(view.ClearButton, "Build drawer must serialize the production clear button.");
+
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject activePrefab = CreateUnit("Queue Vehicle Active", true, false, new Vector2Int(2, 2), 0);
+        unitConfig.UnitSpawnPrefabs.Add(activePrefab);
+
+        var cancelled = new List<(int BuildingId, int PendingIndex)>();
+        presenter.ConfigureForTests(view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandSystem(),
+            CreateCommandContext(
+                (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
+                {
+                    requiredBuilding = string.Empty;
+                    return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+                },
+                (buildingId, pendingIndex) =>
+                {
+                    cancelled.Add((buildingId, pendingIndex));
+                    return true;
+                }),
+            null);
+
+        List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
+        {
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 0, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 1, activePrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 2, activePrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
+        };
+        presenter.ApplyQueueSnapshotForTests(entries);
+        Assert.IsTrue(view.ClearButton.interactable);
+
+        ClickButtonThroughTargetGraphic(view.ClearButton, "clear production queue");
+
+        Assert.AreEqual(3, cancelled.Count);
+        Assert.AreEqual((7, 2), cancelled[0]);
+        Assert.AreEqual((7, 1), cancelled[1]);
+        Assert.AreEqual((7, 0), cancelled[2]);
     }
 
     [Test]
@@ -1203,6 +1262,43 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         where T : UnityEngine.Object
     {
         return (T)serializedObject.FindProperty(propertyName).objectReferenceValue;
+    }
+
+    private void ClickButtonThroughTargetGraphic(Button button, string label)
+    {
+        Assert.NotNull(button, $"{label} button must exist.");
+        Assert.IsTrue(button.gameObject.activeInHierarchy, $"{label} button must be active.");
+        Assert.IsTrue(button.interactable, $"{label} button must be interactable.");
+        Assert.NotNull(button.targetGraphic, $"{label} button must have a target graphic.");
+        Assert.IsTrue(button.targetGraphic.raycastTarget, $"{label} button target graphic must receive raycasts.");
+
+        GameObject eventSystemObject = new($"EventSystem - {label}", typeof(EventSystem), typeof(StandaloneInputModule));
+        _createdObjects.Add(eventSystemObject);
+        EventSystem eventSystem = eventSystemObject.GetComponent<EventSystem>();
+        Canvas.ForceUpdateCanvases();
+
+        RectTransform targetRect = button.targetGraphic.rectTransform;
+        Assert.Greater(targetRect.rect.width, 0f, $"{label} target graphic must have visible width.");
+        Assert.Greater(targetRect.rect.height, 0f, $"{label} target graphic must have visible height.");
+
+        Vector2 center = RectTransformUtility.WorldToScreenPoint(
+            null,
+            targetRect.TransformPoint(targetRect.rect.center));
+        Assert.IsTrue(
+            RectTransformUtility.RectangleContainsScreenPoint(targetRect, center, null),
+            $"{label} target graphic must contain its own center point.");
+
+        var pointerEvent = new PointerEventData(eventSystem)
+        {
+            position = center,
+            button = PointerEventData.InputButton.Left
+        };
+        bool handled = ExecuteEvents.ExecuteHierarchy(
+            button.targetGraphic.gameObject,
+            pointerEvent,
+            ExecuteEvents.pointerClickHandler);
+
+        Assert.IsTrue(handled, $"{label} pointer click must dispatch to a Button.");
     }
 
     private static string GetQueueText(BuildDrawerQueueItemView view, string propertyName)

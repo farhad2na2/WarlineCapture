@@ -119,6 +119,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         WirePrimaryAction();
         WireQueueControls();
         RefreshQueue();
+        ApplyInstructionForCurrentSelection();
     }
 
     internal void BindRuntimeQueries(
@@ -318,6 +319,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         _selectedItem = model;
         _hasSelectedItem = true;
         BindDetail(model);
+        ApplyInstructionForCurrentSelection();
     }
 
     private void OnPrimaryActionClicked()
@@ -333,6 +335,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         if (_uiCommandSystem == null)
         {
+            ApplyInstruction("Build drawer is still connecting. Try again in a moment.", BuildDrawerInstructionSeverity.Error);
             BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
@@ -358,6 +361,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         {
             Debug.Log(
                 $"BUILD_DRAWER_PRIMARY_SUCCESS action=Place item={_selectedItem.DisplayName} frame={Time.frameCount}");
+            ApplyInstruction($"Place {_selectedItem.DisplayName}: choose a valid footprint.", BuildDrawerInstructionSeverity.Ready);
             BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
             BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success("PLACE BUILDING"));
             _closeDrawer?.Invoke();
@@ -366,8 +370,9 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         Debug.Log(
             $"BUILD_DRAWER_PRIMARY_SUCCESS action={_selectedItem.ActionLabel} item={_selectedItem.DisplayName} frame={Time.frameCount}");
+        ApplyInstruction(FormatPrimarySuccessInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
-        Refresh();
+        RefreshQueue();
     }
 
     private void OnCancelProductionClicked()
@@ -379,6 +384,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             _pendingProductions[0].PendingProductionIndex < 0 ||
             _uiCommandSystem == null)
         {
+            ApplyInstruction("Production cancel unavailable.", BuildDrawerInstructionSeverity.Error);
             BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production cancel unavailable."));
@@ -392,11 +398,15 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             active.PendingProductionIndex);
         Debug.Log(
             $"BUILD_DRAWER_CANCEL_RESULT cancelled={cancelled} building={active.BuildingId} pending={active.PendingProductionIndex} frame={Time.frameCount}");
+        ApplyInstruction(cancelled
+                ? $"Cancelled {ResolveQueueDisplayName(active)}."
+                : "Production cancel unavailable.",
+            cancelled ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
 
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelled
             ? TacticalCommandResult.Success("PRODUCTION CANCELLED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production cancel unavailable."));
-        Refresh();
+        RefreshQueue();
     }
 
     private void OnClearProductionsClicked()
@@ -406,6 +416,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         if (_pendingProductions.Count == 0 || _uiCommandSystem == null)
         {
+            ApplyInstruction("Production queue is empty.", BuildDrawerInstructionSeverity.Warning);
             BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production queue is empty."));
@@ -433,10 +444,14 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         _clearProductionScratch.Clear();
         Debug.Log(
             $"BUILD_DRAWER_CLEAR_RESULT cancelled={cancelledCount} frame={Time.frameCount}");
+        ApplyInstruction(cancelledCount > 0
+                ? "Production queue cleared."
+                : "Production clear unavailable.",
+            cancelledCount > 0 ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelledCount > 0
             ? TacticalCommandResult.Success("PRODUCTION QUEUE CLEARED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production clear unavailable."));
-        Refresh();
+        RefreshQueue();
     }
 
     private void RefreshQueue()
@@ -546,6 +561,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             null,
             string.Empty,
             false);
+        ApplyInstruction(FormatEmptyCategoryInstruction(_activeCategory), BuildDrawerInstructionSeverity.Warning);
     }
 
     private void HideStaticPlaceholderItems()
@@ -784,10 +800,11 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         return right.PendingProductionIndex.CompareTo(left.PendingProductionIndex);
     }
 
-    private static void ApplyBuildDrawerCommandResult(
+    private void ApplyBuildDrawerCommandResult(
         BuildingUiCommandSystem.CampRequestFailure failure,
         string requiredBuildingDisplayName)
     {
+        ApplyInstruction(FormatInstructionFailureMessage(failure, requiredBuildingDisplayName), BuildDrawerInstructionSeverity.Error);
         TacticalCommandReasonCode reason = failure == BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney
             ? TacticalCommandReasonCode.InsufficientResources
             : TacticalCommandReasonCode.BuildUnavailable;
@@ -809,6 +826,141 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             BuildingUiCommandSystem.CampRequestFailure.InvalidSelection => "Select a build drawer item first.",
             _ => "Build request unavailable."
         };
+    }
+
+    private void ApplyInstructionForCurrentSelection()
+    {
+        if (view == null)
+            return;
+
+        if (!_hasSelectedItem || _selectedItem.Prefab == null)
+        {
+            ApplyInstruction(FormatEmptyCategoryInstruction(_activeCategory), BuildDrawerInstructionSeverity.Warning);
+            return;
+        }
+
+        if (_uiCommandSystem == null)
+        {
+            ApplyInstruction(FormatReadyInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
+            return;
+        }
+
+        BuildingUiCommandSystem.CampRequestFailure failure = _uiCommandSystem.GetCampRequestFailure(
+            _uiCommandContext,
+            _selectedItem.Prefab,
+            _selectedItem.Price,
+            out string requiredBuildingDisplayName);
+
+        if (failure == BuildingUiCommandSystem.CampRequestFailure.None)
+        {
+            if (_selectedItem.Category == BuildDrawerCategory.Buildings &&
+                _uiCommandSystem.HasPendingBuildingPlacement(_uiCommandContext))
+            {
+                string status = _uiCommandSystem.PlacementStatusText(_uiCommandContext);
+                bool canConfirm = _uiCommandSystem.CanConfirmBuildingPlacement(_uiCommandContext);
+                ApplyInstruction(
+                    canConfirm
+                        ? $"Place {_selectedItem.DisplayName}: drag to position, then confirm."
+                        : $"Cannot place here: {FormatPlacementStatus(status)}.",
+                    canConfirm ? BuildDrawerInstructionSeverity.Ready : BuildDrawerInstructionSeverity.Error);
+                return;
+            }
+
+            ApplyInstruction(FormatReadyInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
+            return;
+        }
+
+        ApplyInstruction(FormatInstructionFailureMessage(failure, requiredBuildingDisplayName), BuildDrawerInstructionSeverity.Error);
+    }
+
+    private void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity)
+    {
+        view?.ApplyInstruction(text, severity);
+    }
+
+    private string FormatInstructionFailureMessage(
+        BuildingUiCommandSystem.CampRequestFailure failure,
+        string requiredBuildingDisplayName)
+    {
+        string itemName = _hasSelectedItem ? _selectedItem.DisplayName : "item";
+        return failure switch
+        {
+            BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney =>
+                $"Need {FormatMissingCredits()} more credits to {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}.",
+            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+                $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: requires {requiredBuildingDisplayName}.",
+            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding =>
+                $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: {FormatMissingProducerFallback(_selectedItem.Category)}.",
+            BuildingUiCommandSystem.CampRequestFailure.InvalidSelection => "Select a build drawer item first.",
+            _ => $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: request unavailable."
+        };
+    }
+
+    private int FormatMissingCredits()
+    {
+        int current = _uiCommandSystem != null
+            ? _uiCommandSystem.CurrentDollars(_uiCommandContext)
+            : 0;
+        return Mathf.Max(0, _selectedItem.Price - current);
+    }
+
+    private static string FormatReadyInstruction(BuildDrawerCatalogItem model)
+    {
+        return model.Category switch
+        {
+            BuildDrawerCategory.Buildings => $"PLACE: choose a location for {model.DisplayName}.",
+            BuildDrawerCategory.Vehicles => $"PRODUCE: add {model.DisplayName} to the vehicle queue.",
+            BuildDrawerCategory.Aircrafts => $"PRODUCE: add {model.DisplayName} to the aircraft queue.",
+            BuildDrawerCategory.Soldiers => $"RECRUIT: add {model.DisplayName} to the training queue.",
+            _ => $"Select {model.DisplayName}."
+        };
+    }
+
+    private static string FormatPrimarySuccessInstruction(BuildDrawerCatalogItem model)
+    {
+        return model.Category == BuildDrawerCategory.Soldiers
+            ? $"{model.DisplayName} added to recruitment queue."
+            : $"{model.DisplayName} added to production queue.";
+    }
+
+    private static string FormatEmptyCategoryInstruction(BuildDrawerCategory category)
+    {
+        return category switch
+        {
+            BuildDrawerCategory.Buildings => "No requestable buildings are configured.",
+            BuildDrawerCategory.Vehicles => "No requestable vehicles are configured.",
+            BuildDrawerCategory.Aircrafts => "No requestable aircraft are configured.",
+            BuildDrawerCategory.Soldiers => "No requestable soldiers are configured.",
+            _ => "Select an item to place, produce, or recruit."
+        };
+    }
+
+    private static string FormatMissingProducerFallback(BuildDrawerCategory category)
+    {
+        return category switch
+        {
+            BuildDrawerCategory.Vehicles => "no compatible vehicle producer is available",
+            BuildDrawerCategory.Aircrafts => "no compatible air producer is available",
+            BuildDrawerCategory.Soldiers => "no compatible training building is available",
+            _ => "required producer is missing"
+        };
+    }
+
+    private static string FormatActionVerb(BuildDrawerCategory category)
+    {
+        return category switch
+        {
+            BuildDrawerCategory.Buildings => "Place",
+            BuildDrawerCategory.Soldiers => "Recruit",
+            BuildDrawerCategory.Vehicles => "Produce",
+            BuildDrawerCategory.Aircrafts => "Produce",
+            _ => "Request"
+        };
+    }
+
+    private static string FormatPlacementStatus(string status)
+    {
+        return string.IsNullOrWhiteSpace(status) ? "invalid placement" : status;
     }
 
     private readonly struct ButtonBinding

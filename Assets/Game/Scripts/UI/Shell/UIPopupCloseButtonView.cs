@@ -38,6 +38,9 @@ public sealed class UIPopupCloseButtonView : MonoBehaviour
         }
 
         GameObject target = closeView != null && closeView.PopupRoot != null ? closeView.PopupRoot : gameObject;
+        UIPopupMotionView motionView = target != null ? target.GetComponent<UIPopupMotionView>() : null;
+        if (motionView != null && motionView.PlayHideAndDestroy(target))
+            return;
 
         if (Application.isPlaying)
             Destroy(target);

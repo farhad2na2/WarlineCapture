@@ -34,6 +34,14 @@ public sealed class BuildDrawerView : MonoBehaviour
     [SerializeField] private Button orderButton;
     [SerializeField] private TMP_Text primaryActionLabelText;
 
+    [Header("Instruction")]
+    [SerializeField] private TMP_Text instructionText;
+    [SerializeField] private Image instructionIcon;
+    [SerializeField] private Sprite instructionInfoIcon;
+    [SerializeField] private Sprite instructionReadyIcon;
+    [SerializeField] private Sprite instructionWarningIcon;
+    [SerializeField] private Sprite instructionErrorIcon;
+
     [Header("Queue")]
     [SerializeField] private GameObject productionPanel;
     [SerializeField] private GameObject productionPanelActive;
@@ -65,6 +73,8 @@ public sealed class BuildDrawerView : MonoBehaviour
     public Button CancelButton => cancelButton;
     public Button RushButton => rushButton;
     public Button ClearButton => clearButton;
+    public TMP_Text InstructionText => instructionText;
+    public Image InstructionIcon => instructionIcon;
     public bool IsOpen => drawerRoot != null ? drawerRoot.activeInHierarchy : gameObject.activeInHierarchy;
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -160,6 +170,30 @@ public sealed class BuildDrawerView : MonoBehaviour
 
         if (clearButton != null)
             clearButton.interactable = clearEnabled;
+    }
+
+    public void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity)
+    {
+        if (instructionText != null)
+            instructionText.text = text ?? string.Empty;
+
+        if (instructionIcon != null)
+        {
+            Sprite icon = ResolveInstructionIcon(severity);
+            instructionIcon.sprite = icon;
+            instructionIcon.enabled = icon != null;
+        }
+    }
+
+    private Sprite ResolveInstructionIcon(BuildDrawerInstructionSeverity severity)
+    {
+        return severity switch
+        {
+            BuildDrawerInstructionSeverity.Ready => instructionReadyIcon,
+            BuildDrawerInstructionSeverity.Warning => instructionWarningIcon,
+            BuildDrawerInstructionSeverity.Error => instructionErrorIcon,
+            _ => instructionInfoIcon
+        };
     }
 
     private static void SetText(TMP_Text text, string value)

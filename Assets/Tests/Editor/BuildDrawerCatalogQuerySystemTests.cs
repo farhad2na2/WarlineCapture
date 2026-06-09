@@ -46,6 +46,18 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 test => test.CurrentBuildDrawerPrefabBindsSelectionDetailAndActionLabel(),
                 ref passed);
             RunValidationStep(
+                nameof(CurrentBuildDrawerPrefabBindsInstructionStripAndIcons),
+                test => test.CurrentBuildDrawerPrefabBindsInstructionStripAndIcons(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerInstruction_ShowsMissingProducerRequirement),
+                test => test.BuildDrawerInstruction_ShowsMissingProducerRequirement(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerInstruction_ShowsInsufficientCredits),
+                test => test.BuildDrawerInstruction_ShowsInsufficientCredits(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer),
                 test => test.BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer(),
                 ref passed);
@@ -308,6 +320,119 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             Assert.AreEqual(1, CountSelectedRows(activeRows, view.SelectedItemFrameSprite));
             Assert.AreEqual(_results[1].DisplayName, detailNameText.text);
         }
+    }
+
+    [Test]
+    public void CurrentBuildDrawerPrefabBindsInstructionStripAndIcons()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab, "Build drawer popup prefab must exist.");
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        Assert.NotNull(view, "Build drawer popup must serialize BuildDrawerView on the root.");
+        Assert.NotNull(view.InstructionText, "Build drawer must serialize the instruction text.");
+        Assert.NotNull(view.InstructionIcon, "Build drawer must serialize the instruction icon image.");
+        Assert.AreSame(
+            view.InstructionText.transform.parent,
+            view.InstructionIcon.transform.parent,
+            "Instruction text and instruction icon must be siblings under InstructionStrip/Frame.");
+
+        SerializedObject viewObject = new SerializedObject(view);
+        Sprite infoIcon = GetSerializedReference<Sprite>(viewObject, "instructionInfoIcon");
+        Sprite readyIcon = GetSerializedReference<Sprite>(viewObject, "instructionReadyIcon");
+        Sprite warningIcon = GetSerializedReference<Sprite>(viewObject, "instructionWarningIcon");
+        Sprite errorIcon = GetSerializedReference<Sprite>(viewObject, "instructionErrorIcon");
+        Assert.NotNull(infoIcon);
+        Assert.NotNull(readyIcon);
+        Assert.NotNull(warningIcon);
+        Assert.NotNull(errorIcon);
+
+        view.ApplyInstruction("Ready", BuildDrawerInstructionSeverity.Ready);
+        Assert.AreSame(readyIcon, view.InstructionIcon.sprite);
+
+        view.ApplyInstruction("Warning", BuildDrawerInstructionSeverity.Warning);
+        Assert.AreSame(warningIcon, view.InstructionIcon.sprite);
+
+        view.ApplyInstruction("Error", BuildDrawerInstructionSeverity.Error);
+        Assert.AreSame(errorIcon, view.InstructionIcon.sprite);
+
+        view.ApplyInstruction("Info", BuildDrawerInstructionSeverity.Neutral);
+        Assert.AreSame(infoIcon, view.InstructionIcon.sprite);
+    }
+
+    [Test]
+    public void BuildDrawerInstruction_ShowsMissingProducerRequirement()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject soldier = CreateUnit("Bomb Suit Specialist", true, false, Vector2Int.one, 0);
+        unitConfig.UnitSpawnPrefabs.Add(soldier);
+
+        presenter.ConfigureForTests(view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandSystem(),
+            CreateCommandContext(
+                null,
+                null,
+                100000,
+                (GameObject requestPrefab, int price, out string requiredBuilding) =>
+                {
+                    requiredBuilding = "Barracks";
+                    return BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding;
+                }),
+            null);
+        presenter.SelectCategoryForTests(BuildDrawerCategory.Soldiers);
+
+        Assert.NotNull(view.InstructionText);
+        Assert.AreEqual(
+            "Cannot recruit Bomb Suit Specialist: requires Barracks.",
+            view.InstructionText.text);
+    }
+
+    [Test]
+    public void BuildDrawerInstruction_ShowsInsufficientCredits()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject vehicle = CreateUnit("Light Vehicle", true, false, new Vector2Int(2, 2), 0);
+        unitConfig.UnitSpawnPrefabs.Add(vehicle);
+
+        presenter.ConfigureForTests(view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandSystem(),
+            CreateCommandContext(
+                null,
+                null,
+                1000,
+                (GameObject requestPrefab, int price, out string requiredBuilding) =>
+                {
+                    requiredBuilding = string.Empty;
+                    return BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney;
+                }),
+            null);
+        presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
+
+        Assert.NotNull(view.InstructionText);
+        Assert.AreEqual(
+            "Need 4678 more credits to produce Light Vehicle.",
+            view.InstructionText.text);
     }
 
     [Test]
@@ -1240,16 +1365,18 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
     private static BuildingUiCommandSystem.Context CreateCommandContext(
         BuildingUiCommandSystem.TryRequestCampItemDelegate tryRequestCampItem,
-        BuildingUiCommandSystem.CancelProductionDelegate cancelProduction = null)
+        BuildingUiCommandSystem.CancelProductionDelegate cancelProduction = null,
+        int currentDollars = 100000,
+        BuildingUiCommandSystem.GetCampRequestFailureDelegate getCampRequestFailure = null)
     {
         return new BuildingUiCommandSystem.Context(
-            () => 100000,
+            () => currentDollars,
             () => 0,
             null,
             () => 0,
             null,
             null,
-            null,
+            getCampRequestFailure,
             tryRequestCampItem,
             () => false,
             () => false,

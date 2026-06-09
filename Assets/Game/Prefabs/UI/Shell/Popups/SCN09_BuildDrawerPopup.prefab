@@ -8460,7 +8460,7 @@ GameObject:
   - component: {fileID: 1291563200385914758}
   - component: {fileID: 6095776010532556526}
   m_Layer: 0
-  m_Name: ConfirmIcon
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16216,6 +16216,12 @@ MonoBehaviour:
   buildButton: {fileID: 3053134644280615873}
   orderButton: {fileID: 2164527941063606833}
   primaryActionLabelText: {fileID: 1922018575489854562}
+  instructionText: {fileID: 2698398954291555045}
+  instructionIcon: {fileID: 6095776010532556526}
+  instructionInfoIcon: {fileID: 21300000, guid: 40211a857346409f99875d1539d8283a, type: 3}
+  instructionReadyIcon: {fileID: 21300000, guid: b6d975cf9eba42dfb64709b349f7d41c, type: 3}
+  instructionWarningIcon: {fileID: 21300000, guid: 0d03d7a14dbb4d17beceb62011c66e6b, type: 3}
+  instructionErrorIcon: {fileID: 21300000, guid: 98e0f934116a411cbdcbccc16e4dd250, type: 3}
   productionPanel: {fileID: 6350925738255562494}
   productionPanelActive: {fileID: 7669047540276769492}
   noProductionView: {fileID: 3939773894899571655}

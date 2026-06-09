@@ -449,16 +449,26 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject popup = _buildDrawerPopupInstance;
         _buildDrawerPopupInstance = null;
 
-        if (popup != null)
-        {
-            DestroyRegionObject(popup);
-            MarkContentChanged();
-        }
-
         bool hasActivePlacement = _buildingUiCommandSystem != null &&
                                   _buildingUiCommandSystem.HasPendingBuildingPlacement(_buildingUiCommandContext);
         if (!hasActivePlacement)
             BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
+
+        if (popup != null)
+        {
+            UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+            if (motionView != null && motionView.PlayHide(() =>
+                {
+                    DestroyRegionObject(popup);
+                    MarkContentChanged();
+                }))
+            {
+                return;
+            }
+
+            DestroyRegionObject(popup);
+            MarkContentChanged();
+        }
     }
 
     private void BindBuildDrawerPopupInputBlocker(GameObject popup)
@@ -471,6 +481,10 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         if (popup == null)
             return;
+
+        UIPopupCloseButtonView directCloseView = popup.GetComponent<UIPopupCloseButtonView>();
+        if (directCloseView != null)
+            directCloseView.enabled = false;
 
         UIPopupCloseView closeView = popup.GetComponent<UIPopupCloseView>();
         if (closeView == null || closeView.CloseButton == null)
@@ -521,6 +535,8 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject instance = Instantiate(prefab, contentRoot, false);
         instance.name = prefab.name;
         Stretch(instance.GetComponent<RectTransform>());
+        if (regionId == UIShellRegionId.PopupLayer)
+            UIPopupMotionView.Ensure(instance)?.PlayShow();
         MarkContentChanged();
         return instance;
     }

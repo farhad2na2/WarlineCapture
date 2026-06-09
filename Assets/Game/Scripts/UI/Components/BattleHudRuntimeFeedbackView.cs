@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum TacticalCommandMode
 {
@@ -29,6 +30,37 @@ public enum TacticalCommandReasonCode
     ScanUnavailable,
     ScanCooldown,
     InsufficientResources
+}
+
+public enum CommandFeedbackSeverity
+{
+    Neutral,
+    Ready,
+    Warning,
+    Error
+}
+
+public readonly struct MatchHudCommandFeedbackModel
+{
+    public MatchHudCommandFeedbackModel(bool visible, string message, CommandFeedbackSeverity severity)
+    {
+        Visible = visible;
+        Message = message;
+        Severity = severity;
+    }
+
+    public bool Visible { get; }
+    public string Message { get; }
+    public CommandFeedbackSeverity Severity { get; }
+
+    public static MatchHudCommandFeedbackModel Hidden => new(false, string.Empty, CommandFeedbackSeverity.Neutral);
+
+    public static MatchHudCommandFeedbackModel Show(string message, CommandFeedbackSeverity severity)
+    {
+        return string.IsNullOrWhiteSpace(message)
+            ? Hidden
+            : new MatchHudCommandFeedbackModel(true, message, severity);
+    }
 }
 
 public readonly struct TacticalCommandResult
@@ -74,11 +106,11 @@ public static class TacticalCommandFeedbackText
     {
         return reasonCode switch
         {
-            TacticalCommandReasonCode.NoSelection => "Select a squad first.",
+            TacticalCommandReasonCode.NoSelection => "Select units or a building first.",
             TacticalCommandReasonCode.TargetOutOfBounds => "Target is outside the playable area.",
             TacticalCommandReasonCode.TargetBlocked => "Route is blocked.",
             TacticalCommandReasonCode.TargetUnreachable => "Target is unreachable.",
-            TacticalCommandReasonCode.TargetNotEnemy => "Select a hostile target.",
+            TacticalCommandReasonCode.TargetNotEnemy => "Target is not hostile.",
             TacticalCommandReasonCode.TargetNotAttackable => "Target cannot be attacked.",
             TacticalCommandReasonCode.CommandUnavailable => "Command unavailable.",
             TacticalCommandReasonCode.BuildUnavailable => "Building unavailable.",
@@ -94,10 +126,27 @@ public static class TacticalCommandFeedbackText
     {
         return mode switch
         {
-            TacticalCommandMode.Move => "Choose destination",
-            TacticalCommandMode.Attack => "TAP TARGET",
-            TacticalCommandMode.Scan => "TAP SCAN AREA",
+            TacticalCommandMode.Select => "Select units or a building.",
+            TacticalCommandMode.Move => "Choose destination.",
+            TacticalCommandMode.Attack => "Tap hostile target.",
+            TacticalCommandMode.Scan => "Tap scan area.",
+            TacticalCommandMode.Build => "Choose what to build, produce, or recruit.",
+            TacticalCommandMode.Special => "Choose special command.",
             _ => string.Empty
+        };
+    }
+
+    public static CommandFeedbackSeverity ToInstructionSeverity(TacticalCommandMode mode)
+    {
+        return mode switch
+        {
+            TacticalCommandMode.Move or
+            TacticalCommandMode.Attack or
+            TacticalCommandMode.Scan or
+            TacticalCommandMode.Build => CommandFeedbackSeverity.Ready,
+            TacticalCommandMode.Select or
+            TacticalCommandMode.Special => CommandFeedbackSeverity.Neutral,
+            _ => CommandFeedbackSeverity.Neutral
         };
     }
 }
@@ -109,11 +158,17 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
     [SerializeField] private GameObject feedbackPanel;
     [SerializeField] private TMP_Text feedbackText;
+    [SerializeField] private Image feedbackIcon;
+    [SerializeField] private Sprite neutralIcon;
+    [SerializeField] private Sprite readyIcon;
+    [SerializeField] private Sprite warningIcon;
+    [SerializeField] private Sprite errorIcon;
 
     public BattleHudTacticalFeedbackView TacticalFeedback => tacticalFeedback;
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
+    public Image FeedbackIcon => feedbackIcon;
 
     private void Awake()
     {
@@ -133,14 +188,25 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 
     public void ShowFeedbackMessage(string message)
     {
-        if (string.IsNullOrWhiteSpace(message))
+        ShowFeedbackMessage(message, CommandFeedbackSeverity.Neutral);
+    }
+
+    public void ShowFeedbackMessage(string message, CommandFeedbackSeverity severity)
+    {
+        ApplyCommandFeedback(MatchHudCommandFeedbackModel.Show(message, severity));
+    }
+
+    public void ApplyCommandFeedback(MatchHudCommandFeedbackModel model)
+    {
+        if (!model.Visible || string.IsNullOrWhiteSpace(model.Message))
         {
             HideFeedbackMessage();
             return;
         }
 
         if (feedbackText != null)
-            feedbackText.text = message;
+            feedbackText.text = model.Message;
+        ApplyFeedbackIcon(model.Severity);
         if (feedbackPanel != null)
             feedbackPanel.SetActive(true);
     }
@@ -149,5 +215,26 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     {
         if (feedbackPanel != null)
             feedbackPanel.SetActive(false);
+    }
+
+    private void ApplyFeedbackIcon(CommandFeedbackSeverity severity)
+    {
+        if (feedbackIcon == null)
+            return;
+
+        Sprite icon = ResolveFeedbackIcon(severity);
+        feedbackIcon.sprite = icon;
+        feedbackIcon.enabled = icon != null;
+    }
+
+    private Sprite ResolveFeedbackIcon(CommandFeedbackSeverity severity)
+    {
+        return severity switch
+        {
+            CommandFeedbackSeverity.Ready => readyIcon != null ? readyIcon : neutralIcon,
+            CommandFeedbackSeverity.Warning => warningIcon != null ? warningIcon : neutralIcon,
+            CommandFeedbackSeverity.Error => errorIcon != null ? errorIcon : warningIcon != null ? warningIcon : neutralIcon,
+            _ => neutralIcon
+        };
     }
 }

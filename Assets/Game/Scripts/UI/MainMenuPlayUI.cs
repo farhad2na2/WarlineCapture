@@ -155,6 +155,12 @@ public sealed class MainMenuPlayUI
             return true;
         }
 
+        if (_matchHudSelectionPanelView != null && _matchHudSelectionPanelView.ContainsScreenPoint(screenPosition))
+        {
+            source = "MatchHudSelectionPanel";
+            return true;
+        }
+
         if (_matchHudSquadTrayView != null && _matchHudSquadTrayView.ContainsScreenPoint(screenPosition))
         {
             source = "MatchHudSquadTray";

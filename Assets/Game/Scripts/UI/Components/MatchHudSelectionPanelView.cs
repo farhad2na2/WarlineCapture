@@ -79,6 +79,9 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private System.Action _returnRequested;
     private System.Action _destroyRequested;
     private System.Action _boardRequested;
+    private Button _boundReturnAction;
+    private Button _boundDestroyAction;
+    private Button _boundBoardAction;
 
     private void Awake()
     {
@@ -94,6 +97,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
 
     public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
     {
+        BindUnityEvents();
         _returnRequested = returnRequested;
         _destroyRequested = destroyRequested;
         _boardRequested = boardRequested;
@@ -139,6 +143,17 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         selectedPortraitImage.preserveAspect = true;
     }
 
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        if (selectedSquadPanel == null || !selectedSquadPanel.activeInHierarchy)
+            return false;
+
+        return ContainsScreenPoint(selectedSquadPanel.transform as RectTransform, screenPosition) ||
+               ContainsScreenPoint(returnAction != null ? returnAction.transform as RectTransform : null, screenPosition) ||
+               ContainsScreenPoint(destroyAction != null ? destroyAction.transform as RectTransform : null, screenPosition) ||
+               ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition);
+    }
+
     public void Apply(Model model)
     {
         SetSelectionVisible(model.Visible);
@@ -152,29 +167,23 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         SetSelectionPortrait(model.PortraitSprite);
         SetHealthFill(model.Health01);
         SetBadge(model.BadgeVisible, model.BadgeSprite);
-        SetActionState(returnAction, model.ReturnEnabled);
-        SetActionState(destroyAction, model.DestroyEnabled);
-        SetActionState(boardAction, model.BoardEnabled);
+        SetActionState(returnAction, model.Visible);
+        SetActionState(destroyAction, model.Visible);
+        SetActionState(boardAction, model.Visible);
     }
 
     private void BindUnityEvents()
     {
-        if (returnAction != null)
-            returnAction.onClick.AddListener(HandleReturnAction);
-        if (destroyAction != null)
-            destroyAction.onClick.AddListener(HandleDestroyAction);
-        if (boardAction != null)
-            boardAction.onClick.AddListener(HandleBoardAction);
+        BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
+        BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
+        BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
     }
 
     private void RemoveUnityEvents()
     {
-        if (returnAction != null)
-            returnAction.onClick.RemoveListener(HandleReturnAction);
-        if (destroyAction != null)
-            destroyAction.onClick.RemoveListener(HandleDestroyAction);
-        if (boardAction != null)
-            boardAction.onClick.RemoveListener(HandleBoardAction);
+        UnbindButton(ref _boundReturnAction, HandleReturnAction);
+        UnbindButton(ref _boundDestroyAction, HandleDestroyAction);
+        UnbindButton(ref _boundBoardAction, HandleBoardAction);
     }
 
     private void HandleReturnAction()
@@ -221,9 +230,36 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
             action.interactable = enabled;
     }
 
+    private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
+    {
+        if (boundButton == button)
+            return;
+
+        UnbindButton(ref boundButton, action);
+        boundButton = button;
+        if (boundButton != null)
+            boundButton.onClick.AddListener(action);
+    }
+
+    private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
+    {
+        if (boundButton == null)
+            return;
+
+        boundButton.onClick.RemoveListener(action);
+        boundButton = null;
+    }
+
     private static void SetText(TMP_Text text, string value)
     {
         if (text != null)
             text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
+    }
+
+    private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)
+    {
+        return rectTransform != null &&
+               rectTransform.gameObject.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition);
     }
 }

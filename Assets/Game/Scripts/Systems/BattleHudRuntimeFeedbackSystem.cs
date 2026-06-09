@@ -191,10 +191,11 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (result.Accepted)
         {
             ResolveTacticalFeedback(view)?.HideInvalidCommand();
-            if (string.IsNullOrWhiteSpace(result.Message))
+            MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, state);
+            if (!feedbackModel.Visible)
                 view.HideFeedbackMessage();
             else
-                view.ShowFeedbackMessage(result.Message);
+                view.ApplyCommandFeedback(feedbackModel);
             return;
         }
 
@@ -202,7 +203,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
             ? result.Message
             : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
         ResolveTacticalFeedback(view)?.ShowInvalidCommand(reason);
-        view.ShowFeedbackMessage(reason);
+        view.ApplyCommandFeedback(MatchHudCommandFeedbackModel.Show(reason, CommandFeedbackSeverity.Error));
     }
 
     public static void SetWorldMarkersVisible(BattleHudRuntimeFeedbackView view, bool visible)
@@ -220,11 +221,11 @@ public sealed class BattleHudRuntimeFeedbackSystem
             CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, mode);
 
         BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
-        string instruction = TacticalCommandFeedbackText.ToInstructionText(mode);
-        if (string.IsNullOrWhiteSpace(instruction))
+        MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode);
+        if (!commandFeedback.Visible)
             view.HideFeedbackMessage();
         else
-            view.ShowFeedbackMessage(instruction);
+            view.ApplyCommandFeedback(commandFeedback);
 
         if (feedback == null)
             return;
@@ -242,6 +243,52 @@ public sealed class BattleHudRuntimeFeedbackSystem
         view.HideFeedbackMessage();
         ResolveTacticalFeedback(view)?.HideCommandMode();
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
+    }
+
+    private static MatchHudCommandFeedbackModel BuildCommandModeFeedback(TacticalCommandMode mode)
+    {
+        string instruction = TacticalCommandFeedbackText.ToInstructionText(mode);
+        return MatchHudCommandFeedbackModel.Show(
+            instruction,
+            TacticalCommandFeedbackText.ToInstructionSeverity(mode));
+    }
+
+    private static MatchHudCommandFeedbackModel BuildCommandResultFeedback(TacticalCommandResult result, MutableState state)
+    {
+        if (!result.Accepted)
+        {
+            string reason = !string.IsNullOrWhiteSpace(result.Message)
+                ? result.Message
+                : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
+            return MatchHudCommandFeedbackModel.Show(reason, CommandFeedbackSeverity.Error);
+        }
+
+        if (string.IsNullOrWhiteSpace(result.Message))
+            return MatchHudCommandFeedbackModel.Hidden;
+
+        TacticalCommandMode mode = state.CurrentCommandMode != TacticalCommandMode.None
+            ? state.CurrentCommandMode
+            : state.StickyCommandMode;
+        return MatchHudCommandFeedbackModel.Show(result.Message, ResolveAcceptedResultSeverity(result.Message, mode));
+    }
+
+    private static CommandFeedbackSeverity ResolveAcceptedResultSeverity(string message, TacticalCommandMode mode)
+    {
+        string normalized = message?.ToUpperInvariant() ?? string.Empty;
+        if (normalized.Contains("CANCEL") ||
+            normalized.Contains("CLEARED") ||
+            normalized.Contains("DESTROY") ||
+            normalized.Contains("STOP"))
+        {
+            return CommandFeedbackSeverity.Warning;
+        }
+
+        return mode switch
+        {
+            TacticalCommandMode.Select or
+            TacticalCommandMode.Special => CommandFeedbackSeverity.Neutral,
+            _ => CommandFeedbackSeverity.Ready
+        };
     }
 
     private static BattleHudTacticalFeedbackView ResolveTacticalFeedback(BattleHudRuntimeFeedbackView view)

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Game.Scripts.UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 internal sealed class BuildingPlacementInputRuntimeTickSystem
 {
@@ -188,6 +190,8 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                                              mainMenu.ShouldIgnoreBuildingSelectionThisFrame();
         bool overGameplayUi = mainMenu != null &&
                               mainMenu.IsPointerOverAnyGameplayUi(pointerPosition, out _);
+        if (!overGameplayUi)
+            overGameplayUi = IsPointerOverRaycastableUi(pointerPosition);
         bool hasActiveBuilding = context.HasActiveBuilding?.Invoke() == true;
         bool overUnitCommandUi = false;
         if (!ignoreBecauseCommandUiPressed && !overGameplayUi && hasActiveBuilding)
@@ -202,6 +206,32 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             hasActiveBuilding,
             overUnitCommandUi,
             Time.realtimeSinceStartupAsDouble);
+    }
+
+    private static bool IsPointerOverRaycastableUi(Vector2 screenPosition)
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null)
+            return false;
+
+        var pointerData = new PointerEventData(eventSystem)
+        {
+            position = screenPosition
+        };
+        var results = new List<RaycastResult>();
+        eventSystem.RaycastAll(pointerData, results);
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            RaycastResult result = results[i];
+            if (result.gameObject == null || !result.gameObject.activeInHierarchy)
+                continue;
+
+            if (result.module is UnityEngine.UI.GraphicRaycaster)
+                return true;
+        }
+
+        return false;
     }
 
     private readonly struct BuildingSelectionClickGate

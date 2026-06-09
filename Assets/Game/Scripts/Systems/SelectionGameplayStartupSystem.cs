@@ -162,7 +162,17 @@ internal sealed class SelectionGameplayStartupSystem
             view?.BindActions(
                 () => selectionUiCommand.RequestReturnToBase(),
                 () => selectionUiCommand.RequestDestroyFocusedUnit(),
-                () => selectionUiCommand.RequestBoardNearestSoldiers());
+                RequestBoardNearestSoldiersFromPanel);
+        }
+
+        void RequestBoardNearestSoldiersFromPanel()
+        {
+            if (selectionUiCommand.RequestBoardNearestSoldiers())
+                return;
+
+            selectionHudFeedbackSystem.ApplyCommandResult(
+                CreateHudFeedbackContext(),
+                TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Board command unavailable."));
         }
 
         void BindMatchHudSquadTray(MatchHudSquadTrayView view)
@@ -883,24 +893,64 @@ internal sealed class SelectionGameplayStartupSystem
         {
             if (!TryGetFocusedUnitEntity(out EntityManager em, out Entity entity))
             {
+                int selectedDestroyed = DestroySelectedUnits(em);
+                if (selectedDestroyed > 0)
+                {
+                    focusedUnitLifecycleSystem.ClearFocusedUnit(selectionStateSystem);
+                    selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
+                    selectionHudFeedbackSystem.ApplyCommandResult(
+                        CreateHudFeedbackContext(),
+                        TacticalCommandResult.Success(selectedDestroyed == 1 ? "Destroyed selected unit." : $"Destroyed {selectedDestroyed} selected units."));
+                    return;
+                }
+
                 if (buildingPlacementInteractionSystem != null &&
                     buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
                 {
                     buildingPlacementInteractionSystem.DeleteSelectedBuilding(buildingPlacementInteractionContext);
                     selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
-                    selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
+                    selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success("Destroyed selected building."));
+                    return;
                 }
 
+                selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
                 return;
             }
 
             if (!FocusedUnitOwnedByPlayer())
+            {
+                selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
                 return;
+            }
 
             focusedUnitCommandSystem.DestroyFocusedUnit(em, entity);
             focusedUnitLifecycleSystem.ClearFocusedUnit(selectionStateSystem);
             selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
-            selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
+            selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success("Destroyed selected unit."));
+        }
+
+        int DestroySelectedUnits(EntityManager em)
+        {
+            if (em.World == null || !em.World.IsCreated)
+                return 0;
+
+            int destroyed = 0;
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            if (query.IsEmptyIgnoreFilter)
+                return 0;
+
+            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < selectedEntities.Length; i++)
+            {
+                Entity selectedEntity = selectedEntities[i];
+                if (!em.Exists(selectedEntity) || !selectionUiQuerySystem.IsOwnedByPlayer(em, selectedEntity))
+                    continue;
+
+                focusedUnitCommandSystem.DestroyFocusedUnit(em, selectedEntity);
+                destroyed++;
+            }
+
+            return destroyed;
         }
 
         void ReturnFocusedSelectionToBase()
@@ -943,17 +993,25 @@ internal sealed class SelectionGameplayStartupSystem
             selectionHudFeedbackSystem.ApplyCommandResult(
                 CreateHudFeedbackContext(),
                 issued > 0
-                    ? TacticalCommandResult.Success()
+                    ? TacticalCommandResult.Success(issued == 1 ? "Unit returning to base." : $"{issued} units returning to base.")
                     : TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         }
 
         void BoardFocusedTransport()
         {
-            if (!TryGetFocusedUnitEntity(out EntityManager em, out Entity transport) ||
-                !selectionUiQuerySystem.IsOwnedByPlayer(em, transport) ||
-                !TryIssueFocusedTransportBoarding(em, transport, out int orderedCount))
+            if (!TryResolveBoardTransport(out EntityManager em, out Entity transport))
             {
-                selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Select a transport vehicle or aircraft first."));
+                return;
+            }
+
+            if (!TryIssueFocusedTransportBoarding(em, transport, out int orderedCount))
+            {
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "No nearby soldiers can board this transport."));
                 return;
             }
 
@@ -961,6 +1019,37 @@ internal sealed class SelectionGameplayStartupSystem
             rtsSelectionInputSystem.ClearActiveCommandMode();
             runtimeGameplayStateSystem.SuppressNextWorldClick = true;
             selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success($"Boarding {orderedCount} unit{(orderedCount == 1 ? string.Empty : "s")}."));
+        }
+
+        bool TryResolveBoardTransport(out EntityManager em, out Entity transport)
+        {
+            transport = Entity.Null;
+            if (!TryGetDefaultEntityManager(out em))
+                return false;
+
+            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
+                IsBoardCommandAvailable(em, focusedUnit))
+            {
+                transport = focusedUnit;
+                return true;
+            }
+
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < selectedEntities.Length; i++)
+            {
+                Entity selected = selectedEntities[i];
+                if (!em.Exists(selected) || !IsBoardCommandAvailable(em, selected))
+                    continue;
+
+                transport = selected;
+                return true;
+            }
+
+            return false;
         }
 
         bool TryIssueFocusedTransportBoarding(EntityManager em, Entity transport, out int orderedCount)
@@ -1230,8 +1319,10 @@ internal sealed class SelectionGameplayStartupSystem
                 $"SelectionUiCommandSystem.{mode}");
             SetCameraDragging(false);
             selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            selectionHudFeedbackSystem.ApplyCommandResult(
+                CreateHudFeedbackContext(),
+                TacticalCommandResult.Success(holdPosition ? "Holding current position." : "Stopped selected units."));
             focusedUnitLifecycleSystem.RefreshFocusedUnit(
                 em,
                 selectionStateSystem,
@@ -1293,10 +1384,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         bool IsPointerOverGameplayUi(Vector2 screenPosition, out string source)
         {
-            if (mainMenuPlayUi != null)
-            {
-                return mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source);
-            }
+            if (mainMenuPlayUi != null &&
+                mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source))
+                return true;
 
             return IsPointerOverUI(screenPosition, out source);
         }

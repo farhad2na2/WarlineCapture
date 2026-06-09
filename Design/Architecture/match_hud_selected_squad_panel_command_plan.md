@@ -111,7 +111,7 @@ Completed:
 - Added `RtsSelectionCommandIntentKind.BoardNearestSoldiers` so selected-transport boarding does not collide with the existing click-to-transport `BoardTransport` command path.
 - Routed Return and selected-transport Board through `RtsSelectionFocusCommandSystem`.
 - Added panel projection for focused units, squads, and selected buildings.
-- Added focused unit/squad Return, focused unit Destroy, selected building Destroy, and focused transport Board-nearest-soldiers behavior.
+- Added focused unit/squad Return, focused unit Destroy, selected-tag unit/squad Destroy fallback, selected building Destroy, and focused transport Board-nearest-soldiers behavior.
 
 Known gaps:
 
@@ -123,6 +123,7 @@ Validation status:
 
 - Main Unity batch compile passed on 2026-06-09 using Unity `6000.4.0f1`.
 - Log scan found no `error CS`, `warning CS`, `Scripts have compiler errors`, or `Aborting batchmode` entries.
+- Destroy fallback fix revalidated with main Unity batch compile on 2026-06-09; log scan found no C# errors or warnings.
 - `WarlineCapture-CodexUnity2` remains unsuitable for this specific validation until its stale/mismatched source state is cleaned up.
 
 ## Step 1 - Panel Read Model

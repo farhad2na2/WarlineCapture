@@ -46,12 +46,14 @@ Use four command feedback severities:
 
 The command feedback panel can reuse the existing Build Drawer instruction icon style initially, or use command-specific copies later if art direction requires it.
 
-Initial recommended assets:
+Initial implemented assets:
 
 - `Assets/Game/Art/UI/Icons/Icon_BuildDrawer_Info_512.png` for `Neutral`
 - `Assets/Game/Art/UI/Icons/Icon_BuildDrawer_Ready_512.png` for `Ready`
 - `Assets/Game/Art/UI/Icons/Icon_BuildDrawer_Warning_512.png` for `Warning`
 - `Assets/Game/Art/UI/Icons/Icon_BuildDrawer_Error_512.png` for `Error`
+
+These are the same severity icons used by the Build Drawer instruction strip.
 
 If the panel needs separate assets later, create:
 
@@ -344,15 +346,15 @@ Add new reason codes when implementing Return/Destroy/Board if needed:
 
 ## Implementation Steps
 
-- [ ] Step 01: Add this design document.
-- [ ] Step 02: Add `CommandFeedbackSeverity` and a command feedback model/result type.
-- [ ] Step 03: Add serialized `FeedbackPanel`, `Feedback`, and `Icon` references to the Match HUD feedback view.
-- [ ] Step 04: Assign the four severity icon sprites on `SCN08_MatchHudContent.prefab`.
-- [ ] Step 05: Replace hard-coded command feedback text with a command feedback formatter using this matrix.
-- [ ] Step 06: Route Move, Attack, Hold, Stop, Scan, and Build results into the command feedback model.
-- [ ] Step 07: Route selected-panel Return, Destroy, and Board results into the same command feedback model.
-- [ ] Step 08: Add tests for mode messages, success messages, rejected reason-code mapping, and missing prefab references.
-- [ ] Step 09: Run focused Unity validation and verify the panel is hidden by default.
+- [x] Step 01: Add this design document.
+- [x] Step 02: Add `CommandFeedbackSeverity` and a command feedback model/result type.
+- [x] Step 03: Add serialized `FeedbackPanel`, `Feedback`, and `Icon` references to the Match HUD feedback view.
+- [x] Step 04: Assign the four severity icon sprites on `SCN08_MatchHudContent.prefab`.
+- [x] Step 05: Replace hard-coded command feedback text with a command feedback formatter using this matrix.
+- [x] Step 06: Route Move, Attack, Hold, Stop, Scan, and Build results into the command feedback model.
+- [x] Step 07: Route selected-panel Return, Destroy, and Board results into the same command feedback model.
+- [x] Step 08: Add tests for mode messages, success messages, rejected reason-code mapping, and missing prefab references.
+- [x] Step 09: Run focused Unity validation and verify the panel is hidden by default.
 
 ## Validation Scenarios
 
@@ -370,3 +372,6 @@ Add new reason codes when implementing Return/Destroy/Board if needed:
 ## Progress Notes
 
 - 2026-06-09: Design document created. Next step is implementation planning for the feedback model and serialized Match HUD references.
+- 2026-06-09: Implemented severity-aware command feedback model, SCN08 feedback icon wiring, result severity mapping, selected-panel Return/Destroy messages, Hold/Stop messages, and focused EditMode coverage for ready/error/warning icon routing. Remaining: run focused Unity validation.
+- 2026-06-09: Focused Unity EditMode validation passed: `MatchHudCommandFeedbackPanelTests` with 2/2 tests covering runtime severity icon routing and SCN08 prefab serialized references.
+- 2026-06-09: Kept the command feedback panel on the same four BuildDrawer severity icons used by the Build Drawer instruction strip, added runtime diagnostics for SCN08 icon application, and corrected the serialized SCN08 icon Image default to enabled + neutral info.

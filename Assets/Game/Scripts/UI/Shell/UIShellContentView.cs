@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public sealed class UIShellContentView : MonoBehaviour
@@ -14,6 +16,10 @@ public sealed class UIShellContentView : MonoBehaviour
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private Button _rightQuickRailBuildButton;
+    private UnityAction _rightQuickRailBuildButtonListener;
+    private Button _buildDrawerPopupCloseButton;
+    private UnityAction _buildDrawerPopupCloseButtonListener;
     private GameObject _buildDrawerPopupInstance;
     private int _contentVersion;
 
@@ -72,6 +78,7 @@ public sealed class UIShellContentView : MonoBehaviour
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindMatchHudSelectionPanelInRegion();
+        BindMatchHudRightQuickRailInRegion();
         BindMatchHudCommandControlsInRegion();
         BindMatchHudRuntimeFeedbackInRegion();
         BindMatchHudMinimapInRegion();
@@ -156,7 +163,8 @@ public sealed class UIShellContentView : MonoBehaviour
         InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
         GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
         BindMatchHudSelectionPanel(left);
-        InstallSection(matchHudContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
+        GameObject right = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
+        BindMatchHudRightQuickRail(right);
         GameObject footer = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
         BindMatchHudCommandControls(footer);
         BindMatchHudRuntimeFeedback(footer);
@@ -200,6 +208,47 @@ public sealed class UIShellContentView : MonoBehaviour
                 CloseBuildDrawerPopup);
             _mainMenuPlayUi?.BindMatchHudCommandControls(view);
         }
+    }
+
+    private void BindMatchHudRightQuickRailInRegion()
+    {
+        if (!TryGetRegionContentRoot(UIShellRegionId.RightRegion, out RectTransform contentRoot) ||
+            contentRoot.childCount == 0)
+        {
+            return;
+        }
+
+        BindMatchHudRightQuickRail(contentRoot.GetChild(0).gameObject);
+    }
+
+    private void BindMatchHudRightQuickRail(GameObject rightContent)
+    {
+        UnbindRightQuickRailBuildButton();
+        if (rightContent == null)
+            return;
+
+        MatchHudRightQuickRailView view = rightContent.GetComponent<MatchHudRightQuickRailView>();
+        if (view == null || view.BuildButton == null)
+            return;
+
+        _rightQuickRailBuildButton = view.BuildButton;
+        _rightQuickRailBuildButtonListener = OpenBuildDrawerFromRightQuickRail;
+        _rightQuickRailBuildButton.onClick.AddListener(_rightQuickRailBuildButtonListener);
+    }
+
+    private void UnbindRightQuickRailBuildButton()
+    {
+        if (_rightQuickRailBuildButton != null && _rightQuickRailBuildButtonListener != null)
+            _rightQuickRailBuildButton.onClick.RemoveListener(_rightQuickRailBuildButtonListener);
+
+        _rightQuickRailBuildButton = null;
+        _rightQuickRailBuildButtonListener = null;
+    }
+
+    private void OpenBuildDrawerFromRightQuickRail()
+    {
+        InstallBuildDrawerPopup();
+        BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
     }
 
     private void BindMatchHudRuntimeFeedbackInRegion()
@@ -281,17 +330,48 @@ public sealed class UIShellContentView : MonoBehaviour
 
     public GameObject InstallBuildDrawerPopup()
     {
+        UnbindBuildDrawerPopupCloseButton();
         _buildDrawerPopupInstance = InstallRoot(buildDrawerPopupPrefab, UIShellRegionId.PopupLayer);
+        BindBuildDrawerPopupCloseButton(_buildDrawerPopupInstance);
         return _buildDrawerPopupInstance;
     }
 
     public void CloseBuildDrawerPopup()
     {
-        if (_buildDrawerPopupInstance == null)
+        UnbindBuildDrawerPopupCloseButton();
+        GameObject popup = _buildDrawerPopupInstance;
+        _buildDrawerPopupInstance = null;
+
+        if (popup != null)
+        {
+            DestroyRegionObject(popup);
+            MarkContentChanged();
+        }
+
+        BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
+    }
+
+    private void BindBuildDrawerPopupCloseButton(GameObject popup)
+    {
+        if (popup == null)
             return;
 
-        DestroyRegionObject(_buildDrawerPopupInstance);
-        _buildDrawerPopupInstance = null;
+        UIPopupCloseView closeView = popup.GetComponent<UIPopupCloseView>();
+        if (closeView == null || closeView.CloseButton == null)
+            return;
+
+        _buildDrawerPopupCloseButton = closeView.CloseButton;
+        _buildDrawerPopupCloseButtonListener = CloseBuildDrawerPopup;
+        _buildDrawerPopupCloseButton.onClick.AddListener(_buildDrawerPopupCloseButtonListener);
+    }
+
+    private void UnbindBuildDrawerPopupCloseButton()
+    {
+        if (_buildDrawerPopupCloseButton != null && _buildDrawerPopupCloseButtonListener != null)
+            _buildDrawerPopupCloseButton.onClick.RemoveListener(_buildDrawerPopupCloseButtonListener);
+
+        _buildDrawerPopupCloseButton = null;
+        _buildDrawerPopupCloseButtonListener = null;
     }
 
     private GameObject InstallRoot(GameObject prefab, UIShellRegionId regionId)
@@ -326,6 +406,11 @@ public sealed class UIShellContentView : MonoBehaviour
 
     private void ClearRegion(UIShellRegionId regionId)
     {
+        if (regionId == UIShellRegionId.RightRegion)
+            UnbindRightQuickRailBuildButton();
+        else if (regionId == UIShellRegionId.PopupLayer)
+            UnbindBuildDrawerPopupCloseButton();
+
         if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
         {
             ClearChildren(contentRoot);

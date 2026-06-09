@@ -35,6 +35,10 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.InstalledMatchHudSelectionPanelActivatesThroughRuntimeBinding(),
                 ref passed);
             RunValidationStep(
+                nameof(RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup),
+                test => test.RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup(),
+                ref passed);
+            RunValidationStep(
                 nameof(ReinstalledMatchHudCommandControlsKeepRuntimeDependencies),
                 test => test.ReinstalledMatchHudCommandControlsKeepRuntimeDependencies(),
                 ref passed);
@@ -187,6 +191,38 @@ public sealed class UIShellCurrentContentLoadTests
         feedback.ApplySelection(_world.EntityManager, unit, new SelectionUiQuerySystem());
 
         Assert.IsTrue(selectedPanel.gameObject.activeSelf, "Selecting a valid unit must activate the active Match HUD SelectedSquadPanel.");
+    }
+
+    [Test]
+    public void RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        GameObject matchRight = AssertRegionHasChild(content.ShellView, UIShellRegionId.RightRegion);
+        MatchHudRightQuickRailView quickRail = matchRight.GetComponent<MatchHudRightQuickRailView>();
+        Assert.NotNull(quickRail, "RightContent must own MatchHudRightQuickRailView for serialized quick rail button bindings.");
+        Assert.NotNull(quickRail.BuildButton, "Right quick rail Build button must be serialized.");
+
+        quickRail.BuildButton.onClick.Invoke();
+
+        GameObject popup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
+        Assert.AreEqual("SCN09_BuildDrawerPopup", popup.name);
+
+        Transform closeTransform = popup.transform.Find("BuildDrawerRoot/DrawerFrame/CloseButton");
+        Assert.NotNull(closeTransform, "Build drawer popup must expose its close button at BuildDrawerRoot/DrawerFrame/CloseButton.");
+        Button closeButton = closeTransform.GetComponent<Button>();
+        Assert.NotNull(closeButton, "Build drawer close object must be a Button.");
+
+        closeButton.onClick.Invoke();
+
+        AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
     }
 
     [Test]

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 {
+    private const float QueueRefreshIntervalSeconds = 0.2f;
+
     [SerializeField] private BuildDrawerView view;
     [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig;
     [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
@@ -32,6 +34,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     private UnityAction _primaryActionListener;
     private Button _cancelButton;
     private UnityAction _cancelButtonListener;
+    private float _nextQueueRefreshTime;
 
     private void Awake()
     {
@@ -41,10 +44,20 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void OnEnable()
     {
+        _nextQueueRefreshTime = 0f;
         WireTabs();
         WirePrimaryAction();
         WireQueueControls();
         Refresh();
+    }
+
+    private void Update()
+    {
+        if (view == null || _uiQuerySystem == null || Time.unscaledTime < _nextQueueRefreshTime)
+            return;
+
+        _nextQueueRefreshTime = Time.unscaledTime + QueueRefreshIntervalSeconds;
+        RefreshQueue();
     }
 
     private void OnDisable()
@@ -57,6 +70,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         ClearRuntimeQueueItems();
         _selectedItemView = null;
         _hasSelectedItem = false;
+        _nextQueueRefreshTime = 0f;
     }
 
     public void ConfigureForTests(
@@ -109,6 +123,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     {
         _uiQuerySystem = uiQuerySystem;
         _uiQueryContext = uiQueryContext;
+        _nextQueueRefreshTime = 0f;
         RefreshQueue();
     }
 
@@ -363,6 +378,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         BuildDrawerQueueItemView activeItem = view.ActiveItemView;
         BuildDrawerQueueItemView queuedTemplate = view.QueuedItemTemplate;
+        HideStaticQueuePlaceholderItems(activeItem, queuedTemplate);
         if (_uiQuerySystem == null)
         {
             ApplyEmptyQueue(activeItem, queuedTemplate);
@@ -381,6 +397,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         BuildDrawerQueueItemView activeItem = view.ActiveItemView;
         BuildDrawerQueueItemView queuedTemplate = view.QueuedItemTemplate;
+        HideStaticQueuePlaceholderItems(activeItem, queuedTemplate);
         if (_pendingProductions.Count == 0)
         {
             ApplyEmptyQueue(activeItem, queuedTemplate);
@@ -474,6 +491,27 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         {
             Transform child = root.GetChild(i);
             if (child != templateTransform)
+                child.gameObject.SetActive(false);
+        }
+    }
+
+    private void HideStaticQueuePlaceholderItems(
+        BuildDrawerQueueItemView activeItem,
+        BuildDrawerQueueItemView queuedTemplate)
+    {
+        if (view == null)
+            return;
+
+        RectTransform root = view.QueueContentRoot;
+        if (root == null)
+            return;
+
+        Transform activeTransform = activeItem != null ? activeItem.transform : null;
+        Transform queuedTemplateTransform = queuedTemplate != null ? queuedTemplate.transform : null;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (child != activeTransform && child != queuedTemplateTransform)
                 child.gameObject.SetActive(false);
         }
     }

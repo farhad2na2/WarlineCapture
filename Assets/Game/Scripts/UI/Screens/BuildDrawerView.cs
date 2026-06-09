@@ -65,6 +65,7 @@ public sealed class BuildDrawerView : MonoBehaviour
     public Button CancelButton => cancelButton;
     public Button RushButton => rushButton;
     public Button ClearButton => clearButton;
+    public bool IsOpen => drawerRoot != null ? drawerRoot.activeInHierarchy : gameObject.activeInHierarchy;
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {

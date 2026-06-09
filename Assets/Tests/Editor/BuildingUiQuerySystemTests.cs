@@ -6,6 +6,25 @@ using UnityEngine;
 
 public sealed class BuildingUiQuerySystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new BuildingUiQuerySystemTests();
+            tests.AddPendingProducedUnitEntries_AddsProgressCappedPendingEntries();
+            tests.GetProducedUnits_PrunesDeadProducedUnits();
+            tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
+            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=3");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BuildingUiQueryValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void AddPendingProducedUnitEntries_AddsProgressCappedPendingEntries()
     {
@@ -104,6 +123,87 @@ public sealed class BuildingUiQuerySystemTests
         Assert.AreEqual(alive, produced[0]);
         Assert.AreEqual(1, results.Count);
         Assert.AreEqual(alive, results[0]);
+    }
+
+    [Test]
+    public void GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues()
+    {
+        GameObject prefab = new("Attack Helicopter");
+        try
+        {
+            RuntimeBuildingEntity playerProducer = new()
+            {
+                Id = 7,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+                Definition = new BuildingDefinition { DisplayName = "Player Helipad" },
+                PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>
+                {
+                    new()
+                    {
+                        Prefab = prefab,
+                        StartedAt = 10f,
+                        ReadyAt = 20f
+                    }
+                }
+            };
+            RuntimeBuildingEntity enemyProducer = new()
+            {
+                Id = 8,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+                Definition = new BuildingDefinition { DisplayName = "Enemy Helipad" },
+                PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>
+                {
+                    new()
+                    {
+                        Prefab = prefab,
+                        StartedAt = 10f,
+                        ReadyAt = 20f
+                    }
+                }
+            };
+            var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+            {
+                [playerProducer.Id] = playerProducer,
+                [enemyProducer.Id] = enemyProducer
+            };
+            BuildingUiQuerySystem.Context context = new(
+                runtimeBuildings,
+                null,
+                null,
+                new BuildingProductionSystem(),
+                () => 12.5f,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+            var entries = new List<BuildingUiQuerySystem.PendingProductionUiEntry>();
+
+            var uiQuery = new BuildingUiQuerySystem();
+            uiQuery.GetFriendlyPendingProductionUiEntries(context, entries);
+
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(playerProducer.Id, entries[0].BuildingId);
+            Assert.AreSame(prefab, entries[0].Prefab);
+            Assert.AreEqual("Player Helipad", entries[0].ProducerDisplayName);
+            Assert.AreEqual(0.25f, entries[0].Progress01, 0.0001f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
     }
 
     private sealed class TestPendingProduction : BuildingProductionSystem.IPendingProduction

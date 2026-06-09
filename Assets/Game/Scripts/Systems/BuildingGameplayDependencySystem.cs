@@ -75,6 +75,11 @@ internal sealed class BuildingGameplayDependencySystem
                MainMenuPlayUi.IsPointerOverPlacementUi(screenPosition);
     }
 
+    internal bool IsBuildDrawerOpen()
+    {
+        return MainMenuPlayUi != null && MainMenuPlayUi.IsBuildDrawerOpen;
+    }
+
     internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition)
     {
         SelectionUiCameraSystem?.SmoothMoveCameraGroundCenterTo(worldPosition);

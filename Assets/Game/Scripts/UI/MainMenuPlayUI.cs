@@ -113,6 +113,8 @@ public sealed class MainMenuPlayUI
         _buildDrawerView = buildDrawerView;
     }
 
+    public bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
+
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)
     {
         if (_buildDrawerView != null && _buildDrawerView.ContainsScreenPoint(screenPosition))

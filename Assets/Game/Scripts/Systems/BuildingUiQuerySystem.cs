@@ -394,7 +394,7 @@ public sealed class BuildingUiQuerySystem
 
             if (building.IsCityGenerated)
                 continue;
-            if (building.HasOwnerFaction && building.OwnerFactionId != 0)
+            if (!IsFriendlyProductionBuilding(building))
                 continue;
 
             AddPendingProductionUiEntries(
@@ -405,6 +405,16 @@ public sealed class BuildingUiQuerySystem
                 entries,
                 ResolveProducerDisplayName(pair.Key, building));
         }
+    }
+
+    private static bool IsFriendlyProductionBuilding(RuntimeBuildingEntity building)
+    {
+        if (building == null)
+            return false;
+
+        return !building.HasOwnerFaction ||
+               building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId ||
+               building.OwnerFactionId == FactionIdentitySystem.PlayerFactionId;
     }
 
     private static string ResolveProducerDisplayName(int buildingId, RuntimeBuildingEntity building)

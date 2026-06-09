@@ -9,6 +9,7 @@ Date: 2026-05-22
 - Queue-enabled reference target: `reference/SCN-09_BuildDrawer_WithProductionQueue_TargetLock_V01.png`
 - Latest single-action queue reference: `reference/SCN-09_BuildDrawer_SingleActionQueue_OnExistingMatchHUD_TargetLock_V03.png`
 - Latest popup-only source: `generated_one_go/source/SCN-09_BuildDrawer_SingleActionQueue_PopupPanel_V02.png`
+- Build placement mode reference: `reference/SCN-09_BuildPlacementMode_TargetLock_V01.png`
 - Canonical layout context: `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
 - Canonical size: `2400 x 1080`
 
@@ -17,6 +18,8 @@ This target is the Build drawer opened on top of the active match HUD. It keeps 
 The queue-enabled reference adds the production queue to the right-side detail column. This is the preferred reference when implementing production status: active item progress, ETA, queued rows, cancel controls, queue capacity, and disabled queue actions remain inside the Build drawer instead of opening a second popup.
 
 The latest single-action queue reference updates the interaction model: item cards are selection/preview only and do not include per-card Build buttons. The selected item detail panel owns the only primary action button: `PLACE` for Buildings, `PRODUCE` for Vehicles, and `RECRUIT` for Soldiers. The production queue remains in the same right-side column below the selected item details.
+
+The Build placement mode reference covers the state after the player taps `PLACE`: the Build drawer closes, a draggable building ghost and valid/invalid footprint appear on the 3D map, and a compact placement confirmation bar appears above the command bar. The placement bar must include `CANCEL`, optional `ROTATE`, `CONFIRM`, selected building name, placement validity, cost, duration, and an instruction line such as `DRAG TO POSITION, CONFIRM TO BUILD`. Use this reference for placement-flow behavior; keep SCN-08 as the canonical HUD baseline if imagegen drifts surrounding HUD details.
 
 ## Layer Pack
 

@@ -99,7 +99,7 @@ internal sealed class BuildingProductionTransportSystem
             if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
                 return false;
 
-            touchdownPosition = ResolveProductionTransportDropPosition(building, pending);
+            touchdownPosition = ResolveProductionTransportDropPosition(context, building, pending);
             hoverPosition = touchdownPosition + new Vector3(0f, 6f, 0f);
             hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
             Vector3 horizontalOffset = context.WorldCamera != null
@@ -714,6 +714,31 @@ internal sealed class BuildingProductionTransportSystem
     private static Vector3 ResolveProductionTransportHoverPosition(RuntimeBuildingEntity building, RuntimeBuildingEntity.PendingProduction pending)
     {
         return ResolveProductionTransportDropPosition(building, pending) + new Vector3(0f, 8f, 0f);
+    }
+
+    private static Vector3 ResolveProductionTransportDropPosition(
+        Context context,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity.PendingProduction pending)
+    {
+        if (pending?.TransportMode == ProductionTransportMode.AirSelf &&
+            pending.Prefab != null &&
+            context.TransportBridgeSystem != null)
+        {
+            byte factionId = BuildingSpawnSystem.ResolveProducedUnitFaction(building);
+            if (context.TransportBridgeSystem.TryResolveAvailableFactionHelipadSpawn(
+                    context.TransportBridgeContext,
+                    factionId,
+                    building,
+                    pending.Prefab,
+                    out _,
+                    out Vector3 helipadPosition))
+            {
+                return new Vector3(helipadPosition.x, Mathf.Max(0.5f, helipadPosition.y), helipadPosition.z);
+            }
+        }
+
+        return ResolveProductionTransportDropPosition(building, pending);
     }
 
     private static Vector3 ResolveProductionTransportDropPosition(RuntimeBuildingEntity building, RuntimeBuildingEntity.PendingProduction pending)

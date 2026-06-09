@@ -76,6 +76,7 @@ internal sealed class BuildingSpawnSystem
     public bool TryResolveAvailableFactionHelipadSpawn(
         Context context,
         byte factionId,
+        RuntimeBuildingEntity sourceBuilding,
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
@@ -99,7 +100,7 @@ internal sealed class BuildingSpawnSystem
             return TryResolveHelicopterSpawnForFaction(
                 context,
                 factionId,
-                null,
+                sourceBuilding,
                 em,
                 ref rng,
                 grid,
@@ -123,6 +124,7 @@ internal sealed class BuildingSpawnSystem
     public bool TryResolveAvailableFactionHelipadSpawn(
         Context context,
         byte factionId,
+        RuntimeBuildingEntity sourceBuilding,
         EntityManager em,
         Entity gridEntity,
         GridConfig grid,
@@ -135,6 +137,35 @@ internal sealed class BuildingSpawnSystem
         bool resolved = TryResolveAvailableFactionHelipadSpawn(
             context,
             factionId,
+            sourceBuilding,
+            em,
+            gridEntity,
+            grid,
+            blockerData,
+            unitFootprint,
+            ref randomState,
+            out cell,
+            out worldPosition);
+        _buildingSpawnRandomState = randomState;
+        return resolved;
+    }
+
+    public bool TryResolveAvailableFactionHelipadSpawn(
+        Context context,
+        byte factionId,
+        EntityManager em,
+        Entity gridEntity,
+        GridConfig grid,
+        DynamicBlockerComponent blockerData,
+        int2 unitFootprint,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        uint randomState = _buildingSpawnRandomState;
+        bool resolved = TryResolveAvailableFactionHelipadSpawn(
+            context,
+            factionId,
+            null,
             em,
             gridEntity,
             grid,
@@ -300,13 +331,18 @@ internal sealed class BuildingSpawnSystem
             isAirUnit &&
             context.ProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab) &&
             building.HasOwnerFaction;
+        bool useOverrideHelicopterSpawn =
+            overrideWorldPosition.HasValue &&
+            overrideCell.HasValue &&
+            isAirUnit &&
+            context.ProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab);
         productionSlotIndex = -1;
         Vector3 productionSpawnLocalPosition = Vector3.zero;
         productionSlotBuilding = building;
         bool hasProductionSpawnSlots = building.ProductionSpawnLocalPositions != null &&
                                        building.ProducedUnitSlots != null &&
                                        building.ProductionSpawnLocalPositions.Length > 0;
-        if (hasProductionSpawnSlots && !useHelicopterSpawnResolver)
+        if (hasProductionSpawnSlots && !useHelicopterSpawnResolver && !useOverrideHelicopterSpawn)
         {
             if (reservedProductionSlotIndex >= 0 &&
                 reservedProductionSlotIndex < building.ProductionSpawnLocalPositions.Length &&
@@ -340,6 +376,8 @@ internal sealed class BuildingSpawnSystem
             {
                 pos = overrideWorldPosition.Value;
                 cell = overrideCell.Value;
+                if (useOverrideHelicopterSpawn)
+                    TryResolveProductionSlotAtCell(context, em, grid, cell, unitFootprint, out productionSlotBuilding, out productionSlotIndex);
             }
             else if (useHelicopterSpawnResolver)
             {
@@ -444,6 +482,63 @@ internal sealed class BuildingSpawnSystem
         }
     }
 
+    private static bool TryResolveProductionSlotAtCell(
+        Context context,
+        EntityManager em,
+        GridConfig grid,
+        int2 targetCell,
+        int2 unitFootprint,
+        out RuntimeBuildingEntity slotBuilding,
+        out int slotIndex)
+    {
+        slotBuilding = null;
+        slotIndex = -1;
+        if (context.RuntimeBuildings == null || context.ProductionSlotSystem == null)
+            return false;
+
+        string helipadKey = NormalizeSpawnableKey("Building_Helipad");
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+        {
+            RuntimeBuildingEntity building = entry.Value;
+            if (building == null ||
+                building.Instance == null ||
+                building.ProductionSpawnLocalPositions == null ||
+                building.ProducedUnitSlots == null ||
+                !context.RuntimeBuildingMatchesId(building, helipadKey))
+            {
+                continue;
+            }
+
+            int count = math.min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i))
+                    continue;
+                if (context.ProductionSlotSystem.IsProductionSlotOccupied(building, em, i))
+                    continue;
+
+                Vector3 candidateWorld = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
+                int2 candidateCell = GridUtils.WorldToCell(grid, candidateWorld);
+                if (!FootprintsOverlap(targetCell, unitFootprint, candidateCell, new int2(1, 1)))
+                    continue;
+
+                slotBuilding = building;
+                slotIndex = i;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool FootprintsOverlap(int2 aCell, int2 aSize, int2 bCell, int2 bSize)
+    {
+        return aCell.x < bCell.x + bSize.x &&
+               aCell.x + aSize.x > bCell.x &&
+               aCell.y < bCell.y + bSize.y &&
+               aCell.y + aSize.y > bCell.y;
+    }
+
     private static void InitializeSpawnedUnit(
         EntityManager em,
         Entity instance,
@@ -471,7 +566,7 @@ internal sealed class BuildingSpawnSystem
         if (em.HasComponent<UnitMoveVisualComponent>(instance))
             em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         if (em.HasComponent<Faction>(instance))
-            em.SetComponentData(instance, new Faction { Id = building.HasOwnerFaction ? building.OwnerFactionId : (byte)0 });
+            em.SetComponentData(instance, new Faction { Id = ResolveProducedUnitFaction(building) });
         if (em.HasComponent<UnitRespawnPrefab>(instance))
             em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = Entity.Null });
         if (em.HasComponent<UnitAttackCooldownComponent>(instance))
@@ -505,6 +600,14 @@ internal sealed class BuildingSpawnSystem
             em.RemoveComponent<AutoWanderMoveTag>(instance);
         if (em.HasComponent<SelectedUnitTag>(instance))
             em.RemoveComponent<SelectedUnitTag>(instance);
+    }
+
+    internal static byte ResolveProducedUnitFaction(RuntimeBuildingEntity building)
+    {
+        if (building == null || !building.HasOwnerFaction || building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId)
+            return FactionIdentitySystem.PlayerFactionId;
+
+        return building.OwnerFactionId;
     }
 
     private void ReserveRecentSpawnBuffers(ref NativeBitArray reserved, GridConfig grid)
@@ -592,6 +695,14 @@ internal sealed class BuildingSpawnSystem
         slotIndex = -1;
 
         bool foundHelipad = false;
+        bool hasSourcePosition = sourceBuilding?.Instance != null;
+        Vector3 sourcePosition = hasSourcePosition ? sourceBuilding.Instance.transform.position : Vector3.zero;
+        bool hasBestHelipadSlot = false;
+        float bestHelipadSlotDistanceSq = float.MaxValue;
+        int2 bestHelipadSlotCell = default;
+        float3 bestHelipadSlotWorldPosition = default;
+        RuntimeBuildingEntity bestHelipadSlotBuilding = null;
+        int bestHelipadSlotIndex = -1;
         int2 helipadSearchCenter = default;
         int helipadSearchRadius = 0;
         string helipadKey = NormalizeSpawnableKey("Building_Helipad");
@@ -632,12 +743,35 @@ internal sealed class BuildingSpawnSystem
                 if (OverlapsExistingUnitFootprint(context, em, candidateCell, unitFootprint))
                     continue;
 
-                cell = candidateCell;
-                worldPosition = candidateWorld;
-                slotBuilding = building;
-                slotIndex = i;
-                return true;
+                if (!hasSourcePosition)
+                {
+                    cell = candidateCell;
+                    worldPosition = candidateWorld;
+                    slotBuilding = building;
+                    slotIndex = i;
+                    return true;
+                }
+
+                float distanceSq = (candidateWorld - sourcePosition).sqrMagnitude;
+                if (hasBestHelipadSlot && distanceSq >= bestHelipadSlotDistanceSq)
+                    continue;
+
+                hasBestHelipadSlot = true;
+                bestHelipadSlotDistanceSq = distanceSq;
+                bestHelipadSlotCell = candidateCell;
+                bestHelipadSlotWorldPosition = candidateWorld;
+                bestHelipadSlotBuilding = building;
+                bestHelipadSlotIndex = i;
             }
+        }
+
+        if (hasBestHelipadSlot)
+        {
+            cell = bestHelipadSlotCell;
+            worldPosition = bestHelipadSlotWorldPosition;
+            slotBuilding = bestHelipadSlotBuilding;
+            slotIndex = bestHelipadSlotIndex;
+            return true;
         }
 
         if (foundHelipad)

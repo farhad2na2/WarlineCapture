@@ -29,6 +29,7 @@ internal sealed class BuildingProductionContextSystem
         public readonly BuildingProductionRequestSystem.RuntimeGameplayAction SuppressNextWorldClick;
         public readonly BuildingProductionRequestSystem.RuntimeGameplayAction RefreshBuildingMarkers;
         public readonly BuildingProductionRequestSystem.RuntimeGameplayAction ClearFocusedUnit;
+        public readonly BuildingProductionTransportBridgeSystem.BooleanQuery IsBuildDrawerOpen;
         public readonly BuildingProductionRequestSystem.CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly BuildingProductionRequestSystem.ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
         public readonly BuildingProductionRequestSystem.RecordUnitOrderedDelegate RecordUnitOrdered;
@@ -68,6 +69,7 @@ internal sealed class BuildingProductionContextSystem
             BuildingProductionRequestSystem.RuntimeGameplayAction suppressNextWorldClick,
             BuildingProductionRequestSystem.RuntimeGameplayAction refreshBuildingMarkers,
             BuildingProductionRequestSystem.RuntimeGameplayAction clearFocusedUnit,
+            BuildingProductionTransportBridgeSystem.BooleanQuery isBuildDrawerOpen,
             BuildingProductionRequestSystem.CameraFocusAction smoothMoveCameraGroundCenterTo,
             BuildingProductionRequestSystem.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
             BuildingProductionRequestSystem.RecordUnitOrderedDelegate recordUnitOrdered,
@@ -106,6 +108,7 @@ internal sealed class BuildingProductionContextSystem
             SuppressNextWorldClick = suppressNextWorldClick;
             RefreshBuildingMarkers = refreshBuildingMarkers;
             ClearFocusedUnit = clearFocusedUnit;
+            IsBuildDrawerOpen = isBuildDrawerOpen;
             SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
             ResolveBuildingFocusWorldPosition = resolveBuildingFocusWorldPosition;
             RecordUnitOrdered = recordUnitOrdered;
@@ -147,6 +150,7 @@ internal sealed class BuildingProductionContextSystem
         BuildingProductionRequestSystem.RuntimeGameplayAction suppressNextWorldClick,
         BuildingProductionRequestSystem.RuntimeGameplayAction refreshBuildingMarkers,
         BuildingProductionRequestSystem.RuntimeGameplayAction clearFocusedUnit,
+        BuildingProductionTransportBridgeSystem.BooleanQuery isBuildDrawerOpen,
         BuildingProductionRequestSystem.CameraFocusAction smoothMoveCameraGroundCenterTo,
         BuildingProductionRequestSystem.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
         BuildingProductionRequestSystem.RecordUnitOrderedDelegate recordUnitOrdered,
@@ -186,6 +190,7 @@ internal sealed class BuildingProductionContextSystem
             suppressNextWorldClick,
             refreshBuildingMarkers,
             clearFocusedUnit,
+            isBuildDrawerOpen,
             smoothMoveCameraGroundCenterTo,
             resolveBuildingFocusWorldPosition,
             recordUnitOrdered,
@@ -232,7 +237,9 @@ internal sealed class BuildingProductionContextSystem
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             source.SpawnSystem,
-            source.SpawnContext);
+            source.SpawnContext,
+            () => source.IsBuildDrawerOpen?.Invoke() == true,
+            worldPosition => source.SmoothMoveCameraGroundCenterTo?.Invoke(worldPosition));
     }
 
     public BuildingProductionRequestSystem.Context CreateProductionRequestContext(Source source)

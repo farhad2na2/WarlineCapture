@@ -1193,7 +1193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerQueueItemView
   cancelButton: {fileID: 0}
-  thumbnailImage: {fileID: 0}
+  thumbnailImage: {fileID: 5060090566557460178}
   progressSlider: {fileID: 0}
   nameText: {fileID: 7451705404617807608}
   producerText: {fileID: 0}
@@ -17346,7 +17346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerQueueItemView
   cancelButton: {fileID: 31375205807487332}
-  thumbnailImage: {fileID: 0}
+  thumbnailImage: {fileID: 2147133504503696062}
   progressSlider: {fileID: 1793096092308859948}
   nameText: {fileID: 824172543306937471}
   producerText: {fileID: 0}

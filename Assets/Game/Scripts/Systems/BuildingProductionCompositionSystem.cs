@@ -43,6 +43,7 @@ internal sealed class BuildingProductionCompositionSystem
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
             () => runtimeSource.RefreshBuildingMarkerVisibility?.Invoke(),
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
+            source.BuildingGameplayDependencySystem.IsBuildDrawerOpen,
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
             building => ResolveBuildingFocusWorldPosition(runtimeSource, building),
             GameRuntimeStats.RecordUnitOrdered,

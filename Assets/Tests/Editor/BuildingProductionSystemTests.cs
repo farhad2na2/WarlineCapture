@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class BuildingProductionSystemTests
@@ -22,6 +24,29 @@ public sealed class BuildingProductionSystemTests
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunProductionCameraFocusValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionSystemTests();
+            tests.FocusNewestPlayerProducedUnit_RequestsCameraMoveToNewestSpawn();
+            tests.FocusNewestPlayerProducedUnit_IgnoresWhenBuildDrawerClosed();
+            tests.FocusNewestPlayerProducedUnit_AllowsNeutralOrUnownedProducerOutput();
+            tests.FocusNewestPlayerProducedUnit_IgnoresNonPlayerProduction();
+            tests.ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer();
+            tests.TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback();
+            tests.TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists();
+            Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=7");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingProductionCameraFocusValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
         }
     }
@@ -55,6 +80,245 @@ public sealed class BuildingProductionSystemTests
         Assert.AreEqual(2, pending.TransportMaxConcurrent);
         Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Plane, pending.TransportMode);
         Assert.IsTrue(pending.TransportRequiresAirportRunway);
+    }
+
+    [Test]
+    public void FocusNewestPlayerProducedUnit_RequestsCameraMoveToNewestSpawn()
+    {
+        using World world = new("FocusNewestPlayerProducedUnit_RequestsCameraMoveToNewestSpawn");
+        EntityManager em = world.EntityManager;
+        Entity older = em.CreateEntity(typeof(LocalTransform));
+        Entity newest = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(older, LocalTransform.FromPosition(new float3(1f, 0f, 2f)));
+        em.SetComponentData(newest, LocalTransform.FromPosition(new float3(7f, 0f, 9f)));
+
+        RuntimeBuildingEntity building = new()
+        {
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+            ProducedUnits = new List<Entity> { older, newest }
+        };
+
+        Vector3? requestedFocus = null;
+        BuildingProductionTransportBridgeSystem.Context context = new(
+            null,
+            null,
+            null,
+            null,
+            default,
+            () => true,
+            worldPosition => requestedFocus = worldPosition);
+
+        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsTrue(requestedFocus.HasValue);
+        Assert.AreEqual(new Vector3(7f, 0f, 9f), requestedFocus.Value);
+    }
+
+    [Test]
+    public void FocusNewestPlayerProducedUnit_IgnoresWhenBuildDrawerClosed()
+    {
+        using World world = new("FocusNewestPlayerProducedUnit_IgnoresWhenBuildDrawerClosed");
+        EntityManager em = world.EntityManager;
+        Entity newest = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(newest, LocalTransform.FromPosition(new float3(7f, 0f, 9f)));
+
+        RuntimeBuildingEntity building = new()
+        {
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+            ProducedUnits = new List<Entity> { newest }
+        };
+
+        bool requestedFocus = false;
+        BuildingProductionTransportBridgeSystem.Context context = new(
+            null,
+            null,
+            null,
+            null,
+            default,
+            () => false,
+            _ => requestedFocus = true);
+
+        Assert.IsFalse(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsFalse(requestedFocus);
+    }
+
+    [Test]
+    public void FocusNewestPlayerProducedUnit_IgnoresNonPlayerProduction()
+    {
+        using World world = new("FocusNewestPlayerProducedUnit_IgnoresNonPlayerProduction");
+        EntityManager em = world.EntityManager;
+        Entity newest = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(newest, LocalTransform.FromPosition(new float3(7f, 0f, 9f)));
+
+        RuntimeBuildingEntity building = new()
+        {
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            ProducedUnits = new List<Entity> { newest }
+        };
+
+        bool requestedFocus = false;
+        BuildingProductionTransportBridgeSystem.Context context = new(
+            null,
+            null,
+            null,
+            null,
+            default,
+            () => true,
+            _ => requestedFocus = true);
+
+        Assert.IsFalse(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsFalse(requestedFocus);
+    }
+
+    [Test]
+    public void FocusNewestPlayerProducedUnit_AllowsNeutralOrUnownedProducerOutput()
+    {
+        using World world = new("FocusNewestPlayerProducedUnit_AllowsNeutralOrUnownedProducerOutput");
+        EntityManager em = world.EntityManager;
+        Entity newest = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(newest, LocalTransform.FromPosition(new float3(3f, 0f, 4f)));
+
+        RuntimeBuildingEntity unownedBuilding = new()
+        {
+            HasOwnerFaction = false,
+            ProducedUnits = new List<Entity> { newest }
+        };
+        RuntimeBuildingEntity neutralBuilding = new()
+        {
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentitySystem.NeutralFactionId,
+            ProducedUnits = new List<Entity> { newest }
+        };
+
+        int focusCount = 0;
+        BuildingProductionTransportBridgeSystem.Context context = new(
+            null,
+            null,
+            null,
+            null,
+            default,
+            () => true,
+            _ => focusCount++);
+
+        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, unownedBuilding, em));
+        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, neutralBuilding, em));
+        Assert.AreEqual(2, focusCount);
+    }
+
+    [Test]
+    public void ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer()
+    {
+        Assert.AreEqual(
+            FactionIdentitySystem.PlayerFactionId,
+            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity { HasOwnerFaction = false }));
+        Assert.AreEqual(
+            FactionIdentitySystem.PlayerFactionId,
+            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            {
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentitySystem.NeutralFactionId
+            }));
+        Assert.AreEqual(
+            FactionIdentitySystem.PlayerFactionId,
+            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            {
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentitySystem.PlayerFactionId
+            }));
+        Assert.AreEqual(
+            FactionIdentitySystem.EnemyFactionId,
+            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            {
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentitySystem.EnemyFactionId
+            }));
+    }
+
+    [Test]
+    public void TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback()
+    {
+        var requestSystem = new BuildingProductionRequestSystem();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Attack Helicopter");
+        try
+        {
+            RuntimeBuildingEntity neutralProducer = CreateProducerBuilding(
+                id: 10,
+                displayName: "Neutral Helipad",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.NeutralFactionId);
+            RuntimeBuildingEntity playerProducer = CreateProducerBuilding(
+                id: 20,
+                displayName: "Player Helipad",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [neutralProducer.Id] = neutralProducer,
+                [playerProducer.Id] = playerProducer
+            };
+            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab);
+
+            Assert.IsTrue(requestSystem.TryFindFirstFriendlyProducerBuilding(
+                context,
+                unitPrefab,
+                out int buildingId,
+                out int productionIndex,
+                out string displayName));
+            Assert.AreEqual(playerProducer.Id, buildingId);
+            Assert.AreEqual(0, productionIndex);
+            Assert.AreEqual("Player Helipad", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists()
+    {
+        var requestSystem = new BuildingProductionRequestSystem();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Attack Helicopter");
+        try
+        {
+            RuntimeBuildingEntity neutralProducer = CreateProducerBuilding(
+                id: 10,
+                displayName: "Neutral Helipad",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.NeutralFactionId);
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [neutralProducer.Id] = neutralProducer
+            };
+            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab);
+
+            Assert.IsTrue(requestSystem.TryFindFirstFriendlyProducerBuilding(
+                context,
+                unitPrefab,
+                out int buildingId,
+                out int productionIndex,
+                out string displayName));
+            Assert.AreEqual(neutralProducer.Id, buildingId);
+            Assert.AreEqual(0, productionIndex);
+            Assert.AreEqual("Neutral Helipad", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
     }
 
     [Test]
@@ -413,6 +677,74 @@ public sealed class BuildingProductionSystemTests
         FieldInfo field = FindPrivateField(target.GetType(), fieldName);
         Assert.IsNotNull(field, $"{target.GetType().Name} must expose serialized field '{fieldName}' for this test.");
         field.SetValue(target, value);
+    }
+
+    private static RuntimeBuildingEntity CreateProducerBuilding(
+        int id,
+        string displayName,
+        GameObject unitPrefab,
+        bool hasOwnerFaction,
+        byte ownerFactionId)
+    {
+        return new RuntimeBuildingEntity
+        {
+            Id = id,
+            HasOwnerFaction = hasOwnerFaction,
+            OwnerFactionId = ownerFactionId,
+            Definition = new BuildingDefinition
+            {
+                DisplayName = displayName,
+                ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                {
+                    new() { SpawnUnitPrefab = unitPrefab }
+                }
+            },
+            ProducedUnits = new List<Entity>(),
+            ProducedUnitPrefabs = new Dictionary<Entity, GameObject>(),
+            PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>()
+        };
+    }
+
+    private static BuildingProductionRequestSystem.Context CreateProducerSelectionContext(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        BuildingProductionSystem productionSystem,
+        GameObject unitPrefab)
+    {
+        var unitPrefabs = new List<GameObject> { unitPrefab };
+        BuildingProductionSystem.QueueContext queueContext = new(
+            unitPrefabs,
+            new Dictionary<string, GameObject>(),
+            new BuildingProductionSlotSystem(),
+            null,
+            null);
+
+        return new BuildingProductionRequestSystem.Context(
+            runtimeBuildings,
+            null,
+            null,
+            unitPrefabs,
+            new Dictionary<string, GameObject>(),
+            100000,
+            productionSystem,
+            queueContext,
+            null,
+            BuildingDefinitionSystem.GetProductionPrefab,
+            null,
+            null,
+            _ => true,
+            _ => { },
+            _ => { },
+            null,
+            _ => { },
+            () => { },
+            () => { },
+            () => { },
+            _ => { },
+            _ => Vector3.zero,
+            _ => { },
+            Debug.LogWarning,
+            (_, _) => 0,
+            (_, _) => 0);
     }
 
     private static FieldInfo FindPrivateField(System.Type type, string fieldName)

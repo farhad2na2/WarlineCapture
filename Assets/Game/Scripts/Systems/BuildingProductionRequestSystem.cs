@@ -429,30 +429,47 @@ internal sealed class BuildingProductionRequestSystem
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        for (int pass = 0; pass < 2; pass++)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-            if (building.IsCityGenerated)
-                continue;
-            if (building.HasOwnerFaction && building.OwnerFactionId != 0)
-                continue;
-
-            int productionCount = GetProductionCount(building.Definition);
-            for (int i = 0; i < productionCount; i++)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                RuntimeBuildingEntity building = pair.Value;
+                if (building?.Definition == null || building.IsDestroyed)
                     continue;
-                if (!CanQueueUnitFromBuilding(context, building, unitPrefab, false))
+                if (building.IsCityGenerated)
+                    continue;
+                if (!IsFriendlyProducerBuildingForPass(building, pass))
                     continue;
 
-                buildingId = pair.Key;
-                productionIndex = i;
-                buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
-                return true;
+                int productionCount = GetProductionCount(building.Definition);
+                for (int i = 0; i < productionCount; i++)
+                {
+                    if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                        continue;
+                    if (!CanQueueUnitFromBuilding(context, building, unitPrefab, false))
+                        continue;
+
+                    buildingId = pair.Key;
+                    productionIndex = i;
+                    buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+                    return true;
+                }
             }
         }
+
+        return false;
+    }
+
+    private static bool IsFriendlyProducerBuildingForPass(RuntimeBuildingEntity building, int pass)
+    {
+        if (building == null)
+            return false;
+
+        if (building.HasOwnerFaction && building.OwnerFactionId == FactionIdentitySystem.PlayerFactionId)
+            return pass == 0;
+
+        if (!building.HasOwnerFaction || building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId)
+            return pass == 1;
 
         return false;
     }

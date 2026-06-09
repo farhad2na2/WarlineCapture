@@ -66,6 +66,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 test => test.CurrentBuildDrawerPrefabBindsProductionQueueSnapshot(),
                 ref passed);
             RunValidationStep(
+                nameof(CurrentBuildDrawerPrefabShowsSingleActiveProductionForOneQueueEntry),
+                test => test.CurrentBuildDrawerPrefabShowsSingleActiveProductionForOneQueueEntry(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerCancelButton_RoutesActiveProductionCancelRequest),
                 test => test.BuildDrawerCancelButton_RoutesActiveProductionCancelRequest(),
                 ref passed);
@@ -76,6 +80,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             RunValidationStep(
                 nameof(BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput),
                 test => test.BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerPopup_ReportsOpenStateForProductionCameraFocusGate),
+                test => test.BuildDrawerPopup_ReportsOpenStateForProductionCameraFocusGate(),
                 ref passed);
             RunValidationStep(
                 nameof(BuildDrawerPrimaryActionButton_ReceivesPointerRaycastAtCenter),
@@ -352,6 +360,8 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject vehicle = CreateUnit("Requestable Vehicle", true, false, new Vector2Int(2, 2), 0);
+        Sprite vehiclePortrait = CreateTestSprite(Color.cyan);
+        AssignUnitPortraitSprites(vehicle, vehiclePortrait);
         unitConfig.UnitSpawnPrefabs.Add(vehicle);
 
         GameObject requestedPrefab = null;
@@ -442,6 +452,8 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject vehicle = CreateUnit("Requestable Vehicle", true, false, new Vector2Int(2, 2), 0);
+        Sprite vehiclePortrait = CreateTestSprite(Color.cyan);
+        AssignUnitPortraitSprites(vehicle, vehiclePortrait);
         unitConfig.UnitSpawnPrefabs.Add(vehicle);
 
         RuntimeBuildingEntity producer = CreateRuntimeProducerBuilding(7, "Vehicle Factory", vehicle);
@@ -492,6 +504,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.AreEqual(100000 - 5678, dollars);
         Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf, "Queue should refresh immediately after production starts.");
         Assert.AreEqual("Requestable Vehicle", GetQueueText(view.ActiveItemView, "nameText"));
+        Assert.IsFalse(view.QueuedItemTemplate.gameObject.activeSelf, "One pending production should only show the active queue row.");
+        Image activeThumbnail = GetSerializedReference<Image>(new SerializedObject(view.ActiveItemView), "thumbnailImage");
+        Assert.NotNull(activeThumbnail, "Active queue item must serialize its thumbnail image.");
+        Assert.AreSame(vehiclePortrait, activeThumbnail.sprite);
+        Assert.IsTrue(activeThumbnail.enabled);
         Assert.IsFalse(GetSerializedReference<GameObject>(new SerializedObject(view), "noProductionView").activeSelf);
     }
 
@@ -514,6 +531,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject activePrefab = CreateUnit("Queue Vehicle Active", true, false, new Vector2Int(2, 2), 0);
         GameObject queuedPrefab = CreateUnit("Queue Vehicle Waiting", true, false, new Vector2Int(2, 2), 0);
+        Sprite activePortrait = CreateTestSprite(Color.green);
+        Sprite queuedPortrait = CreateTestSprite(Color.yellow);
+        AssignUnitPortraitSprites(activePrefab, activePortrait);
+        AssignUnitPortraitSprites(queuedPrefab, queuedPortrait);
         unitConfig.UnitSpawnPrefabs.Add(activePrefab);
         unitConfig.UnitSpawnPrefabs.Add(queuedPrefab);
         presenter.ConfigureForTests(view, unitConfig, null);
@@ -551,12 +572,64 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.AreEqual("Queue Vehicle Active", GetQueueText(view.ActiveItemView, "nameText"));
         Assert.AreEqual("26%", GetQueueText(view.ActiveItemView, "percentageText"));
         Assert.AreEqual("Queue Vehicle Waiting", GetQueueText(view.QueuedItemTemplate, "nameText"));
+        Image activeThumbnail = GetSerializedReference<Image>(new SerializedObject(view.ActiveItemView), "thumbnailImage");
+        Image queuedThumbnail = GetSerializedReference<Image>(new SerializedObject(view.QueuedItemTemplate), "thumbnailImage");
+        Assert.NotNull(activeThumbnail);
+        Assert.NotNull(queuedThumbnail);
+        Assert.AreSame(activePortrait, activeThumbnail.sprite);
+        Assert.AreSame(queuedPortrait, queuedThumbnail.sprite);
 
         Assert.AreEqual("26%", GetSerializedReference<TMP_Text>(viewObject, "queuePercentageText").text);
         Assert.AreEqual("01:14", GetSerializedReference<TMP_Text>(viewObject, "queueTimeText").text);
         Assert.AreEqual("2", GetSerializedReference<TMP_Text>(viewObject, "queueNumbersText").text);
         Assert.IsFalse(view.RushButton == null || view.RushButton.interactable);
         Assert.IsFalse(view.ClearButton == null || view.ClearButton.interactable);
+    }
+
+    [Test]
+    public void CurrentBuildDrawerPrefabShowsSingleActiveProductionForOneQueueEntry()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject activePrefab = CreateUnit("Queue Vehicle Active", true, false, new Vector2Int(2, 2), 0);
+        Sprite activePortrait = CreateTestSprite(Color.magenta);
+        AssignUnitPortraitSprites(activePrefab, activePortrait);
+        unitConfig.UnitSpawnPrefabs.Add(activePrefab);
+        presenter.ConfigureForTests(view, unitConfig, null);
+
+        presenter.ApplyQueueSnapshotForTests(new[]
+        {
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory")
+        });
+
+        Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf);
+        Assert.IsFalse(view.QueuedItemTemplate.gameObject.activeSelf);
+        Assert.AreEqual("Queue Vehicle Active", GetQueueText(view.ActiveItemView, "nameText"));
+        Assert.AreEqual("26%", GetQueueText(view.ActiveItemView, "percentageText"));
+
+        Image activeThumbnail = GetSerializedReference<Image>(new SerializedObject(view.ActiveItemView), "thumbnailImage");
+        Assert.NotNull(activeThumbnail, "Active queue item must serialize its thumbnail image.");
+        Assert.AreSame(activePortrait, activeThumbnail.sprite);
+        Assert.IsTrue(activeThumbnail.enabled);
+
+        RectTransform queueRoot = view.QueueContentRoot;
+        Assert.NotNull(queueRoot);
+        for (int i = 0; i < queueRoot.childCount; i++)
+        {
+            Transform child = queueRoot.GetChild(i);
+            if (child != view.ActiveItemView.transform && child != view.QueuedItemTemplate.transform)
+                Assert.IsFalse(child.gameObject.activeSelf, $"Static queue placeholder '{child.name}' must not appear as an extra production row.");
+        }
     }
 
     [Test]
@@ -697,6 +770,37 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     }
 
     [Test]
+    public void BuildDrawerPopup_ReportsOpenStateForProductionCameraFocusGate()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        Assert.NotNull(view);
+
+        MainMenuPlayUI mainMenu = new MainMenuPlayUI();
+        Assert.IsFalse(mainMenu.IsBuildDrawerOpen);
+
+        mainMenu.BindBuildDrawer(view);
+        Assert.IsTrue(mainMenu.IsBuildDrawerOpen);
+
+        GameObject drawerRoot = GetSerializedReference<GameObject>(new SerializedObject(view), "drawerRoot");
+        Assert.NotNull(drawerRoot, "Build drawer open state must be based on the serialized drawer root.");
+
+        drawerRoot.SetActive(false);
+        Assert.IsFalse(mainMenu.IsBuildDrawerOpen);
+
+        drawerRoot.SetActive(true);
+        Assert.IsTrue(mainMenu.IsBuildDrawerOpen);
+
+        mainMenu.BindBuildDrawer(null);
+        Assert.IsFalse(mainMenu.IsBuildDrawerOpen);
+    }
+
+    [Test]
     public void BuildDrawerPrimaryActionButton_ReceivesPointerRaycastAtCenter()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
@@ -824,6 +928,16 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         serialized.FindProperty("productionDurationSeconds").floatValue = 42f;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return prefab;
+    }
+
+    private void AssignUnitPortraitSprites(GameObject prefab, Sprite sprite)
+    {
+        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
+        SerializedObject serialized = new SerializedObject(authoring);
+        serialized.FindProperty("portraitSprite").objectReferenceValue = sprite;
+        serialized.FindProperty("portraitCardSprite").objectReferenceValue = sprite;
+        serialized.FindProperty("portraitActionSprite").objectReferenceValue = sprite;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static RuntimeBuildingEntity CreateRuntimeProducerBuilding(int id, string displayName, GameObject producedPrefab)

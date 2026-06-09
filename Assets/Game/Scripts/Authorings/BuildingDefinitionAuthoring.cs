@@ -30,6 +30,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
     [SerializeField, HideInInspector] private BuildingRole role;
     [SerializeField, HideInInspector] private bool canRequest = true;
     [SerializeField, HideInInspector, Min(0)] private int price = 20000;
+    [SerializeField, HideInInspector, Min(0.01f)] private float productionDurationSeconds = 30f;
 
     [Header("Resources")]
     [SerializeField, HideInInspector, Min(0f)] private float oilBarrelsPerDay;
@@ -64,6 +65,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
     public BuildingRole ConfiguredRole => role;
     public bool ConfiguredCanRequest => canRequest;
     public int ConfiguredPrice => Mathf.Max(0, price);
+    public float ConfiguredProductionDurationSeconds => Mathf.Max(0.01f, productionDurationSeconds);
     public bool ConfiguredIsWall => isWall;
     public float ConfiguredOilBarrelsPerDay => oilBarrelsPerDay;
     public int ConfiguredOilStorageCapacity => oilStorageCapacity;
@@ -114,6 +116,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
         role = config.Role;
         canRequest = config.CanRequest;
         price = config.Price;
+        productionDurationSeconds = config.ProductionDurationSeconds;
         isWall = config.IsWall;
         oilBarrelsPerDay = config.OilBarrelsPerDay;
         oilStorageCapacity = config.OilStorageCapacity;

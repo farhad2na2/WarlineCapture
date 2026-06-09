@@ -19,6 +19,7 @@ MonoBehaviour:
   description: Temporary fuel storage used to support vehicles, aircraft, and field logistics.
   maxHealth: 500
   price: 18000
+  productionDurationSeconds: 30
   productions:
   - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 807d71c09b501438ba26e9ef9f5ec132, type: 3}
   - spawnUnitPrefab: {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}

@@ -20,6 +20,7 @@ MonoBehaviour:
   maxHealth: 650
   isWall: 0
   price: 50000
+  productionDurationSeconds: 30
   oilBarrelsPerDay: 50
   oilStorageCapacity: 200
   fuelBarrelsPerDay: 0

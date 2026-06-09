@@ -19,6 +19,7 @@ MonoBehaviour:
   description: Air surveillance dish that detects hostile aircraft approaching the base but cannot attack.
   maxHealth: 450
   price: 20000
+  productionDurationSeconds: 30
   threatDetectionKind: 2
   threatDetectionRadiusCells: 240
   productions: []

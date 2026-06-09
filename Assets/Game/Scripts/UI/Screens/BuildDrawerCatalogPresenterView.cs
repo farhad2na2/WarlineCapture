@@ -283,6 +283,9 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void OnPrimaryActionClicked()
     {
+        Debug.Log(
+            $"BUILD_DRAWER_PRIMARY_CLICK selected={_hasSelectedItem} item={(_hasSelectedItem ? _selectedItem.DisplayName : "<none>")} category={(_hasSelectedItem ? _selectedItem.Category.ToString() : "<none>")} commandBound={_uiCommandSystem != null} prefab={(_hasSelectedItem && _selectedItem.Prefab != null ? _selectedItem.Prefab.name : "<null>")} frame={Time.frameCount}");
+
         if (!_hasSelectedItem || _selectedItem.Prefab == null)
         {
             ApplyBuildDrawerCommandResult(BuildingUiCommandSystem.CampRequestFailure.InvalidSelection, string.Empty);
@@ -306,18 +309,24 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         if (failure != BuildingUiCommandSystem.CampRequestFailure.None)
         {
+            Debug.LogWarning(
+                $"BUILD_DRAWER_PRIMARY_FAILED item={_selectedItem.DisplayName} category={_selectedItem.Category} failure={failure} required={requiredBuildingDisplayName} frame={Time.frameCount}");
             ApplyBuildDrawerCommandResult(failure, requiredBuildingDisplayName);
             return;
         }
 
         if (_selectedItem.Category == BuildDrawerCategory.Buildings)
         {
+            Debug.Log(
+                $"BUILD_DRAWER_PRIMARY_SUCCESS action=Place item={_selectedItem.DisplayName} frame={Time.frameCount}");
             BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
             BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success("PLACE BUILDING"));
             _closeDrawer?.Invoke();
             return;
         }
 
+        Debug.Log(
+            $"BUILD_DRAWER_PRIMARY_SUCCESS action={_selectedItem.ActionLabel} item={_selectedItem.DisplayName} frame={Time.frameCount}");
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
         Refresh();
     }
@@ -565,7 +574,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private static string FormatDuration(BuildDrawerCatalogItem model)
     {
-        if (model.Category == BuildDrawerCategory.Buildings || model.ProductionDurationSeconds <= 0f)
+        if (model.ProductionDurationSeconds <= 0f)
             return "-";
 
         int seconds = Mathf.CeilToInt(model.ProductionDurationSeconds);

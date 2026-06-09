@@ -23,6 +23,7 @@ MonoBehaviour:
   isWall: 0
   canRequest: 1
   price: 80000
+  productionDurationSeconds: 30
   oilBarrelsPerDay: 0
   oilStorageCapacity: 5000
   fuelBarrelsPerDay: 100

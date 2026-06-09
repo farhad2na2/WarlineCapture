@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System;
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEditor;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public sealed class BuildDrawerCatalogQuerySystemTests
@@ -52,6 +54,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 test => test.BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndKeepsDrawerOpen(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerPrimaryAction_RealBuildingRequestBeginsPlacementAndClosesDrawer),
+                test => test.BuildDrawerPrimaryAction_RealBuildingRequestBeginsPlacementAndClosesDrawer(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerPrimaryAction_RealUnitRequestQueuesProductionAndRefreshesQueue),
+                test => test.BuildDrawerPrimaryAction_RealUnitRequestQueuesProductionAndRefreshesQueue(),
+                ref passed);
+            RunValidationStep(
                 nameof(CurrentBuildDrawerPrefabBindsProductionQueueSnapshot),
                 test => test.CurrentBuildDrawerPrefabBindsProductionQueueSnapshot(),
                 ref passed);
@@ -66,6 +76,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             RunValidationStep(
                 nameof(BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput),
                 test => test.BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerPrimaryActionButton_ReceivesPointerRaycastAtCenter),
+                test => test.BuildDrawerPrimaryActionButton_ReceivesPointerRaycastAtCenter(),
                 ref passed);
 
             Debug.Log($"[BuildDrawerCatalogQueryValidation] result=Passed tests={passed}");
@@ -367,6 +381,121 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     }
 
     [Test]
+    public void BuildDrawerPrimaryAction_RealBuildingRequestBeginsPlacementAndClosesDrawer()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
+        GameObject buildingPrefab = CreateBuilding("Requestable Airport", true, BuildingRole.MilitaryCamp, false);
+        buildingConfig.Spawnables.Add(buildingPrefab);
+
+        BuildingDefinition buildingDefinition = new()
+        {
+            DisplayName = "Requestable Airport",
+            Prefab = buildingPrefab
+        };
+        var requestSystem = new BuildingProductionRequestSystem();
+        bool beganPlacement = false;
+        int activePlacementCost = -1;
+        bool closed = false;
+        BuildingProductionRequestSystem.Context requestContext = CreateProductionRequestContext(
+            new Dictionary<int, RuntimeBuildingEntity>(),
+            requestSystem,
+            new BuildingProductionSystem(),
+            Array.Empty<GameObject>(),
+            new Dictionary<GameObject, BuildingDefinition> { { buildingPrefab, buildingDefinition } },
+            _ => { beganPlacement = true; return true; },
+            amount => true,
+            amount => activePlacementCost = amount);
+
+        presenter.ConfigureForTests(view, null, buildingConfig);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandSystem(),
+            CreateRealCommandContext(requestSystem, () => requestContext),
+            () => closed = true);
+        presenter.RefreshForTests();
+
+        view.PrimaryActionButton.onClick.Invoke();
+
+        Assert.IsTrue(beganPlacement, "Building PLACE must enter configured building placement.");
+        Assert.AreEqual(1234, activePlacementCost);
+        Assert.IsTrue(closed, "Building PLACE should close the drawer after placement is armed.");
+    }
+
+    [Test]
+    public void BuildDrawerPrimaryAction_RealUnitRequestQueuesProductionAndRefreshesQueue()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        using World world = new("BuildDrawerProductionRequestTest");
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject vehicle = CreateUnit("Requestable Vehicle", true, false, new Vector2Int(2, 2), 0);
+        unitConfig.UnitSpawnPrefabs.Add(vehicle);
+
+        RuntimeBuildingEntity producer = CreateRuntimeProducerBuilding(7, "Vehicle Factory", vehicle);
+        var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity> { { producer.Id, producer } };
+        var productionSystem = new BuildingProductionSystem();
+        var requestSystem = new BuildingProductionRequestSystem();
+        int dollars = 100000;
+        BuildingProductionRequestSystem.Context requestContext = CreateProductionRequestContext(
+            runtimeBuildings,
+            requestSystem,
+            productionSystem,
+            new[] { vehicle },
+            new Dictionary<GameObject, BuildingDefinition>(),
+            _ => false,
+            amount =>
+            {
+                if (dollars < amount)
+                    return false;
+
+                dollars -= amount;
+                return true;
+            },
+            _ => { },
+            world.EntityManager);
+        BuildingUiQuerySystem.Context queryContext = CreateProductionQueryContext(
+            runtimeBuildings,
+            requestSystem,
+            productionSystem,
+            () => requestContext,
+            world.EntityManager);
+
+        bool closed = false;
+        presenter.ConfigureForTests(view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandSystem(),
+            CreateRealCommandContext(requestSystem, () => requestContext),
+            () => closed = true);
+        presenter.BindRuntimeQueries(new BuildingUiQuerySystem(), queryContext);
+        presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
+
+        Assert.AreEqual(0, producer.PendingProductions.Count);
+        view.PrimaryActionButton.onClick.Invoke();
+
+        Assert.IsFalse(closed, "Production requests should keep the drawer open.");
+        Assert.AreEqual(1, producer.PendingProductions.Count);
+        Assert.AreSame(vehicle, producer.PendingProductions[0].Prefab);
+        Assert.AreEqual(0, producer.PendingProductions[0].ProductionIndex);
+        Assert.AreEqual(100000 - 5678, dollars);
+        Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf, "Queue should refresh immediately after production starts.");
+        Assert.AreEqual("Requestable Vehicle", GetQueueText(view.ActiveItemView, "nameText"));
+        Assert.IsFalse(GetSerializedReference<GameObject>(new SerializedObject(view), "noProductionView").activeSelf);
+    }
+
+    [Test]
     public void CurrentBuildDrawerPrefabBindsProductionQueueSnapshot()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
@@ -567,6 +696,72 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.IsFalse(mainMenu.IsPointerOverAnyGameplayUi(drawerCenter, out _));
     }
 
+    [Test]
+    public void BuildDrawerPrimaryActionButton_ReceivesPointerRaycastAtCenter()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject eventSystemObject = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        _createdObjects.Add(eventSystemObject);
+        EventSystem eventSystem = eventSystemObject.GetComponent<EventSystem>();
+        GameObject canvasObject = new GameObject("Test Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        _createdObjects.Add(canvasObject);
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+        canvasRect.sizeDelta = new Vector2(1920f, 1080f);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect, false);
+        _createdObjects.Add(instance);
+        RectTransform instanceRect = instance.transform as RectTransform;
+        Assert.NotNull(instanceRect);
+        instanceRect.anchorMin = Vector2.zero;
+        instanceRect.anchorMax = Vector2.one;
+        instanceRect.offsetMin = Vector2.zero;
+        instanceRect.offsetMax = Vector2.zero;
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+
+        BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
+        buildingConfig.Spawnables.Add(CreateBuilding("Requestable Barracks", true, BuildingRole.MilitaryCamp, false));
+        presenter.ConfigureForTests(view, null, buildingConfig);
+        presenter.RefreshForTests();
+        Canvas.ForceUpdateCanvases();
+
+        Button button = view.PrimaryActionButton;
+        Assert.NotNull(button);
+        Assert.IsTrue(button.gameObject.activeInHierarchy);
+        Assert.IsTrue(button.interactable);
+        Assert.NotNull(button.targetGraphic);
+        Assert.IsTrue(button.targetGraphic.raycastTarget, "Primary build drawer button target graphic must receive raycasts across the full CTA frame.");
+
+        Vector2 center = RectTransformUtility.WorldToScreenPoint(
+            null,
+            button.targetGraphic.rectTransform.TransformPoint(button.targetGraphic.rectTransform.rect.center));
+        Assert.IsTrue(
+            RectTransformUtility.RectangleContainsScreenPoint(button.targetGraphic.rectTransform, center, null),
+            "Primary build drawer button target graphic must contain its own center point.");
+
+        var pointerEvent = new PointerEventData(eventSystem)
+        {
+            position = center,
+            button = PointerEventData.InputButton.Left
+        };
+        bool clicked = false;
+        button.onClick.AddListener(() => clicked = true);
+        bool handled = ExecuteEvents.ExecuteHierarchy(
+            button.targetGraphic.gameObject,
+            pointerEvent,
+            ExecuteEvents.pointerClickHandler);
+
+        Assert.IsTrue(handled, "Primary build drawer button center raycast must dispatch to a Button.");
+        Assert.IsTrue(clicked, "Primary build drawer button center click must invoke the Button onClick.");
+    }
+
     private T CreateAsset<T>() where T : ScriptableObject
     {
         T asset = ScriptableObject.CreateInstance<T>();
@@ -629,6 +824,174 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         serialized.FindProperty("productionDurationSeconds").floatValue = 42f;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return prefab;
+    }
+
+    private static RuntimeBuildingEntity CreateRuntimeProducerBuilding(int id, string displayName, GameObject producedPrefab)
+    {
+        return new RuntimeBuildingEntity
+        {
+            Id = id,
+            Definition = new BuildingDefinition
+            {
+                DisplayName = displayName,
+                ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                {
+                    new() { SpawnUnitPrefab = producedPrefab }
+                }
+            },
+            ProducedUnits = new List<Entity>(),
+            ProducedUnitPrefabs = new Dictionary<Entity, GameObject>(),
+            PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>()
+        };
+    }
+
+    private static BuildingProductionRequestSystem.Context CreateProductionRequestContext(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        BuildingProductionRequestSystem requestSystem,
+        BuildingProductionSystem productionSystem,
+        IReadOnlyList<GameObject> unitPrefabs,
+        IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
+        BuildingProductionRequestSystem.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
+        BuildingProductionRequestSystem.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystem.SetActivePlacementCostDelegate setActivePlacementCost,
+        EntityManager entityManager = default)
+    {
+        IReadOnlyDictionary<string, GameObject> unitPrefabsByKey = new Dictionary<string, GameObject>();
+        BuildingProductionSystem.QueueContext queueContext = new(
+            unitPrefabs,
+            unitPrefabsByKey,
+            new BuildingProductionSlotSystem(),
+            null,
+            null);
+        var configuredDefinitions = new List<BuildingDefinition>();
+        if (configuredDefinitionsByPrefab != null)
+        {
+            foreach (KeyValuePair<GameObject, BuildingDefinition> pair in configuredDefinitionsByPrefab)
+            {
+                if (pair.Value != null)
+                    configuredDefinitions.Add(pair.Value);
+            }
+        }
+
+        return new BuildingProductionRequestSystem.Context(
+            runtimeBuildings,
+            configuredDefinitions,
+            configuredDefinitionsByPrefab,
+            unitPrefabs,
+            unitPrefabsByKey,
+            100000,
+            productionSystem,
+            queueContext,
+            null,
+            BuildingDefinitionSystem.GetProductionPrefab,
+            null,
+            beginPlacement,
+            trySpendDollars,
+            _ => { },
+            setActivePlacementCost,
+            (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
+                queueContext,
+                building,
+                productionIndex,
+                spawnUnitPrefab,
+                entityManager,
+                10f),
+            _ => { },
+            () => { },
+            () => { },
+            () => { },
+            _ => { },
+            building => building?.Instance != null ? building.Instance.transform.position : Vector3.zero,
+            _ => { },
+            Debug.LogWarning,
+            (_, _) => 0,
+            (_, _) => 0);
+    }
+
+    private static BuildingUiCommandSystem.Context CreateRealCommandContext(
+        BuildingProductionRequestSystem requestSystem,
+        Func<BuildingProductionRequestSystem.Context> createRequestContext)
+    {
+        return new BuildingUiCommandSystem.Context(
+            () => 100000,
+            () => 0,
+            null,
+            () => 0,
+            null,
+            null,
+            (GameObject requestPrefab, int price, out string requiredBuilding) => requestSystem.GetCampRequestFailure(
+                createRequestContext(),
+                requestPrefab,
+                price,
+                out requiredBuilding),
+            (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) => requestSystem.TryRequestCampItem(
+                createRequestContext(),
+                requestPrefab,
+                price,
+                focusProducer,
+                100,
+                out requiredBuilding),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+    }
+
+    private static BuildingUiQuerySystem.Context CreateProductionQueryContext(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        BuildingProductionRequestSystem requestSystem,
+        BuildingProductionSystem productionSystem,
+        Func<BuildingProductionRequestSystem.Context> createRequestContext,
+        EntityManager entityManager)
+    {
+        return new BuildingUiQuerySystem.Context(
+            runtimeBuildings,
+            () => null,
+            (out EntityManager em) =>
+            {
+                em = entityManager;
+                return true;
+            },
+            productionSystem,
+            () => 10f,
+            () => false,
+            () => false,
+            () => string.Empty,
+            () => string.Empty,
+            () => string.Empty,
+            () => string.Empty,
+            (out int current, out int max) =>
+            {
+                current = 0;
+                max = 0;
+                return false;
+            },
+            (out GameObject prefab) =>
+            {
+                prefab = null;
+                return false;
+            },
+            requestSystem,
+            createRequestContext,
+            _ => false,
+            _ => false,
+            (int buildingId, out byte ownerFactionId) =>
+            {
+                ownerFactionId = 0;
+                return false;
+            },
+            _ => false,
+            (Entity unit, out GameObject prefab) =>
+            {
+                prefab = null;
+                return false;
+            });
     }
 
     private static int CountActiveCatalogItemRows(BuildDrawerView view)

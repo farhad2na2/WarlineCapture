@@ -21,6 +21,7 @@ internal sealed class BuildingDefinition
     public Vector2Int FootprintCells;
     public BuildingRole Role;
     public bool IsWall;
+    public float ProductionDurationSeconds;
     public float OilBarrelsPerDay;
     public int OilStorageCapacity;
     public float FuelBarrelsPerDay;

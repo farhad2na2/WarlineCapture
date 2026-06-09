@@ -19,4 +19,5 @@ MonoBehaviour:
   description: Defensive road obstacle used to block routes and slow enemy movement.
   maxHealth: 800
   price: 6000
+  productionDurationSeconds: 30
   productions: []

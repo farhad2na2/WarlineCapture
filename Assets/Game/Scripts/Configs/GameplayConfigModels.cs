@@ -409,7 +409,7 @@ public class StaticGridBlockerAuthoringConfig : ScriptableObject
 [CreateAssetMenu(menuName = "Game/Config/Building Definition Authoring")]
 public class BuildingDefinitionAuthoringConfig : ScriptableObject
 { [SerializeField] private string displayName = "Building";
-    [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
+    [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0.01f)] private float productionDurationSeconds = 30f; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
 
     private void OnValidate()
     {
@@ -427,6 +427,7 @@ public class BuildingDefinitionAuthoringConfig : ScriptableObject
     public bool IsWall => isWall;
     public bool CanRequest => canRequest;
     public int Price => Mathf.Max(0, price);
+    public float ProductionDurationSeconds => Mathf.Max(0.01f, productionDurationSeconds);
     public float OilBarrelsPerDay => Mathf.Max(0f, oilBarrelsPerDay);
     public int OilStorageCapacity => Mathf.Max(0, oilStorageCapacity);
     public float FuelBarrelsPerDay => Mathf.Max(0f, fuelBarrelsPerDay);

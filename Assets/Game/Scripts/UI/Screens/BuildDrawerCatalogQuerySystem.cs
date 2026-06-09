@@ -174,7 +174,7 @@ public sealed class BuildDrawerCatalogQuerySystem
             ResolveBuildingTypeLabel(authoring),
             ResolveBuildingDescription(authoring),
             authoring.ConfiguredPrice,
-            0f,
+            authoring.ConfiguredProductionDurationSeconds,
             authoring.ConfiguredFootprintCells,
             authoring.ConfiguredPortraitSprite,
             authoring.ConfiguredPortraitCardSprite,

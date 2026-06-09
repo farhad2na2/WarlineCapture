@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Shop_Config
   m_EditorClassIdentifier: 
-  portraitSprite: {fileID: 21300000, guid: 683fb84a7fcf49fca92ec3dd3f1d3cee, type: 3}
-  portraitCardSprite: {fileID: 21300000, guid: 5c8f8575d45e4be2ab4a622acbdcdc21, type: 3}
   displayName: Shop
   description: Civilian commercial building used by residents for daily supplies.
+  portraitSprite: {fileID: 21300000, guid: 683fb84a7fcf49fca92ec3dd3f1d3cee, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 5c8f8575d45e4be2ab4a622acbdcdc21, type: 3}
+  portraitActionSprite: {fileID: 0}
   maxHealth: 400
   role: 2
   isWall: 0
-  canRequest: 1
+  canRequest: 0
   price: 14000
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0

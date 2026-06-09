@@ -3896,15 +3896,15 @@ RectTransform:
   m_GameObject: {fileID: 1716324162109426227}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: -1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2761717650000454890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 25}
-  m_SizeDelta: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -83.53427}
+  m_SizeDelta: {x: 0, y: -199.4686}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8553469913948879142
 CanvasRenderer:
@@ -3934,7 +3934,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5fe40f55b3a2b2b4aaf64326c03c1d5e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2627fb9d458bedd4fb7710840b776220, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6797,8 +6797,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 35.929993, y: 16.2}
-  m_SizeDelta: {x: 382.4, y: 118}
+  m_AnchoredPosition: {x: 20.3, y: -5.7400055}
+  m_SizeDelta: {x: 430.4, y: 118}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &7784497033792431750
 CanvasRenderer:
@@ -9966,7 +9966,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: PRODUCTION QUEUE IS EMPTY
+  m_text: NO PRODUCTION QUEUED
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -16203,7 +16203,7 @@ MonoBehaviour:
   itemTemplate: {fileID: -9205153555886113324}
   selectedItemFrameSprite: {fileID: 21300000, guid: 9e20eb184d13c4230895c2edf429e6eb, type: 3}
   previewImage: {fileID: 5866987094321382430}
-  thumbnailImage: {fileID: 8613247941276407181}
+  thumbnailImage: {fileID: 0}
   nameText: {fileID: 6030163123476267040}
   roleText: {fileID: 5303555146183844461}
   descriptionText: {fileID: 3780550838095816822}
@@ -16218,6 +16218,7 @@ MonoBehaviour:
   productionPanel: {fileID: 6350925738255562494}
   productionPanelActive: {fileID: 7669047540276769492}
   noProductionView: {fileID: 3939773894899571655}
+  noProductionText: {fileID: 8110746557981269064}
   queueContentRoot: {fileID: 7571601333741596279}
   queuedItemTemplate: {fileID: -6494335887273454535}
   activeItemView: {fileID: -825715202423557114}

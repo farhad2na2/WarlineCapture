@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEditor;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class BuildDrawerCatalogQuerySystemTests
 {
@@ -57,6 +58,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             RunValidationStep(
                 nameof(BuildDrawerCancelButton_RoutesActiveProductionCancelRequest),
                 test => test.BuildDrawerCancelButton_RoutesActiveProductionCancelRequest(),
+                ref passed);
+            RunValidationStep(
+                nameof(BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail),
+                test => test.BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail(),
                 ref passed);
 
             Debug.Log($"[BuildDrawerCatalogQueryValidation] result=Passed tests={passed}");
@@ -380,10 +385,23 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         unitConfig.UnitSpawnPrefabs.Add(queuedPrefab);
         presenter.ConfigureForTests(view, unitConfig, null);
 
+        SerializedObject viewObject = new SerializedObject(view);
+        GameObject productionPanel = GetSerializedReference<GameObject>(viewObject, "productionPanel");
+        GameObject productionPanelActive = GetSerializedReference<GameObject>(viewObject, "productionPanelActive");
+        GameObject noProductionView = GetSerializedReference<GameObject>(viewObject, "noProductionView");
+        TMP_Text noProductionText = GetSerializedReference<TMP_Text>(viewObject, "noProductionText");
+        Assert.NotNull(productionPanel, "Build drawer must serialize the production panel container.");
+        Assert.NotNull(productionPanelActive, "Build drawer must serialize the active production panel state.");
+        Assert.NotNull(noProductionView, "Build drawer must serialize the empty production panel state.");
+        Assert.NotNull(noProductionText, "Build drawer must serialize the empty production label.");
+
         presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingUiQuerySystem.PendingProductionUiEntry>());
         Assert.IsFalse(view.ActiveItemView.gameObject.activeSelf);
         Assert.IsFalse(view.QueuedItemTemplate.gameObject.activeSelf);
-        Assert.IsTrue(GetSerializedReference<GameObject>(new SerializedObject(view), "noProductionView").activeSelf);
+        Assert.IsTrue(productionPanel.activeSelf, "ProductionPanel should remain visible so the empty state can be shown.");
+        Assert.IsFalse(productionPanelActive.activeSelf);
+        Assert.IsTrue(noProductionView.activeSelf);
+        Assert.AreEqual("NO PRODUCTION QUEUED", noProductionText.text);
 
         List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
         {
@@ -394,12 +412,13 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf);
         Assert.IsTrue(view.QueuedItemTemplate.gameObject.activeSelf);
-        Assert.IsFalse(GetSerializedReference<GameObject>(new SerializedObject(view), "noProductionView").activeSelf);
+        Assert.IsTrue(productionPanel.activeSelf);
+        Assert.IsTrue(productionPanelActive.activeSelf);
+        Assert.IsFalse(noProductionView.activeSelf);
         Assert.AreEqual("Queue Vehicle Active", GetQueueText(view.ActiveItemView, "nameText"));
         Assert.AreEqual("26%", GetQueueText(view.ActiveItemView, "percentageText"));
         Assert.AreEqual("Queue Vehicle Waiting", GetQueueText(view.QueuedItemTemplate, "nameText"));
 
-        SerializedObject viewObject = new SerializedObject(view);
         Assert.AreEqual("26%", GetSerializedReference<TMP_Text>(viewObject, "queuePercentageText").text);
         Assert.AreEqual("01:14", GetSerializedReference<TMP_Text>(viewObject, "queueTimeText").text);
         Assert.AreEqual("2", GetSerializedReference<TMP_Text>(viewObject, "queueNumbersText").text);
@@ -458,6 +477,47 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.AreEqual(3, cancelledPendingIndex);
     }
 
+    [Test]
+    public void BuildDrawerItemSelection_DoesNotMutateFirstCardThumbnail()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+
+        Image detailThumbnail = GetSerializedReference<Image>(new SerializedObject(view), "thumbnailImage");
+        Assert.AreNotSame(view.ItemTemplate.ThumbnailImage, detailThumbnail, "Detail thumbnail must not share the first catalog card thumbnail image.");
+
+        BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
+        Sprite airportSprite = CreateTestSprite(Color.blue);
+        Sprite barracksSprite = CreateTestSprite(Color.red);
+        GameObject airport = CreateBuilding("Airport", true, BuildingRole.MilitaryCamp, false);
+        GameObject barracks = CreateBuilding("Barracks", true, BuildingRole.MilitaryCamp, false);
+        AssignBuildingPortraitSprites(airport, airportSprite);
+        AssignBuildingPortraitSprites(barracks, barracksSprite);
+        buildingConfig.Spawnables.Add(airport);
+        buildingConfig.Spawnables.Add(barracks);
+
+        presenter.ConfigureForTests(view, null, buildingConfig);
+        presenter.RefreshForTests();
+
+        List<BuildDrawerItemView> activeRows = GetActiveCatalogItemRows(view);
+        Assert.GreaterOrEqual(activeRows.Count, 2);
+        Assert.AreSame(airportSprite, activeRows[0].ThumbnailImage.sprite);
+        Assert.AreSame(barracksSprite, activeRows[1].ThumbnailImage.sprite);
+
+        activeRows[1].SelectionButton.onClick.Invoke();
+
+        Assert.AreSame(airportSprite, activeRows[0].ThumbnailImage.sprite, "Selecting another building must not mutate the first card thumbnail.");
+        Assert.AreSame(barracksSprite, activeRows[1].ThumbnailImage.sprite);
+    }
+
     private T CreateAsset<T>() where T : ScriptableObject
     {
         T asset = ScriptableObject.CreateInstance<T>();
@@ -480,6 +540,28 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         serialized.FindProperty("footprintCells").vector2IntValue = new Vector2Int(2, 2);
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return prefab;
+    }
+
+    private void AssignBuildingPortraitSprites(GameObject prefab, Sprite sprite)
+    {
+        BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
+        SerializedObject serialized = new SerializedObject(authoring);
+        serialized.FindProperty("portraitSprite").objectReferenceValue = sprite;
+        serialized.FindProperty("portraitCardSprite").objectReferenceValue = sprite;
+        serialized.FindProperty("portraitActionSprite").objectReferenceValue = sprite;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private Sprite CreateTestSprite(Color color)
+    {
+        Texture2D texture = new Texture2D(2, 2);
+        texture.SetPixels(new[] { color, color, color, color });
+        texture.Apply();
+        _createdObjects.Add(texture);
+
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+        _createdObjects.Add(sprite);
+        return sprite;
     }
 
     private GameObject CreateUnit(string displayName, bool canRequest, bool isAir, Vector2Int footprint, int transportCapacity)

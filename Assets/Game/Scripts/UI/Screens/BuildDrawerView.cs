@@ -38,6 +38,7 @@ public sealed class BuildDrawerView : MonoBehaviour
     [SerializeField] private GameObject productionPanel;
     [SerializeField] private GameObject productionPanelActive;
     [SerializeField] private GameObject noProductionView;
+    [SerializeField] private TMP_Text noProductionText;
     [SerializeField] private RectTransform queueContentRoot;
     [SerializeField] private BuildDrawerQueueItemView queuedItemTemplate;
     [SerializeField] private BuildDrawerQueueItemView activeItemView;
@@ -118,13 +119,16 @@ public sealed class BuildDrawerView : MonoBehaviour
     public void ApplyQueueSummary(bool hasProduction, float progress01, string percentage, string time, string numbers)
     {
         if (productionPanel != null)
-            productionPanel.SetActive(hasProduction);
+            productionPanel.SetActive(true);
 
         if (productionPanelActive != null)
             productionPanelActive.SetActive(hasProduction);
 
         if (noProductionView != null)
             noProductionView.SetActive(!hasProduction);
+
+        if (!hasProduction)
+            SetText(noProductionText, "NO PRODUCTION QUEUED");
 
         if (queueProgressSlider != null)
             queueProgressSlider.value = Mathf.Clamp01(progress01);

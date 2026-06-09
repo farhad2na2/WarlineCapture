@@ -4,19 +4,27 @@ using UnityEngine.Rendering.Universal;
 
 public enum VisualQualityRuntimeMode
 {
-    High = 0,
-    Ultra = 1
+    Low = 0,
+    Medium = 1,
+    High = 2,
+    Ultra = 3
 }
 
 [CreateAssetMenu(menuName = "Game/Rendering/Visual Quality Profile")]
 public sealed class VisualQualityProfileAsset : ScriptableObject
 {
     [SerializeField] private VisualQualityRuntimeMode runtimeMode = VisualQualityRuntimeMode.Ultra;
+    [SerializeField] private UniversalRenderPipelineAsset lowRenderPipelineAsset;
+    [SerializeField] private UniversalRenderPipelineAsset mediumRenderPipelineAsset;
     [SerializeField] private UniversalRenderPipelineAsset renderPipelineAsset;
     [SerializeField] private VolumeProfile globalVolumeProfile;
+    [SerializeField, Range(0.5f, 1f)] private float lowRenderScaleOverride = 0.72f;
+    [SerializeField, Range(0.5f, 1f)] private float mediumRenderScaleOverride = 0.9f;
     [SerializeField] private bool enableCameraPostProcessing = true;
     [SerializeField] private AntialiasingMode cameraAntialiasingMode = AntialiasingMode.FastApproximateAntialiasing;
     [SerializeField, Min(0f)] private float cameraRenderScaleOverride = 1f;
+    [SerializeField, Range(0f, 1f)] private float lowSunShadowStrength = 0.25f;
+    [SerializeField, Range(0f, 1f)] private float mediumSunShadowStrength = 0.55f;
     [SerializeField] private Color premiumSunColor = new(1f, 0.78f, 0.48f, 1f);
     [SerializeField, Range(0f, 8f)] private float premiumSunIntensity = 3.2f;
     [SerializeField, Range(0f, 1f)] private float premiumSunShadowStrength = 0.88f;
@@ -29,12 +37,18 @@ public sealed class VisualQualityProfileAsset : ScriptableObject
     [SerializeField, Range(0f, 0.05f)] private float premiumFogDensity = 0.0085f;
 
     public VisualQualityRuntimeMode RuntimeMode => runtimeMode;
+    public UniversalRenderPipelineAsset LowRenderPipelineAsset => lowRenderPipelineAsset;
+    public UniversalRenderPipelineAsset MediumRenderPipelineAsset => mediumRenderPipelineAsset;
     public UniversalRenderPipelineAsset RenderPipelineAsset => renderPipelineAsset;
     public VolumeProfile GlobalVolumeProfile => globalVolumeProfile;
+    public float LowRenderScaleOverride => lowRenderScaleOverride;
+    public float MediumRenderScaleOverride => mediumRenderScaleOverride;
     public bool EnableCameraPostProcessing => enableCameraPostProcessing;
     public AntialiasingMode CameraAntialiasingMode => cameraAntialiasingMode;
     public float CameraRenderScaleOverride => cameraRenderScaleOverride;
     public bool HasCameraRenderScaleOverride => cameraRenderScaleOverride > 0f;
+    public float LowSunShadowStrength => lowSunShadowStrength;
+    public float MediumSunShadowStrength => mediumSunShadowStrength;
     public Color PremiumSunColor => premiumSunColor;
     public float PremiumSunIntensity => premiumSunIntensity;
     public float PremiumSunShadowStrength => premiumSunShadowStrength;
@@ -45,10 +59,6 @@ public sealed class VisualQualityProfileAsset : ScriptableObject
     public bool EnablePremiumFog => enablePremiumFog;
     public Color PremiumFogColor => premiumFogColor;
     public float PremiumFogDensity => premiumFogDensity;
-
-    public UIGraphicsQuality Quality => runtimeMode == VisualQualityRuntimeMode.Ultra
-        ? UIGraphicsQuality.Ultra
-        : UIGraphicsQuality.High;
 
     public bool UsePremiumProfile => runtimeMode == VisualQualityRuntimeMode.Ultra;
 }

@@ -27,8 +27,16 @@ public sealed class VisualQualitySettingsSystem : IDisposable
     private bool _originalCameraPostProcessing;
     private AntialiasingMode _originalCameraAntialiasing;
     private bool _hasOriginalCameraData;
+    private float _originalLowRenderScale;
+    private float _originalMediumRenderScale;
+    private float _originalPremiumRenderScale;
+    private bool _hasOriginalLowRenderScale;
+    private bool _hasOriginalMediumRenderScale;
+    private bool _hasOriginalPremiumRenderScale;
+    private VisualQualityRuntimeMode _appliedMode;
+    private bool _hasAppliedMode;
     private bool _initialized;
-    private bool _premiumApplied;
+    private bool _overrideApplied;
 
     public void Initialize(VisualQualityProfileAsset premiumProfile, Camera worldCamera, Light directionalLight, Volume globalVolume)
     {
@@ -49,6 +57,27 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         _originalFogColor = RenderSettings.fogColor;
         _originalFogDensity = RenderSettings.fogDensity;
 
+        if (premiumProfile != null)
+        {
+            if (premiumProfile.LowRenderPipelineAsset != null)
+            {
+                _originalLowRenderScale = premiumProfile.LowRenderPipelineAsset.renderScale;
+                _hasOriginalLowRenderScale = true;
+            }
+
+            if (premiumProfile.MediumRenderPipelineAsset != null)
+            {
+                _originalMediumRenderScale = premiumProfile.MediumRenderPipelineAsset.renderScale;
+                _hasOriginalMediumRenderScale = true;
+            }
+
+            if (premiumProfile.RenderPipelineAsset != null)
+            {
+                _originalPremiumRenderScale = premiumProfile.RenderPipelineAsset.renderScale;
+                _hasOriginalPremiumRenderScale = true;
+            }
+        }
+
         if (directionalLight != null)
         {
             _originalSunColor = directionalLight.color;
@@ -66,7 +95,7 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         }
 
         _initialized = true;
-        Apply(_premiumProfile != null ? _premiumProfile.Quality : UIGraphicsQuality.High);
+        Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
     }
 
     public void Update()
@@ -74,7 +103,7 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         if (!_initialized)
             return;
 
-        Apply(_premiumProfile != null ? _premiumProfile.Quality : UIGraphicsQuality.High);
+        Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
     }
 
     public void Dispose()
@@ -91,29 +120,110 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         _originalVolumeProfile = null;
         _hasOriginalSunData = false;
         _hasOriginalCameraData = false;
+        _hasOriginalLowRenderScale = false;
+        _hasOriginalMediumRenderScale = false;
+        _hasOriginalPremiumRenderScale = false;
+        _hasAppliedMode = false;
         _initialized = false;
-        _premiumApplied = false;
+        _overrideApplied = false;
     }
 
-    private void Apply(UIGraphicsQuality quality)
+    private void Apply(VisualQualityRuntimeMode mode)
     {
         if (!_initialized)
             return;
 
-        if (quality == UIGraphicsQuality.Ultra)
+        if (!_hasAppliedMode || _appliedMode != mode)
         {
-            ApplyPremiumProfile();
-            return;
+            RestoreBaseline();
+            ApplyModeStaticSettings(mode);
+            _appliedMode = mode;
+            _hasAppliedMode = true;
         }
 
-        RestoreBaseline();
+        ApplyModeDynamicSettings(mode);
     }
 
-    private void ApplyPremiumProfile()
+    private void ApplyModeStaticSettings(VisualQualityRuntimeMode mode)
     {
         if (_premiumProfile == null)
             return;
 
+        switch (mode)
+        {
+            case VisualQualityRuntimeMode.Low:
+                ApplyLowStaticSettings();
+                break;
+            case VisualQualityRuntimeMode.Medium:
+                ApplyMediumStaticSettings();
+                break;
+            case VisualQualityRuntimeMode.Ultra:
+                ApplyUltraStaticSettings();
+                break;
+        }
+    }
+
+    private void ApplyModeDynamicSettings(VisualQualityRuntimeMode mode)
+    {
+        if (_premiumProfile == null)
+            return;
+
+        switch (mode)
+        {
+            case VisualQualityRuntimeMode.Low:
+                ApplyMobileDynamicSettings(_premiumProfile.LowSunShadowStrength);
+                break;
+            case VisualQualityRuntimeMode.Medium:
+                ApplyMobileDynamicSettings(_premiumProfile.MediumSunShadowStrength);
+                break;
+            case VisualQualityRuntimeMode.Ultra:
+                ApplyUltraDynamicSettings();
+                break;
+        }
+    }
+
+    private void ApplyLowStaticSettings()
+    {
+        if (_premiumProfile.LowRenderPipelineAsset != null)
+        {
+            QualitySettings.renderPipeline = _premiumProfile.LowRenderPipelineAsset;
+            _premiumProfile.LowRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.LowRenderScaleOverride, 0.5f, 1f);
+        }
+
+        if (_globalVolume != null)
+            _globalVolume.sharedProfile = _originalVolumeProfile;
+
+        if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
+        {
+            cameraData.renderPostProcessing = false;
+            cameraData.antialiasing = AntialiasingMode.None;
+        }
+
+        _overrideApplied = true;
+    }
+
+    private void ApplyMediumStaticSettings()
+    {
+        if (_premiumProfile.MediumRenderPipelineAsset != null)
+        {
+            QualitySettings.renderPipeline = _premiumProfile.MediumRenderPipelineAsset;
+            _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, 0.5f, 1f);
+        }
+
+        if (_globalVolume != null)
+            _globalVolume.sharedProfile = _originalVolumeProfile;
+
+        if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
+        {
+            cameraData.renderPostProcessing = false;
+            cameraData.antialiasing = AntialiasingMode.FastApproximateAntialiasing;
+        }
+
+        _overrideApplied = true;
+    }
+
+    private void ApplyUltraStaticSettings()
+    {
         if (_premiumProfile.RenderPipelineAsset != null)
         {
             QualitySettings.renderPipeline = _premiumProfile.RenderPipelineAsset;
@@ -133,6 +243,28 @@ public sealed class VisualQualitySettingsSystem : IDisposable
             cameraData.antialiasing = _premiumProfile.CameraAntialiasingMode;
         }
 
+        _overrideApplied = true;
+    }
+
+    private void ApplyMobileDynamicSettings(float shadowStrength)
+    {
+        if (_hasOriginalSunData && _directionalLight != null)
+        {
+            _directionalLight.color = _originalSunColor;
+            _directionalLight.intensity = _originalSunIntensity;
+            _directionalLight.shadowStrength = shadowStrength;
+            _directionalLight.transform.rotation = _originalSunRotation;
+        }
+
+        RenderSettings.ambientMode = _originalAmbientMode;
+        RenderSettings.ambientSkyColor = _originalAmbientSkyColor;
+        RenderSettings.ambientEquatorColor = _originalAmbientEquatorColor;
+        RenderSettings.ambientGroundColor = _originalAmbientGroundColor;
+        RenderSettings.fog = false;
+    }
+
+    private void ApplyUltraDynamicSettings()
+    {
         if (_directionalLight != null)
         {
             _directionalLight.color = _premiumProfile.PremiumSunColor;
@@ -149,16 +281,15 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         RenderSettings.fogMode = FogMode.ExponentialSquared;
         RenderSettings.fogColor = _premiumProfile.PremiumFogColor;
         RenderSettings.fogDensity = _premiumProfile.PremiumFogDensity;
-
-        _premiumApplied = true;
     }
 
     private void RestoreBaseline()
     {
-        if (!_premiumApplied)
+        if (!_overrideApplied)
             return;
 
         QualitySettings.renderPipeline = _originalRenderPipeline;
+        RestoreRenderPipelineAssetScales();
 
         if (_globalVolume != null)
             _globalVolume.sharedProfile = _originalVolumeProfile;
@@ -186,6 +317,21 @@ public sealed class VisualQualitySettingsSystem : IDisposable
             cameraData.antialiasing = _originalCameraAntialiasing;
         }
 
-        _premiumApplied = false;
+        _overrideApplied = false;
+    }
+
+    private void RestoreRenderPipelineAssetScales()
+    {
+        if (_premiumProfile == null)
+            return;
+
+        if (_hasOriginalLowRenderScale && _premiumProfile.LowRenderPipelineAsset != null)
+            _premiumProfile.LowRenderPipelineAsset.renderScale = _originalLowRenderScale;
+
+        if (_hasOriginalMediumRenderScale && _premiumProfile.MediumRenderPipelineAsset != null)
+            _premiumProfile.MediumRenderPipelineAsset.renderScale = _originalMediumRenderScale;
+
+        if (_hasOriginalPremiumRenderScale && _premiumProfile.RenderPipelineAsset != null)
+            _premiumProfile.RenderPipelineAsset.renderScale = _originalPremiumRenderScale;
     }
 }

@@ -13,6 +13,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private MainMenuPlayUI _mainMenuPlayUi;
+    private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private GameObject _buildDrawerPopupInstance;
     private int _contentVersion;
 
@@ -62,15 +63,32 @@ public sealed class UIShellContentView : MonoBehaviour
         }
     }
 
-    public void BindGameplayRuntimeDependencies(SelectionUiCommandSystem selectionUiCommandSystem, MainMenuPlayUI mainMenuPlayUi = null)
+    public void BindGameplayRuntimeDependencies(
+        SelectionUiCommandSystem selectionUiCommandSystem,
+        MainMenuPlayUI mainMenuPlayUi = null,
+        System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel = null)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _mainMenuPlayUi = mainMenuPlayUi;
+        _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindMatchHudSelectionPanelInRegion();
         BindMatchHudCommandControlsInRegion();
         BindMatchHudRuntimeFeedbackInRegion();
         BindMatchHudMinimapInRegion();
         BindMatchHudSquadTrayInRegion();
+    }
+
+    public bool TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView view)
+    {
+        view = null;
+        if (!TryGetRegionContentRoot(UIShellRegionId.LeftRegion, out RectTransform contentRoot) ||
+            contentRoot.childCount == 0)
+        {
+            return false;
+        }
+
+        view = contentRoot.GetChild(0).GetComponent<MatchHudSelectionPanelView>();
+        return view != null;
     }
 
     private void InstallLoading()
@@ -164,6 +182,7 @@ public sealed class UIShellContentView : MonoBehaviour
         MatchHudSelectionPanelView view = leftContent.GetComponent<MatchHudSelectionPanelView>();
         view?.HideSelection();
         _mainMenuPlayUi?.BindMatchHudSelectionPanel(view);
+        _bindMatchHudSelectionPanel?.Invoke(view);
     }
 
     private void BindMatchHudCommandControlsInRegion()
@@ -173,11 +192,14 @@ public sealed class UIShellContentView : MonoBehaviour
 
         MatchOverlayCommandControlsView view = contentRoot.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
         if (view != null)
+        {
             _matchOverlayCommandInputSystem.Bind(
                 view,
                 _selectionUiCommandSystem,
                 () => InstallBuildDrawerPopup(),
                 CloseBuildDrawerPopup);
+            _mainMenuPlayUi?.BindMatchHudCommandControls(view);
+        }
     }
 
     private void BindMatchHudRuntimeFeedbackInRegion()
@@ -217,11 +239,14 @@ public sealed class UIShellContentView : MonoBehaviour
 
         MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
         if (view != null)
+        {
             _matchOverlayCommandInputSystem.Bind(
                 view,
                 _selectionUiCommandSystem,
                 () => InstallBuildDrawerPopup(),
                 CloseBuildDrawerPopup);
+            _mainMenuPlayUi?.BindMatchHudCommandControls(view);
+        }
     }
 
     private static void BindMatchHudRuntimeFeedback(GameObject footer)

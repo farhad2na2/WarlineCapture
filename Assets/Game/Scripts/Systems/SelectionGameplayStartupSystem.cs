@@ -3,6 +3,7 @@ using Game.Scripts.UI;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 internal sealed class SelectionGameplayStartupSystem
@@ -10,6 +11,7 @@ internal sealed class SelectionGameplayStartupSystem
     public readonly struct Result
     {
         public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
+        public readonly System.Action<MatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandSystem SelectionUiCommand;
@@ -21,6 +23,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         public Result(
             System.Action<MainMenuPlayUI> bindSelectionMainMenu,
+            System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
             SelectionUiCommandSystem selectionUiCommand,
@@ -31,6 +34,7 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionRectangleView selectionRectangleView)
         {
             BindSelectionMainMenu = bindSelectionMainMenu;
+            BindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
             SelectionRuntimeUpdate = selectionRuntimeUpdate;
             DisposeSelection = disposeSelection;
             SelectionUiCommand = selectionUiCommand;
@@ -127,6 +131,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         return new Result(
             BindSelectionMainMenu,
+            BindMatchHudSelectionPanel,
             UpdateSelectionRuntimePhases,
             selectionOrderMarkerSystem.Dispose,
             selectionUiCommand,
@@ -836,7 +841,9 @@ internal sealed class SelectionGameplayStartupSystem
         bool IsPointerOverGameplayUi(Vector2 screenPosition, out string source)
         {
             if (mainMenuPlayUi != null)
+            {
                 return mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source);
+            }
 
             return IsPointerOverUI(screenPosition, out source);
         }
@@ -845,6 +852,30 @@ internal sealed class SelectionGameplayStartupSystem
     private static bool IsPointerOverUI(Vector2 screenPosition, out string source)
     {
         source = null;
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null)
+            return false;
+
+        var pointerData = new PointerEventData(eventSystem)
+        {
+            position = screenPosition
+        };
+        var results = new List<RaycastResult>();
+        eventSystem.RaycastAll(pointerData, results);
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            RaycastResult result = results[i];
+            if (result.gameObject == null || !result.gameObject.activeInHierarchy)
+                continue;
+
+            if (result.module is not UnityEngine.UI.GraphicRaycaster)
+                continue;
+
+            source = result.gameObject.name;
+            return true;
+        }
+
         return false;
     }
 

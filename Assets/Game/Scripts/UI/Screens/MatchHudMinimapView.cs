@@ -32,6 +32,17 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     public event Action<Vector2> FocusRequested;
     public event Action<int, bool> ZoomHeldChanged;
 
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        Camera eventCamera = ResolveEventCamera();
+        RectTransform rect = MapRect;
+        if (rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera))
+            return true;
+
+        return ContainsButton(zoomInButton, screenPosition, eventCamera) ||
+               ContainsButton(zoomOutButton, screenPosition, eventCamera);
+    }
+
     private void Awake()
     {
         EnsureZoomRelay(zoomInButton, 1);
@@ -135,6 +146,23 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
         parentRect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         return true;
+    }
+
+    private Camera ResolveEventCamera()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            return null;
+
+        return canvas.worldCamera;
+    }
+
+    private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)
+    {
+        RectTransform rect = button != null ? button.transform as RectTransform : null;
+        return rect != null &&
+               button.gameObject.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
     }
 
     private static bool IsFinite(float value)

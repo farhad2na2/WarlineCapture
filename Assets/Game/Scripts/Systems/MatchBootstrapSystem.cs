@@ -108,6 +108,7 @@ internal sealed class MatchBootstrapSystem
     private Action<MainMenuPlayUI> _bindBuildingMainMenu;
     private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<MainMenuPlayUI> _bindSelectionMainMenu;
+    private Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
     private Action _citizenPopulationRuntimeUpdate;
     private Action _disposeCitizenPopulation;
@@ -119,8 +120,14 @@ internal sealed class MatchBootstrapSystem
     private Entity _buildingRuntimeBoundaryEntity;
     private PerformanceDiagnosticsSystem _performanceDiagnosticsSystem;
     private bool _mainMenuBaseBindingsApplied;
+    private bool _mainMenuRoadBindingApplied;
+    private bool _mainMenuBuildingBindingApplied;
+    private bool _mainMenuSelectionBindingApplied;
     private RuntimeGridBlockerSystem _mainMenuFeatureBoundGridBlockers;
     private RuntimeCityCompositionSystem _mainMenuFeatureBoundRuntimeCity;
+    private MatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
+    private MatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
+    private MatchHudSelectionPanelView _deferredMatchHudSelectionPanelView;
     private bool _gameplayStartPending;
     private bool _gameplayStartRequested;
     private bool _gameplayStartComplete;
@@ -257,6 +264,9 @@ internal sealed class MatchBootstrapSystem
 
         MainMenu = null;
         _mainMenuBaseBindingsApplied = false;
+        _mainMenuRoadBindingApplied = false;
+        _mainMenuBuildingBindingApplied = false;
+        _mainMenuSelectionBindingApplied = false;
         _mainMenuFeatureBoundGridBlockers = null;
         _mainMenuFeatureBoundRuntimeCity = null;
         SelectionUiCommand = null;
@@ -284,6 +294,7 @@ internal sealed class MatchBootstrapSystem
         _bindBuildingMainMenu = null;
         _bindBuildingGameplayFeatures = null;
         _bindSelectionMainMenu = null;
+        _bindMatchHudSelectionPanel = null;
         _selectionRuntimeUpdate = null;
         _citizenPopulationRuntimeUpdate = null;
         _disposeCitizenPopulation = null;
@@ -298,6 +309,9 @@ internal sealed class MatchBootstrapSystem
         UnitAttackTraces = null;
         UnitImpostors = null;
         DayNight = null;
+        _pendingMatchHudSelectionPanelView = null;
+        _boundMatchHudSelectionPanelView = null;
+        _deferredMatchHudSelectionPanelView = null;
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
         RuntimeCity = null;
@@ -472,15 +486,53 @@ internal sealed class MatchBootstrapSystem
         return MainMenu;
     }
 
-    private void ApplyMainMenuBaseBindings()
+    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
     {
-        if (_mainMenuBaseBindingsApplied || MainMenu == null)
+        _pendingMatchHudSelectionPanelView = view;
+        if (_bindMatchHudSelectionPanel == null)
+        {
+            if (_deferredMatchHudSelectionPanelView == view)
+                return;
+
+            _deferredMatchHudSelectionPanelView = view;
+            return;
+        }
+
+        if (_boundMatchHudSelectionPanelView == view)
             return;
 
-        _bindRoadMainMenu?.Invoke(MainMenu);
-        _bindBuildingMainMenu?.Invoke(MainMenu);
-        _bindSelectionMainMenu?.Invoke(MainMenu);
-        _mainMenuBaseBindingsApplied = true;
+        _bindMatchHudSelectionPanel.Invoke(view);
+        _boundMatchHudSelectionPanelView = view;
+        _deferredMatchHudSelectionPanelView = null;
+    }
+
+    private void ApplyMainMenuBaseBindings()
+    {
+        if (MainMenu == null)
+            return;
+
+        if (!_mainMenuRoadBindingApplied && _bindRoadMainMenu != null)
+        {
+            _bindRoadMainMenu.Invoke(MainMenu);
+            _mainMenuRoadBindingApplied = true;
+        }
+
+        if (!_mainMenuBuildingBindingApplied && _bindBuildingMainMenu != null)
+        {
+            _bindBuildingMainMenu.Invoke(MainMenu);
+            _mainMenuBuildingBindingApplied = true;
+        }
+
+        if (!_mainMenuSelectionBindingApplied && _bindSelectionMainMenu != null)
+        {
+            _bindSelectionMainMenu.Invoke(MainMenu);
+            _mainMenuSelectionBindingApplied = true;
+        }
+
+        _mainMenuBaseBindingsApplied =
+            _mainMenuRoadBindingApplied &&
+            _mainMenuBuildingBindingApplied &&
+            _mainMenuSelectionBindingApplied;
     }
 
     private void ApplyMainMenuFeatureBindingsIfReady()
@@ -841,6 +893,12 @@ internal sealed class MatchBootstrapSystem
         _bindBuildingMainMenu = managedSystems.BindBuildingMainMenu;
         _bindBuildingGameplayFeatures = managedSystems.BindBuildingGameplayFeatures;
         _bindSelectionMainMenu = managedSystems.BindSelectionMainMenu;
+        _bindMatchHudSelectionPanel = managedSystems.BindMatchHudSelectionPanel;
+        _mainMenuBaseBindingsApplied = false;
+        _mainMenuRoadBindingApplied = false;
+        _mainMenuBuildingBindingApplied = false;
+        _mainMenuSelectionBindingApplied = false;
+        _boundMatchHudSelectionPanelView = null;
         _selectionRuntimeUpdate = managedSystems.SelectionRuntimeUpdate;
         _disposeSelection = managedSystems.DisposeSelection;
         _disposeBuildingGameplay = managedSystems.DisposeBuildingGameplay;
@@ -863,6 +921,14 @@ internal sealed class MatchBootstrapSystem
         EnsureBuildingRuntimeBoundaryEntity();
         _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
+        if (MainMenu != null)
+        {
+            MainMenu.Init(SelectionUiCommand, DayNight, SelectionUiCamera, resetRuntimeState: false);
+            ApplyMainMenuBaseBindings();
+        }
+
+        if (_pendingMatchHudSelectionPanelView != null)
+            BindMatchHudSelectionPanel(_pendingMatchHudSelectionPanelView);
     }
 
     private void InitializeVisualQualitySettingsIfNeeded()

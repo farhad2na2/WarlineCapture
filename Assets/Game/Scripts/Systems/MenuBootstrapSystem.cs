@@ -348,6 +348,9 @@ internal sealed class MenuBootstrapSystem
 
         MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
         MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
+        if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
+            matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
+
         SelectionUiCommandSystem selectionUiCommand = matchBootstrap.SelectionUiCommand;
         if (selectionUiCommand == null)
             return;
@@ -361,7 +364,10 @@ internal sealed class MenuBootstrapSystem
             return;
         }
 
-        view.ContentSystem.BindGameplayRuntimeDependencies(selectionUiCommand, mainMenu);
+        view.ContentSystem.BindGameplayRuntimeDependencies(
+            selectionUiCommand,
+            mainMenu,
+            matchBootstrap.BindMatchHudSelectionPanel);
         boundMatchRuntimeView = matchScene;
         boundSelectionUiCommand = selectionUiCommand;
         boundMainMenu = mainMenu;

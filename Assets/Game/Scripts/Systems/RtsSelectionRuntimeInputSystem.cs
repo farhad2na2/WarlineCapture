@@ -229,7 +229,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         bool pointerOverBlockingUi = runtime.PlayRequested ? pointerOverGameplayUi : (pointerOverAnyUi || pointerOverGameplayUi);
         context.LogClickDiagnostic?.Invoke(
             $"press pos={pointerPosition} frame={Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} blockingUi={pointerOverBlockingUi}");
-        input.BeginPointerPress(pointerPosition, !runtime.PlayRequested && pointerOverBlockingUi);
+        input.BeginPointerPress(pointerPosition, pointerOverBlockingUi);
         context.SetCameraDragging?.Invoke(false);
 
         if (runtime.SelectionModeActive)
@@ -249,7 +249,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         }
         else
         {
-            context.SetCameraDragging?.Invoke(true);
+            context.SetCameraDragging?.Invoke(false);
         }
     }
 

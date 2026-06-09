@@ -17,6 +17,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
     private World _world;
     private World _previousWorld;
     private GameObject _overlay;
+    private readonly List<GameObject> _createdObjects = new();
 
     [SetUp]
     public void SetUp()
@@ -36,6 +37,9 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
     {
         if (_overlay != null)
             Object.DestroyImmediate(_overlay);
+        for (int i = 0; i < _createdObjects.Count; i++)
+            Object.DestroyImmediate(_createdObjects[i]);
+        _createdObjects.Clear();
 
         if (_world != null && _world.IsCreated)
             _world.Dispose();
@@ -108,6 +112,27 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         Assert.IsFalse(
             markerLayer.gameObject.activeSelf,
             "Live gameplay must not surface fixed screen-space marker preview art over scripted-start units.");
+    }
+
+    [Test]
+    public void SelectionHudFeedback_ActivatesMatchHudSelectedSquadPanelDirectly()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity unit = CreatePlayerUnit(em, "Echo Squad", new int2(8, 9), 96);
+        var panelRoot = new GameObject("SelectedSquadPanel");
+        var panelHost = new GameObject("MatchHudSelectionPanel");
+        _createdObjects.Add(panelRoot);
+        _createdObjects.Add(panelHost);
+        panelRoot.SetActive(false);
+        var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
+        SetPrivateField(panel, "selectedSquadPanel", panelRoot);
+
+        var feedback = new SelectionHudFeedbackSystem();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        feedback.ApplySelection(em, unit, new SelectionUiQuerySystem());
+
+        Assert.IsTrue(panelRoot.activeSelf);
     }
 
     [Test]
@@ -484,6 +509,15 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(awake);
         awake.Invoke(component, null);
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        FieldInfo field = target.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, $"Missing private field {fieldName} on {target.GetType().Name}.");
+        field.SetValue(target, value);
     }
 
     private void AssertText(string path, string expected)

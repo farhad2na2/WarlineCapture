@@ -12,11 +12,6 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         HideSelection();
     }
 
-    private void OnEnable()
-    {
-        HideSelection();
-    }
-
     public void ShowSelection()
     {
         SetSelectionVisible(true);

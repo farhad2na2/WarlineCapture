@@ -26,4 +26,38 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
+
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        Camera eventCamera = ResolveEventCamera();
+        RectTransform root = transform as RectTransform;
+        if (root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera))
+            return true;
+
+        return ContainsButton(selectButton, screenPosition, eventCamera) ||
+               ContainsButton(moveButton, screenPosition, eventCamera) ||
+               ContainsButton(attackButton, screenPosition, eventCamera) ||
+               ContainsButton(scanButton, screenPosition, eventCamera) ||
+               ContainsButton(buildButton, screenPosition, eventCamera) ||
+               ContainsButton(holdButton, screenPosition, eventCamera) ||
+               ContainsButton(stopButton, screenPosition, eventCamera) ||
+               ContainsButton(commandWheelStopButton, screenPosition, eventCamera);
+    }
+
+    private Camera ResolveEventCamera()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            return null;
+
+        return canvas.worldCamera;
+    }
+
+    private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)
+    {
+        RectTransform rect = button != null ? button.transform as RectTransform : null;
+        return rect != null &&
+               button.gameObject.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
+    }
 }

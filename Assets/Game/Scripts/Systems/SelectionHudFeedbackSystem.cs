@@ -38,7 +38,6 @@ public sealed class SelectionHudFeedbackSystem
     public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
     {
         _matchHudSelectionPanelView = view;
-        _matchHudSelectionPanelView?.HideSelection();
     }
 
     public Entity EnsureFeedbackQueue(EntityManager em)
@@ -162,8 +161,10 @@ public sealed class SelectionHudFeedbackSystem
 
     public void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
     {
+        bool validSelection = entity != Entity.Null && em.Exists(entity);
         QueueSelection(em, entity, selectionUiQuerySystem);
         ProcessPendingFeedback(em);
+        _matchHudSelectionPanelView?.SetSelectionVisible(validSelection);
     }
 
     public void ApplySelection(Context context, EntityManager em, Entity entity)
@@ -174,15 +175,17 @@ public sealed class SelectionHudFeedbackSystem
 
     private void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem, Sprite portraitSprite)
     {
+        bool validSelection = entity != Entity.Null && em.Exists(entity);
         QueueSelection(em, entity, selectionUiQuerySystem);
         ProcessPendingFeedback(em);
-        _matchHudSelectionPanelView?.SetSelectionPortrait(portraitSprite);
+        _matchHudSelectionPanelView?.SetSelectionVisible(validSelection, portraitSprite);
     }
 
     public void ApplySquadSelection(EntityManager em, int selectedCount)
     {
         QueueSquadSelection(em, selectedCount);
         ProcessPendingFeedback(em);
+        _matchHudSelectionPanelView?.SetSelectionVisible(selectedCount > 0);
     }
 
     public void ApplySquadSelection(Context context, int selectedCount)
@@ -202,6 +205,7 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearSelection(em);
         ProcessPendingFeedback(em);
+        _matchHudSelectionPanelView?.SetSelectionVisible(false);
     }
 
     public void ClearSelection(Context context)

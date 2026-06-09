@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -26,6 +29,10 @@ public sealed class UIShellCurrentContentLoadTests
             RunValidationStep(
                 nameof(InstalledMatchHudCommandControlsRebindWhenRuntimeDependenciesArrive),
                 test => test.InstalledMatchHudCommandControlsRebindWhenRuntimeDependenciesArrive(),
+                ref passed);
+            RunValidationStep(
+                nameof(InstalledMatchHudSelectionPanelActivatesThroughRuntimeBinding),
+                test => test.InstalledMatchHudSelectionPanelActivatesThroughRuntimeBinding(),
                 ref passed);
             RunValidationStep(
                 nameof(ReinstalledMatchHudCommandControlsKeepRuntimeDependencies),
@@ -144,6 +151,42 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
         Assert.AreEqual(1, requests.Length, "Move click must queue after runtime dependencies arrive after HUD install.");
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void InstalledMatchHudSelectionPanelActivatesThroughRuntimeBinding()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        GameObject matchLeft = AssertRegionHasChild(content.ShellView, UIShellRegionId.LeftRegion);
+        MatchHudSelectionPanelView selectionPanelView = matchLeft.GetComponent<MatchHudSelectionPanelView>();
+        Assert.NotNull(selectionPanelView, "Installed Match HUD left region must own MatchHudSelectionPanelView.");
+
+        Transform selectedPanel = matchLeft.transform.Find("SelectedSquadPanel");
+        Assert.NotNull(selectedPanel, "Installed Match HUD must contain SelectedSquadPanel under LeftContent.");
+
+        var feedback = new SelectionHudFeedbackSystem();
+        content.BindGameplayRuntimeDependencies(
+            new SelectionUiCommandSystem(),
+            null,
+            feedback.BindMatchHudSelectionPanel);
+        Assert.IsFalse(selectedPanel.gameObject.activeSelf, "Runtime binding should start with the selection panel hidden.");
+
+        Entity unit = CreatePlayerUnit(_world.EntityManager, "Echo Squad", new int2(8, 9), 96);
+        feedback.ApplySelection(_world.EntityManager, unit, new SelectionUiQuerySystem());
+
+        Assert.IsTrue(selectedPanel.gameObject.activeSelf, "Selecting a valid unit must activate the active Match HUD SelectedSquadPanel.");
     }
 
     [Test]
@@ -277,6 +320,28 @@ public sealed class UIShellCurrentContentLoadTests
             out _,
             out requests,
             out DynamicBuffer<RtsSelectionCommandResultElement> _);
+    }
+
+    private static Entity CreatePlayerUnit(EntityManager em, string displayName, int2 cell, int health)
+    {
+        Entity entity = em.CreateEntity();
+        em.AddComponentData(entity, new Faction { Id = 0 });
+        em.AddComponentData(entity, new UnitGrid { Cell = cell });
+        em.AddComponentData(entity, new UnitHealth { Current = health, Max = 100 });
+        em.AddComponentData(entity, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes(displayName),
+            Description = new FixedString128Bytes("Runtime feedback system test unit")
+        });
+        em.AddComponentData(entity, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 5f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        em.AddComponentData(entity, LocalTransform.FromPosition(new float3(cell.x, 0f, cell.y)));
+        return entity;
     }
 
     private static void RunValidationStep(

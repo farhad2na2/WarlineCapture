@@ -218,7 +218,14 @@ internal sealed class BuildingUiContextSystem
             return false;
         }
 
-        return source.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex);
+        if (!source.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex))
+            return false;
+
+        source.ProductionSystem.RebuildPendingProductionTimeline(
+            building.PendingProductions,
+            source.GetNow?.Invoke() ?? Time.time,
+            preserveActiveProgress: pendingProductionIndex > 0);
+        return true;
     }
 
     public BuildingUiQuerySystem.Context CreateQueryContext(Source source)

@@ -405,7 +405,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         }
 
         BuildingUiQuerySystem.PendingProductionUiEntry active = _pendingProductions[0];
-        BindQueueItem(activeItem, active);
+        BindQueueItem(activeItem, active, 1);
         if (activeItem != null)
             activeItem.gameObject.SetActive(true);
 
@@ -413,7 +413,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         {
             if (_pendingProductions.Count > 1)
             {
-                BindQueueItem(queuedTemplate, _pendingProductions[1]);
+                BindQueueItem(queuedTemplate, _pendingProductions[1], 2);
                 queuedTemplate.gameObject.SetActive(true);
             }
             else
@@ -425,7 +425,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             {
                 BuildDrawerQueueItemView item = Instantiate(queuedTemplate, view.QueueContentRoot, false);
                 item.gameObject.name = $"ProductionItemView - {ResolveQueueDisplayName(_pendingProductions[i])}";
-                BindQueueItem(item, _pendingProductions[i]);
+                BindQueueItem(item, _pendingProductions[i], i + 1);
                 item.gameObject.SetActive(true);
                 _runtimeQueueItems.Add(item);
             }
@@ -649,12 +649,13 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         view.ApplySecondaryQueueControls(false, false, false);
     }
 
-    private void BindQueueItem(BuildDrawerQueueItemView item, BuildingUiQuerySystem.PendingProductionUiEntry entry)
+    private void BindQueueItem(BuildDrawerQueueItemView item, BuildingUiQuerySystem.PendingProductionUiEntry entry, int queueNumber)
     {
         if (item == null)
             return;
 
         item.Bind(
+            queueNumber,
             ResolveQueueDisplayName(entry),
             string.IsNullOrWhiteSpace(entry.ProducerDisplayName) ? $"Building {entry.BuildingId}" : entry.ProducerDisplayName,
             FormatRemaining(entry.RemainingSeconds),

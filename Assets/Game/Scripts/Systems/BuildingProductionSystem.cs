@@ -145,6 +145,7 @@ public sealed class BuildingProductionSystem
             transportSettings.Mode,
             transportSettings.RequiresAirportRunway);
         building.PendingProductions.Add(queuedProduction);
+        RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
         return true;
     }
 
@@ -312,6 +313,38 @@ public sealed class BuildingProductionSystem
         return pending != null &&
                pending.TransportPrefab != null &&
                now >= GetTransportLaunchAt(pending);
+    }
+
+    public void RebuildPendingProductionTimeline<TPending>(
+        IList<TPending> pendingProductions,
+        float now,
+        bool preserveActiveProgress)
+        where TPending : class, IPendingProduction
+    {
+        if (pendingProductions == null || pendingProductions.Count == 0)
+            return;
+
+        float nextStartAt = now;
+        bool activeTimelineAssigned = false;
+        for (int i = 0; i < pendingProductions.Count; i++)
+        {
+            TPending pending = pendingProductions[i];
+            if (pending == null)
+                continue;
+
+            float duration = Mathf.Max(0.01f, pending.ReadyAt - pending.StartedAt);
+            if (!activeTimelineAssigned)
+            {
+                if (preserveActiveProgress)
+                    nextStartAt = pending.StartedAt;
+
+                activeTimelineAssigned = true;
+            }
+
+            pending.StartedAt = nextStartAt;
+            pending.ReadyAt = nextStartAt + duration;
+            nextStartAt = pending.ReadyAt;
+        }
     }
 
     public void DelayPendingProduction(IPendingProduction pending, float deltaTime)

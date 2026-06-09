@@ -44,7 +44,8 @@ internal sealed class BuildingProductionUpdateSystem
                 RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
                 if (pending == null)
                 {
-                    context.ProductionSystem.RemovePendingAt(building.PendingProductions, i);
+                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
+                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: i > 0);
                     continue;
                 }
 
@@ -77,7 +78,8 @@ internal sealed class BuildingProductionUpdateSystem
                         null,
                         ref randomState))
                 {
-                    context.ProductionSystem.RemovePendingAt(building.PendingProductions, i);
+                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
+                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
                 }
             }
         }

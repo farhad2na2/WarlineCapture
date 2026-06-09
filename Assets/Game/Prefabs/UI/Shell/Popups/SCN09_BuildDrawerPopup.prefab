@@ -1199,6 +1199,7 @@ MonoBehaviour:
   producerText: {fileID: 0}
   timeText: {fileID: 7759102824305716547}
   percentageText: {fileID: 0}
+  numberText: {fileID: 7562694232523141425}
 --- !u!1 &634054408292088410
 GameObject:
   m_ObjectHideFlags: 0
@@ -17352,6 +17353,7 @@ MonoBehaviour:
   producerText: {fileID: 0}
   timeText: {fileID: 0}
   percentageText: {fileID: 2053046144270877260}
+  numberText: {fileID: 7851325949759976214}
 --- !u!1 &7401730314474482638
 GameObject:
   m_ObjectHideFlags: 0

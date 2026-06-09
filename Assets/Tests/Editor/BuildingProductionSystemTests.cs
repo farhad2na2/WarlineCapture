@@ -40,7 +40,9 @@ public sealed class BuildingProductionSystemTests
             tests.ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer();
             tests.TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback();
             tests.TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists();
-            Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=7");
+            tests.RebuildPendingProductionTimeline_ChainsQueuedItemsAfterActiveProduction();
+            tests.RebuildPendingProductionTimeline_AfterActiveRemovalResetsNextActiveProgress();
+            Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=9");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -471,6 +473,43 @@ public sealed class BuildingProductionSystemTests
         {
             UnityEngine.Object.DestroyImmediate(transportPrefab);
         }
+    }
+
+    [Test]
+    public void RebuildPendingProductionTimeline_ChainsQueuedItemsAfterActiveProduction()
+    {
+        var first = new TestPendingProduction { StartedAt = 10f, ReadyAt = 20f };
+        var second = new TestPendingProduction { StartedAt = 12f, ReadyAt = 22f };
+        var third = new TestPendingProduction { StartedAt = 13f, ReadyAt = 18f };
+        var pending = new List<TestPendingProduction> { first, second, third };
+
+        var system = new BuildingProductionSystem();
+        system.RebuildPendingProductionTimeline(pending, now: 15f, preserveActiveProgress: true);
+
+        Assert.AreEqual(10f, first.StartedAt, 0.0001f);
+        Assert.AreEqual(20f, first.ReadyAt, 0.0001f);
+        Assert.AreEqual(20f, second.StartedAt, 0.0001f);
+        Assert.AreEqual(30f, second.ReadyAt, 0.0001f);
+        Assert.AreEqual(30f, third.StartedAt, 0.0001f);
+        Assert.AreEqual(35f, third.ReadyAt, 0.0001f);
+    }
+
+    [Test]
+    public void RebuildPendingProductionTimeline_AfterActiveRemovalResetsNextActiveProgress()
+    {
+        var next = new TestPendingProduction { StartedAt = 0f, ReadyAt = 10f };
+        var later = new TestPendingProduction { StartedAt = 0f, ReadyAt = 5f };
+        var pending = new List<TestPendingProduction> { next, later };
+
+        var system = new BuildingProductionSystem();
+        system.RebuildPendingProductionTimeline(pending, now: 50f, preserveActiveProgress: false);
+        BuildingProductionSystem.PendingProductionProgress progress = system.GetProgress(next, 50f, capTransportProgress: false);
+
+        Assert.AreEqual(50f, next.StartedAt, 0.0001f);
+        Assert.AreEqual(60f, next.ReadyAt, 0.0001f);
+        Assert.AreEqual(60f, later.StartedAt, 0.0001f);
+        Assert.AreEqual(65f, later.ReadyAt, 0.0001f);
+        Assert.AreEqual(0f, progress.Progress01, 0.0001f);
     }
 
     [Test]

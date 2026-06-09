@@ -12,10 +12,12 @@ public sealed class BuildDrawerQueueItemView : MonoBehaviour
     [SerializeField] private TMP_Text producerText;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text percentageText;
+    [SerializeField] private TMP_Text numberText;
 
     public Button CancelButton => cancelButton;
 
     public void Bind(
+        int queueNumber,
         string displayName,
         string producer,
         string time,
@@ -23,6 +25,7 @@ public sealed class BuildDrawerQueueItemView : MonoBehaviour
         Sprite thumbnail,
         bool cancelable)
     {
+        SetText(numberText, Mathf.Max(1, queueNumber).ToString(System.Globalization.CultureInfo.InvariantCulture));
         SetText(nameText, displayName);
         SetText(producerText, producer);
         SetText(timeText, time);

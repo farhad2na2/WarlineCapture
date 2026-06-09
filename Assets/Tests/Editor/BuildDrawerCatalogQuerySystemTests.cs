@@ -531,12 +531,16 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject activePrefab = CreateUnit("Queue Vehicle Active", true, false, new Vector2Int(2, 2), 0);
         GameObject queuedPrefab = CreateUnit("Queue Vehicle Waiting", true, false, new Vector2Int(2, 2), 0);
+        GameObject thirdPrefab = CreateUnit("Queue Vehicle Third", true, false, new Vector2Int(2, 2), 0);
         Sprite activePortrait = CreateTestSprite(Color.green);
         Sprite queuedPortrait = CreateTestSprite(Color.yellow);
+        Sprite thirdPortrait = CreateTestSprite(Color.cyan);
         AssignUnitPortraitSprites(activePrefab, activePortrait);
         AssignUnitPortraitSprites(queuedPrefab, queuedPortrait);
+        AssignUnitPortraitSprites(thirdPrefab, thirdPortrait);
         unitConfig.UnitSpawnPrefabs.Add(activePrefab);
         unitConfig.UnitSpawnPrefabs.Add(queuedPrefab);
+        unitConfig.UnitSpawnPrefabs.Add(thirdPrefab);
         presenter.ConfigureForTests(view, unitConfig, null);
 
         SerializedObject viewObject = new SerializedObject(view);
@@ -560,7 +564,8 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
         {
             new BuildingUiQuerySystem.PendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, queuedPrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory")
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, queuedPrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
+            new BuildingUiQuerySystem.PendingProductionUiEntry(7, thirdPrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
         };
         presenter.ApplyQueueSnapshotForTests(entries);
 
@@ -570,18 +575,27 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.IsTrue(productionPanelActive.activeSelf);
         Assert.IsFalse(noProductionView.activeSelf);
         Assert.AreEqual("Queue Vehicle Active", GetQueueText(view.ActiveItemView, "nameText"));
+        Assert.AreEqual("1", GetQueueText(view.ActiveItemView, "numberText"));
         Assert.AreEqual("26%", GetQueueText(view.ActiveItemView, "percentageText"));
         Assert.AreEqual("Queue Vehicle Waiting", GetQueueText(view.QueuedItemTemplate, "nameText"));
+        Assert.AreEqual("2", GetQueueText(view.QueuedItemTemplate, "numberText"));
         Image activeThumbnail = GetSerializedReference<Image>(new SerializedObject(view.ActiveItemView), "thumbnailImage");
         Image queuedThumbnail = GetSerializedReference<Image>(new SerializedObject(view.QueuedItemTemplate), "thumbnailImage");
         Assert.NotNull(activeThumbnail);
         Assert.NotNull(queuedThumbnail);
         Assert.AreSame(activePortrait, activeThumbnail.sprite);
         Assert.AreSame(queuedPortrait, queuedThumbnail.sprite);
+        List<BuildDrawerQueueItemView> activeQueueItems = GetActiveQueueItemViews(view);
+        Assert.AreEqual(3, activeQueueItems.Count);
+        Assert.AreEqual("Queue Vehicle Third", GetQueueText(activeQueueItems[2], "nameText"));
+        Assert.AreEqual("3", GetQueueText(activeQueueItems[2], "numberText"));
+        Image thirdThumbnail = GetSerializedReference<Image>(new SerializedObject(activeQueueItems[2]), "thumbnailImage");
+        Assert.NotNull(thirdThumbnail);
+        Assert.AreSame(thirdPortrait, thirdThumbnail.sprite);
 
         Assert.AreEqual("26%", GetSerializedReference<TMP_Text>(viewObject, "queuePercentageText").text);
         Assert.AreEqual("01:14", GetSerializedReference<TMP_Text>(viewObject, "queueTimeText").text);
-        Assert.AreEqual("2", GetSerializedReference<TMP_Text>(viewObject, "queueNumbersText").text);
+        Assert.AreEqual("3", GetSerializedReference<TMP_Text>(viewObject, "queueNumbersText").text);
         Assert.IsFalse(view.RushButton == null || view.RushButton.interactable);
         Assert.IsFalse(view.ClearButton == null || view.ClearButton.interactable);
     }
@@ -1195,5 +1209,22 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     {
         TMP_Text text = GetSerializedReference<TMP_Text>(new SerializedObject(view), propertyName);
         return text != null ? text.text : string.Empty;
+    }
+
+    private static List<BuildDrawerQueueItemView> GetActiveQueueItemViews(BuildDrawerView view)
+    {
+        var results = new List<BuildDrawerQueueItemView>();
+        RectTransform root = view.QueueContentRoot;
+        if (root == null)
+            return results;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            BuildDrawerQueueItemView item = root.GetChild(i).GetComponent<BuildDrawerQueueItemView>();
+            if (item != null && item.gameObject.activeSelf)
+                results.Add(item);
+        }
+
+        return results;
     }
 }

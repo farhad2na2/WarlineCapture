@@ -284,7 +284,8 @@ internal sealed class BuildingProductionTransportSystem
             int2 airCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
             if (TrySpawnPlayerUnitNearBuilding(context, building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell, ref randomState))
             {
-                context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending);
+                if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending))
+                    context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
                 AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
             }
 
@@ -312,7 +313,8 @@ internal sealed class BuildingProductionTransportSystem
             runwayCell,
             ref randomState))
         {
-            context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending);
+            if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending))
+                context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
             AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
             ConfigureNewestRunwayUnit(building, readySelfArrivalPending, transport, runwayCell, context);
             MoveNewestProducedUnitToCell(context, building, finalGoalCell);
@@ -564,7 +566,8 @@ internal sealed class BuildingProductionTransportSystem
             Destroy(drop.Rope.gameObject);
 
         RuntimeBuildingEntity.PendingProduction production = drop.Production;
-        context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production);
+        if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production))
+            context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
 
         if (transport.Mode == ProductionTransportMode.Plane)
         {

@@ -75,7 +75,8 @@ internal sealed class BuildingUiCompositionSystem
             () => source.BuildingPlacementCommandSystem.ConfirmBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
             () => source.BuildingPlacementCommandSystem.CancelBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
             _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
-            () => source.BuildingPlacementCommandSystem.ExitBuildMode(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
+            () => source.BuildingPlacementCommandSystem.ExitBuildMode(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+            () => source.BuildingPlacementCommandSystem.RotateBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
     }
 
     public BuildingUiCommandSystem.Context CreateCommandContext(

@@ -38,6 +38,7 @@ internal sealed class BuildingUiContextSystem
         public readonly Action CancelBuildingPlacement;
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
+        public readonly Func<bool> RotateBuildingPlacement;
 
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
@@ -71,7 +72,8 @@ internal sealed class BuildingUiContextSystem
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
             Action<string> clearSelectedBuilding,
-            Action exitBuildMode)
+            Action exitBuildMode,
+            Func<bool> rotateBuildingPlacement = null)
         {
             RuntimeResourceSystem = runtimeResourceSystem;
             DefinitionSystem = definitionSystem;
@@ -105,6 +107,7 @@ internal sealed class BuildingUiContextSystem
             CancelBuildingPlacement = cancelBuildingPlacement;
             ClearSelectedBuilding = clearSelectedBuilding;
             ExitBuildMode = exitBuildMode;
+            RotateBuildingPlacement = rotateBuildingPlacement;
         }
     }
 
@@ -140,7 +143,8 @@ internal sealed class BuildingUiContextSystem
         Func<bool> confirmBuildingPlacement,
         Action cancelBuildingPlacement,
         Action<string> clearSelectedBuilding,
-        Action exitBuildMode)
+        Action exitBuildMode,
+        Func<bool> rotateBuildingPlacement = null)
     {
         return new Source(
             runtimeResourceSystem,
@@ -174,7 +178,8 @@ internal sealed class BuildingUiContextSystem
             confirmBuildingPlacement,
             cancelBuildingPlacement,
             clearSelectedBuilding,
-            exitBuildMode);
+            exitBuildMode,
+            rotateBuildingPlacement);
     }
 
     public BuildingUiCommandSystem.Context CreateCommandContext(Source source)
@@ -227,7 +232,8 @@ internal sealed class BuildingUiContextSystem
             () => source.ProductionRequestSystem?.ArmNextProductionFromUi(source.GetFrameCount?.Invoke() ?? 0),
             (buildingId, pendingProductionIndex) => CancelProduction(source, buildingId, pendingProductionIndex),
             source.ClearSelectedBuilding,
-            source.ExitBuildMode);
+            source.ExitBuildMode,
+            source.RotateBuildingPlacement);
     }
 
     private static bool CancelProduction(Source source, int buildingId, int pendingProductionIndex)

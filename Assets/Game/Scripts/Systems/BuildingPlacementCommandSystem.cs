@@ -68,6 +68,12 @@ internal sealed class BuildingPlacementCommandSystem
                context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
     }
 
+    public bool RotateBuildingPlacement(Context context)
+    {
+        return context.SessionSystem != null &&
+               context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
+    }
+
     public void CancelBuildingPlacement(Context context)
     {
         context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);

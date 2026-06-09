@@ -150,6 +150,11 @@ internal sealed class BuildingPlacementContextSystem
             source.CommitPlacement);
     }
 
+    public BuildingPlacementLifecycleSystem.RotateContext CreateRotateContext(Source source)
+    {
+        return new BuildingPlacementLifecycleSystem.RotateContext(source.UpdatePlacementVisual);
+    }
+
     public BuildingPlacementSessionSystem.Context CreateSessionContext(
         Source source,
         Action recordBuildingBuilt,
@@ -165,6 +170,7 @@ internal sealed class BuildingPlacementContextSystem
             () => CreateCancelContext(source),
             () => CreateBeginContext(source),
             () => CreateConfirmContext(source),
+            () => CreateRotateContext(source),
             recordBuildingBuilt,
             notifyStaticMinimapChanged,
             clearSelectedBuilding,

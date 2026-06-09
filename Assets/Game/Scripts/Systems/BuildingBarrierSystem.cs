@@ -469,8 +469,10 @@ internal sealed class BuildingBarrierSystem
         if (IsLinearWallDefinition(placement.Definition))
             return inputSystem != null && inputSystem.IsWallPlacementVertical(placement);
 
-        return ShouldAlignGateToNearbyWall(context, placement.OriginCell, placement.Definition, out bool gateVertical) &&
-               gateVertical;
+        if (ShouldAlignGateToNearbyWall(context, placement.OriginCell, placement.Definition, out bool gateVertical))
+            return gateVertical;
+
+        return placement.AutoRotateVertical;
     }
 
     public static bool IsLinearWallDefinition(BuildingDefinition definition)

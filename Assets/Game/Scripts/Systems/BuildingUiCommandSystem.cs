@@ -82,6 +82,7 @@ public sealed class BuildingUiCommandSystem
         public readonly CancelProductionDelegate CancelProduction;
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
+        public readonly Func<bool> RotateBuildingPlacement;
 
         public Context(
             Func<int> getCurrentDollars,
@@ -106,7 +107,8 @@ public sealed class BuildingUiCommandSystem
             Action armNextProductionFromUi,
             CancelProductionDelegate cancelProduction,
             Action<string> clearSelectedBuilding,
-            Action exitBuildMode)
+            Action exitBuildMode,
+            Func<bool> rotateBuildingPlacement = null)
         {
             GetCurrentDollars = getCurrentDollars;
             GetConfiguredSpawnableCount = getConfiguredSpawnableCount;
@@ -131,6 +133,7 @@ public sealed class BuildingUiCommandSystem
             CancelProduction = cancelProduction;
             ClearSelectedBuilding = clearSelectedBuilding;
             ExitBuildMode = exitBuildMode;
+            RotateBuildingPlacement = rotateBuildingPlacement;
         }
     }
 
@@ -299,6 +302,12 @@ public sealed class BuildingUiCommandSystem
     public void CancelBuildingPlacement(Context context)
     {
         context.CancelBuildingPlacement?.Invoke();
+    }
+
+    public bool RotateBuildingPlacement(Context context)
+    {
+        return context.RotateBuildingPlacement != null &&
+               context.RotateBuildingPlacement();
     }
 
     public void FocusLastCampProductionRequest(Context context)

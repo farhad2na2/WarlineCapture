@@ -114,6 +114,16 @@ internal sealed class BuildingPlacementLifecycleSystem
         }
     }
 
+    public readonly struct RotateContext
+    {
+        public readonly UpdatePlacementVisualDelegate UpdatePlacementVisual;
+
+        public RotateContext(UpdatePlacementVisualDelegate updatePlacementVisual)
+        {
+            UpdatePlacementVisual = updatePlacementVisual;
+        }
+    }
+
     public PlacementState ActivePlacement { get; private set; }
     public int ActivePlacementCost { get; private set; }
     public bool HasPendingBuildingPlacement => ActivePlacement != null;
@@ -187,6 +197,17 @@ internal sealed class BuildingPlacementLifecycleSystem
         placement.OriginCell = placement.CommittedOriginCell;
         ActivePlacementCost = 0;
         context.CommitPlacement?.Invoke(placement);
+        return true;
+    }
+
+    public bool Rotate(RotateContext context)
+    {
+        PlacementState placement = ActivePlacement;
+        if (placement?.Definition == null)
+            return false;
+
+        placement.AutoRotateVertical = !placement.AutoRotateVertical;
+        context.UpdatePlacementVisual?.Invoke(placement, false, default);
         return true;
     }
 

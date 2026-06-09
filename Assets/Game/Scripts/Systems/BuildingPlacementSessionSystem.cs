@@ -12,6 +12,7 @@ internal sealed class BuildingPlacementSessionSystem
         public readonly Func<BuildingPlacementLifecycleSystem.CancelContext> CreateCancelContext;
         public readonly Func<BuildingPlacementLifecycleSystem.BeginContext> CreateBeginContext;
         public readonly Func<BuildingPlacementLifecycleSystem.ConfirmContext> CreateConfirmContext;
+        public readonly Func<BuildingPlacementLifecycleSystem.RotateContext> CreateRotateContext;
         public readonly Action RecordBuildingBuilt;
         public readonly Action NotifyStaticMinimapChanged;
         public readonly Action<string> ClearSelectedBuilding;
@@ -25,6 +26,7 @@ internal sealed class BuildingPlacementSessionSystem
             Func<BuildingPlacementLifecycleSystem.CancelContext> createCancelContext,
             Func<BuildingPlacementLifecycleSystem.BeginContext> createBeginContext,
             Func<BuildingPlacementLifecycleSystem.ConfirmContext> createConfirmContext,
+            Func<BuildingPlacementLifecycleSystem.RotateContext> createRotateContext,
             Action recordBuildingBuilt,
             Action notifyStaticMinimapChanged,
             Action<string> clearSelectedBuilding,
@@ -37,6 +39,7 @@ internal sealed class BuildingPlacementSessionSystem
             CreateCancelContext = createCancelContext;
             CreateBeginContext = createBeginContext;
             CreateConfirmContext = createConfirmContext;
+            CreateRotateContext = createRotateContext;
             RecordBuildingBuilt = recordBuildingBuilt;
             NotifyStaticMinimapChanged = notifyStaticMinimapChanged;
             ClearSelectedBuilding = clearSelectedBuilding;
@@ -67,6 +70,15 @@ internal sealed class BuildingPlacementSessionSystem
         _preserveBuildingSelectionOnNextExitBuildMode = true;
         ExitBuildMode(context, clearBuildingSelection: false);
         return true;
+    }
+
+    public bool RotateBuildingPlacement(Context context)
+    {
+        return context.LifecycleSystem != null &&
+               context.LifecycleSystem.Rotate(
+                   context.CreateRotateContext != null
+                       ? context.CreateRotateContext()
+                       : default);
     }
 
     public void CancelBuildingPlacement(Context context)

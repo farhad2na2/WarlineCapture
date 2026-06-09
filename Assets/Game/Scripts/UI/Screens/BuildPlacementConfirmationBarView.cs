@@ -208,7 +208,7 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
         if (cancelButton != null)
             cancelButton.interactable = true;
         if (rotateButton != null)
-            rotateButton.interactable = false;
+            rotateButton.interactable = true;
     }
 
     private void OnCancelClicked()
@@ -221,9 +221,11 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
 
     private void OnRotateClicked()
     {
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
-            TacticalCommandReasonCode.BuildUnavailable,
-            "Rotation is not available for this building yet."));
+        bool rotated = _commandSystem != null && _commandSystem.RotateBuildingPlacement(_commandContext);
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(rotated
+            ? TacticalCommandResult.Success("ROTATED 90 DEGREES")
+            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "No active building placement."));
+        Refresh(force: true);
     }
 
     private void OnConfirmClicked()

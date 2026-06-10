@@ -76,6 +76,19 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     [SerializeField] private Button destroyAction;
     [SerializeField] private Button boardAction;
 
+    [Header("Fallback Portraits")]
+    [SerializeField] private Sprite genericSquadPortraitSprite;
+    [SerializeField] private Sprite soldierSquadPortraitSprite;
+    [SerializeField] private Sprite vehicleSquadPortraitSprite;
+    [SerializeField] private Sprite aircraftSquadPortraitSprite;
+    [SerializeField] private Sprite transportSquadPortraitSprite;
+    [SerializeField] private Sprite buildingSquadPortraitSprite;
+    [SerializeField] private Sprite mixedForcePortraitSprite;
+    [SerializeField] private Sprite mixedSoldierVehiclePortraitSprite;
+    [SerializeField] private Sprite mixedSoldierAircraftPortraitSprite;
+    [SerializeField] private Sprite mixedVehicleAircraftPortraitSprite;
+    [SerializeField] private Sprite mixedSoldierVehicleAircraftPortraitSprite;
+
     private System.Action _returnRequested;
     private System.Action _destroyRequested;
     private System.Action _boardRequested;
@@ -146,6 +159,25 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         selectedPortraitImage.sprite = portraitSprite;
         selectedPortraitImage.enabled = portraitSprite != null;
         selectedPortraitImage.preserveAspect = true;
+    }
+
+    public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
+    {
+        return kind switch
+        {
+            SelectionSummaryPortraitKind.Soldiers => FirstNonNull(soldierSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.Vehicles => FirstNonNull(vehicleSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.Aircraft => FirstNonNull(aircraftSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.Transports => FirstNonNull(transportSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.Buildings => FirstNonNull(buildingSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.MixedSoldierVehicle => FirstNonNull(mixedSoldierVehiclePortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.MixedSoldierAircraft => FirstNonNull(mixedSoldierAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.MixedVehicleAircraft => FirstNonNull(mixedVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.MixedSoldierVehicleAircraft => FirstNonNull(mixedSoldierVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.MixedForce => FirstNonNull(mixedForcePortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.GenericSquad => genericSquadPortraitSprite,
+            _ => genericSquadPortraitSprite
+        };
     }
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -315,5 +347,19 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         return rectTransform != null &&
                rectTransform.gameObject.activeInHierarchy &&
                RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition);
+    }
+
+    private static Sprite FirstNonNull(params Sprite[] sprites)
+    {
+        if (sprites == null)
+            return null;
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (sprites[i] != null)
+                return sprites[i];
+        }
+
+        return null;
     }
 }

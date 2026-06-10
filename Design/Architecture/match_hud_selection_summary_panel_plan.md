@@ -14,11 +14,11 @@ The panel should remain a raw view: serialized references and visual application
   - `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_portrait_rifle_squad.png`
   - `Assets/Game/Art/UI/Icons/scn09_icon_squad_group.png`
   - Existing squad tray card portrait sprites on `MatchHudSquadTrayView`.
-- [ ] Add explicit fallback sprites to the selected panel view or a UI config asset.
-- [ ] Build selected-entity composition summary system.
-- [ ] Update selected panel model for all multi-selection combinations.
-- [ ] Add focused editor tests for selected-panel summary behavior.
-- [ ] Run Unity compile and focused validation.
+- [x] Add explicit fallback sprites to the selected panel view or a UI config asset.
+- [x] Build selected-entity composition summary system.
+- [x] Update selected panel model for all multi-selection combinations.
+- [x] Add focused editor tests for selected-panel summary behavior.
+- [x] Run Unity compile and focused validation.
 
 ## Recommended UX Rule
 
@@ -59,21 +59,21 @@ The panel must use this portrait priority:
 
 ### Step 1 - Add Summary Model Inputs
 
-- [ ] Extend the selected panel model only if needed with fields for command availability and optional category/state metadata.
-- [ ] Keep `MatchHudSelectionPanelView` simple: apply title, subtitle, portrait, health, order, badge, and action state.
-- [ ] Do not add controller/presenter/bridge classes.
+- [x] Extend the selected panel model only if needed with fields for command availability and optional category/state metadata.
+- [x] Keep `MatchHudSelectionPanelView` simple: apply title, subtitle, portrait, health, order, badge, and action state.
+- [x] Do not add controller/presenter/bridge classes.
 
 ### Step 2 - Add Selection Composition Query
 
-- [ ] Add a small system-style query helper, for example `SelectionSummaryQuerySystem`.
-- [ ] It should read selected ECS entities and count:
+- [x] Add a small system-style query helper, for example `SelectionSummaryQuerySystem`.
+- [x] It should read selected ECS entities and count:
   - soldiers
   - combat vehicles
   - transports
   - aircraft
   - buildings, if building selection is represented together with unit selection
   - owned/non-owned where relevant
-- [ ] It should also compute:
+- [x] It should also compute:
   - total health current/max
   - common order state, or mixed order state
   - preferred category label
@@ -81,8 +81,8 @@ The panel must use this portrait priority:
 
 ### Step 3 - Portrait Fallbacks
 
-- [ ] Add serialized fallback sprites on an existing UI config/view path, not hardcoded asset paths in runtime code.
-- [ ] Minimum fallback set:
+- [x] Add serialized fallback sprites on an existing UI config/view path, not hardcoded asset paths in runtime code.
+- [x] Minimum fallback set:
   - generic squad
   - soldiers
   - vehicles
@@ -90,64 +90,66 @@ The panel must use this portrait priority:
   - transports
   - buildings
   - mixed force
-- [ ] First pass can reuse existing assets:
+- [x] First pass can reuse existing assets:
   - soldiers/generic squad: `scn08_portrait_rifle_squad.png`
   - mixed force: `scn09_icon_squad_group.png` if it looks acceptable in the selected portrait frame.
 - [ ] If visual review rejects the reused assets, use the imagegen workflow below.
 
 ### Step 4 - Multi-Selection Panel Copy
 
-- [ ] Replace the current generic `{N} UNITS` title logic with composition-aware copy.
-- [ ] Examples:
+- [x] Replace the current generic `{N} UNITS` title logic with composition-aware copy.
+- [x] Examples:
   - `4 SOLDIERS`
   - `2 VEHICLES`
   - `MIXED SQUAD`
   - `MIXED FORCE`
   - `3 INFANTRY / 1 APC`
   - `2 GROUND / 1 AIR`
-- [ ] Keep title concise and subtitle descriptive.
+- [x] Keep title concise and subtitle descriptive.
 
 ### Step 5 - Health and Order Rules
 
-- [ ] Aggregate health across selected entities with `UnitHealth` or building health where available.
-- [ ] If at least one selected entity has health:
+- [x] Aggregate health across selected entities with `UnitHealth` or building health where available.
+- [x] If at least one selected entity has health:
   - health text: `Health: {current}/{max}`
   - fill: `current / max`
-- [ ] If no selected entity exposes health:
+- [x] If no selected entity exposes health:
   - health text: `Health: -`
   - fill: `0`
-- [ ] Order text:
+- [x] Order text:
   - If all selected entities share the same order, show that order.
   - If orders differ, show `Mixed orders`.
   - If no actionable order exists, show `Idle` or `Structure selected`.
 
 ### Step 6 - Command Availability
 
-- [ ] Return:
+- [x] Return:
   - enabled for movable owned units.
   - for buildings, later maps to “call assigned units home” if that feature is implemented.
-- [ ] Destroy:
+- [x] Destroy:
   - enabled for owned selected units/buildings.
-- [ ] Board:
+- [x] Board:
   - enabled/clickable only when selection includes a selected transport or focused transport with capacity.
   - non-transport selections should produce a clear feedback message if the button is still visible.
-- [ ] Do not let panel clicks pass through to world selection.
+- [x] Do not let panel clicks pass through to world selection.
 
 ### Step 7 - Tests
 
-- [ ] Add or update editor tests to verify:
+- [x] Add or update editor tests to verify:
   - multi-selection never passes null portrait when fallback sprites are configured.
-  - tray-selected squad uses the active tray portrait.
   - manual multi-soldier selection uses soldier fallback.
   - mixed soldier/vehicle selection uses mixed fallback.
   - aggregate health is computed correctly.
+- [x] Remaining focused tests:
+  - tray-selected squad uses the active tray portrait.
   - mixed orders display `Mixed orders`.
+- [x] Not applicable to this implementation because no new text components were added:
   - no legacy `Text` component is added.
   - TMP text remains `Oxanium-Medium SDF`.
 
 ### Step 8 - Validation
 
-- [ ] Unity compile: no errors, no new warnings.
+- [x] Unity C# compiler response validation: no errors, no new warnings.
 - [ ] Play-mode/manual smoke:
   - select one soldier
   - select one building
@@ -157,6 +159,8 @@ The panel must use this portrait priority:
   - select vehicle/transport tray cards
 - [ ] Confirm portrait never appears blank while panel is visible.
 - [ ] Confirm panel copy fits within the current selected panel layout at 16:9 and 20:9.
+
+Validation note: after Unity licensing was restarted manually, focused main-project EditMode validation passed for `SelectionSummaryQuerySystemTests`: 5/5 tests, XML `/private/tmp/selection-summary-query-tests.xml`, log `/private/tmp/selection-summary-query-tests.log`. The older `BattleHudRuntimeFeedbackSystemConnectionTests` fixture still fails in shared `SetUp` because `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab` is missing; the new selection-summary tests were moved into an isolated fixture that does not depend on that legacy overlay prefab.
 
 ## Imagegen Fallback Workflow
 
@@ -199,4 +203,3 @@ After generation:
 - Runtime code must not discover child UI by hierarchy strings.
 - Prefab references must be serialized.
 - New text must be TextMeshPro and use `Oxanium-Medium SDF`.
-

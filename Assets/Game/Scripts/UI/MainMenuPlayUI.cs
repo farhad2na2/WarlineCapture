@@ -170,6 +170,13 @@ public sealed class MainMenuPlayUI
             return true;
         }
 
+        if (_matchHudRuntimeFeedbackView != null &&
+            _matchHudRuntimeFeedbackView.ContainsFeedbackActionScreenPoint(screenPosition))
+        {
+            source = "MatchHudFeedbackActions";
+            return true;
+        }
+
         if (_matchHudRightQuickRailView != null && _matchHudRightQuickRailView.ContainsScreenPoint(screenPosition))
         {
             source = "MatchHudRightQuickRail";

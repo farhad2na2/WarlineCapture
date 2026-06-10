@@ -64,6 +64,43 @@ public readonly struct MatchHudCommandFeedbackModel
     }
 }
 
+public readonly struct MatchHudCommandFeedbackActionsModel
+{
+    public MatchHudCommandFeedbackActionsModel(
+        bool visible,
+        bool boardAllVisible,
+        bool boardAllInteractable,
+        string boardAllLabel,
+        bool cancelVisible,
+        string cancelLabel)
+    {
+        Visible = visible;
+        BoardAllVisible = boardAllVisible;
+        BoardAllInteractable = boardAllInteractable;
+        BoardAllLabel = boardAllLabel;
+        CancelVisible = cancelVisible;
+        CancelLabel = cancelLabel;
+    }
+
+    public bool Visible { get; }
+    public bool BoardAllVisible { get; }
+    public bool BoardAllInteractable { get; }
+    public string BoardAllLabel { get; }
+    public bool CancelVisible { get; }
+    public string CancelLabel { get; }
+
+    public static MatchHudCommandFeedbackActionsModel Hidden =>
+        new(false, false, false, string.Empty, false, string.Empty);
+
+    public static MatchHudCommandFeedbackActionsModel BoardPassengerSelection(bool boardAllInteractable)
+    {
+        return new(true, true, boardAllInteractable, "BOARD ALL", true, "CANCEL");
+    }
+
+    public static MatchHudCommandFeedbackActionsModel CancelOnly =>
+        new(true, false, false, string.Empty, true, "CANCEL");
+}
+
 public readonly struct TacticalCommandResult
 {
     public bool Accepted { get; }
@@ -163,6 +200,11 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     [SerializeField] private GameObject feedbackPanel;
     [SerializeField] private TMP_Text feedbackText;
     [SerializeField] private Image feedbackIcon;
+    [SerializeField] private GameObject feedbackActionsRoot;
+    [SerializeField] private Button boardAllButton;
+    [SerializeField] private TMP_Text boardAllButtonLabel;
+    [SerializeField] private Button cancelButton;
+    [SerializeField] private TMP_Text cancelButtonLabel;
     [SerializeField] private Sprite neutralIcon;
     [SerializeField] private Sprite readyIcon;
     [SerializeField] private Sprite warningIcon;
@@ -171,12 +213,19 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     private TacticalCommandMode _stickyCommandMode = TacticalCommandMode.None;
     private TacticalCommandResult _lastCommandResult = TacticalCommandResult.Success();
     private bool _hasLastCommandResult;
+    private System.Action _boardAllRequested;
+    private System.Action _cancelRequested;
+    private Button _boundBoardAllButton;
+    private Button _boundCancelButton;
 
     public BattleHudTacticalFeedbackView TacticalFeedback => tacticalFeedback;
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
     public Image FeedbackIcon => feedbackIcon;
+    public GameObject FeedbackActionsRoot => feedbackActionsRoot;
+    public Button BoardAllButton => boardAllButton;
+    public Button CancelButton => cancelButton;
     internal TacticalCommandMode CurrentCommandMode
     {
         get => _currentCommandMode;
@@ -206,13 +255,34 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 
     private void Awake()
     {
+        BindUnityEvents();
         HideFeedbackMessage();
     }
 
     private void OnEnable()
     {
+        BindUnityEvents();
         ResetRuntimeFeedbackState();
         BattleHudRuntimeFeedbackSystem.ClearCommandMode(this);
+    }
+
+    private void OnDestroy()
+    {
+        ClearFeedbackActionCallbacks();
+        RemoveUnityEvents();
+    }
+
+    public void BindFeedbackActionCallbacks(System.Action boardAllRequested, System.Action cancelRequested)
+    {
+        BindUnityEvents();
+        _boardAllRequested = boardAllRequested;
+        _cancelRequested = cancelRequested;
+    }
+
+    public void ClearFeedbackActionCallbacks()
+    {
+        _boardAllRequested = null;
+        _cancelRequested = null;
     }
 
     public void ShowFeedbackMessage(string message)
@@ -244,6 +314,16 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     {
         if (feedbackPanel != null)
             feedbackPanel.SetActive(false);
+        ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
+    }
+
+    public void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model)
+    {
+        if (feedbackActionsRoot != null)
+            feedbackActionsRoot.SetActive(model.Visible);
+
+        ApplyButtonState(boardAllButton, boardAllButtonLabel, model.BoardAllVisible, model.BoardAllInteractable, model.BoardAllLabel);
+        ApplyButtonState(cancelButton, cancelButtonLabel, model.CancelVisible, true, model.CancelLabel);
     }
 
     internal void ResetRuntimeFeedbackState()
@@ -273,5 +353,72 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
             CommandFeedbackSeverity.Error => errorIcon != null ? errorIcon : warningIcon != null ? warningIcon : neutralIcon,
             _ => neutralIcon
         };
+    }
+
+    public bool ContainsFeedbackActionScreenPoint(Vector2 screenPosition)
+    {
+        return ContainsScreenPoint(boardAllButton != null ? boardAllButton.transform as RectTransform : null, screenPosition) ||
+               ContainsScreenPoint(cancelButton != null ? cancelButton.transform as RectTransform : null, screenPosition);
+    }
+
+    private void BindUnityEvents()
+    {
+        BindButton(boardAllButton, ref _boundBoardAllButton, HandleBoardAll);
+        BindButton(cancelButton, ref _boundCancelButton, HandleCancel);
+    }
+
+    private void RemoveUnityEvents()
+    {
+        UnbindButton(ref _boundBoardAllButton, HandleBoardAll);
+        UnbindButton(ref _boundCancelButton, HandleCancel);
+    }
+
+    private void HandleBoardAll()
+    {
+        _boardAllRequested?.Invoke();
+    }
+
+    private void HandleCancel()
+    {
+        _cancelRequested?.Invoke();
+    }
+
+    private static void ApplyButtonState(Button button, TMP_Text label, bool visible, bool interactable, string text)
+    {
+        if (button != null)
+        {
+            button.gameObject.SetActive(visible);
+            button.interactable = visible && interactable;
+        }
+
+        if (label != null)
+            label.text = string.IsNullOrWhiteSpace(text) ? string.Empty : text;
+    }
+
+    private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
+    {
+        if (boundButton == button)
+            return;
+
+        UnbindButton(ref boundButton, action);
+        boundButton = button;
+        if (boundButton != null)
+            boundButton.onClick.AddListener(action);
+    }
+
+    private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
+    {
+        if (boundButton == null)
+            return;
+
+        boundButton.onClick.RemoveListener(action);
+        boundButton = null;
+    }
+
+    private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)
+    {
+        return rectTransform != null &&
+               rectTransform.gameObject.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition);
     }
 }

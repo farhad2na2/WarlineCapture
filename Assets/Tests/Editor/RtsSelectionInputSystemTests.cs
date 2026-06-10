@@ -285,6 +285,42 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void SelectionUiCommandSystem_BoardAllQueuesBoardAllSelectedTransportAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestBoardAllSelectedTransport());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardAllSelectedTransport, requests[0].Kind);
+    }
+
+    [Test]
+    public void SelectionUiCommandSystem_CancelFeedbackQueuesCancelActiveCommandModeAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestCancelActiveCommandMode());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.CancelActiveCommandMode, requests[0].Kind);
+    }
+
+    [Test]
     public void BoardSelectedTransportPassengerRequest_StoresTransportPassengerAndScreenRect()
     {
         var inputSystem = new RtsSelectionInputSystem();
@@ -313,12 +349,62 @@ public sealed class RtsSelectionInputSystemTests
     public void BoardPreview_UsesTransportOnlyPredicateForPassengerFirstMode()
     {
         string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string previewTarget = ExtractMethodBodyByName(startup, "IsValidBoardTransportPreviewTarget");
+        string previewTarget = ExtractBlockAfter(startup, "bool IsValidBoardTransportPreviewTarget");
 
         StringAssert.Contains("IsBoardTransportWithAvailableSeats(em, target)", previewTarget);
         Assert.IsFalse(
             previewTarget.Contains("IsBoardCommandAvailable(em, target)", StringComparison.Ordinal),
             "Passenger-first Board preview must not use broad Board availability, because that also includes soldiers.");
+    }
+
+    [Test]
+    public void BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation()
+    {
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string boarding = ExtractBlockAfter(startup, "bool TryIssueFocusedTransportBoarding");
+
+        int planningIndex = boarding.IndexOf("plannedOrders.Add(new TransportBoardingOrder", StringComparison.Ordinal);
+        int mutationIndex = boarding.IndexOf("unitMoveOrderSystem.ClearMovementOrderComponents", StringComparison.Ordinal);
+        Assert.GreaterOrEqual(planningIndex, 0, "Board All transport boarding must collect planned orders before mutating ECS components.");
+        Assert.GreaterOrEqual(mutationIndex, 0, "Board All transport boarding must still issue movement orders after planning.");
+        Assert.Less(
+            planningIndex,
+            mutationIndex,
+            "Board All must not mutate ECS components while GridWalkable.AsNativeArray() and other grid arrays are still being used for approach-cell search.");
+    }
+
+    [Test]
+    public void BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess()
+    {
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string boardFocusedTransport = ExtractBlockAfter(startup, "void BoardFocusedTransport");
+
+        int clearModeIndex = boardFocusedTransport.IndexOf("selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext())", StringComparison.Ordinal);
+        int successIndex = boardFocusedTransport.IndexOf("TacticalCommandResult.Success($\"Boarding", StringComparison.Ordinal);
+
+        Assert.GreaterOrEqual(clearModeIndex, 0, "Successful Board All must clear Board command mode so BOARD ALL and CANCEL disappear.");
+        Assert.GreaterOrEqual(successIndex, 0, "Successful Board All must still show a success message.");
+        Assert.Less(clearModeIndex, successIndex, "Clear command mode before showing the success result so the message remains but action buttons are hidden.");
+    }
+
+    [Test]
+    public void SelectAll_ClearsPriorCommandModeFeedbackBeforeSelecting()
+    {
+        string focusCommands = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs");
+        string selectAll = ExtractBlockAfter(focusCommands, "public void SelectAllVisiblePlayerUnits");
+
+        int clearModeIndex = selectAll.IndexOf("context.InputSystem.ClearActiveCommandMode()", StringComparison.Ordinal);
+        int clearHudIndex = selectAll.IndexOf("context.ClearHudCommandMode?.Invoke()", StringComparison.Ordinal);
+        int hideMarkersIndex = selectAll.IndexOf("context.SetHudWorldMarkersVisible?.Invoke(false)", StringComparison.Ordinal);
+        int queueSelectionIndex = selectAll.IndexOf("context.QueueSelectionRectangleRequest?.Invoke", StringComparison.Ordinal);
+
+        Assert.GreaterOrEqual(clearModeIndex, 0, "Select All must exit any prior command mode.");
+        Assert.GreaterOrEqual(clearHudIndex, 0, "Select All must clear command feedback actions such as BOARD ALL and CANCEL.");
+        Assert.GreaterOrEqual(hideMarkersIndex, 0, "Select All must hide command targeting markers from the previous mode.");
+        Assert.GreaterOrEqual(queueSelectionIndex, 0, "Select All must still issue the selection rectangle request.");
+        Assert.Less(clearModeIndex, queueSelectionIndex);
+        Assert.Less(clearHudIndex, queueSelectionIndex);
+        Assert.Less(hideMarkersIndex, queueSelectionIndex);
     }
 
     [Test]
@@ -402,7 +488,7 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("input.BoardPassengerDragArmed = IsTransportFirstBoardPassengerPress(context, input, pointerPosition);", pointerPressed);
         StringAssert.Contains("bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;", pointerPressed);
         StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
-        StringAssert.Contains("direction == BoardCommandModeDirection.TransportToPassenger", passengerPress);
+        StringAssert.Contains("direction != BoardCommandModeDirection.TransportToPassenger", passengerPress);
         StringAssert.Contains("context.IsBoardSelectedTransportPassengerTarget.Invoke(transport, pointerPosition)", passengerPress);
         StringAssert.Contains("return !input.BoardPassengerDragArmed;", commandPan);
         StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);

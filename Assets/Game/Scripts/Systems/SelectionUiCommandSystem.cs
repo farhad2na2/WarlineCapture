@@ -103,6 +103,18 @@ public sealed class SelectionUiCommandSystem
         return Queue(RtsSelectionCommandIntentKind.BoardNearestSoldiers);
     }
 
+    public bool RequestBoardAllSelectedTransport()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.BoardAllSelectedTransport);
+    }
+
+    public bool RequestCancelActiveCommandMode()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.CancelActiveCommandMode);
+    }
+
     public bool RequestFocusedAttackOrTargetMode()
     {
         return Queue(RtsSelectionCommandIntentKind.ToggleAttackTargetMode);

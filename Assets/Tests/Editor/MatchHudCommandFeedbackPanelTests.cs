@@ -75,6 +75,11 @@ public sealed class MatchHudCommandFeedbackPanelTests
         AssertObjectReference(serializedView, "feedbackPanel");
         AssertObjectReference(serializedView, "feedbackText");
         AssertObjectReference(serializedView, "feedbackIcon");
+        AssertObjectReference(serializedView, "feedbackActionsRoot");
+        AssertObjectReference(serializedView, "boardAllButton");
+        AssertObjectReference(serializedView, "boardAllButtonLabel");
+        AssertObjectReference(serializedView, "cancelButton");
+        AssertObjectReference(serializedView, "cancelButtonLabel");
         AssertObjectReference(serializedView, "neutralIcon");
         AssertObjectReference(serializedView, "readyIcon");
         AssertObjectReference(serializedView, "warningIcon");
@@ -88,6 +93,126 @@ public sealed class MatchHudCommandFeedbackPanelTests
             "SCN08 command feedback icon must point at FooterContent/FeedbackPanel/Frame/Icon.");
         Assert.IsTrue(icon.enabled, "SCN08 command feedback icon Image must be enabled like the Build Drawer instruction icon.");
         Assert.AreSame(serializedView.FindProperty("neutralIcon").objectReferenceValue, icon.sprite);
+
+        Assert.AreSame(
+            FindRequiredButton(prefab.transform, "FooterContent/FeedbackPanel/Frame/Actions/BoardAllButton"),
+            serializedView.FindProperty("boardAllButton").objectReferenceValue);
+        Assert.AreSame(
+            FindRequiredButton(prefab.transform, "FooterContent/FeedbackPanel/Frame/Actions/CancelButton"),
+            serializedView.FindProperty("cancelButton").objectReferenceValue);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_AppliesBoardFeedbackActions()
+    {
+        _root = new GameObject("FeedbackView");
+        var panel = new GameObject("FeedbackPanel");
+        var textNode = new GameObject("FeedbackText");
+        var actions = new GameObject("Actions");
+        var boardAllNode = new GameObject("BoardAllButton");
+        var boardAllLabelNode = new GameObject("BoardAllLabel");
+        var cancelNode = new GameObject("CancelButton");
+        var cancelLabelNode = new GameObject("CancelLabel");
+
+        panel.transform.SetParent(_root.transform);
+        textNode.transform.SetParent(panel.transform);
+        actions.transform.SetParent(panel.transform);
+        boardAllNode.transform.SetParent(actions.transform);
+        boardAllLabelNode.transform.SetParent(boardAllNode.transform);
+        cancelNode.transform.SetParent(actions.transform);
+        cancelLabelNode.transform.SetParent(cancelNode.transform);
+
+        var view = _root.AddComponent<BattleHudRuntimeFeedbackView>();
+        TMP_Text text = textNode.AddComponent<TextMeshProUGUI>();
+        Button boardAll = boardAllNode.AddComponent<Button>();
+        TMP_Text boardAllLabel = boardAllLabelNode.AddComponent<TextMeshProUGUI>();
+        Button cancel = cancelNode.AddComponent<Button>();
+        TMP_Text cancelLabel = cancelLabelNode.AddComponent<TextMeshProUGUI>();
+        SetPrivateField(view, "feedbackPanel", panel);
+        SetPrivateField(view, "feedbackText", text);
+        SetPrivateField(view, "feedbackActionsRoot", actions);
+        SetPrivateField(view, "boardAllButton", boardAll);
+        SetPrivateField(view, "boardAllButtonLabel", boardAllLabel);
+        SetPrivateField(view, "cancelButton", cancel);
+        SetPrivateField(view, "cancelButtonLabel", cancelLabel);
+
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            view,
+            BoardCommandModeDirection.TransportToPassenger,
+            boardAllInteractable: true);
+
+        Assert.IsTrue(panel.activeSelf);
+        Assert.IsTrue(actions.activeSelf);
+        Assert.AreEqual("Tap soldiers or board all.", text.text);
+        Assert.IsTrue(boardAll.gameObject.activeSelf);
+        Assert.IsTrue(boardAll.interactable);
+        Assert.AreEqual("BOARD ALL", boardAllLabel.text);
+        Assert.IsTrue(cancel.gameObject.activeSelf);
+        Assert.IsTrue(cancel.interactable);
+        Assert.AreEqual("CANCEL", cancelLabel.text);
+
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            view,
+            BoardCommandModeDirection.PassengerToTransport,
+            boardAllInteractable: false);
+
+        Assert.IsTrue(actions.activeSelf);
+        Assert.AreEqual("Tap a transport.", text.text);
+        Assert.IsFalse(boardAll.gameObject.activeSelf);
+        Assert.IsTrue(cancel.gameObject.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
+        Assert.IsFalse(actions.activeSelf);
+    }
+
+    [Test]
+    public void SelectButtonClick_HidesBoardFeedbackActionsImmediately()
+    {
+        _root = new GameObject("SelectButtonFeedbackBoundary");
+        var controlsObject = new GameObject("Controls");
+        var selectButtonObject = new GameObject("SelectButton");
+        var feedbackObject = new GameObject("FeedbackView");
+        var panel = new GameObject("FeedbackPanel");
+        var textNode = new GameObject("FeedbackText");
+        var actions = new GameObject("Actions");
+        var boardAllObject = new GameObject("BoardAllButton");
+        var cancelObject = new GameObject("CancelButton");
+
+        controlsObject.transform.SetParent(_root.transform);
+        selectButtonObject.transform.SetParent(controlsObject.transform);
+        feedbackObject.transform.SetParent(_root.transform);
+        panel.transform.SetParent(feedbackObject.transform);
+        textNode.transform.SetParent(panel.transform);
+        actions.transform.SetParent(panel.transform);
+        boardAllObject.transform.SetParent(actions.transform);
+        cancelObject.transform.SetParent(actions.transform);
+
+        var controls = controlsObject.AddComponent<MatchOverlayCommandControlsView>();
+        Button selectButton = selectButtonObject.AddComponent<Button>();
+        var feedbackView = feedbackObject.AddComponent<BattleHudRuntimeFeedbackView>();
+        TMP_Text text = textNode.AddComponent<TextMeshProUGUI>();
+        Button boardAll = boardAllObject.AddComponent<Button>();
+        Button cancel = cancelObject.AddComponent<Button>();
+
+        SetPrivateField(controls, "selectButton", selectButton);
+        SetPrivateField(feedbackView, "feedbackPanel", panel);
+        SetPrivateField(feedbackView, "feedbackText", text);
+        SetPrivateField(feedbackView, "feedbackActionsRoot", actions);
+        SetPrivateField(feedbackView, "boardAllButton", boardAll);
+        SetPrivateField(feedbackView, "cancelButton", cancel);
+
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            feedbackView,
+            BoardCommandModeDirection.TransportToPassenger,
+            boardAllInteractable: true);
+        Assert.IsTrue(actions.activeSelf, "Test setup must start with Board feedback actions visible.");
+
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        inputSystem.Bind(controls, new SelectionUiCommandSystem(), feedbackView);
+
+        selectButton.onClick.Invoke();
+
+        Assert.IsFalse(actions.activeSelf, "Clicking Select must immediately hide stale Board feedback actions.");
     }
 
     [Test]
@@ -155,6 +280,16 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Image image = child.GetComponent<Image>();
         Assert.NotNull(image, $"Missing Image component at {path}.");
         return image;
+    }
+
+    private static Button FindRequiredButton(Transform root, string path)
+    {
+        Transform child = root.Find(path);
+        Assert.NotNull(child, $"Missing prefab path {path}.");
+
+        Button button = child.GetComponent<Button>();
+        Assert.NotNull(button, $"Missing Button component at {path}.");
+        return button;
     }
 
     private static void AssertObjectReference(SerializedObject serializedObject, string propertyName)

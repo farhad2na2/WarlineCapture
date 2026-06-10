@@ -30,6 +30,7 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action<EntityManager, Entity> ApplyHudSelection;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
         public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
+        public readonly Action<BoardCommandModeDirection, bool> ApplyHudBoardCommandMode;
         public readonly Action ClearHudSelection;
         public readonly Action ClearHudCommandMode;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -67,6 +68,7 @@ public sealed class RtsSelectionFocusCommandSystem
             Action<EntityManager, Entity> applyHudSelection,
             Action<TacticalCommandResult> applyHudCommandResult,
             Action<TacticalCommandMode> applyHudCommandMode,
+            Action<BoardCommandModeDirection, bool> applyHudBoardCommandMode,
             Action clearHudSelection,
             Action clearHudCommandMode,
             Action<bool> setHudWorldMarkersVisible,
@@ -103,6 +105,7 @@ public sealed class RtsSelectionFocusCommandSystem
             ApplyHudSelection = applyHudSelection;
             ApplyHudCommandResult = applyHudCommandResult;
             ApplyHudCommandMode = applyHudCommandMode;
+            ApplyHudBoardCommandMode = applyHudBoardCommandMode;
             ClearHudSelection = clearHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
@@ -191,6 +194,11 @@ public sealed class RtsSelectionFocusCommandSystem
 
     public void SelectAllVisiblePlayerUnits(Context context, VisibleUnitSelectionSystem.Filter filter)
     {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.InputSystem.ClearActiveCommandMode();
+        context.ClearHudCommandMode?.Invoke();
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+
         if (context.WorldCamera == null)
         {
             context.LogSelectionDiagnostic?.Invoke($"result=SelectAllSkipped reason=NoCamera filter={filter}");
@@ -277,6 +285,8 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
                kind == RtsSelectionCommandIntentKind.ReturnToBase ||
                kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
+               kind == RtsSelectionCommandIntentKind.CancelActiveCommandMode ||
+               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode ||
                kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
     }
@@ -336,6 +346,19 @@ public sealed class RtsSelectionFocusCommandSystem
             case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
                 context.InputSystem.ClearActiveCommandMode();
                 context.BoardFocusedTransport?.Invoke();
+                return true;
+            case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
+                context.BoardFocusedTransport?.Invoke();
+                return true;
+            case RtsSelectionCommandIntentKind.CancelActiveCommandMode:
+                context.SetExplicitAttackTargetModeActive?.Invoke(false);
+                context.InputSystem.ClearActiveCommandMode();
+                context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+                context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+                context.SetCameraDragging?.Invoke(false);
+                context.SetHudWorldMarkersVisible?.Invoke(false);
+                context.ClearHudCommandMode?.Invoke();
+                context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Command cancelled."));
                 return true;
             case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 if (context.IssueFocusedMissileLauncherRadarAttack == null ||
@@ -551,9 +574,12 @@ public sealed class RtsSelectionFocusCommandSystem
         context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
         context.SetCameraDragging?.Invoke(false);
         context.SetHudWorldMarkersVisible?.Invoke(true);
-        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Board);
-        if (direction == BoardCommandModeDirection.TransportToPassenger)
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Tap units to board."));
+        bool boardAllInteractable = direction == BoardCommandModeDirection.TransportToPassenger &&
+                                    transport != Entity.Null;
+        if (context.ApplyHudBoardCommandMode != null)
+            context.ApplyHudBoardCommandMode.Invoke(direction, boardAllInteractable);
+        else
+            context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Board);
         context.LogSelectionDiagnostic?.Invoke($"boardModeEntered result=True direction={direction} transport={transport} frame={Time.frameCount} dragReset={pointerPosition}");
     }
 

@@ -58,6 +58,32 @@ public sealed class BattleHudRuntimeFeedbackSystem
         ApplyCommandModeVisuals(view, mode);
     }
 
+    public static void ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackView view,
+        BoardCommandModeDirection direction,
+        bool boardAllInteractable)
+    {
+        if (view == null)
+            return;
+
+        view.CurrentCommandMode = TacticalCommandMode.Board;
+        CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, TacticalCommandMode.Board);
+
+        MatchHudCommandFeedbackModel commandFeedback = direction == BoardCommandModeDirection.TransportToPassenger
+            ? MatchHudCommandFeedbackModel.Show("Tap soldiers or board all.", CommandFeedbackSeverity.Ready)
+            : MatchHudCommandFeedbackModel.Show("Tap a transport.", CommandFeedbackSeverity.Ready);
+        view.ApplyCommandFeedback(commandFeedback);
+        view.ApplyCommandFeedbackActions(direction == BoardCommandModeDirection.TransportToPassenger
+            ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
+            : MatchHudCommandFeedbackActionsModel.CancelOnly);
+
+        BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
+        if (feedback == null)
+            return;
+
+        feedback.ShowCommandMode(TacticalCommandFeedbackText.ToDisplayText(TacticalCommandMode.Board));
+    }
+
     public static void ApplyStickyCommandMode(BattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
     {
         if (view == null)
@@ -135,6 +161,8 @@ public sealed class BattleHudRuntimeFeedbackSystem
         else
             CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, mode);
 
+        view.ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
+
         BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
         MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode);
         if (!commandFeedback.Visible)
@@ -156,6 +184,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
     {
         view.CurrentCommandMode = TacticalCommandMode.None;
         view.HideFeedbackMessage();
+        view.ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
         ResolveTacticalFeedback(view)?.HideCommandMode();
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
     }

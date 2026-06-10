@@ -1,0 +1,190 @@
+using System.Collections.Generic;
+using System.Reflection;
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+using UnityEngine.UI;
+
+public sealed class SelectionSummaryQuerySystemTests
+{
+    private World _world;
+    private World _previousWorld;
+    private readonly List<GameObject> _createdObjects = new();
+
+    [SetUp]
+    public void SetUp()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("SelectionSummaryQuerySystemTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        for (int i = 0; i < _createdObjects.Count; i++)
+            Object.DestroyImmediate(_createdObjects[i]);
+        _createdObjects.Clear();
+
+        if (_world != null && _world.IsCreated)
+            _world.Dispose();
+
+        World.DefaultGameObjectInjectionWorld = _previousWorld;
+    }
+
+    [Test]
+    public void SoldierMultiSelectionUsesInfantryCopyAndAggregateHealth()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity first = CreatePlayerUnit(em, "Rifle Squad", new int2(1, 1), 80);
+        Entity second = CreatePlayerUnit(em, "Security Squad", new int2(2, 1), 60);
+        em.AddComponent<SelectedUnitTag>(first);
+        em.AddComponent<SelectedUnitTag>(second);
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(2, summary.UnitCount);
+        Assert.AreEqual(2, summary.SoldierCount);
+        Assert.AreEqual("2 SOLDIERS", summary.Title);
+        Assert.AreEqual("Infantry squad", summary.Subtitle);
+        Assert.AreEqual("Health: 140/200", summary.HealthText);
+        Assert.AreEqual(0.7f, summary.Health01, 0.001f);
+        Assert.AreEqual(SelectionSummaryPortraitKind.Soldiers, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedSoldierAndVehicleUsesMixedCopyAndAggregateHealth()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity soldier = CreatePlayerUnit(em, "Rifle Squad", new int2(1, 1), 50);
+        Entity vehicle = CreatePlayerUnit(em, "Recon Vehicle", new int2(2, 1), 75);
+        em.AddComponent<SelectedUnitTag>(soldier);
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(2, summary.UnitCount);
+        Assert.AreEqual(1, summary.SoldierCount);
+        Assert.AreEqual(1, summary.VehicleCount);
+        Assert.AreEqual("MIXED SQUAD", summary.Title);
+        Assert.AreEqual("1 infantry / 1 vehicles", summary.Subtitle);
+        Assert.AreEqual("Health: 125/200", summary.HealthText);
+        Assert.AreEqual(0.625f, summary.Health01, 0.001f);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedForce, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedSelectedOrdersDisplaysMixedOrders()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity idle = CreatePlayerUnit(em, "Rifle Squad", new int2(1, 1), 90);
+        Entity moving = CreatePlayerUnit(em, "Security Squad", new int2(2, 1), 90);
+        em.AddComponent<SelectedUnitTag>(idle);
+        em.AddComponent<SelectedUnitTag>(moving);
+        em.AddComponentData(moving, new UnitTarget { Cell = new int2(8, 8) });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual("Mixed orders", summary.OrderText);
+    }
+
+    [Test]
+    public void SelectionPanelResolvesConfiguredFallbackPortraits()
+    {
+        var panelHost = new GameObject("MatchHudSelectionPanel");
+        _createdObjects.Add(panelHost);
+
+        Texture2D genericTexture = new Texture2D(1, 1);
+        Texture2D mixedTexture = new Texture2D(1, 1);
+        Sprite genericSprite = Sprite.Create(genericTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        Sprite mixedSprite = Sprite.Create(mixedTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        try
+        {
+            var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
+            SetPrivateField(panel, "genericSquadPortraitSprite", genericSprite);
+            SetPrivateField(panel, "mixedForcePortraitSprite", mixedSprite);
+
+            Assert.AreSame(genericSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers));
+            Assert.AreSame(mixedSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedForce));
+        }
+        finally
+        {
+            Object.DestroyImmediate(genericSprite);
+            Object.DestroyImmediate(mixedSprite);
+            Object.DestroyImmediate(genericTexture);
+            Object.DestroyImmediate(mixedTexture);
+        }
+    }
+
+    [Test]
+    public void SquadTrayViewReturnsConfiguredPortraitSpriteForSlot()
+    {
+        var trayHost = new GameObject("MatchHudSquadTray");
+        var portraitHost = new GameObject("Portrait");
+        _createdObjects.Add(trayHost);
+        _createdObjects.Add(portraitHost);
+
+        Texture2D portraitTexture = new Texture2D(1, 1);
+        Sprite portraitSprite = Sprite.Create(portraitTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        try
+        {
+            Image portraitImage = portraitHost.AddComponent<Image>();
+            portraitImage.sprite = portraitSprite;
+
+            var tray = trayHost.AddComponent<MatchHudSquadTrayView>();
+            var cards = new MatchHudSquadTrayView.Card[5];
+            cards[1] = new MatchHudSquadTrayView.Card { PortraitImage = portraitImage };
+            SetPrivateField(tray, "cards", cards);
+
+            Assert.IsTrue(tray.TryGetPortraitSprite(MatchHudSquadTraySlot.CombatVehicles, out Sprite resolved));
+            Assert.AreSame(portraitSprite, resolved);
+        }
+        finally
+        {
+            Object.DestroyImmediate(portraitSprite);
+            Object.DestroyImmediate(portraitTexture);
+        }
+    }
+
+    private static Entity CreatePlayerUnit(EntityManager em, string displayName, int2 cell, int health)
+    {
+        Entity entity = em.CreateEntity();
+        em.AddComponentData(entity, new Faction { Id = 0 });
+        em.AddComponentData(entity, new UnitGrid { Cell = cell });
+        em.AddComponentData(entity, new UnitHealth { Current = health, Max = 100 });
+        em.AddComponentData(entity, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes(displayName),
+            Description = new FixedString128Bytes("Selection summary test unit")
+        });
+        em.AddComponentData(entity, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 5f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        em.AddComponentData(entity, LocalTransform.FromPosition(new float3(cell.x, 0f, cell.y)));
+        return entity;
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, $"Missing private field {fieldName} on {target.GetType().Name}.");
+        field.SetValue(target, value);
+    }
+}

@@ -89,6 +89,7 @@ public sealed class MatchOverlayCommandInputSystem
         public void Bind()
         {
             BindCommandTabs();
+            _runtimeFeedbackView?.BindFeedbackActionCallbacks(OnBoardAllFeedbackClicked, OnCancelFeedbackClicked);
 
             _view.SelectButton?.onClick.AddListener(OnSelectButtonClicked);
             _view.MoveButton?.onClick.AddListener(OnMoveButtonClicked);
@@ -103,6 +104,7 @@ public sealed class MatchOverlayCommandInputSystem
         public void Unbind()
         {
             UnbindCommandTabs();
+            _runtimeFeedbackView?.ClearFeedbackActionCallbacks();
 
             _view.SelectButton?.onClick.RemoveListener(OnSelectButtonClicked);
             _view.MoveButton?.onClick.RemoveListener(OnMoveButtonClicked);
@@ -172,6 +174,11 @@ public sealed class MatchOverlayCommandInputSystem
         private void OnSelectButtonClicked()
         {
             bool selected = _tabVisualSystem == null || _tabVisualSystem.IsSelected(_selectCommandTab);
+            if (selected)
+                BattleHudRuntimeFeedbackSystem.ApplyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Select);
+            else
+                BattleHudRuntimeFeedbackSystem.ClearCommandMode(_runtimeFeedbackView);
+
             bool queued = _selectionUiCommandSystem != null &&
                 (selected
                     ? _selectionUiCommandSystem.RequestEnterSelectionMode()
@@ -260,6 +267,28 @@ public sealed class MatchOverlayCommandInputSystem
         {
             _view.CommandWheelPanel?.Close();
             _selectionUiCommandSystem?.RequestStop();
+        }
+
+        private void OnBoardAllFeedbackClicked()
+        {
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestBoardAllSelectedTransport();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Board all unavailable."));
+        }
+
+        private void OnCancelFeedbackClicked()
+        {
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestCancelActiveCommandMode();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Cancel unavailable."));
         }
 
         private readonly struct TabButtonBinding

@@ -54,6 +54,10 @@ public sealed class RtsSelectionFocusCommandContextSystem
             (em, entity) => hudFeedbackSystem.ApplySelection(hudFeedbackContext, em, entity),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
             mode => hudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+            (direction, boardAllInteractable) => hudFeedbackSystem.ApplyBoardCommandMode(
+                hudFeedbackContext,
+                direction,
+                boardAllInteractable),
             () => hudFeedbackSystem.ClearSelection(hudFeedbackContext),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
             visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),

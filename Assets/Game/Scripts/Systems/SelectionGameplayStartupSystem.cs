@@ -10,6 +10,18 @@ using UnityEngine.InputSystem;
 
 internal sealed class SelectionGameplayStartupSystem
 {
+    private readonly struct TransportBoardingOrder
+    {
+        public readonly Entity Passenger;
+        public readonly int2 Goal;
+
+        public TransportBoardingOrder(Entity passenger, int2 goal)
+        {
+            Passenger = passenger;
+            Goal = goal;
+        }
+    }
+
     public readonly struct Result
     {
         public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
@@ -87,6 +99,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionScreenMarkers = new SelectionScreenMarkerSystem();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiQuerySystem = new SelectionUiQuerySystem();
+        var selectionSummaryQuerySystem = new SelectionSummaryQuerySystem();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelSystem();
         var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();
         var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
@@ -565,6 +578,7 @@ internal sealed class SelectionGameplayStartupSystem
         MatchHudSelectionPanelView.Model BuildFocusedUnitPanelModel(EntityManager em, Entity entity)
         {
             Sprite portraitSprite = resolveSelectionPortraitSprite?.Invoke(em, entity);
+            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
             bool owned = selectionUiQuerySystem.IsOwnedByPlayer(em, entity);
             bool movable = em.HasComponent<UnitMove>(entity);
             bool vehicle = selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
@@ -587,15 +601,22 @@ internal sealed class SelectionGameplayStartupSystem
 
         MatchHudSelectionPanelView.Model BuildSquadPanelModel(EntityManager em, int selectedCount)
         {
-            TryGetSelectedHealthModel(em, out string healthLabel, out float health01);
+            bool includeSelectedBuilding = buildingPlacementInteractionSystem != null &&
+                                           buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
+            SelectionSummaryQuerySystem.Summary summary = selectionSummaryQuerySystem.BuildSelectedSummary(
+                em,
+                selectionUiQuerySystem,
+                includeSelectedBuilding);
             Sprite portraitSprite = ResolveActiveSquadTrayPortraitSprite();
+            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
+            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
             return new MatchHudSelectionPanelView.Model(
                 true,
-                selectedCount == 1 ? "1 UNIT" : $"{selectedCount} UNITS",
-                "Selected squad",
-                ResolveSquadOrderText(em),
-                healthLabel,
-                health01,
+                summary.Title,
+                summary.Subtitle,
+                summary.OrderText,
+                summary.HealthText,
+                summary.Health01,
                 portraitSprite,
                 false,
                 null,
@@ -618,6 +639,7 @@ internal sealed class SelectionGameplayStartupSystem
         {
             string label = buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext);
             Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
+            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
             return new MatchHudSelectionPanelView.Model(
                 true,
                 string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
@@ -649,35 +671,6 @@ internal sealed class SelectionGameplayStartupSystem
             };
         }
 
-        string ResolveSquadOrderText(EntityManager em)
-        {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-            if (query.IsEmptyIgnoreFilter)
-                return "Idle";
-
-            bool anyMoving = false;
-            bool anyEngaged = false;
-            bool anyReturning = false;
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (!em.Exists(entity))
-                    continue;
-
-                SelectionUiQuerySystem.FocusedUnitUiStatus status = selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity);
-                anyReturning |= status == SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase;
-                anyEngaged |= status == SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged;
-                anyMoving |= status == SelectionUiQuerySystem.FocusedUnitUiStatus.Moving;
-            }
-
-            if (anyReturning)
-                return "Returning to base";
-            if (anyEngaged)
-                return "Engaging target";
-            return anyMoving ? "Moving" : "Idle";
-        }
-
         void TryGetHealthModel(EntityManager em, Entity entity, out string healthLabel, out float health01)
         {
             if (!selectionUiQuerySystem.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
@@ -689,37 +682,6 @@ internal sealed class SelectionGameplayStartupSystem
 
             healthLabel = $"Health: {math.max(0, current)}/{max}";
             health01 = math.saturate((float)current / max);
-        }
-
-        void TryGetSelectedHealthModel(EntityManager em, out string healthLabel, out float health01)
-        {
-            int currentTotal = 0;
-            int maxTotal = 0;
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>(), ComponentType.ReadOnly<UnitHealth>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (!em.Exists(entity) || !em.HasComponent<UnitHealth>(entity))
-                        continue;
-
-                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-                    currentTotal += math.max(0, health.Current);
-                    maxTotal += math.max(0, health.Max);
-                }
-            }
-
-            if (maxTotal <= 0)
-            {
-                healthLabel = "Health: -";
-                health01 = 0f;
-                return;
-            }
-
-            healthLabel = $"Health: {currentTotal}/{maxTotal}";
-            health01 = math.saturate((float)currentTotal / maxTotal);
         }
 
         bool IsBoardCommandAvailable(EntityManager em, Entity entity)
@@ -1204,7 +1166,11 @@ internal sealed class SelectionGameplayStartupSystem
 
             explicitAttackTargetModeActive = false;
             rtsSelectionInputSystem.ClearActiveCommandMode();
+            runtimeGameplayStateSystem.SelectionModeActive = false;
             runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+            SetCameraDragging(false);
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
             selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success($"Boarding {orderedCount} unit{(orderedCount == 1 ? string.Empty : "s")}."));
         }
 
@@ -1297,8 +1263,9 @@ internal sealed class SelectionGameplayStartupSystem
             int2 boardingTransportSize = em.HasComponent<UnitAirMovement>(transport) ? new int2(1, 1) : transportSize;
             int directBoardingCells = unitTransportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
             var reservedBoardingCells = new HashSet<int>();
+            var plannedOrders = new List<TransportBoardingOrder>(math.min(candidates.Count, availableSeats));
 
-            for (int i = 0; i < candidates.Count && orderedCount < availableSeats; i++)
+            for (int i = 0; i < candidates.Count && plannedOrders.Count < availableSeats; i++)
             {
                 Entity passenger = candidates[i];
                 if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
@@ -1333,14 +1300,24 @@ internal sealed class SelectionGameplayStartupSystem
                 }
 
                 unitTransportApproachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+                plannedOrders.Add(new TransportBoardingOrder(passenger, goal));
+            }
+
+            for (int i = 0; i < plannedOrders.Count; i++)
+            {
+                TransportBoardingOrder order = plannedOrders[i];
+                Entity passenger = order.Passenger;
+                if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                    continue;
+
                 unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
                 if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
                     em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
-                unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
+                unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, order.Goal);
                 if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-                    em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
+                    em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = order.Goal });
                 else
-                    em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
+                    em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = order.Goal });
                 orderedCount++;
             }
 

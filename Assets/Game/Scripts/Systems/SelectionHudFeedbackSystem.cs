@@ -236,6 +236,17 @@ public sealed class SelectionHudFeedbackSystem
         ApplyCommandMode(em, mode);
     }
 
+    public void ApplyBoardCommandMode(Context context, BoardCommandModeDirection direction, bool boardAllInteractable)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        QueueCommandMode(em, TacticalCommandMode.Board);
+        ProcessPendingFeedback(em);
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(ResolveBattleHudView(), direction, boardAllInteractable);
+        _matchHudSelectionPanelView?.SetBoardActionSelected(true);
+    }
+
     public void ClearCommandMode(EntityManager em)
     {
         QueueClearCommandMode(em);

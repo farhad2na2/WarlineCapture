@@ -595,8 +595,10 @@ public sealed class UnitTransportValidationTests
         try
         {
             Entity queue = em.CreateEntity();
-            DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue);
-            DynamicBuffer<RtsSelectionCommandResultElement> results = em.AddBuffer<RtsSelectionCommandResultElement>(queue);
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue);
+            em.AddBuffer<RtsSelectionCommandResultElement>(queue);
+            DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue);
+            DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(queue);
             requests.Add(new RtsSelectionCommandIntentRequestElement
             {
                 Kind = RtsSelectionCommandIntentKind.DisembarkTransport,

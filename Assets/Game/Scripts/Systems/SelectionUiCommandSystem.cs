@@ -131,6 +131,17 @@ public sealed class SelectionUiCommandSystem
         return _inputSystem.QueueDisembarkTransportCommandRequest(focusedUnit, Time.frameCount);
     }
 
+    public bool RequestFocusedTransportPassengerDisembark(Entity passenger)
+    {
+        if (IsGameplayInputLocked() || passenger == Entity.Null)
+            return false;
+
+        if (!TryReadFocusedUnit(out Entity focusedUnit))
+            return false;
+
+        return _inputSystem.QueueDisembarkTransportPassengerCommandRequest(focusedUnit, passenger, Time.frameCount);
+    }
+
     private bool Queue(RtsSelectionCommandIntentKind kind)
     {
         if (IsGameplayInputLocked())

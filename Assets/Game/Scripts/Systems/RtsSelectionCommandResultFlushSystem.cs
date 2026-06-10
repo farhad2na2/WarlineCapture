@@ -375,7 +375,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
             if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
-                result.Kind != RtsSelectionCommandIntentKind.DisembarkTransport)
+                result.Kind != RtsSelectionCommandIntentKind.DisembarkTransport &&
+                result.Kind != RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
             {
                 i++;
                 continue;
@@ -397,6 +398,16 @@ public sealed class RtsSelectionCommandResultFlushSystem
             }
 
             accepted = true;
+            if (result.Kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
+                result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
+            {
+                context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+                    result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
+                        ? "Exiting unit."
+                        : "Exiting passengers."));
+                continue;
+            }
+
             if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger)

@@ -186,6 +186,21 @@ public struct EngageTarget : IComponentData
     public byte IsCommanded;
 }
 
+public struct SelectedUnitDebugFireState : IComponentData
+{
+    public Entity Target;
+    public Entity PreviousTarget;
+    public int2 PreviousCell;
+    public Unity.Mathematics.float3 PreviousPosition;
+    public byte PreviousIsCommanded;
+    public byte HadPreviousTarget;
+}
+
+public struct DebugFireTargetTag : IComponentData
+{
+    public Entity Source;
+}
+
 public struct BaseBreachOrder : IComponentData
 {
     public const byte StageAttackingBreach = 0;

@@ -1,10 +1,73 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Entities;
+using System;
+using System.Collections.Generic;
 
 [DisallowMultipleComponent]
 public sealed class MatchHudSelectionPanelView : MonoBehaviour
 {
+    public readonly struct PassengerItemModel
+    {
+        public readonly Entity Passenger;
+        public readonly string DisplayName;
+        public readonly string RoleText;
+        public readonly string HealthText;
+        public readonly float Health01;
+        public readonly Sprite PortraitSprite;
+        public readonly bool ExitEnabled;
+
+        public PassengerItemModel(
+            Entity passenger,
+            string displayName,
+            string roleText,
+            string healthText,
+            float health01,
+            Sprite portraitSprite,
+            bool exitEnabled)
+        {
+            Passenger = passenger;
+            DisplayName = displayName;
+            RoleText = roleText;
+            HealthText = healthText;
+            Health01 = health01;
+            PortraitSprite = portraitSprite;
+            ExitEnabled = exitEnabled;
+        }
+    }
+
+    public readonly struct TransportPassengersModel
+    {
+        public readonly bool Visible;
+        public readonly bool DrawerOpen;
+        public readonly Entity Transport;
+        public readonly int PassengerCount;
+        public readonly int Capacity;
+        public readonly bool ExitAllEnabled;
+        public readonly IReadOnlyList<PassengerItemModel> Passengers;
+
+        public TransportPassengersModel(
+            bool visible,
+            bool drawerOpen,
+            Entity transport,
+            int passengerCount,
+            int capacity,
+            bool exitAllEnabled,
+            IReadOnlyList<PassengerItemModel> passengers)
+        {
+            Visible = visible;
+            DrawerOpen = drawerOpen;
+            Transport = transport;
+            PassengerCount = passengerCount;
+            Capacity = capacity;
+            ExitAllEnabled = exitAllEnabled;
+            Passengers = passengers;
+        }
+
+        public static TransportPassengersModel Hidden => new(false, false, Entity.Null, 0, 0, false, null);
+    }
+
     public readonly struct Model
     {
         public readonly bool Visible;
@@ -75,6 +138,10 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     [SerializeField] private Button returnAction;
     [SerializeField] private Button destroyAction;
     [SerializeField] private Button boardAction;
+    [SerializeField] private GameObject passengerChipRoot;
+    [SerializeField] private Button passengerChipButton;
+    [SerializeField] private TMP_Text passengerChipLabel;
+    [SerializeField] private MatchHudTransportPassengerDrawerView passengerDrawer;
 
     [Header("Fallback Portraits")]
     [SerializeField] private Sprite genericSquadPortraitSprite;
@@ -92,24 +159,34 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private System.Action _returnRequested;
     private System.Action _destroyRequested;
     private System.Action _boardRequested;
+    private Action _passengerChipRequested;
+    private Action _passengerDrawerCloseRequested;
+    private Action _passengerExitAllRequested;
+    private Action<Entity> _passengerExitRequested;
     private Button _boundReturnAction;
     private Button _boundDestroyAction;
     private Button _boundBoardAction;
+    private Button _boundPassengerChipButton;
     private Sprite _boardActionNormalSprite;
     private Color _boardActionNormalColor;
     private bool _boardActionNormalColorCached;
     private bool _boardActionSelected;
+    private bool _passengerDrawerOpen;
+    private Entity _passengerDrawerTransport;
+    private readonly List<PassengerItemModel> _emptyPassengers = new();
 
     private void Awake()
     {
         BindUnityEvents();
         CacheBoardActionNormalSprite();
+        ApplyTransportPassengers(TransportPassengersModel.Hidden);
         HideSelection();
     }
 
     private void OnDestroy()
     {
         ClearActions();
+        ClearTransportPassengerActions();
         RemoveUnityEvents();
     }
 
@@ -121,11 +198,34 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         _boardRequested = boardRequested;
     }
 
+    public void BindTransportPassengerActions(
+        Action passengerChipRequested,
+        Action passengerDrawerCloseRequested,
+        Action passengerExitAllRequested,
+        Action<Entity> passengerExitRequested)
+    {
+        BindUnityEvents();
+        _passengerChipRequested = passengerChipRequested;
+        _passengerDrawerCloseRequested = passengerDrawerCloseRequested;
+        _passengerExitAllRequested = passengerExitAllRequested;
+        _passengerExitRequested = passengerExitRequested;
+        passengerDrawer?.BindActions(HandlePassengerExitAll, HandlePassengerDrawerClose, HandlePassengerExit);
+    }
+
     public void ClearActions()
     {
         _returnRequested = null;
         _destroyRequested = null;
         _boardRequested = null;
+    }
+
+    public void ClearTransportPassengerActions()
+    {
+        _passengerChipRequested = null;
+        _passengerDrawerCloseRequested = null;
+        _passengerExitAllRequested = null;
+        _passengerExitRequested = null;
+        passengerDrawer?.ClearActions();
     }
 
     public void ShowSelection()
@@ -188,7 +288,9 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         return ContainsScreenPoint(selectedSquadPanel.transform as RectTransform, screenPosition) ||
                ContainsScreenPoint(returnAction != null ? returnAction.transform as RectTransform : null, screenPosition) ||
                ContainsScreenPoint(destroyAction != null ? destroyAction.transform as RectTransform : null, screenPosition) ||
-               ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition);
+               ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition) ||
+               ContainsScreenPoint(passengerChipButton != null ? passengerChipButton.transform as RectTransform : null, screenPosition) ||
+               (passengerDrawer != null && passengerDrawer.ContainsScreenPoint(screenPosition));
     }
 
     public void Apply(Model model)
@@ -208,6 +310,44 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
         SetActionState(boardAction, model.Visible && model.BoardEnabled);
         SetBoardActionSelected(_boardActionSelected);
+    }
+
+    public void ToggleTransportPassengerDrawer()
+    {
+        _passengerDrawerOpen = !_passengerDrawerOpen;
+    }
+
+    public void CloseTransportPassengerDrawer()
+    {
+        _passengerDrawerOpen = false;
+    }
+
+    public void ApplyTransportPassengers(TransportPassengersModel model)
+    {
+        if (!model.Visible || model.Transport == Entity.Null)
+        {
+            _passengerDrawerOpen = false;
+            _passengerDrawerTransport = Entity.Null;
+            ApplyPassengerChip(false, 0, 0);
+            passengerDrawer?.Apply(TransportPassengersModel.Hidden);
+            return;
+        }
+
+        if (_passengerDrawerTransport != model.Transport)
+        {
+            _passengerDrawerTransport = model.Transport;
+            _passengerDrawerOpen = false;
+        }
+
+        ApplyPassengerChip(true, model.PassengerCount, model.Capacity);
+        passengerDrawer?.Apply(new TransportPassengersModel(
+            true,
+            _passengerDrawerOpen,
+            model.Transport,
+            model.PassengerCount,
+            model.Capacity,
+            model.ExitAllEnabled,
+            model.Passengers ?? _emptyPassengers));
     }
 
     public void SetBoardActionSelected(bool selected)
@@ -242,6 +382,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
         BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
         BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
+        BindButton(passengerChipButton, ref _boundPassengerChipButton, HandlePassengerChip);
     }
 
     private void CacheBoardActionNormalSprite()
@@ -270,6 +411,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         UnbindButton(ref _boundReturnAction, HandleReturnAction);
         UnbindButton(ref _boundDestroyAction, HandleDestroyAction);
         UnbindButton(ref _boundBoardAction, HandleBoardAction);
+        UnbindButton(ref _boundPassengerChipButton, HandlePassengerChip);
     }
 
     private void HandleReturnAction()
@@ -285,6 +427,42 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private void HandleBoardAction()
     {
         _boardRequested?.Invoke();
+    }
+
+    private void HandlePassengerChip()
+    {
+        ToggleTransportPassengerDrawer();
+        _passengerChipRequested?.Invoke();
+    }
+
+    private void HandlePassengerDrawerClose()
+    {
+        CloseTransportPassengerDrawer();
+        _passengerDrawerCloseRequested?.Invoke();
+    }
+
+    private void HandlePassengerExitAll()
+    {
+        _passengerExitAllRequested?.Invoke();
+    }
+
+    private void HandlePassengerExit(Entity passenger)
+    {
+        _passengerExitRequested?.Invoke(passenger);
+    }
+
+    private void ApplyPassengerChip(bool visible, int passengerCount, int capacity)
+    {
+        if (passengerChipRoot != null)
+            passengerChipRoot.SetActive(visible);
+
+        if (passengerChipButton != null)
+            passengerChipButton.interactable = visible;
+
+        if (passengerChipLabel != null)
+            passengerChipLabel.text = visible
+                ? $"PASSENGERS {Mathf.Max(0, passengerCount)}/{Mathf.Max(0, capacity)}"
+                : string.Empty;
     }
 
     private void SetHealthFill(float health01)

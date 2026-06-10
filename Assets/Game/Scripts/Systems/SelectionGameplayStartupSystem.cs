@@ -129,6 +129,7 @@ internal sealed class SelectionGameplayStartupSystem
         var unitTransportRopeDisembarkCommandSystem = new UnitTransportRopeDisembarkCommandSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
+        var transportPassengerPanelItems = new List<MatchHudSelectionPanelView.PassengerItemModel>();
         MainMenuPlayUI mainMenuPlayUi = null;
         MatchHudSelectionPanelView matchHudSelectionPanelView = null;
         MatchHudSquadTrayView matchHudSquadTrayView = null;
@@ -178,6 +179,11 @@ internal sealed class SelectionGameplayStartupSystem
                 () => selectionUiCommand.RequestReturnToBase(),
                 () => selectionUiCommand.RequestDestroyFocusedUnit(),
                 RequestBoardTargetModeFromPanel);
+            view?.BindTransportPassengerActions(
+                () => { },
+                () => { },
+                () => selectionUiCommand.RequestFocusedTransportDisembark(),
+                passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(passenger));
         }
 
         void BindBattleHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
@@ -555,6 +561,7 @@ internal sealed class SelectionGameplayStartupSystem
                 em.Exists(focusedUnit))
             {
                 matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(em, focusedUnit));
+                matchHudSelectionPanelView.ApplyTransportPassengers(BuildTransportPassengersPanelModel(em, focusedUnit));
                 return;
             }
 
@@ -562,6 +569,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectedCount > 0)
             {
                 matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
                 return;
             }
 
@@ -569,10 +577,12 @@ internal sealed class SelectionGameplayStartupSystem
                 buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
             {
                 matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel());
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
                 return;
             }
 
             matchHudSelectionPanelView.Apply(MatchHudSelectionPanelView.Model.Hidden);
+            matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
         }
 
         MatchHudSelectionPanelView.Model BuildFocusedUnitPanelModel(EntityManager em, Entity entity)
@@ -597,6 +607,63 @@ internal sealed class SelectionGameplayStartupSystem
                 owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
                 owned,
                 IsBoardCommandAvailable(em, entity));
+        }
+
+        MatchHudSelectionPanelView.TransportPassengersModel BuildTransportPassengersPanelModel(EntityManager em, Entity transport)
+        {
+            transportPassengerPanelItems.Clear();
+            if (!em.Exists(transport) ||
+                !selectionUiQuerySystem.IsOwnedByPlayer(em, transport) ||
+                !unitTransportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
+                !em.HasComponent<UnitTransportCapacity>(transport) ||
+                !em.HasBuffer<UnitTransportPassengerElement>(transport))
+            {
+                return MatchHudSelectionPanelView.TransportPassengersModel.Hidden;
+            }
+
+            int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+            if (capacity <= 0)
+                return MatchHudSelectionPanelView.TransportPassengersModel.Hidden;
+
+            DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+            for (int i = 0; i < passengers.Length; i++)
+            {
+                Entity passenger = passengers[i].Passenger;
+                if (!em.Exists(passenger))
+                    continue;
+
+                TryGetHealthModel(em, passenger, out string healthLabel, out float health01);
+                Sprite portrait = resolveSelectionPortraitSprite?.Invoke(em, passenger);
+                portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
+                transportPassengerPanelItems.Add(new MatchHudSelectionPanelView.PassengerItemModel(
+                    passenger,
+                    selectionUiQuerySystem.ResolveFocusedUnitName(em, passenger),
+                    ResolvePassengerRoleText(em, passenger),
+                    healthLabel,
+                    health01,
+                    portrait,
+                    true));
+            }
+
+            return new MatchHudSelectionPanelView.TransportPassengersModel(
+                true,
+                false,
+                transport,
+                transportPassengerPanelItems.Count,
+                capacity,
+                transportPassengerPanelItems.Count > 0,
+                transportPassengerPanelItems);
+        }
+
+        string ResolvePassengerRoleText(EntityManager em, Entity passenger)
+        {
+            if (!em.Exists(passenger))
+                return "UNIT";
+
+            if (selectionUiQuerySystem.IsVehicleForVisibleSelection(em, passenger))
+                return "VEHICLE";
+
+            return "SOLDIER";
         }
 
         MatchHudSelectionPanelView.Model BuildSquadPanelModel(EntityManager em, int selectedCount)

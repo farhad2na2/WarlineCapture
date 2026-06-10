@@ -41,7 +41,8 @@ public sealed class SelectionTransportCommandRequestSystem
             if (request.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
                 request.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
                 request.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
-                request.Kind != RtsSelectionCommandIntentKind.DisembarkTransport)
+                request.Kind != RtsSelectionCommandIntentKind.DisembarkTransport &&
+                request.Kind != RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
             {
                 i++;
                 continue;
@@ -87,6 +88,7 @@ public sealed class SelectionTransportCommandRequestSystem
                     transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem),
+                RtsSelectionCommandIntentKind.DisembarkTransportPassenger => ProcessDisembarkTransportPassengerRequest(em, request, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem),
                 _ => ProcessDisembarkTransportRequest(em, request, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem)
             };
             AddCommandResult(em, commandEntity, commandResults, result);
@@ -179,6 +181,35 @@ public sealed class SelectionTransportCommandRequestSystem
     {
         bool accepted = request.HasTargetEntity != 0 &&
                         TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem);
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            HasCommandResult = accepted ? (byte)1 : (byte)0,
+            Accepted = accepted ? (byte)1 : (byte)0
+        };
+    }
+
+    private RtsSelectionCommandResultElement ProcessDisembarkTransportPassengerRequest(
+        EntityManager em,
+        RtsSelectionCommandIntentRequestElement request,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        bool accepted = request.HasTargetEntity != 0 &&
+                        request.HasSecondaryTargetEntity != 0 &&
+                        TryDisembarkTransportPassenger(
+                            em,
+                            request.TargetEntity,
+                            request.SecondaryTargetEntity,
+                            transportCapacitySystem,
+                            transportApproachCellSystem,
+                            ropeDisembarkCommandSystem,
+                            moveOrderSystem);
+
         return new RtsSelectionCommandResultElement
         {
             Kind = request.Kind,
@@ -382,5 +413,115 @@ public sealed class SelectionTransportCommandRequestSystem
         }
 
         return _disembarkingPassengers.Count > 0 || _remainingPassengers.Count != _passengerSnapshot.Count;
+    }
+
+    private bool TryDisembarkTransportPassenger(
+        EntityManager em,
+        Entity transport,
+        Entity passenger,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        if (!em.Exists(transport) ||
+            !em.Exists(passenger) ||
+            !transportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
+            !em.HasBuffer<UnitTransportPassengerElement>(transport))
+        {
+            return false;
+        }
+
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        int passengerIndex = IndexOfPassenger(passengers, passenger);
+        if (passengerIndex < 0)
+            return false;
+
+        if (ropeDisembarkCommandSystem.IsRopeDisembarkTransport(em, transport))
+        {
+            if (passengerIndex > 0)
+            {
+                UnitTransportPassengerElement selected = passengers[passengerIndex];
+                passengers.RemoveAt(passengerIndex);
+                passengers.Insert(0, selected);
+            }
+
+            int2 ropeReferenceCell = em.HasComponent<UnitGrid>(transport)
+                ? em.GetComponentData<UnitGrid>(transport).Cell
+                : default;
+            if (em.HasComponent<LocalTransform>(transport) && !_gridPathingQuery.IsEmptyIgnoreFilter)
+            {
+                Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
+                GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+                ropeReferenceCell = GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
+            }
+
+            return ropeDisembarkCommandSystem.StartRopeDisembarkTransport(em, transport, ropeReferenceCell, moveOrderSystem);
+        }
+
+        if (!em.HasComponent<UnitGrid>(transport) ||
+            !em.HasComponent<UnitFootprint>(transport) ||
+            _gridPathingQuery.IsEmptyIgnoreFilter)
+        {
+            return false;
+        }
+
+        Entity pathingGridEntity = _gridPathingQuery.GetSingletonEntity();
+        GridConfig pathingGrid = em.GetComponentData<GridConfig>(pathingGridEntity);
+        NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(pathingGridEntity).AsNativeArray();
+        NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(pathingGridEntity).Blocked;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(pathingGridEntity).Occupied;
+        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
+        int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
+        int2 groundReferenceCell = transportCell;
+        if (em.HasComponent<LocalTransform>(transport))
+            groundReferenceCell = GridUtils.WorldToCell(pathingGrid, em.GetComponentData<LocalTransform>(transport).Position);
+
+        _reservedCells.Clear();
+        if (!transportApproachCellSystem.TryFindTransportDisembarkCell(
+                pathingGrid,
+                walkable,
+                blocked,
+                occupied,
+                _reservedCells,
+                transportCell,
+                transportSize,
+                groundReferenceCell,
+                out int2 cell))
+        {
+            return false;
+        }
+
+        passengers.RemoveAt(passengerIndex);
+        if (em.HasComponent<Disabled>(passenger))
+            em.RemoveComponent<Disabled>(passenger);
+        if (em.HasComponent<UnitTransportPassenger>(passenger))
+            em.RemoveComponent<UnitTransportPassenger>(passenger);
+        if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
+            em.RemoveComponent<UnitTransportBoardingTarget>(passenger);
+        moveOrderSystem.ClearMovementOrderComponents(em, passenger);
+
+        if (em.HasComponent<UnitGrid>(passenger))
+            em.SetComponentData(passenger, new UnitGrid { Cell = cell });
+        if (em.HasComponent<LocalTransform>(passenger))
+        {
+            LocalTransform transform = em.GetComponentData<LocalTransform>(passenger);
+            transform.Position = GridUtils.CellToWorldCenter(pathingGrid, cell);
+            em.SetComponentData(passenger, transform);
+        }
+
+        UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
+        return true;
+    }
+
+    private static int IndexOfPassenger(DynamicBuffer<UnitTransportPassengerElement> passengers, Entity passenger)
+    {
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            if (passengers[i].Passenger == passenger)
+                return i;
+        }
+
+        return -1;
     }
 }

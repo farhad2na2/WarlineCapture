@@ -1,6 +1,6 @@
 # Match HUD Transport Passenger Drawer Plan
 
-Status: planning; implementation not started.
+Status: initial implementation complete; runtime smoke pending.
 Updated: 2026-06-10
 
 ## Summary
@@ -215,29 +215,29 @@ Cancel/close should not show a feedback message.
 
 Mark each step complete only after its done criteria are verified.
 
-- [ ] Step 01 - Inspect current selected panel and Build Drawer scroll-view structure
+- [x] Step 01 - Inspect current selected panel and Build Drawer scroll-view structure
   - Inventory `SCN08_MatchHudContent.prefab` selected-panel hierarchy.
   - Inventory `SCN09_BuildDrawerPopup.prefab` production scroll-view references, template item behavior, masks, layout groups, and button wiring.
   - Done when the exact new serialized references and target prefab insertion point are documented in progress notes.
 
-- [ ] Step 02 - Add transport passenger drawer UI plan to prefab without rebuilding
+- [x] Step 02 - Add transport passenger drawer UI plan to prefab without rebuilding
   - Add a compact passenger chip to the existing selected panel.
   - Add a drawer root with header, empty state, scroll view, content root, row template, `EXIT ALL`, and `CLOSE`.
   - Match SCN-08 target-lock frame styling and use the Build Drawer scroll-view setup as the layout reference.
   - Done when prefab diff is minimal and all new UI objects are explicitly named.
 
-- [ ] Step 03 - Add passive view scripts
+- [x] Step 03 - Add passive view scripts
   - Extend `MatchHudSelectionPanelView` with serialized passenger chip/drawer references.
   - Add `MatchHudTransportPassengerDrawerView`.
   - Add `MatchHudTransportPassengerItemView`.
   - Done when scripts compile and contain only serialized references, apply methods, row pooling, and callback binding.
 
-- [ ] Step 04 - Wire serialized prefab references
+- [x] Step 04 - Wire serialized prefab references
   - Assign chip, drawer, scroll, item template, labels, images, health bar, individual exit buttons, exit all, and close references.
   - Do not use runtime hierarchy lookup.
   - Done when prefab validation reports no missing references or missing scripts.
 
-- [ ] Step 05 - Add selected-transport passenger read model
+- [x] Step 05 - Add selected-transport passenger read model
   - Project selected transport capacity and current passenger list from ECS state.
   - Resolve passenger name, role/type, portrait, health ratio, health label, and individual exit availability.
   - Hide the chip/drawer for non-transport selections.
@@ -245,13 +245,13 @@ Mark each step complete only after its done criteria are verified.
   - Close drawer automatically when selection changes away from that transport.
   - Done when focused tests cover visible, empty, populated, and non-transport model states.
 
-- [ ] Step 06 - Bind chip and close interactions
+- [x] Step 06 - Bind chip and close interactions
   - Chip toggles drawer open/closed.
   - Close hides drawer only.
   - Neither action mutates gameplay or changes selection.
   - Done when tests verify drawer open/close state and no command requests are emitted for close.
 
-- [ ] Step 07 - Add individual exit request flow
+- [x] Step 07 - Add individual exit request flow
   - Row `EXIT` emits an explicit disembark-passenger request.
   - Request carries selected transport and passenger identity.
   - ECS command system validates selection, transport, passenger membership, landed/exit eligibility, and safe exit cell.
@@ -259,28 +259,28 @@ Mark each step complete only after its done criteria are verified.
   - Failure emits transient feedback.
   - Done when tests cover valid exit, wrong transport/passenger, airborne transport, and no safe exit.
 
-- [ ] Step 08 - Add Exit All request flow
+- [x] Step 08 - Add Exit All request flow
   - `EXIT ALL` emits one bulk disembark request for the selected transport.
   - System expands request to valid passengers up to current passenger list.
   - Partial success is allowed and reports blocked passengers.
   - Empty transport disables button and/or shows transient `Transport is empty.` if tapped.
   - Done when tests cover empty, full success, partial blocked, and invalid transport.
 
-- [ ] Step 09 - Update panel/drawer after disembark
+- [x] Step 09 - Update panel/drawer after disembark
   - Passenger list refreshes as ECS state changes.
   - Count chip updates immediately after state projection.
   - Drawer empty state appears when the last passenger exits.
   - Selected transport remains selected.
   - Done when tests verify `3/8 -> 2/8 -> 0/8` updates.
 
-- [ ] Step 10 - Integrate feedback lifetime and command modes
+- [x] Step 10 - Integrate feedback lifetime and command modes
   - Disembark messages are transient.
   - Closing drawer does not show feedback.
   - Opening drawer does not override active command prompts such as Board, Move, or Attack unless the command mode explicitly closes the drawer.
   - Switching active command modes closes the drawer if that avoids conflicting touch targets.
   - Done when tests verify feedback does not stick and Board/Move/Attack command visuals remain correct.
 
-- [ ] Step 11 - Prefab and UI validation
+- [x] Step 11 - Prefab and UI validation
   - Validate `SelectedSquadPanel`, passenger chip, drawer root, scroll view, viewport mask, row template, row buttons, `EXIT ALL`, and `CLOSE`.
   - Verify buttons are raycastable only on their visible button rects.
   - Verify drawer does not block bottom command buttons, minimap, or world panning outside its rect.
@@ -320,3 +320,5 @@ Add focused EditMode tests where practical:
 ## Progress Notes
 
 - 2026-06-10: Created plan. The implementation should reuse the Build Drawer production scroll-view pattern and route disembark through the existing transport command/request boundary.
+- 2026-06-10: Implemented the initial feature slice. Added passive passenger chip/drawer/item views, wired `SCN08_MatchHudContent.prefab` in place through a one-time editor setup system, projected focused transport passenger count/list into the selected panel, added individual passenger disembark requests, reused focused transport disembark for `EXIT ALL`, and routed transient success feedback through the existing command result flush. Shadow Unity compile passed and focused EditMode tests `MatchHudTransportPassengerDrawerTests` passed 3/3. Runtime smoke remains pending because the main project was open during this pass.
+- 2026-06-10: Additional validation passed in `WarlineCapture-CodexUnity1`: `RtsSelectionInputSystemTests` 29/29 passed, `UnitTransportValidationTests.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger` passed after fixing the test's stale dynamic-buffer handle setup, and `git diff --check` passed.

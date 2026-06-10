@@ -519,6 +519,19 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueDisembarkTransportPassengerCommandRequest(Entity transport, Entity passenger, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransportPassenger,
+            Frame = frame,
+            TargetEntity = transport,
+            SecondaryTargetEntity = passenger,
+            HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0,
+            HasSecondaryTargetEntity = passenger != Entity.Null ? (byte)1 : (byte)0
+        });
+    }
+
     public bool QueueCommandIntentRequest(RtsSelectionCommandIntentKind kind, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -597,7 +610,8 @@ public sealed class RtsSelectionInputSystem
             if (kind == RtsSelectionCommandIntentKind.BoardTransport ||
                 kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
                 kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
-                kind == RtsSelectionCommandIntentKind.DisembarkTransport)
+                kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
+                kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
             {
                 return true;
             }

@@ -42,7 +42,8 @@ public enum RtsSelectionCommandIntentKind : byte
     BoardSelectedTransport,
     BoardSelectedTransportPassenger,
     CancelActiveCommandMode,
-    BoardAllSelectedTransport
+    BoardAllSelectedTransport,
+    DisembarkTransportPassenger
 }
 
 public enum BoardCommandModeDirection : byte

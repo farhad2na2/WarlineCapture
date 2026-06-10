@@ -39,6 +39,8 @@ public sealed class SelectionTransportCommandRequestSystem
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
             if (request.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
+                request.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
+                request.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
                 request.Kind != RtsSelectionCommandIntentKind.DisembarkTransport)
             {
                 i++;
@@ -52,8 +54,9 @@ public sealed class SelectionTransportCommandRequestSystem
         for (int i = 0; i < _pendingTransportRequests.Count; i++)
         {
             RtsSelectionCommandIntentRequestElement request = _pendingTransportRequests[i];
-            RtsSelectionCommandResultElement result = request.Kind == RtsSelectionCommandIntentKind.BoardTransport
-                ? ProcessBoardTransportRequest(
+            RtsSelectionCommandResultElement result = request.Kind switch
+            {
+                RtsSelectionCommandIntentKind.BoardTransport => ProcessBoardTransportRequest(
                     em,
                     request,
                     transportBoardingCommandSystem,
@@ -64,8 +67,28 @@ public sealed class SelectionTransportCommandRequestSystem
                     moveOrderSystem,
                     selectionStateSystem,
                     tryGetClickedUnitEntity,
-                    tryGetClickedCell)
-                : ProcessDisembarkTransportRequest(em, request, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem);
+                    tryGetClickedCell),
+                RtsSelectionCommandIntentKind.BoardSelectedTransport => ProcessBoardSelectedTransportRequest(
+                    em,
+                    request,
+                    transportBoardingCommandSystem,
+                    transportBoardingQuerySystem,
+                    transportBoardingRuleSystem,
+                    transportApproachCellSystem,
+                    transportAirPickupSystem,
+                    moveOrderSystem,
+                    tryGetClickedUnitEntity),
+                RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger => ProcessBoardSelectedTransportPassengerRequest(
+                    em,
+                    request,
+                    transportBoardingCommandSystem,
+                    transportBoardingQuerySystem,
+                    transportBoardingRuleSystem,
+                    transportApproachCellSystem,
+                    transportAirPickupSystem,
+                    moveOrderSystem),
+                _ => ProcessDisembarkTransportRequest(em, request, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem)
+            };
             AddCommandResult(em, commandEntity, commandResults, result);
         }
 
@@ -135,8 +158,9 @@ public sealed class SelectionTransportCommandRequestSystem
             TargetCell = result.MarkerCell,
             ScreenPosition = request.ScreenPosition,
             WorldPosition = result.MarkerPosition,
-            HasCommandResult = result.Accepted ? (byte)1 : (byte)0,
+            HasCommandResult = 1,
             Accepted = result.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = result.Accepted ? 0 : (int)TacticalCommandReasonCode.CommandUnavailable,
             EmitScreenMarker = result.Accepted ? (byte)1 : (byte)0,
             MarkerFactionId = result.MarkerFactionId,
             HasTargetCell = result.Accepted ? (byte)1 : (byte)0,
@@ -162,6 +186,90 @@ public sealed class SelectionTransportCommandRequestSystem
             Frame = request.Frame,
             HasCommandResult = accepted ? (byte)1 : (byte)0,
             Accepted = accepted ? (byte)1 : (byte)0
+        };
+    }
+
+    private RtsSelectionCommandResultElement ProcessBoardSelectedTransportRequest(
+        EntityManager em,
+        RtsSelectionCommandIntentRequestElement request,
+        TransportBoardingCommandSystem transportBoardingCommandSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportAirPickupSystem transportAirPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem,
+        TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity)
+    {
+        Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
+        TransportBoardingCommandSystem.Result result = transportBoardingCommandSystem.TryIssueBoardSelectedTransportOrderToClickedPassenger(
+            em,
+            request.TargetEntity,
+            screenPosition,
+            transportBoardingQuerySystem,
+            transportBoardingRuleSystem,
+            transportApproachCellSystem,
+            transportAirPickupSystem,
+            moveOrderSystem,
+            tryGetClickedUnitEntity);
+
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            TargetCell = result.MarkerCell,
+            ScreenPosition = request.ScreenPosition,
+            WorldPosition = result.MarkerPosition,
+            HasCommandResult = 1,
+            Accepted = result.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = result.Accepted ? 0 : (int)TacticalCommandReasonCode.CommandUnavailable,
+            EmitScreenMarker = result.Accepted ? (byte)1 : (byte)0,
+            MarkerFactionId = result.MarkerFactionId,
+            HasTargetCell = result.Accepted ? (byte)1 : (byte)0,
+            HasWorldPosition = result.Accepted ? (byte)1 : (byte)0,
+            ShowWorldMarkers = result.Accepted ? (byte)1 : (byte)0
+        };
+    }
+
+    private RtsSelectionCommandResultElement ProcessBoardSelectedTransportPassengerRequest(
+        EntityManager em,
+        RtsSelectionCommandIntentRequestElement request,
+        TransportBoardingCommandSystem transportBoardingCommandSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportAirPickupSystem transportAirPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        TransportBoardingCommandSystem.Result result = request.HasTargetEntity != 0 &&
+            request.HasSecondaryTargetEntity != 0
+            ? transportBoardingCommandSystem.TryIssueBoardSelectedTransportOrderToPassenger(
+                em,
+                request.TargetEntity,
+                request.SecondaryTargetEntity,
+                transportBoardingQuerySystem,
+                transportBoardingRuleSystem,
+                transportApproachCellSystem,
+                transportAirPickupSystem,
+                moveOrderSystem)
+            : TransportBoardingCommandSystem.Result.Rejected();
+
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            TargetCell = result.MarkerCell,
+            ScreenPosition = request.ScreenPosition,
+            WorldPosition = result.MarkerPosition,
+            HasCommandResult = 1,
+            Accepted = result.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = result.Accepted ? 0 : (int)TacticalCommandReasonCode.CommandUnavailable,
+            EmitScreenMarker = result.Accepted ? (byte)1 : (byte)0,
+            MarkerFactionId = result.MarkerFactionId,
+            HasTargetCell = result.Accepted ? (byte)1 : (byte)0,
+            HasWorldPosition = result.Accepted ? (byte)1 : (byte)0,
+            ShowWorldMarkers = result.Accepted ? (byte)1 : (byte)0
         };
     }
 

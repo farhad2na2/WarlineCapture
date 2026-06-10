@@ -373,6 +373,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
         {
             RtsSelectionCommandResultElement result = commandResults[i];
             if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
                 result.Kind != RtsSelectionCommandIntentKind.DisembarkTransport)
             {
                 i++;
@@ -388,12 +390,21 @@ public sealed class RtsSelectionCommandResultFlushSystem
         {
             RtsSelectionCommandResultElement result = _transportCommandResultScratch[i];
             if (result.Accepted == 0)
+            {
+                if (result.HasCommandResult != 0)
+                    context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                 continue;
+            }
 
             accepted = true;
-            if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport)
+            if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger)
                 continue;
 
+            bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Board);
+            if (clearInputCommandMode)
+                context.InputSystem.ClearActiveCommandMode();
             if (result.HasTargetCell != 0 && result.HasWorldPosition != 0)
             {
                 context.OrderMarkerSystem.ShowMoveOrderMarker(
@@ -404,9 +415,14 @@ public sealed class RtsSelectionCommandResultFlushSystem
             }
             if (result.EmitScreenMarker != 0)
                 context.RequestMoveOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
-            context.ClearCurrentSelection?.Invoke(em, "BoardTransportOrderIssued");
-            context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
             context.SetCameraDragging?.Invoke(false);
+            if (clearInputCommandMode)
+                context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+                result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
+                result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger
+                    ? "Loading transport."
+                    : "Boarding transport."));
         }
 
         return accepted;

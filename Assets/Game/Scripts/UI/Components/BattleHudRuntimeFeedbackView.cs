@@ -12,7 +12,8 @@ public enum TacticalCommandMode
     Stop,
     Build,
     Special,
-    Scan
+    Scan,
+    Board
 }
 
 public enum TacticalCommandReasonCode
@@ -96,6 +97,7 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Hold => "HOLD POSITION",
             TacticalCommandMode.Stop => "STOP ORDER",
             TacticalCommandMode.Scan => "SCAN ORDER",
+            TacticalCommandMode.Board => "BOARD ORDER",
             TacticalCommandMode.Build => "BUILD MODE",
             TacticalCommandMode.Special => "SPECIAL ORDER",
             _ => string.Empty
@@ -130,6 +132,7 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Move => "Choose destination.",
             TacticalCommandMode.Attack => "Tap hostile target.",
             TacticalCommandMode.Scan => "Tap scan area.",
+            TacticalCommandMode.Board => "Tap a transport.",
             TacticalCommandMode.Build => "Choose what to build, produce, or recruit.",
             TacticalCommandMode.Special => "Choose special command.",
             _ => string.Empty
@@ -143,6 +146,7 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Move or
             TacticalCommandMode.Attack or
             TacticalCommandMode.Scan or
+            TacticalCommandMode.Board or
             TacticalCommandMode.Build => CommandFeedbackSeverity.Ready,
             TacticalCommandMode.Select or
             TacticalCommandMode.Special => CommandFeedbackSeverity.Neutral,

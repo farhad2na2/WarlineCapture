@@ -23,10 +23,15 @@ public sealed class SelectionRectangleView : MonoBehaviour
 
     public void Draw()
     {
-        if (!_runtimeGameplayStateSystem.PlayRequested || !_runtimeGameplayStateSystem.SelectionModeActive)
+        if (!_runtimeGameplayStateSystem.PlayRequested)
             return;
 
         if (!_inputStateSystem.TryRead(out _, out RtsSelectionInputStateComponent state))
+            return;
+
+        bool canDrawSelectionRect = _runtimeGameplayStateSystem.SelectionModeActive ||
+                                    (TacticalCommandMode)state.ActiveCommandMode == TacticalCommandMode.Board;
+        if (!canDrawSelectionRect)
             return;
 
         if (state.HasLiveSelectionRect == 0)

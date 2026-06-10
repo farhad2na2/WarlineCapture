@@ -52,6 +52,7 @@ public sealed class TransportBoardingCommandSystem
     private EntityQuery _transportBoardingTargetQuery;
     private EntityQuery _pathingLiveUnitsQuery;
     private readonly List<Entity> _selectedBoardingSourceEntities = new();
+    private readonly List<Entity> _targetedBoardingSourceEntities = new();
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -323,6 +324,225 @@ public sealed class TransportBoardingCommandSystem
                     $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
                     $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
             }
+        }
+
+        float3 markerPosition = em.GetComponentData<LocalTransform>(transport).Position;
+        return Result.AcceptedAt(transportCell, markerPosition, 0);
+    }
+
+    public Result TryIssueBoardSelectedTransportOrderToClickedPassenger(
+        EntityManager em,
+        Entity transport,
+        Vector2 screenPosition,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem approachCellSystem,
+        UnitTransportAirPickupSystem airPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem,
+        TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity)
+    {
+        EnsureEntityQueries(em);
+        bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
+        if (transport == Entity.Null ||
+            !em.Exists(transport) ||
+            !transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SelectedTransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)}");
+            return Result.Rejected();
+        }
+
+        Entity passenger = Entity.Null;
+        if (tryGetClickedUnitEntity == null ||
+            !tryGetClickedUnitEntity(screenPosition, em, out passenger) ||
+            passenger == transport)
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedPassengerNotBoardable passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+            return Result.Rejected();
+        }
+
+        return TryIssueBoardSelectedTransportOrderToPassenger(
+            em,
+            transport,
+            passenger,
+            transportBoardingQuerySystem,
+            transportBoardingRuleSystem,
+            approachCellSystem,
+            airPickupSystem,
+            moveOrderSystem);
+    }
+
+    public Result TryIssueBoardSelectedTransportOrderToPassenger(
+        EntityManager em,
+        Entity transport,
+        Entity passenger,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem approachCellSystem,
+        UnitTransportAirPickupSystem airPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        EnsureEntityQueries(em);
+        bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
+        if (transport == Entity.Null ||
+            !em.Exists(transport) ||
+            !transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SelectedTransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)}");
+            return Result.Rejected();
+        }
+
+        if (passenger == Entity.Null ||
+            !em.Exists(passenger) ||
+            !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger) ||
+            passenger == transport)
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=PassengerNotBoardable passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+            return Result.Rejected();
+        }
+
+        bool airTransport = em.HasComponent<UnitAirMovement>(transport);
+        bool transportLanded = transportBoardingRuleSystem.IsTransportLandedForBoarding(em, transport);
+        if (!transportLanded && !airTransport)
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            return Result.Rejected();
+        }
+
+        if (!transportLanded && em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportBusyRopeDisembark transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            return Result.Rejected();
+        }
+
+        int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+        int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);
+        int availableSeats = capacity - occupiedSeats;
+        if (availableSeats <= 0)
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity}");
+            return Result.Rejected();
+        }
+
+        if (_gridPathingQuery.IsEmptyIgnoreFilter)
+        {
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} passenger={DescribeTransportBoardingEntity(em, passenger)}");
+            return Result.Rejected();
+        }
+
+        Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+        NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        NativeBitArray blocked = blockerData.Blocked;
+        NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
+        int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
+        int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
+        using NativeArray<Entity> liveUnitEntities = _pathingLiveUnitsQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<UnitGrid> liveUnitGrids = _pathingLiveUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
+        using NativeArray<UnitFootprint> liveUnitFootprints = _pathingLiveUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+
+        bool hasPendingAirPickupLanding = false;
+        int2 pendingAirPickupCell = default;
+        _targetedBoardingSourceEntities.Clear();
+        _targetedBoardingSourceEntities.Add(passenger);
+        if (airTransport && !transportLanded)
+        {
+            if (!airPickupSystem.TryFindAirTransportPickupForBoarding(
+                    em,
+                    transport,
+                    grid,
+                    walkable,
+                    blocked,
+                    friendlyPassFactionIds,
+                    occupied,
+                    transportCell,
+                    transportSize,
+                    _targetedBoardingSourceEntities,
+                    1,
+                    liveUnitEntities,
+                    liveUnitGrids,
+                    liveUnitFootprints,
+                    out pendingAirPickupCell))
+            {
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} passenger={DescribeTransportBoardingEntity(em, passenger)}");
+                return Result.Rejected();
+            }
+
+            transportCell = pendingAirPickupCell;
+            hasPendingAirPickupLanding = true;
+        }
+
+        int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
+        byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
+        int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
+        int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
+        var reservedBoardingCells = new HashSet<int>();
+        if (!approachCellSystem.TryFindTransportApproachCell(
+                grid,
+                walkable,
+                blocked,
+                friendlyPassFactionIds,
+                occupied,
+                transportCell,
+                boardingTransportSize,
+                referenceCell,
+                passengerFootprint,
+                passenger,
+                liveUnitEntities,
+                liveUnitGrids,
+                liveUnitFootprints,
+                transport,
+                em.GetComponentData<UnitGrid>(transport).Cell,
+                transportSize,
+                reservedBoardingCells,
+                directBoardingCells,
+                passengerFaction,
+                out int2 goal))
+        {
+            if (shouldLogTransportBoarding)
+            {
+                EnqueueTransportBoardingDiagnostic(
+                    em,
+                    $"[TransportBoard] result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                    $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
+            }
+
+            return Result.Rejected();
+        }
+
+        if (hasPendingAirPickupLanding)
+        {
+            airPickupSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, moveOrderSystem);
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
+        }
+
+        moveOrderSystem.ClearMovementOrderComponents(em, passenger);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
+        moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
+        if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
+            em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
+        else
+            em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
+
+        if (shouldLogTransportBoarding)
+        {
+            EnqueueTransportBoardingDiagnostic(
+                em,
+                $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                $"from={referenceCell} goal={goal} direct={goal.Equals(referenceCell)} selectedTransport=1 seats={occupiedSeats}/{capacity}");
         }
 
         float3 markerPosition = em.GetComponentData<LocalTransform>(transport).Position;

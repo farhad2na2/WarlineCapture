@@ -37,7 +37,17 @@ public enum RtsSelectionCommandIntentKind : byte
     CancelAttackTargetMode,
     EnterScanTargetMode,
     Scan,
-    BoardNearestSoldiers
+    BoardNearestSoldiers,
+    EnterBoardTargetMode,
+    BoardSelectedTransport,
+    BoardSelectedTransportPassenger
+}
+
+public enum BoardCommandModeDirection : byte
+{
+    None,
+    PassengerToTransport,
+    TransportToPassenger
 }
 
 public struct RtsSelectionInputRequestQueueComponent : IComponentData
@@ -70,6 +80,8 @@ public struct RtsSelectionInputStateComponent : IComponentData
     public int ActiveCommandModeFrame;
     public byte ActiveCommandModeOneShot;
     public byte ActiveCommandModeRequiresWorldTarget;
+    public byte ActiveBoardCommandDirection;
+    public Entity ActiveBoardTransport;
     public byte HasLastMoveTargetClick;
     public float2 LastMoveTargetClickScreenPosition;
     public float LastMoveTargetClickTime;
@@ -93,12 +105,17 @@ public struct RtsSelectionCommandIntentRequestElement : IBufferElementData
     public int RequestId;
     public int Frame;
     public Entity TargetEntity;
+    public Entity SecondaryTargetEntity;
     public int2 TargetCell;
     public float2 ScreenPosition;
+    public float2 DragStart;
+    public float2 DragCurrent;
     public byte ExplicitAttackTargetMode;
     public byte HasTargetEntity;
+    public byte HasSecondaryTargetEntity;
     public byte HasTargetCell;
     public byte HasScreenPosition;
+    public byte HasScreenRect;
 }
 
 public struct RtsSelectionCommandResultElement : IBufferElementData

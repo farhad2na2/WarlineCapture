@@ -82,10 +82,12 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private Button _boundReturnAction;
     private Button _boundDestroyAction;
     private Button _boundBoardAction;
+    private Sprite _boardActionNormalSprite;
 
     private void Awake()
     {
         BindUnityEvents();
+        CacheBoardActionNormalSprite();
         HideSelection();
     }
 
@@ -167,9 +169,22 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         SetSelectionPortrait(model.PortraitSprite);
         SetHealthFill(model.Health01);
         SetBadge(model.BadgeVisible, model.BadgeSprite);
-        SetActionState(returnAction, model.Visible);
-        SetActionState(destroyAction, model.Visible);
-        SetActionState(boardAction, model.Visible);
+        SetActionState(returnAction, model.Visible && model.ReturnEnabled);
+        SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
+        SetActionState(boardAction, model.Visible && model.BoardEnabled);
+    }
+
+    public void SetBoardActionSelected(bool selected)
+    {
+        if (boardAction == null || boardAction.targetGraphic is not Image image)
+            return;
+
+        CacheBoardActionNormalSprite();
+        Sprite selectedSprite = boardAction.spriteState.selectedSprite;
+        if (selected && selectedSprite != null)
+            image.sprite = selectedSprite;
+        else if (_boardActionNormalSprite != null)
+            image.sprite = _boardActionNormalSprite;
     }
 
     private void BindUnityEvents()
@@ -177,6 +192,18 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
         BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
         BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
+    }
+
+    private void CacheBoardActionNormalSprite()
+    {
+        if (_boardActionNormalSprite != null ||
+            boardAction == null ||
+            boardAction.targetGraphic is not Image image)
+        {
+            return;
+        }
+
+        _boardActionNormalSprite = image.sprite;
     }
 
     private void RemoveUnityEvents()

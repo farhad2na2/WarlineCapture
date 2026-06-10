@@ -181,6 +181,20 @@ public sealed class RtsSelectionInputSystem
         state.ActiveCommandModeFrame = frame;
         state.ActiveCommandModeOneShot = ToByte(oneShot);
         state.ActiveCommandModeRequiresWorldTarget = ToByte(requiresWorldTarget);
+        state.ActiveBoardCommandDirection = 0;
+        state.ActiveBoardTransport = Entity.Null;
+        WriteState(state);
+    }
+
+    public void ArmBoardCommandMode(BoardCommandModeDirection direction, Entity transport, int frame, bool oneShot)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        state.ActiveCommandMode = (int)TacticalCommandMode.Board;
+        state.ActiveCommandModeFrame = frame;
+        state.ActiveCommandModeOneShot = ToByte(oneShot);
+        state.ActiveCommandModeRequiresWorldTarget = 1;
+        state.ActiveBoardCommandDirection = (byte)direction;
+        state.ActiveBoardTransport = direction == BoardCommandModeDirection.TransportToPassenger ? transport : Entity.Null;
         WriteState(state);
     }
 
@@ -191,7 +205,19 @@ public sealed class RtsSelectionInputSystem
         state.ActiveCommandModeFrame = 0;
         state.ActiveCommandModeOneShot = 0;
         state.ActiveCommandModeRequiresWorldTarget = 0;
+        state.ActiveBoardCommandDirection = 0;
+        state.ActiveBoardTransport = Entity.Null;
         WriteState(state);
+    }
+
+    public bool TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        direction = (BoardCommandModeDirection)state.ActiveBoardCommandDirection;
+        transport = state.ActiveBoardTransport;
+        return (TacticalCommandMode)state.ActiveCommandMode == TacticalCommandMode.Board &&
+               state.ActiveCommandModeRequiresWorldTarget != 0 &&
+               direction != BoardCommandModeDirection.None;
     }
 
     public bool ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode mode)
@@ -435,6 +461,37 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueBoardSelectedTransportCommandRequest(Entity transport, Vector2 screenPosition, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardSelectedTransport,
+            Frame = frame,
+            TargetEntity = transport,
+            HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0,
+            ScreenPosition = ToFloat2(screenPosition),
+            HasScreenPosition = 1
+        });
+    }
+
+    public bool QueueBoardSelectedTransportPassengerCommandRequest(Entity transport, Entity passenger, Rect screenRect, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger,
+            Frame = frame,
+            TargetEntity = transport,
+            SecondaryTargetEntity = passenger,
+            HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0,
+            HasSecondaryTargetEntity = passenger != Entity.Null ? (byte)1 : (byte)0,
+            ScreenPosition = ToFloat2(screenRect.center),
+            DragStart = ToFloat2(screenRect.min),
+            DragCurrent = ToFloat2(screenRect.max),
+            HasScreenPosition = 1,
+            HasScreenRect = 1
+        });
+    }
+
     public bool QueueDisembarkTransportCommandRequest(Entity transport, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -496,6 +553,7 @@ public sealed class RtsSelectionInputSystem
                 case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
                 case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
                 case RtsSelectionCommandIntentKind.EnterScanTargetMode:
+                case RtsSelectionCommandIntentKind.EnterBoardTargetMode:
                 case RtsSelectionCommandIntentKind.HoldPosition:
                 case RtsSelectionCommandIntentKind.Stop:
                 case RtsSelectionCommandIntentKind.ReturnToBase:
@@ -519,6 +577,8 @@ public sealed class RtsSelectionInputSystem
         {
             RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
             if (kind == RtsSelectionCommandIntentKind.BoardTransport ||
+                kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
+                kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
                 kind == RtsSelectionCommandIntentKind.DisembarkTransport)
             {
                 return true;

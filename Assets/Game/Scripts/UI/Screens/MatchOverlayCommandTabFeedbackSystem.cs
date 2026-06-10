@@ -81,6 +81,7 @@ public sealed class MatchOverlayCommandTabFeedbackSystem
             TacticalCommandMode.Hold => "Hold",
             TacticalCommandMode.Stop => "Stop",
             TacticalCommandMode.Scan => "Scan",
+            TacticalCommandMode.Board => "Board",
             TacticalCommandMode.Build => "Build",
             _ => string.Empty
         };

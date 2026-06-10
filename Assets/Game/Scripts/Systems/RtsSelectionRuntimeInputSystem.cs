@@ -27,6 +27,8 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly Action<bool> SetHudWorldMarkersVisible;
         public readonly Func<Vector2, bool> TryIssueBoardTransportOrderToClickedUnit;
+        public readonly Func<Entity, Vector2, bool> TryIssueBoardSelectedTransportOrderToClickedUnit;
+        public readonly Func<Entity, Rect, bool> TryIssueBoardSelectedTransportOrderToPassengerRect;
         public readonly Func<Vector2, bool> TryFocusUnit;
         public readonly Action<Vector2> PanCamera;
         public readonly Action<Vector2> IssueMoveOrder;
@@ -55,6 +57,8 @@ public sealed class RtsSelectionRuntimeInputSystem
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
             Action<bool> setHudWorldMarkersVisible,
             Func<Vector2, bool> tryIssueBoardTransportOrderToClickedUnit,
+            Func<Entity, Vector2, bool> tryIssueBoardSelectedTransportOrderToClickedUnit,
+            Func<Entity, Rect, bool> tryIssueBoardSelectedTransportOrderToPassengerRect,
             Func<Vector2, bool> tryFocusUnit,
             Action<Vector2> panCamera,
             Action<Vector2> issueMoveOrder,
@@ -82,6 +86,8 @@ public sealed class RtsSelectionRuntimeInputSystem
             TryGetScanClickedCell = tryGetScanClickedCell;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
             TryIssueBoardTransportOrderToClickedUnit = tryIssueBoardTransportOrderToClickedUnit;
+            TryIssueBoardSelectedTransportOrderToClickedUnit = tryIssueBoardSelectedTransportOrderToClickedUnit;
+            TryIssueBoardSelectedTransportOrderToPassengerRect = tryIssueBoardSelectedTransportOrderToPassengerRect;
             TryFocusUnit = tryFocusUnit;
             PanCamera = panCamera;
             IssueMoveOrder = issueMoveOrder;
@@ -282,6 +288,18 @@ public sealed class RtsSelectionRuntimeInputSystem
                 }
             }
         }
+        else if (IsTransportFirstBoardMode(input) && !input.PointerPressedOverUi)
+        {
+            if (!input.IsDraggingSelection && dragDistance >= context.DragThresholdPixels)
+                input.IsDraggingSelection = true;
+
+            if (input.IsDraggingSelection)
+            {
+                Rect liveRect = GetScreenRect(input.DragStart, input.DragCurrent);
+                input.LastLiveSelectionRect = liveRect;
+                input.HasLiveSelectionRect = true;
+            }
+        }
         else if (context.GetCameraDragging?.Invoke() == true && frameDelta.sqrMagnitude > 0f)
         {
             context.PanCamera?.Invoke(frameDelta);
@@ -415,12 +433,6 @@ public sealed class RtsSelectionRuntimeInputSystem
                     if (attackIssued)
                         context.SetExplicitAttackTargetModeActive?.Invoke(false);
                 }
-                else if (context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition) == true)
-                {
-                    context.LogClickDiagnostic?.Invoke($"clickBoardTransport result=True pos={pointerPosition}");
-                    runtime.SuppressNextWorldClick = false;
-                    LogOneClickDebug(context, pointerPosition, "BoardTransport");
-                }
                 else if (context.TryFocusUnit?.Invoke(pointerPosition) == true)
                 {
                     context.LogClickDiagnostic?.Invoke($"clickFocus result=True pos={pointerPosition}");
@@ -440,8 +452,9 @@ public sealed class RtsSelectionRuntimeInputSystem
         }
         else
         {
-            context.LogClickDiagnostic?.Invoke($"releaseIgnored reason=DragDistance pos={pointerPosition} drag={dragDistance:F1}");
-            LogOneClickDebug(context, pointerPosition, "DragIgnored");
+            bool handledBoardRect = HandleBoardPassengerRectCommand(context, input, pointerPosition);
+            context.LogClickDiagnostic?.Invoke($"releaseDragCommand boardRect={handledBoardRect} pos={pointerPosition} drag={dragDistance:F1}");
+            LogOneClickDebug(context, pointerPosition, handledBoardRect ? "BoardPassengerRect" : "DragIgnored");
         }
 
         input.IsDraggingSelection = false;
@@ -510,9 +523,67 @@ public sealed class RtsSelectionRuntimeInputSystem
             return true;
         }
 
+        if (activeMode == TacticalCommandMode.Board)
+        {
+            if (!input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport))
+            {
+                input.ClearActiveCommandMode();
+                context.ClearCommandMode?.Invoke();
+                return false;
+            }
+
+            if (direction == BoardCommandModeDirection.PassengerToTransport)
+            {
+                if (context.TryIssueBoardTransportOrderToClickedUnit == null)
+                {
+                    input.ClearActiveCommandMode();
+                    context.ClearCommandMode?.Invoke();
+                    return false;
+                }
+
+                context.TryIssueBoardTransportOrderToClickedUnit.Invoke(pointerPosition);
+                return true;
+            }
+
+            if (direction == BoardCommandModeDirection.TransportToPassenger)
+            {
+                if (context.TryIssueBoardSelectedTransportOrderToClickedUnit == null)
+                {
+                    input.ClearActiveCommandMode();
+                    context.ClearCommandMode?.Invoke();
+                    return false;
+                }
+
+                context.TryIssueBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition);
+                return true;
+            }
+        }
+
         input.ClearActiveCommandMode();
         context.ClearCommandMode?.Invoke();
         return false;
+    }
+
+    private static bool HandleBoardPassengerRectCommand(
+        Context context,
+        RtsSelectionInputSystem input,
+        Vector2 pointerPosition)
+    {
+        if (!input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport) ||
+            direction != BoardCommandModeDirection.TransportToPassenger ||
+            context.TryIssueBoardSelectedTransportOrderToPassengerRect == null)
+        {
+            return false;
+        }
+
+        Rect screenRect = GetScreenRect(input.DragStart, pointerPosition);
+        return context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect);
+    }
+
+    private static bool IsTransportFirstBoardMode(RtsSelectionInputSystem input)
+    {
+        return input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out _) &&
+               direction == BoardCommandModeDirection.TransportToPassenger;
     }
 
     private static void UpdateScanTargetPreview(Context context, Vector2 pointerPosition)

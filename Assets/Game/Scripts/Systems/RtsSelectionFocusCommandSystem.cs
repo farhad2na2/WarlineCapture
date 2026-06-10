@@ -9,6 +9,8 @@ public sealed class RtsSelectionFocusCommandSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate TacticalCommandResult ValidateControllableEntityDelegate(Entity entity);
+    public delegate bool IsBoardPassengerCandidateDelegate(EntityManager em, Entity entity);
+    public delegate bool IsBoardTransportCandidateDelegate(EntityManager em, Entity entity);
 
     public readonly struct Context
     {
@@ -36,6 +38,8 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action<string> LogSelectionDiagnostic;
         public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
         public readonly ValidateControllableEntityDelegate ValidateControllableEntity;
+        public readonly IsBoardPassengerCandidateDelegate IsBoardPassengerCandidate;
+        public readonly IsBoardTransportCandidateDelegate IsBoardTransportCandidate;
         public readonly Action IssueHoldPositionOrder;
         public readonly Action IssueStopOrder;
         public readonly Action DestroyFocusedUnit;
@@ -71,6 +75,8 @@ public sealed class RtsSelectionFocusCommandSystem
             Action<string> logSelectionDiagnostic,
             FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
             ValidateControllableEntityDelegate validateControllableEntity,
+            IsBoardPassengerCandidateDelegate isBoardPassengerCandidate,
+            IsBoardTransportCandidateDelegate isBoardTransportCandidate,
             Action issueHoldPositionOrder,
             Action issueStopOrder,
             Action destroyFocusedUnit,
@@ -105,6 +111,8 @@ public sealed class RtsSelectionFocusCommandSystem
             LogSelectionDiagnostic = logSelectionDiagnostic;
             DescribeEntity = describeEntity;
             ValidateControllableEntity = validateControllableEntity;
+            IsBoardPassengerCandidate = isBoardPassengerCandidate;
+            IsBoardTransportCandidate = isBoardTransportCandidate;
             IssueHoldPositionOrder = issueHoldPositionOrder;
             IssueStopOrder = issueStopOrder;
             DestroyFocusedUnit = destroyFocusedUnit;
@@ -263,6 +271,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode ||
                kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode ||
                kind == RtsSelectionCommandIntentKind.EnterScanTargetMode ||
+               kind == RtsSelectionCommandIntentKind.EnterBoardTargetMode ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
@@ -305,6 +314,9 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.EnterScanTargetMode:
                 EnterScanTargetMode(context);
+                return true;
+            case RtsSelectionCommandIntentKind.EnterBoardTargetMode:
+                EnterBoardTargetMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
                 context.InputSystem.ClearActiveCommandMode();
@@ -493,6 +505,58 @@ public sealed class RtsSelectionFocusCommandSystem
         context.LogSelectionDiagnostic?.Invoke($"scanModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
     }
 
+    private static void EnterBoardTargetMode(Context context)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterBoardTargetMode");
+        context.InputSystem.ClearQueuedMoveOrder();
+        context.InputSystem.ClearPendingMoveCommandRequests();
+
+        if (context.InputSystem.TryGetActiveCommandMode(out TacticalCommandMode activeMode) &&
+            activeMode == TacticalCommandMode.Board)
+        {
+            context.InputSystem.ClearActiveCommandMode();
+            context.ClearHudCommandMode?.Invoke();
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionDiagnostic?.Invoke($"boardModeToggledOff frame={Time.frameCount}");
+            return;
+        }
+
+        if (!TryResolveBoardModeSource(context, out BoardCommandModeDirection direction, out Entity transport, out TacticalCommandReasonCode rejectionReason, out string message))
+        {
+            context.InputSystem.ClearActiveCommandMode();
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason, message));
+            context.SetCameraDragging?.Invoke(false);
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionDiagnostic?.Invoke($"boardModeEntered result=False reason={rejectionReason} message=\"{message}\" frame={Time.frameCount}");
+            return;
+        }
+
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.ArmBoardCommandMode(
+            direction,
+            transport,
+            Time.frameCount,
+            oneShot: true);
+        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(true);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Board);
+        if (direction == BoardCommandModeDirection.TransportToPassenger)
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Tap units to board."));
+        context.LogSelectionDiagnostic?.Invoke($"boardModeEntered result=True direction={direction} transport={transport} frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
     private static bool TryHasSelectedMovableUnit(Context context)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
@@ -552,6 +616,93 @@ public sealed class RtsSelectionFocusCommandSystem
         rejectionReason = hasSelected
             ? TacticalCommandReasonCode.TargetNotAttackable
             : TacticalCommandReasonCode.NoSelection;
+        return false;
+    }
+
+    private static bool TryResolveBoardModeSource(
+        Context context,
+        out BoardCommandModeDirection direction,
+        out Entity transport,
+        out TacticalCommandReasonCode rejectionReason,
+        out string message)
+    {
+        direction = BoardCommandModeDirection.None;
+        transport = Entity.Null;
+        rejectionReason = TacticalCommandReasonCode.NoSelection;
+        message = "Select units to board.";
+
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        context.EnsureEntityQueries?.Invoke(em);
+        if (TryFindSelectedBoardTransport(context, em, out transport))
+        {
+            direction = BoardCommandModeDirection.TransportToPassenger;
+            return true;
+        }
+
+        if (TryHasSelectedBoardPassenger(context, em, out bool hasSelected))
+        {
+            direction = BoardCommandModeDirection.PassengerToTransport;
+            return true;
+        }
+
+        rejectionReason = hasSelected
+            ? TacticalCommandReasonCode.CommandUnavailable
+            : TacticalCommandReasonCode.NoSelection;
+        message = hasSelected ? "Selected unit cannot board." : "Select units to board.";
+        return false;
+    }
+
+    private static bool TryFindSelectedBoardTransport(Context context, EntityManager em, out Entity transport)
+    {
+        transport = Entity.Null;
+        if (context.SelectionStateSystem.FocusedUnit != Entity.Null &&
+            em.Exists(context.SelectionStateSystem.FocusedUnit) &&
+            context.IsBoardTransportCandidate?.Invoke(em, context.SelectionStateSystem.FocusedUnit) == true)
+        {
+            transport = context.SelectionStateSystem.FocusedUnit;
+            return true;
+        }
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity entity = selectedEntities[i];
+            if (em.Exists(entity) &&
+                context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
+            {
+                transport = entity;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryHasSelectedBoardPassenger(Context context, EntityManager em, out bool hasSelected)
+    {
+        hasSelected = false;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity entity = selectedEntities[i];
+            if (!em.Exists(entity))
+                continue;
+
+            hasSelected = true;
+            if (context.IsBoardPassengerCandidate?.Invoke(em, entity) == true)
+                return true;
+        }
+
         return false;
     }
 

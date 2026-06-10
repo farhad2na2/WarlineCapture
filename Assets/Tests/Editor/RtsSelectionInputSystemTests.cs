@@ -165,6 +165,31 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void BoardCommandModeState_StoresDirectionAndLockedTransport()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Entity transport = new Entity { Index = 123, Version = 4 };
+
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            transport,
+            frame: 77,
+            oneShot: true);
+
+        Assert.IsTrue(inputSystem.TryGetActiveCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Board, activeMode);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode targetMode));
+        Assert.AreEqual(TacticalCommandMode.Board, targetMode);
+        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity lockedTransport));
+        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, direction);
+        Assert.AreEqual(transport, lockedTransport);
+
+        inputSystem.ClearActiveCommandMode();
+
+        Assert.IsFalse(inputSystem.TryGetActiveBoardCommandMode(out _, out _));
+    }
+
+    [Test]
     public void MoveTargetDoubleClick_RequiresRecentNearbyMoveTargetClick()
     {
         var inputSystem = new RtsSelectionInputSystem();
@@ -232,6 +257,49 @@ public sealed class RtsSelectionInputSystemTests
             out _));
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterAttackTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void SelectionUiCommandSystem_BoardButtonQueuesEnterBoardTargetModeAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestBoardTargetMode());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterBoardTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void BoardSelectedTransportPassengerRequest_StoresTransportPassengerAndScreenRect()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Entity transport = new Entity { Index = 45, Version = 2 };
+        Entity passenger = new Entity { Index = 91, Version = 7 };
+        Rect screenRect = Rect.MinMaxRect(10f, 20f, 110f, 220f);
+
+        Assert.IsTrue(inputSystem.QueueBoardSelectedTransportPassengerCommandRequest(transport, passenger, screenRect, frame: 12));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger, requests[0].Kind);
+        Assert.AreEqual(transport, requests[0].TargetEntity);
+        Assert.AreEqual(passenger, requests[0].SecondaryTargetEntity);
+        Assert.AreEqual(1, requests[0].HasTargetEntity);
+        Assert.AreEqual(1, requests[0].HasSecondaryTargetEntity);
+        Assert.AreEqual(1, requests[0].HasScreenRect);
+        Assert.AreEqual(new Unity.Mathematics.float2(screenRect.min.x, screenRect.min.y), requests[0].DragStart);
+        Assert.AreEqual(new Unity.Mathematics.float2(screenRect.max.x, screenRect.max.y), requests[0].DragCurrent);
     }
 
     [Test]
@@ -317,7 +385,12 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("HandleWorldTargetCommand(context, input, activeMode, pointerPosition)", pointerReleased);
         StringAssert.Contains("activeMode == TacticalCommandMode.Attack", worldTargetCommand);
         StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
-        StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
+        StringAssert.Contains("activeMode == TacticalCommandMode.Board", worldTargetCommand);
+        StringAssert.Contains("input.TryGetActiveBoardCommandMode", worldTargetCommand);
+        StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
+        StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition)", worldTargetCommand);
+        StringAssert.Contains("HandleBoardPassengerRectCommand", pointerReleased);
+        StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect)", ExtractBlockAfter(runtimeInput, "private static bool HandleBoardPassengerRectCommand"));
         StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
         StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);
         StringAssert.Contains("HandlePersistentMoveTargetDoubleClick", pointerReleased);

@@ -225,6 +225,7 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueCommandMode(em, mode);
         ProcessPendingFeedback(em);
+        _matchHudSelectionPanelView?.SetBoardActionSelected(mode == TacticalCommandMode.Board);
     }
 
     public void ApplyCommandMode(Context context, TacticalCommandMode mode)
@@ -242,6 +243,7 @@ public sealed class SelectionHudFeedbackSystem
         BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
         if (!HasStickyCommandMode())
             _commandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
+        _matchHudSelectionPanelView?.SetBoardActionSelected(false);
     }
 
     public bool HasStickyCommandMode()

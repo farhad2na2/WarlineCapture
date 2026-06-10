@@ -67,6 +67,12 @@ public sealed class SelectionUiCommandSystem
         return Queue(RtsSelectionCommandIntentKind.EnterScanTargetMode);
     }
 
+    public bool RequestBoardTargetMode()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.EnterBoardTargetMode);
+    }
+
     public bool RequestHoldPosition()
     {
         CaptureUiClickSequence();

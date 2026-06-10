@@ -173,28 +173,34 @@ public sealed class SelectionSummaryQuerySystemTests
         _createdObjects.Add(panelHost);
 
         Texture2D genericTexture = new Texture2D(1, 1);
+        Texture2D vehicleTexture = new Texture2D(1, 1);
         Texture2D mixedTexture = new Texture2D(1, 1);
         Texture2D mixedAirTexture = new Texture2D(1, 1);
         Sprite genericSprite = Sprite.Create(genericTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        Sprite vehicleSprite = Sprite.Create(vehicleTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite mixedSprite = Sprite.Create(mixedTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite mixedAirSprite = Sprite.Create(mixedAirTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         try
         {
             var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
             SetPrivateField(panel, "genericSquadPortraitSprite", genericSprite);
+            SetPrivateField(panel, "vehicleSquadPortraitSprite", vehicleSprite);
             SetPrivateField(panel, "mixedForcePortraitSprite", mixedSprite);
             SetPrivateField(panel, "mixedSoldierAircraftPortraitSprite", mixedAirSprite);
 
             Assert.AreSame(genericSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers));
+            Assert.AreSame(vehicleSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Vehicles));
             Assert.AreSame(mixedSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedForce));
             Assert.AreSame(mixedAirSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedSoldierAircraft));
         }
         finally
         {
             Object.DestroyImmediate(genericSprite);
+            Object.DestroyImmediate(vehicleSprite);
             Object.DestroyImmediate(mixedSprite);
             Object.DestroyImmediate(mixedAirSprite);
             Object.DestroyImmediate(genericTexture);
+            Object.DestroyImmediate(vehicleTexture);
             Object.DestroyImmediate(mixedTexture);
             Object.DestroyImmediate(mixedAirTexture);
         }

@@ -41,26 +41,49 @@ public enum CommandFeedbackSeverity
     Error
 }
 
+public enum CommandFeedbackLifetime
+{
+    Hidden,
+    Persistent,
+    Transient
+}
+
 public readonly struct MatchHudCommandFeedbackModel
 {
-    public MatchHudCommandFeedbackModel(bool visible, string message, CommandFeedbackSeverity severity)
+    public MatchHudCommandFeedbackModel(
+        bool visible,
+        string message,
+        CommandFeedbackSeverity severity,
+        CommandFeedbackLifetime lifetime = CommandFeedbackLifetime.Persistent,
+        float durationSeconds = 0f)
     {
         Visible = visible;
         Message = message;
         Severity = severity;
+        Lifetime = visible ? lifetime : CommandFeedbackLifetime.Hidden;
+        DurationSeconds = visible ? Mathf.Max(0f, durationSeconds) : 0f;
     }
 
     public bool Visible { get; }
     public string Message { get; }
     public CommandFeedbackSeverity Severity { get; }
+    public CommandFeedbackLifetime Lifetime { get; }
+    public float DurationSeconds { get; }
 
-    public static MatchHudCommandFeedbackModel Hidden => new(false, string.Empty, CommandFeedbackSeverity.Neutral);
+    public static MatchHudCommandFeedbackModel Hidden => new(false, string.Empty, CommandFeedbackSeverity.Neutral, CommandFeedbackLifetime.Hidden);
 
     public static MatchHudCommandFeedbackModel Show(string message, CommandFeedbackSeverity severity)
     {
         return string.IsNullOrWhiteSpace(message)
             ? Hidden
             : new MatchHudCommandFeedbackModel(true, message, severity);
+    }
+
+    public static MatchHudCommandFeedbackModel ShowTransient(string message, CommandFeedbackSeverity severity, float durationSeconds)
+    {
+        return string.IsNullOrWhiteSpace(message)
+            ? Hidden
+            : new MatchHudCommandFeedbackModel(true, message, severity, CommandFeedbackLifetime.Transient, durationSeconds);
     }
 }
 
@@ -213,6 +236,11 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     private TacticalCommandMode _stickyCommandMode = TacticalCommandMode.None;
     private TacticalCommandResult _lastCommandResult = TacticalCommandResult.Success();
     private bool _hasLastCommandResult;
+    private bool _hasPersistentCommandFeedback;
+    private MatchHudCommandFeedbackModel _persistentCommandFeedback = MatchHudCommandFeedbackModel.Hidden;
+    private MatchHudCommandFeedbackActionsModel _persistentCommandFeedbackActions = MatchHudCommandFeedbackActionsModel.Hidden;
+    private bool _transientFeedbackActive;
+    private float _transientFeedbackExpiresAt;
     private System.Action _boardAllRequested;
     private System.Action _cancelRequested;
     private Button _boundBoardAllButton;
@@ -297,24 +325,69 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 
     public void ApplyCommandFeedback(MatchHudCommandFeedbackModel model)
     {
+        ApplyPersistentCommandFeedback(model, MatchHudCommandFeedbackActionsModel.Hidden);
+    }
+
+    internal void ApplyPersistentCommandFeedback(
+        MatchHudCommandFeedbackModel model,
+        MatchHudCommandFeedbackActionsModel actionsModel)
+    {
+        _transientFeedbackActive = false;
+
         if (!model.Visible || string.IsNullOrWhiteSpace(model.Message))
         {
+            ClearPersistentCommandFeedback();
             HideFeedbackMessage();
             return;
         }
 
-        if (feedbackText != null)
-            feedbackText.text = model.Message;
-        ApplyFeedbackIcon(model.Severity);
-        if (feedbackPanel != null)
-            feedbackPanel.SetActive(true);
+        _hasPersistentCommandFeedback = true;
+        _persistentCommandFeedback = model;
+        _persistentCommandFeedbackActions = actionsModel;
+        ApplyFeedbackVisuals(model);
+        ApplyCommandFeedbackActions(actionsModel);
+    }
+
+    internal void ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel model, float now)
+    {
+        if (!model.Visible || string.IsNullOrWhiteSpace(model.Message))
+            return;
+
+        _transientFeedbackActive = model.Lifetime == CommandFeedbackLifetime.Transient;
+        _transientFeedbackExpiresAt = now + Mathf.Max(0f, model.DurationSeconds);
+        ApplyFeedbackVisuals(model);
+        ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
     }
 
     public void HideFeedbackMessage()
     {
+        _transientFeedbackActive = false;
         if (feedbackPanel != null)
             feedbackPanel.SetActive(false);
         ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
+    }
+
+    internal void ClearPersistentCommandFeedback()
+    {
+        _hasPersistentCommandFeedback = false;
+        _persistentCommandFeedback = MatchHudCommandFeedbackModel.Hidden;
+        _persistentCommandFeedbackActions = MatchHudCommandFeedbackActionsModel.Hidden;
+    }
+
+    internal void TickFeedbackLifetime(float now)
+    {
+        if (!_transientFeedbackActive || now < _transientFeedbackExpiresAt)
+            return;
+
+        _transientFeedbackActive = false;
+        if (_hasPersistentCommandFeedback && _persistentCommandFeedback.Visible)
+        {
+            ApplyFeedbackVisuals(_persistentCommandFeedback);
+            ApplyCommandFeedbackActions(_persistentCommandFeedbackActions);
+            return;
+        }
+
+        HideFeedbackMessage();
     }
 
     public void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model)
@@ -332,6 +405,17 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
         _stickyCommandMode = TacticalCommandMode.None;
         _lastCommandResult = TacticalCommandResult.Success();
         _hasLastCommandResult = false;
+        ClearPersistentCommandFeedback();
+        _transientFeedbackActive = false;
+    }
+
+    private void ApplyFeedbackVisuals(MatchHudCommandFeedbackModel model)
+    {
+        if (feedbackText != null)
+            feedbackText.text = model.Message;
+        ApplyFeedbackIcon(model.Severity);
+        if (feedbackPanel != null)
+            feedbackPanel.SetActive(true);
     }
 
     private void ApplyFeedbackIcon(CommandFeedbackSeverity severity)

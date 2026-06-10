@@ -358,7 +358,6 @@ public sealed class RtsSelectionFocusCommandSystem
                 context.SetCameraDragging?.Invoke(false);
                 context.SetHudWorldMarkersVisible?.Invoke(false);
                 context.ClearHudCommandMode?.Invoke();
-                context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Command cancelled."));
                 return true;
             case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 if (context.IssueFocusedMissileLauncherRadarAttack == null ||

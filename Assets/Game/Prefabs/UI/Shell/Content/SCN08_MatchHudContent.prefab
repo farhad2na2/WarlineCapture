@@ -12577,7 +12577,7 @@ MonoBehaviour:
   boardAction: {fileID: 1800108208000012123}
   genericSquadPortraitSprite: {fileID: 21300000, guid: 4ceb9ddade3f34b08a022990c8de3f3c, type: 3}
   soldierSquadPortraitSprite: {fileID: 21300000, guid: 4ceb9ddade3f34b08a022990c8de3f3c, type: 3}
-  vehicleSquadPortraitSprite: {fileID: 21300000, guid: 6deccd0e9e494611a956cbf4506792a8, type: 3}
+  vehicleSquadPortraitSprite: {fileID: 21300000, guid: b4dc1494954f4b31bbefb58fac5f6785, type: 3}
   aircraftSquadPortraitSprite: {fileID: 21300000, guid: 9775b44f6e3641e4845b7efaa2d29bb7, type: 3}
   transportSquadPortraitSprite: {fileID: 21300000, guid: ab5e976b12f24cb59ee6bf779c667463, type: 3}
   buildingSquadPortraitSprite: {fileID: 21300000, guid: f6f9cbee6ba04c379de851460c113e6d, type: 3}

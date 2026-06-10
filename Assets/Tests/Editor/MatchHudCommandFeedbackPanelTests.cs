@@ -166,6 +166,107 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
+    public void RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide()
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
+
+        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Move);
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, Time.unscaledTime + 20f);
+
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Choose destination.", text.text);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration()
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
+        float now = Time.unscaledTime;
+
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Boarding 3 units.", text.text);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds * 0.5f);
+        Assert.IsTrue(panel.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds + 1f);
+        Assert.IsFalse(panel.activeSelf);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration()
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
+        float now = Time.unscaledTime;
+
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Select units or a building first.", text.text);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds * 0.5f);
+        Assert.IsTrue(panel.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds + 1f);
+        Assert.IsFalse(panel.activeSelf);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions()
+    {
+        BattleHudRuntimeFeedbackView view = CreateBoardFeedbackView(
+            out GameObject actions,
+            out TMP_Text text,
+            out Button boardAll,
+            out Button cancel);
+        float now = Time.unscaledTime;
+
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            view,
+            BoardCommandModeDirection.TransportToPassenger,
+            boardAllInteractable: true);
+        Assert.IsTrue(actions.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+            view,
+            TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "No nearby soldiers can board this transport."));
+        Assert.AreEqual("No nearby soldiers can board this transport.", text.text);
+        Assert.IsFalse(actions.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds + 1f);
+
+        Assert.AreEqual("Tap soldiers or board all.", text.text);
+        Assert.IsTrue(actions.activeSelf);
+        Assert.IsTrue(boardAll.gameObject.activeSelf);
+        Assert.IsTrue(cancel.gameObject.activeSelf);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides()
+    {
+        BattleHudRuntimeFeedbackView view = CreateBoardFeedbackView(
+            out GameObject actions,
+            out TMP_Text text,
+            out _,
+            out _);
+        float now = Time.unscaledTime;
+
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            view,
+            BoardCommandModeDirection.TransportToPassenger,
+            boardAllInteractable: true);
+        BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
+
+        Assert.AreEqual("Boarding 3 units.", text.text);
+        Assert.IsFalse(actions.activeSelf);
+
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds + 1f);
+        Assert.IsFalse(view.FeedbackPanel.activeSelf);
+        Assert.IsFalse(actions.activeSelf);
+    }
+
+    [Test]
     public void SelectButtonClick_HidesBoardFeedbackActionsImmediately()
     {
         _root = new GameObject("SelectButtonFeedbackBoundary");
@@ -290,6 +391,42 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Button button = child.GetComponent<Button>();
         Assert.NotNull(button, $"Missing Button component at {path}.");
         return button;
+    }
+
+    private BattleHudRuntimeFeedbackView CreateFeedbackView(out GameObject panel, out TMP_Text text)
+    {
+        _root = new GameObject("FeedbackView");
+        panel = new GameObject("FeedbackPanel");
+        var textNode = new GameObject("FeedbackText");
+        panel.transform.SetParent(_root.transform);
+        textNode.transform.SetParent(panel.transform);
+
+        var view = _root.AddComponent<BattleHudRuntimeFeedbackView>();
+        text = textNode.AddComponent<TextMeshProUGUI>();
+        SetPrivateField(view, "feedbackPanel", panel);
+        SetPrivateField(view, "feedbackText", text);
+        return view;
+    }
+
+    private BattleHudRuntimeFeedbackView CreateBoardFeedbackView(
+        out GameObject actions,
+        out TMP_Text text,
+        out Button boardAll,
+        out Button cancel)
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out text);
+        actions = new GameObject("Actions");
+        var boardAllNode = new GameObject("BoardAllButton");
+        var cancelNode = new GameObject("CancelButton");
+        actions.transform.SetParent(panel.transform);
+        boardAllNode.transform.SetParent(actions.transform);
+        cancelNode.transform.SetParent(actions.transform);
+        boardAll = boardAllNode.AddComponent<Button>();
+        cancel = cancelNode.AddComponent<Button>();
+        SetPrivateField(view, "feedbackActionsRoot", actions);
+        SetPrivateField(view, "boardAllButton", boardAll);
+        SetPrivateField(view, "cancelButton", cancel);
+        return view;
     }
 
     private static void AssertObjectReference(SerializedObject serializedObject, string propertyName)

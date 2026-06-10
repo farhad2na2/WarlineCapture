@@ -408,6 +408,21 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void CancelActiveCommandMode_ClearsModeWithoutPersistentCancelMessage()
+    {
+        string focusCommands = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs");
+        string cancelCase = ExtractSpan(
+            focusCommands,
+            "case RtsSelectionCommandIntentKind.CancelActiveCommandMode:",
+            "case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:");
+
+        StringAssert.Contains("context.ClearHudCommandMode?.Invoke()", cancelCase);
+        Assert.IsFalse(
+            cancelCase.Contains("Command cancelled", StringComparison.Ordinal),
+            "Cancel should clear mode/buttons without leaving a feedback message on screen.");
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_HoldButtonQueuesHoldAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();
@@ -666,6 +681,15 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.Fail($"{marker} block body was not closed.");
         return string.Empty;
+    }
+
+    private static string ExtractSpan(string source, string startMarker, string endMarker)
+    {
+        int start = source.IndexOf(startMarker, StringComparison.Ordinal);
+        Assert.GreaterOrEqual(start, 0, $"{startMarker} was not found.");
+        int end = source.IndexOf(endMarker, start + startMarker.Length, StringComparison.Ordinal);
+        Assert.GreaterOrEqual(end, 0, $"{endMarker} was not found after {startMarker}.");
+        return source.Substring(start, end - start);
     }
 }
 #endif

@@ -60,6 +60,7 @@ public sealed class MainMenuPlayUI
     public void Update()
     {
         _matchHudMinimapInputSystem.Update();
+        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
     }
 
     public void NotifyStaticMinimapChanged()

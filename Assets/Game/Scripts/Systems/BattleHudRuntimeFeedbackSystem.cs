@@ -25,6 +25,8 @@ public readonly struct BattleHudRuntimeFeedbackState
 
 public sealed class BattleHudRuntimeFeedbackSystem
 {
+    public const float SuccessFeedbackDurationSeconds = 1.4f;
+    public const float ErrorFeedbackDurationSeconds = 2.25f;
     private static readonly MatchOverlayCommandTabFeedbackSystem CommandTabFeedbackSystem = new();
 
     public static BattleHudRuntimeFeedbackState GetState(BattleHudRuntimeFeedbackView view)
@@ -72,10 +74,10 @@ public sealed class BattleHudRuntimeFeedbackSystem
         MatchHudCommandFeedbackModel commandFeedback = direction == BoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackModel.Show("Tap soldiers or board all.", CommandFeedbackSeverity.Ready)
             : MatchHudCommandFeedbackModel.Show("Tap a transport.", CommandFeedbackSeverity.Ready);
-        view.ApplyCommandFeedback(commandFeedback);
-        view.ApplyCommandFeedbackActions(direction == BoardCommandModeDirection.TransportToPassenger
+        MatchHudCommandFeedbackActionsModel actions = direction == BoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
-            : MatchHudCommandFeedbackActionsModel.CancelOnly);
+            : MatchHudCommandFeedbackActionsModel.CancelOnly;
+        view.ApplyPersistentCommandFeedback(commandFeedback, actions);
 
         BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
         if (feedback == null)
@@ -133,10 +135,8 @@ public sealed class BattleHudRuntimeFeedbackSystem
         {
             ResolveTacticalFeedback(view)?.HideInvalidCommand();
             MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState);
-            if (!feedbackModel.Visible)
-                view.HideFeedbackMessage();
-            else
-                view.ApplyCommandFeedback(feedbackModel);
+            if (feedbackModel.Visible)
+                view.ApplyTransientCommandFeedback(feedbackModel, Time.unscaledTime);
             return;
         }
 
@@ -144,7 +144,14 @@ public sealed class BattleHudRuntimeFeedbackSystem
             ? result.Message
             : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
         ResolveTacticalFeedback(view)?.ShowInvalidCommand(reason);
-        view.ApplyCommandFeedback(MatchHudCommandFeedbackModel.Show(reason, CommandFeedbackSeverity.Error));
+        view.ApplyTransientCommandFeedback(
+            MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds),
+            Time.unscaledTime);
+    }
+
+    public static void TickFeedbackLifetime(BattleHudRuntimeFeedbackView view, float now)
+    {
+        view?.TickFeedbackLifetime(now);
     }
 
     public static void SetWorldMarkersVisible(BattleHudRuntimeFeedbackView view, bool visible)
@@ -161,14 +168,12 @@ public sealed class BattleHudRuntimeFeedbackSystem
         else
             CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, mode);
 
-        view.ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
-
         BattleHudTacticalFeedbackView feedback = ResolveTacticalFeedback(view);
         MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode);
         if (!commandFeedback.Visible)
             view.HideFeedbackMessage();
         else
-            view.ApplyCommandFeedback(commandFeedback);
+            view.ApplyPersistentCommandFeedback(commandFeedback, MatchHudCommandFeedbackActionsModel.Hidden);
 
         if (feedback == null)
             return;
@@ -183,8 +188,8 @@ public sealed class BattleHudRuntimeFeedbackSystem
     private static void ClearCommandModeInternal(BattleHudRuntimeFeedbackView view)
     {
         view.CurrentCommandMode = TacticalCommandMode.None;
+        view.ClearPersistentCommandFeedback();
         view.HideFeedbackMessage();
-        view.ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
         ResolveTacticalFeedback(view)?.HideCommandMode();
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
     }
@@ -204,7 +209,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
             string reason = !string.IsNullOrWhiteSpace(result.Message)
                 ? result.Message
                 : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
-            return MatchHudCommandFeedbackModel.Show(reason, CommandFeedbackSeverity.Error);
+            return MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds);
         }
 
         if (string.IsNullOrWhiteSpace(result.Message))
@@ -213,7 +218,18 @@ public sealed class BattleHudRuntimeFeedbackSystem
         TacticalCommandMode mode = state.CurrentCommandMode != TacticalCommandMode.None
             ? state.CurrentCommandMode
             : state.StickyCommandMode;
-        return MatchHudCommandFeedbackModel.Show(result.Message, ResolveAcceptedResultSeverity(result.Message, mode));
+        CommandFeedbackSeverity severity = ResolveAcceptedResultSeverity(result.Message, mode);
+        return MatchHudCommandFeedbackModel.ShowTransient(
+            result.Message,
+            severity,
+            ResolveResultDuration(severity));
+    }
+
+    private static float ResolveResultDuration(CommandFeedbackSeverity severity)
+    {
+        return severity == CommandFeedbackSeverity.Warning || severity == CommandFeedbackSeverity.Error
+            ? ErrorFeedbackDurationSeconds
+            : SuccessFeedbackDurationSeconds;
     }
 
     private static CommandFeedbackSeverity ResolveAcceptedResultSeverity(string message, TacticalCommandMode mode)

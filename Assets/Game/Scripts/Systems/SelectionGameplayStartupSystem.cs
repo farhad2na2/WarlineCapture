@@ -57,6 +57,7 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
+        System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
         FactionVisualSettings factionVisuals)
     {
         var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
@@ -547,6 +548,7 @@ internal sealed class SelectionGameplayStartupSystem
         MatchHudSelectionPanelView.Model BuildSelectedBuildingPanelModel()
         {
             string label = buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext);
+            Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
             return new MatchHudSelectionPanelView.Model(
                 true,
                 string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
@@ -554,7 +556,7 @@ internal sealed class SelectionGameplayStartupSystem
                 "Structure selected",
                 "Health: -",
                 0f,
-                null,
+                portraitSprite,
                 false,
                 null,
                 false,

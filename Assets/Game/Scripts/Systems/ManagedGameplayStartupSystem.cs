@@ -183,6 +183,13 @@ internal sealed class ManagedGameplayStartupSystem
                 : null;
         }
 
+        Sprite ResolveSelectedBuildingPortraitSprite()
+        {
+            return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
+                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab)
+                : null;
+        }
+
         SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,
             worldCamera,
@@ -192,6 +199,7 @@ internal sealed class ManagedGameplayStartupSystem
             building.InteractionContext,
             building.TrySelectFirstBuildingInScreenRect,
             ResolveSelectionPortraitSprite,
+            ResolveSelectedBuildingPortraitSprite,
             factionVisuals);
 
         _roadBuildCompositionSystem.BindBuildingInteraction(

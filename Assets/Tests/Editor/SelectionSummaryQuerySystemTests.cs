@@ -149,6 +149,28 @@ public sealed class SelectionSummaryQuerySystemTests
     }
 
     [Test]
+    public void MultiVehicleSelectionUsesVehiclePortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity firstVehicle = CreatePlayerUnit(em, "Recon Vehicle", new int2(2, 1), 75);
+        Entity secondVehicle = CreatePlayerUnit(em, "Armored Vehicle", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(firstVehicle);
+        em.AddComponent<SelectedUnitTag>(secondVehicle);
+        em.AddComponentData(firstVehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(secondVehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(2, summary.VehicleCount);
+        Assert.AreEqual("2 VEHICLES", summary.Title);
+        Assert.AreEqual("Vehicle squad", summary.Subtitle);
+        Assert.AreEqual(SelectionSummaryPortraitKind.Vehicles, summary.PortraitKind);
+    }
+
+    [Test]
     public void MixedSelectedOrdersDisplaysMixedOrders()
     {
         EntityManager em = _world.EntityManager;

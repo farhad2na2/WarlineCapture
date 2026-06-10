@@ -55,6 +55,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetMoveClickedCell;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate TryGetAttackClickedUnitEntity;
+        public readonly AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate CollectSelectedAttackSources;
         public readonly TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate TryGetTransportClickedUnitEntity;
         public readonly TransportBoardingCommandSystem.TryGetClickedCellDelegate TryGetTransportClickedCell;
 
@@ -98,6 +99,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
             AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
+            AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
             TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
             TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
         {
@@ -140,6 +142,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TryGetMoveClickedCell = tryGetMoveClickedCell;
             TryGetScanClickedCell = tryGetScanClickedCell;
             TryGetAttackClickedUnitEntity = tryGetAttackClickedUnitEntity;
+            CollectSelectedAttackSources = collectSelectedAttackSources;
             TryGetTransportClickedUnitEntity = tryGetTransportClickedUnitEntity;
             TryGetTransportClickedCell = tryGetTransportClickedCell;
         }
@@ -245,6 +248,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.AttackOrderCommandSystem,
             context.UnitTargetOrderSystem,
             context.TryGetAttackClickedUnitEntity,
+            context.CollectSelectedAttackSources,
             context.BuildingPlacementInteractionSystem,
             context.BuildingPlacementInteractionContext);
 

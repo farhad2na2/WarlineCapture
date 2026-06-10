@@ -40,6 +40,7 @@ public sealed class RtsSelectionCommandResultContextSystem
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
         AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
+        AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
         TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
     {
@@ -83,6 +84,7 @@ public sealed class RtsSelectionCommandResultContextSystem
             tryGetMoveClickedCell,
             tryGetScanClickedCell,
             tryGetAttackClickedUnitEntity,
+            collectSelectedAttackSources,
             tryGetTransportClickedUnitEntity,
             tryGetTransportClickedCell);
     }

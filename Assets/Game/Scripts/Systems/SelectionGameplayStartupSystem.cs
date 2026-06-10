@@ -34,6 +34,7 @@ internal sealed class SelectionGameplayStartupSystem
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
         public readonly SelectionRectangleView SelectionRectangleView;
+        public readonly System.Func<bool> ShouldBlockBuildingSelectionClick;
 
         public Result(
             System.Action<MainMenuPlayUI> bindSelectionMainMenu,
@@ -45,7 +46,8 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionUiCameraSystem selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerSystem selectionScreenMarkers,
-            SelectionRectangleView selectionRectangleView)
+            SelectionRectangleView selectionRectangleView,
+            System.Func<bool> shouldBlockBuildingSelectionClick)
         {
             BindSelectionMainMenu = bindSelectionMainMenu;
             BindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
@@ -57,6 +59,7 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionBuildingInteraction = selectionBuildingInteraction;
             SelectionScreenMarkers = selectionScreenMarkers;
             SelectionRectangleView = selectionRectangleView;
+            ShouldBlockBuildingSelectionClick = shouldBlockBuildingSelectionClick;
         }
     }
 
@@ -130,6 +133,7 @@ internal sealed class SelectionGameplayStartupSystem
         var unitTransportRopeDisembarkCommandSystem = new UnitTransportRopeDisembarkCommandSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
+        var selectedAttackSourceScratch = new List<Entity>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelView.PassengerItemModel>();
         MainMenuPlayUI mainMenuPlayUi = null;
         MatchHudSelectionPanelView matchHudSelectionPanelView = null;
@@ -158,7 +162,14 @@ internal sealed class SelectionGameplayStartupSystem
             selectionUiCamera,
             selectionBuildingInteraction,
             selectionScreenMarkers,
-            EnsureSelectionRectangleView(runtimeUiRoot, rtsSelectionConfig));
+            EnsureSelectionRectangleView(runtimeUiRoot, rtsSelectionConfig),
+            ShouldBlockBuildingSelectionClick);
+
+        bool ShouldBlockBuildingSelectionClick()
+        {
+            return explicitAttackTargetModeActive ||
+                   rtsSelectionInputSystem.HasActiveWorldTargetCommandMode(out _);
+        }
 
         void BindSelectionMainMenu(MainMenuPlayUI mainMenu)
         {
@@ -324,7 +335,8 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetClickedUnitEntity,
                 TryGetClickedCell,
                 TryGetClickedCell,
-                TryGetClickedUnitEntity,
+                TryGetClickedAttackTargetEntity,
+                CollectSelectedAttackSources,
                 TryGetClickedUnitEntity,
                 TryGetClickedCell);
         }
@@ -1053,6 +1065,56 @@ internal sealed class SelectionGameplayStartupSystem
                 out bestEntity);
         }
 
+        bool TryGetClickedAttackTargetEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+        {
+            return rtsSelectionPointerTargetCommandSystem.TryGetClickedAttackTargetEntity(
+                CreatePointerTargetCommandContext(),
+                screenPosition,
+                em,
+                out bestEntity);
+        }
+
+        void CollectSelectedAttackSources(EntityManager em, List<Entity> sources)
+        {
+            if (sources == null || em.World == null || !em.World.IsCreated)
+                return;
+
+            EnsureRuntimeSelectionDependencies(em);
+            TryAddAttackSource(em, selectionStateSystem.FocusedUnit, sources);
+
+            List<Entity> cached = selectionStateSystem.CachedSelectedMoveEntities;
+            for (int i = 0; i < cached.Count; i++)
+                TryAddAttackSource(em, cached[i], sources);
+
+            EntityQuery selectedTagQuery = selectionRuntimeQuerySystem.SelectedTagQuery;
+            if (selectedTagQuery.IsEmptyIgnoreFilter)
+                return;
+
+            using NativeArray<Entity> selectedEntities = selectedTagQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < selectedEntities.Length; i++)
+                TryAddAttackSource(em, selectedEntities[i], sources);
+        }
+
+        bool TryAddAttackSource(EntityManager em, Entity entity, List<Entity> sources)
+        {
+            if (entity == Entity.Null ||
+                !em.Exists(entity) ||
+                sources.Contains(entity) ||
+                em.HasComponent<Disabled>(entity) ||
+                em.HasComponent<UnitTransportPassenger>(entity) ||
+                !em.HasComponent<UnitAttack>(entity) ||
+                !em.HasComponent<LocalTransform>(entity))
+            {
+                return false;
+            }
+
+            if (!unitTargetOrderSystem.ValidateAttackSource(em, entity).Accepted)
+                return false;
+
+            sources.Add(entity);
+            return true;
+        }
+
         string BuildClickDebugSummary(Vector2 screenPosition)
         {
             if (!TryGetDefaultEntityManager(out EntityManager em))
@@ -1108,12 +1170,6 @@ internal sealed class SelectionGameplayStartupSystem
         {
             return TryGetFocusedUnitEntity(out EntityManager em, out Entity entity) &&
                    selectionUiQuerySystem.IsOwnedByPlayer(em, entity);
-        }
-
-        bool FocusedUnitCanAttack()
-        {
-            return TryGetFocusedUnitEntity(out EntityManager em, out Entity entity) &&
-                   selectionUiQuerySystem.CanAttack(em, entity);
         }
 
         void DestroyFocusedUnit()
@@ -1489,11 +1545,19 @@ internal sealed class SelectionGameplayStartupSystem
 
         bool ArmFocusedAttackTargetMode()
         {
-            bool hasFocusedUnit = TryGetFocusedUnitEntity(out _, out _);
-            if (!hasFocusedUnit || !FocusedUnitOwnedByPlayer() || !FocusedUnitCanAttack())
+            if (!TryGetDefaultEntityManager(out EntityManager em))
             {
                 selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(
-                    hasFocusedUnit ? TacticalCommandReasonCode.TargetNotAttackable : TacticalCommandReasonCode.NoSelection));
+                    TacticalCommandReasonCode.NoSelection));
+                return false;
+            }
+
+            selectedAttackSourceScratch.Clear();
+            CollectSelectedAttackSources(em, selectedAttackSourceScratch);
+            if (selectedAttackSourceScratch.Count == 0)
+            {
+                selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(
+                    HasAnySelectionForAttackMode(em) ? TacticalCommandReasonCode.TargetNotAttackable : TacticalCommandReasonCode.NoSelection));
                 return false;
             }
 
@@ -1506,6 +1570,22 @@ internal sealed class SelectionGameplayStartupSystem
             SetCameraDragging(false);
             rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = true;
             return true;
+        }
+
+        bool HasAnySelectionForAttackMode(EntityManager em)
+        {
+            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out _))
+                return true;
+            if (selectionStateSystem.CachedSelectedMoveEntities.Count > 0)
+                return true;
+            if (buildingPlacementInteractionSystem != null &&
+                buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
+            {
+                return true;
+            }
+
+            EnsureRuntimeSelectionDependencies(em);
+            return !selectionRuntimeQuerySystem.SelectedTagQuery.IsEmptyIgnoreFilter;
         }
 
         void CancelExplicitAttackTargetMode()

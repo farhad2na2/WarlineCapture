@@ -217,7 +217,8 @@ internal sealed class ManagedGameplayStartupSystem
         building.BindSelection(
             dayNight,
             selection.SelectionUiCamera,
-            selection.SelectionBuildingInteraction);
+            selection.SelectionBuildingInteraction,
+            selection.ShouldBlockBuildingSelectionClick);
 
         var unitAttackTraces = new UnitAttackTraceSystem();
         unitAttackTraces.Init(unitAttackTraceConfig, worldCamera, ownerLayer, factionVisuals);

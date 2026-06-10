@@ -15,6 +15,7 @@ public sealed class SelectionAttackCommandRequestSystem
         AttackOrderCommandSystem attackOrderCommandSystem,
         UnitTargetOrderSystem targetOrderSystem,
         AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
+        AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
     {
@@ -41,6 +42,7 @@ public sealed class SelectionAttackCommandRequestSystem
                 screenPosition,
                 targetOrderSystem,
                 tryGetClickedUnitEntity,
+                collectSelectedAttackSources,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
                 request.ExplicitAttackTargetMode != 0);

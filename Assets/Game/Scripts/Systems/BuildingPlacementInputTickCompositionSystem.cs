@@ -25,6 +25,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystem
             () => source.BuildingGameplayDependencySystem.MainMenuPlayUi,
             source.BuildingSelectionClickSystem,
             createSelectionClickContext(source),
+            () => source.BuildingGameplayDependencySystem.IsBuildingSelectionClickBlocked(),
             clickDragThresholdPixels);
     }
 }

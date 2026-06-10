@@ -137,7 +137,9 @@ public sealed class UnitTargetOrderSystem
             int2 engageCell = targetCell;
             float3 engagePosition = targetTransform.Position;
             bool issuedBreachOrder = false;
-            if (tryResolveBaseBreachTarget != null &&
+            bool canResolveBaseBreach = !entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
+            if (canResolveBaseBreach &&
+                tryResolveBaseBreachTarget != null &&
                 entityManager.HasComponent<Faction>(entity) &&
                 entityManager.HasComponent<UnitGrid>(entity) &&
                 tryResolveBaseBreachTarget(

@@ -25,6 +25,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         public readonly Func<MainMenuPlayUI> GetMainMenu;
         public readonly BuildingSelectionClickSystem SelectionClickSystem;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
+        public readonly Func<bool> ShouldBlockBuildingSelectionClick;
         public readonly float ClickDragThresholdPixels;
 
         public Context(
@@ -40,6 +41,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             Func<MainMenuPlayUI> getMainMenu,
             BuildingSelectionClickSystem selectionClickSystem,
             BuildingSelectionClickSystem.Context selectionClickContext,
+            Func<bool> shouldBlockBuildingSelectionClick,
             float clickDragThresholdPixels)
         {
             GetWorldCamera = getWorldCamera;
@@ -54,6 +56,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             GetMainMenu = getMainMenu;
             SelectionClickSystem = selectionClickSystem;
             SelectionClickContext = selectionClickContext;
+            ShouldBlockBuildingSelectionClick = shouldBlockBuildingSelectionClick;
             ClickDragThresholdPixels = clickDragThresholdPixels > 0f
                 ? clickDragThresholdPixels
                 : DefaultClickDragThresholdPixels;
@@ -130,7 +133,11 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
             afterUi = gate.MeasuredAt;
 
-            if (!gate.IgnoreBecauseCommandUiPressed && !gate.OverGameplayUi && gate.OverUnitCommandUi && gate.HasActiveBuilding)
+            if (!gate.BlockedByCommandMode &&
+                !gate.IgnoreBecauseCommandUiPressed &&
+                !gate.OverGameplayUi &&
+                gate.OverUnitCommandUi &&
+                gate.HasActiveBuilding)
             {
                 _pendingBuildingSelectionClick = false;
                 if (context.RuntimeGameplayStateSystem != null)
@@ -139,7 +146,8 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                 return new Result(afterOutline, afterMouse, afterUi, afterInput, afterInput);
             }
 
-            _pendingBuildingSelectionClick = !gate.IgnoreBecauseCommandUiPressed &&
+            _pendingBuildingSelectionClick = !gate.BlockedByCommandMode &&
+                                             !gate.IgnoreBecauseCommandUiPressed &&
                                              !gate.OverGameplayUi &&
                                              !gate.OverUnitCommandUi;
             if (_pendingBuildingSelectionClick)
@@ -156,7 +164,10 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                 BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
                 afterUi = Math.Max(afterUi, gate.MeasuredAt);
 
-                if (!gate.IgnoreBecauseCommandUiPressed && !gate.OverGameplayUi && !gate.OverUnitCommandUi)
+                if (!gate.BlockedByCommandMode &&
+                    !gate.IgnoreBecauseCommandUiPressed &&
+                    !gate.OverGameplayUi &&
+                    !gate.OverUnitCommandUi)
                 {
                     context.SelectionClickSystem?.HandleBuildingSelectionClick(
                         context.SelectionClickContext,
@@ -188,6 +199,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
     {
         bool ignoreBecauseCommandUiPressed = mainMenu != null &&
                                              mainMenu.ShouldIgnoreBuildingSelectionThisFrame();
+        bool blockedByCommandMode = context.ShouldBlockBuildingSelectionClick?.Invoke() == true;
         bool overGameplayUi = mainMenu != null &&
                               mainMenu.IsPointerOverAnyGameplayUi(pointerPosition, out _);
         if (!overGameplayUi)
@@ -201,6 +213,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         }
 
         return new BuildingSelectionClickGate(
+            blockedByCommandMode,
             ignoreBecauseCommandUiPressed,
             overGameplayUi,
             hasActiveBuilding,
@@ -237,18 +250,21 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
     private readonly struct BuildingSelectionClickGate
     {
         public readonly bool IgnoreBecauseCommandUiPressed;
+        public readonly bool BlockedByCommandMode;
         public readonly bool OverGameplayUi;
         public readonly bool HasActiveBuilding;
         public readonly bool OverUnitCommandUi;
         public readonly double MeasuredAt;
 
         public BuildingSelectionClickGate(
+            bool blockedByCommandMode,
             bool ignoreBecauseCommandUiPressed,
             bool overGameplayUi,
             bool hasActiveBuilding,
             bool overUnitCommandUi,
             double measuredAt)
         {
+            BlockedByCommandMode = blockedByCommandMode;
             IgnoreBecauseCommandUiPressed = ignoreBecauseCommandUiPressed;
             OverGameplayUi = overGameplayUi;
             HasActiveBuilding = hasActiveBuilding;

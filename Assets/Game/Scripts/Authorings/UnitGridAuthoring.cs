@@ -463,7 +463,7 @@ public class UnitGridAuthoring : MonoBehaviour
             AddComponent(entity, new GroundMissileLauncherComponent
             {
                 MinRange = missileConfig.MinRange,
-                MaxRange = missileConfig.MaxRange,
+                MaxRange = math.max(missileConfig.MaxRange, authoring.ConfiguredAttackRange),
                 PrepareSeconds = missileConfig.PrepareSeconds,
                 ReloadSeconds = missileConfig.ReloadSeconds,
                 BatteryElevatedAngleDegrees = missileConfig.BatteryElevatedAngleDegrees,

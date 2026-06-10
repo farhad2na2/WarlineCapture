@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionInputSystemTests
@@ -264,6 +266,85 @@ public sealed class RtsSelectionInputSystemTests
             out _));
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterAttackTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void AttackTargetMode_ArmsFromFocusedAttackUnitWithoutSelectedTag()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity launcher = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(launcher, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(launcher, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(launcher, LocalTransform.FromPosition(float3.zero));
+
+        var inputSystem = new RtsSelectionInputSystem();
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(launcher);
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        TacticalCommandMode appliedMode = TacticalCommandMode.None;
+        TacticalCommandResult rejectedResult = default;
+        bool explicitAttackMode = false;
+        bool worldMarkersVisible = false;
+
+        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
+        var context = new RtsSelectionFocusCommandSystem.Context(
+            new RuntimeGameplayStateSystem(),
+            inputSystem,
+            selectionState,
+            new FocusedUnitLifecycleSystem(),
+            new UnitTargetOrderSystem(),
+            null,
+            default,
+            null,
+            (out EntityManager entityManager) =>
+            {
+                entityManager = em;
+                return true;
+            },
+            _ => { },
+            null,
+            null,
+            null,
+            null,
+            result => rejectedResult = result,
+            mode => appliedMode = mode,
+            null,
+            null,
+            null,
+            visible => worldMarkersVisible = visible,
+            _ => { },
+            value => explicitAttackMode = value,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
+
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+        Assert.AreEqual(TacticalCommandMode.Attack, appliedMode);
+        Assert.IsTrue(explicitAttackMode);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectedResult.ReasonCode);
     }
 
     [Test]
@@ -606,9 +687,13 @@ public sealed class RtsSelectionInputSystemTests
         string buildingInput = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs");
         string pointerPressed = ExtractBlockAfter(buildingInput, "if (pointer.WasPressedThisFrame)");
         string pointerReleased = ExtractBlockAfter(buildingInput, "if (pointer.WasReleasedThisFrame)");
+        string clickGate = ExtractBlockAfter(buildingInput, "private static BuildingSelectionClickGate GetBuildingSelectionClickGate");
 
         Assert.IsFalse(pointerPressed.Contains("HandleBuildingSelectionClick", StringComparison.Ordinal));
+        StringAssert.Contains("!gate.BlockedByCommandMode", pointerPressed);
+        StringAssert.Contains("context.ShouldBlockBuildingSelectionClick?.Invoke() == true", clickGate);
         StringAssert.Contains("Vector2.Distance(_buildingSelectionPressPosition, pointerPosition) < context.ClickDragThresholdPixels", pointerReleased);
+        StringAssert.Contains("!gate.BlockedByCommandMode", pointerReleased);
         StringAssert.Contains("context.SelectionClickSystem?.HandleBuildingSelectionClick", pointerReleased);
     }
 

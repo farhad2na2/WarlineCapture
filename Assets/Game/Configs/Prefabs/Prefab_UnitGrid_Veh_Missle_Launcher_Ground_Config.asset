@@ -44,6 +44,9 @@ MonoBehaviour:
     and fortified targets.
   midLodPrefab: {fileID: 8572898761752687562, guid: 673a614a5a4c04cc3a150a29301045e0, type: 3}
   lowLodPrefab: {fileID: 6368581098325830619, guid: 042c98158e7f7442b84445e9f7b5335d, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 0}
+  unitHealthBarPrefab: {fileID: 0}
+  tintUnitModelRenderers: 1
   vehicleDestroyedVisualPrefab: {fileID: 4917785960060466873, guid: 4dfb82e1ed820469094fafb666ca2a01, type: 3}
   vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
@@ -57,7 +60,7 @@ MonoBehaviour:
   allowAutoEngage: 1
   usesTurretAim: 0
   aggroRangeCells: 16
-  attackRange: 600
+  attackRange: 50000
   chaseBreakDistance: 8
   attackCooldownSeconds: 3
   attackDamage: 90

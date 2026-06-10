@@ -1,6 +1,8 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionPointerTargetCommandSystem
@@ -126,6 +128,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private World _queryWorld;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _mapSurfaceQuery;
+    private EntityQuery _runtimeBuildingCombatQuery;
     private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();
 
     public void IssueMoveOrder(Context context, Vector2 screenPosition)
@@ -302,6 +305,36 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return screenHit;
     }
 
+    public bool TryGetClickedAttackTargetEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+    {
+        if (TryGetClickedUnitEntity(context, screenPosition, em, out bestEntity))
+            return true;
+
+        bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
+        if (hasFlatClickedCell &&
+            TryGetClickedRuntimeBuildingCombatEntity(em, context.WorldCamera, flatClickedCell, screenPosition, out bestEntity))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"attackTargetLookup result=True route=FlatRuntimeBuilding pos={screenPosition} cell={flatClickedCell} entity={DescribeClickedEntity(em, bestEntity)}");
+            return true;
+        }
+
+        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _) ||
+            (hasFlatClickedCell && clickedCell.Equals(flatClickedCell)))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"attackTargetLookup result=False route=RuntimeBuilding pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell}");
+            return false;
+        }
+
+        if (TryGetClickedRuntimeBuildingCombatEntity(em, context.WorldCamera, clickedCell, screenPosition, out bestEntity))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"attackTargetLookup result=True route=SurfaceRuntimeBuilding pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell} surfaceCell={clickedCell} entity={DescribeClickedEntity(em, bestEntity)}");
+            return true;
+        }
+
+        context.LogSelectionDiagnostic?.Invoke($"attackTargetLookup result=False route=SurfaceRuntimeBuilding pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell} surfaceCell={clickedCell}");
+        return false;
+    }
+
     private static string DescribeClickedEntity(EntityManager em, Entity entity)
     {
         if (entity == Entity.Null || !em.Exists(entity))
@@ -340,6 +373,72 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         Vector3 worldPoint = ray.GetPoint(distance);
         cell = GridUtils.WorldToCell(grid, worldPoint);
         return GridUtils.InBounds(cell, grid.Width, grid.Height);
+    }
+
+    private bool TryGetClickedRuntimeBuildingCombatEntity(
+        EntityManager em,
+        Camera worldCamera,
+        int2 clickedCell,
+        Vector2 screenPosition,
+        out Entity bestEntity)
+    {
+        bestEntity = Entity.Null;
+        if (worldCamera == null)
+            return false;
+
+        EnsureEntityQueries(em);
+        if (_runtimeBuildingCombatQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        float bestDistanceSq = float.MaxValue;
+        using NativeArray<Entity> entities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!IsAttackableRuntimeBuildingCandidate(em, entity, clickedCell))
+                continue;
+
+            Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalTransform>(entity).Position);
+            if (screen.z <= 0f)
+                continue;
+
+            float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+            if (distanceSq >= bestDistanceSq)
+                continue;
+
+            bestDistanceSq = distanceSq;
+            bestEntity = entity;
+        }
+
+        return bestEntity != Entity.Null;
+    }
+
+    private static bool IsAttackableRuntimeBuildingCandidate(EntityManager em, Entity entity, int2 clickedCell)
+    {
+        if (!em.Exists(entity) ||
+            !em.HasComponent<RuntimeBuildingCombatInfo>(entity) ||
+            !em.HasComponent<Faction>(entity) ||
+            !em.HasComponent<UnitHealth>(entity) ||
+            !em.HasComponent<LocalTransform>(entity))
+        {
+            return false;
+        }
+
+        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(entity).Id))
+            return false;
+
+        UnitHealth health = em.GetComponentData<UnitHealth>(entity);
+        if (health.Current <= 0)
+            return false;
+
+        RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+        int2 origin = info.OriginCell;
+        int2 size = UnitFootprintUtility.ClampSize(info.FootprintCells);
+        int2 max = origin + size;
+        return clickedCell.x >= origin.x &&
+               clickedCell.y >= origin.y &&
+               clickedCell.x < max.x &&
+               clickedCell.y < max.y;
     }
 
     public bool TryGetClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
@@ -382,5 +481,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         _queryWorld = world;
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        _runtimeBuildingCombatQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<LocalTransform>());
     }
 }

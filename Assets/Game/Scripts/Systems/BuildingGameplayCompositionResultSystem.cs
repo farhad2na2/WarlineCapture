@@ -189,13 +189,15 @@ internal sealed class BuildingGameplayCompositionResultSystem
         public void BindSelection(
             DayNightSystem dayNight,
             SelectionUiCameraSystem selectionUiCameraSystem,
-            SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)
+            SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
+            Func<bool> shouldBlockBuildingSelectionClick)
         {
             DependencySystem?.BindRuntimeDependencies(
                 null,
                 dayNight,
                 selectionUiCameraSystem,
-                selectionBuildingInteractionSystem);
+                selectionBuildingInteractionSystem,
+                shouldBlockBuildingSelectionClick: shouldBlockBuildingSelectionClick);
         }
 
         public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)

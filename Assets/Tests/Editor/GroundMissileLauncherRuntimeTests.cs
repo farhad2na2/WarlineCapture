@@ -361,6 +361,100 @@ public sealed class GroundMissileLauncherRuntimeTests
     }
 
     [Test]
+    public void AttackOrder_GroundMissileLauncherAcceptsHostileRuntimeBuildingAtLongRange()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_LongRangeBuilding");
+        EntityManager em = world.EntityManager;
+
+        Entity targetBuilding = CreateRuntimeBuildingTarget(
+            em,
+            originCell: new int2(120, 8),
+            footprintCells: new int2(4, 4),
+            position: new float3(122f, 0f, 10f),
+            factionId: FactionIdentitySystem.EnemyFactionId,
+            health: 250);
+        Entity breachTarget = CreateRuntimeBuildingTarget(
+            em,
+            originCell: new int2(20, 8),
+            footprintCells: new int2(2, 2),
+            position: new float3(21f, 0f, 9f),
+            factionId: FactionIdentitySystem.EnemyFactionId,
+            health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        var selected = new NativeArray<Entity>(1, Allocator.Temp);
+        selected[0] = launcher;
+
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            result = new UnitTargetOrderSystem().IssueAttackTarget(
+                em,
+                selected,
+                targetBuilding,
+                (
+                    byte _,
+                    Entity __,
+                    int2 ___,
+                    int2 ____,
+                    out Entity breach,
+                    out int2 breachCell,
+                    out float3 breachPosition) =>
+                {
+                    breach = breachTarget;
+                    breachCell = new int2(20, 8);
+                    breachPosition = new float3(21f, 0f, 9f);
+                    return true;
+                });
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual(1, result.IssuedCount);
+        Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
+        EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);
+        Assert.AreEqual(targetBuilding, engage.Target);
+        Assert.AreEqual(1, engage.IsCommanded);
+        Assert.IsFalse(em.HasComponent<BaseBreachOrder>(launcher), "Missile launchers should fire at hostile buildings directly instead of receiving breach movement orders.");
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(launcher));
+    }
+
+    [Test]
+    public void AttackOrder_GroundMissileLauncherRejectsHostileRuntimeBuildingInsideMinimumRange()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_CloseBuilding");
+        EntityManager em = world.EntityManager;
+
+        Entity targetBuilding = CreateRuntimeBuildingTarget(
+            em,
+            originCell: new int2(2, 0),
+            footprintCells: new int2(2, 2),
+            position: new float3(2f, 0f, 0f),
+            factionId: FactionIdentitySystem.EnemyFactionId,
+            health: 250);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        var selected = new NativeArray<Entity>(1, Allocator.Temp);
+        selected[0] = launcher;
+
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            result = new UnitTargetOrderSystem().IssueAttackTarget(em, selected, targetBuilding);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsFalse(result.CommandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, result.CommandResult.ReasonCode);
+        Assert.AreEqual("Target too close for missile launcher.", result.CommandResult.Message);
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
+    }
+
+    [Test]
     public void SelectionAttackRequest_PreservesGroundMissileRangeFeedbackMessage()
     {
         using var world = new World("GroundMissileLauncherRuntimeTests_RequestMessage");
@@ -398,12 +492,67 @@ public sealed class GroundMissileLauncherRuntimeTests
                 return true;
             },
             null,
+            null,
             default);
 
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.TargetNotAttackable, results[0].ReasonCode);
         Assert.AreEqual("Target too close for missile launcher.", results[0].Message.ToString());
+    }
+
+    [Test]
+    public void SelectionAttackRequest_UsesFocusedAttackSourceWhenSelectedTagMissing()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_FocusedAttackSource");
+        EntityManager em = world.EntityManager;
+
+        Entity targetBuilding = CreateRuntimeBuildingTarget(
+            em,
+            originCell: new int2(120, 8),
+            footprintCells: new int2(4, 4),
+            position: new float3(122f, 0f, 10f),
+            factionId: FactionIdentitySystem.EnemyFactionId,
+            health: 250);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputRequestQueueComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Attack,
+            RequestId = 8,
+            ExplicitAttackTargetMode = 1,
+            HasScreenPosition = 1,
+            ScreenPosition = new float2(10f, 20f)
+        });
+
+        var requestSystem = new SelectionAttackCommandRequestSystem();
+        requestSystem.ProcessPendingRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new AttackOrderCommandSystem(),
+            new UnitTargetOrderSystem(),
+            (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
+            {
+                clicked = targetBuilding;
+                return true;
+            },
+            (EntityManager entityManager, System.Collections.Generic.List<Entity> sources) => sources.Add(launcher),
+            null,
+            default);
+
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(0, results[0].ReasonCode);
+        Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
+        Assert.AreEqual(targetBuilding, em.GetComponentData<EngageTarget>(launcher).Target);
     }
 
 
@@ -513,6 +662,40 @@ public sealed class GroundMissileLauncherRuntimeTests
         em.SetComponentData(entity, new UnitGrid { Cell = GridUtils.WorldToCell(new GridConfig { Width = 256, Height = 256, CellSize = 1f, Origin = float3.zero }, position) });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
+    }
+
+    private static Entity CreateRuntimeBuildingTarget(
+        EntityManager em,
+        int2 originCell,
+        int2 footprintCells,
+        float3 position,
+        byte factionId,
+        int health)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(UnitRespawnPrefab),
+            typeof(RuntimeBuildingCombatTag),
+            typeof(RuntimeBuildingCombatInfo),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = originCell + footprintCells / 2 });
+        em.SetComponentData(entity, new UnitFootprint { Size = footprintCells });
+        em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });
+        em.SetComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
+        em.SetComponentData(entity, new RuntimeBuildingCombatInfo
+        {
+            OwnerFactionId = factionId,
+            OriginCell = originCell,
+            FootprintCells = footprintCells,
+            IsWall = 0,
+            IsGate = 0
+        });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
     }

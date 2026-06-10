@@ -622,20 +622,41 @@ public sealed class RtsSelectionFocusCommandSystem
 
         context.EnsureEntityQueries?.Invoke(em);
         bool hasSelected = false;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
 
-        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
+        Entity focused = context.SelectionStateSystem.FocusedUnit;
+        if (focused != Entity.Null && em.Exists(focused))
         {
-            Entity entity = selectedEntities[i];
+            hasSelected = true;
+            if (IsSelectedAttackCapableUnit(em, focused))
+                return true;
+        }
+
+        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < cached.Count; i++)
+        {
+            Entity entity = cached[i];
             if (!em.Exists(entity))
                 continue;
 
             hasSelected = true;
             if (IsSelectedAttackCapableUnit(em, entity))
                 return true;
+        }
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < selectedEntities.Length; i++)
+            {
+                Entity entity = selectedEntities[i];
+                if (!em.Exists(entity))
+                    continue;
+
+                hasSelected = true;
+                if (IsSelectedAttackCapableUnit(em, entity))
+                    return true;
+            }
         }
 
         rejectionReason = hasSelected

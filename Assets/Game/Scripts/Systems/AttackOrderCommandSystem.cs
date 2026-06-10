@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -7,6 +8,7 @@ using UnityEngine;
 public sealed class AttackOrderCommandSystem
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
+    public delegate void CollectSelectedAttackSourcesDelegate(EntityManager em, List<Entity> sources);
 
     public readonly struct Result
     {
@@ -43,6 +45,7 @@ public sealed class AttackOrderCommandSystem
     private EntityQuery _selectedAttackQuery;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
+    private readonly List<Entity> _selectedAttackSourceScratch = new();
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -64,6 +67,7 @@ public sealed class AttackOrderCommandSystem
         Vector2 screenPosition,
         UnitTargetOrderSystem targetOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
+        CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         bool explicitAttackTargetModeActive)
@@ -82,22 +86,46 @@ public sealed class AttackOrderCommandSystem
         if (!targetValidation.Accepted)
             return explicitAttackTargetModeActive ? Result.Rejected(targetValidation) : Result.NoCommand();
 
-        return IssueAttackTarget(em, targetEntity, targetOrderSystem, TryResolveBaseBreachTargetForAttackOrder);
+        return IssueAttackTarget(em, targetEntity, targetOrderSystem, TryResolveBaseBreachTargetForAttackOrder, collectSelectedAttackSources);
     }
 
     public Result IssueAttackTarget(
         EntityManager em,
         Entity targetEntity,
         UnitTargetOrderSystem targetOrderSystem,
-        UnitTargetOrderSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null)
+        UnitTargetOrderSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null,
+        CollectSelectedAttackSourcesDelegate collectSelectedAttackSources = null)
     {
         EnsureEntityQueries(em);
-        using NativeArray<Entity> selectedEntities = _selectedAttackQuery.ToEntityArray(Allocator.Temp);
-        UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
-            targetOrderSystem.IssueAttackTarget(em, selectedEntities, targetEntity, tryResolveBaseBreachTarget);
-        return issueResult.CommandResult.Accepted
-            ? Result.Accepted(issueResult)
-            : Result.Rejected(issueResult.CommandResult);
+        NativeArray<Entity> selectedEntities = CreateSelectedAttackSourceArray(em, collectSelectedAttackSources);
+        try
+        {
+            UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
+                targetOrderSystem.IssueAttackTarget(em, selectedEntities, targetEntity, tryResolveBaseBreachTarget);
+            return issueResult.CommandResult.Accepted
+                ? Result.Accepted(issueResult)
+                : Result.Rejected(issueResult.CommandResult);
+        }
+        finally
+        {
+            if (selectedEntities.IsCreated)
+                selectedEntities.Dispose();
+        }
+    }
+
+    private NativeArray<Entity> CreateSelectedAttackSourceArray(
+        EntityManager em,
+        CollectSelectedAttackSourcesDelegate collectSelectedAttackSources)
+    {
+        _selectedAttackSourceScratch.Clear();
+        collectSelectedAttackSources?.Invoke(em, _selectedAttackSourceScratch);
+        if (_selectedAttackSourceScratch.Count == 0)
+            return _selectedAttackQuery.ToEntityArray(Allocator.Temp);
+
+        var selectedEntities = new NativeArray<Entity>(_selectedAttackSourceScratch.Count, Allocator.Temp);
+        for (int i = 0; i < _selectedAttackSourceScratch.Count; i++)
+            selectedEntities[i] = _selectedAttackSourceScratch[i];
+        return selectedEntities;
     }
 
     private bool TryResolveBaseBreachTargetForAttackOrder(

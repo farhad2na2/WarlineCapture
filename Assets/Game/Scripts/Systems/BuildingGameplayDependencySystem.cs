@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 internal sealed class BuildingGameplayDependencySystem
@@ -9,6 +10,7 @@ internal sealed class BuildingGameplayDependencySystem
     internal RuntimeCityCompositionSystem RuntimeCitySystem { get; private set; }
     internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
+    private Func<bool> ShouldBlockBuildingSelectionClick { get; set; }
     internal float BuildingFactionTintStrength => FactionVisualSettings != null ? FactionVisualSettings.BuildingFactionTintStrength : 0.45f;
     internal DayNightSystem DayNightSystem { get; private set; }
 
@@ -29,7 +31,8 @@ internal sealed class BuildingGameplayDependencySystem
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
         RuntimeCityCompositionSystem runtimeCitySystem = null,
-        CitizenPopulationEventSystem citizenPopulationEventSystem = null)
+        CitizenPopulationEventSystem citizenPopulationEventSystem = null,
+        Func<bool> shouldBlockBuildingSelectionClick = null)
     {
         MainMenuPlayUi = mainMenuPlayUi;
         if (dayNightSystem != null)
@@ -44,6 +47,13 @@ internal sealed class BuildingGameplayDependencySystem
             RuntimeCitySystem = runtimeCitySystem;
         if (citizenPopulationEventSystem != null)
             CitizenPopulationEventSystem = citizenPopulationEventSystem;
+        if (shouldBlockBuildingSelectionClick != null)
+            ShouldBlockBuildingSelectionClick = shouldBlockBuildingSelectionClick;
+    }
+
+    internal bool IsBuildingSelectionClickBlocked()
+    {
+        return ShouldBlockBuildingSelectionClick?.Invoke() == true;
     }
 
     internal bool IsRuntimeBlockerCell(int x, int y, int width, int height)

@@ -77,6 +77,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         public readonly string HealthText;
         public readonly float Health01;
         public readonly Sprite PortraitSprite;
+        public readonly SelectionSummaryPortraitKind PortraitKind;
         public readonly bool BadgeVisible;
         public readonly Sprite BadgeSprite;
         public readonly bool ReturnEnabled;
@@ -96,6 +97,37 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
             bool returnEnabled,
             bool destroyEnabled,
             bool boardEnabled)
+            : this(
+                visible,
+                title,
+                subtitle,
+                currentOrder,
+                healthText,
+                health01,
+                portraitSprite,
+                SelectionSummaryPortraitKind.GenericSquad,
+                badgeVisible,
+                badgeSprite,
+                returnEnabled,
+                destroyEnabled,
+                boardEnabled)
+        {
+        }
+
+        public Model(
+            bool visible,
+            string title,
+            string subtitle,
+            string currentOrder,
+            string healthText,
+            float health01,
+            Sprite portraitSprite,
+            SelectionSummaryPortraitKind portraitKind,
+            bool badgeVisible,
+            Sprite badgeSprite,
+            bool returnEnabled,
+            bool destroyEnabled,
+            bool boardEnabled)
         {
             Visible = visible;
             Title = title;
@@ -104,6 +136,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
             HealthText = healthText;
             Health01 = health01;
             PortraitSprite = portraitSprite;
+            PortraitKind = portraitKind;
             BadgeVisible = badgeVisible;
             BadgeSprite = badgeSprite;
             ReturnEnabled = returnEnabled;
@@ -268,7 +301,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
             SelectionSummaryPortraitKind.Soldiers => FirstNonNull(soldierSquadPortraitSprite, genericSquadPortraitSprite),
             SelectionSummaryPortraitKind.Vehicles => FirstNonNull(vehicleSquadPortraitSprite, genericSquadPortraitSprite),
             SelectionSummaryPortraitKind.Aircraft => FirstNonNull(aircraftSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.Transports => FirstNonNull(transportSquadPortraitSprite, genericSquadPortraitSprite),
+            SelectionSummaryPortraitKind.Transports => FirstNonNull(vehicleSquadPortraitSprite, transportSquadPortraitSprite, genericSquadPortraitSprite),
             SelectionSummaryPortraitKind.Buildings => FirstNonNull(buildingSquadPortraitSprite, genericSquadPortraitSprite),
             SelectionSummaryPortraitKind.MixedSoldierVehicle => FirstNonNull(mixedSoldierVehiclePortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
             SelectionSummaryPortraitKind.MixedSoldierAircraft => FirstNonNull(mixedSoldierAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
@@ -303,7 +336,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         SetText(subtitleText, model.Subtitle);
         SetText(currentOrderText, model.CurrentOrder);
         SetText(healthText, model.HealthText);
-        SetSelectionPortrait(model.PortraitSprite);
+        SetSelectionPortrait(FirstNonNull(model.PortraitSprite, ResolveFallbackPortraitSprite(model.PortraitKind)));
         SetHealthFill(model.Health01);
         SetBadge(model.BadgeVisible, model.BadgeSprite);
         SetActionState(returnAction, model.Visible && model.ReturnEnabled);

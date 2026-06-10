@@ -171,6 +171,75 @@ public sealed class SelectionSummaryQuerySystemTests
     }
 
     [Test]
+    public void MultiTransportSelectionUsesVehiclePortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity firstTransport = CreatePlayerUnit(em, "APC Transport", new int2(2, 1), 75);
+        Entity secondTransport = CreatePlayerUnit(em, "Troop Truck", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(firstTransport);
+        em.AddComponent<SelectedUnitTag>(secondTransport);
+        em.AddComponentData(firstTransport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(secondTransport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(firstTransport, new UnitTransportCapacity { SoldierCapacity = 4 });
+        em.AddComponentData(secondTransport, new UnitTransportCapacity { SoldierCapacity = 4 });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(2, summary.TransportCount);
+        Assert.AreEqual("2 TRANSPORTS", summary.Title);
+        Assert.AreEqual(SelectionSummaryPortraitKind.Vehicles, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedGroundVehicleAndTransportUsesVehiclePortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity vehicle = CreatePlayerUnit(em, "Battle Tank", new int2(2, 1), 75);
+        Entity transport = CreatePlayerUnit(em, "APC Transport", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponent<SelectedUnitTag>(transport);
+        em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(transport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 4 });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(1, summary.VehicleCount);
+        Assert.AreEqual(1, summary.TransportCount);
+        Assert.AreEqual(SelectionSummaryPortraitKind.Vehicles, summary.PortraitKind);
+    }
+
+    [Test]
+    public void GroundTransportAndAirTransportUsesAirVehiclePortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity groundTransport = CreatePlayerUnit(em, "APC Transport", new int2(2, 1), 75);
+        Entity airTransport = CreatePlayerUnit(em, "Transport Helicopter", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(groundTransport);
+        em.AddComponent<SelectedUnitTag>(airTransport);
+        em.AddComponentData(groundTransport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(airTransport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(groundTransport, new UnitTransportCapacity { SoldierCapacity = 4 });
+        em.AddComponentData(airTransport, new UnitTransportCapacity { SoldierCapacity = 6 });
+        em.AddComponentData(airTransport, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(1, summary.TransportCount);
+        Assert.AreEqual(1, summary.AircraftCount);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedVehicleAircraft, summary.PortraitKind);
+    }
+
+    [Test]
     public void MixedSelectedOrdersDisplaysMixedOrders()
     {
         EntityManager em = _world.EntityManager;
@@ -212,6 +281,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
             Assert.AreSame(genericSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers));
             Assert.AreSame(vehicleSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Vehicles));
+            Assert.AreSame(vehicleSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Transports));
             Assert.AreSame(mixedSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedForce));
             Assert.AreSame(mixedAirSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedSoldierAircraft));
         }

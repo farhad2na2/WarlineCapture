@@ -198,12 +198,11 @@ public sealed class SelectionSummaryQuerySystem
     {
         int categories = 0;
         categories += soldierCount > 0 ? 1 : 0;
-        categories += vehicleCount > 0 ? 1 : 0;
+        int groundVehicleCount = vehicleCount + transportCount;
+        categories += groundVehicleCount > 0 ? 1 : 0;
         categories += aircraftCount > 0 ? 1 : 0;
-        categories += transportCount > 0 ? 1 : 0;
         categories += buildingCount > 0 ? 1 : 0;
 
-        int groundVehicleCount = vehicleCount + transportCount;
         if (buildingCount > 0)
             return SelectionSummaryPortraitKind.MixedForce;
         if (soldierCount > 0 && groundVehicleCount > 0 && aircraftCount > 0)
@@ -219,7 +218,7 @@ public sealed class SelectionSummaryQuerySystem
         if (soldierCount > 0)
             return SelectionSummaryPortraitKind.Soldiers;
         if (transportCount > 0)
-            return SelectionSummaryPortraitKind.Transports;
+            return SelectionSummaryPortraitKind.Vehicles;
         if (aircraftCount > 0)
             return SelectionSummaryPortraitKind.Aircraft;
         if (vehicleCount > 0)
@@ -241,10 +240,10 @@ public sealed class SelectionSummaryQuerySystem
                                  (em.HasComponent<UnitMovementBehavior>(entity) &&
                                   em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0);
         bool namedTransport = ContainsAny(lower, "transport", "apc", "truck", "tanker", "hauler", "canopy");
-        if (hasTransportCapacity || namedTransport && (usesVehicleMotion || isAir))
-            return UnitCategory.Transport;
         if (isAir)
             return UnitCategory.Aircraft;
+        if (hasTransportCapacity || namedTransport && usesVehicleMotion)
+            return UnitCategory.Transport;
         if (usesVehicleMotion || lower.Contains("unit_veh_", System.StringComparison.OrdinalIgnoreCase))
             return UnitCategory.Vehicle;
 

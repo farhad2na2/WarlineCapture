@@ -557,6 +557,14 @@ internal sealed class SelectionGameplayStartupSystem
             }
 
             EnsureRuntimeSelectionDependencies(em);
+            int selectedCount = CountSelectedTags(em);
+            if (selectedCount > 1)
+            {
+                matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
+                return;
+            }
+
             if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
                 em.Exists(focusedUnit))
             {
@@ -565,7 +573,6 @@ internal sealed class SelectionGameplayStartupSystem
                 return;
             }
 
-            int selectedCount = CountSelectedTags(em);
             if (selectedCount > 0)
             {
                 matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
@@ -674,8 +681,8 @@ internal sealed class SelectionGameplayStartupSystem
                 em,
                 selectionUiQuerySystem,
                 includeSelectedBuilding);
-            Sprite portraitSprite = ResolveActiveSquadTrayPortraitSprite();
-            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
+            Sprite portraitSprite = matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
+            portraitSprite ??= ResolveActiveSquadTrayPortraitSprite();
             portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
             return new MatchHudSelectionPanelView.Model(
                 true,
@@ -685,6 +692,7 @@ internal sealed class SelectionGameplayStartupSystem
                 summary.HealthText,
                 summary.Health01,
                 portraitSprite,
+                summary.PortraitKind,
                 false,
                 null,
                 selectedCount > 0,
@@ -894,6 +902,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
         {
+            matchHudSquadTraySelectionSystem.ClearActiveSlot(matchHudSquadTrayView);
             focusedUnitLifecycleSystem.ClearCurrentSelection(
                 em,
                 selectionStateSystem,

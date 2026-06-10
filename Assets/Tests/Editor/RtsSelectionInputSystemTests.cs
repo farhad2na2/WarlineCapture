@@ -36,6 +36,7 @@ public sealed class RtsSelectionInputSystemTests
         {
             IsDraggingSelection = true,
             SelectionModeHoldArmed = true,
+            BoardPassengerDragArmed = true,
             HasLiveSelectionRect = true,
             LastLiveSelectionRect = new Rect(100f, 200f, 300f, 400f)
         };
@@ -49,6 +50,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsTrue(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
         Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsFalse(inputSystem.HasLiveSelectionRect);
         Assert.AreEqual(new Rect(pointer.x, pointer.y, 0f, 0f), inputSystem.LastLiveSelectionRect);
     }
@@ -61,6 +63,7 @@ public sealed class RtsSelectionInputSystemTests
             PointerPressedOverUi = true,
             IsDraggingSelection = true,
             SelectionModeHoldArmed = true,
+            BoardPassengerDragArmed = true,
             HasLiveSelectionRect = true,
             LastLiveSelectionRect = new Rect(10f, 20f, 500f, 600f)
         };
@@ -74,6 +77,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
         Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsFalse(inputSystem.HasLiveSelectionRect);
         Assert.AreEqual(new Rect(pointer.x, pointer.y, 0f, 0f), inputSystem.LastLiveSelectionRect);
     }
@@ -97,6 +101,7 @@ public sealed class RtsSelectionInputSystemTests
             PointerPressedOverUi = true,
             IsDraggingSelection = true,
             SelectionModeHoldArmed = true,
+            BoardPassengerDragArmed = true,
             HasLiveSelectionRect = true
         };
 
@@ -105,13 +110,14 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
         Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsFalse(inputSystem.HasLiveSelectionRect);
     }
 
     [Test]
     public void CaptureUiClickSequence_SuppressesWorldReleaseUntilPointerEnds()
     {
-        var inputSystem = new RtsSelectionInputSystem { IsDraggingSelection = true };
+        var inputSystem = new RtsSelectionInputSystem { IsDraggingSelection = true, BoardPassengerDragArmed = true };
 
         inputSystem.CaptureUiClickSequence();
 
@@ -119,6 +125,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsFalse(inputSystem.HasLiveSelectionRect);
     }
 
@@ -383,22 +390,22 @@ public sealed class RtsSelectionInputSystemTests
     {
         string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs");
         string pointerPressed = ExtractMethod(runtimeInput, "HandlePointerPressed");
-        string updateInput = ExtractMethod(runtimeInput, "UpdateNormalPointerInput");
         string pointerReleased = ExtractMethod(runtimeInput, "HandlePointerReleased");
         string worldTargetCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleWorldTargetCommand");
         string commandPan = ExtractBlockAfter(runtimeInput, "private static bool AllowsCameraPanDuringCommandMode");
-        string secondaryCancel = ExtractBlockAfter(runtimeInput, "private static bool TryCancelActiveCommandModeWithSecondaryPointer");
+        string passengerPress = ExtractBlockAfter(runtimeInput, "private static bool IsTransportFirstBoardPassengerPress");
+        string boardRectCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleBoardPassengerRectCommand");
 
         Assert.IsFalse(pointerPressed.Contains("TryFocusUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueAttackOrderToClickedUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueBoardTransportOrderToClickedUnit", StringComparison.Ordinal));
-        StringAssert.Contains("TryCancelActiveCommandModeWithSecondaryPointer(context)", updateInput);
+        StringAssert.Contains("input.BoardPassengerDragArmed = IsTransportFirstBoardPassengerPress(context, input, pointerPosition);", pointerPressed);
         StringAssert.Contains("bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;", pointerPressed);
         StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
+        StringAssert.Contains("direction == BoardCommandModeDirection.TransportToPassenger", passengerPress);
+        StringAssert.Contains("context.IsBoardSelectedTransportPassengerTarget.Invoke(transport, pointerPosition)", passengerPress);
+        StringAssert.Contains("return !input.BoardPassengerDragArmed;", commandPan);
         StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);
-        StringAssert.Contains("GamePointerInput.TryGetSecondaryPointerRelease", secondaryCancel);
-        StringAssert.Contains("input.ClearActiveCommandMode()", secondaryCancel);
-        StringAssert.Contains("context.ClearCommandMode?.Invoke()", secondaryCancel);
         StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);
         StringAssert.Contains("else if (dragDistance < context.DragThresholdPixels)", pointerReleased);
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
@@ -412,7 +419,8 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
         StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition)", worldTargetCommand);
         StringAssert.Contains("HandleBoardPassengerRectCommand", pointerReleased);
-        StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect)", ExtractBlockAfter(runtimeInput, "private static bool HandleBoardPassengerRectCommand"));
+        StringAssert.Contains("if (!input.BoardPassengerDragArmed)", boardRectCommand);
+        StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect)", boardRectCommand);
         StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
         StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);
         StringAssert.Contains("HandlePersistentMoveTargetDoubleClick", pointerReleased);

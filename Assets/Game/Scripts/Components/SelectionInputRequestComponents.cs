@@ -82,6 +82,7 @@ public struct RtsSelectionInputStateComponent : IComponentData
     public byte ActiveCommandModeRequiresWorldTarget;
     public byte ActiveBoardCommandDirection;
     public Entity ActiveBoardTransport;
+    public byte BoardPassengerDragArmed;
     public byte HasLastMoveTargetClick;
     public float2 LastMoveTargetClickScreenPosition;
     public float LastMoveTargetClickTime;

@@ -65,17 +65,6 @@ internal static class GamePointerInput
         return false;
     }
 
-    public static bool TryGetSecondaryPointerRelease(out Vector2 screenPosition)
-    {
-        screenPosition = default;
-        Mouse mouse = Mouse.current;
-        if (mouse == null || !mouse.rightButton.wasReleasedThisFrame)
-            return false;
-
-        screenPosition = mouse.position.ReadValue();
-        return true;
-    }
-
     public static bool IsPrimaryPointerPressed()
     {
         return TryGetPrimaryPointer(out GamePointerState pointer) && pointer.IsPressed;

@@ -238,6 +238,7 @@ internal sealed class SelectionGameplayStartupSystem
                 TryIssueBoardTransportOrderToClickedUnit,
                 TryIssueBoardSelectedTransportOrderToClickedUnit,
                 TryIssueBoardSelectedTransportOrdersToPassengerRect,
+                IsBoardSelectedTransportPassengerTarget,
                 QueueFocusUnitCommand,
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
                 IssueMoveOrder,
@@ -954,6 +955,15 @@ internal sealed class SelectionGameplayStartupSystem
             }
 
             return ProcessTransportCommandRequests();
+        }
+
+        bool IsBoardSelectedTransportPassengerTarget(Entity transport, Vector2 screenPosition)
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return false;
+
+            return TryGetClickedUnitEntity(screenPosition, em, out Entity passenger) &&
+                   IsValidBoardPassengerPreviewTarget(em, transport, passenger);
         }
 
         bool QueueFocusUnitCommand(Vector2 screenPosition)

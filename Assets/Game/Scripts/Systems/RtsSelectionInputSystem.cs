@@ -156,6 +156,17 @@ public sealed class RtsSelectionInputSystem
         }
     }
 
+    public bool BoardPassengerDragArmed
+    {
+        get => ToBool(ReadState().BoardPassengerDragArmed);
+        set
+        {
+            RtsSelectionInputStateComponent state = ReadState();
+            state.BoardPassengerDragArmed = ToByte(value);
+            WriteState(state);
+        }
+    }
+
     public Vector2 LastKnownPointerPosition => ToVector2(ReadState().LastKnownPointerPosition);
     public bool HasLastKnownPointerPosition => ToBool(ReadState().HasLastKnownPointerPosition);
 
@@ -207,6 +218,7 @@ public sealed class RtsSelectionInputSystem
         state.ActiveCommandModeRequiresWorldTarget = 0;
         state.ActiveBoardCommandDirection = 0;
         state.ActiveBoardTransport = Entity.Null;
+        state.BoardPassengerDragArmed = 0;
         WriteState(state);
     }
 
@@ -262,6 +274,7 @@ public sealed class RtsSelectionInputSystem
         state.SelectionModeHoldArmed = 0;
         state.LastLiveSelectionRect = ToFloat4(Rect.MinMaxRect(pointer.x, pointer.y, pointer.x, pointer.y));
         state.HasLiveSelectionRect = 0;
+        state.BoardPassengerDragArmed = 0;
         WriteState(state);
     }
 
@@ -277,6 +290,7 @@ public sealed class RtsSelectionInputSystem
         state.SelectionModeHoldArmed = 0;
         state.LastLiveSelectionRect = ToFloat4(Rect.MinMaxRect(pointer.x, pointer.y, pointer.x, pointer.y));
         state.HasLiveSelectionRect = 0;
+        state.BoardPassengerDragArmed = 0;
         WriteState(state);
     }
 
@@ -287,6 +301,7 @@ public sealed class RtsSelectionInputSystem
         state.IsDraggingSelection = 0;
         state.SelectionModeHoldArmed = 0;
         state.HasLiveSelectionRect = 0;
+        state.BoardPassengerDragArmed = 0;
         WriteState(state);
     }
 
@@ -326,6 +341,7 @@ public sealed class RtsSelectionInputSystem
         state.PointerPressedOverUi = 1;
         state.IsDraggingSelection = 0;
         state.HasLiveSelectionRect = 0;
+        state.BoardPassengerDragArmed = 0;
         WriteState(state);
         ClearPendingMoveCommandRequests();
     }

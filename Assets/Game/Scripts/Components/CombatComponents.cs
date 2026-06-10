@@ -176,6 +176,22 @@ public enum GroundMissileLauncherPhase : byte
     Reloading = 4
 }
 
+public static class GroundMissileLauncherTiming
+{
+    public const float PostOpenLaunchDelaySeconds = 1f;
+    public const float PostLaunchHoldSeconds = 1f;
+
+    public static float PrepareAndHoldSeconds(float prepareSeconds)
+    {
+        return math.max(0.01f, prepareSeconds) + PostOpenLaunchDelaySeconds;
+    }
+
+    public static float FullAttackCycleSeconds(float prepareSeconds, float reloadSeconds)
+    {
+        return PrepareAndHoldSeconds(prepareSeconds) + PostLaunchHoldSeconds + math.max(0.01f, reloadSeconds);
+    }
+}
+
 public struct GroundMissileLauncherComponent : IComponentData
 {
     public float MinRange;
@@ -226,6 +242,7 @@ public struct GroundMissileFlyingRocketVisualComponent : IComponentData
     public float InitialLocalScale;
     public float3 StartPosition;
     public float3 TargetPosition;
+    public float3 LaunchDirection;
     public float ElapsedSeconds;
     public float DurationSeconds;
     public float ArcHeight;

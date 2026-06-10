@@ -34,6 +34,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var staticBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
+        var debugFireTargetLookup = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true);
 
         var handle = new EngagedMoveJob
         {
@@ -48,7 +49,8 @@ public partial struct UnitEngagedMovementSystem : ISystem
             FootprintLookup = footprintLookup,
             HealthLookup = healthLookup,
             StaticBlockerLookup = staticBlockerLookup,
-            HoldPositionLookup = holdPositionLookup
+            HoldPositionLookup = holdPositionLookup,
+            DebugFireTargetLookup = debugFireTargetLookup
         }.ScheduleParallel(state.Dependency);
 
         state.Dependency = handle;
@@ -73,6 +75,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
         [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticBlockerLookup;
         [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
+        [ReadOnly] public ComponentLookup<DebugFireTargetTag> DebugFireTargetLookup;
 
         public void Execute(
             Entity entity,
@@ -94,6 +97,13 @@ public partial struct UnitEngagedMovementSystem : ISystem
 
             if (engage.Target == Entity.Null)
             {
+                return;
+            }
+
+            if (DebugFireTargetLookup.HasComponent(engage.Target) &&
+                DebugFireTargetLookup[engage.Target].Source == entity)
+            {
+                vehicleKinematics.CurrentSpeed = 0f;
                 return;
             }
 

@@ -33,6 +33,176 @@ public sealed class GroundMissileLauncherRuntimeTests
         GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
         Assert.AreEqual((byte)GroundMissileLauncherPhase.Preparing, launcherState.Phase);
         Assert.AreEqual(target, launcherState.TargetEntity);
+        Assert.AreEqual(1.5f, launcherState.Timer, 0.001f);
+        Assert.AreEqual(0f, em.GetComponentData<UnitAttackTraceComponent>(launcher).TimeRemaining, 0.001f);
+    }
+
+    [Test]
+    public void MissileFire_WaitsForBatteryOpenAndHoldDelayBeforeLaunch()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_DelayedLaunch");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+
+        Entity target = CreateTarget(em, new float3(120f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        em.AddComponentData(launcher, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(120, 0),
+            Position = new float3(120f, 0f, 0f),
+            IsCommanded = 1
+        });
+
+        SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+        world.SetTime(new TimeData(0.6d, 0.5f));
+        fireSystem.Update(world.Unmanaged);
+
+        EntityQuery projectileQuery = em.CreateEntityQuery(typeof(GroundMissileProjectileComponent));
+        Assert.AreEqual(0, projectileQuery.CalculateEntityCount(), "Launcher should not fire immediately when the battery has only just opened.");
+
+        world.SetTime(new TimeData(1.6d, 1f));
+        fireSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount(), "Launcher should fire after the one-second post-open hold.");
+    }
+
+    [Test]
+    public void MissileVisual_YawsBatteryTowardTargetWhileOpen()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_BatteryYaw");
+        EntityManager em = world.EntityManager;
+
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        Entity battery = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(battery, LocalTransform.Identity);
+        em.AddComponentData(launcher, new GroundMissileLauncherVisualReferenceComponent
+        {
+            Battery = battery,
+            SmokeSpawn = Entity.Null,
+            BatteryDefaultLocalPosition = float3.zero,
+            BatteryDefaultLocalRotation = quaternion.identity
+        });
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Preparing,
+            TargetEntity = Entity.Null,
+            TargetCell = new int2(10, 0),
+            TargetWorldPosition = new float3(10f, 0f, 0f),
+            Timer = GroundMissileLauncherTiming.PostOpenLaunchDelaySeconds,
+            SelectedRocketSlot = -1
+        });
+
+        SystemHandle visualSystem = world.CreateSystem<GroundMissileLauncherVisualSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        visualSystem.Update(world.Unmanaged);
+
+        LocalTransform batteryTransform = em.GetComponentData<LocalTransform>(battery);
+        float3 forward = math.rotate(batteryTransform.Rotation, new float3(0f, 0f, 1f));
+        Assert.Greater(forward.x, 0.7f, "Battery should yaw toward the target direction.");
+        Assert.Less(math.abs(forward.z), 0.55f, "Battery should no longer aim mostly along its default forward axis.");
+    }
+
+    [Test]
+    public void MissileFire_HoldsBatteryOpenAfterLaunchBeforeReloading()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_PostLaunchHold");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(10f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.01f, reloadSeconds: 3f);
+        Entity battery = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(battery, LocalTransform.Identity);
+        em.AddComponentData(launcher, new GroundMissileLauncherVisualReferenceComponent
+        {
+            Battery = battery,
+            SmokeSpawn = Entity.Null,
+            BatteryDefaultLocalPosition = float3.zero,
+            BatteryDefaultLocalRotation = quaternion.identity
+        });
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Preparing,
+            TargetEntity = target,
+            TargetCell = new int2(10, 0),
+            TargetWorldPosition = new float3(10f, 0f, 0f),
+            Timer = 0f,
+            SelectedRocketSlot = -1
+        });
+
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+        SystemHandle visualSystem = world.CreateSystem<GroundMissileLauncherVisualSystem>();
+
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        fireSystem.Update(world.Unmanaged);
+        visualSystem.Update(world.Unmanaged);
+
+        GroundMissileLauncherStateComponent launchState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Launching, launchState.Phase);
+        Assert.AreEqual(GroundMissileLauncherTiming.PostLaunchHoldSeconds, launchState.Timer, 0.001f);
+        AssertBatteryStillElevated(em.GetComponentData<LocalTransform>(battery).Rotation);
+
+        world.SetTime(new TimeData(0.6d, 0.5f));
+        fireSystem.Update(world.Unmanaged);
+        visualSystem.Update(world.Unmanaged);
+
+        launchState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Launching, launchState.Phase);
+        AssertBatteryStillElevated(em.GetComponentData<LocalTransform>(battery).Rotation);
+
+        world.SetTime(new TimeData(1.2d, 0.6f));
+        fireSystem.Update(world.Unmanaged);
+
+        launchState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Reloading, launchState.Phase);
+    }
+
+    [Test]
+    public void MissileVisual_ClosesBatteryAtPrepareSpeedDuringReload()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_CloseSpeed");
+        EntityManager em = world.EntityManager;
+
+        float prepareSeconds = 0.5f;
+        float reloadSeconds = 3f;
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds, reloadSeconds);
+        Entity battery = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(battery, LocalTransform.Identity);
+        em.AddComponentData(launcher, new GroundMissileLauncherVisualReferenceComponent
+        {
+            Battery = battery,
+            SmokeSpawn = Entity.Null,
+            BatteryDefaultLocalPosition = float3.zero,
+            BatteryDefaultLocalRotation = quaternion.identity
+        });
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Reloading,
+            TargetEntity = Entity.Null,
+            TargetCell = new int2(10, 0),
+            TargetWorldPosition = new float3(10f, 0f, 0f),
+            Timer = reloadSeconds,
+            SelectedRocketSlot = -1
+        });
+
+        SystemHandle visualSystem = world.CreateSystem<GroundMissileLauncherVisualSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        visualSystem.Update(world.Unmanaged);
+        AssertBatteryStillElevated(em.GetComponentData<LocalTransform>(battery).Rotation);
+
+        GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        launcherState.Timer = reloadSeconds - prepareSeconds;
+        em.SetComponentData(launcher, launcherState);
+
+        world.SetTime(new TimeData(0.6d, 0.5f));
+        visualSystem.Update(world.Unmanaged);
+
+        float3 forward = math.rotate(em.GetComponentData<LocalTransform>(battery).Rotation, new float3(0f, 0f, 1f));
+        Assert.Less(math.abs(forward.y), 0.08f, "Battery should finish closing after one prepare-duration, not over the full reload duration.");
     }
 
     [Test]
@@ -114,6 +284,18 @@ public sealed class GroundMissileLauncherRuntimeTests
 
         Assert.IsTrue(em.HasComponent<GroundMissileFlyingRocketVisualComponent>(rocket));
         Assert.IsFalse(em.HasComponent<Parent>(rocket));
+        GroundMissileFlyingRocketVisualComponent flying = em.GetComponentData<GroundMissileFlyingRocketVisualComponent>(rocket);
+        Assert.Greater(flying.LaunchDirection.y, 0.45f, "The visible rocket should launch upward at the battery elevation angle.");
+        Assert.IsFalse(
+            em.HasComponent<GroundMissileProjectileTrailComponent>(em.CreateEntityQuery(typeof(GroundMissileProjectileComponent)).GetSingletonEntity()),
+            "Missile projectile should not spawn repeated trail smoke components.");
+
+        world.SetTime(new TimeData(0.12d, 0.02f));
+        rocketVisualSystem.Update(world.Unmanaged);
+        Assert.Greater(
+            em.GetComponentData<LocalTransform>(rocket).Position.y,
+            0.15f,
+            "The visible rocket should climb immediately after launch instead of flying flat.");
 
         world.SetTime(new TimeData(1d, 1f));
         rocketVisualSystem.Update(world.Unmanaged);
@@ -299,6 +481,13 @@ public sealed class GroundMissileLauncherRuntimeTests
         });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
+    }
+
+    private static void AssertBatteryStillElevated(quaternion rotation)
+    {
+        float3 forward = math.rotate(rotation, new float3(0f, 0f, 1f));
+        Assert.Greater(forward.x, 0.7f, "Battery should keep yawing toward the target during post-launch hold.");
+        Assert.Greater(forward.y, 0.35f, "Battery should remain elevated during post-launch hold instead of closing immediately.");
     }
 
     private static Entity CreateTarget(EntityManager em, float3 position, int health)

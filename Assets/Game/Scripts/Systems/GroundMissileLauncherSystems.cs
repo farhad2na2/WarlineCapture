@@ -7,7 +7,9 @@ using UnityEngine;
 public partial struct GroundMissileLauncherFireSystem : ISystem
 {
     private const float MinimumProjectileDurationSeconds = 0.35f;
-    private const float TrailIntervalSeconds = 0.22f;
+    private const float LaunchSmokeEmitSeconds = 1.1f;
+    private const float LaunchSmokeActiveSeconds = 3f;
+    private const float LaunchSmokeVerticalOffset = -0.45f;
 
     public void OnCreate(ref SystemState state)
     {
@@ -57,6 +59,16 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
                     stateRw,
                     localToWorldLookup);
 
+                stateRw.Phase = (byte)GroundMissileLauncherPhase.Launching;
+                stateRw.Timer = GroundMissileLauncherTiming.PostLaunchHoldSeconds;
+                continue;
+            }
+
+            if (stateRw.Phase == (byte)GroundMissileLauncherPhase.Launching)
+            {
+                if (stateRw.Timer > 0f)
+                    continue;
+
                 stateRw.Phase = (byte)GroundMissileLauncherPhase.Reloading;
                 stateRw.Timer = math.max(0.01f, launcher.ValueRO.ReloadSeconds);
                 continue;
@@ -91,16 +103,29 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
         float3 targetPosition = launcherState.TargetWorldPosition;
         float distance = math.distance(new float2(sourcePosition.x, sourcePosition.z), new float2(targetPosition.x, targetPosition.z));
         float duration = math.max(MinimumProjectileDurationSeconds, distance / math.max(0.01f, launcher.RocketSpeed));
+        float3 launchDirection = ResolveLaunchDirection(sourcePosition, targetPosition, launcher.BatteryElevatedAngleDegrees);
+        quaternion launchRotation = quaternion.LookRotationSafe(launchDirection, math.up());
 
         if (em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(launcherEntity))
         {
             GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(launcherEntity);
-            if (vfx?.LauncherBackfirePrefab != null)
-                UnitAttackImpactVfxRuntime.Play(vfx.LauncherBackfirePrefab, sourcePosition);
+            GameObject launchSmokePrefab = vfx?.LauncherBackfirePrefab != null
+                ? vfx.LauncherBackfirePrefab
+                : vfx?.RocketTrailPrefab;
+            if (launchSmokePrefab != null)
+            {
+                float3 smokePosition = sourcePosition + math.up() * LaunchSmokeVerticalOffset;
+                UnitAttackImpactVfxRuntime.PlayTimedLoop(
+                    launchSmokePrefab,
+                    smokePosition,
+                    ToUnityQuaternion(quaternion.LookRotationSafe(-launchDirection, math.up())),
+                    LaunchSmokeEmitSeconds,
+                    LaunchSmokeActiveSeconds);
+            }
         }
 
         Entity projectile = ecb.CreateEntity();
-        ecb.AddComponent(projectile, LocalTransform.FromPosition(sourcePosition));
+        ecb.AddComponent(projectile, LocalTransform.FromPositionRotation(sourcePosition, launchRotation));
         ecb.AddComponent(projectile, new GroundMissileProjectileComponent
         {
             Source = launcherEntity,
@@ -115,11 +140,6 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
             Damage = launcher.Damage,
             FactionId = factionId,
             Interceptable = 1
-        });
-        ecb.AddComponent(projectile, new GroundMissileProjectileTrailComponent
-        {
-            TimeUntilNextTrail = 0f,
-            TrailIntervalSeconds = TrailIntervalSeconds
         });
         ecb.AddComponent(projectile, new MissileInterceptionTargetComponent
         {
@@ -162,9 +182,7 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
             Entity originalParent = em.HasComponent<Parent>(rocket.Rocket)
                 ? em.GetComponentData<Parent>(rocket.Rocket).Value
                 : Entity.Null;
-            float3 launchDirection = launcherState.TargetWorldPosition - startPosition;
-            launchDirection.y = math.max(0.15f, launchDirection.y);
-            launchDirection = math.normalizesafe(launchDirection, new float3(0f, 0f, 1f));
+            float3 launchDirection = ResolveLaunchDirection(startPosition, launcherState.TargetWorldPosition, launcher.BatteryElevatedAngleDegrees);
 
             if (originalParent != Entity.Null)
                 ecb.RemoveComponent<Parent>(rocket.Rocket);
@@ -185,6 +203,7 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
                 InitialLocalScale = rocket.InitialLocalScale,
                 StartPosition = startPosition,
                 TargetPosition = launcherState.TargetWorldPosition,
+                LaunchDirection = launchDirection,
                 ElapsedSeconds = 0f,
                 DurationSeconds = duration,
                 ArcHeight = launcher.ArcHeight
@@ -212,6 +231,23 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
 
         return fallback;
     }
+
+    private static float3 ResolveLaunchDirection(float3 sourcePosition, float3 targetPosition, float batteryAngleDegrees)
+    {
+        float3 horizontal = targetPosition - sourcePosition;
+        horizontal.y = 0f;
+        horizontal = math.normalizesafe(horizontal, new float3(0f, 0f, 1f));
+
+        float angleRadians = math.radians(math.clamp(math.abs(batteryAngleDegrees), 1f, 80f));
+        return math.normalizesafe(
+            horizontal * math.cos(angleRadians) + math.up() * math.sin(angleRadians),
+            math.up());
+    }
+
+    private static Quaternion ToUnityQuaternion(quaternion rotation)
+    {
+        return new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
+    }
 }
 
 [UpdateAfter(typeof(GroundMissileLauncherFireSystem))]
@@ -226,11 +262,11 @@ public partial struct GroundMissileLauncherVisualSystem : ISystem
     {
         EntityManager em = state.EntityManager;
 
-        foreach (var (launcher, launcherState, visual, entity) in SystemAPI
-                     .Query<RefRO<GroundMissileLauncherComponent>, RefRO<GroundMissileLauncherStateComponent>, RefRO<GroundMissileLauncherVisualReferenceComponent>>()
+        foreach (var (launcher, launcherState, visual, launcherTransform, entity) in SystemAPI
+                     .Query<RefRO<GroundMissileLauncherComponent>, RefRO<GroundMissileLauncherStateComponent>, RefRO<GroundMissileLauncherVisualReferenceComponent>, RefRO<LocalTransform>>()
                      .WithEntityAccess())
         {
-            ApplyBatteryRotation(em, launcher.ValueRO, launcherState.ValueRO, visual.ValueRO);
+            ApplyBatteryRotation(em, launcher.ValueRO, launcherState.ValueRO, visual.ValueRO, launcherTransform.ValueRO);
             ApplyRocketSlotVisibility(em, launcherState.ValueRO, entity);
         }
     }
@@ -239,20 +275,45 @@ public partial struct GroundMissileLauncherVisualSystem : ISystem
         EntityManager em,
         GroundMissileLauncherComponent launcher,
         GroundMissileLauncherStateComponent launcherState,
-        GroundMissileLauncherVisualReferenceComponent visual)
+        GroundMissileLauncherVisualReferenceComponent visual,
+        LocalTransform launcherTransform)
     {
         if (visual.Battery == Entity.Null || !em.HasComponent<LocalTransform>(visual.Battery))
             return;
 
         float elevationFactor = ResolveElevationFactor(launcher, launcherState);
+        quaternion yawRotation = ResolveBatteryYawRotation(launcherState, launcherTransform);
         quaternion elevatedRotation = math.mul(
-            visual.BatteryDefaultLocalRotation,
-            quaternion.RotateX(math.radians(launcher.BatteryElevatedAngleDegrees)));
+            yawRotation,
+            math.mul(
+                visual.BatteryDefaultLocalRotation,
+                quaternion.RotateX(math.radians(launcher.BatteryElevatedAngleDegrees))));
 
         LocalTransform transform = em.GetComponentData<LocalTransform>(visual.Battery);
         transform.Position = visual.BatteryDefaultLocalPosition;
         transform.Rotation = math.slerp(visual.BatteryDefaultLocalRotation, elevatedRotation, elevationFactor);
         em.SetComponentData(visual.Battery, transform);
+    }
+
+    private static quaternion ResolveBatteryYawRotation(
+        GroundMissileLauncherStateComponent launcherState,
+        LocalTransform launcherTransform)
+    {
+        if (launcherState.Phase != (byte)GroundMissileLauncherPhase.Preparing &&
+            launcherState.Phase != (byte)GroundMissileLauncherPhase.Launching &&
+            launcherState.Phase != (byte)GroundMissileLauncherPhase.Reloading)
+        {
+            return quaternion.identity;
+        }
+
+        float3 worldDirection = launcherState.TargetWorldPosition - launcherTransform.Position;
+        worldDirection.y = 0f;
+        if (math.lengthsq(worldDirection) < 1e-6f)
+            return quaternion.identity;
+
+        float3 localDirection = math.rotate(math.inverse(launcherTransform.Rotation), math.normalizesafe(worldDirection, new float3(0f, 0f, 1f)));
+        float yawRadians = math.atan2(localDirection.x, localDirection.z);
+        return quaternion.RotateY(yawRadians);
     }
 
     private static float ResolveElevationFactor(
@@ -262,13 +323,20 @@ public partial struct GroundMissileLauncherVisualSystem : ISystem
         if (launcherState.Phase == (byte)GroundMissileLauncherPhase.Preparing)
         {
             float prepareSeconds = math.max(0.01f, launcher.PrepareSeconds);
-            return math.saturate(1f - launcherState.Timer / prepareSeconds);
+            float openingTimer = math.max(0f, launcherState.Timer - GroundMissileLauncherTiming.PostOpenLaunchDelaySeconds);
+            return math.saturate(1f - openingTimer / prepareSeconds);
         }
+
+        if (launcherState.Phase == (byte)GroundMissileLauncherPhase.Launching)
+            return 1f;
 
         if (launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading)
         {
             float reloadSeconds = math.max(0.01f, launcher.ReloadSeconds);
-            return math.saturate(launcherState.Timer / reloadSeconds);
+            float closeSeconds = math.min(math.max(0.01f, launcher.PrepareSeconds), reloadSeconds);
+            float closeStartTimer = reloadSeconds;
+            float closeEndTimer = reloadSeconds - closeSeconds;
+            return math.saturate((launcherState.Timer - closeEndTimer) / (closeStartTimer - closeEndTimer));
         }
 
         return 0f;
@@ -283,7 +351,8 @@ public partial struct GroundMissileLauncherVisualSystem : ISystem
             return;
 
         DynamicBuffer<GroundMissileLauncherRocketVisualComponent> rockets = em.GetBuffer<GroundMissileLauncherRocketVisualComponent>(launcherEntity);
-        bool hideSelected = launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading;
+        bool hideSelected = launcherState.Phase == (byte)GroundMissileLauncherPhase.Launching ||
+                            launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading;
         for (int i = 0; i < rockets.Length; i++)
         {
             GroundMissileLauncherRocketVisualComponent rocket = rockets[i];
@@ -325,12 +394,10 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
             flyingRw.ElapsedSeconds += dt;
             float duration = math.max(0.01f, flyingRw.DurationSeconds);
             float t = math.saturate(flyingRw.ElapsedSeconds / duration);
-            float3 position = math.lerp(flyingRw.StartPosition, flyingRw.TargetPosition, t);
-            position.y += math.sin(t * math.PI) * math.max(0f, flyingRw.ArcHeight);
+            float3 position = EvaluateRocketArc(flyingRw, t);
 
             float nextT = math.saturate((flyingRw.ElapsedSeconds + math.min(0.05f, dt)) / duration);
-            float3 nextPosition = math.lerp(flyingRw.StartPosition, flyingRw.TargetPosition, nextT);
-            nextPosition.y += math.sin(nextT * math.PI) * math.max(0f, flyingRw.ArcHeight);
+            float3 nextPosition = EvaluateRocketArc(flyingRw, nextT);
             float3 direction = math.normalizesafe(nextPosition - position, new float3(0f, 0f, 1f));
 
             transform.ValueRW.Position = position;
@@ -344,7 +411,8 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
             if (em.HasComponent<GroundMissileLauncherStateComponent>(flyingRw.Launcher))
             {
                 GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(flyingRw.Launcher);
-                if (launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading &&
+                if ((launcherState.Phase == (byte)GroundMissileLauncherPhase.Launching ||
+                     launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading) &&
                     launcherState.SelectedRocketSlot == flyingRw.SlotIndex)
                 {
                     restoreScale = 0f;
@@ -365,6 +433,29 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
         ecb.Playback(em);
         ecb.Dispose();
     }
+
+    private static float3 EvaluateRocketArc(GroundMissileFlyingRocketVisualComponent flying, float t)
+    {
+        float3 p0 = flying.StartPosition;
+        float3 p3 = flying.TargetPosition;
+        float3 horizontalDelta = p3 - p0;
+        horizontalDelta.y = 0f;
+        float3 horizontalDirection = math.normalizesafe(horizontalDelta, new float3(0f, 0f, 1f));
+        float distance = math.distance(new float2(p0.x, p0.z), new float2(p3.x, p3.z));
+        float launchControlDistance = math.clamp(distance * 0.35f, 8f, 90f);
+        float apexHeight = math.max(
+            math.max(0f, flying.ArcHeight),
+            math.clamp(distance * 0.25f, 8f, 80f));
+        float3 launchDirection = math.normalizesafe(flying.LaunchDirection, math.up());
+        float3 p1 = p0 + launchDirection * launchControlDistance;
+        float3 p2 = p0 + horizontalDirection * math.max(launchControlDistance, distance * 0.65f) + math.up() * apexHeight;
+
+        float oneMinusT = 1f - t;
+        return oneMinusT * oneMinusT * oneMinusT * p0 +
+               3f * oneMinusT * oneMinusT * t * p1 +
+               3f * oneMinusT * t * t * p2 +
+               t * t * t * p3;
+    }
 }
 
 [UpdateAfter(typeof(GroundMissileFlyingRocketVisualSystem))]
@@ -381,8 +472,8 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
         float dt = SystemAPI.Time.DeltaTime;
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
-        foreach (var (projectile, transform, trail, entity) in SystemAPI
-                     .Query<RefRW<GroundMissileProjectileComponent>, RefRW<LocalTransform>, RefRW<GroundMissileProjectileTrailComponent>>()
+        foreach (var (projectile, transform, entity) in SystemAPI
+                     .Query<RefRW<GroundMissileProjectileComponent>, RefRW<LocalTransform>>()
                      .WithEntityAccess())
         {
             ref GroundMissileProjectileComponent projectileRw = ref projectile.ValueRW;
@@ -392,19 +483,6 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
             float3 position = math.lerp(projectileRw.StartPosition, projectileRw.TargetPosition, t);
             position.y += math.sin(t * math.PI) * math.max(0f, projectileRw.ArcHeight);
             transform.ValueRW.Position = position;
-
-            ref GroundMissileProjectileTrailComponent trailRw = ref trail.ValueRW;
-            trailRw.TimeUntilNextTrail -= dt;
-            if (trailRw.TimeUntilNextTrail <= 0f)
-            {
-                trailRw.TimeUntilNextTrail = math.max(0.05f, trailRw.TrailIntervalSeconds);
-                if (em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(projectileRw.Source))
-                {
-                    GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(projectileRw.Source);
-                    if (vfx?.RocketTrailPrefab != null)
-                        UnitAttackImpactVfxRuntime.Play(vfx.RocketTrailPrefab, position);
-                }
-            }
 
             if (projectileRw.ElapsedSeconds < duration)
                 continue;
@@ -420,7 +498,6 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
                 FactionId = projectileRw.FactionId
             });
             ecb.RemoveComponent<GroundMissileProjectileComponent>(entity);
-            ecb.RemoveComponent<GroundMissileProjectileTrailComponent>(entity);
             ecb.RemoveComponent<MissileInterceptionTargetComponent>(entity);
         }
 

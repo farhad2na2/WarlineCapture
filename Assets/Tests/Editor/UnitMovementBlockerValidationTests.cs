@@ -187,6 +187,80 @@ public sealed class UnitMovementBlockerValidationTests
     }
 
     [Test]
+    public void EngagedCombatMovementDoesNotMoveTowardDebugFireTarget()
+    {
+        using var world = new World("UnitMovementDebugFireValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+
+        try
+        {
+            CreateGrid(em, 16, 3, out blockerCounts, out blocked, out friendlyPassFactionIds);
+
+            Entity attacker = em.CreateEntity(
+                typeof(Faction),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitMove),
+                typeof(UnitMovementBehavior),
+                typeof(UnitVehicleMovement),
+                typeof(UnitVehicleKinematics),
+                typeof(UnitCombat),
+                typeof(UnitAttack),
+                typeof(EngageTarget),
+                typeof(LocalTransform));
+            Entity debugTarget = em.CreateEntity(
+                typeof(DebugFireTargetTag),
+                typeof(UnitHealth),
+                typeof(LocalTransform));
+
+            em.SetComponentData(attacker, new Faction { Id = 1 });
+            em.SetComponentData(attacker, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(attacker, new UnitFootprint { Size = new int2(2, 2) });
+            em.SetComponentData(attacker, new UnitMove { Speed = 4f, WalkSpeed = 4f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(attacker, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 1 });
+            em.SetComponentData(attacker, new UnitVehicleMovement { TurnSpeedDegrees = 360f, Acceleration = 20f, Braking = 20f, RearPivotOffset = 0f });
+            em.SetComponentData(attacker, new UnitVehicleKinematics { CurrentSpeed = 1f });
+            em.SetComponentData(attacker, new UnitCombat { AggroRangeCells = 8, ChaseBreakDistance = 20f, CanAttack = 1, AutoEngage = 1 });
+            em.SetComponentData(attacker, new UnitAttack { Range = 0.1f, CooldownSeconds = 1f, Damage = 1 });
+            em.SetComponentData(attacker, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
+
+            em.SetComponentData(debugTarget, new DebugFireTargetTag { Source = attacker });
+            em.SetComponentData(debugTarget, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(debugTarget, LocalTransform.FromPosition(new float3(12.5f, 0f, 1.5f)));
+            em.SetComponentData(attacker, new EngageTarget
+            {
+                Target = debugTarget,
+                Cell = new int2(12, 1),
+                Position = new float3(12.5f, 0f, 1.5f),
+                IsCommanded = 1
+            });
+
+            SystemHandle engagedMoveSystem = world.CreateSystem<UnitEngagedMovementSystem>();
+            world.SetTime(new TimeData(0.4d, 0.4f));
+            engagedMoveSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            float3 position = em.GetComponentData<LocalTransform>(attacker).Position;
+            Assert.AreEqual(1.5f, position.x, 0.001f);
+            Assert.AreEqual(1.5f, position.z, 0.001f);
+            Assert.AreEqual(0f, em.GetComponentData<UnitVehicleKinematics>(attacker).CurrentSpeed, 0.001f);
+        }
+        finally
+        {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
     public void InfantryMovementDoesNotStallOnOwnPreviousOccupancySnapshot()
     {
         using var world = new World("UnitMovementSelfOccupancyValidation");

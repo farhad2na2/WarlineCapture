@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -40,6 +41,7 @@ public sealed class SelectedUnitDebugFireSystemTests
         Assert.IsTrue(em.HasComponent<DebugFireTargetTag>(debugState.Target));
         Assert.AreEqual(unit, em.GetComponentData<DebugFireTargetTag>(debugState.Target).Source);
         Assert.Greater(em.GetComponentData<UnitHealth>(debugState.Target).Current, 1000);
+        Assert.AreEqual(1, engage.IsCommanded);
     }
 
     [Test]
@@ -91,12 +93,14 @@ public sealed class SelectedUnitDebugFireSystemTests
     }
 
     [Test]
-    public void HoldingDebugFireForGroundMissileLauncherUsesValidMinimumRange()
+    public void HoldingDebugFireForGroundMissileLauncherTargetsEnemyBaseBeyondNormalRange()
     {
         EntityManager em = _world.EntityManager;
-        GridConfig grid = CreateGrid(em);
-        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 40f);
+        GridConfig grid = CreateGrid(em, width: 256, height: 256);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 6f);
         AddGroundMissileLauncher(em, launcher, minRange: 35f, maxRange: 100f);
+        float3 enemyBasePosition = new(210f, 0f, 120f);
+        CreateEnemyRuntimeBuilding(em, enemyBasePosition, "Enemy Command Base");
 
         SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
 
@@ -105,35 +109,60 @@ public sealed class SelectedUnitDebugFireSystemTests
         float distance = math.distance(
             new float2(3f, 3f),
             new float2(targetPosition.x, targetPosition.z));
-        Assert.Greater(distance, 35f);
-        Assert.LessOrEqual(distance, 40f * 0.95f + 0.001f);
+        Assert.Greater(distance, 100f);
+        Assert.AreEqual(enemyBasePosition, targetPosition);
+        Assert.AreEqual(1, em.GetComponentData<EngageTarget>(launcher).IsCommanded);
     }
 
     [Test]
-    public void HoldingDebugFireForGroundMissileLauncherArmsMissileAttack()
+    public void HoldingDebugFireForGroundMissileLauncherArmsMissileAttackDirectly()
     {
         EntityManager em = _world.EntityManager;
-        GridConfig grid = CreateGrid(em);
-        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 40f);
+        GridConfig grid = CreateGrid(em, width: 256, height: 256);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 6f);
         AddGroundMissileLauncher(em, launcher, minRange: 35f, maxRange: 100f);
+        CreateEnemyRuntimeBuilding(em, new float3(210f, 0f, 120f), "Enemy Command Base");
 
         SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
-        SystemHandle attackSystem = _world.CreateSystem<UnitAttackSystem>();
-        _world.SetTime(new TimeData(0.1d, 0.1f));
-        attackSystem.Update(_world.Unmanaged);
 
         GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
         Assert.AreEqual((byte)GroundMissileLauncherPhase.Preparing, launcherState.Phase);
         Assert.AreEqual(em.GetComponentData<SelectedUnitDebugFireState>(launcher).Target, launcherState.TargetEntity);
+        Assert.Greater(em.GetComponentData<UnitAttackCooldownComponent>(launcher).CooldownRemaining, 0f);
     }
 
-    private static GridConfig CreateGrid(EntityManager em)
+    [Test]
+    public void HoldingDebugFireForGroundMissileLauncherCreatesMissileProjectileThroughCooldown()
+    {
+        EntityManager em = _world.EntityManager;
+        GridConfig grid = CreateGrid(em, width: 256, height: 256);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 6f);
+        AddGroundMissileLauncher(em, launcher, minRange: 35f, maxRange: 100f);
+        em.SetComponentData(launcher, new UnitAttackCooldownComponent { CooldownRemaining = 99f });
+        CreateEnemyRuntimeBuilding(em, new float3(210f, 0f, 120f), "Enemy Command Base");
+
+        SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
+
+        SystemHandle fireSystem = _world.CreateSystem<GroundMissileLauncherFireSystem>();
+        _world.SetTime(new TimeData(0.4d, 0.3f));
+        fireSystem.Update(_world.Unmanaged);
+
+        EntityQuery projectileQuery = em.CreateEntityQuery(typeof(GroundMissileProjectileComponent));
+        Assert.AreEqual(0, projectileQuery.CalculateEntityCount());
+
+        _world.SetTime(new TimeData(1.4d, 1f));
+        fireSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
+    }
+
+    private static GridConfig CreateGrid(EntityManager em, int width = 16, int height = 16)
     {
         Entity entity = em.CreateEntity(typeof(GridConfig));
         GridConfig grid = new()
         {
-            Width = 16,
-            Height = 16,
+            Width = width,
+            Height = height,
             CellSize = 1f,
             Origin = float3.zero
         };
@@ -144,6 +173,7 @@ public sealed class SelectedUnitDebugFireSystemTests
     private static Entity CreateSelectedAttackUnit(EntityManager em, float3 position, float attackRange = 6f)
     {
         Entity entity = em.CreateEntity(
+            typeof(Faction),
             typeof(SelectedUnitTag),
             typeof(UnitCombat),
             typeof(UnitAttack),
@@ -152,6 +182,7 @@ public sealed class SelectedUnitDebugFireSystemTests
             typeof(UnitAttackAnimationComponent),
             typeof(UnitHealth),
             typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
         em.SetComponentData(entity, new UnitAttack
         {
@@ -197,6 +228,33 @@ public sealed class SelectedUnitDebugFireSystemTests
     {
         Entity entity = em.CreateEntity(typeof(UnitHealth), typeof(LocalTransform));
         em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
+    }
+
+    private static Entity CreateEnemyRuntimeBuilding(EntityManager em, float3 position, string name)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(RuntimeBuildingCombatTag),
+            typeof(RuntimeBuildingCombatInfo),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitDisplayInfo),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new RuntimeBuildingCombatInfo
+        {
+            RuntimeBuildingId = 1,
+            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            OriginCell = new int2((int)position.x, (int)position.z),
+            FootprintCells = new int2(20, 20),
+            IsWall = 0,
+            IsGate = 0
+        });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(name) });
+        em.SetComponentData(entity, new UnitDisplayInfo { Name = new FixedString64Bytes(name) });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
     }

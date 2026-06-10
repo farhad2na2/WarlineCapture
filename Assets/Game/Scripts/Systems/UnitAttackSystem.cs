@@ -80,7 +80,9 @@ public partial struct UnitAttackSystem : ISystem
                 continue;
             }
 
-            if (em.HasComponent<StaticGridBlocker>(engageRw.Target) || em.GetComponentData<UnitHealth>(engageRw.Target).Current <= 0)
+            bool isDebugFireTarget = IsDebugFireTargetForSource(em, engageRw.Target, entity);
+            if ((em.HasComponent<StaticGridBlocker>(engageRw.Target) && !isDebugFireTarget) ||
+                em.GetComponentData<UnitHealth>(engageRw.Target).Current <= 0)
             {
                 engageRw.Target = Entity.Null;
                 continue;
@@ -109,10 +111,11 @@ public partial struct UnitAttackSystem : ISystem
                 ? GetCombatRadius(footprintLookup[engageRw.Target].Size, grid.CellSize)
                 : 0f;
             float range = attackRange + selfCombatRadius + targetCombatRadius + grid.CellSize * 0.25f;
-            if (math.lengthsq(delta) > range * range)
+            bool bypassMissileDebugRange = isDebugFireTarget && em.HasComponent<GroundMissileLauncherComponent>(entity);
+            if (!bypassMissileDebugRange && math.lengthsq(delta) > range * range)
                 continue;
 
-            if (stateRw.CooldownRemaining > 0f)
+            if (!bypassMissileDebugRange && stateRw.CooldownRemaining > 0f)
                 continue;
 
             if (TryStartGroundMissileLauncherAttack(
@@ -125,7 +128,8 @@ public partial struct UnitAttackSystem : ISystem
                     ref stateRw,
                     ref traceRw,
                     ref attackAnimRw,
-                    animationSettingsRo))
+                    animationSettingsRo,
+                    bypassRangeValidation: bypassMissileDebugRange))
             {
                 continue;
             }
@@ -243,7 +247,8 @@ public partial struct UnitAttackSystem : ISystem
         ref UnitAttackCooldownComponent attackState,
         ref UnitAttackTraceComponent traceState,
         ref UnitAttackAnimationComponent attackAnimationState,
-        UnitAnimationSettings animationSettings)
+        UnitAnimationSettings animationSettings,
+        bool bypassRangeValidation = false)
     {
         if (!em.HasComponent<GroundMissileLauncherComponent>(attacker) ||
             !em.HasComponent<GroundMissileLauncherStateComponent>(attacker))
@@ -259,8 +264,11 @@ public partial struct UnitAttackSystem : ISystem
         float3 delta = targetPosition - attackerPosition;
         delta.y = 0f;
         float distance = math.length(delta);
-        if (distance < math.max(0f, launcher.MinRange) || distance > math.max(launcher.MinRange, launcher.MaxRange))
+        if (!bypassRangeValidation &&
+            (distance < math.max(0f, launcher.MinRange) || distance > math.max(launcher.MinRange, launcher.MaxRange)))
+        {
             return true;
+        }
 
         int rocketCount = em.HasBuffer<GroundMissileLauncherRocketVisualComponent>(attacker)
             ? em.GetBuffer<GroundMissileLauncherRocketVisualComponent>(attacker).Length
@@ -273,15 +281,24 @@ public partial struct UnitAttackSystem : ISystem
         launcherState.TargetEntity = target;
         launcherState.TargetCell = targetCell;
         launcherState.TargetWorldPosition = targetPosition;
-        launcherState.Timer = math.max(0.01f, launcher.PrepareSeconds);
+        launcherState.Timer = GroundMissileLauncherTiming.PrepareAndHoldSeconds(launcher.PrepareSeconds);
         launcherState.SelectedRocketSlot = nextRocketSlot;
         em.SetComponentData(attacker, launcherState);
 
-        attackState.CooldownRemaining = math.max(0.01f, launcher.PrepareSeconds + launcher.ReloadSeconds);
-        traceState.TimeRemaining = math.max(0.01f, 0.16f);
-        traceState.Phase = math.frac(traceState.Phase + 0.371f);
+        attackState.CooldownRemaining = math.max(
+            0.01f,
+            GroundMissileLauncherTiming.FullAttackCycleSeconds(launcher.PrepareSeconds, launcher.ReloadSeconds));
+        traceState.TimeRemaining = 0f;
         attackAnimationState.TimeRemaining = math.max(0.01f, animationSettings.AttackAnimationSeconds);
         return true;
+    }
+
+    private static bool IsDebugFireTargetForSource(EntityManager em, Entity target, Entity source)
+    {
+        return target != Entity.Null &&
+               em.Exists(target) &&
+               em.HasComponent<DebugFireTargetTag>(target) &&
+               em.GetComponentData<DebugFireTargetTag>(target).Source == source;
     }
 
     private static void TryIssueFleeOrder(

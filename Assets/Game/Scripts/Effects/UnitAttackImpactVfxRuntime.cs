@@ -8,6 +8,8 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         public GameObject Root;
         public ParticleSystem[] ParticleSystems;
         public float ReleaseTime;
+        public float StopEmittingTime;
+        public bool StopEmittingScheduled;
         public GameObject Prefab;
     }
 
@@ -16,6 +18,16 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
     private readonly List<PooledInstance> _active = new();
 
     public static void Play(GameObject prefab, Vector3 position)
+    {
+        Play(prefab, position, prefab != null ? prefab.transform.rotation : Quaternion.identity);
+    }
+
+    public static void Play(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        Play(prefab, position, rotation, float.PositiveInfinity);
+    }
+
+    public static void Play(GameObject prefab, Vector3 position, Quaternion rotation, float maxActiveSeconds)
     {
         if (prefab == null)
             return;
@@ -27,7 +39,22 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
             _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
         }
 
-        _instance.PlayInternal(prefab, position);
+        _instance.PlayInternal(prefab, position, rotation, maxActiveSeconds);
+    }
+
+    public static void PlayTimedLoop(GameObject prefab, Vector3 position, Quaternion rotation, float emitSeconds, float totalActiveSeconds)
+    {
+        if (prefab == null)
+            return;
+
+        if (_instance == null)
+        {
+            GameObject root = new("UnitAttackImpactVfxRuntime");
+            DontDestroyOnLoad(root);
+            _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
+        }
+
+        _instance.PlayTimedLoopInternal(prefab, position, rotation, emitSeconds, totalActiveSeconds);
     }
 
     private void Update()
@@ -36,6 +63,12 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         for (int i = _active.Count - 1; i >= 0; i--)
         {
             PooledInstance instance = _active[i];
+            if (instance.StopEmittingScheduled && now >= instance.StopEmittingTime)
+            {
+                StopEmitting(instance.ParticleSystems);
+                instance.StopEmittingScheduled = false;
+            }
+
             if (now < instance.ReleaseTime)
                 continue;
 
@@ -51,12 +84,31 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         }
     }
 
-    private void PlayInternal(GameObject prefab, Vector3 position)
+    private void PlayInternal(GameObject prefab, Vector3 position, Quaternion rotation, float maxActiveSeconds)
     {
         PooledInstance instance = GetOrCreate(prefab);
-        instance.Root.transform.SetPositionAndRotation(position, prefab.transform.rotation);
+        instance.Root.transform.SetPositionAndRotation(position, rotation);
         instance.Root.SetActive(true);
-        instance.ReleaseTime = Time.time + PlayOnce(instance.ParticleSystems);
+        float playSeconds = PlayOnce(instance.ParticleSystems, loopDuringPlayback: false);
+        if (!float.IsPositiveInfinity(maxActiveSeconds))
+            playSeconds = Mathf.Min(playSeconds, Mathf.Max(0.05f, maxActiveSeconds));
+        instance.StopEmittingScheduled = false;
+        instance.ReleaseTime = Time.time + playSeconds;
+        _active.Add(instance);
+    }
+
+    private void PlayTimedLoopInternal(GameObject prefab, Vector3 position, Quaternion rotation, float emitSeconds, float totalActiveSeconds)
+    {
+        PooledInstance instance = GetOrCreate(prefab);
+        instance.Root.transform.SetPositionAndRotation(position, rotation);
+        instance.Root.SetActive(true);
+        PlayOnce(instance.ParticleSystems, loopDuringPlayback: true);
+
+        float safeEmitSeconds = Mathf.Max(0.05f, emitSeconds);
+        float safeTotalActiveSeconds = Mathf.Max(safeEmitSeconds + 0.05f, totalActiveSeconds);
+        instance.StopEmittingTime = Time.time + safeEmitSeconds;
+        instance.StopEmittingScheduled = true;
+        instance.ReleaseTime = Time.time + safeTotalActiveSeconds;
         _active.Add(instance);
     }
 
@@ -75,7 +127,7 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         };
     }
 
-    private static float PlayOnce(ParticleSystem[] particleSystems)
+    private static float PlayOnce(ParticleSystem[] particleSystems, bool loopDuringPlayback)
     {
         float maxSeconds = 0.5f;
         for (int i = 0; i < particleSystems.Length; i++)
@@ -85,9 +137,9 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
                 continue;
 
             particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            particleSystem.Play(true);
-
             ParticleSystem.MainModule main = particleSystem.main;
+            main.loop = loopDuringPlayback;
+            particleSystem.Play(true);
             float startLifetime = main.startLifetime.mode switch
             {
                 ParticleSystemCurveMode.TwoConstants => main.startLifetime.constantMax,
@@ -101,5 +153,17 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         }
 
         return maxSeconds;
+    }
+
+    private static void StopEmitting(ParticleSystem[] particleSystems)
+    {
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            ParticleSystem particleSystem = particleSystems[i];
+            if (particleSystem == null)
+                continue;
+
+            particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
     }
 }

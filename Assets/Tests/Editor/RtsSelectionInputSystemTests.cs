@@ -505,6 +505,7 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
         StringAssert.Contains("direction != BoardCommandModeDirection.TransportToPassenger", passengerPress);
         StringAssert.Contains("context.IsBoardSelectedTransportPassengerTarget.Invoke(transport, pointerPosition)", passengerPress);
+        StringAssert.Contains("activeMode == TacticalCommandMode.Attack", commandPan);
         StringAssert.Contains("return !input.BoardPassengerDragArmed;", commandPan);
         StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);
         StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);

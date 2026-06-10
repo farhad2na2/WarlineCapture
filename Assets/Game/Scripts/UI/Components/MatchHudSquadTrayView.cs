@@ -104,6 +104,17 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour
         _disabledFlashUntil = Time.unscaledTime + disabledFlashSeconds;
     }
 
+    public bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite)
+    {
+        sprite = null;
+        int index = ToIndex(slot);
+        if (!TryGetCard(index, out Card card) || card.PortraitImage == null)
+            return false;
+
+        sprite = card.PortraitImage.sprite;
+        return sprite != null;
+    }
+
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {
         if (!isActiveAndEnabled)

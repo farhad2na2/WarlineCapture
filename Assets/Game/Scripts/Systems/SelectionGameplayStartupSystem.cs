@@ -118,6 +118,7 @@ internal sealed class SelectionGameplayStartupSystem
         var visibleSelectionScratch = new List<Entity>();
         MainMenuPlayUI mainMenuPlayUi = null;
         MatchHudSelectionPanelView matchHudSelectionPanelView = null;
+        MatchHudSquadTrayView matchHudSquadTrayView = null;
         RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
@@ -183,6 +184,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void BindMatchHudSquadTray(MatchHudSquadTrayView view)
         {
+            matchHudSquadTrayView = view;
             if (view == null)
                 return;
 
@@ -530,6 +532,7 @@ internal sealed class SelectionGameplayStartupSystem
         MatchHudSelectionPanelView.Model BuildSquadPanelModel(EntityManager em, int selectedCount)
         {
             TryGetSelectedHealthModel(em, out string healthLabel, out float health01);
+            Sprite portraitSprite = ResolveActiveSquadTrayPortraitSprite();
             return new MatchHudSelectionPanelView.Model(
                 true,
                 selectedCount == 1 ? "1 UNIT" : $"{selectedCount} UNITS",
@@ -537,12 +540,22 @@ internal sealed class SelectionGameplayStartupSystem
                 ResolveSquadOrderText(em),
                 healthLabel,
                 health01,
-                null,
+                portraitSprite,
                 false,
                 null,
                 selectedCount > 0,
                 selectedCount > 0,
                 false);
+        }
+
+        Sprite ResolveActiveSquadTrayPortraitSprite()
+        {
+            if (matchHudSquadTrayView == null)
+                return null;
+
+            return matchHudSquadTrayView.TryGetPortraitSprite(matchHudSquadTraySelectionSystem.ActiveSlot, out Sprite sprite)
+                ? sprite
+                : null;
         }
 
         MatchHudSelectionPanelView.Model BuildSelectedBuildingPanelModel()

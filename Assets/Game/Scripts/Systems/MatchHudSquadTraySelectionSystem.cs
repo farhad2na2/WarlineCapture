@@ -56,6 +56,8 @@ public sealed class MatchHudSquadTraySelectionSystem
     private EntityQuery _unitQuery;
     private MatchHudSquadTraySlot _activeSlot = MatchHudSquadTraySlot.None;
 
+    public MatchHudSquadTraySlot ActiveSlot => _activeSlot;
+
     public void SelectSlot(Context context, MatchHudSquadTrayView view, MatchHudSquadTraySlot slot)
     {
         if (slot == MatchHudSquadTraySlot.None || view == null)

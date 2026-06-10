@@ -69,6 +69,7 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
+        SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
         FactionVisualSettings factionVisuals)
     {
@@ -640,7 +641,8 @@ internal sealed class SelectionGameplayStartupSystem
                     continue;
 
                 TryGetHealthModel(em, passenger, out string healthLabel, out float health01);
-                Sprite portrait = resolveSelectionPortraitSprite?.Invoke(em, passenger);
+                Sprite portrait = resolveSelectionCardPortraitSprite?.Invoke(em, passenger);
+                portrait ??= resolveSelectionPortraitSprite?.Invoke(em, passenger);
                 portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
                 transportPassengerPanelItems.Add(new MatchHudSelectionPanelView.PassengerItemModel(
                     passenger,

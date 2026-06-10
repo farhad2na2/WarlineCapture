@@ -20,6 +20,24 @@ internal static class SelectionPortraitSpriteResolverSystem
         return null;
     }
 
+    public static Sprite ResolveSelectionCardPortraitSprite(GameObject prefab)
+    {
+        if (prefab == null)
+            return null;
+
+        if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring))
+            return unitAuthoring.PortraitCardSprite != null
+                ? unitAuthoring.PortraitCardSprite
+                : unitAuthoring.PortraitSprite;
+
+        if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring))
+            return buildingAuthoring.ConfiguredPortraitCardSprite != null
+                ? buildingAuthoring.ConfiguredPortraitCardSprite
+                : buildingAuthoring.ConfiguredPortraitSprite;
+
+        return null;
+    }
+
     public static Sprite ResolveSelectionPortraitSprite(RuntimeBuildingEntity building)
     {
         if (building == null)

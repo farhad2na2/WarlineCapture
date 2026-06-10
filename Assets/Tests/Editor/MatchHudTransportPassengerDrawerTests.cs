@@ -51,10 +51,11 @@ public sealed class MatchHudTransportPassengerDrawerTests
         MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
         RectTransform contentRoot = GetReference<RectTransform>(new SerializedObject(drawer), "contentRoot");
+        Sprite riflemanCardSprite = CreateTestSprite();
 
         var passengers = new List<MatchHudSelectionPanelView.PassengerItemModel>
         {
-            new(new Entity { Index = 12, Version = 1 }, "Rifleman", "SOLDIER", "Health: 80/100", 0.8f, null, true),
+            new(new Entity { Index = 12, Version = 1 }, "Rifleman", "SOLDIER", "Health: 80/100", 0.8f, riflemanCardSprite, true),
             new(new Entity { Index = 13, Version = 1 }, "Medic", "SOLDIER", "Health: 60/100", 0.6f, null, true)
         };
 
@@ -83,6 +84,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
 
         Assert.IsTrue(drawerRoot.activeSelf);
         Assert.GreaterOrEqual(CountActivePassengerRows(contentRoot), 2);
+        Assert.AreSame(riflemanCardSprite, ResolveFirstActivePassengerPortrait(contentRoot));
     }
 
     [Test]
@@ -137,6 +139,29 @@ public sealed class MatchHudTransportPassengerDrawerTests
         }
 
         return count;
+    }
+
+    private static Sprite ResolveFirstActivePassengerPortrait(RectTransform contentRoot)
+    {
+        for (int i = 0; i < contentRoot.childCount; i++)
+        {
+            MatchHudTransportPassengerItemView item = contentRoot.GetChild(i).GetComponent<MatchHudTransportPassengerItemView>();
+            if (item == null || !item.gameObject.activeSelf)
+                continue;
+
+            Image portraitImage = GetReference<Image>(new SerializedObject(item), "portraitImage");
+            return portraitImage != null ? portraitImage.sprite : null;
+        }
+
+        return null;
+    }
+
+    private static Sprite CreateTestSprite()
+    {
+        var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 100f);
     }
 
     private static T GetReference<T>(SerializedObject serialized, string propertyName) where T : Object

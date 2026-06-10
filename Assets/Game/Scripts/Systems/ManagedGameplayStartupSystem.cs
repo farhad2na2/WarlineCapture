@@ -183,6 +183,13 @@ internal sealed class ManagedGameplayStartupSystem
                 : null;
         }
 
+        Sprite ResolveSelectionCardPortraitSprite(EntityManager em, Entity entity)
+        {
+            return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
+                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite(prefab)
+                : null;
+        }
+
         Sprite ResolveSelectedBuildingPortraitSprite()
         {
             return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
@@ -199,6 +206,7 @@ internal sealed class ManagedGameplayStartupSystem
             building.InteractionContext,
             building.TrySelectFirstBuildingInScreenRect,
             ResolveSelectionPortraitSprite,
+            ResolveSelectionCardPortraitSprite,
             ResolveSelectedBuildingPortraitSprite,
             factionVisuals);
 

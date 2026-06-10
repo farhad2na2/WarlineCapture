@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -82,6 +83,7 @@ public sealed class SelectionAttackCommandRequestSystem
             HasCommandResult = result.HasCommandResult ? (byte)1 : (byte)0,
             Accepted = result.Issued ? (byte)1 : (byte)0,
             ReasonCode = result.HasCommandResult ? (int)commandResult.ReasonCode : 0,
+            Message = result.HasCommandResult ? new FixedString64Bytes(commandResult.Message ?? string.Empty) : default,
             EmitScreenMarker = result.Issued ? (byte)1 : (byte)0,
             HasWorldPosition = result.Issued ? (byte)1 : (byte)0,
             ShowWorldMarkers = result.Issued ? (byte)1 : (byte)0

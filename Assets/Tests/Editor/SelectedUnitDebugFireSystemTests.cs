@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -89,6 +90,43 @@ public sealed class SelectedUnitDebugFireSystemTests
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
     }
 
+    [Test]
+    public void HoldingDebugFireForGroundMissileLauncherUsesValidMinimumRange()
+    {
+        EntityManager em = _world.EntityManager;
+        GridConfig grid = CreateGrid(em);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 40f);
+        AddGroundMissileLauncher(em, launcher, minRange: 35f, maxRange: 100f);
+
+        SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
+
+        Entity target = em.GetComponentData<SelectedUnitDebugFireState>(launcher).Target;
+        float3 targetPosition = em.GetComponentData<LocalTransform>(target).Position;
+        float distance = math.distance(
+            new float2(3f, 3f),
+            new float2(targetPosition.x, targetPosition.z));
+        Assert.Greater(distance, 35f);
+        Assert.LessOrEqual(distance, 40f * 0.95f + 0.001f);
+    }
+
+    [Test]
+    public void HoldingDebugFireForGroundMissileLauncherArmsMissileAttack()
+    {
+        EntityManager em = _world.EntityManager;
+        GridConfig grid = CreateGrid(em);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 40f);
+        AddGroundMissileLauncher(em, launcher, minRange: 35f, maxRange: 100f);
+
+        SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
+        SystemHandle attackSystem = _world.CreateSystem<UnitAttackSystem>();
+        _world.SetTime(new TimeData(0.1d, 0.1f));
+        attackSystem.Update(_world.Unmanaged);
+
+        GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Preparing, launcherState.Phase);
+        Assert.AreEqual(em.GetComponentData<SelectedUnitDebugFireState>(launcher).Target, launcherState.TargetEntity);
+    }
+
     private static GridConfig CreateGrid(EntityManager em)
     {
         Entity entity = em.CreateEntity(typeof(GridConfig));
@@ -103,7 +141,7 @@ public sealed class SelectedUnitDebugFireSystemTests
         return grid;
     }
 
-    private static Entity CreateSelectedAttackUnit(EntityManager em, float3 position)
+    private static Entity CreateSelectedAttackUnit(EntityManager em, float3 position, float attackRange = 6f)
     {
         Entity entity = em.CreateEntity(
             typeof(SelectedUnitTag),
@@ -117,7 +155,7 @@ public sealed class SelectedUnitDebugFireSystemTests
         em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
         em.SetComponentData(entity, new UnitAttack
         {
-            Range = 6f,
+            Range = attackRange,
             CooldownSeconds = 0.5f,
             Damage = 10,
             TraceVisibleSeconds = 0.08f,
@@ -128,6 +166,31 @@ public sealed class SelectedUnitDebugFireSystemTests
         em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
+    }
+
+    private static void AddGroundMissileLauncher(EntityManager em, Entity entity, float minRange, float maxRange)
+    {
+        em.AddComponentData(entity, new GroundMissileLauncherComponent
+        {
+            MinRange = minRange,
+            MaxRange = maxRange,
+            PrepareSeconds = 0.25f,
+            ReloadSeconds = 1f,
+            BatteryElevatedAngleDegrees = -30f,
+            RocketSpeed = 80f,
+            ArcHeight = 10f,
+            DamageRadius = 5f,
+            Damage = 90
+        });
+        em.AddComponentData(entity, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Idle,
+            TargetEntity = Entity.Null,
+            TargetCell = default,
+            TargetWorldPosition = default,
+            Timer = 0f,
+            SelectedRocketSlot = -1
+        });
     }
 
     private static Entity CreateTarget(EntityManager em, float3 position)

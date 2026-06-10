@@ -61,6 +61,10 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector, Min(0)] private int attackDamage = 10;
     [SerializeField, HideInInspector, Min(1)] private int maxHealth = 100;
     [SerializeField, HideInInspector] private GameObject attackImpactPrefab;
+    [SerializeField, HideInInspector] private GroundMissileLauncherConfig groundMissileLauncherConfig;
+    [SerializeField, HideInInspector] private Transform groundMissileLauncherBattery;
+    [SerializeField, HideInInspector] private Transform groundMissileLauncherSmokeSpawn;
+    [SerializeField, HideInInspector] private List<Transform> groundMissileLauncherRockets = new();
     [SerializeField, HideInInspector] private Color attackTraceColor = new(1f, 0.85f, 0.2f, 1f);
     [Header("Attack Trace")]
     [SerializeField, HideInInspector, Min(0.01f)] private float attackTraceWidth = 0.18f;
@@ -136,6 +140,7 @@ public class UnitGridAuthoring : MonoBehaviour
         attackDamage = config.AttackDamage;
         maxHealth = config.MaxHealth;
         attackImpactPrefab = config.AttackImpactPrefab;
+        groundMissileLauncherConfig = config.GroundMissileLauncherConfig;
         attackTraceColor = config.AttackTraceColor;
         attackTraceWidth = config.AttackTraceWidth;
         attackTraceScrollSpeed = config.AttackTraceScrollSpeed;
@@ -169,6 +174,10 @@ public class UnitGridAuthoring : MonoBehaviour
     public float ConfiguredAttackRange => Mathf.Max(0f, config != null ? config.AttackRange : attackRange);
     public int ConfiguredAttackDamage => Mathf.Max(0, config != null ? config.AttackDamage : attackDamage);
     public int ConfiguredMaxHealth => Mathf.Max(1, config != null ? config.MaxHealth : maxHealth);
+    public GroundMissileLauncherConfig GroundMissileLauncherConfig => config != null ? config.GroundMissileLauncherConfig : groundMissileLauncherConfig;
+    public Transform GroundMissileLauncherBattery => groundMissileLauncherBattery;
+    public Transform GroundMissileLauncherSmokeSpawn => groundMissileLauncherSmokeSpawn;
+    public IReadOnlyList<Transform> GroundMissileLauncherRockets => groundMissileLauncherRockets;
     public GameObject MidLodPrefab => config != null ? config.MidLodPrefab : null;
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
@@ -325,6 +334,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     Prefab = authoring.attackImpactPrefab
                 });
             }
+            AddGroundMissileLauncherComponents(authoring, entity);
 
             int maxHp = math.max(1, authoring.maxHealth);
             AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
@@ -441,6 +451,80 @@ public class UnitGridAuthoring : MonoBehaviour
             UnitAttachedLightSet attachedLights = BuildAttachedLightSet(authoring.transform);
             if (attachedLights != null)
                 AddComponentObject(entity, attachedLights);
+        }
+
+        private void AddGroundMissileLauncherComponents(UnitGridAuthoring authoring, Entity entity)
+        {
+            GroundMissileLauncherConfig missileConfig = authoring.GroundMissileLauncherConfig;
+            if (missileConfig == null)
+                return;
+
+            DependsOn(missileConfig);
+            AddComponent(entity, new GroundMissileLauncherComponent
+            {
+                MinRange = missileConfig.MinRange,
+                MaxRange = missileConfig.MaxRange,
+                PrepareSeconds = missileConfig.PrepareSeconds,
+                ReloadSeconds = missileConfig.ReloadSeconds,
+                BatteryElevatedAngleDegrees = missileConfig.BatteryElevatedAngleDegrees,
+                RocketSpeed = missileConfig.RocketSpeed,
+                ArcHeight = missileConfig.ArcHeight,
+                DamageRadius = missileConfig.DamageRadius,
+                Damage = missileConfig.Damage
+            });
+            AddComponent(entity, new GroundMissileLauncherStateComponent
+            {
+                Phase = (byte)GroundMissileLauncherPhase.Idle,
+                TargetEntity = Entity.Null,
+                TargetCell = int2.zero,
+                TargetWorldPosition = float3.zero,
+                Timer = 0f,
+                SelectedRocketSlot = -1
+            });
+
+            Transform battery = authoring.GroundMissileLauncherBattery;
+            if (battery != null)
+            {
+                AddComponent(entity, new GroundMissileLauncherVisualReferenceComponent
+                {
+                    Battery = GetEntity(battery.gameObject, TransformUsageFlags.Dynamic),
+                    SmokeSpawn = authoring.GroundMissileLauncherSmokeSpawn != null
+                        ? GetEntity(authoring.GroundMissileLauncherSmokeSpawn.gameObject, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+                    BatteryDefaultLocalRotation = battery.localRotation,
+                    BatteryDefaultLocalPosition = battery.localPosition
+                });
+            }
+
+            DynamicBuffer<GroundMissileLauncherRocketVisualComponent> rockets =
+                AddBuffer<GroundMissileLauncherRocketVisualComponent>(entity);
+            IReadOnlyList<Transform> rocketReferences = authoring.GroundMissileLauncherRockets;
+            if (rocketReferences != null)
+            {
+                for (int i = 0; i < rocketReferences.Count; i++)
+                {
+                    Transform rocket = rocketReferences[i];
+                    if (rocket == null)
+                        continue;
+
+                    rockets.Add(new GroundMissileLauncherRocketVisualComponent
+                    {
+                        Rocket = GetEntity(rocket.gameObject, TransformUsageFlags.Dynamic),
+                        SlotIndex = i,
+                        InitialLocalPosition = rocket.localPosition,
+                        InitialLocalRotation = rocket.localRotation,
+                        InitialLocalScale = rocket.localScale.x
+                    });
+                }
+            }
+
+            AddComponentObject(entity, new GroundMissileLauncherVfxReferenceComponent
+            {
+                LauncherBackfirePrefab = missileConfig.LauncherBackfirePrefab,
+                RocketTrailPrefab = missileConfig.RocketTrailPrefab,
+                ImpactExplosionPrefab = missileConfig.ImpactExplosionPrefab,
+                ImpactSmokePrefab = missileConfig.ImpactSmokePrefab
+            });
         }
 
         private static UnitAttachedLightSet BuildAttachedLightSet(Transform root)

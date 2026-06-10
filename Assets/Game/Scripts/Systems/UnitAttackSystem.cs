@@ -115,6 +115,21 @@ public partial struct UnitAttackSystem : ISystem
             if (stateRw.CooldownRemaining > 0f)
                 continue;
 
+            if (TryStartGroundMissileLauncherAttack(
+                    em,
+                    entity,
+                    engageRw.Target,
+                    engageRw.Cell,
+                    engageRw.Position,
+                    selfTransform.ValueRO.Position,
+                    ref stateRw,
+                    ref traceRw,
+                    ref attackAnimRw,
+                    animationSettingsRo))
+            {
+                continue;
+            }
+
             stateRw.CooldownRemaining = math.max(0.01f, attackRo.CooldownSeconds);
             traceRw.TimeRemaining = math.max(0.01f, attackRo.TraceVisibleSeconds);
             traceRw.Phase = math.frac(traceRw.Phase + 0.371f);
@@ -216,6 +231,57 @@ public partial struct UnitAttackSystem : ISystem
         float halfWidth = math.max(0f, (clamped.x - 1) * 0.5f * cellSize);
         float halfDepth = math.max(0f, (clamped.y - 1) * 0.5f * cellSize);
         return math.max(halfWidth, halfDepth);
+    }
+
+    private static bool TryStartGroundMissileLauncherAttack(
+        EntityManager em,
+        Entity attacker,
+        Entity target,
+        int2 targetCell,
+        float3 targetPosition,
+        float3 attackerPosition,
+        ref UnitAttackCooldownComponent attackState,
+        ref UnitAttackTraceComponent traceState,
+        ref UnitAttackAnimationComponent attackAnimationState,
+        UnitAnimationSettings animationSettings)
+    {
+        if (!em.HasComponent<GroundMissileLauncherComponent>(attacker) ||
+            !em.HasComponent<GroundMissileLauncherStateComponent>(attacker))
+        {
+            return false;
+        }
+
+        GroundMissileLauncherComponent launcher = em.GetComponentData<GroundMissileLauncherComponent>(attacker);
+        GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(attacker);
+        if (launcherState.Phase != (byte)GroundMissileLauncherPhase.Idle)
+            return true;
+
+        float3 delta = targetPosition - attackerPosition;
+        delta.y = 0f;
+        float distance = math.length(delta);
+        if (distance < math.max(0f, launcher.MinRange) || distance > math.max(launcher.MinRange, launcher.MaxRange))
+            return true;
+
+        int rocketCount = em.HasBuffer<GroundMissileLauncherRocketVisualComponent>(attacker)
+            ? em.GetBuffer<GroundMissileLauncherRocketVisualComponent>(attacker).Length
+            : 0;
+        int nextRocketSlot = rocketCount > 0
+            ? (launcherState.SelectedRocketSlot + 1 + rocketCount) % rocketCount
+            : -1;
+
+        launcherState.Phase = (byte)GroundMissileLauncherPhase.Preparing;
+        launcherState.TargetEntity = target;
+        launcherState.TargetCell = targetCell;
+        launcherState.TargetWorldPosition = targetPosition;
+        launcherState.Timer = math.max(0.01f, launcher.PrepareSeconds);
+        launcherState.SelectedRocketSlot = nextRocketSlot;
+        em.SetComponentData(attacker, launcherState);
+
+        attackState.CooldownRemaining = math.max(0.01f, launcher.PrepareSeconds + launcher.ReloadSeconds);
+        traceState.TimeRemaining = math.max(0.01f, 0.16f);
+        traceState.Phase = math.frac(traceState.Phase + 0.371f);
+        attackAnimationState.TimeRemaining = math.max(0.01f, animationSettings.AttackAnimationSeconds);
+        return true;
     }
 
     private static void TryIssueFleeOrder(

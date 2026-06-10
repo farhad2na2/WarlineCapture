@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65e518f9d9442c0b061f035b12ca7e4, type: 3}
+  m_Name: GroundMissileLauncher_Ground_Config
+  m_EditorClassIdentifier: 
+  minRange: 35
+  maxRange: 600
+  prepareSeconds: 0.65
+  reloadSeconds: 3
+  batteryElevatedAngleDegrees: -30
+  rocketSpeed: 42
+  arcHeight: 28
+  damage: 90
+  damageRadius: 8
+  launcherBackfirePrefab: {fileID: 1948596792619958, guid: 3f8d63e87785f27478ada28fe2c9a545, type: 3}
+  rocketTrailPrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}
+  impactExplosionPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  impactSmokePrefab: {fileID: 1948596792619958, guid: 3f8d63e87785f27478ada28fe2c9a545, type: 3}

@@ -121,11 +121,17 @@ public sealed class UnitTargetOrderSystem
             ? entityManager.GetComponentData<UnitGrid>(targetEntity).Cell
             : default;
         int issuedCount = 0;
+        TacticalCommandResult missileRangeRejection = default;
         for (int i = 0; i < selectedEntities.Length; i++)
         {
             Entity entity = selectedEntities[i];
             if (!ValidateAttackSource(entityManager, entity).Accepted)
                 continue;
+            if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
+            {
+                missileRangeRejection = missileRangeResult;
+                continue;
+            }
 
             Entity engageTarget = targetEntity;
             int2 engageCell = targetCell;
@@ -191,7 +197,9 @@ public sealed class UnitTargetOrderSystem
 
         TacticalCommandResult result = issuedCount > 0
             ? TacticalCommandResult.Success()
-            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+            : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
+                ? missileRangeRejection
+                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         return new AttackOrderIssueResult(result, issuedCount, targetTransform.Position);
     }
 
@@ -262,6 +270,45 @@ public sealed class UnitTargetOrderSystem
         }
 
         return TacticalCommandResult.Success();
+    }
+
+    private static bool ValidateGroundMissileLauncherRange(
+        EntityManager entityManager,
+        Entity launcherEntity,
+        float3 targetPosition,
+        out TacticalCommandResult result)
+    {
+        result = TacticalCommandResult.Success();
+        if (!entityManager.HasComponent<GroundMissileLauncherComponent>(launcherEntity) ||
+            !entityManager.HasComponent<LocalTransform>(launcherEntity))
+        {
+            return true;
+        }
+
+        GroundMissileLauncherComponent launcher = entityManager.GetComponentData<GroundMissileLauncherComponent>(launcherEntity);
+        float3 launcherPosition = entityManager.GetComponentData<LocalTransform>(launcherEntity).Position;
+        float3 delta = targetPosition - launcherPosition;
+        delta.y = 0f;
+        float distance = math.length(delta);
+        float minRange = math.max(0f, launcher.MinRange);
+        float maxRange = math.max(minRange, launcher.MaxRange);
+        if (distance < minRange)
+        {
+            result = TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.TargetNotAttackable,
+                "Target too close for missile launcher.");
+            return false;
+        }
+
+        if (distance > maxRange)
+        {
+            result = TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.TargetNotAttackable,
+                "Target out of missile range.");
+            return false;
+        }
+
+        return true;
     }
 
     public bool IsInFriendlyDetectorRadius(EntityManager entityManager, NativeArray<Entity> detectors, byte factionId, int detectorKind, int2 targetCell)

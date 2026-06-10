@@ -61,7 +61,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         UnitAttack attack = em.GetComponentData<UnitAttack>(entity);
         LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(entity);
         Entity target = EnsureDebugTarget(em, entity);
-        float3 targetPosition = ResolveTargetPosition(grid, sourceTransform, attack);
+        float3 targetPosition = ResolveTargetPosition(em, grid, entity, sourceTransform, attack);
         int2 targetCell = ResolveCell(grid, targetPosition);
 
         em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
@@ -216,16 +216,41 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
                (!em.HasComponent<UnitHealth>(target) || em.GetComponentData<UnitHealth>(target).Current > 0);
     }
 
-    private static float3 ResolveTargetPosition(GridConfig grid, LocalTransform sourceTransform, UnitAttack attack)
+    private static float3 ResolveTargetPosition(
+        EntityManager em,
+        GridConfig grid,
+        Entity source,
+        LocalTransform sourceTransform,
+        UnitAttack attack)
     {
         float3 forward = math.rotate(sourceTransform.Rotation, new float3(0f, 0f, 1f));
         forward.y = 0f;
         forward = math.normalizesafe(forward, new float3(0f, 0f, 1f));
 
         float minDistance = math.max(0.25f, grid.CellSize);
-        float distance = math.max(minDistance, attack.Range * 0.85f);
-        distance = math.min(distance, math.max(minDistance, attack.Range * 0.95f));
+        float maxDistance = math.max(minDistance, attack.Range * 0.95f);
+        float distance = math.clamp(attack.Range * 0.85f, minDistance, maxDistance);
+        if (em.HasComponent<GroundMissileLauncherComponent>(source))
+            distance = ResolveMissileLauncherDebugDistance(em.GetComponentData<GroundMissileLauncherComponent>(source), grid, minDistance, maxDistance, distance);
+
         return sourceTransform.Position + forward * distance;
+    }
+
+    private static float ResolveMissileLauncherDebugDistance(
+        GroundMissileLauncherComponent launcher,
+        GridConfig grid,
+        float minDistance,
+        float maxDistance,
+        float fallbackDistance)
+    {
+        float missileMin = math.max(minDistance, launcher.MinRange + math.max(0.1f, grid.CellSize));
+        float missileMax = launcher.MaxRange > 0f
+            ? math.min(maxDistance, launcher.MaxRange * 0.95f)
+            : maxDistance;
+        if (missileMin > missileMax)
+            return fallbackDistance;
+
+        return math.clamp(math.max(fallbackDistance, missileMin), missileMin, missileMax);
     }
 
     private static int2 ResolveCell(GridConfig grid, float3 position)

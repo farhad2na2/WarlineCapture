@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Collections;
 using Unity.Mathematics;
 
 public enum RtsSelectionPointerRequestKind : byte
@@ -140,4 +141,5 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public byte ShowWorldMarkers;
     public int RevealedCount;
     public int RadiusCells;
+    public FixedString64Bytes Message;
 }

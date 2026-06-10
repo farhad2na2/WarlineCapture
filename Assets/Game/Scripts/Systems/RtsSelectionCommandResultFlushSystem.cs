@@ -467,9 +467,10 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
     private static TacticalCommandResult ToTacticalCommandResult(RtsSelectionCommandResultElement result)
     {
+        string message = result.Message.ToString();
         return result.Accepted != 0
-            ? TacticalCommandResult.Success()
-            : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+            ? TacticalCommandResult.Success(message)
+            : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode, message);
     }
 
     private static TacticalCommandResult ToScanCommandResult(RtsSelectionCommandResultElement result)

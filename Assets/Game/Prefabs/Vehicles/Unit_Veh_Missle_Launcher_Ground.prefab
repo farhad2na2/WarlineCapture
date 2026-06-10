@@ -1836,7 +1836,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6363089890128195085}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0.16789417, z: -1.5350811}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2221,6 +2221,66 @@ PrefabInstance:
       propertyPath: attackImpactPrefab
       value: 
       objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherBattery
+      value:
+      objectReference: {fileID: 6366099986864145873}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherSmokeSpawn
+      value:
+      objectReference: {fileID: 6366099986864145873}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[0]
+      value:
+      objectReference: {fileID: 6366114128934241767}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[1]
+      value:
+      objectReference: {fileID: 6360818995780002033}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[2]
+      value:
+      objectReference: {fileID: 6361328730509446879}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[3]
+      value:
+      objectReference: {fileID: 6366296744994794959}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[4]
+      value:
+      objectReference: {fileID: 6360909575208506671}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[5]
+      value:
+      objectReference: {fileID: 6361293760527477513}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[6]
+      value:
+      objectReference: {fileID: 6361006340629187053}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[7]
+      value:
+      objectReference: {fileID: 6366072142059655961}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[8]
+      value:
+      objectReference: {fileID: 6361171755134375377}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[9]
+      value:
+      objectReference: {fileID: 6361207935340526203}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[10]
+      value:
+      objectReference: {fileID: 6366320509314214793}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.data[11]
+      value:
+      objectReference: {fileID: 6360807328529677465}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitCardSprite
       value: 

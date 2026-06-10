@@ -1,0 +1,330 @@
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Core;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+
+public sealed class GroundMissileLauncherRuntimeTests
+{
+    [Test]
+    public void AttackSystem_ArmsGroundMissileLauncherWithoutImmediateDamage()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_Attack");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+
+        Entity target = CreateTarget(em, new float3(120f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        em.AddComponentData(launcher, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(120, 0),
+            Position = new float3(120f, 0f, 0f),
+            IsCommanded = 1
+        });
+
+        SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(target).Current);
+        GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Preparing, launcherState.Phase);
+        Assert.AreEqual(target, launcherState.TargetEntity);
+    }
+
+    [Test]
+    public void MissileProjectile_ImpactsAndDamagesEnemyArea()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_Impact");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(10f, 0f, 0f), health: 100);
+        Entity friendly = CreateFriendly(em, new float3(10f, 0f, 1f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.01f, reloadSeconds: 3f);
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Preparing,
+            TargetEntity = target,
+            TargetCell = new int2(10, 0),
+            TargetWorldPosition = new float3(10f, 0f, 0f),
+            Timer = 0f,
+            SelectedRocketSlot = -1
+        });
+
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+        SystemHandle flightSystem = world.CreateSystem<GroundMissileProjectileFlightSystem>();
+        SystemHandle impactSystem = world.CreateSystem<GroundMissileImpactSystem>();
+
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        fireSystem.Update(world.Unmanaged);
+
+        EntityQuery projectileQuery = em.CreateEntityQuery(typeof(GroundMissileProjectileComponent));
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
+
+        world.SetTime(new TimeData(1d, 1f));
+        flightSystem.Update(world.Unmanaged);
+        impactSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(10, em.GetComponentData<UnitHealth>(target).Current);
+        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(friendly).Current);
+    }
+
+    [Test]
+    public void MissileFire_DetachesAndRestoresSelectedRocketVisual()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_RocketVisual");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(10f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.01f, reloadSeconds: 3f);
+        Entity rocketParent = em.CreateEntity(typeof(LocalTransform));
+        Entity rocket = em.CreateEntity(typeof(LocalTransform), typeof(LocalToWorld), typeof(Parent));
+        em.SetComponentData(rocketParent, LocalTransform.Identity);
+        em.SetComponentData(rocket, LocalTransform.FromPosition(new float3(1f, 0f, 0f)));
+        em.SetComponentData(rocket, new LocalToWorld { Value = float4x4.Translate(new float3(1f, 0f, 0f)) });
+        em.SetComponentData(rocket, new Parent { Value = rocketParent });
+        DynamicBuffer<GroundMissileLauncherRocketVisualComponent> rockets =
+            em.AddBuffer<GroundMissileLauncherRocketVisualComponent>(launcher);
+        rockets.Add(new GroundMissileLauncherRocketVisualComponent
+        {
+            Rocket = rocket,
+            SlotIndex = 0,
+            InitialLocalPosition = new float3(1f, 0f, 0f),
+            InitialLocalRotation = quaternion.identity,
+            InitialLocalScale = 1f
+        });
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Preparing,
+            TargetEntity = target,
+            TargetCell = new int2(10, 0),
+            TargetWorldPosition = new float3(10f, 0f, 0f),
+            Timer = 0f,
+            SelectedRocketSlot = 0
+        });
+
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+        SystemHandle rocketVisualSystem = world.CreateSystem<GroundMissileFlyingRocketVisualSystem>();
+
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        fireSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<GroundMissileFlyingRocketVisualComponent>(rocket));
+        Assert.IsFalse(em.HasComponent<Parent>(rocket));
+
+        world.SetTime(new TimeData(1d, 1f));
+        rocketVisualSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<GroundMissileFlyingRocketVisualComponent>(rocket));
+        Assert.IsTrue(em.HasComponent<Parent>(rocket));
+        Assert.AreEqual(rocketParent, em.GetComponentData<Parent>(rocket).Value);
+    }
+
+
+    [Test]
+    public void AttackOrder_RejectsGroundMissileTargetInsideMinimumRangeWithMessage()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_TooClose");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(2f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        var selected = new NativeArray<Entity>(1, Allocator.Temp);
+        selected[0] = launcher;
+
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            result = new UnitTargetOrderSystem().IssueAttackTarget(em, selected, target);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsFalse(result.CommandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, result.CommandResult.ReasonCode);
+        Assert.AreEqual("Target too close for missile launcher.", result.CommandResult.Message);
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
+    }
+
+    [Test]
+    public void AttackOrder_RejectsGroundMissileTargetOutsideMaximumRangeWithMessage()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_OutOfRange");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(700f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        var selected = new NativeArray<Entity>(1, Allocator.Temp);
+        selected[0] = launcher;
+
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            result = new UnitTargetOrderSystem().IssueAttackTarget(em, selected, target);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsFalse(result.CommandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, result.CommandResult.ReasonCode);
+        Assert.AreEqual("Target out of missile range.", result.CommandResult.Message);
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
+    }
+
+    [Test]
+    public void SelectionAttackRequest_PreservesGroundMissileRangeFeedbackMessage()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_RequestMessage");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(2f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
+        em.AddComponent<SelectedUnitTag>(launcher);
+
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputRequestQueueComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Attack,
+            RequestId = 7,
+            ExplicitAttackTargetMode = 1,
+            HasScreenPosition = 1,
+            ScreenPosition = new float2(10f, 20f)
+        });
+
+        var requestSystem = new SelectionAttackCommandRequestSystem();
+        requestSystem.ProcessPendingRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new AttackOrderCommandSystem(),
+            new UnitTargetOrderSystem(),
+            (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
+            {
+                clicked = target;
+                return true;
+            },
+            null,
+            default);
+
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(0, results[0].Accepted);
+        Assert.AreEqual((int)TacticalCommandReasonCode.TargetNotAttackable, results[0].ReasonCode);
+        Assert.AreEqual("Target too close for missile launcher.", results[0].Message.ToString());
+    }
+
+
+    private static void CreateGrid(EntityManager em)
+    {
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 256,
+            Height = 256,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+    }
+
+    private static Entity CreateLauncher(EntityManager em, float3 position, float prepareSeconds, float reloadSeconds)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(UnitAttackCooldownComponent),
+            typeof(UnitAttackTraceComponent),
+            typeof(UnitAttackAnimationComponent),
+            typeof(GroundMissileLauncherComponent),
+            typeof(GroundMissileLauncherStateComponent),
+            typeof(LocalTransform));
+
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = GridUtils.WorldToCell(new GridConfig { Width = 256, Height = 256, CellSize = 1f, Origin = float3.zero }, position) });
+        em.SetComponentData(entity, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 2f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(2, 2) });
+        em.SetComponentData(entity, new UnitHealth { Current = 450, Max = 450 });
+        em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1, AggroRangeCells = 120, ChaseBreakDistance = 120f });
+        em.SetComponentData(entity, new UnitAttack
+        {
+            Range = 600f,
+            CooldownSeconds = 3f,
+            Damage = 90,
+            TraceVisibleSeconds = 0.08f
+        });
+        em.SetComponentData(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+        em.SetComponentData(entity, new UnitAttackTraceComponent { TimeRemaining = 0f, Phase = 0f });
+        em.SetComponentData(entity, new UnitAttackAnimationComponent { TimeRemaining = 0f });
+        em.SetComponentData(entity, new GroundMissileLauncherComponent
+        {
+            MinRange = 5f,
+            MaxRange = 600f,
+            PrepareSeconds = prepareSeconds,
+            ReloadSeconds = reloadSeconds,
+            BatteryElevatedAngleDegrees = -30f,
+            RocketSpeed = 100f,
+            ArcHeight = 10f,
+            DamageRadius = 5f,
+            Damage = 90
+        });
+        em.SetComponentData(entity, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Idle,
+            TargetEntity = Entity.Null,
+            TargetCell = default,
+            TargetWorldPosition = default,
+            Timer = 0f,
+            SelectedRocketSlot = -1
+        });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
+    }
+
+    private static Entity CreateTarget(EntityManager em, float3 position, int health)
+    {
+        Entity entity = CreateHealthEntity(em, position, health, FactionIdentitySystem.EnemyFactionId);
+        return entity;
+    }
+
+    private static Entity CreateFriendly(EntityManager em, float3 position, int health)
+    {
+        return CreateHealthEntity(em, position, health, FactionIdentitySystem.PlayerFactionId);
+    }
+
+    private static Entity CreateHealthEntity(EntityManager em, float3 position, int health, byte factionId)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = GridUtils.WorldToCell(new GridConfig { Width = 256, Height = 256, CellSize = 1f, Origin = float3.zero }, position) });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
+    }
+}

@@ -80,7 +80,72 @@ public sealed class SelectionSummaryQuerySystemTests
         Assert.AreEqual("1 infantry / 1 vehicles", summary.Subtitle);
         Assert.AreEqual("Health: 125/200", summary.HealthText);
         Assert.AreEqual(0.625f, summary.Health01, 0.001f);
-        Assert.AreEqual(SelectionSummaryPortraitKind.MixedForce, summary.PortraitKind);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedSoldierVehicle, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedSoldierAndAircraftUsesAirInfantryPortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity soldier = CreatePlayerUnit(em, "Rifle Squad", new int2(1, 1), 50);
+        Entity aircraft = CreatePlayerUnit(em, "Attack Helicopter", new int2(2, 1), 75);
+        em.AddComponent<SelectedUnitTag>(soldier);
+        em.AddComponent<SelectedUnitTag>(aircraft);
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(1, summary.SoldierCount);
+        Assert.AreEqual(1, summary.AircraftCount);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedSoldierAircraft, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedSoldierVehicleAndAircraftUsesCombinedArmsPortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity soldier = CreatePlayerUnit(em, "Rifle Squad", new int2(1, 1), 50);
+        Entity vehicle = CreatePlayerUnit(em, "Recon Vehicle", new int2(2, 1), 75);
+        Entity aircraft = CreatePlayerUnit(em, "Attack Helicopter", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(soldier);
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponent<SelectedUnitTag>(aircraft);
+        em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(1, summary.SoldierCount);
+        Assert.AreEqual(1, summary.VehicleCount);
+        Assert.AreEqual(1, summary.AircraftCount);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedSoldierVehicleAircraft, summary.PortraitKind);
+    }
+
+    [Test]
+    public void MixedVehicleAndAircraftUsesAirVehiclePortraitKind()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity vehicle = CreatePlayerUnit(em, "Recon Vehicle", new int2(2, 1), 75);
+        Entity aircraft = CreatePlayerUnit(em, "Attack Helicopter", new int2(3, 1), 80);
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponent<SelectedUnitTag>(aircraft);
+        em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+
+        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+            em,
+            new SelectionUiQuerySystem(),
+            false);
+
+        Assert.AreEqual(1, summary.VehicleCount);
+        Assert.AreEqual(1, summary.AircraftCount);
+        Assert.AreEqual(SelectionSummaryPortraitKind.MixedVehicleAircraft, summary.PortraitKind);
     }
 
     [Test]
@@ -109,23 +174,29 @@ public sealed class SelectionSummaryQuerySystemTests
 
         Texture2D genericTexture = new Texture2D(1, 1);
         Texture2D mixedTexture = new Texture2D(1, 1);
+        Texture2D mixedAirTexture = new Texture2D(1, 1);
         Sprite genericSprite = Sprite.Create(genericTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite mixedSprite = Sprite.Create(mixedTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        Sprite mixedAirSprite = Sprite.Create(mixedAirTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         try
         {
             var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
             SetPrivateField(panel, "genericSquadPortraitSprite", genericSprite);
             SetPrivateField(panel, "mixedForcePortraitSprite", mixedSprite);
+            SetPrivateField(panel, "mixedSoldierAircraftPortraitSprite", mixedAirSprite);
 
             Assert.AreSame(genericSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers));
             Assert.AreSame(mixedSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedForce));
+            Assert.AreSame(mixedAirSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedSoldierAircraft));
         }
         finally
         {
             Object.DestroyImmediate(genericSprite);
             Object.DestroyImmediate(mixedSprite);
+            Object.DestroyImmediate(mixedAirSprite);
             Object.DestroyImmediate(genericTexture);
             Object.DestroyImmediate(mixedTexture);
+            Object.DestroyImmediate(mixedAirTexture);
         }
     }
 

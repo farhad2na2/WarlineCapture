@@ -12582,6 +12582,10 @@ MonoBehaviour:
   transportSquadPortraitSprite: {fileID: 21300000, guid: ab5e976b12f24cb59ee6bf779c667463, type: 3}
   buildingSquadPortraitSprite: {fileID: 21300000, guid: f6f9cbee6ba04c379de851460c113e6d, type: 3}
   mixedForcePortraitSprite: {fileID: 21300000, guid: 48adb2f5eafd4db797abdc1dc76d93e3, type: 3}
+  mixedSoldierVehiclePortraitSprite: {fileID: 21300000, guid: 48adb2f5eafd4db797abdc1dc76d93e3, type: 3}
+  mixedSoldierAircraftPortraitSprite: {fileID: 21300000, guid: 342c006c39704857bf89b628b5762bb9, type: 3}
+  mixedVehicleAircraftPortraitSprite: {fileID: 21300000, guid: eabe42234a604ee3861a759d61fd240f, type: 3}
+  mixedSoldierVehicleAircraftPortraitSprite: {fileID: 21300000, guid: a32458c8c0934334bf960fdf21c13d5c, type: 3}
 --- !u!1 &6764696033042498354
 GameObject:
   m_ObjectHideFlags: 0

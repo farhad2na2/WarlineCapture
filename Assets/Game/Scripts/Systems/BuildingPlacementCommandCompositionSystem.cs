@@ -105,7 +105,7 @@ internal sealed class BuildingPlacementCommandCompositionSystem
             GameRuntimeStats.RecordBuildingBuilt,
             source.BuildingGameplayDependencySystem.NotifyStaticMinimapChanged,
             _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
-            BattleHudRuntimeFeedbackSystem.ClearCommandMode);
+            source.BuildingGameplayDependencySystem.ClearCommandMode);
     }
 
     public BuildingPlacementContextSystem.Source CreateContextSource(
@@ -142,7 +142,7 @@ internal sealed class BuildingPlacementCommandCompositionSystem
             placement => validateActivePlacementForConfirm(source, interactionContext, markerPropertyBlock, placement),
             source.RuntimeResourceSystem.TrySpendDollars,
             placement => placeBuilding(source, interactionContext, markerPropertyBlock, placement),
-            () => BattleHudRuntimeFeedbackSystem.ApplyCommandMode(TacticalCommandMode.Build),
+            source.BuildingGameplayDependencySystem.ApplyBuildCommandMode,
             () => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),

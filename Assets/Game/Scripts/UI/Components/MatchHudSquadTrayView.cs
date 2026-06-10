@@ -113,12 +113,17 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour
         if (rectTransform == null)
             return false;
 
-        Canvas canvas = GetComponentInParent<Canvas>();
-        Camera eventCamera = null;
-        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            eventCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
-
+        Camera eventCamera = ResolveEventCamera();
         return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition, eventCamera);
+    }
+
+    private Camera ResolveEventCamera()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            return null;
+
+        return canvas.worldCamera;
     }
 
     private void CacheBaseFrameColors()

@@ -20,6 +20,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
     {
     };
 
+    private static readonly Dictionary<string, int> RuntimeUiDebugLogDebtAllowlist = new(StringComparer.Ordinal)
+    {
+        { "Assets/Game/Scripts/UI/GameStrings.cs|Debug.LogWarning", 1 },
+        { "Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs|Debug.LogError", 2 },
+        { "Assets/Game/Scripts/UI/Shell/UIShellRouteButtonView.cs|Debug.LogError", 1 },
+    };
+
     private static readonly HashSet<string> NonViewUiMonoBehaviourDebtAllowlist = new(StringComparer.Ordinal)
     {
         "CampListItemViewReferences",
@@ -95,6 +102,88 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Runtime scripts must not add hierarchy string lookup or Object.Find-style discovery. Add serialized references, authoring data, cached spawn references, or ECS managed references instead.");
+    }
+
+    [Test]
+    public void RuntimeScriptsMustNotUseCameraMain()
+    {
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeSourceFiles())
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                if (line.Contains("Camera.main", StringComparison.Ordinal))
+                    violations.Add($"{normalized}:{lineIndex + 1} uses Camera.main: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime scripts must not use Camera.main. Pass cameras through serialized references, scene bindings, or explicit runtime contexts.");
+    }
+
+    [Test]
+    public void RuntimeUiScriptsMustNotAddDirectDebugLogs()
+    {
+        Dictionary<string, int> occurrences = new(StringComparer.Ordinal);
+        List<string> violations = new();
+
+        foreach (string path in EnumerateSourceFiles("Assets/Game/Scripts/UI"))
+        {
+            if (IsEditorPath(path))
+                continue;
+
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                string logKind = ResolveDebugLogKind(line);
+                if (logKind == null)
+                    continue;
+
+                string key = normalized + "|" + logKind;
+                occurrences.TryGetValue(key, out int count);
+                occurrences[key] = count + 1;
+
+                int allowedCount = RuntimeUiDebugLogDebtAllowlist.TryGetValue(key, out int allowed) ? allowed : 0;
+                if (occurrences[key] > allowedCount)
+                    violations.Add($"{normalized}:{lineIndex + 1} uses {logKind}: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime UI scripts must not add direct Debug.Log* diagnostics. Use user-facing feedback, gated diagnostics, or ECS diagnostic buffers instead.");
+    }
+
+    [Test]
+    public void RuntimeScriptsMustNotAddStaticViewRegistries()
+    {
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeSourceFiles())
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                string violationKind = ResolveForbiddenStaticViewRegistryKind(line);
+                if (violationKind == null)
+                    continue;
+
+                violations.Add($"{normalized}:{lineIndex + 1} uses {violationKind}: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime scripts must not add static mutable view registries. Bind views through serialized references or explicit shell/gameplay dependency edges.");
     }
 
     [Test]
@@ -267,6 +356,44 @@ public sealed class ScriptArchitectureAlignmentContractTests
             !line.Contains(".FindProperty(", StringComparison.Ordinal))
         {
             return "HierarchyFind";
+        }
+
+        return null;
+    }
+
+    private static string ResolveDebugLogKind(string line)
+    {
+        if (line.Contains("Debug.LogException", StringComparison.Ordinal))
+            return "Debug.LogException";
+        if (line.Contains("Debug.LogError", StringComparison.Ordinal))
+            return "Debug.LogError";
+        if (line.Contains("Debug.LogWarning", StringComparison.Ordinal))
+            return "Debug.LogWarning";
+        if (line.Contains("Debug.Log", StringComparison.Ordinal))
+            return "Debug.Log";
+
+        return null;
+    }
+
+    private static string ResolveForbiddenStaticViewRegistryKind(string line)
+    {
+        if (line.Contains("ActiveView", StringComparison.Ordinal) ||
+            line.Contains("StatesByView", StringComparison.Ordinal))
+        {
+            return "StaticViewRegistry";
+        }
+
+        if (!line.Contains("static", StringComparison.Ordinal) ||
+            !line.Contains("View", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        if (line.Contains("Dictionary<", StringComparison.Ordinal) ||
+            line.Contains("List<", StringComparison.Ordinal) ||
+            line.Contains("HashSet<", StringComparison.Ordinal))
+        {
+            return "StaticViewCollection";
         }
 
         return null;

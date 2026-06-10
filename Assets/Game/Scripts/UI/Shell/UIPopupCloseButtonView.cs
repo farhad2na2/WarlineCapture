@@ -4,8 +4,14 @@ using UnityEngine;
 public sealed class UIPopupCloseButtonView : MonoBehaviour
 {
     [SerializeField] private UIPopupCloseView closeView;
+    [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
 
     public UIPopupCloseView CloseView => closeView;
+
+    public void BindRuntimeFeedback(BattleHudRuntimeFeedbackView view)
+    {
+        runtimeFeedbackView = view;
+    }
 
     private void Awake()
     {
@@ -31,11 +37,7 @@ public sealed class UIPopupCloseButtonView : MonoBehaviour
     public void ClosePopup()
     {
         if (closeView != null && closeView.CommandModeToClear != TacticalCommandMode.None)
-        {
-            BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
-            if (view != null)
-                BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(view, closeView.CommandModeToClear);
-        }
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(runtimeFeedbackView, closeView.CommandModeToClear);
 
         GameObject target = closeView != null && closeView.PopupRoot != null ? closeView.PopupRoot : gameObject;
         UIPopupMotionView motionView = target != null ? target.GetComponent<UIPopupMotionView>() : null;

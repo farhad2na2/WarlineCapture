@@ -163,12 +163,42 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     [SerializeField] private Sprite readyIcon;
     [SerializeField] private Sprite warningIcon;
     [SerializeField] private Sprite errorIcon;
+    private TacticalCommandMode _currentCommandMode = TacticalCommandMode.None;
+    private TacticalCommandMode _stickyCommandMode = TacticalCommandMode.None;
+    private TacticalCommandResult _lastCommandResult = TacticalCommandResult.Success();
+    private bool _hasLastCommandResult;
 
     public BattleHudTacticalFeedbackView TacticalFeedback => tacticalFeedback;
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
     public Image FeedbackIcon => feedbackIcon;
+    internal TacticalCommandMode CurrentCommandMode
+    {
+        get => _currentCommandMode;
+        set => _currentCommandMode = value;
+    }
+
+    internal TacticalCommandMode StickyCommandMode
+    {
+        get => _stickyCommandMode;
+        set => _stickyCommandMode = value;
+    }
+
+    internal TacticalCommandResult LastCommandResult
+    {
+        get => _lastCommandResult;
+        set => _lastCommandResult = value;
+    }
+
+    internal bool HasLastCommandResult
+    {
+        get => _hasLastCommandResult;
+        set => _hasLastCommandResult = value;
+    }
+
+    internal BattleHudRuntimeFeedbackState RuntimeFeedbackState =>
+        new(_currentCommandMode, _stickyCommandMode, _lastCommandResult, _hasLastCommandResult);
 
     private void Awake()
     {
@@ -177,13 +207,8 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 
     private void OnEnable()
     {
-        BattleHudRuntimeFeedbackSystem.SetActiveView(this);
+        ResetRuntimeFeedbackState();
         BattleHudRuntimeFeedbackSystem.ClearCommandMode(this);
-    }
-
-    private void OnDisable()
-    {
-        BattleHudRuntimeFeedbackSystem.ClearActiveView(this);
     }
 
     public void ShowFeedbackMessage(string message)
@@ -215,6 +240,14 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     {
         if (feedbackPanel != null)
             feedbackPanel.SetActive(false);
+    }
+
+    internal void ResetRuntimeFeedbackState()
+    {
+        _currentCommandMode = TacticalCommandMode.None;
+        _stickyCommandMode = TacticalCommandMode.None;
+        _lastCommandResult = TacticalCommandResult.Success();
+        _hasLastCommandResult = false;
     }
 
     private void ApplyFeedbackIcon(CommandFeedbackSeverity severity)

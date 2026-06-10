@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public readonly struct BattleHudRuntimeFeedbackState
@@ -26,65 +25,11 @@ public readonly struct BattleHudRuntimeFeedbackState
 
 public sealed class BattleHudRuntimeFeedbackSystem
 {
-    private sealed class MutableState
-    {
-        public TacticalCommandMode CurrentCommandMode = TacticalCommandMode.None;
-        public TacticalCommandMode StickyCommandMode = TacticalCommandMode.None;
-        public TacticalCommandResult LastCommandResult = TacticalCommandResult.Success();
-        public bool HasLastCommandResult;
-
-        public BattleHudRuntimeFeedbackState Snapshot()
-        {
-            return new BattleHudRuntimeFeedbackState(
-                CurrentCommandMode,
-                StickyCommandMode,
-                LastCommandResult,
-                HasLastCommandResult);
-        }
-    }
-
-    private static readonly Dictionary<BattleHudRuntimeFeedbackView, MutableState> StatesByView = new();
     private static readonly MatchOverlayCommandTabFeedbackSystem CommandTabFeedbackSystem = new();
-    private static BattleHudRuntimeFeedbackView ActiveView;
 
-    public static void SetActiveView(BattleHudRuntimeFeedbackView view)
+    public static BattleHudRuntimeFeedbackState GetState(BattleHudRuntimeFeedbackView view)
     {
-        if (view == null)
-            return;
-
-        ActiveView = view;
-        ResolveState(view);
-    }
-
-    public static void ClearActiveView(BattleHudRuntimeFeedbackView view)
-    {
-        if (view == null)
-            return;
-
-        StatesByView.Remove(view);
-        if (ReferenceEquals(ActiveView, view))
-            ActiveView = null;
-    }
-
-    public static BattleHudRuntimeFeedbackView ResolveActiveView()
-    {
-        if (IsValidView(ActiveView, requireActiveInHierarchy: true))
-            return ActiveView;
-
-        return IsValidView(ActiveView, requireActiveInHierarchy: false) ? ActiveView : null;
-    }
-
-    public static BattleHudRuntimeFeedbackState GetState(BattleHudRuntimeFeedbackView view = null)
-    {
-        view ??= ResolveActiveView();
-        return view != null && StatesByView.TryGetValue(view, out MutableState state)
-            ? state.Snapshot()
-            : BattleHudRuntimeFeedbackState.Empty;
-    }
-
-    public static void ApplySelection(string displayName, string status)
-    {
-        ApplySelection(ResolveActiveView(), displayName, status);
+        return view != null ? view.RuntimeFeedbackState : BattleHudRuntimeFeedbackState.Empty;
     }
 
     public static void ApplySelection(BattleHudRuntimeFeedbackView view, string displayName, string status)
@@ -99,14 +44,9 @@ public sealed class BattleHudRuntimeFeedbackSystem
             feedback.ShowSelectedEntity(displayName, status);
     }
 
-    public static void ClearSelection(BattleHudRuntimeFeedbackView view = null)
+    public static void ClearSelection(BattleHudRuntimeFeedbackView view)
     {
-        ResolveTacticalFeedback(view ?? ResolveActiveView())?.HideSelectedEntity();
-    }
-
-    public static void ApplyCommandMode(TacticalCommandMode mode)
-    {
-        ApplyCommandMode(ResolveActiveView(), mode);
+        ResolveTacticalFeedback(view)?.HideSelectedEntity();
     }
 
     public static void ApplyCommandMode(BattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -114,14 +54,8 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (view == null)
             return;
 
-        MutableState state = ResolveState(view);
-        state.CurrentCommandMode = mode;
+        view.CurrentCommandMode = mode;
         ApplyCommandModeVisuals(view, mode);
-    }
-
-    public static void ApplyStickyCommandMode(TacticalCommandMode mode)
-    {
-        ApplyStickyCommandMode(ResolveActiveView(), mode);
     }
 
     public static void ApplyStickyCommandMode(BattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -129,15 +63,9 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (view == null)
             return;
 
-        MutableState state = ResolveState(view);
-        state.StickyCommandMode = mode;
-        state.CurrentCommandMode = mode;
+        view.StickyCommandMode = mode;
+        view.CurrentCommandMode = mode;
         ApplyCommandModeVisuals(view, mode);
-    }
-
-    public static void ClearStickyCommandMode(TacticalCommandMode mode)
-    {
-        ClearStickyCommandMode(ResolveActiveView(), mode);
     }
 
     public static void ClearStickyCommandMode(BattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -145,17 +73,11 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (view == null)
             return;
 
-        MutableState state = ResolveState(view);
-        if (state.StickyCommandMode != mode)
+        if (view.StickyCommandMode != mode)
             return;
 
-        state.StickyCommandMode = TacticalCommandMode.None;
-        ClearCommandModeInternal(view, state);
-    }
-
-    public static void ClearCommandMode()
-    {
-        ClearCommandMode(ResolveActiveView());
+        view.StickyCommandMode = TacticalCommandMode.None;
+        ClearCommandModeInternal(view);
     }
 
     public static void ClearCommandMode(BattleHudRuntimeFeedbackView view)
@@ -163,20 +85,14 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (view == null)
             return;
 
-        MutableState state = ResolveState(view);
-        if (state.StickyCommandMode != TacticalCommandMode.None)
+        if (view.StickyCommandMode != TacticalCommandMode.None)
         {
-            state.CurrentCommandMode = state.StickyCommandMode;
-            ApplyCommandModeVisuals(view, state.StickyCommandMode);
+            view.CurrentCommandMode = view.StickyCommandMode;
+            ApplyCommandModeVisuals(view, view.StickyCommandMode);
             return;
         }
 
-        ClearCommandModeInternal(view, state);
-    }
-
-    public static void ApplyCommandResult(TacticalCommandResult result)
-    {
-        ApplyCommandResult(ResolveActiveView(), result);
+        ClearCommandModeInternal(view);
     }
 
     public static void ApplyCommandResult(BattleHudRuntimeFeedbackView view, TacticalCommandResult result)
@@ -184,14 +100,13 @@ public sealed class BattleHudRuntimeFeedbackSystem
         if (view == null)
             return;
 
-        MutableState state = ResolveState(view);
-        state.LastCommandResult = result;
-        state.HasLastCommandResult = true;
+        view.LastCommandResult = result;
+        view.HasLastCommandResult = true;
 
         if (result.Accepted)
         {
             ResolveTacticalFeedback(view)?.HideInvalidCommand();
-            MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, state);
+            MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState);
             if (!feedbackModel.Visible)
                 view.HideFeedbackMessage();
             else
@@ -210,7 +125,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
     {
         // The HUD marker layer is a static art-preview surface. Live targeting feedback
         // must come from grounded runtime markers so fixed screen-space art cannot cover units.
-        ResolveTacticalFeedback(view ?? ResolveActiveView())?.SetWorldMarkersVisible(false);
+        ResolveTacticalFeedback(view)?.SetWorldMarkersVisible(false);
     }
 
     private static void ApplyCommandModeVisuals(BattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -237,9 +152,9 @@ public sealed class BattleHudRuntimeFeedbackSystem
             feedback.ShowCommandMode(displayText);
     }
 
-    private static void ClearCommandModeInternal(BattleHudRuntimeFeedbackView view, MutableState state)
+    private static void ClearCommandModeInternal(BattleHudRuntimeFeedbackView view)
     {
-        state.CurrentCommandMode = TacticalCommandMode.None;
+        view.CurrentCommandMode = TacticalCommandMode.None;
         view.HideFeedbackMessage();
         ResolveTacticalFeedback(view)?.HideCommandMode();
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
@@ -253,7 +168,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
             TacticalCommandFeedbackText.ToInstructionSeverity(mode));
     }
 
-    private static MatchHudCommandFeedbackModel BuildCommandResultFeedback(TacticalCommandResult result, MutableState state)
+    private static MatchHudCommandFeedbackModel BuildCommandResultFeedback(TacticalCommandResult result, BattleHudRuntimeFeedbackState state)
     {
         if (!result.Accepted)
         {
@@ -301,22 +216,4 @@ public sealed class BattleHudRuntimeFeedbackSystem
             : view.GetComponent<BattleHudTacticalFeedbackView>();
     }
 
-    private static bool IsValidView(BattleHudRuntimeFeedbackView view, bool requireActiveInHierarchy)
-    {
-        return view != null &&
-            view.gameObject != null &&
-            view.gameObject.scene.IsValid() &&
-            (!requireActiveInHierarchy || view.gameObject.activeInHierarchy);
-    }
-
-    private static MutableState ResolveState(BattleHudRuntimeFeedbackView view)
-    {
-        if (!StatesByView.TryGetValue(view, out MutableState state))
-        {
-            state = new MutableState();
-            StatesByView.Add(view, state);
-        }
-
-        return state;
-    }
 }

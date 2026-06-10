@@ -41,6 +41,12 @@ public sealed class UIPopupMotionView : MonoBehaviour
     {
         ResolveReferences();
         hiding = false;
+        if (!Application.isPlaying)
+        {
+            ApplyFinalState(visibleScale, 1f);
+            return;
+        }
+
         Play(hiddenScale, visibleScale, 0f, 1f, showDurationSeconds, showEase, null);
     }
 
@@ -51,6 +57,14 @@ public sealed class UIPopupMotionView : MonoBehaviour
             return false;
 
         hiding = true;
+        if (!Application.isPlaying)
+        {
+            ApplyFinalState(hiddenScale, 0f);
+            completed?.Invoke();
+            activeRoutine = null;
+            return true;
+        }
+
         Play(
             motionRoot != null ? motionRoot.localScale : visibleScale,
             hiddenScale,

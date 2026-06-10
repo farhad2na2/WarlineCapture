@@ -11983,7 +11983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MatchHudSelectionPanelView
   selectedSquadPanel: {fileID: 6100291839165307813}
-  selectedPortraitImage: {fileID: 6802404043073543796}
+  selectedPortraitImage: {fileID: 7183310017926736872}
   titleText: {fileID: 2144751127138404243}
   subtitleText: {fileID: 5979615600717039321}
   currentOrderText: {fileID: 1570030766290541719}
@@ -14695,6 +14695,7 @@ GameObject:
   - component: {fileID: 5406923442042087610}
   - component: {fileID: 1800108208000010005}
   - component: {fileID: 1800108208000012000}
+  - component: {fileID: 1800108208000014000}
   m_Layer: 0
   m_Name: FooterContent
   m_TagString: Untagged
@@ -14747,7 +14748,6 @@ MonoBehaviour:
   commandWheelStopButton: {fileID: 0}
   commandWheelPanel: {fileID: 0}
   commandTabGroup: {fileID: 1800108208000011000}
-  buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}
 --- !u!114 &1800108208000012000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14770,6 +14770,22 @@ MonoBehaviour:
   readyIcon: {fileID: 21300000, guid: b6d975cf9eba42dfb64709b349f7d41c, type: 3}
   warningIcon: {fileID: 21300000, guid: 0d03d7a14dbb4d17beceb62011c66e6b, type: 3}
   errorIcon: {fileID: 21300000, guid: 98e0f934116a411cbdcbccc16e4dd250, type: 3}
+--- !u!114 &1800108208000014000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399705092529502062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9b1c0a05b2546f8a0fbcf6df01a8f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MatchHudFooterContentView
+  commandControls: {fileID: 1800108208000010005}
+  runtimeFeedback: {fileID: 1800108208000012000}
+  minimap: {fileID: 1800108208000013000}
+  squadTray: {fileID: 710100000000000006}
 --- !u!1 &8514835543902700259
 GameObject:
   m_ObjectHideFlags: 0

@@ -236,9 +236,9 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view, "Build drawer popup must serialize BuildDrawerView on the root.");
-        Assert.NotNull(presenter, "Build drawer popup must serialize BuildDrawerCatalogPresenterView on the root.");
+        Assert.NotNull(presenter, "Build drawer popup must serialize BuildDrawerCatalogRuntimeView on the root.");
         Assert.NotNull(view.ItemTemplate, "Build drawer must serialize its item template.");
         Assert.NotNull(view.ItemTemplate.SelectionButton, "Build drawer item template must expose a selection button.");
         Assert.NotNull(view.ItemTemplate.FrameImage, "Build drawer item template must expose a frame image for selected state.");
@@ -278,7 +278,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
 
@@ -373,7 +373,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject soldier = CreateUnit("Bomb Suit Specialist", true, false, Vector2Int.one, 0);
         unitConfig.UnitSpawnPrefabs.Add(soldier);
@@ -409,7 +409,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject vehicle = CreateUnit("Light Vehicle", true, false, new Vector2Int(2, 2), 0);
         unitConfig.UnitSpawnPrefabs.Add(vehicle);
@@ -445,7 +445,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
         GameObject building = CreateBuilding("Requestable Barracks", true, BuildingRole.MilitaryCamp, false);
         buildingConfig.Spawnables.Add(building);
@@ -486,7 +486,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject vehicle = CreateUnit("Requestable Vehicle", true, false, new Vector2Int(2, 2), 0);
         Sprite vehiclePortrait = CreateTestSprite(Color.cyan);
@@ -529,7 +529,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
         GameObject buildingPrefab = CreateBuilding("Requestable Airport", true, BuildingRole.MilitaryCamp, false);
         buildingConfig.Spawnables.Add(buildingPrefab);
@@ -578,7 +578,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject vehicle = CreateUnit("Requestable Vehicle", true, false, new Vector2Int(2, 2), 0);
         Sprite vehiclePortrait = CreateTestSprite(Color.cyan);
@@ -651,7 +651,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
         Assert.NotNull(view.ActiveItemView, "Build drawer must serialize the active queue item view.");
@@ -727,6 +727,26 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.AreEqual("3", GetSerializedReference<TMP_Text>(viewObject, "queueNumbersText").text);
         Assert.IsFalse(view.RushButton == null || view.RushButton.interactable);
         Assert.IsFalse(view.ClearButton == null || view.ClearButton.interactable);
+
+        BuildDrawerQueueItemView retainedThirdRow = activeQueueItems[2];
+        int queueChildCount = view.QueueContentRoot.childCount;
+        presenter.ApplyQueueSnapshotForTests(entries);
+        Assert.AreSame(
+            retainedThirdRow,
+            GetActiveQueueItemViews(view)[2],
+            "Refreshing an unchanged queue must retain the extra queue row instance.");
+
+        presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingUiQuerySystem.PendingProductionUiEntry>());
+        Assert.AreEqual(
+            queueChildCount,
+            view.QueueContentRoot.childCount,
+            "Clearing the queue snapshot must keep pooled queue rows inactive instead of destroying them.");
+
+        presenter.ApplyQueueSnapshotForTests(entries);
+        Assert.AreSame(
+            retainedThirdRow,
+            GetActiveQueueItemViews(view)[2],
+            "Refilling the queue must reuse the pooled extra queue row instance.");
     }
 
     [Test]
@@ -739,7 +759,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
 
@@ -785,7 +805,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
         Assert.NotNull(view.CancelButton, "Build drawer must serialize the production cancel button.");
@@ -838,7 +858,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
         Assert.NotNull(view.ClearButton, "Build drawer must serialize the production clear button.");
@@ -891,7 +911,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         _createdObjects.Add(instance);
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
 
@@ -1024,7 +1044,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         instanceRect.offsetMax = Vector2.zero;
 
         BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
-        BuildDrawerCatalogPresenterView presenter = instance.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
 

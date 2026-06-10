@@ -40,6 +40,11 @@ public sealed class SelectionHudFeedbackSystem
         _matchHudSelectionPanelView = view;
     }
 
+    public void BindBattleHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
+    {
+        _battleHudView = view;
+    }
+
     public Entity EnsureFeedbackQueue(EntityManager em)
     {
         World world = em.World;
@@ -234,10 +239,16 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
-        BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
-        if (view == null ||
-            BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
+        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        if (!HasStickyCommandMode())
             _commandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
+    }
+
+    public bool HasStickyCommandMode()
+    {
+        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        return view != null &&
+               BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode != TacticalCommandMode.None;
     }
 
     public void ClearCommandMode(Context context)
@@ -324,10 +335,6 @@ public sealed class SelectionHudFeedbackSystem
 
     private BattleHudRuntimeFeedbackView ResolveBattleHudView()
     {
-        if (_battleHudView != null)
-            return _battleHudView;
-
-        _battleHudView = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
         return _battleHudView;
     }
 }

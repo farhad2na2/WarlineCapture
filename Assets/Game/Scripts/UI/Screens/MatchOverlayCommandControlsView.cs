@@ -13,7 +13,6 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private Button commandWheelStopButton;
     [SerializeField] private CommandWheelPanelView commandWheelPanel;
     [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
-    [SerializeField] private GameObject buildDrawerPopupPrefab;
 
     public Button SelectButton => selectButton;
     public Button MoveButton => moveButton;
@@ -25,7 +24,6 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public Button CommandWheelStopButton => commandWheelStopButton;
     public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
-    public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {

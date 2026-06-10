@@ -10,7 +10,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
 
     private Action _buildCommandClicked;
     private SelectionUiCommandSystem _selectionUiCommandSystem;
-    private UIShellContentView _shellContentView;
+    private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private bool _buildButtonListenerInstalled;
 
     public Button BuildButton => buildButton;
@@ -18,7 +18,6 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     private void OnEnable()
     {
         InstallBuildButtonListener();
-        BindToParentShellContentIfNeeded();
         ClearBuildButtonSelection();
     }
 
@@ -27,10 +26,14 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         UninstallBuildButtonListener();
     }
 
-    public void BindBuildCommand(Action buildCommandClicked, SelectionUiCommandSystem selectionUiCommandSystem)
+    public void BindBuildCommand(
+        Action buildCommandClicked,
+        SelectionUiCommandSystem selectionUiCommandSystem,
+        BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
     {
         _buildCommandClicked = buildCommandClicked;
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _runtimeFeedbackView = runtimeFeedbackView;
         InstallBuildButtonListener();
         ClearBuildButtonSelection();
     }
@@ -39,6 +42,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     {
         _buildCommandClicked = null;
         _selectionUiCommandSystem = null;
+        _runtimeFeedbackView = null;
     }
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -59,7 +63,6 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
 
     private void TriggerBuildCommand()
     {
-        BindToParentShellContentIfNeeded();
         _selectionUiCommandSystem?.CaptureUiClickSequence();
 
         if (_buildCommandClicked != null)
@@ -68,18 +71,9 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
             return;
         }
 
-        Debug.LogWarning("Build drawer command clicked before the right quick rail was bound to the shell.");
-    }
-
-    private void BindToParentShellContentIfNeeded()
-    {
-        if (_buildCommandClicked != null)
-            return;
-
-        if (_shellContentView == null)
-            _shellContentView = GetComponentInParent<UIShellContentView>();
-
-        _shellContentView?.TryBindMatchHudRightQuickRailView(this);
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+            TacticalCommandReasonCode.BuildUnavailable,
+            "Build drawer is not ready."));
     }
 
     private void InstallBuildButtonListener()

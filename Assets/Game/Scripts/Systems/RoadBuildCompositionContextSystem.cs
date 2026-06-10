@@ -44,8 +44,8 @@ internal sealed class RoadBuildCompositionContextSystem
             snapshot => source.RoadBuildMutationSystem.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
             () => RemoveRuntimeBlockersUnderRoads(source),
             source.RoadMinimapEventSystem.PublishStaticMinimapChanged,
-            ApplyBuildCommandMode,
-            ClearCommandMode,
+            () => ApplyBuildCommandMode(source),
+            () => ClearCommandMode(source),
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
                 "RoadBuild.ClearSelectedBuilding"),
@@ -332,13 +332,13 @@ internal sealed class RoadBuildCompositionContextSystem
         return runtimeGridBlockers != null && runtimeGridBlockers.IsRuntimeBlockerCell(x, y, width, height);
     }
 
-    private static void ApplyBuildCommandMode()
+    private static void ApplyBuildCommandMode(RoadBuildCompositionSourceSystem source)
     {
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(TacticalCommandMode.Build);
+        source.RoadBuildDependencySystem.ApplyBuildCommandMode(source.RoadBuildDependencyState);
     }
 
-    private static void ClearCommandMode()
+    private static void ClearCommandMode(RoadBuildCompositionSourceSystem source)
     {
-        BattleHudRuntimeFeedbackSystem.ClearCommandMode();
+        source.RoadBuildDependencySystem.ClearCommandMode(source.RoadBuildDependencyState);
     }
 }

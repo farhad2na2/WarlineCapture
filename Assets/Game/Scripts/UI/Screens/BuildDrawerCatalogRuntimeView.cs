@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
+public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
 {
     private const float QueueRefreshIntervalSeconds = 0.2f;
 
@@ -30,6 +30,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     private BuildingUiCommandSystem.Context _uiCommandContext;
     private BuildingUiQuerySystem _uiQuerySystem;
     private BuildingUiQuerySystem.Context _uiQueryContext;
+    private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private Action _closeDrawer;
     private Button _primaryActionButton;
     private UnityAction _primaryActionListener;
@@ -111,11 +112,13 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
     public void BindRuntimeCommands(
         BuildingUiCommandSystem uiCommandSystem,
         BuildingUiCommandSystem.Context uiCommandContext,
-        Action closeDrawer)
+        Action closeDrawer,
+        BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
     {
         _uiCommandSystem = uiCommandSystem;
         _uiCommandContext = uiCommandContext;
         _closeDrawer = closeDrawer;
+        _runtimeFeedbackView = runtimeFeedbackView;
         WirePrimaryAction();
         WireQueueControls();
         RefreshQueue();
@@ -324,9 +327,6 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void OnPrimaryActionClicked()
     {
-        Debug.Log(
-            $"BUILD_DRAWER_PRIMARY_CLICK selected={_hasSelectedItem} item={(_hasSelectedItem ? _selectedItem.DisplayName : "<none>")} category={(_hasSelectedItem ? _selectedItem.Category.ToString() : "<none>")} commandBound={_uiCommandSystem != null} prefab={(_hasSelectedItem && _selectedItem.Prefab != null ? _selectedItem.Prefab.name : "<null>")} frame={Time.frameCount}");
-
         if (!_hasSelectedItem || _selectedItem.Prefab == null)
         {
             ApplyBuildDrawerCommandResult(BuildingUiCommandSystem.CampRequestFailure.InvalidSelection, string.Empty);
@@ -336,7 +336,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         if (_uiCommandSystem == null)
         {
             ApplyInstruction("Build drawer is still connecting. Try again in a moment.", BuildDrawerInstructionSeverity.Error);
-            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
             return;
@@ -351,41 +351,32 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
         if (failure != BuildingUiCommandSystem.CampRequestFailure.None)
         {
-            Debug.LogWarning(
-                $"BUILD_DRAWER_PRIMARY_FAILED item={_selectedItem.DisplayName} category={_selectedItem.Category} failure={failure} required={requiredBuildingDisplayName} frame={Time.frameCount}");
             ApplyBuildDrawerCommandResult(failure, requiredBuildingDisplayName);
             return;
         }
 
         if (_selectedItem.Category == BuildDrawerCategory.Buildings)
         {
-            Debug.Log(
-                $"BUILD_DRAWER_PRIMARY_SUCCESS action=Place item={_selectedItem.DisplayName} frame={Time.frameCount}");
             ApplyInstruction($"Place {_selectedItem.DisplayName}: choose a valid footprint.", BuildDrawerInstructionSeverity.Ready);
-            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
-            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success("PLACE BUILDING"));
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACE BUILDING"));
             _closeDrawer?.Invoke();
             return;
         }
 
-        Debug.Log(
-            $"BUILD_DRAWER_PRIMARY_SUCCESS action={_selectedItem.ActionLabel} item={_selectedItem.DisplayName} frame={Time.frameCount}");
         ApplyInstruction(FormatPrimarySuccessInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
         RefreshQueue();
     }
 
     private void OnCancelProductionClicked()
     {
-        Debug.Log(
-            $"BUILD_DRAWER_CANCEL_CLICK queue={_pendingProductions.Count} commandBound={_uiCommandSystem != null} frame={Time.frameCount}");
-
         if (_pendingProductions.Count == 0 ||
             _pendingProductions[0].PendingProductionIndex < 0 ||
             _uiCommandSystem == null)
         {
             ApplyInstruction("Production cancel unavailable.", BuildDrawerInstructionSeverity.Error);
-            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production cancel unavailable."));
             return;
@@ -396,14 +387,12 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             _uiCommandContext,
             active.BuildingId,
             active.PendingProductionIndex);
-        Debug.Log(
-            $"BUILD_DRAWER_CANCEL_RESULT cancelled={cancelled} building={active.BuildingId} pending={active.PendingProductionIndex} frame={Time.frameCount}");
         ApplyInstruction(cancelled
                 ? $"Cancelled {ResolveQueueDisplayName(active)}."
                 : "Production cancel unavailable.",
             cancelled ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelled
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, cancelled
             ? TacticalCommandResult.Success("PRODUCTION CANCELLED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production cancel unavailable."));
         RefreshQueue();
@@ -411,13 +400,10 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void OnClearProductionsClicked()
     {
-        Debug.Log(
-            $"BUILD_DRAWER_CLEAR_CLICK queue={_pendingProductions.Count} commandBound={_uiCommandSystem != null} frame={Time.frameCount}");
-
         if (_pendingProductions.Count == 0 || _uiCommandSystem == null)
         {
             ApplyInstruction("Production queue is empty.", BuildDrawerInstructionSeverity.Warning);
-            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production queue is empty."));
             return;
@@ -442,13 +428,11 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         }
 
         _clearProductionScratch.Clear();
-        Debug.Log(
-            $"BUILD_DRAWER_CLEAR_RESULT cancelled={cancelledCount} frame={Time.frameCount}");
         ApplyInstruction(cancelledCount > 0
                 ? "Production queue cleared."
                 : "Production clear unavailable.",
             cancelledCount > 0 ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(cancelledCount > 0
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, cancelledCount > 0
             ? TacticalCommandResult.Success("PRODUCTION QUEUE CLEARED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production clear unavailable."));
         RefreshQueue();
@@ -456,7 +440,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void RefreshQueue()
     {
-        ClearRuntimeQueueItems();
+        HideRuntimeQueueItems();
         if (view == null)
             return;
 
@@ -475,7 +459,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
     private void ApplyQueueEntries()
     {
-        ClearRuntimeQueueItems();
+        HideRuntimeQueueItems();
         if (view == null)
             return;
 
@@ -507,12 +491,16 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
 
             for (int i = 2; i < _pendingProductions.Count; i++)
             {
-                BuildDrawerQueueItemView item = Instantiate(queuedTemplate, view.QueueContentRoot, false);
+                BuildDrawerQueueItemView item = GetOrCreateRuntimeQueueItem(i - 2, queuedTemplate);
+                if (item == null)
+                    continue;
+
                 item.gameObject.name = $"ProductionItemView - {ResolveQueueDisplayName(_pendingProductions[i])}";
                 BindQueueItem(item, _pendingProductions[i], i + 1);
                 item.gameObject.SetActive(true);
-                _runtimeQueueItems.Add(item);
             }
+
+            HideUnusedRuntimeQueueItems(Mathf.Max(0, _pendingProductions.Count - 2));
         }
 
         view.ApplyQueueSummary(
@@ -744,9 +732,41 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
             activeItem.gameObject.SetActive(false);
         if (queuedTemplate != null)
             queuedTemplate.gameObject.SetActive(false);
+        HideRuntimeQueueItems();
 
         view.ApplyQueueSummary(false, 0f, string.Empty, string.Empty, string.Empty);
         view.ApplySecondaryQueueControls(false, false, false);
+    }
+
+    private BuildDrawerQueueItemView GetOrCreateRuntimeQueueItem(int poolIndex, BuildDrawerQueueItemView queuedTemplate)
+    {
+        if (poolIndex < 0 || queuedTemplate == null || view == null || view.QueueContentRoot == null)
+            return null;
+
+        while (_runtimeQueueItems.Count <= poolIndex)
+        {
+            BuildDrawerQueueItemView item = Instantiate(queuedTemplate, view.QueueContentRoot, false);
+            item.gameObject.SetActive(false);
+            _runtimeQueueItems.Add(item);
+        }
+
+        return _runtimeQueueItems[poolIndex];
+    }
+
+    private void HideRuntimeQueueItems()
+    {
+        HideUnusedRuntimeQueueItems(0);
+    }
+
+    private void HideUnusedRuntimeQueueItems(int usedCount)
+    {
+        int clampedUsedCount = Mathf.Clamp(usedCount, 0, _runtimeQueueItems.Count);
+        for (int i = clampedUsedCount; i < _runtimeQueueItems.Count; i++)
+        {
+            BuildDrawerQueueItemView item = _runtimeQueueItems[i];
+            if (item != null)
+                item.gameObject.SetActive(false);
+        }
     }
 
     private void BindQueueItem(BuildDrawerQueueItemView item, BuildingUiQuerySystem.PendingProductionUiEntry entry, int queueNumber)
@@ -808,7 +828,7 @@ public sealed class BuildDrawerCatalogPresenterView : MonoBehaviour
         TacticalCommandReasonCode reason = failure == BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney
             ? TacticalCommandReasonCode.InsufficientResources
             : TacticalCommandReasonCode.BuildUnavailable;
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(TacticalCommandResult.Rejected(
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
             reason,
             FormatFailureMessage(failure, requiredBuildingDisplayName)));
     }

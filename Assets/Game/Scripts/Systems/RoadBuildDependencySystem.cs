@@ -40,4 +40,14 @@ internal sealed class RoadBuildDependencySystem
         if (runtimeGridBlockers != null)
             state.RuntimeGridBlockers = runtimeGridBlockers;
     }
+
+    public void ApplyBuildCommandMode(State state)
+    {
+        state?.MainMenuPlayUi?.ApplyMatchHudCommandMode(TacticalCommandMode.Build);
+    }
+
+    public void ClearCommandMode(State state)
+    {
+        state?.MainMenuPlayUi?.ClearMatchHudCommandMode();
+    }
 }

@@ -61,8 +61,6 @@ public sealed class UIShellRouteButtonView : MonoBehaviour
             Route = route,
             PushHistory = pushHistory ? (byte)1 : (byte)0
         });
-
-        Debug.Log($"[UiShellRoute] submitted intent={intent} route={route} pushHistory={(pushHistory ? 1 : 0)}");
     }
 
     private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

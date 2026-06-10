@@ -65,7 +65,6 @@ public sealed class UIShellCurrentContentLoadTests
     [TearDown]
     public void TearDown()
     {
-        BattleHudRuntimeFeedbackSystem.ClearActiveView(BattleHudRuntimeFeedbackSystem.ResolveActiveView());
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
         if (_world == null)
             return;
@@ -126,10 +125,11 @@ public sealed class UIShellCurrentContentLoadTests
         GameObject matchLeft = AssertRegionHasChild(content.ShellView, UIShellRegionId.LeftRegion);
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
         Assert.NotNull(matchLeft.GetComponent<MatchHudSelectionPanelView>());
-        Assert.NotNull(matchFooter.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true));
-        Assert.NotNull(matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
-        Assert.NotNull(matchFooter.GetComponentInChildren<MatchHudMinimapView>(true));
-        Assert.NotNull(matchFooter.GetComponentInChildren<MatchHudSquadTrayView>(true));
+        MatchHudFooterContentView footerView = AssertMatchHudFooterView(matchFooter);
+        Assert.NotNull(footerView.RuntimeFeedback);
+        Assert.NotNull(footerView.CommandControls);
+        Assert.NotNull(footerView.Minimap);
+        Assert.NotNull(footerView.SquadTray);
         BuildPlacementConfirmationBarView placementBar =
             content.ShellView.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
         Assert.NotNull(placementBar, "Match HUD install must instantiate the build placement confirmation bar.");
@@ -157,8 +157,7 @@ public sealed class UIShellCurrentContentLoadTests
         });
 
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
-        MatchOverlayCommandControlsView controls =
-            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
         content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem());
@@ -206,6 +205,37 @@ public sealed class UIShellCurrentContentLoadTests
     }
 
     [Test]
+    public void InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        BattleHudRuntimeFeedbackView runtimeFeedback = AssertMatchHudFooterView(matchFooter).RuntimeFeedback;
+        Assert.NotNull(runtimeFeedback);
+
+        var feedback = new SelectionHudFeedbackSystem();
+        var mainMenuPlayUi = new MainMenuPlayUI();
+        mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackBinding(feedback.BindBattleHudRuntimeFeedback);
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenuPlayUi);
+
+        feedback.ApplyCommandMode(_world.EntityManager, TacticalCommandMode.Move);
+
+        Assert.IsTrue(runtimeFeedback.FeedbackPanel.activeSelf);
+        Assert.AreEqual("Choose destination.", runtimeFeedback.FeedbackText.text);
+    }
+
+    [Test]
     public void RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup()
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
@@ -218,9 +248,12 @@ public sealed class UIShellCurrentContentLoadTests
         });
 
         GameObject matchRight = AssertRegionHasChild(content.ShellView, UIShellRegionId.RightRegion);
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
         MatchHudRightQuickRailView quickRail = matchRight.GetComponent<MatchHudRightQuickRailView>();
+        BattleHudRuntimeFeedbackView runtimeFeedback = AssertMatchHudFooterView(matchFooter).RuntimeFeedback;
         Assert.NotNull(quickRail, "RightContent must own MatchHudRightQuickRailView for serialized quick rail button bindings.");
         Assert.NotNull(quickRail.BuildButton, "Right quick rail Build button must be serialized.");
+        Assert.NotNull(runtimeFeedback, "Match HUD footer must expose explicit runtime feedback for command state checks.");
         Canvas.ForceUpdateCanvases();
         AssertButtonHasInteractiveRect(
             quickRail.BuildButton,
@@ -240,7 +273,7 @@ public sealed class UIShellCurrentContentLoadTests
             "Right quick rail Build button must not start in Unity selected state after Match HUD binding.");
         Assert.AreNotEqual(
             TacticalCommandMode.Build,
-            BattleHudRuntimeFeedbackSystem.GetState().CurrentCommandMode,
+            BattleHudRuntimeFeedbackSystem.GetState(runtimeFeedback).CurrentCommandMode,
             "Build command mode must not be active by default when the Match HUD loads.");
 
         Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);
@@ -252,7 +285,6 @@ public sealed class UIShellCurrentContentLoadTests
             gameplayUiSource,
             "Runtime UI hit filter should identify the moved Build button as the right quick rail.");
 
-        quickRail.UnbindBuildCommand();
         AssertPointerClickDispatchesToButton(scene, quickRail.BuildButton);
 
         GameObject popup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
@@ -299,8 +331,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         Assert.Greater(content.ContentVersion, beforeInstallVersion, "Installing Match HUD content must advance the shell content version.");
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
-        MatchOverlayCommandControlsView controls =
-            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
         controls.MoveButton.onClick.Invoke();
@@ -327,8 +358,7 @@ public sealed class UIShellCurrentContentLoadTests
         });
 
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
-        MatchOverlayCommandControlsView controls =
-            matchFooter.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
         var staleInputSystem = new MatchOverlayCommandInputSystem();
@@ -379,6 +409,15 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(region.ContentRoot, $"{regionId} must have a content root.");
         Assert.Greater(region.ContentRoot.childCount, 0, $"{regionId} should contain installed content.");
         return region.ContentRoot.GetChild(0).gameObject;
+    }
+
+    private static MatchHudFooterContentView AssertMatchHudFooterView(GameObject matchFooter)
+    {
+        MatchHudFooterContentView footerView = matchFooter.GetComponent<MatchHudFooterContentView>();
+        Assert.NotNull(
+            footerView,
+            "Match HUD FooterContent must own MatchHudFooterContentView so shell runtime binding uses serialized references.");
+        return footerView;
     }
 
     private static void AssertRegionIsEmpty(UIShellView shell, UIShellRegionId regionId)
@@ -538,6 +577,15 @@ public sealed class UIShellCurrentContentLoadTests
     private static void AssertPlacementBarSpritesAssigned(BuildPlacementConfirmationBarView view)
     {
         SerializedObject serialized = new(view);
+        AssertSerializedReference(serialized, "root");
+        AssertSerializedReference(serialized, "titleText");
+        AssertSerializedReference(serialized, "statusText");
+        AssertSerializedReference(serialized, "costText");
+        AssertSerializedReference(serialized, "durationText");
+        AssertSerializedReference(serialized, "instructionText");
+        AssertSerializedReference(serialized, "cancelButton");
+        AssertSerializedReference(serialized, "rotateButton");
+        AssertSerializedReference(serialized, "confirmButton");
         AssertSerializedReference(serialized, "panelFrameSprite");
         AssertSerializedReference(serialized, "statusChipSprite");
         AssertSerializedReference(serialized, "secondaryButtonSprite");

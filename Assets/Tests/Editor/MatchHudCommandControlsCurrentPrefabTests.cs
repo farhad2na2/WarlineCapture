@@ -52,7 +52,6 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         AssertButton(controls.HoldButton, "Hold");
         AssertButton(controls.StopButton, "Stop");
         Assert.NotNull(controls.CommandTabGroup, "Command tab group must be serialized so runtime code avoids hierarchy lookup.");
-        Assert.NotNull(controls.BuildDrawerPopupPrefab, "Build drawer popup prefab must be serialized on the command controls view.");
     }
 
     [Test]

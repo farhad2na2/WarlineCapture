@@ -44,8 +44,6 @@ public sealed class MatchHudCommandFeedbackPanelTests
         SetPrivateField(view, "warningIcon", warning);
         SetPrivateField(view, "errorIcon", error);
 
-        BattleHudRuntimeFeedbackSystem.SetActiveView(view);
-
         BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Attack);
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Tap hostile target.", text.text);

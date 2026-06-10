@@ -165,7 +165,6 @@ public sealed class ArmoryContentListView : MonoBehaviour
 
         UnityEngine.Events.UnityAction action = () =>
         {
-            Debug.Log($"[ArmoryItemView] click displayName={model.DisplayName} category={model.Category} frame={Time.frameCount} inspectionPanel={(inspectionPanel != null ? inspectionPanel.name : "null")}");
             BindInspectionPanel(model);
             SetSelectedItem(item);
         };

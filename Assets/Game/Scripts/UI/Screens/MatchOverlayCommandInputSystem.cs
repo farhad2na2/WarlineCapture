@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -11,6 +10,7 @@ public sealed class MatchOverlayCommandInputSystem
     public void Bind(
         MatchOverlayCommandControlsView view,
         SelectionUiCommandSystem selectionUiCommandSystem,
+        BattleHudRuntimeFeedbackView runtimeFeedbackView = null,
         Action showBuildDrawer = null,
         Action closeBuildDrawer = null)
     {
@@ -20,7 +20,7 @@ public sealed class MatchOverlayCommandInputSystem
         Unbind(view);
         ResetCommandControlRuntimeListeners(view);
 
-        var binding = new Binding(view, selectionUiCommandSystem, showBuildDrawer, closeBuildDrawer);
+        var binding = new Binding(view, selectionUiCommandSystem, runtimeFeedbackView, showBuildDrawer, closeBuildDrawer);
         binding.Bind();
         _bindings.Add(view, binding);
     }
@@ -62,6 +62,7 @@ public sealed class MatchOverlayCommandInputSystem
     {
         private readonly MatchOverlayCommandControlsView _view;
         private readonly SelectionUiCommandSystem _selectionUiCommandSystem;
+        private readonly BattleHudRuntimeFeedbackView _runtimeFeedbackView;
         private readonly Action _showBuildDrawer;
         private readonly Action _closeBuildDrawer;
         private readonly List<TabButtonBinding> _tabButtonBindings = new();
@@ -74,11 +75,13 @@ public sealed class MatchOverlayCommandInputSystem
         public Binding(
             MatchOverlayCommandControlsView view,
             SelectionUiCommandSystem selectionUiCommandSystem,
+            BattleHudRuntimeFeedbackView runtimeFeedbackView,
             Action showBuildDrawer,
             Action closeBuildDrawer)
         {
             _view = view;
             _selectionUiCommandSystem = selectionUiCommandSystem;
+            _runtimeFeedbackView = runtimeFeedbackView;
             _showBuildDrawer = showBuildDrawer;
             _closeBuildDrawer = closeBuildDrawer;
         }
@@ -175,19 +178,25 @@ public sealed class MatchOverlayCommandInputSystem
                     : _selectionUiCommandSystem.RequestExitSelectionMode());
 
             if (!queued)
-                Debug.LogWarning("MATCHHUD_SELECT_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Selection command unavailable."));
         }
 
         private void OnBuildButtonClicked()
         {
             if (_showBuildDrawer != null)
+            {
                 _showBuildDrawer.Invoke();
-            else
-                InstallBuildDrawerPopupFallback();
+                _tabVisualSystem?.Select(_buildCommandTab);
+                _buildDrawerOpen = true;
+                BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+                return;
+            }
 
-            _tabVisualSystem?.Select(_buildCommandTab);
-            _buildDrawerOpen = true;
-            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.BuildUnavailable,
+                "Build drawer is not ready."));
         }
 
         private void OnMoveButtonClicked()
@@ -196,7 +205,9 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestMoveCommandMode();
 
             if (!queued)
-                Debug.LogWarning("MATCHHUD_MOVE_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Move command unavailable."));
         }
 
         private void OnAttackButtonClicked()
@@ -205,7 +216,9 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestAttackCommandMode();
 
             if (!queued)
-                Debug.LogWarning("MATCHHUD_ATTACK_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Attack command unavailable."));
         }
 
         private void OnScanButtonClicked()
@@ -216,7 +229,9 @@ public sealed class MatchOverlayCommandInputSystem
                 _selectionUiCommandSystem.RequestScanCommandMode();
 
             if (!queued)
-                Debug.LogWarning("MATCHHUD_SCAN_CLICK_FAILED reason=SelectionCommandQueueUnavailable");
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Scan command unavailable."));
         }
 
         private void CloseBuildDrawerIfOpen()
@@ -226,83 +241,9 @@ public sealed class MatchOverlayCommandInputSystem
 
             if (_closeBuildDrawer != null)
                 _closeBuildDrawer.Invoke();
-            else
-                CloseBuildDrawerPopupFallback();
 
             _buildDrawerOpen = false;
-            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
-        }
-
-        private void InstallBuildDrawerPopupFallback()
-        {
-            GameObject prefab = _view.BuildDrawerPopupPrefab;
-            if (prefab == null)
-                return;
-
-            Transform parent = ResolvePopupParent();
-            if (parent == null)
-                return;
-
-            for (int i = parent.childCount - 1; i >= 0; i--)
-            {
-                Transform child = parent.GetChild(i);
-                if (child != null && child.name == prefab.name)
-                    DestroyObject(child.gameObject);
-            }
-
-            GameObject instance = UnityEngine.Object.Instantiate(prefab, parent, false);
-            instance.name = prefab.name;
-            Stretch(instance.GetComponent<RectTransform>());
-        }
-
-        private void CloseBuildDrawerPopupFallback()
-        {
-            GameObject prefab = _view.BuildDrawerPopupPrefab;
-            if (prefab == null)
-                return;
-
-            Transform parent = ResolvePopupParent();
-            if (parent == null)
-                return;
-
-            for (int i = parent.childCount - 1; i >= 0; i--)
-            {
-                Transform child = parent.GetChild(i);
-                if (child != null && child.name == prefab.name)
-                    DestroyObject(child.gameObject);
-            }
-        }
-
-        private Transform ResolvePopupParent()
-        {
-            Canvas canvas = _view.GetComponentInParent<Canvas>();
-            if (canvas != null)
-                return canvas.transform;
-
-            return _view.transform.root;
-        }
-
-        private static void Stretch(RectTransform rectTransform)
-        {
-            if (rectTransform == null)
-                return;
-
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-            rectTransform.localScale = Vector3.one;
-        }
-
-        private static void DestroyObject(UnityEngine.Object target)
-        {
-            if (target == null)
-                return;
-
-            if (Application.isPlaying)
-                UnityEngine.Object.Destroy(target);
-            else
-                UnityEngine.Object.DestroyImmediate(target);
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
         }
 
         private void OnHoldButtonClicked()

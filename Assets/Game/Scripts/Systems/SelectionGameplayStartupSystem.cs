@@ -99,7 +99,6 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionScanCommandRequestSystem = new SelectionScanCommandRequestSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
         var selectionHudFeedbackSystem = new SelectionHudFeedbackSystem();
-        var matchOverlayCommandTabFeedbackSystem = new MatchOverlayCommandTabFeedbackSystem();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleSystem();
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
@@ -151,6 +150,7 @@ internal sealed class SelectionGameplayStartupSystem
             buildingPlacementInteractionSystem = buildingInteraction;
             buildingPlacementInteractionContext = buildingInteractionContext;
             mainMenuPlayUi?.ConfigureMatchHudSelectionPanelBinding(BindMatchHudSelectionPanel);
+            mainMenuPlayUi?.ConfigureMatchHudRuntimeFeedbackBinding(BindBattleHudRuntimeFeedback);
             mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
         }
 
@@ -163,6 +163,11 @@ internal sealed class SelectionGameplayStartupSystem
                 () => selectionUiCommand.RequestReturnToBase(),
                 () => selectionUiCommand.RequestDestroyFocusedUnit(),
                 RequestBoardNearestSoldiersFromPanel);
+        }
+
+        void BindBattleHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
+        {
+            selectionHudFeedbackSystem.BindBattleHudRuntimeFeedback(view);
         }
 
         void RequestBoardNearestSoldiersFromPanel()
@@ -723,10 +728,6 @@ internal sealed class SelectionGameplayStartupSystem
         {
             rtsSelectionInputSystem.ClearActiveCommandMode();
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
-            if (view == null ||
-                BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
-                matchOverlayCommandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
         }
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")

@@ -21,6 +21,9 @@ public sealed class UIShellContentView : MonoBehaviour
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private MatchHudSelectionPanelView _matchHudSelectionPanelView;
+    private MatchOverlayCommandControlsView _matchHudCommandControlsView;
+    private MatchHudFooterContentView _matchHudFooterContentView;
     private MatchHudRightQuickRailView _rightQuickRailView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private Button _rightQuickRailBuildButton;
@@ -91,12 +94,9 @@ public sealed class UIShellContentView : MonoBehaviour
         _buildingUiCommandContext = buildingUiCommandContext;
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
-        BindMatchHudSelectionPanelInRegion();
-        BindMatchHudCommandControlsInRegion();
-        BindMatchHudRightQuickRailInRegion();
-        BindMatchHudRuntimeFeedbackInRegion();
-        BindMatchHudMinimapInRegion();
-        BindMatchHudSquadTrayInRegion();
+        BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
+        BindMatchHudFooter(_matchHudFooterContentView);
+        BindMatchHudRightQuickRail(_rightQuickRailView);
         BindBuildPlacementConfirmationBarInRegion();
     }
 
@@ -111,18 +111,11 @@ public sealed class UIShellContentView : MonoBehaviour
 
     public bool TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView view)
     {
-        view = null;
-        if (!TryGetRegionContentRoot(UIShellRegionId.LeftRegion, out RectTransform contentRoot) ||
-            contentRoot.childCount == 0)
-        {
-            return false;
-        }
-
-        view = contentRoot.GetChild(0).GetComponent<MatchHudSelectionPanelView>();
+        view = _matchHudSelectionPanelView;
         return view != null;
     }
 
-    public bool TryBindMatchHudRightQuickRailView(MatchHudRightQuickRailView view)
+    private bool TryBindMatchHudRightQuickRailView(MatchHudRightQuickRailView view)
     {
         if (view == null || view.BuildButton == null)
             return false;
@@ -132,7 +125,10 @@ public sealed class UIShellContentView : MonoBehaviour
 
         _rightQuickRailView = view;
         _rightQuickRailBuildButton = view.BuildButton;
-        _rightQuickRailView.BindBuildCommand(OpenBuildDrawerFromRightQuickRail, _selectionUiCommandSystem);
+        _rightQuickRailView.BindBuildCommand(
+            OpenBuildDrawerFromRightQuickRail,
+            _selectionUiCommandSystem,
+            ResolveMatchHudRuntimeFeedback());
         _mainMenuPlayUi?.BindMatchHudRightQuickRail(view);
         return true;
     }
@@ -201,89 +197,38 @@ public sealed class UIShellContentView : MonoBehaviour
         ClearRegion(UIShellRegionId.MenuBackgroundRegion);
         InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
         GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
-        BindMatchHudSelectionPanel(left);
+        _matchHudSelectionPanelView = left != null ? left.GetComponent<MatchHudSelectionPanelView>() : null;
+        BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
         GameObject right = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
+        _rightQuickRailView = right != null ? right.GetComponent<MatchHudRightQuickRailView>() : null;
         GameObject footer = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
-        BindMatchHudCommandControls(footer);
-        BindMatchHudRightQuickRail(right);
-        BindMatchHudRuntimeFeedback(footer);
-        BindMatchHudMinimap(footer);
-        BindMatchHudSquadTray(footer);
+        _matchHudFooterContentView = footer != null ? footer.GetComponent<MatchHudFooterContentView>() : null;
+        BindMatchHudFooter(_matchHudFooterContentView);
+        BindMatchHudRightQuickRail(_rightQuickRailView);
         BindBuildPlacementConfirmationBar(footer);
         ClearRegion(UIShellRegionId.MiddleRegion);
     }
 
-    private void BindMatchHudSelectionPanelInRegion()
+    private void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
     {
-        if (!TryGetRegionContentRoot(UIShellRegionId.LeftRegion, out RectTransform contentRoot) ||
-            contentRoot.childCount == 0)
-            return;
-
-        BindMatchHudSelectionPanel(contentRoot.GetChild(0).gameObject);
-    }
-
-    private void BindMatchHudSelectionPanel(GameObject leftContent)
-    {
-        if (leftContent == null)
-            return;
-
-        MatchHudSelectionPanelView view = leftContent.GetComponent<MatchHudSelectionPanelView>();
         view?.HideSelection();
         _mainMenuPlayUi?.BindMatchHudSelectionPanel(view);
         _bindMatchHudSelectionPanel?.Invoke(view);
     }
 
-    private void BindMatchHudCommandControlsInRegion()
+    private void BindMatchHudFooter(MatchHudFooterContentView footer)
     {
-        if (!TryGetRegionContentRoot(UIShellRegionId.FooterRegion, out RectTransform contentRoot))
-            return;
-
-        MatchOverlayCommandControlsView view = contentRoot.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
-        if (view != null)
-        {
-            _matchOverlayCommandInputSystem.Bind(
-                view,
-                _selectionUiCommandSystem,
-                () => InstallBuildDrawerPopup(),
-                CloseBuildDrawerPopup);
-            _mainMenuPlayUi?.BindMatchHudCommandControls(view);
-        }
+        _matchHudCommandControlsView = footer != null ? footer.CommandControls : null;
+        BindMatchHudCommandControls(_matchHudCommandControlsView);
+        BindMatchHudRuntimeFeedback(footer != null ? footer.RuntimeFeedback : null);
+        BindMatchHudMinimap(footer != null ? footer.Minimap : null);
+        BindMatchHudSquadTray(footer != null ? footer.SquadTray : null);
     }
 
-    private void BindMatchHudRightQuickRailInRegion()
-    {
-        if (!TryGetRegionContentRoot(UIShellRegionId.RightRegion, out RectTransform contentRoot) ||
-            contentRoot.childCount == 0)
-        {
-            return;
-        }
-
-        BindMatchHudRightQuickRail(contentRoot.GetChild(0).gameObject);
-    }
-
-    private void BindMatchHudRightQuickRail(GameObject rightContent)
+    private void BindMatchHudRightQuickRail(MatchHudRightQuickRailView view)
     {
         UnbindRightQuickRailBuildButton();
-        if (rightContent == null)
-            return;
-
-        MatchHudRightQuickRailView view = rightContent.GetComponent<MatchHudRightQuickRailView>();
-        if (view == null)
-            return;
-
-        if (view.BuildButton == null)
-        {
-            Debug.LogWarning(
-                $"Right quick rail build command is missing its Button reference on {rightContent.name}.");
-            return;
-        }
-
         TryBindMatchHudRightQuickRailView(view);
-
-        if (!HasRaycastableGraphic(_rightQuickRailBuildButton))
-        {
-            Debug.LogWarning("Right quick rail build command has no raycastable Graphic target.");
-        }
     }
 
     private void UnbindRightQuickRailBuildButton()
@@ -299,64 +244,20 @@ public sealed class UIShellContentView : MonoBehaviour
         _selectionUiCommandSystem?.CaptureUiClickSequence();
         if (_buildDrawerPopupInstance != null)
         {
-            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
             return;
         }
 
         GameObject popup = InstallBuildDrawerPopup();
         if (popup == null)
         {
-            Debug.LogWarning("Build drawer popup could not be installed.");
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.BuildUnavailable,
+                "Build drawer is not ready."));
             return;
         }
 
-        BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
-    }
-
-    private static bool HasRaycastableGraphic(Button button)
-    {
-        if (button == null)
-            return false;
-
-        Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
-        for (int i = 0; i < graphics.Length; i++)
-        {
-            Graphic graphic = graphics[i];
-            if (graphic != null && graphic.raycastTarget)
-                return true;
-        }
-
-        return false;
-    }
-
-    private void BindMatchHudRuntimeFeedbackInRegion()
-    {
-        if (!TryGetRegionContentRoot(UIShellRegionId.FooterRegion, out RectTransform contentRoot))
-            return;
-
-        BattleHudRuntimeFeedbackView view = contentRoot.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
-        if (view != null)
-            BattleHudRuntimeFeedbackSystem.SetActiveView(view);
-    }
-
-    private void BindMatchHudMinimapInRegion()
-    {
-        if (!TryGetRegionContentRoot(UIShellRegionId.FooterRegion, out RectTransform contentRoot))
-            return;
-
-        MatchHudMinimapView view = contentRoot.GetComponentInChildren<MatchHudMinimapView>(true);
-        if (view != null)
-            _mainMenuPlayUi?.BindMatchHudMinimap(view);
-    }
-
-    private void BindMatchHudSquadTrayInRegion()
-    {
-        if (!TryGetRegionContentRoot(UIShellRegionId.FooterRegion, out RectTransform contentRoot))
-            return;
-
-        MatchHudSquadTrayView view = contentRoot.GetComponentInChildren<MatchHudSquadTrayView>(true);
-        if (view != null)
-            _mainMenuPlayUi?.BindMatchHudSquadTray(view);
+        BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
     }
 
     private void BindBuildPlacementConfirmationBarInRegion()
@@ -368,49 +269,40 @@ public sealed class UIShellContentView : MonoBehaviour
         BindBuildPlacementConfirmationBar(contentRoot.gameObject);
     }
 
-    private void BindMatchHudCommandControls(GameObject footer)
+    private void BindMatchHudCommandControls(MatchOverlayCommandControlsView view)
     {
-        if (footer == null)
-            return;
-
-        MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
         if (view != null)
         {
             _matchOverlayCommandInputSystem.Bind(
                 view,
                 _selectionUiCommandSystem,
+                _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
                 () => InstallBuildDrawerPopup(),
                 CloseBuildDrawerPopup);
             _mainMenuPlayUi?.BindMatchHudCommandControls(view);
         }
     }
 
-    private static void BindMatchHudRuntimeFeedback(GameObject footer)
+    private void BindMatchHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
     {
-        if (footer == null)
-            return;
-
-        BattleHudRuntimeFeedbackView view = footer.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
         if (view != null)
-            BattleHudRuntimeFeedbackSystem.SetActiveView(view);
+        {
+            _mainMenuPlayUi?.BindMatchHudRuntimeFeedback(view);
+        }
+        else
+        {
+            _mainMenuPlayUi?.BindMatchHudRuntimeFeedback(null);
+        }
     }
 
-    private void BindMatchHudMinimap(GameObject footer)
+    private void BindMatchHudMinimap(MatchHudMinimapView view)
     {
-        if (footer == null)
-            return;
-
-        MatchHudMinimapView view = footer.GetComponentInChildren<MatchHudMinimapView>(true);
         if (view != null)
             _mainMenuPlayUi?.BindMatchHudMinimap(view);
     }
 
-    private void BindMatchHudSquadTray(GameObject footer)
+    private void BindMatchHudSquadTray(MatchHudSquadTrayView view)
     {
-        if (footer == null)
-            return;
-
-        MatchHudSquadTrayView view = footer.GetComponentInChildren<MatchHudSquadTrayView>(true);
         if (view != null)
             _mainMenuPlayUi?.BindMatchHudSquadTray(view);
     }
@@ -428,7 +320,10 @@ public sealed class UIShellContentView : MonoBehaviour
             return;
 
         _buildPlacementConfirmationBarView.transform.SetAsLastSibling();
-        _buildPlacementConfirmationBarView?.BindRuntimeCommands(_buildingUiCommandSystem, _buildingUiCommandContext);
+        _buildPlacementConfirmationBarView?.BindRuntimeCommands(
+            _buildingUiCommandSystem,
+            _buildingUiCommandContext,
+            ResolveMatchHudRuntimeFeedback());
         _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
     }
 
@@ -452,18 +347,21 @@ public sealed class UIShellContentView : MonoBehaviour
         bool hasActivePlacement = _buildingUiCommandSystem != null &&
                                   _buildingUiCommandSystem.HasPendingBuildingPlacement(_buildingUiCommandContext);
         if (!hasActivePlacement)
-            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
 
         if (popup != null)
         {
-            UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
-            if (motionView != null && motionView.PlayHide(() =>
-                {
-                    DestroyRegionObject(popup);
-                    MarkContentChanged();
-                }))
+            if (Application.isPlaying)
             {
-                return;
+                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+                if (motionView != null && motionView.PlayHide(() =>
+                    {
+                        DestroyRegionObject(popup);
+                        MarkContentChanged();
+                    }))
+                {
+                    return;
+                }
             }
 
             DestroyRegionObject(popup);
@@ -477,6 +375,11 @@ public sealed class UIShellContentView : MonoBehaviour
         _mainMenuPlayUi?.BindBuildDrawer(view);
     }
 
+    private BattleHudRuntimeFeedbackView ResolveMatchHudRuntimeFeedback()
+    {
+        return _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null;
+    }
+
     private void BindBuildDrawerPopupCloseButton(GameObject popup)
     {
         if (popup == null)
@@ -484,14 +387,16 @@ public sealed class UIShellContentView : MonoBehaviour
 
         UIPopupCloseButtonView directCloseView = popup.GetComponent<UIPopupCloseButtonView>();
         if (directCloseView != null)
+        {
+            directCloseView.BindRuntimeFeedback(_matchHudFooterContentView != null
+                ? _matchHudFooterContentView.RuntimeFeedback
+                : null);
             directCloseView.enabled = false;
+        }
 
         UIPopupCloseView closeView = popup.GetComponent<UIPopupCloseView>();
         if (closeView == null || closeView.CloseButton == null)
-        {
-            Debug.LogWarning("Build drawer popup is missing its close button binding.");
             return;
-        }
 
         _buildDrawerPopupCloseButton = closeView.CloseButton;
         _buildDrawerPopupCloseButtonListener = CloseBuildDrawerPopup;
@@ -504,14 +409,15 @@ public sealed class UIShellContentView : MonoBehaviour
         if (popup == null)
             return;
 
-        BuildDrawerCatalogPresenterView presenter = popup.GetComponent<BuildDrawerCatalogPresenterView>();
+        BuildDrawerCatalogRuntimeView presenter = popup.GetComponent<BuildDrawerCatalogRuntimeView>();
         if (presenter == null)
             return;
 
         presenter.BindRuntimeCommands(
             _buildingUiCommandSystem,
             _buildingUiCommandContext,
-            CloseBuildDrawerPopup);
+            CloseBuildDrawerPopup,
+            ResolveMatchHudRuntimeFeedback());
         presenter.BindRuntimeQueries(
             _buildingUiQuerySystem,
             _buildingUiQueryContext);
@@ -562,6 +468,12 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         if (regionId == UIShellRegionId.RightRegion)
             UnbindRightQuickRailBuildButton();
+        else if (regionId == UIShellRegionId.LeftRegion)
+        {
+            _matchHudSelectionPanelView = null;
+            _mainMenuPlayUi?.BindMatchHudSelectionPanel(null);
+            _bindMatchHudSelectionPanel?.Invoke(null);
+        }
         else if (regionId == UIShellRegionId.PopupLayer)
         {
             UnbindBuildDrawerPopupCloseButton();
@@ -579,7 +491,13 @@ public sealed class UIShellContentView : MonoBehaviour
         if (regionId == UIShellRegionId.FooterRegion)
         {
             _buildPlacementConfirmationBarView = null;
+            _matchHudFooterContentView = null;
+            _matchHudCommandControlsView = null;
             _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(null);
+            _mainMenuPlayUi?.BindMatchHudCommandControls(null);
+            _mainMenuPlayUi?.BindMatchHudRuntimeFeedback(null);
+            _mainMenuPlayUi?.BindMatchHudMinimap(null);
+            _mainMenuPlayUi?.BindMatchHudSquadTray(null);
         }
     }
 

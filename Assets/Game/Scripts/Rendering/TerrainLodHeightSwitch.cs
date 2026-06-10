@@ -96,13 +96,6 @@ public sealed class TerrainLodHeightSwitch : MonoBehaviour
         if (_resolvedCamera != null && _resolvedCamera.isActiveAndEnabled)
             return _resolvedCamera;
 
-        Camera main = Camera.main;
-        if (main != null && main.isActiveAndEnabled)
-        {
-            _resolvedCamera = main;
-            return _resolvedCamera;
-        }
-
         Camera[] cameras = Camera.allCameras;
         for (int i = 0; i < cameras.Length; i++)
         {

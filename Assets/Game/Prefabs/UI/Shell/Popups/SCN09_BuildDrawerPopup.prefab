@@ -16247,7 +16247,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79aa257b201d42dca56557f869b1edb1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerCatalogPresenterView
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDrawerCatalogRuntimeView
   view: {fileID: 5121146197482808315}
   unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
   buildingPlacementConfig: {fileID: 11400000, guid: b2010000000000000000000000000004, type: 2}

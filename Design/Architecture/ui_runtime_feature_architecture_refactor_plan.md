@@ -45,14 +45,14 @@ The recent features are partially aligned:
 - Match command buttons route through `SelectionUiCommandSystem`.
 - Most UI elements are `*View` types with serialized fields.
 
-Known drift:
+Resolved drift:
 
-- `BattleHudRuntimeFeedbackSystem` owns static mutable view state.
-- `BuildDrawerCatalogPresenterView` still has direct temporary `Debug.Log*` diagnostics.
-- `MatchHudSquadTrayView` uses `Camera.main` as a fallback.
-- `UIShellContentView`, `MatchHudRightQuickRailView`, and command popup fallback paths still do runtime component discovery/fallback binding.
-- `BuildPlacementConfirmationBarView` can generate a runtime UI layout when a prefab/reference path is missing.
-- Build Drawer queue refresh destroys/recreates runtime queue rows on a timer.
+- `BattleHudRuntimeFeedbackSystem` no longer owns static mutable view state.
+- Runtime UI click diagnostics were removed or covered by narrow architecture guardrails.
+- Runtime scripts no longer use `Camera.main`.
+- Match HUD and Build Drawer runtime binding now uses serialized shell references and explicit dependency edges.
+- `BuildPlacementConfirmationBarView` no longer generates runtime UI layout fallbacks.
+- Build Drawer queue refresh now retains extra queue rows instead of recreating them on every refresh.
 
 ## Architecture Constraints
 
@@ -65,11 +65,11 @@ Known drift:
 
 ## Step 01: Remove Temporary Runtime UI Logs
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
-- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresenterView.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputSystem.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs`
 - `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
@@ -88,7 +88,7 @@ Acceptance checks:
 
 ## Step 02: Remove `Camera.main` And Event-Camera Fallbacks
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
@@ -111,7 +111,7 @@ Acceptance checks:
 
 ## Step 03: Replace Runtime UI Discovery With Explicit Binding
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
@@ -137,14 +137,14 @@ Acceptance checks:
 
 ## Step 04: Move HUD Runtime Feedback Off Static View Registry
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
 - `Assets/Game/Scripts/Systems/BattleHudRuntimeFeedbackSystem.cs`
 - `Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.cs`
 - `Assets/Game/Scripts/Systems/SelectionHudFeedbackSystem.cs`
-- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresenterView.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs`
 - `Assets/Game/Scripts/UI/Screens/CommandWheelPanelView.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerPanelView.cs`
@@ -164,7 +164,7 @@ Acceptance checks:
 
 ## Step 05: Remove Runtime-Generated Confirmation Bar Fallback
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
@@ -187,11 +187,11 @@ Acceptance checks:
 
 ## Step 06: Make Build Drawer Queue UI Retained
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
-- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresenterView.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerQueueItemView.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerView.cs`
 
@@ -210,7 +210,7 @@ Acceptance checks:
 
 ## Step 07: Add Architecture Regression Tests
 
-Status: [ ]
+Status: [x]
 
 Files to inspect first:
 
@@ -234,7 +234,7 @@ Acceptance checks:
 
 ## Step 08: Final Validation And Documentation
 
-Status: [ ]
+Status: [x]
 
 Validation:
 
@@ -253,3 +253,18 @@ Completion criteria:
 ## Progress Notes
 
 - 2026-06-09: Plan created from audit findings. Next step is Step 01, removing temporary runtime UI logs while preserving user-facing Build Drawer/HUD feedback.
+- 2026-06-10: Step 01 complete. Removed temporary Build Drawer and Match HUD click/binding `Debug.Log*` calls from shipped runtime UI code. User-facing failures still route through Build Drawer instructions or HUD command feedback. Next validation: focused Build Drawer/command/shell EditMode tests after Step 02 slice.
+- 2026-06-10: Step 02 complete. Removed the `Camera.main` fallback from `MatchHudSquadTrayView`; listed UI hit-test views now use overlay `null` event cameras or explicitly assigned Canvas `worldCamera` only. Runtime UI scan found no remaining `Camera.main`.
+- 2026-06-10: Step 03 in progress. Removed the Match HUD command-input Build Drawer popup fallback that searched/destroyed children by prefab name, removed right quick rail upward self-binding into `UIShellContentView`, and narrowed right quick rail binding to shell-owned explicit binding. `UIPopupMotionView` now completes immediately in EditMode for deterministic validation while preserving play-mode tweening. Validation passed: `MatchHudCommandControlsCurrentPrefabTests` 2/2, `UIShellCurrentContentLoadTests` 7/7, `BuildDrawerCatalogQuerySystemTests` 21/21, `MatchHudCommandFeedbackPanelTests` 3/3.
+- 2026-06-10: Step 03 follow-up slice complete. Removed stale `BuildDrawerPopupPrefab` ownership from `MatchOverlayCommandControlsView`, its SCN08 prefab serialization, and the command-controls prefab test. Build Drawer popup prefab ownership now remains on `UIShellContentView`. Validation passed: `MatchHudCommandControlsCurrentPrefabTests` 2/2.
+- 2026-06-10: Step 03 complete. Added `MatchHudFooterContentView` as the serialized FooterContent reference holder for command controls, runtime feedback, minimap, and squad tray, then updated `UIShellContentView` to bind cached installed section views instead of rediscovering footer children. Validation passed: `UIShellCurrentContentLoadTests` 7/7; `git diff --check` passed.
+- 2026-06-10: Step 04 complete. Removed `BattleHudRuntimeFeedbackSystem` active-view/static-state registry and no-argument feedback APIs; runtime feedback state now lives on `BattleHudRuntimeFeedbackView`, and all command/build/selection feedback paths use explicit view bindings through shell or gameplay dependency edges. Road build and building placement composition now route build command feedback through `MainMenuPlayUI` dependencies instead of parameterless feedback calls. Contract scan found no `ResolveActiveView`, `SetActiveView`, `ClearActiveView`, or `GetState()` calls. Validation passed: `git diff --check`, `UIShellCurrentContentLoadTests` 8/8, `MatchHudCommandFeedbackPanelTests` 3/3, `BuildDrawerCatalogQuerySystemTests` 21/21.
+- 2026-06-10: Step 05 complete. Serialized real child controls and references onto `SCN08_BuildPlacementConfirmationBar.prefab`, removed the runtime-generated confirmation bar layout fallback from `BuildPlacementConfirmationBarView`, and extended shell validation to require all placement bar text/button references. Runtime scan found no confirmation-bar `new GameObject`, `AddComponent`, or generated-layout fallback path. Validation passed: `git diff --check`, `UIShellCurrentContentLoadTests` 8/8, `BuildDrawerCatalogQuerySystemTests` 21/21.
+- 2026-06-10: Step 06 complete. Changed Build Drawer queue refresh to retain and reuse extra queue rows instead of destroying/recreating them on each snapshot refresh; runtime rows are hidden when unused and destroyed only on presenter teardown. Added queue-retention assertions to `BuildDrawerCatalogQuerySystemTests`. Validation passed: `git diff --check`, `BuildDrawerCatalogQuerySystemTests` 21/21.
+- 2026-06-10: Step 07 complete. Extended `ScriptArchitectureAlignmentContractTests` with guardrails for `Camera.main`, direct runtime UI `Debug.Log*` debt, and static runtime view registries. Removed the remaining `Camera.main` fallback from `TerrainLodHeightSwitch`, removed temporary Armory click logging, removed the route-success debug log, and renamed `BuildDrawerCatalogPresenterView` to `BuildDrawerCatalogRuntimeView` while preserving its `.meta`/MonoScript GUID. Validation passed: `git diff --check`, `ScriptArchitectureAlignmentContractTests` 9/9.
+- 2026-06-10: Step 08 complete. Final validation passed: `git diff --check`, `ScriptArchitectureAlignmentContractTests` 9/9, `BuildDrawerCatalogQuerySystemTests` 21/21, `UIShellCurrentContentLoadTests` 8/8, `MatchHudCommandControlsCurrentPrefabTests` 2/2, and `MatchHudCommandFeedbackPanelTests` 3/3. No remaining checklist items are open.
+- 2026-06-10: Step 04 in progress. Added an explicit shell-to-gameplay binding path for `BattleHudRuntimeFeedbackView` through `MainMenuPlayUI` and `SelectionHudFeedbackSystem`, reducing selection feedback dependence on `BattleHudRuntimeFeedbackSystem.ResolveActiveView()` while keeping the static compatibility API for remaining callers. Validation passed: `UIShellCurrentContentLoadTests` 8/8; `git diff --check` passed.
+- 2026-06-10: Step 04 state slice complete. Removed the static `StatesByView` dictionary from `BattleHudRuntimeFeedbackSystem`; per-view command mode, sticky mode, and last-result state now lives on `BattleHudRuntimeFeedbackView` and resets with the view lifecycle. Validation passed: `MatchHudCommandFeedbackPanelTests` 3/3, `UIShellCurrentContentLoadTests` 8/8, `git diff --check`. Attempted `BattleHudRuntimeFeedbackSystemConnectionTests`, but the suite is currently blocked by its removed `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab` fixture path.
+- 2026-06-10: Step 04 selection cleanup complete. Removed `SelectionGameplayStartupSystem`'s direct `BattleHudRuntimeFeedbackSystem.ResolveActiveView()` command-clear path; selection command clears now rely on the explicitly bound `SelectionHudFeedbackSystem` feedback view. Validation passed: `UIShellCurrentContentLoadTests` 8/8; `git diff --check` passed.
+- 2026-06-10: Step 04 UI fallback cleanup continued. Removed `ResolveActiveView()` fallbacks from `BuildDrawerPanelView`, `CommandWheelPanelView`, and `UIPopupCloseButtonView`; popup close helpers now accept an explicit feedback binding from `UIShellContentView`. `MatchOverlayCommandInputSystem` now receives the serialized footer runtime-feedback view and uses explicit-view command feedback/sticky-mode calls. Validation passed: `UIShellCurrentContentLoadTests` 8/8, `MatchHudCommandControlsCurrentPrefabTests` 2/2, `MatchHudCommandFeedbackPanelTests` 3/3, `git diff --check`.
+- 2026-06-10: Step 04 Build Drawer feedback cleanup complete. `BuildDrawerCatalogRuntimeView`, `BuildPlacementConfirmationBarView`, and `MatchHudRightQuickRailView` now receive the explicit footer `BattleHudRuntimeFeedbackView` from `UIShellContentView`; their command result and sticky build-mode feedback no longer use parameterless global feedback calls. Validation passed: `BuildDrawerCatalogQuerySystemTests` 21/21, `UIShellCurrentContentLoadTests` 8/8, `git diff --check`.

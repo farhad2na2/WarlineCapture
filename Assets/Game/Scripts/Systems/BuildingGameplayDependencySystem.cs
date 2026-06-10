@@ -69,6 +69,16 @@ internal sealed class BuildingGameplayDependencySystem
         MainMenuPlayUi?.NotifyStaticMinimapChanged();
     }
 
+    internal void ApplyBuildCommandMode()
+    {
+        MainMenuPlayUi?.ApplyMatchHudCommandMode(TacticalCommandMode.Build);
+    }
+
+    internal void ClearCommandMode()
+    {
+        MainMenuPlayUi?.ClearMatchHudCommandMode();
+    }
+
     internal bool IsPointerOverPlacementUi(Vector2 screenPosition)
     {
         return MainMenuPlayUi != null &&

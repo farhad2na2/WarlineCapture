@@ -10,10 +10,12 @@ public sealed class MainMenuPlayUI
     private MatchHudRightQuickRailView _matchHudRightQuickRailView;
     private MatchHudMinimapView _matchHudMinimapView;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
+    private BattleHudRuntimeFeedbackView _matchHudRuntimeFeedbackView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
     private BuildDrawerView _buildDrawerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private System.Action<BattleHudRuntimeFeedbackView> _bindMatchHudRuntimeFeedback;
     private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
@@ -43,11 +45,13 @@ public sealed class MainMenuPlayUI
         _matchHudRightQuickRailView = null;
         _matchHudMinimapView = null;
         _matchHudSelectionPanelView = null;
+        _matchHudRuntimeFeedbackView = null;
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = null;
         _buildDrawerView = null;
         _buildPlacementConfirmationBarView = null;
         _bindMatchHudSelectionPanel = null;
+        _bindMatchHudRuntimeFeedback = null;
         _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
         _selectionUiCameraSystem = null;
@@ -94,6 +98,29 @@ public sealed class MainMenuPlayUI
         _matchHudSelectionPanelView = selectionPanelView;
         _matchHudSelectionPanelView?.HideSelection();
         _bindMatchHudSelectionPanel?.Invoke(_matchHudSelectionPanelView);
+    }
+
+    public void ConfigureMatchHudRuntimeFeedbackBinding(System.Action<BattleHudRuntimeFeedbackView> bindMatchHudRuntimeFeedback)
+    {
+        _bindMatchHudRuntimeFeedback = bindMatchHudRuntimeFeedback;
+        if (_matchHudRuntimeFeedbackView != null)
+            _bindMatchHudRuntimeFeedback?.Invoke(_matchHudRuntimeFeedbackView);
+    }
+
+    public void BindMatchHudRuntimeFeedback(BattleHudRuntimeFeedbackView runtimeFeedbackView)
+    {
+        _matchHudRuntimeFeedbackView = runtimeFeedbackView;
+        _bindMatchHudRuntimeFeedback?.Invoke(_matchHudRuntimeFeedbackView);
+    }
+
+    public void ApplyMatchHudCommandMode(TacticalCommandMode mode)
+    {
+        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode);
+    }
+
+    public void ClearMatchHudCommandMode()
+    {
+        BattleHudRuntimeFeedbackSystem.ClearCommandMode(_matchHudRuntimeFeedbackView);
     }
 
     public void ConfigureMatchHudSquadTrayBinding(System.Action<MatchHudSquadTrayView> bindMatchHudSquadTray)

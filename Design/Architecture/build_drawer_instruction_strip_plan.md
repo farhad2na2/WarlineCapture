@@ -13,7 +13,7 @@ The text object is `Instruction`, and the icon object is `Icon`.
 - Do not rebuild the prefab wholesale.
 - Do not use `Object.Find*`, `GameObject.Find`, or runtime hierarchy string lookup.
 - Keep `BuildDrawerView` as a serialized view and renderer only.
-- Keep policy and instruction selection in `BuildDrawerCatalogPresenterView`.
+- Keep policy and instruction selection in `BuildDrawerCatalogRuntimeView`.
 - Use `BuildingUiCommandSystem` and existing query/command context for resources, producer availability, placement state, queue actions, and command failures.
 - Generated icons must be project assets under `Assets/Game/Art/UI/Icons`, imported as Sprites with clamp wrapping.
 

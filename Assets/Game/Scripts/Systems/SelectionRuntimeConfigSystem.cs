@@ -13,6 +13,7 @@ public sealed class SelectionRuntimeConfigSystem
         public GameObject MoveOrderMarkerPrefab;
         public float OrderMarkerVisibleSeconds;
         public GameObject AttackOrderMarkerPrefab;
+        public GameObject AttackTargetMarkerPrefab;
         public float DragThresholdPixels;
         public float SelectionModeHoldSeconds;
         public float PanSensitivity;
@@ -79,6 +80,7 @@ public sealed class SelectionRuntimeConfigSystem
         state.MoveOrderMarkerPrefab = config.MoveOrderMarkerPrefab;
         state.OrderMarkerVisibleSeconds = Mathf.Max(0.01f, config.OrderMarkerVisibleSeconds);
         state.AttackOrderMarkerPrefab = config.AttackOrderMarkerPrefab;
+        state.AttackTargetMarkerPrefab = config.AttackTargetMarkerPrefab;
         state.DragThresholdPixels = config.DragThresholdPixels;
         state.SelectionModeHoldSeconds = Mathf.Max(0.1f, config.SelectionModeHoldSeconds);
         state.PanSensitivity = config.PanSensitivity;

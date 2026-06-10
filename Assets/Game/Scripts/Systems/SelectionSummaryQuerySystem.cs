@@ -274,6 +274,7 @@ public sealed class SelectionSummaryQuerySystem
         return status switch
         {
             SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
             SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
             SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
             _ => "Idle"

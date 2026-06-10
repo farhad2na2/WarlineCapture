@@ -215,6 +215,13 @@ public struct GroundMissileLauncherStateComponent : IComponentData
     public int SelectedRocketSlot;
 }
 
+public struct GroundMissileInFlightComponent : IComponentData
+{
+    public Entity TargetEntity;
+    public int2 TargetCell;
+    public float3 TargetWorldPosition;
+}
+
 public struct GroundMissileLauncherVisualReferenceComponent : IComponentData
 {
     public Entity Battery;

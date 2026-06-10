@@ -69,15 +69,33 @@ public sealed class SelectionUiQuerySystemTests
         Entity airUnit = _entityManager.CreateEntity(typeof(UnitAirComponent));
         _entityManager.SetComponentData(airUnit, new UnitAirComponent { ReturningHome = 1 });
         Entity engagedUnit = _entityManager.CreateEntity(typeof(EngageTarget));
+        Entity missileUnit = _entityManager.CreateEntity(typeof(GroundMissileInFlightComponent));
+        Entity commandedMissileUnit = _entityManager.CreateEntity(typeof(GroundMissileLauncherComponent), typeof(EngageTarget));
+        _entityManager.SetComponentData(commandedMissileUnit, new EngageTarget { IsCommanded = 1 });
+        Entity missilePreparingUnit = _entityManager.CreateEntity(typeof(GroundMissileLauncherStateComponent));
+        _entityManager.SetComponentData(missilePreparingUnit, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Preparing
+        });
+        Entity autoTargetMissileUnit = _entityManager.CreateEntity(typeof(GroundMissileLauncherComponent), typeof(EngageTarget));
+        _entityManager.SetComponentData(autoTargetMissileUnit, new EngageTarget { IsCommanded = 0 });
         Entity movingUnit = _entityManager.CreateEntity(typeof(UnitPathRequest));
         Entity holdingUnit = _entityManager.CreateEntity(typeof(HoldPositionOrderTag), typeof(UnitPathRequest));
         Entity manualGuardUnit = _entityManager.CreateEntity(typeof(ManualMoveOrderTag));
 
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase, _querySystem.GetFocusedUnitUiStatus(_entityManager, airUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched, _querySystem.GetFocusedUnitUiStatus(_entityManager, missileUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched, _querySystem.GetFocusedUnitUiStatus(_entityManager, commandedMissileUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, missilePreparingUnit));
+        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, autoTargetMissileUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged, _querySystem.GetFocusedUnitUiStatus(_entityManager, engagedUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Moving, _querySystem.GetFocusedUnitUiStatus(_entityManager, movingUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
         Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
+        StringAssert.Contains("MISSILE LAUNCHED", _querySystem.ResolveHudSelectionStatus(_entityManager, missileUnit));
+        StringAssert.Contains("MISSILE LAUNCHED", _querySystem.ResolveHudSelectionStatus(_entityManager, commandedMissileUnit));
+        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, missilePreparingUnit));
+        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, autoTargetMissileUnit));
         StringAssert.Contains("HOLDING", _querySystem.ResolveHudSelectionStatus(_entityManager, holdingUnit));
         StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, manualGuardUnit));
     }

@@ -15,29 +15,31 @@ public sealed class AttackOrderCommandSystem
         public readonly bool Issued;
         public readonly bool HasCommandResult;
         public readonly TacticalCommandResult CommandResult;
+        public readonly Entity TargetEntity;
         public readonly float3 TargetPosition;
 
-        private Result(bool issued, bool hasCommandResult, TacticalCommandResult commandResult, float3 targetPosition)
+        private Result(bool issued, bool hasCommandResult, TacticalCommandResult commandResult, Entity targetEntity, float3 targetPosition)
         {
             Issued = issued;
             HasCommandResult = hasCommandResult;
             CommandResult = commandResult;
+            TargetEntity = targetEntity;
             TargetPosition = targetPosition;
         }
 
         public static Result NoCommand()
         {
-            return new Result(false, false, default, default);
+            return new Result(false, false, default, Entity.Null, default);
         }
 
         public static Result Rejected(TacticalCommandResult commandResult)
         {
-            return new Result(false, true, commandResult, default);
+            return new Result(false, true, commandResult, Entity.Null, default);
         }
 
         public static Result Accepted(UnitTargetOrderSystem.AttackOrderIssueResult issueResult)
         {
-            return new Result(true, true, issueResult.CommandResult, issueResult.TargetPosition);
+            return new Result(true, true, issueResult.CommandResult, issueResult.TargetEntity, issueResult.TargetPosition);
         }
     }
 

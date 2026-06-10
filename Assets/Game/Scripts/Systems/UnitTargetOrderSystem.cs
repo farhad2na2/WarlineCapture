@@ -18,12 +18,14 @@ public sealed class UnitTargetOrderSystem
     {
         public readonly TacticalCommandResult CommandResult;
         public readonly int IssuedCount;
+        public readonly Entity TargetEntity;
         public readonly float3 TargetPosition;
 
-        public AttackOrderIssueResult(TacticalCommandResult commandResult, int issuedCount, float3 targetPosition)
+        public AttackOrderIssueResult(TacticalCommandResult commandResult, int issuedCount, Entity targetEntity, float3 targetPosition)
         {
             CommandResult = commandResult;
             IssuedCount = issuedCount;
+            TargetEntity = targetEntity;
             TargetPosition = targetPosition;
         }
     }
@@ -111,22 +113,24 @@ public sealed class UnitTargetOrderSystem
     {
         TacticalCommandResult targetValidation = ValidateAttackTarget(entityManager, targetEntity);
         if (!targetValidation.Accepted)
-            return new AttackOrderIssueResult(targetValidation, 0, default);
+            return new AttackOrderIssueResult(targetValidation, 0, Entity.Null, default);
 
         if (selectedEntities.Length == 0)
-            return new AttackOrderIssueResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection), 0, default);
+            return new AttackOrderIssueResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection), 0, Entity.Null, default);
 
         LocalTransform targetTransform = entityManager.GetComponentData<LocalTransform>(targetEntity);
         int2 targetCell = entityManager.HasComponent<UnitGrid>(targetEntity)
             ? entityManager.GetComponentData<UnitGrid>(targetEntity).Cell
             : default;
         int issuedCount = 0;
+        bool issuedGroundMissileOrder = false;
         TacticalCommandResult missileRangeRejection = default;
         for (int i = 0; i < selectedEntities.Length; i++)
         {
             Entity entity = selectedEntities[i];
             if (!ValidateAttackSource(entityManager, entity).Accepted)
                 continue;
+            bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
             if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
             {
                 missileRangeRejection = missileRangeResult;
@@ -195,14 +199,15 @@ public sealed class UnitTargetOrderSystem
                 SetOrAdd(entityManager, entity, breachOrder);
             }
             issuedCount++;
+            issuedGroundMissileOrder |= isGroundMissileLauncher;
         }
 
         TacticalCommandResult result = issuedCount > 0
-            ? TacticalCommandResult.Success()
+            ? TacticalCommandResult.Success(issuedGroundMissileOrder ? "Missile launched." : string.Empty)
             : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
                 ? missileRangeRejection
                 : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-        return new AttackOrderIssueResult(result, issuedCount, targetTransform.Position);
+        return new AttackOrderIssueResult(result, issuedCount, issuedCount > 0 ? targetEntity : Entity.Null, targetTransform.Position);
     }
 
     public void IssueDirectAttackTarget(

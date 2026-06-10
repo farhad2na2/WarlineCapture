@@ -16,6 +16,7 @@ MonoBehaviour:
   moveOrderMarkerPrefab: {fileID: 4032666883729616791, guid: cb0c4fde409484cb7a9dc099b2a2dab3, type: 3}
   orderMarkerVisibleSeconds: 1.5
   attackOrderMarkerPrefab: {fileID: 1658869923990684923, guid: 6f2a86e945dcb4a69bdfe9e93977ea4c, type: 3}
+  attackTargetMarkerPrefab: {fileID: 5733906895582332945, guid: 28130757d8fd4844b171b631fb2547ce, type: 3}
   selectionFill: {r: 0.2, g: 1, b: 0.2, a: 0.15}
   selectionBorder: {r: 0.2, g: 1, b: 0.2, a: 0.95}
   dragThresholdPixels: 8

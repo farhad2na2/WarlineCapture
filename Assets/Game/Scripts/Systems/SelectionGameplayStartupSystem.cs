@@ -74,6 +74,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
         SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
+        SelectionOrderMarkerSystem.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
         FactionVisualSettings factionVisuals)
     {
         var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
@@ -142,6 +143,8 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
         bool explicitAttackTargetModeActive = false;
+        bool attackModeOrderSnapshotActive = false;
+        string attackModeOrderSnapshotText = string.Empty;
 
         selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
         selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -149,6 +152,8 @@ internal sealed class SelectionGameplayStartupSystem
         selectionOrderMarkerSystem.Initialize(
             runtimeConfig.MoveOrderMarkerPrefab,
             runtimeConfig.AttackOrderMarkerPrefab,
+            runtimeConfig.AttackTargetMarkerPrefab,
+            tryResolveRuntimeBuildingInstance,
             runtimeConfig.OrderMarkerVisibleSeconds,
             runtimeUiRoot);
 
@@ -255,7 +260,7 @@ internal sealed class SelectionGameplayStartupSystem
                 mainMenuPlayUi,
                 runtimeConfig,
                 () => explicitAttackTargetModeActive,
-                value => explicitAttackTargetModeActive = value,
+                SetExplicitAttackTargetModeActive,
                 () => rtsCameraSystem.IsDragging,
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), value),
                 pointerPosition => IsPointerOverUI(pointerPosition, out _),
@@ -360,7 +365,7 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
                 SetCameraDragging,
-                value => explicitAttackTargetModeActive = value,
+                SetExplicitAttackTargetModeActive,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 ValidateControllableEntity,
@@ -400,7 +405,7 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetDefaultEntityManager,
                 TryGetPointerPosition,
                 () => explicitAttackTargetModeActive,
-                value => explicitAttackTargetModeActive = value,
+                SetExplicitAttackTargetModeActive,
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
                 ClearCurrentSelection,
@@ -613,12 +618,15 @@ internal sealed class SelectionGameplayStartupSystem
             bool movable = em.HasComponent<UnitMove>(entity);
             bool vehicle = selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
             TryGetHealthModel(em, entity, out string healthLabel, out float health01);
+            string orderText = ResolveFocusedUnitOrderText(em, entity);
+            if (TryGetAttackModeOrderSnapshot(out string attackModeOrderText))
+                orderText = attackModeOrderText;
 
             return new MatchHudSelectionPanelView.Model(
                 true,
                 selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
                 selectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity),
-                ResolveFocusedUnitOrderText(em, entity),
+                orderText,
                 healthLabel,
                 health01,
                 portraitSprite,
@@ -695,6 +703,9 @@ internal sealed class SelectionGameplayStartupSystem
                 em,
                 selectionUiQuerySystem,
                 includeSelectedBuilding);
+            string orderText = TryGetAttackModeOrderSnapshot(out string attackModeOrderText)
+                ? attackModeOrderText
+                : summary.OrderText;
             Sprite portraitSprite = matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
             portraitSprite ??= ResolveActiveSquadTrayPortraitSprite();
             portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
@@ -702,7 +713,7 @@ internal sealed class SelectionGameplayStartupSystem
                 true,
                 summary.Title,
                 summary.Subtitle,
-                summary.OrderText,
+                orderText,
                 summary.HealthText,
                 summary.Health01,
                 portraitSprite,
@@ -754,10 +765,78 @@ internal sealed class SelectionGameplayStartupSystem
             return selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity) switch
             {
                 SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+                SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
                 SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
                 SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
                 _ => "Idle"
             };
+        }
+
+        bool TryGetAttackModeOrderSnapshot(out string orderText)
+        {
+            orderText = attackModeOrderSnapshotText;
+            return explicitAttackTargetModeActive &&
+                   attackModeOrderSnapshotActive &&
+                   !string.IsNullOrWhiteSpace(orderText);
+        }
+
+        void SetExplicitAttackTargetModeActive(bool active)
+        {
+            if (active)
+            {
+                if (!explicitAttackTargetModeActive)
+                    CaptureAttackModeOrderSnapshot();
+            }
+            else
+            {
+                ClearAttackModeOrderSnapshot();
+            }
+
+            explicitAttackTargetModeActive = active;
+        }
+
+        void CaptureAttackModeOrderSnapshot()
+        {
+            attackModeOrderSnapshotText = ResolveCurrentSelectionOrderTextSnapshot();
+            attackModeOrderSnapshotActive = true;
+        }
+
+        void ClearAttackModeOrderSnapshot()
+        {
+            attackModeOrderSnapshotActive = false;
+            attackModeOrderSnapshotText = string.Empty;
+        }
+
+        string ResolveCurrentSelectionOrderTextSnapshot()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return "Idle";
+
+            EnsureRuntimeSelectionDependencies(em);
+            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
+                em.Exists(focusedUnit))
+            {
+                return ResolveFocusedUnitOrderText(em, focusedUnit);
+            }
+
+            int selectedCount = CountSelectedTags(em);
+            if (selectedCount > 0)
+            {
+                bool includeSelectedBuilding = buildingPlacementInteractionSystem != null &&
+                                               buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
+                return selectionSummaryQuerySystem.BuildSelectedSummary(
+                    em,
+                    selectionUiQuerySystem,
+                    includeSelectedBuilding).OrderText;
+            }
+
+            if (buildingPlacementInteractionSystem != null &&
+                buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
+            {
+                return "Structure selected";
+            }
+
+            return "Idle";
         }
 
         void TryGetHealthModel(EntityManager em, Entity entity, out string healthLabel, out float health01)
@@ -1269,7 +1348,7 @@ internal sealed class SelectionGameplayStartupSystem
                 }
             }
 
-            explicitAttackTargetModeActive = false;
+            SetExplicitAttackTargetModeActive(false);
             rtsSelectionInputSystem.ClearActiveCommandMode();
             runtimeGameplayStateSystem.SuppressNextWorldClick = true;
             selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
@@ -1298,7 +1377,7 @@ internal sealed class SelectionGameplayStartupSystem
                 return;
             }
 
-            explicitAttackTargetModeActive = false;
+            SetExplicitAttackTargetModeActive(false);
             rtsSelectionInputSystem.ClearActiveCommandMode();
             runtimeGameplayStateSystem.SelectionModeActive = false;
             runtimeGameplayStateSystem.SuppressNextWorldClick = true;
@@ -1534,7 +1613,7 @@ internal sealed class SelectionGameplayStartupSystem
             selectionOrderMarkerSystem.ShowAttackOrderMarker(em, targetPosition);
             ClearCurrentSelection(em, "MissileLauncherRadarAttack");
             focusedUnitLifecycleSystem.SetFocusedUnit(selectionStateSystem, launcher);
-            explicitAttackTargetModeActive = false;
+            SetExplicitAttackTargetModeActive(false);
             SetCameraDragging(false);
             selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
@@ -1561,7 +1640,7 @@ internal sealed class SelectionGameplayStartupSystem
                 return false;
             }
 
-            explicitAttackTargetModeActive = true;
+            SetExplicitAttackTargetModeActive(true);
             selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Attack);
             selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
             runtimeGameplayStateSystem.SelectionModeActive = false;
@@ -1590,7 +1669,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void CancelExplicitAttackTargetMode()
         {
-            explicitAttackTargetModeActive = false;
+            SetExplicitAttackTargetModeActive(false);
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
         }
 
@@ -1627,7 +1706,7 @@ internal sealed class SelectionGameplayStartupSystem
                 return false;
             }
 
-            explicitAttackTargetModeActive = false;
+            SetExplicitAttackTargetModeActive(false);
             rtsSelectionInputSystem.ClearActiveCommandMode();
             rtsSelectionInputSystem.ClearQueuedMoveOrder();
             rtsSelectionInputSystem.ClearPendingMoveCommandRequests();

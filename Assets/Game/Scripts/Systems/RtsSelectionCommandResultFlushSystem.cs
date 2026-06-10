@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionCommandResultFlushSystem
@@ -254,6 +255,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Attack, _attackCommandResultScratch);
+        if (_attackCommandResultScratch.Count > 0)
+        {
+            Debug.Log(
+                $"[AttackMarkerDiag] phase=flush count={_attackCommandResultScratch.Count} explicitMode={explicitAttackTargetModeActive} frame={Time.frameCount}");
+        }
 
         bool issued = false;
         for (int i = 0; i < _attackCommandResultScratch.Count; i++)
@@ -267,10 +273,17 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
             bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Attack);
             bool clearHudCommandMode = clearInputCommandMode || explicitAttackTargetModeActive;
+            Debug.Log(
+                $"[AttackMarkerDiag] phase=result index={i} accepted={result.Accepted} hasCommandResult={result.HasCommandResult} reason={(TacticalCommandReasonCode)result.ReasonCode} message=\"{result.Message}\" hasWorld={result.HasWorldPosition} world={FormatFloat3(result.WorldPosition)} hasTarget={result.HasTargetEntity} target={DescribeEntity(em, result.TargetEntity)} emitScreen={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers} clearInput={clearInputCommandMode} clearHud={clearHudCommandMode} frame={Time.frameCount}");
             if (clearInputCommandMode)
                 context.InputSystem.ClearActiveCommandMode();
             if (result.HasWorldPosition != 0)
-                context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.WorldPosition);
+            {
+                if (result.HasTargetEntity != 0)
+                    context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.TargetEntity, result.WorldPosition, 6f);
+                else
+                    context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.WorldPosition, 6f);
+            }
             if (result.EmitScreenMarker != 0)
                 context.RequestAttackOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
             context.SetCameraDragging?.Invoke(false);
@@ -282,6 +295,42 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         return issued;
+    }
+
+    private static string DescribeEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null)
+            return "null";
+        if (!em.Exists(entity))
+            return $"{entity}:missing";
+
+        string name = em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
+            : (byte)255;
+        bool building = em.HasComponent<RuntimeBuildingCombatInfo>(entity);
+        bool unit = em.HasComponent<UnitMove>(entity);
+        string position = em.HasComponent<LocalTransform>(entity)
+            ? FormatFloat3(em.GetComponentData<LocalTransform>(entity).Position)
+            : "noLocalTransform";
+        string footprint = "none";
+        if (building)
+        {
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            footprint = $"building origin={info.OriginCell.x},{info.OriginCell.y} size={info.FootprintCells.x},{info.FootprintCells.y}";
+        }
+        else if (em.HasComponent<UnitFootprint>(entity))
+        {
+            UnitFootprint unitFootprint = em.GetComponentData<UnitFootprint>(entity);
+            footprint = $"unit size={unitFootprint.Size.x},{unitFootprint.Size.y}";
+        }
+
+        return $"{entity}:{name}:faction={faction}:building={building}:unit={unit}:pos={position}:footprint={footprint}";
+    }
+
+    private static string FormatFloat3(float3 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###},{value.z:0.###})";
     }
 
     public bool ProcessScanCommandRequests(Context context)

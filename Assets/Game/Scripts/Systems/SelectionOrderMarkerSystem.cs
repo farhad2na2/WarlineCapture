@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 public sealed class SelectionOrderMarkerSystem
 {
     public delegate bool IsPreviewTargetValidWithSourceDelegate(EntityManager em, Entity source, Entity target);
+    public delegate bool TryResolveRuntimeBuildingInstanceDelegate(Entity combatEntity, int runtimeBuildingId, out GameObject instance);
 
     private World _queryWorld;
     private EntityQuery _gridBlockerQuery;
@@ -20,11 +21,19 @@ public sealed class SelectionOrderMarkerSystem
     private Renderer[] _attackOrderMarkerRenderers;
     private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
     private float _attackOrderMarkerHideTime = -1f;
+    private GameObject _attackTargetRingMarker;
+    private LineRenderer _attackTargetRingRenderer;
+    private GameObject _attackTargetSelectionMarker;
+    private Renderer[] _attackTargetSelectionMarkerRenderers;
+    private Vector3 _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
+    private readonly MaterialPropertyBlock _attackTargetSelectionMarkerPropertyBlock = new();
     private GameObject _scanOrderMarker;
     private LineRenderer _scanOrderMarkerRenderer;
     private float _scanOrderMarkerHideTime = -1f;
     private GameObject _moveOrderMarkerPrefab;
     private GameObject _attackOrderMarkerPrefab;
+    private GameObject _attackTargetMarkerPrefab;
+    private TryResolveRuntimeBuildingInstanceDelegate _tryResolveRuntimeBuildingInstance;
     private float _orderMarkerVisibleSeconds = 1.25f;
     private Transform _runtimeRoot;
     private EntityQuery _attackTargetPreviewQuery;
@@ -36,6 +45,14 @@ public sealed class SelectionOrderMarkerSystem
     private float _nextAttackTargetPreviewUpdateTime;
     private const int MaxAttackTargetPreviewMarkers = 64;
     private const float AttackTargetPreviewUpdateSeconds = 0.15f;
+    private const float AttackOrderMarkerVerticalOffset = 0.45f;
+    private const float AttackTargetSelectionMarkerVerticalOffset = 0.035f;
+    private const float AttackTargetSelectionMarkerScaleMultiplier = 1.25f;
+    private const float AttackTargetRingMinimumRadius = 0.95f;
+    private const float AttackTargetRingWidth = 0.55f;
+    private const float AttackTargetMarkerMinimumVisibleSeconds = 14f;
+    private const int AttackTargetRingSegments = 96;
+    private static readonly Color AttackTargetMarkerColor = new(1f, 0.08f, 0.04f, 0.95f);
     private const int ScanMarkerSegments = 72;
 
     public void EnsureEntityQueries(EntityManager em)
@@ -57,12 +74,16 @@ public sealed class SelectionOrderMarkerSystem
     public void Initialize(
         GameObject moveOrderMarkerPrefab,
         GameObject attackOrderMarkerPrefab,
+        GameObject attackTargetMarkerPrefab,
+        TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
         float orderMarkerVisibleSeconds,
         Transform runtimeRoot)
     {
         Dispose();
         _moveOrderMarkerPrefab = moveOrderMarkerPrefab;
         _attackOrderMarkerPrefab = attackOrderMarkerPrefab;
+        _attackTargetMarkerPrefab = attackTargetMarkerPrefab;
+        _tryResolveRuntimeBuildingInstance = tryResolveRuntimeBuildingInstance;
         _orderMarkerVisibleSeconds = Mathf.Max(0.01f, orderMarkerVisibleSeconds);
         _runtimeRoot = runtimeRoot;
         CacheMoveOrderMarker();
@@ -75,6 +96,10 @@ public sealed class SelectionOrderMarkerSystem
             UnityEngine.Object.Destroy(_moveOrderMarker);
         if (_attackOrderMarker != null)
             UnityEngine.Object.Destroy(_attackOrderMarker);
+        if (_attackTargetRingMarker != null)
+            UnityEngine.Object.Destroy(_attackTargetRingMarker);
+        if (_attackTargetSelectionMarker != null)
+            UnityEngine.Object.Destroy(_attackTargetSelectionMarker);
         if (_scanOrderMarker != null)
             UnityEngine.Object.Destroy(_scanOrderMarker);
         for (int i = 0; i < _attackTargetPreviewMarkers.Count; i++)
@@ -87,6 +112,11 @@ public sealed class SelectionOrderMarkerSystem
         _moveOrderMarkerRenderers = null;
         _attackOrderMarker = null;
         _attackOrderMarkerRenderers = null;
+        _attackTargetRingMarker = null;
+        _attackTargetRingRenderer = null;
+        _attackTargetSelectionMarker = null;
+        _attackTargetSelectionMarkerRenderers = null;
+        _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
         _scanOrderMarker = null;
         _scanOrderMarkerRenderer = null;
         _attackTargetPreviewMarkers.Clear();
@@ -115,13 +145,19 @@ public sealed class SelectionOrderMarkerSystem
 
     public void UpdateAttackOrderMarkerVisibility(System.Action<bool> setHudWorldMarkersVisible)
     {
-        if (_attackOrderMarker == null || _attackOrderMarkerHideTime < 0f)
+        if ((_attackOrderMarker == null && _attackTargetRingMarker == null && _attackTargetSelectionMarker == null) || _attackOrderMarkerHideTime < 0f)
             return;
 
         if (Time.time < _attackOrderMarkerHideTime)
             return;
 
-        _attackOrderMarker.SetActive(false);
+        if (_attackOrderMarker != null)
+            _attackOrderMarker.SetActive(false);
+        if (_attackTargetRingMarker != null)
+            _attackTargetRingMarker.SetActive(false);
+        if (_attackTargetSelectionMarker != null)
+            _attackTargetSelectionMarker.SetActive(false);
+        Debug.Log($"[AttackMarkerDiag] phase=hide now={Time.time:0.###} frame={Time.frameCount}");
         _attackOrderMarkerHideTime = -1f;
         if (_moveOrderMarkerHideTime < 0f && _scanOrderMarkerHideTime < 0f)
             setHudWorldMarkersVisible?.Invoke(false);
@@ -187,20 +223,53 @@ public sealed class SelectionOrderMarkerSystem
         _moveOrderMarkerHideTime = Time.time + _orderMarkerVisibleSeconds;
     }
 
-    public void ShowAttackOrderMarker(EntityManager em, Vector3 worldPoint)
+    public void ShowAttackOrderMarker(EntityManager em, Vector3 worldPoint, float visibleSeconds = -1f)
     {
-        if (_attackOrderMarker == null || _attackOrderMarkerRenderers == null || _attackOrderMarkerRenderers.Length == 0)
+        ShowAttackOrderMarker(em, Entity.Null, worldPoint, visibleSeconds);
+    }
+
+    public void ShowAttackOrderMarker(EntityManager em, Entity targetEntity, Vector3 worldPoint, float visibleSeconds = -1f)
+    {
+        bool hasPrefabMarker = _attackOrderMarker != null &&
+                               _attackOrderMarkerRenderers != null &&
+                               _attackOrderMarkerRenderers.Length > 0;
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=show-request target={DescribeMarkerEntity(em, targetEntity)} worldPoint={FormatVector3(worldPoint)} visibleSeconds={visibleSeconds:0.###} hasPrefabMarker={hasPrefabMarker} ringExists={_attackTargetRingMarker != null} frame={Time.frameCount}");
+        if (targetEntity == Entity.Null && !hasPrefabMarker)
+        {
+            Debug.LogWarning("[AttackMarkerDiag] phase=show-abort reason=NoTargetAndNoPrefabMarker");
             return;
+        }
 
         EnsureEntityQueries(em);
         if (_gridBlockerQuery.IsEmptyIgnoreFilter)
+        {
+            Debug.LogWarning("[AttackMarkerDiag] phase=show-abort reason=NoGridBlockerQuery");
             return;
+        }
 
         Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
 
-        Vector3 worldPosition = worldPoint;
-        worldPosition.y = grid.Origin.y + 0.05f;
+        Vector3 worldPosition = ResolveAttackMarkerWorldPosition(em, targetEntity, grid, worldPoint);
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=show-resolved target={DescribeMarkerEntity(em, targetEntity)} gridEntity={gridEntity} gridOrigin={FormatFloat3(grid.Origin)} cellSize={grid.CellSize:0.###} resolvedWorld={FormatVector3(worldPosition)} frame={Time.frameCount}");
+        if (targetEntity != Entity.Null)
+        {
+            if (!ShowAttackTargetSelectionMarker(em, targetEntity, grid, worldPosition, visibleSeconds))
+                ShowAttackTargetRingMarker(em, targetEntity, grid, worldPosition, visibleSeconds);
+            if (_attackOrderMarker != null)
+                _attackOrderMarker.SetActive(false);
+            return;
+        }
+
+        if (!hasPrefabMarker)
+        {
+            Debug.LogWarning("[AttackMarkerDiag] phase=show-abort reason=NoPrefabMarkerForWorldPoint");
+            return;
+        }
+
+        worldPosition.y = grid.Origin.y + AttackOrderMarkerVerticalOffset;
 
         _attackOrderMarker.transform.position = worldPosition;
         _attackOrderMarker.transform.rotation = Quaternion.identity;
@@ -216,7 +285,148 @@ public sealed class SelectionOrderMarkerSystem
             renderer.SetPropertyBlock(_attackOrderMarkerPropertyBlock);
         }
 
-        _attackOrderMarkerHideTime = Time.time + _orderMarkerVisibleSeconds;
+        _attackOrderMarkerHideTime = Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=prefab-shown position={FormatVector3(_attackOrderMarker.transform.position)} active={_attackOrderMarker.activeSelf} hideAt={_attackOrderMarkerHideTime:0.###} frame={Time.frameCount}");
+    }
+
+    private bool ShowAttackTargetSelectionMarker(
+        EntityManager em,
+        Entity targetEntity,
+        GridConfig grid,
+        Vector3 worldPosition,
+        float visibleSeconds)
+    {
+        EnsureAttackTargetSelectionMarker();
+        if (_attackTargetSelectionMarker == null ||
+            _attackTargetSelectionMarkerRenderers == null ||
+            _attackTargetSelectionMarkerRenderers.Length == 0)
+        {
+            Debug.LogWarning(
+                $"[AttackMarkerDiag] phase=prefab-target-abort reason=MissingTargetSelectionMarker prefab={(_attackTargetMarkerPrefab != null ? _attackTargetMarkerPrefab.name : "null")} markerNull={_attackTargetSelectionMarker == null} renderers={(_attackTargetSelectionMarkerRenderers != null ? _attackTargetSelectionMarkerRenderers.Length : -1)} frame={Time.frameCount}");
+            return false;
+        }
+
+        Vector2 markerSize = ResolveAttackMarkerWorldSize(em, targetEntity, grid);
+        Vector3 markerPosition = worldPosition;
+        Quaternion markerRotation = ResolveAttackMarkerRotation(em, targetEntity);
+        bool usedRuntimeBounds = TryResolveRuntimeBuildingMarkerPlacement(
+            em,
+            targetEntity,
+            out Vector3 runtimePosition,
+            out Quaternion runtimeRotation);
+        if (usedRuntimeBounds)
+        {
+            markerPosition = runtimePosition;
+            markerRotation = runtimeRotation;
+        }
+        else
+        {
+            markerPosition.y = Mathf.Max(grid.Origin.y, worldPosition.y) + AttackTargetSelectionMarkerVerticalOffset;
+        }
+
+        Transform markerTransform = _attackTargetSelectionMarker.transform;
+        markerTransform.SetPositionAndRotation(markerPosition, markerRotation);
+        markerTransform.localScale = ResolveAttackTargetSelectionMarkerScale(markerSize);
+        _attackTargetSelectionMarker.SetActive(true);
+        if (_attackTargetRingMarker != null)
+            _attackTargetRingMarker.SetActive(false);
+
+        float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
+        _attackOrderMarkerHideTime = Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
+
+        Transform parent = _attackTargetSelectionMarker.transform.parent;
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=prefab-target-shown target={DescribeMarkerEntity(em, targetEntity)} center={FormatVector3(worldPosition)} markerPosition={FormatVector3(markerPosition)} size=({markerSize.x:0.###},{markerSize.y:0.###}) scale={FormatVector3(markerTransform.localScale)} rotationY={markerTransform.eulerAngles.y:0.###} runtimeBounds={usedRuntimeBounds} active={_attackTargetSelectionMarker.activeSelf} activeHierarchy={_attackTargetSelectionMarker.activeInHierarchy} renderers={_attackTargetSelectionMarkerRenderers.Length} parent={(parent != null ? parent.name : "null")} parentActive={(parent != null ? parent.gameObject.activeInHierarchy.ToString() : "none")} parentScale={(parent != null ? FormatVector3(parent.lossyScale) : "none")} hideAt={_attackOrderMarkerHideTime:0.###} frame={Time.frameCount}");
+        return true;
+    }
+
+    private void ShowAttackTargetRingMarker(
+        EntityManager em,
+        Entity targetEntity,
+        GridConfig grid,
+        Vector3 worldPosition,
+        float visibleSeconds)
+    {
+        EnsureAttackTargetRingMarker();
+        if (_attackTargetRingMarker == null || _attackTargetRingRenderer == null)
+        {
+            Debug.LogWarning(
+                $"[AttackMarkerDiag] phase=ring-abort reason=MissingRingObjects ringNull={_attackTargetRingMarker == null} rendererNull={_attackTargetRingRenderer == null}");
+            return;
+        }
+
+        Vector2 markerSize = ResolveAttackMarkerWorldSize(em, targetEntity, grid);
+        float radiusX = Mathf.Max(AttackTargetRingMinimumRadius, markerSize.x * AttackTargetSelectionMarkerScaleMultiplier * 0.5f);
+        float radiusZ = Mathf.Max(AttackTargetRingMinimumRadius, markerSize.y * AttackTargetSelectionMarkerScaleMultiplier * 0.5f);
+        float markerY = Mathf.Max(grid.Origin.y + AttackTargetSelectionMarkerVerticalOffset, worldPosition.y + AttackTargetSelectionMarkerVerticalOffset);
+        _attackTargetRingMarker.transform.position = Vector3.zero;
+        _attackTargetRingMarker.transform.rotation = Quaternion.identity;
+        _attackTargetRingRenderer.positionCount = AttackTargetRingSegments;
+        for (int i = 0; i < AttackTargetRingSegments; i++)
+        {
+            float t = (i / (float)AttackTargetRingSegments) * Mathf.PI * 2f;
+            _attackTargetRingRenderer.SetPosition(
+                i,
+                new Vector3(
+                    worldPosition.x + Mathf.Cos(t) * radiusX,
+                    markerY,
+                    worldPosition.z + Mathf.Sin(t) * radiusZ));
+        }
+
+        _attackTargetRingMarker.SetActive(true);
+        float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
+        _attackOrderMarkerHideTime = Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
+        string materialName = _attackTargetRingRenderer.sharedMaterial != null
+            ? _attackTargetRingRenderer.sharedMaterial.name
+            : "null";
+        string shaderName = _attackTargetRingRenderer.sharedMaterial != null && _attackTargetRingRenderer.sharedMaterial.shader != null
+            ? _attackTargetRingRenderer.sharedMaterial.shader.name
+            : "null";
+        Transform parent = _attackTargetRingMarker.transform.parent;
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=ring-shown target={DescribeMarkerEntity(em, targetEntity)} center={FormatVector3(worldPosition)} size=({markerSize.x:0.###},{markerSize.y:0.###}) radius=({radiusX:0.###},{radiusZ:0.###}) markerY={markerY:0.###} active={_attackTargetRingMarker.activeSelf} activeHierarchy={_attackTargetRingMarker.activeInHierarchy} rendererEnabled={_attackTargetRingRenderer.enabled} positionCount={_attackTargetRingRenderer.positionCount} width={_attackTargetRingRenderer.widthMultiplier:0.###} material={materialName} shader={shaderName} parent={(parent != null ? parent.name : "null")} parentActive={(parent != null ? parent.gameObject.activeInHierarchy.ToString() : "none")} parentScale={(parent != null ? FormatVector3(parent.lossyScale) : "none")} rootScale={FormatVector3(_attackTargetRingMarker.transform.lossyScale)} layer={_attackTargetRingMarker.layer} hideAt={_attackOrderMarkerHideTime:0.###} frame={Time.frameCount}");
+    }
+
+    private static Vector3 ResolveAttackMarkerWorldPosition(EntityManager em, Entity targetEntity, GridConfig grid, Vector3 fallbackWorldPoint)
+    {
+        if (targetEntity == Entity.Null || !em.Exists(targetEntity))
+            return fallbackWorldPoint;
+
+        if (em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity))
+        {
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(targetEntity);
+            int2 footprint = UnitFootprintUtility.ClampSize(info.FootprintCells);
+            float3 minWorld = grid.Origin + new float3(info.OriginCell.x * grid.CellSize, 0f, info.OriginCell.y * grid.CellSize);
+            return new Vector3(
+                minWorld.x + footprint.x * grid.CellSize * 0.5f,
+                fallbackWorldPoint.y,
+                minWorld.z + footprint.y * grid.CellSize * 0.5f);
+        }
+
+        if (em.HasComponent<LocalTransform>(targetEntity))
+        {
+            float3 position = em.GetComponentData<LocalTransform>(targetEntity).Position;
+            return new Vector3(position.x, position.y, position.z);
+        }
+
+        return fallbackWorldPoint;
+    }
+
+    private static Vector2 ResolveAttackMarkerWorldSize(EntityManager em, Entity targetEntity, GridConfig grid)
+    {
+        if (targetEntity == Entity.Null || !em.Exists(targetEntity))
+            return Vector2.one * math.max(0.01f, grid.CellSize);
+
+        int2 footprint = default;
+        if (em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity))
+            footprint = em.GetComponentData<RuntimeBuildingCombatInfo>(targetEntity).FootprintCells;
+        else if (em.HasComponent<UnitFootprint>(targetEntity))
+            footprint = em.GetComponentData<UnitFootprint>(targetEntity).Size;
+
+        footprint = UnitFootprintUtility.ClampSize(footprint);
+        float cellSize = math.max(0.01f, grid.CellSize);
+        return new Vector2(math.max(1, footprint.x) * cellSize, math.max(1, footprint.y) * cellSize);
     }
 
     public void ShowScanOrderMarker(EntityManager em, int2 cell, float3 worldPoint, int radiusCells, float visibleSeconds = -1f)
@@ -455,6 +665,250 @@ public sealed class SelectionOrderMarkerSystem
         _scanOrderMarkerRenderer.startColor = new Color(0.25f, 1f, 0.85f, 0.95f);
         _scanOrderMarkerRenderer.endColor = new Color(0.12f, 0.65f, 1f, 0.95f);
         _scanOrderMarker.SetActive(false);
+    }
+
+    private void EnsureAttackTargetSelectionMarker()
+    {
+        if (_attackTargetSelectionMarker != null &&
+            _attackTargetSelectionMarkerRenderers != null &&
+            _attackTargetSelectionMarkerRenderers.Length > 0)
+        {
+            return;
+        }
+
+        if (_attackTargetMarkerPrefab == null)
+            return;
+
+        _attackTargetSelectionMarker = UnityEngine.Object.Instantiate(_attackTargetMarkerPrefab, _runtimeRoot);
+        _attackTargetSelectionMarker.name = "AttackTargetSelectionMarkerRuntime";
+        _attackTargetSelectionMarkerRenderers = _attackTargetSelectionMarker.GetComponentsInChildren<Renderer>(true);
+        _attackTargetSelectionMarkerBaseRendererSize = CalculateRendererSize(_attackTargetSelectionMarkerRenderers);
+        ConfigureMarkerRenderers(_attackTargetSelectionMarkerRenderers);
+        ApplyAttackTargetSelectionMarkerColor();
+        _attackTargetSelectionMarker.SetActive(false);
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=prefab-target-created prefab={_attackTargetMarkerPrefab.name} runtimeRoot={(_runtimeRoot != null ? _runtimeRoot.name : "null")} rootActive={(_runtimeRoot != null ? _runtimeRoot.gameObject.activeInHierarchy.ToString() : "none")} renderers={(_attackTargetSelectionMarkerRenderers != null ? _attackTargetSelectionMarkerRenderers.Length : -1)} baseSize={FormatVector3(_attackTargetSelectionMarkerBaseRendererSize)} frame={Time.frameCount}");
+    }
+
+    private Vector3 ResolveAttackTargetSelectionMarkerScale(Vector2 markerSize)
+    {
+        float baseX = Mathf.Max(0.001f, _attackTargetSelectionMarkerBaseRendererSize.x);
+        float baseZ = Mathf.Max(0.001f, _attackTargetSelectionMarkerBaseRendererSize.z);
+        return new Vector3(
+            Mathf.Max(0.01f, markerSize.x * AttackTargetSelectionMarkerScaleMultiplier) / baseX,
+            1f,
+            Mathf.Max(0.01f, markerSize.y * AttackTargetSelectionMarkerScaleMultiplier) / baseZ);
+    }
+
+    private void ApplyAttackTargetSelectionMarkerColor()
+    {
+        if (_attackTargetSelectionMarkerRenderers == null)
+            return;
+
+        for (int i = 0; i < _attackTargetSelectionMarkerRenderers.Length; i++)
+        {
+            Renderer renderer = _attackTargetSelectionMarkerRenderers[i];
+            if (renderer == null)
+                continue;
+
+            _attackTargetSelectionMarkerPropertyBlock.Clear();
+            renderer.GetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
+            _attackTargetSelectionMarkerPropertyBlock.SetColor("_BaseColor", AttackTargetMarkerColor);
+            _attackTargetSelectionMarkerPropertyBlock.SetColor("_Color", AttackTargetMarkerColor);
+            renderer.SetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
+        }
+    }
+
+    private bool TryResolveRuntimeBuildingMarkerPlacement(
+        EntityManager em,
+        Entity targetEntity,
+        out Vector3 position,
+        out Quaternion rotation)
+    {
+        position = default;
+        rotation = Quaternion.identity;
+
+        if (targetEntity == Entity.Null ||
+            !em.Exists(targetEntity) ||
+            !em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) ||
+            _tryResolveRuntimeBuildingInstance == null)
+        {
+            return false;
+        }
+
+        RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(targetEntity);
+        if (info.RuntimeBuildingId <= 0 ||
+            !_tryResolveRuntimeBuildingInstance(targetEntity, info.RuntimeBuildingId, out GameObject instance) ||
+            instance == null ||
+            !TryCalculateRendererBounds(instance, out Bounds bounds))
+        {
+            Debug.Log(
+                $"[AttackMarkerDiag] phase=runtime-bounds-miss target={DescribeMarkerEntity(em, targetEntity)} runtimeId={info.RuntimeBuildingId} hasResolver={_tryResolveRuntimeBuildingInstance != null} frame={Time.frameCount}");
+            return false;
+        }
+
+        position = bounds.center;
+        position.y = bounds.min.y + AttackTargetSelectionMarkerVerticalOffset;
+        rotation = Quaternion.Euler(0f, instance.transform.eulerAngles.y, 0f);
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=runtime-bounds-hit target={DescribeMarkerEntity(em, targetEntity)} runtimeId={info.RuntimeBuildingId} instance={instance.name} boundsCenter={FormatVector3(bounds.center)} boundsMin={FormatVector3(bounds.min)} boundsSize={FormatVector3(bounds.size)} rotationY={rotation.eulerAngles.y:0.###} frame={Time.frameCount}");
+        return true;
+    }
+
+    private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
+    {
+        bounds = default;
+        if (instance == null)
+            return false;
+
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(false);
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled)
+                continue;
+
+            if (hasBounds)
+                bounds.Encapsulate(renderer.bounds);
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private static Quaternion ResolveAttackMarkerRotation(EntityManager em, Entity targetEntity)
+    {
+        if (targetEntity == Entity.Null || !em.Exists(targetEntity) || !em.HasComponent<LocalTransform>(targetEntity))
+            return Quaternion.identity;
+
+        Quaternion rotation = em.GetComponentData<LocalTransform>(targetEntity).Rotation;
+        return Quaternion.Euler(0f, rotation.eulerAngles.y, 0f);
+    }
+
+    private void EnsureAttackTargetRingMarker()
+    {
+        if (_attackTargetRingMarker != null && _attackTargetRingRenderer != null)
+            return;
+
+        _attackTargetRingMarker = new GameObject("AttackTargetRingMarkerRuntime");
+        if (_runtimeRoot != null)
+            _attackTargetRingMarker.transform.SetParent(_runtimeRoot, false);
+
+        _attackTargetRingRenderer = _attackTargetRingMarker.AddComponent<LineRenderer>();
+        _attackTargetRingRenderer.useWorldSpace = true;
+        _attackTargetRingRenderer.loop = true;
+        _attackTargetRingRenderer.widthMultiplier = AttackTargetRingWidth;
+        _attackTargetRingRenderer.numCornerVertices = 4;
+        _attackTargetRingRenderer.numCapVertices = 4;
+        _attackTargetRingRenderer.alignment = LineAlignment.View;
+        _attackTargetRingRenderer.shadowCastingMode = ShadowCastingMode.Off;
+        _attackTargetRingRenderer.receiveShadows = false;
+        _attackTargetRingRenderer.lightProbeUsage = LightProbeUsage.Off;
+        _attackTargetRingRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        _attackTargetRingRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        Material ringMaterial = CreateAttackTargetRingMaterial();
+        if (ringMaterial != null)
+            _attackTargetRingRenderer.material = ringMaterial;
+        _attackTargetRingRenderer.startColor = AttackTargetMarkerColor;
+        _attackTargetRingRenderer.endColor = AttackTargetMarkerColor;
+        _attackTargetRingMarker.SetActive(false);
+        Debug.Log(
+            $"[AttackMarkerDiag] phase=ring-created runtimeRoot={(_runtimeRoot != null ? _runtimeRoot.name : "null")} rootActive={(_runtimeRoot != null ? _runtimeRoot.gameObject.activeInHierarchy.ToString() : "none")} material={(_attackTargetRingRenderer.sharedMaterial != null ? _attackTargetRingRenderer.sharedMaterial.name : "null")} shader={(_attackTargetRingRenderer.sharedMaterial != null && _attackTargetRingRenderer.sharedMaterial.shader != null ? _attackTargetRingRenderer.sharedMaterial.shader.name : "null")} frame={Time.frameCount}");
+    }
+
+    private static Material CreateAttackTargetRingMaterial()
+    {
+        Shader shader = Shader.Find("Hidden/Internal-Colored");
+        if (shader == null)
+            shader = Shader.Find("Sprites/Default");
+        if (shader == null)
+            return null;
+
+        var material = new Material(shader)
+        {
+            name = "AttackTargetRingOverlayMaterial",
+            hideFlags = HideFlags.HideAndDontSave,
+            renderQueue = (int)RenderQueue.Overlay
+        };
+        material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+        material.SetInt("_Cull", (int)CullMode.Off);
+        material.SetInt("_ZWrite", 0);
+        material.SetInt("_ZTest", (int)CompareFunction.Always);
+        material.SetColor("_Color", AttackTargetMarkerColor);
+        material.SetColor("_BaseColor", AttackTargetMarkerColor);
+        return material;
+    }
+
+    private static string DescribeMarkerEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null)
+            return "null";
+        if (!em.Exists(entity))
+            return $"{entity}:missing";
+
+        string name = em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
+            : (byte)255;
+        bool building = em.HasComponent<RuntimeBuildingCombatInfo>(entity);
+        bool unit = em.HasComponent<UnitMove>(entity);
+        string position = em.HasComponent<LocalTransform>(entity)
+            ? FormatFloat3(em.GetComponentData<LocalTransform>(entity).Position)
+            : "noLocalTransform";
+        string footprint = "none";
+        if (building)
+        {
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            footprint = $"building origin={info.OriginCell.x},{info.OriginCell.y} size={info.FootprintCells.x},{info.FootprintCells.y}";
+        }
+        else if (em.HasComponent<UnitFootprint>(entity))
+        {
+            UnitFootprint unitFootprint = em.GetComponentData<UnitFootprint>(entity);
+            footprint = $"unit size={unitFootprint.Size.x},{unitFootprint.Size.y}";
+        }
+
+        return $"{entity}:{name}:faction={faction}:building={building}:unit={unit}:pos={position}:footprint={footprint}";
+    }
+
+    private static string FormatVector3(Vector3 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###},{value.z:0.###})";
+    }
+
+    private static string FormatFloat3(float3 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###},{value.z:0.###})";
+    }
+
+    private static Vector3 CalculateRendererSize(Renderer[] renderers)
+    {
+        if (renderers == null || renderers.Length == 0)
+            return Vector3.one;
+
+        bool hasBounds = false;
+        Bounds bounds = default;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null)
+                continue;
+
+            if (hasBounds)
+                bounds.Encapsulate(renderer.bounds);
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds ? bounds.size : Vector3.one;
     }
 
     private void HideAttackTargetPreviewMarkersIfNeeded(int startIndex)

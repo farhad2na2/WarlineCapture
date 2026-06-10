@@ -17,7 +17,7 @@ public sealed class GroundMissileLauncherAuthoringTests
         Assert.NotNull(config, $"Missing ground missile launcher config at {GroundLauncherConfigPath}.");
         Assert.Greater(config.MinRange, 0f);
         Assert.Greater(config.MaxRange, config.MinRange);
-        Assert.Greater(config.Damage, 0);
+        Assert.GreaterOrEqual(config.Damage, 600);
         Assert.Greater(config.DamageRadius, 0f);
         Assert.NotNull(config.LauncherBackfirePrefab);
         Assert.NotNull(config.RocketTrailPrefab);

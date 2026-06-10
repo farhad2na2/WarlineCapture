@@ -258,6 +258,8 @@ public partial struct UnitAttackSystem : ISystem
 
         GroundMissileLauncherComponent launcher = em.GetComponentData<GroundMissileLauncherComponent>(attacker);
         GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(attacker);
+        if (em.HasComponent<GroundMissileInFlightComponent>(attacker))
+            return true;
         if (launcherState.Phase != (byte)GroundMissileLauncherPhase.Idle)
             return true;
 

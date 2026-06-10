@@ -128,6 +128,7 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public RtsSelectionCommandIntentKind Kind;
     public int RequestId;
     public int Frame;
+    public Entity TargetEntity;
     public int2 TargetCell;
     public float2 ScreenPosition;
     public float3 WorldPosition;
@@ -136,6 +137,7 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public int ReasonCode;
     public byte EmitScreenMarker;
     public byte MarkerFactionId;
+    public byte HasTargetEntity;
     public byte HasTargetCell;
     public byte HasWorldPosition;
     public byte ShowWorldMarkers;

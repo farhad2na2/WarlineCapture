@@ -28,7 +28,8 @@ public sealed class SelectionUiQuerySystem
         Idle = 0,
         Moving = 1,
         Engaged = 2,
-        ReturningToBase = 3
+        ReturningToBase = 3,
+        MissileLaunched = 4
     }
 
     public bool HasFocusedUnit(EntityManager entityManager, Entity focusedUnit)
@@ -267,6 +268,15 @@ public sealed class SelectionUiQuerySystem
         if (entityManager.HasComponent<UnitAirComponent>(entity) && entityManager.GetComponentData<UnitAirComponent>(entity).ReturningHome != 0)
             return FocusedUnitUiStatus.ReturningToBase;
 
+        if (entityManager.HasComponent<GroundMissileInFlightComponent>(entity) ||
+            HasCommandedGroundMissileTarget(entityManager, entity))
+        {
+            return FocusedUnitUiStatus.MissileLaunched;
+        }
+
+        if (HasAutoGroundMissileTarget(entityManager, entity))
+            return FocusedUnitUiStatus.Idle;
+
         if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
             return FocusedUnitUiStatus.Idle;
 
@@ -382,7 +392,16 @@ public sealed class SelectionUiQuerySystem
             parts.Add($"HP {health.Current}/{health.Max}");
         }
 
-        if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
+        if (entityManager.HasComponent<GroundMissileInFlightComponent>(entity) ||
+            HasCommandedGroundMissileTarget(entityManager, entity))
+        {
+            parts.Add("MISSILE LAUNCHED");
+        }
+        else if (HasAutoGroundMissileTarget(entityManager, entity))
+        {
+            parts.Add("IDLE");
+        }
+        else if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
             parts.Add("HOLDING");
         else if (entityManager.HasComponent<EngageTarget>(entity))
             parts.Add("ENGAGED");
@@ -407,5 +426,27 @@ public sealed class SelectionUiQuerySystem
             forward.Normalize();
         else
             forward = Vector3.forward;
+    }
+
+    private static bool HasCommandedGroundMissileTarget(EntityManager entityManager, Entity entity)
+    {
+        if (!entityManager.HasComponent<GroundMissileLauncherComponent>(entity) ||
+            !entityManager.HasComponent<EngageTarget>(entity))
+        {
+            return false;
+        }
+
+        return entityManager.GetComponentData<EngageTarget>(entity).IsCommanded != 0;
+    }
+
+    private static bool HasAutoGroundMissileTarget(EntityManager entityManager, Entity entity)
+    {
+        if (!entityManager.HasComponent<GroundMissileLauncherComponent>(entity) ||
+            !entityManager.HasComponent<EngageTarget>(entity))
+        {
+            return false;
+        }
+
+        return entityManager.GetComponentData<EngageTarget>(entity).IsCommanded == 0;
     }
 }

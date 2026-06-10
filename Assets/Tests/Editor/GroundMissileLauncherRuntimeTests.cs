@@ -69,6 +69,26 @@ public sealed class GroundMissileLauncherRuntimeTests
         fireSystem.Update(world.Unmanaged);
 
         Assert.AreEqual(1, projectileQuery.CalculateEntityCount(), "Launcher should fire after the one-second post-open hold.");
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher), "Missile launch should consume the one-shot attack order instead of re-arming after reload.");
+        Assert.IsTrue(em.HasComponent<GroundMissileInFlightComponent>(launcher), "Launcher should expose an in-flight missile state for HUD order display.");
+
+        world.SetTime(new TimeData(2.7d, 1.1f));
+        fireSystem.Update(world.Unmanaged);
+        world.SetTime(new TimeData(5.8d, 3.1f));
+        fireSystem.Update(world.Unmanaged);
+        attackSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount(), "Launcher must not create a second projectile for the same clicked target after reload.");
+
+        em.AddComponentData(launcher, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(120, 0),
+            Position = new float3(120f, 0f, 0f),
+            IsCommanded = 0
+        });
+        attackSystem.Update(world.Unmanaged);
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount(), "Launcher must not auto-fire again while the previous missile is still in flight.");
     }
 
     [Test]
@@ -233,13 +253,36 @@ public sealed class GroundMissileLauncherRuntimeTests
 
         EntityQuery projectileQuery = em.CreateEntityQuery(typeof(GroundMissileProjectileComponent));
         Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
+        Assert.IsTrue(em.HasComponent<GroundMissileInFlightComponent>(launcher));
 
         world.SetTime(new TimeData(1d, 1f));
         flightSystem.Update(world.Unmanaged);
         impactSystem.Update(world.Unmanaged);
 
-        Assert.AreEqual(10, em.GetComponentData<UnitHealth>(target).Current);
+        Assert.AreEqual(0, em.GetComponentData<UnitHealth>(target).Current);
         Assert.AreEqual(100, em.GetComponentData<UnitHealth>(friendly).Current);
+        Assert.IsFalse(em.HasComponent<GroundMissileInFlightComponent>(launcher));
+    }
+
+    [Test]
+    public void EngagementSystem_DoesNotAutoAcquireGroundMissileLauncherTargets()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_NoAutoEngage");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+
+        CreateTarget(em, new float3(20f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.01f, reloadSeconds: 3f);
+
+        var endSimulation = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        SystemHandle engagementSystem = world.CreateSystem<UnitEngagementSystem>();
+
+        world.SetTime(new TimeData(0.2d, 0.2f));
+        engagementSystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        endSimulation.Update();
+
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher), "Ground missile launchers should fire only from explicit attack/debug orders, not automatic target acquisition.");
     }
 
     [Test]
@@ -412,6 +455,7 @@ public sealed class GroundMissileLauncherRuntimeTests
         }
 
         Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual("Missile launched.", result.CommandResult.Message);
         Assert.AreEqual(1, result.IssuedCount);
         Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
         EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);

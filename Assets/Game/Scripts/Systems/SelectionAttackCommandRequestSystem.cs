@@ -80,6 +80,7 @@ public sealed class SelectionAttackCommandRequestSystem
             Kind = request.Kind,
             RequestId = request.RequestId,
             Frame = request.Frame,
+            TargetEntity = result.TargetEntity,
             ScreenPosition = request.ScreenPosition,
             WorldPosition = result.TargetPosition,
             HasCommandResult = result.HasCommandResult ? (byte)1 : (byte)0,
@@ -87,6 +88,7 @@ public sealed class SelectionAttackCommandRequestSystem
             ReasonCode = result.HasCommandResult ? (int)commandResult.ReasonCode : 0,
             Message = result.HasCommandResult ? new FixedString64Bytes(commandResult.Message ?? string.Empty) : default,
             EmitScreenMarker = result.Issued ? (byte)1 : (byte)0,
+            HasTargetEntity = result.Issued && result.TargetEntity != Entity.Null ? (byte)1 : (byte)0,
             HasWorldPosition = result.Issued ? (byte)1 : (byte)0,
             ShowWorldMarkers = result.Issued ? (byte)1 : (byte)0
         };

@@ -19,7 +19,7 @@ MonoBehaviour:
   batteryElevatedAngleDegrees: -30
   rocketSpeed: 42
   arcHeight: 28
-  damage: 90
+  damage: 650
   damageRadius: 8
   launcherBackfirePrefab: {fileID: 1948596792619958, guid: 3f8d63e87785f27478ada28fe2c9a545, type: 3}
   rocketTrailPrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}

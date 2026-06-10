@@ -52,7 +52,9 @@ public partial struct UnitEngagementSystem : ISystem
             None = new[]
             {
                 ComponentType.ReadOnly<StaticGridBlocker>(),
-                ComponentType.ReadOnly<EngageTarget>()
+                ComponentType.ReadOnly<EngageTarget>(),
+                ComponentType.ReadOnly<GroundMissileInFlightComponent>(),
+                ComponentType.ReadOnly<GroundMissileLauncherComponent>()
             }
         });
 
@@ -151,7 +153,7 @@ public partial struct UnitEngagementSystem : ISystem
     }
 
     [BurstCompile]
-    [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget))]
+    [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent))]
     private partial struct AcquireTargetsJob : IJobEntity
     {
         [ReadOnly] public GridConfig Grid;

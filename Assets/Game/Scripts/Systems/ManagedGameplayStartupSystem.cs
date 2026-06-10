@@ -197,6 +197,46 @@ internal sealed class ManagedGameplayStartupSystem
                 : null;
         }
 
+        bool TryResolveRuntimeBuildingInstance(Entity combatEntity, int runtimeBuildingId, out GameObject instance)
+        {
+            instance = null;
+            if (building.RuntimeBuildings == null)
+            {
+                return false;
+            }
+
+            if (runtimeBuildingId > 0 &&
+                building.RuntimeBuildings.TryGetValue(runtimeBuildingId, out RuntimeBuildingEntity runtimeBuilding) &&
+                TryResolveRuntimeBuildingGameObject(runtimeBuilding, out instance))
+            {
+                return true;
+            }
+
+            foreach (RuntimeBuildingEntity candidateBuilding in building.RuntimeBuildings.Values)
+            {
+                if (candidateBuilding == null || candidateBuilding.CombatEntity != combatEntity)
+                    continue;
+
+                return TryResolveRuntimeBuildingGameObject(candidateBuilding, out instance);
+            }
+
+            return false;
+        }
+
+        static bool TryResolveRuntimeBuildingGameObject(RuntimeBuildingEntity runtimeBuilding, out GameObject instance)
+        {
+            instance = null;
+            if (runtimeBuilding == null ||
+                runtimeBuilding.IsDestroyed ||
+                runtimeBuilding.Instance == null)
+            {
+                return false;
+            }
+
+            instance = runtimeBuilding.Instance;
+            return true;
+        }
+
         SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,
             worldCamera,
@@ -208,6 +248,7 @@ internal sealed class ManagedGameplayStartupSystem
             ResolveSelectionPortraitSprite,
             ResolveSelectionCardPortraitSprite,
             ResolveSelectedBuildingPortraitSprite,
+            TryResolveRuntimeBuildingInstance,
             factionVisuals);
 
         _roadBuildCompositionSystem.BindBuildingInteraction(

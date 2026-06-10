@@ -146,6 +146,20 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
             Source = launcherEntity,
             FactionId = factionId
         });
+
+        var inFlight = new GroundMissileInFlightComponent
+        {
+            TargetEntity = launcherState.TargetEntity,
+            TargetCell = launcherState.TargetCell,
+            TargetWorldPosition = targetPosition
+        };
+        if (em.HasComponent<GroundMissileInFlightComponent>(launcherEntity))
+            ecb.SetComponent(launcherEntity, inFlight);
+        else
+            ecb.AddComponent(launcherEntity, inFlight);
+
+        if (em.HasComponent<EngageTarget>(launcherEntity))
+            ecb.RemoveComponent<EngageTarget>(launcherEntity);
     }
 
     private static void LaunchRocketVisual(
@@ -529,6 +543,7 @@ public partial struct GroundMissileImpactSystem : ISystem
             float radius = math.max(0f, request.DamageRadius);
             float radiusSq = radius * radius;
             int damage = math.max(0, request.Damage);
+            ApplyDirectHitDamage(em, ecb, request);
             if (damage > 0)
             {
                 foreach (var (health, transform, faction, target) in SystemAPI
@@ -545,48 +560,89 @@ public partial struct GroundMissileImpactSystem : ISystem
                         continue;
 
                     health.ValueRW.Current = math.max(0, health.ValueRO.Current - damage);
-                    if (em.HasComponent<RecentAttacker>(target))
-                    {
-                        em.SetComponentData(target, new RecentAttacker
-                        {
-                            Attacker = request.Source,
-                            Cell = request.TargetCell,
-                            Position = request.Position
-                        });
-                    }
-                    else
-                    {
-                        ecb.AddComponent(target, new RecentAttacker
-                        {
-                            Attacker = request.Source,
-                            Cell = request.TargetCell,
-                            Position = request.Position
-                        });
-                    }
-
-                    if (em.HasComponent<RecentDamageHealthBarVisibility>(target))
-                    {
-                        em.SetComponentData(target, new RecentDamageHealthBarVisibility
-                        {
-                            TimeRemaining = DamageHealthBarVisibleSeconds
-                        });
-                    }
-                    else
-                    {
-                        ecb.AddComponent(target, new RecentDamageHealthBarVisibility
-                        {
-                            TimeRemaining = DamageHealthBarVisibleSeconds
-                        });
-                    }
+                    ApplyRecentDamageState(em, ecb, target, request);
                 }
             }
 
             PlayImpactVfx(em, request);
+            if (request.Source != Entity.Null &&
+                em.Exists(request.Source) &&
+                em.HasComponent<GroundMissileInFlightComponent>(request.Source))
+            {
+                ecb.RemoveComponent<GroundMissileInFlightComponent>(request.Source);
+            }
             ecb.DestroyEntity(entity);
         }
 
         ecb.Playback(em);
         ecb.Dispose();
+    }
+
+    private static void ApplyDirectHitDamage(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        GroundMissileImpactRequestComponent request)
+    {
+        Entity target = request.TargetEntity;
+        if (target == Entity.Null ||
+            !em.Exists(target) ||
+            !em.HasComponent<UnitHealth>(target) ||
+            !em.HasComponent<Faction>(target))
+        {
+            return;
+        }
+
+        if (em.GetComponentData<Faction>(target).Id == request.FactionId)
+            return;
+
+        UnitHealth health = em.GetComponentData<UnitHealth>(target);
+        if (health.Current <= 0)
+            return;
+
+        health.Current = 0;
+        em.SetComponentData(target, health);
+        ApplyRecentDamageState(em, ecb, target, request);
+    }
+
+    private static void ApplyRecentDamageState(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity target,
+        GroundMissileImpactRequestComponent request)
+    {
+        if (em.HasComponent<RecentAttacker>(target))
+        {
+            em.SetComponentData(target, new RecentAttacker
+            {
+                Attacker = request.Source,
+                Cell = request.TargetCell,
+                Position = request.Position
+            });
+        }
+        else
+        {
+            ecb.AddComponent(target, new RecentAttacker
+            {
+                Attacker = request.Source,
+                Cell = request.TargetCell,
+                Position = request.Position
+            });
+        }
+
+        if (em.HasComponent<RecentDamageHealthBarVisibility>(target))
+        {
+            em.SetComponentData(target, new RecentDamageHealthBarVisibility
+            {
+                TimeRemaining = DamageHealthBarVisibleSeconds
+            });
+        }
+        else
+        {
+            ecb.AddComponent(target, new RecentDamageHealthBarVisibility
+            {
+                TimeRemaining = DamageHealthBarVisibleSeconds
+            });
+        }
     }
 
     private static void PlayImpactVfx(EntityManager em, GroundMissileImpactRequestComponent request)

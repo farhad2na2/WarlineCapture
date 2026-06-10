@@ -26,7 +26,8 @@ public sealed class SelectionUiReadModelSystem
         Idle = 0,
         Moving = 1,
         Engaged = 2,
-        ReturningToBase = 3
+        ReturningToBase = 3,
+        MissileLaunched = 4
     }
 
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
@@ -225,6 +226,7 @@ public sealed class SelectionUiReadModelSystem
             SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
             SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
             SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
             _ => FocusedUnitUiStatus.Idle
         };
     }

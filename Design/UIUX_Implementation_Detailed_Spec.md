@@ -116,7 +116,8 @@ For every screen:
 - Start from accepted `VisualLock` / `VisualLockLayered` targets. Archived source JPGs under `Design/Archive/LegacyUI_2026-05-21/UIUX_Codex_Package/uiux_spec_assets` may be used only as content/layout references.
 - Create or select a landscape target that preserves the original style and hierarchy.
 - Build a real Canvas prefab from separate replaceable parts. Do not use the target as one runtime background with invisible buttons.
-- Reuse shared UI kit pieces when the target uses the same style: outer screen frame, tabs, animated buttons, sliders, toggles, dropdowns, masked art crops, and Oxanium TMP text.
+- Reuse shared UI kit pieces when the target uses the same style: outer screen frame, tabs, animated buttons, sliders, toggles, dropdowns, masked art crops, and TextMeshPro text using `Oxanium-Medium SDF`.
+- All new or modified runtime UI text must be TextMeshPro text with the `Oxanium-Medium SDF` font asset. Do not add legacy `Text` components or TMP text using another font asset unless PM explicitly approves a screen-specific exception.
 - Keep every interactive element as a real Unity control with normal, highlighted, pressed, selected, and disabled states where applicable.
 - Validate that every visible UI element appears in the gameplay element alignment contract.
 - Apply the shared feedback primitives from `Visual_Feedback_VFX_Recommendations.md` for accepted, selected, locked, disabled, invalid, reward, popup, drawer, and tactical HUD states instead of inventing per-screen one-offs.

@@ -303,6 +303,18 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void BoardPreview_UsesTransportOnlyPredicateForPassengerFirstMode()
+    {
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string previewTarget = ExtractMethodBodyByName(startup, "IsValidBoardTransportPreviewTarget");
+
+        StringAssert.Contains("IsBoardTransportWithAvailableSeats(em, target)", previewTarget);
+        Assert.IsFalse(
+            previewTarget.Contains("IsBoardCommandAvailable(em, target)", StringComparison.Ordinal),
+            "Passenger-first Board preview must not use broad Board availability, because that also includes soldiers.");
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_HoldButtonQueuesHoldAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();
@@ -371,12 +383,22 @@ public sealed class RtsSelectionInputSystemTests
     {
         string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs");
         string pointerPressed = ExtractMethod(runtimeInput, "HandlePointerPressed");
+        string updateInput = ExtractMethod(runtimeInput, "UpdateNormalPointerInput");
         string pointerReleased = ExtractMethod(runtimeInput, "HandlePointerReleased");
         string worldTargetCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleWorldTargetCommand");
+        string commandPan = ExtractBlockAfter(runtimeInput, "private static bool AllowsCameraPanDuringCommandMode");
+        string secondaryCancel = ExtractBlockAfter(runtimeInput, "private static bool TryCancelActiveCommandModeWithSecondaryPointer");
 
         Assert.IsFalse(pointerPressed.Contains("TryFocusUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueAttackOrderToClickedUnit", StringComparison.Ordinal));
         Assert.IsFalse(pointerPressed.Contains("TryIssueBoardTransportOrderToClickedUnit", StringComparison.Ordinal));
+        StringAssert.Contains("TryCancelActiveCommandModeWithSecondaryPointer(context)", updateInput);
+        StringAssert.Contains("bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;", pointerPressed);
+        StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
+        StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);
+        StringAssert.Contains("GamePointerInput.TryGetSecondaryPointerRelease", secondaryCancel);
+        StringAssert.Contains("input.ClearActiveCommandMode()", secondaryCancel);
+        StringAssert.Contains("context.ClearCommandMode?.Invoke()", secondaryCancel);
         StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);
         StringAssert.Contains("else if (dragDistance < context.DragThresholdPixels)", pointerReleased);
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
@@ -487,6 +509,31 @@ public sealed class RtsSelectionInputSystemTests
         Assert.GreaterOrEqual(start, 0, $"{methodName} was not found.");
         int bodyStart = source.IndexOf('{', start);
         Assert.GreaterOrEqual(bodyStart, 0, $"{methodName} body was not found.");
+
+        int depth = 0;
+        for (int i = bodyStart; i < source.Length; i++)
+        {
+            if (source[i] == '{')
+                depth++;
+            else if (source[i] == '}')
+                depth--;
+
+            if (depth == 0)
+                return source.Substring(bodyStart, i - bodyStart + 1);
+        }
+
+        Assert.Fail($"{methodName} body was not closed.");
+        return string.Empty;
+    }
+
+    private static string ExtractMethodBodyByName(string source, string methodName)
+    {
+        int nameIndex = source.IndexOf(methodName, StringComparison.Ordinal);
+        Assert.GreaterOrEqual(nameIndex, 0, $"{methodName} was not found.");
+        int signatureStart = source.LastIndexOf('\n', nameIndex);
+        signatureStart = signatureStart < 0 ? 0 : signatureStart + 1;
+        int bodyStart = source.IndexOf('{', nameIndex);
+        Assert.GreaterOrEqual(bodyStart, signatureStart, $"{methodName} body was not found.");
 
         int depth = 0;
         for (int i = bodyStart; i < source.Length; i++)

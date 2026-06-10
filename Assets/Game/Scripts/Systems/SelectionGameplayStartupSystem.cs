@@ -455,7 +455,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         bool IsValidBoardTransportPreviewTarget(EntityManager em, Entity source, Entity target)
         {
-            return IsBoardCommandAvailable(em, target);
+            return IsBoardTransportWithAvailableSeats(em, target);
         }
 
         bool IsValidBoardPassengerPreviewTarget(EntityManager em, Entity transport, Entity passenger)
@@ -728,6 +728,14 @@ internal sealed class SelectionGameplayStartupSystem
 
             if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
                 return true;
+
+            return IsBoardTransportWithAvailableSeats(em, entity);
+        }
+
+        bool IsBoardTransportWithAvailableSeats(EntityManager em, Entity entity)
+        {
+            if (!selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
+                return false;
 
             if (!unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity))
                 return false;

@@ -83,6 +83,9 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private Button _boundDestroyAction;
     private Button _boundBoardAction;
     private Sprite _boardActionNormalSprite;
+    private Color _boardActionNormalColor;
+    private bool _boardActionNormalColorCached;
+    private bool _boardActionSelected;
 
     private void Awake()
     {
@@ -172,6 +175,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         SetActionState(returnAction, model.Visible && model.ReturnEnabled);
         SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
         SetActionState(boardAction, model.Visible && model.BoardEnabled);
+        SetBoardActionSelected(_boardActionSelected);
     }
 
     public void SetBoardActionSelected(bool selected)
@@ -179,12 +183,26 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         if (boardAction == null || boardAction.targetGraphic is not Image image)
             return;
 
+        _boardActionSelected = selected;
         CacheBoardActionNormalSprite();
+        CacheBoardActionNormalColor(image);
         Sprite selectedSprite = boardAction.spriteState.selectedSprite;
         if (selected && selectedSprite != null)
+        {
             image.sprite = selectedSprite;
+            image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+        }
         else if (_boardActionNormalSprite != null)
+        {
             image.sprite = _boardActionNormalSprite;
+            image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+        }
+        else
+        {
+            image.color = selected
+                ? boardAction.colors.selectedColor
+                : (_boardActionNormalColorCached ? _boardActionNormalColor : image.color);
+        }
     }
 
     private void BindUnityEvents()
@@ -204,6 +222,15 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         }
 
         _boardActionNormalSprite = image.sprite;
+    }
+
+    private void CacheBoardActionNormalColor(Image image)
+    {
+        if (_boardActionNormalColorCached || image == null)
+            return;
+
+        _boardActionNormalColor = image.color;
+        _boardActionNormalColorCached = true;
     }
 
     private void RemoveUnityEvents()

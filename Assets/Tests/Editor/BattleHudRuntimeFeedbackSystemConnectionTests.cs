@@ -136,6 +136,67 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
     }
 
     [Test]
+    public void MatchHudSelectionPanel_BoardSelectedFallsBackToButtonTintWithoutSelectedSprite()
+    {
+        var panelRoot = new GameObject("SelectedSquadPanel");
+        var panelHost = new GameObject("MatchHudSelectionPanel");
+        var buttonObject = new GameObject("BoardButton");
+        _createdObjects.Add(panelRoot);
+        _createdObjects.Add(panelHost);
+        _createdObjects.Add(buttonObject);
+
+        Image targetImage = buttonObject.AddComponent<Image>();
+        targetImage.color = Color.clear;
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = targetImage;
+        ColorBlock colors = button.colors;
+        colors.selectedColor = new Color(1f, 0.88f, 0.42f, 0.16f);
+        button.colors = colors;
+
+        var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
+        SetPrivateField(panel, "selectedSquadPanel", panelRoot);
+        SetPrivateField(panel, "boardAction", button);
+        InvokeAwake(panel);
+
+        panel.Apply(new MatchHudSelectionPanelView.Model(
+            true,
+            "Unit",
+            "Ready",
+            "IDLE",
+            "100/100",
+            1f,
+            null,
+            false,
+            null,
+            false,
+            false,
+            true));
+        panel.SetBoardActionSelected(true);
+
+        Assert.AreEqual(colors.selectedColor, targetImage.color);
+
+        panel.Apply(new MatchHudSelectionPanelView.Model(
+            true,
+            "Unit",
+            "Ready",
+            "IDLE",
+            "100/100",
+            1f,
+            null,
+            false,
+            null,
+            false,
+            false,
+            true));
+
+        Assert.AreEqual(colors.selectedColor, targetImage.color);
+
+        panel.SetBoardActionSelected(false);
+
+        Assert.AreEqual(Color.clear, targetImage.color);
+    }
+
+    [Test]
     public void SelectionSystems_HoldAndStopClearCommandModesAndOrders()
     {
         EntityManager em = _world.EntityManager;

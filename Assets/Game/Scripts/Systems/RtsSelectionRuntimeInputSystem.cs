@@ -165,6 +165,9 @@ public sealed class RtsSelectionRuntimeInputSystem
             return;
         }
 
+        if (TryCancelActiveCommandModeWithSecondaryPointer(context))
+            return;
+
         if (input.IgnoreUiClickUntilRelease)
         {
             if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
@@ -243,7 +246,8 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         if (input.HasActiveWorldTargetCommandMode(out _))
         {
-            context.SetCameraDragging?.Invoke(false);
+            bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;
+            context.SetCameraDragging?.Invoke(allowCommandPan);
             input.SelectionModeHoldArmed = false;
             return;
         }
@@ -464,6 +468,33 @@ public sealed class RtsSelectionRuntimeInputSystem
         input.HasLiveSelectionRect = false;
     }
 
+    private static bool TryCancelActiveCommandModeWithSecondaryPointer(Context context)
+    {
+        if (!GamePointerInput.TryGetSecondaryPointerRelease(out Vector2 pointerPosition))
+            return false;
+
+        RtsSelectionInputSystem input = context.InputSystem;
+        if (!input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode))
+            return false;
+
+        bool pointerOverAnyUi = context.IsPointerOverAnyUi?.Invoke(pointerPosition) == true;
+        bool pointerOverGameplayUi = context.IsPointerOverGameplayUi?.Invoke(pointerPosition) == true;
+        if (pointerOverAnyUi || pointerOverGameplayUi)
+            return false;
+
+        input.ClearActiveCommandMode();
+        input.ClearQueuedMoveOrder();
+        input.ClearPendingMoveCommandRequests();
+        input.ClearPointerReleaseState();
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = false;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.ClearCommandMode?.Invoke();
+        context.LogClickDiagnostic?.Invoke($"commandModeCanceled reason=SecondaryPointer mode={activeMode} pos={pointerPosition} frame={Time.frameCount}");
+        return true;
+    }
+
     private static bool HandleWorldTargetCommand(
         Context context,
         RtsSelectionInputSystem input,
@@ -584,6 +615,12 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         return input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out _) &&
                direction == BoardCommandModeDirection.TransportToPassenger;
+    }
+
+    private static bool AllowsCameraPanDuringCommandMode(RtsSelectionInputSystem input)
+    {
+        return input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out _) &&
+               direction == BoardCommandModeDirection.PassengerToTransport;
     }
 
     private static void UpdateScanTargetPreview(Context context, Vector2 pointerPosition)

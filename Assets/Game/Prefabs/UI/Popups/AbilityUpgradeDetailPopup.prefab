@@ -142,7 +142,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Chapter 1 M03 Reward
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -279,7 +279,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: CONFIG TARGET
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -687,7 +687,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: TARGET ID
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -824,7 +824,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: ability.drone_scan
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1186,7 +1186,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 18 / 40
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1403,7 +1403,7 @@ MonoBehaviour:
 
     art loads from Visual Config.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1615,7 +1615,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Unveils an area on the map.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1752,7 +1752,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: ABILITY / UPGRADE DETAIL
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1891,7 +1891,7 @@ MonoBehaviour:
 
     HUD, Intel Reveal, Store'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2319,7 +2319,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: UNLOCK
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2609,7 +2609,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: TARGET ID     upgrade.vehicle.apc_armor
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2979,7 +2979,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: AVAILABILITY
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3191,7 +3191,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: SUPPORT ABILITY
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3482,7 +3482,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 45s
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3874,7 +3874,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Support Ability
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4011,7 +4011,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4148,7 +4148,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: NOT UNLOCKED
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4696,7 +4696,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: ABILITY EFFECTS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4989,7 +4989,7 @@ MonoBehaviour:
 
     x1'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5201,7 +5201,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Mark hidden hostile
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5594,7 +5594,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Cooldown
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5731,7 +5731,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: VIEW SOURCE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5868,7 +5868,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: PREREQUISITE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6008,7 +6008,7 @@ MonoBehaviour:
     revealing hidden threats
     and objectives.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6606,7 +6606,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Charges
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6743,7 +6743,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: UPGRADE TARGET (IF APPLICABLE)
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6880,7 +6880,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Reveal fogged district
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7092,7 +7092,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Temporarily marks hidden enemy units.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7231,7 +7231,7 @@ MonoBehaviour:
 
     Support Slot'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7443,7 +7443,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: APC ARMOR UPGRADE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7811,7 +7811,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: DRONE SCAN
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7948,7 +7948,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Upgrade Track
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: 1710293705271617687, guid: 2af067056c9fda94daaafa34c5ec7d72, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

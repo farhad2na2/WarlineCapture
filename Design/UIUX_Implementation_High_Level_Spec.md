@@ -25,6 +25,7 @@ The current UI uses the Canvas/TMP shell:
 - Unity Canvas hierarchy under `UI_Canvas / Panel_Main`, controlled mostly by `Assets/Game/Scripts/UI/MenuView.cs`.
 - Canvas prefab shell content under `Assets/Game/Prefabs/UI`, with supporting screen, popup, component, and config assets under `Assets/Game/Art/UI`, `Assets/Game/Configs/UI`, and `Assets/Game/Scripts/UI`.
 - New runtime UI must stay on the Canvas/TMP shell path.
+- All new or modified runtime UI text must be TextMeshPro text using the `Oxanium-Medium SDF` font asset. Do not add legacy `Text` components or TMP text with another font asset unless PM explicitly approves a screen-specific exception.
 
 The current screens are practical but not yet aligned with the target AAA mobile shell:
 
@@ -95,7 +96,7 @@ Do not complete all visual-lock work first and do not complete all functionality
 
 Mockups and generated visual targets are references, not runtime shortcuts. The production UI must be separate Canvas elements: 9-sliced panels, masked art crops, icons, TMP text, and real `Button`, `Toggle`, `Slider`, `Dropdown`, and `ScrollRect` controls. Replaceable elements such as portraits, resources, logos, icons, and text must not be baked into large background images.
 
-Shared chrome rule: buttons, tabs, segmented controls, dropdowns, and launch actions must use thin clean control chrome, not the heavier section/panel border art. Future screen builders should reuse the accepted Settings/Skirmish control style, keep controls below section-title divider lines, keep dropdown rects separated from their labels, use `Oxanium-Bold SDF` for page titles and large CTA labels, and use `Oxanium-Light SDF` for normal screen/control text. Numeric steppers, difficulty groups, map stat cards, icon plates, and CTA buttons are separate control families and should not be collapsed into a generic segmented-control treatment.
+Shared chrome rule: buttons, tabs, segmented controls, dropdowns, and launch actions must use thin clean control chrome, not the heavier section/panel border art. Future screen builders should reuse the accepted Settings/Skirmish control style, keep controls below section-title divider lines, keep dropdown rects separated from their labels, and set every TMP text component to `Oxanium-Medium SDF`. Numeric steppers, difficulty groups, map stat cards, icon plates, and CTA buttons are separate control families and should not be collapsed into a generic segmented-control treatment.
 
 The recommended path is:
 

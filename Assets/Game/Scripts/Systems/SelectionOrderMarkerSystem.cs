@@ -29,6 +29,8 @@ public sealed class SelectionOrderMarkerSystem
     private Transform _runtimeRoot;
     private EntityQuery _attackTargetPreviewQuery;
     private readonly List<GameObject> _attackTargetPreviewMarkers = new();
+    private readonly List<Renderer[]> _attackTargetPreviewMarkerRenderers = new();
+    private readonly MaterialPropertyBlock _boardTargetPreviewPropertyBlock = new();
     private bool _attackTargetPreviewVisible;
     private int _attackTargetPreviewVisibleCount;
     private float _nextAttackTargetPreviewUpdateTime;
@@ -88,6 +90,7 @@ public sealed class SelectionOrderMarkerSystem
         _scanOrderMarker = null;
         _scanOrderMarkerRenderer = null;
         _attackTargetPreviewMarkers.Clear();
+        _attackTargetPreviewMarkerRenderers.Clear();
         _attackTargetPreviewVisible = false;
         _attackTargetPreviewVisibleCount = 0;
         _nextAttackTargetPreviewUpdateTime = 0f;
@@ -291,6 +294,7 @@ public sealed class SelectionOrderMarkerSystem
                 hasGroundY ? groundY : position.y + 0.05f,
                 position.z);
             marker.transform.rotation = Quaternion.identity;
+            ClearTargetPreviewColor(markerIndex);
             SetMarkerActive(marker, true);
             markerIndex++;
         }
@@ -346,6 +350,7 @@ public sealed class SelectionOrderMarkerSystem
                 hasGroundY ? groundY : position.y + 0.05f,
                 position.z);
             marker.transform.rotation = Quaternion.identity;
+            ApplyBoardTargetPreviewColor(markerIndex);
             SetMarkerActive(marker, true);
             markerIndex++;
         }
@@ -412,9 +417,11 @@ public sealed class SelectionOrderMarkerSystem
             marker.name = "AttackTargetPreviewMarkerRuntime";
             if (_runtimeRoot != null)
                 marker.transform.SetParent(_runtimeRoot, false);
-            ConfigureMarkerRenderers(marker.GetComponentsInChildren<Renderer>(true));
+            Renderer[] renderers = marker.GetComponentsInChildren<Renderer>(true);
+            ConfigureMarkerRenderers(renderers);
             marker.SetActive(false);
             _attackTargetPreviewMarkers.Add(marker);
+            _attackTargetPreviewMarkerRenderers.Add(renderers);
         }
 
         return _attackTargetPreviewMarkers[index];
@@ -476,6 +483,50 @@ public sealed class SelectionOrderMarkerSystem
             renderer.lightProbeUsage = LightProbeUsage.Off;
             renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
             renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        }
+    }
+
+    private void ApplyBoardTargetPreviewColor(int markerIndex)
+    {
+        if ((uint)markerIndex >= (uint)_attackTargetPreviewMarkerRenderers.Count)
+            return;
+
+        Renderer[] renderers = _attackTargetPreviewMarkerRenderers[markerIndex];
+        if (renderers == null)
+            return;
+
+        Color color = new(0.22f, 1f, 0.78f, 0.92f);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null)
+                continue;
+
+            _boardTargetPreviewPropertyBlock.Clear();
+            renderer.GetPropertyBlock(_boardTargetPreviewPropertyBlock);
+            _boardTargetPreviewPropertyBlock.SetColor("_BaseColor", color);
+            _boardTargetPreviewPropertyBlock.SetColor("_Color", color);
+            renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
+        }
+    }
+
+    private void ClearTargetPreviewColor(int markerIndex)
+    {
+        if ((uint)markerIndex >= (uint)_attackTargetPreviewMarkerRenderers.Count)
+            return;
+
+        Renderer[] renderers = _attackTargetPreviewMarkerRenderers[markerIndex];
+        if (renderers == null)
+            return;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null)
+                continue;
+
+            _boardTargetPreviewPropertyBlock.Clear();
+            renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
         }
     }
 

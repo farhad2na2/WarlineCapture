@@ -14,7 +14,6 @@
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",
-        "Unity.Entities.Hybrid",
         "Unity.InputSystem",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",

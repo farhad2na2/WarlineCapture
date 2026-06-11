@@ -2,6 +2,7 @@
     "name": "Game.UI.Shell.Ecs",
     "rootNamespace": "",
     "references": [
+        "Game.UI.Contracts",
         "Unity.Collections",
         "Unity.Entities"
     ],

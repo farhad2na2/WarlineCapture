@@ -45,8 +45,8 @@ public sealed class PerformanceDiagnosticsSystem
 
     private readonly bool _enableFrameRateDiagnostics = true;
     private readonly bool _enableSlowFrameDiagnostics = true;
-    private readonly System.Text.StringBuilder _freezeLogBuilder = new();
-    private readonly System.Text.StringBuilder _lastStepLogBuilder = new();
+    private readonly System.Text.StringBuilder _freezeLogBuilder = new(256);
+    private readonly System.Text.StringBuilder _lastStepLogBuilder = new(256);
     private readonly StepSample[] _lastStepSamples = new StepSample[MaxLastStepSamples];
     private readonly List<NamedProfilerRecorder> _markerRecorders = new();
     private double _lastUpdateTimestamp;

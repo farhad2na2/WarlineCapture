@@ -132,6 +132,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void RuntimeAssemblyMustNotReferenceUiShellEcsAssembly()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.UI.Shell.Ecs\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Game.UI.Shell.Ecs`. Shared shell route/state data belongs in `Game.UI.Contracts`; shell systems stay UI-owned.");
+    }
+
+    [Test]
     public void RuntimeAssemblyMustNotReferenceUnityUiPackage()
     {
         string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
@@ -151,6 +162,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Unity.TextMeshPro\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Unity.TextMeshPro`. Runtime text presentation belongs in UI or composition assemblies.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceEntitiesHybridPackage()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.Entities.Hybrid\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Unity.Entities.Hybrid` unless runtime source directly uses hybrid Entities APIs.");
     }
 
     [Test]

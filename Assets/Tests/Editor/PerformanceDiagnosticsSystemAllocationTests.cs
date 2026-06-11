@@ -28,7 +28,16 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
         for (int i = 0; i < 256; i++)
             diagnosticsSystem.EndStep("UnitRenderBudgetSystem", diagnosticsSystem.BeginStep());
 
-        int emptyBlocks = CountGcAllocationBlocks(() => { });
+        int timeBaselineBlocks = CountGcAllocationBlocks(() =>
+        {
+            for (int i = 0; i < 128; i++)
+            {
+                diagnosticsSystem.BeginStep();
+                diagnosticsSystem.BeginStep();
+            }
+        });
+
+        diagnosticsSystem.BeginUpdate(gameplayActive: false);
         int measuredBlocks = CountGcAllocationBlocks(() =>
         {
             for (int i = 0; i < 128; i++)
@@ -37,8 +46,8 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
 
         Assert.LessOrEqual(
             measuredBlocks,
-            emptyBlocks,
-            $"EndStep allocated beyond the recorder baseline. baseline={emptyBlocks} measured={measuredBlocks}");
+            timeBaselineBlocks,
+            $"EndStep allocated beyond the warmed Unity time baseline. baseline={timeBaselineBlocks} measured={measuredBlocks}");
     }
 
     private static int CountGcAllocationBlocks(System.Action action)

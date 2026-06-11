@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public sealed class MainMenuPlayUI : IMatchRuntimeUi
 {
@@ -209,6 +211,36 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     public bool IsPointerOverPlacementUi(Vector2 screenPosition)
     {
         return IsPointerOverAnyGameplayUi(screenPosition, out _);
+    }
+
+    public bool IsPointerOverRaycastableUi(Vector2 screenPosition, out string source)
+    {
+        source = null;
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null)
+            return false;
+
+        var pointerData = new PointerEventData(eventSystem)
+        {
+            position = screenPosition
+        };
+        var results = new List<RaycastResult>();
+        eventSystem.RaycastAll(pointerData, results);
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            RaycastResult result = results[i];
+            if (result.gameObject == null || !result.gameObject.activeInHierarchy)
+                continue;
+
+            if (result.module is not UnityEngine.UI.GraphicRaycaster)
+                continue;
+
+            source = result.gameObject.name;
+            return true;
+        }
+
+        return false;
     }
 
     public bool IsPointerOverSelectionCancelUi(Vector2 screenPosition)

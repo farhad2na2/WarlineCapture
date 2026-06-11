@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 internal sealed class SelectionGameplayStartupSystem
@@ -263,7 +262,7 @@ internal sealed class SelectionGameplayStartupSystem
                 SetExplicitAttackTargetModeActive,
                 () => rtsCameraSystem.IsDragging,
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), value),
-                pointerPosition => IsPointerOverUI(pointerPosition, out _),
+                pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                 TryIssueAttackOrderToClickedUnit,
                 TryIssueScanOrder,
@@ -1793,38 +1792,15 @@ internal sealed class SelectionGameplayStartupSystem
                 mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source))
                 return true;
 
-            return IsPointerOverUI(screenPosition, out source);
-        }
-    }
-
-    private static bool IsPointerOverUI(Vector2 screenPosition, out string source)
-    {
-        source = null;
-        EventSystem eventSystem = EventSystem.current;
-        if (eventSystem == null)
-            return false;
-
-        var pointerData = new PointerEventData(eventSystem)
-        {
-            position = screenPosition
-        };
-        var results = new List<RaycastResult>();
-        eventSystem.RaycastAll(pointerData, results);
-
-        for (int i = 0; i < results.Count; i++)
-        {
-            RaycastResult result = results[i];
-            if (result.gameObject == null || !result.gameObject.activeInHierarchy)
-                continue;
-
-            if (result.module is not UnityEngine.UI.GraphicRaycaster)
-                continue;
-
-            source = result.gameObject.name;
-            return true;
+            return IsPointerOverRaycastableUi(screenPosition, out source);
         }
 
-        return false;
+        bool IsPointerOverRaycastableUi(Vector2 screenPosition, out string source)
+        {
+            source = null;
+            return mainMenuPlayUi != null &&
+                   mainMenuPlayUi.IsPointerOverRaycastableUi(screenPosition, out source);
+        }
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)

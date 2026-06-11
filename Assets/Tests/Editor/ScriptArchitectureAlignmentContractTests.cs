@@ -132,6 +132,28 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void RuntimeAssemblyMustNotReferenceUnityUiPackage()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"UnityEngine.UI\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `UnityEngine.UI`. Runtime code should query UI-blocking state through `Game.UI.Contracts`; concrete UI hit testing belongs in `Game.UI.Runtime`.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceTextMeshProPackage()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.TextMeshPro\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Unity.TextMeshPro`. Runtime text presentation belongs in UI or composition assemblies.");
+    }
+
+    [Test]
     public void LegacyBootstrapFolderMustNotContainRuntimeSourceFiles()
     {
         List<string> violations = EnumerateSourceFiles(LegacyBootstrapRoot)
@@ -246,6 +268,45 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Runtime scripts must not use Camera.main. Pass cameras through serialized references, scene bindings, or explicit runtime contexts.");
+    }
+
+    [Test]
+    public void RuntimeLogicMustNotReferenceUnityUiImplementationTypes()
+    {
+        string[] forbiddenTokens =
+        {
+            "using UnityEngine.UI",
+            "UnityEngine.UI.",
+            "GraphicRaycaster",
+            "using UnityEngine.EventSystems",
+            "UnityEngine.EventSystems",
+            "PointerEventData",
+            "RaycastResult",
+            "using TMPro",
+            "TMPro.",
+            "TextMeshPro",
+            "TMP_",
+        };
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeLogicSourceFiles())
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                foreach (string forbiddenToken in forbiddenTokens)
+                {
+                    if (line.Contains(forbiddenToken, StringComparison.Ordinal))
+                        violations.Add($"{normalized}:{lineIndex + 1} references UI implementation token `{forbiddenToken}`: {line.Trim()}");
+                }
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime logic must not reference Unity UI implementation types. Expose UI hit testing through `Game.UI.Contracts` and keep EventSystem/GraphicRaycaster code in `Game.UI.Runtime`.");
     }
 
     [Test]

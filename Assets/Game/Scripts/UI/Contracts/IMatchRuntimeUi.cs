@@ -23,6 +23,8 @@ public interface IMatchRuntimeUi
 
     bool IsPointerOverPlacementUi(Vector2 screenPosition);
 
+    bool IsPointerOverRaycastableUi(Vector2 screenPosition, out string source);
+
     bool IsPointerOverSelectionCancelUi(Vector2 screenPosition);
 
     bool IsPointerOverUnitCommandUi(Vector2 screenPosition, out string source);

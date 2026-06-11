@@ -8,9 +8,11 @@ using UnityEngine;
 public partial struct UnitRespawnSystem : ISystem
 {
     private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private EntityQuery _respawnQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<DynamicBlockerComponent>();
@@ -19,7 +21,7 @@ public partial struct UnitRespawnSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
         var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
         if (buffer.Length == 0)
             return;

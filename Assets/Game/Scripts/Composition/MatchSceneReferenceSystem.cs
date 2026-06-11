@@ -27,17 +27,7 @@ public sealed class MatchSceneReferenceSystem
     public bool TryGetLoadedMatchSceneView(World world, out MatchSceneView view)
     {
         view = null;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager entityManager = world.EntityManager;
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchSceneReferenceComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        if (!entityManager.Exists(entity) || !entityManager.HasComponent<MatchSceneReferenceComponent>(entity))
+        if (!TryGetReference(world, out EntityManager entityManager, out Entity entity))
             return false;
 
         MatchSceneView candidate = entityManager.GetComponentObject<MatchSceneReferenceComponent>(entity).View;
@@ -58,6 +48,24 @@ public sealed class MatchSceneReferenceSystem
             return false;
 
         entityManager = world.EntityManager;
+        return TryGetReference(entityManager, out entity);
+    }
+
+    private bool TryGetReference(World world, out EntityManager entityManager, out Entity entity)
+    {
+        entityManager = default;
+        entity = Entity.Null;
+
+        if (world == null || !world.IsCreated)
+            return false;
+
+        entityManager = world.EntityManager;
+        return TryGetReference(entityManager, out entity);
+    }
+
+    private bool TryGetReference(EntityManager entityManager, out Entity entity)
+    {
+        entity = Entity.Null;
         if (_referenceEntity != Entity.Null &&
             entityManager.Exists(_referenceEntity) &&
             entityManager.HasComponent<MatchSceneReferenceComponent>(_referenceEntity))

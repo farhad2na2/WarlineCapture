@@ -3,7 +3,6 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
-using Unity.Transforms;
 
 public sealed class MatchHudMinimapInputSystem
 {
@@ -43,9 +42,13 @@ public sealed class MatchHudMinimapInputSystem
     private Color32[] _rasterPixels;
     private readonly Vector3[] _mapWorldCorners = new Vector3[4];
     private readonly MatchHudMinimapProjectionGrid[] _rasterProjectionCandidates = new MatchHudMinimapProjectionGrid[4];
-    private World _markerQueryWorld;
-    private EntityQuery _markerQuery;
-    private bool _hasMarkerQuery;
+    private World _markerBoundaryWorld;
+    private EntityQuery _markerBoundaryQuery;
+    private Entity _markerBoundaryEntity;
+    private bool _hasMarkerBoundaryQuery;
+    private World _gridQueryWorld;
+    private EntityQuery _gridQuery;
+    private bool _hasGridQuery;
     private bool _staticMapDirty = true;
     private float _nextStaticMapRetryTime;
     private int _warmupStaticMapRefreshesRemaining;
@@ -106,7 +109,8 @@ public sealed class MatchHudMinimapInputSystem
     public void Dispose()
     {
         Unbind();
-        ReleaseMarkerQuery();
+        ReleaseMarkerBoundaryQuery();
+        ReleaseGridQuery();
         ReleaseCaptureResources();
     }
 
@@ -117,7 +121,7 @@ public sealed class MatchHudMinimapInputSystem
 
     public void Update()
     {
-        if (_view == null || !MatchHudMinimapProjectionSystem.TryGetGrid(out GridConfig grid))
+        if (_view == null || !TryGetGrid(out GridConfig grid))
             return;
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
@@ -202,7 +206,7 @@ public sealed class MatchHudMinimapInputSystem
     {
         if (_runtimeGameplayStateSystem == null ||
             _selectionUiCameraSystem == null ||
-            !MatchHudMinimapProjectionSystem.TryGetGrid(out GridConfig grid))
+            !TryGetGrid(out GridConfig grid))
         {
             return;
         }
@@ -368,28 +372,19 @@ public sealed class MatchHudMinimapInputSystem
 
         Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
         int markerIndex = 0;
-        if (TryGetMarkerQuery(out EntityManager em, out EntityQuery query))
+        if (TryGetMarkerBuffer(out DynamicBuffer<MatchHudMinimapMarkerElement> markers))
         {
-            if (!query.IsEmptyIgnoreFilter)
+            for (int i = 0; i < markers.Length && markerIndex < MaxMarkers; i++)
             {
-                using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-                for (int i = 0; i < entities.Length && markerIndex < MaxMarkers; i++)
-                {
-                    Entity entity = entities[i];
-                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-                    if (health.Current <= 0)
-                        continue;
+                MatchHudMinimapMarkerElement marker = markers[i];
+                Vector3 worldPosition = new(marker.Position.x, marker.Position.y, marker.Position.z);
+                if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, worldPosition, out Vector2 normalized))
+                    continue;
+                if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
+                    continue;
 
-                    LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-                    if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, transform.Position, out Vector2 normalized))
-                        continue;
-                    if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
-                        continue;
-
-                    Faction faction = em.GetComponentData<Faction>(entity);
-                    SetMarker(markerIndex, normalized, ResolveMarkerColor(faction.Id), mapRect, parentTopLeft);
-                    markerIndex++;
-                }
+                SetMarker(markerIndex, normalized, ResolveMarkerColor(marker.FactionId), mapRect, parentTopLeft);
+                markerIndex++;
             }
         }
 
@@ -445,39 +440,37 @@ public sealed class MatchHudMinimapInputSystem
         return _markerPool[index];
     }
 
-    private bool TryGetMarkerQuery(out EntityManager em, out EntityQuery query)
+    private bool TryGetGrid(out GridConfig grid)
     {
-        em = default;
-        query = default;
+        grid = default;
         World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 
-        if (!_hasMarkerQuery || _markerQueryWorld != world)
+        if (!_hasGridQuery || _gridQueryWorld != world)
         {
-            ReleaseMarkerQuery();
-            _markerQueryWorld = world;
-            _markerQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitHealth>());
-            _hasMarkerQuery = true;
+            ReleaseGridQuery();
+            _gridQueryWorld = world;
+            _gridQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _hasGridQuery = true;
         }
 
-        em = world.EntityManager;
-        query = _markerQuery;
+        if (_gridQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        grid = _gridQuery.GetSingleton<GridConfig>();
         return true;
     }
 
-    private void ReleaseMarkerQuery()
+    private void ReleaseGridQuery()
     {
-        if (!_hasMarkerQuery)
+        if (!_hasGridQuery)
             return;
 
         try
         {
-            if (_markerQueryWorld != null && _markerQueryWorld.IsCreated)
-                _markerQuery.Dispose();
+            if (_gridQueryWorld != null && _gridQueryWorld.IsCreated)
+                _gridQuery.Dispose();
         }
         catch (System.NullReferenceException)
         {
@@ -486,9 +479,68 @@ public sealed class MatchHudMinimapInputSystem
         {
         }
 
-        _markerQueryWorld = null;
-        _markerQuery = default;
-        _hasMarkerQuery = false;
+        _gridQueryWorld = null;
+        _gridQuery = default;
+        _hasGridQuery = false;
+    }
+
+    private bool TryGetMarkerBuffer(out DynamicBuffer<MatchHudMinimapMarkerElement> markers)
+    {
+        markers = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        if (_markerBoundaryEntity != Entity.Null &&
+            _markerBoundaryWorld == world &&
+            em.Exists(_markerBoundaryEntity) &&
+            em.HasComponent<MatchHudMinimapMarkerBoundary>(_markerBoundaryEntity) &&
+            em.HasBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity))
+        {
+            markers = em.GetBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity, true);
+            return true;
+        }
+
+        if (!_hasMarkerBoundaryQuery || _markerBoundaryWorld != world)
+        {
+            ReleaseMarkerBoundaryQuery();
+            _markerBoundaryWorld = world;
+            _markerBoundaryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+                ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+            _hasMarkerBoundaryQuery = true;
+        }
+
+        if (_markerBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        _markerBoundaryEntity = _markerBoundaryQuery.GetSingletonEntity();
+        markers = em.GetBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity, true);
+        return true;
+    }
+
+    private void ReleaseMarkerBoundaryQuery()
+    {
+        if (!_hasMarkerBoundaryQuery)
+            return;
+
+        try
+        {
+            if (_markerBoundaryWorld != null && _markerBoundaryWorld.IsCreated)
+                _markerBoundaryQuery.Dispose();
+        }
+        catch (System.NullReferenceException)
+        {
+        }
+        catch (System.ObjectDisposedException)
+        {
+        }
+
+        _markerBoundaryWorld = null;
+        _markerBoundaryQuery = default;
+        _markerBoundaryEntity = Entity.Null;
+        _hasMarkerBoundaryQuery = false;
     }
 
     private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)
@@ -633,7 +685,7 @@ public sealed class MatchHudMinimapInputSystem
             return 1;
         }
 
-        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionSystem.TryGetGrid(out GridConfig grid)
+        MatchHudMinimapProjectionGrid fullGrid = TryGetGrid(out GridConfig grid)
             ? MatchHudMinimapProjectionGrid.FromGridConfig(grid)
             : requestedGrid;
         Vector3 center = requestedGrid.Origin + new Vector3(requestedGrid.Width * 0.5f, 0f, requestedGrid.Height * 0.5f);

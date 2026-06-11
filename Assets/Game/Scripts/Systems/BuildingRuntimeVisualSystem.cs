@@ -7,6 +7,7 @@ internal sealed class BuildingRuntimeVisualSystem
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
+        public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingFactionVisualSystem FactionVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
@@ -24,6 +25,7 @@ internal sealed class BuildingRuntimeVisualSystem
             float factionTintStrength)
         {
             RuntimeBuildings = runtimeBuildings;
+            RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
             VisualSystem = visualSystem;
             FactionVisualSystem = factionVisualSystem;
             BarrierSystem = barrierSystem;
@@ -74,21 +76,30 @@ internal sealed class BuildingRuntimeVisualSystem
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.VisualSystem == null)
             return;
 
-        foreach (var entry in context.RuntimeBuildings)
+        if (context.RuntimeBuildingMap != null)
         {
-            RuntimeBuildingEntity building = entry.Value;
-            if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
-                continue;
-
-            bool isProducingOil = building.Definition.OilStorageCapacity > 0 &&
-                                  building.Definition.OilBarrelsPerDay > 0f &&
-                                  building.StoredOilBarrels < building.Definition.OilStorageCapacity;
-            bool isProducingFuel = building.Definition.FuelStorageCapacity > 0 &&
-                                   building.Definition.FuelBarrelsPerDay > 0f &&
-                                   building.StoredOilBarrels > 0f &&
-                                   building.StoredFuelBarrels < building.Definition.FuelStorageCapacity;
-            context.VisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildingMap)
+                UpdateBuildingResourceVisual(context, entry.Value, time);
+            return;
         }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+            UpdateBuildingResourceVisual(context, entry.Value, time);
+    }
+
+    private static void UpdateBuildingResourceVisual(Context context, RuntimeBuildingEntity building, float time)
+    {
+        if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
+            return;
+
+        bool isProducingOil = building.Definition.OilStorageCapacity > 0 &&
+                              building.Definition.OilBarrelsPerDay > 0f &&
+                              building.StoredOilBarrels < building.Definition.OilStorageCapacity;
+        bool isProducingFuel = building.Definition.FuelStorageCapacity > 0 &&
+                               building.Definition.FuelBarrelsPerDay > 0f &&
+                               building.StoredOilBarrels > 0f &&
+                               building.StoredFuelBarrels < building.Definition.FuelStorageCapacity;
+        context.VisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
     }
 
     public void RefreshBuildingMarkerVisibility(Context context)
@@ -96,19 +107,28 @@ internal sealed class BuildingRuntimeVisualSystem
         if (context.RuntimeBuildings == null || context.VisualSystem == null)
             return;
 
-        foreach (var entry in context.RuntimeBuildings)
+        if (context.RuntimeBuildingMap != null)
         {
-            RuntimeBuildingEntity building = entry.Value;
-            if (building == null)
-                continue;
-
-            if (building.IsDestroyed)
-                context.FactionVisualSystem?.Clear(new BuildingFactionVisualSystem.Context(
-                    context.FactionVisualSettings,
-                    context.MarkerPropertyBlock,
-                    context.FactionTintStrength),
-                    building);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildingMap)
+                RefreshBuildingMarkerVisibility(context, entry.Value);
+            return;
         }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+            RefreshBuildingMarkerVisibility(context, entry.Value);
+    }
+
+    private static void RefreshBuildingMarkerVisibility(Context context, RuntimeBuildingEntity building)
+    {
+        if (building == null)
+            return;
+
+        if (building.IsDestroyed)
+            context.FactionVisualSystem?.Clear(new BuildingFactionVisualSystem.Context(
+                context.FactionVisualSettings,
+                context.MarkerPropertyBlock,
+                context.FactionTintStrength),
+                building);
     }
 
     private static float NormalizeSignedAngle(float angle)

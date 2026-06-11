@@ -39,6 +39,7 @@ public sealed class BuildingCombatSystem
     {
         public readonly RuntimeBuildingSystem<TBuilding> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, TBuilding> RuntimeBuildings;
+        public readonly Dictionary<int, TBuilding> RuntimeBuildingMap;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingAction<TBuilding> RememberOpenBaseBreach;
         public readonly BuildingIdAction NotifyHomeBuildingDestroyed;
@@ -66,6 +67,7 @@ public sealed class BuildingCombatSystem
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
             RuntimeBuildings = runtimeBuildings;
+            RuntimeBuildingMap = runtimeBuildings as Dictionary<int, TBuilding>;
             TryGetEntityManager = tryGetEntityManager;
             RememberOpenBaseBreach = rememberOpenBaseBreach;
             NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
@@ -95,8 +97,31 @@ public sealed class BuildingCombatSystem
         if (buildings == null || buildings.Count == 0)
             return null;
 
+        if (buildings is Dictionary<int, TBuilding> buildingMap)
+            return CollectDestroyedCleanupIds(buildingMap, now);
+
         List<int> cleanupIds = null;
-        foreach (var entry in buildings)
+        foreach (KeyValuePair<int, TBuilding> entry in buildings)
+        {
+            TBuilding building = entry.Value;
+            if (building == null || !building.IsDestroyed || now < building.DestroyedCleanupAt)
+                continue;
+
+            cleanupIds ??= new List<int>();
+            cleanupIds.Add(entry.Key);
+        }
+
+        return cleanupIds;
+    }
+
+    public List<int> CollectDestroyedCleanupIds<TBuilding>(Dictionary<int, TBuilding> buildings, float now)
+        where TBuilding : class, IRuntimeBuilding
+    {
+        if (buildings == null || buildings.Count == 0)
+            return null;
+
+        List<int> cleanupIds = null;
+        foreach (KeyValuePair<int, TBuilding> entry in buildings)
         {
             TBuilding building = entry.Value;
             if (building == null || !building.IsDestroyed || now < building.DestroyedCleanupAt)
@@ -197,7 +222,9 @@ public sealed class BuildingCombatSystem
     public void UpdateDestroyedBuildings<TBuilding>(Context<TBuilding> context, float now)
         where TBuilding : class, IRuntimeBuildingVisualState
     {
-        List<int> cleanupIds = CollectDestroyedCleanupIds(context.RuntimeBuildings, now);
+        List<int> cleanupIds = context.RuntimeBuildingMap != null
+            ? CollectDestroyedCleanupIds(context.RuntimeBuildingMap, now)
+            : CollectDestroyedCleanupIds(context.RuntimeBuildings, now);
         if (cleanupIds == null)
             return;
 
@@ -216,23 +243,38 @@ public sealed class BuildingCombatSystem
             return;
         }
 
-        foreach (var entry in context.RuntimeBuildings)
+        if (context.RuntimeBuildingMap != null)
         {
-            TBuilding building = entry.Value;
-            if (building == null || building.IsDestroyed || building.CombatEntity == Entity.Null)
-                continue;
-
-            RuntimeCombatState combatState = ResolveRuntimeCombatState(building, em);
-            if (combatState == RuntimeCombatState.MissingCombatEntity)
-            {
-                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
-                building.CombatEntity = Entity.Null;
-                continue;
-            }
-
-            if (combatState == RuntimeCombatState.DeadCombatEntity)
-                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+            foreach (KeyValuePair<int, TBuilding> entry in context.RuntimeBuildingMap)
+                SyncDestroyedRuntimeBuildingCombatEntity(context, entry.Value, em, now, destroyedLifetimeSeconds);
+            return;
         }
+
+        foreach (KeyValuePair<int, TBuilding> entry in context.RuntimeBuildings)
+            SyncDestroyedRuntimeBuildingCombatEntity(context, entry.Value, em, now, destroyedLifetimeSeconds);
+    }
+
+    private void SyncDestroyedRuntimeBuildingCombatEntity<TBuilding>(
+        Context<TBuilding> context,
+        TBuilding building,
+        EntityManager em,
+        float now,
+        float destroyedLifetimeSeconds)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (building == null || building.IsDestroyed || building.CombatEntity == Entity.Null)
+            return;
+
+        RuntimeCombatState combatState = ResolveRuntimeCombatState(building, em);
+        if (combatState == RuntimeCombatState.MissingCombatEntity)
+        {
+            BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+            building.CombatEntity = Entity.Null;
+            return;
+        }
+
+        if (combatState == RuntimeCombatState.DeadCombatEntity)
+            BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
     }
 
     public bool BeginDestroyedBuildingState<TBuilding>(Context<TBuilding> context, TBuilding building, float now, float destroyedLifetimeSeconds)

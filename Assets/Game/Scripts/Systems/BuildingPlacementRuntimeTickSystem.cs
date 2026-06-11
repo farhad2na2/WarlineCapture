@@ -1,8 +1,22 @@
 using System;
+using Unity.Profiling;
 using UnityEngine;
 
 internal sealed class BuildingPlacementRuntimeTickSystem
 {
+    private static readonly ProfilerMarker ProcessPendingProductionsMarker = new("BuildingPlacementRuntimeTick.ProcessPendingProductions");
+    private static readonly ProfilerMarker UpdateResourceProductionMarker = new("BuildingPlacementRuntimeTick.UpdateResourceProduction");
+    private static readonly ProfilerMarker UpdateResourceHaulersMarker = new("BuildingPlacementRuntimeTick.UpdateResourceHaulers");
+    private static readonly ProfilerMarker UpdateBuildingResourceVisualsMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingResourceVisuals");
+    private static readonly ProfilerMarker CleanupRecentSpawnReservationsMarker = new("BuildingPlacementRuntimeTick.CleanupRecentSpawnReservations");
+    private static readonly ProfilerMarker SyncDestroyedRuntimeBuildingCombatEntitiesMarker = new("BuildingPlacementRuntimeTick.SyncDestroyedRuntimeBuildingCombatEntities");
+    private static readonly ProfilerMarker UpdateDestroyedBuildingsMarker = new("BuildingPlacementRuntimeTick.UpdateDestroyedBuildings");
+    private static readonly ProfilerMarker UpdateRoadBarrierDoorsMarker = new("BuildingPlacementRuntimeTick.UpdateRoadBarrierDoors");
+    private static readonly ProfilerMarker FlushPendingMarkerRefreshMarker = new("BuildingPlacementRuntimeTick.FlushPendingMarkerRefresh");
+    private static readonly ProfilerMarker EnqueueMapBuildingPlacementsMarker = new("BuildingPlacementRuntimeTick.EnqueueMapBuildingPlacements");
+    private static readonly ProfilerMarker UpdateBuildingRuntimeBoundaryMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingRuntimeBoundary");
+    private static readonly ProfilerMarker UpdateInputMarker = new("BuildingPlacementRuntimeTick.UpdateInput");
+
     public readonly struct Context
     {
         public readonly Action ProcessPendingProductions;
@@ -71,29 +85,66 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         double afterInput = startTime;
         try
         {
-            context.ProcessPendingProductions?.Invoke();
+            using (ProcessPendingProductionsMarker.Auto())
+            {
+                context.ProcessPendingProductions?.Invoke();
+            }
             afterProductions = Time.realtimeSinceStartupAsDouble;
-            context.UpdateResourceProduction?.Invoke();
+            using (UpdateResourceProductionMarker.Auto())
+            {
+                context.UpdateResourceProduction?.Invoke();
+            }
             afterResources = Time.realtimeSinceStartupAsDouble;
-            context.UpdateResourceHaulers?.Invoke();
+            using (UpdateResourceHaulersMarker.Auto())
+            {
+                context.UpdateResourceHaulers?.Invoke();
+            }
             afterHaulers = Time.realtimeSinceStartupAsDouble;
-            context.UpdateBuildingResourceVisuals?.Invoke();
+            using (UpdateBuildingResourceVisualsMarker.Auto())
+            {
+                context.UpdateBuildingResourceVisuals?.Invoke();
+            }
             afterResourceVisuals = Time.realtimeSinceStartupAsDouble;
-            context.CleanupRecentSpawnReservations?.Invoke();
+            using (CleanupRecentSpawnReservationsMarker.Auto())
+            {
+                context.CleanupRecentSpawnReservations?.Invoke();
+            }
             afterReservations = Time.realtimeSinceStartupAsDouble;
-            context.SyncDestroyedRuntimeBuildingCombatEntities?.Invoke();
-            context.UpdateDestroyedBuildings?.Invoke();
+            using (SyncDestroyedRuntimeBuildingCombatEntitiesMarker.Auto())
+            {
+                context.SyncDestroyedRuntimeBuildingCombatEntities?.Invoke();
+            }
+            using (UpdateDestroyedBuildingsMarker.Auto())
+            {
+                context.UpdateDestroyedBuildings?.Invoke();
+            }
             afterDestroyed = Time.realtimeSinceStartupAsDouble;
-            context.UpdateRoadBarrierDoors?.Invoke();
+            using (UpdateRoadBarrierDoorsMarker.Auto())
+            {
+                context.UpdateRoadBarrierDoors?.Invoke();
+            }
             afterDoors = Time.realtimeSinceStartupAsDouble;
-            context.FlushPendingMarkerRefresh?.Invoke();
+            using (FlushPendingMarkerRefreshMarker.Auto())
+            {
+                context.FlushPendingMarkerRefresh?.Invoke();
+            }
             afterMarkers = Time.realtimeSinceStartupAsDouble;
-            context.EnqueueMapBuildingPlacements?.Invoke();
-            context.UpdateBuildingRuntimeBoundary?.Invoke();
+            using (EnqueueMapBuildingPlacementsMarker.Auto())
+            {
+                context.EnqueueMapBuildingPlacements?.Invoke();
+            }
+            using (UpdateBuildingRuntimeBoundaryMarker.Auto())
+            {
+                context.UpdateBuildingRuntimeBoundary?.Invoke();
+            }
 
-            BuildingPlacementInputRuntimeTickSystem.Result input = context.UpdateInput != null
-                ? context.UpdateInput()
-                : default;
+            BuildingPlacementInputRuntimeTickSystem.Result input;
+            using (UpdateInputMarker.Auto())
+            {
+                input = context.UpdateInput != null
+                    ? context.UpdateInput()
+                    : default;
+            }
             afterInputOutline = input.AfterOutline;
             afterInputMouse = input.AfterMouse;
             afterInputUi = input.AfterUi;

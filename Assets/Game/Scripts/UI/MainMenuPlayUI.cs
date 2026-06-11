@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public sealed class MainMenuPlayUI : IMatchRuntimeUi
 {
+    private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
+    private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
+
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
@@ -61,8 +65,15 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public void Update()
     {
-        _matchHudMinimapInputSystem.Update();
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
+        using (MinimapUpdateMarker.Auto())
+        {
+            _matchHudMinimapInputSystem.Update();
+        }
+
+        using (FeedbackLifetimeMarker.Auto())
+        {
+            BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
+        }
     }
 
     public void NotifyStaticMinimapChanged()

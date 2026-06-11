@@ -4,14 +4,17 @@ using Unity.Entities;
 [UpdateAfter(typeof(UnitDeathSystem))]
 public partial struct VehicleWreckCleanupSystem : ISystem
 {
+    private EntityQuery _respawnQueueQuery;
+
     public void OnCreate(ref SystemState state)
     {
+        _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
         state.RequireForUpdate<VehicleWreckComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
         var queueState = SystemAPI.GetComponent<RespawnQueueComponent>(queueEntity);
         var em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;

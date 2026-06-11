@@ -15,8 +15,18 @@ internal sealed class MenuBootstrapSystem
     private readonly MatchSceneReferenceSystem matchSceneReferenceSystem = new();
 
     private EntityQuery boundaryQuery;
+    private Entity cachedBoundaryEntity;
     private World cachedWorld;
     private bool hasBoundaryQuery;
+    private EntityQuery sceneLifecycleQuery;
+    private World sceneLifecycleQueryWorld;
+    private bool hasSceneLifecycleQuery;
+    private EntityQuery matchStartBoundaryQuery;
+    private World matchStartBoundaryQueryWorld;
+    private bool hasMatchStartBoundaryQuery;
+    private EntityQuery matchStartProgressQuery;
+    private World matchStartProgressQueryWorld;
+    private bool hasMatchStartProgressQuery;
     private bool diagnosticsInitialized;
     private bool initialized;
     private bool hasCapturedUiPresentation;
@@ -471,9 +481,9 @@ internal sealed class MenuBootstrapSystem
         }
     }
 
-    private static bool IsMatchStartComplete(EntityManager entityManager)
+    private bool IsMatchStartComplete(EntityManager entityManager)
     {
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+        EntityQuery query = GetMatchStartBoundaryQuery(entityManager);
         if (query.IsEmptyIgnoreFilter)
             return false;
 
@@ -485,12 +495,10 @@ internal sealed class MenuBootstrapSystem
         return queue.HasStarted != 0 && queue.IsStartPending == 0;
     }
 
-    private static bool TryGetMatchStartProgress(EntityManager entityManager, out MatchStartProgressComponent progress)
+    private bool TryGetMatchStartProgress(EntityManager entityManager, out MatchStartProgressComponent progress)
     {
         progress = default;
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchStartBoundaryComponent>(),
-            ComponentType.ReadOnly<MatchStartProgressComponent>());
+        EntityQuery query = GetMatchStartProgressQuery(entityManager);
         if (query.IsEmptyIgnoreFilter)
             return false;
 
@@ -499,15 +507,15 @@ internal sealed class MenuBootstrapSystem
         return true;
     }
 
-    private static bool IsMatchSceneLoaded(EntityManager entityManager)
+    private bool IsMatchSceneLoaded(EntityManager entityManager)
     {
         return TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent state) && state.IsMatchLoaded != 0;
     }
 
-    private static bool TryGetSceneLifecycleState(EntityManager entityManager, out SceneLifecycleStateComponent state)
+    private bool TryGetSceneLifecycleState(EntityManager entityManager, out SceneLifecycleStateComponent state)
     {
         state = default;
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
+        EntityQuery query = GetSceneLifecycleQuery(entityManager);
         if (query.IsEmptyIgnoreFilter)
             return false;
 
@@ -517,6 +525,47 @@ internal sealed class MenuBootstrapSystem
 
         state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
         return true;
+    }
+
+    private EntityQuery GetSceneLifecycleQuery(EntityManager entityManager)
+    {
+        World world = entityManager.World;
+        if (sceneLifecycleQueryWorld != world || !hasSceneLifecycleQuery)
+        {
+            sceneLifecycleQueryWorld = world;
+            sceneLifecycleQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
+            hasSceneLifecycleQuery = true;
+        }
+
+        return sceneLifecycleQuery;
+    }
+
+    private EntityQuery GetMatchStartBoundaryQuery(EntityManager entityManager)
+    {
+        World world = entityManager.World;
+        if (matchStartBoundaryQueryWorld != world || !hasMatchStartBoundaryQuery)
+        {
+            matchStartBoundaryQueryWorld = world;
+            matchStartBoundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+            hasMatchStartBoundaryQuery = true;
+        }
+
+        return matchStartBoundaryQuery;
+    }
+
+    private EntityQuery GetMatchStartProgressQuery(EntityManager entityManager)
+    {
+        World world = entityManager.World;
+        if (matchStartProgressQueryWorld != world || !hasMatchStartProgressQuery)
+        {
+            matchStartProgressQueryWorld = world;
+            matchStartProgressQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MatchStartBoundaryComponent>(),
+                ComponentType.ReadOnly<MatchStartProgressComponent>());
+            hasMatchStartProgressQuery = true;
+        }
+
+        return matchStartProgressQuery;
     }
 
     private static void ResetShellForFreshMenuScene()
@@ -585,13 +634,23 @@ internal sealed class MenuBootstrapSystem
         if (cachedWorld != world || !hasBoundaryQuery)
         {
             cachedWorld = world;
+            cachedBoundaryEntity = Entity.Null;
             boundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
             hasBoundaryQuery = true;
+        }
+
+        if (cachedBoundaryEntity != Entity.Null &&
+            entityManager.Exists(cachedBoundaryEntity) &&
+            entityManager.HasComponent<UiShellBoundaryComponent>(cachedBoundaryEntity))
+        {
+            boundary = cachedBoundaryEntity;
+            return true;
         }
 
         if (boundaryQuery.IsEmptyIgnoreFilter)
             return false;
         boundary = boundaryQuery.GetSingletonEntity();
+        cachedBoundaryEntity = boundary;
         return true;
     }
 }

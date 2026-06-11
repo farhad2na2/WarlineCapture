@@ -1281,8 +1281,8 @@ internal sealed class SelectionGameplayStartupSystem
 
         int CountSelectedTags(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-            return query.CalculateEntityCount();
+            EnsureRuntimeSelectionDependencies(em);
+            return selectionRuntimeQuerySystem.SelectedTagQuery.CalculateEntityCount();
         }
 
         string DescribeClickDebugEntity(EntityManager em, Entity entity)

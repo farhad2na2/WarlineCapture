@@ -7,8 +7,14 @@ public static class RespawnQueueUtility
     {
         var em = state.EntityManager;
         using var q = em.CreateEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
-        if (!q.IsEmptyIgnoreFilter)
-            return q.GetSingletonEntity();
+        return GetOrCreateQueue(ref state, q);
+    }
+
+    public static Entity GetOrCreateQueue(ref SystemState state, EntityQuery queueQuery)
+    {
+        var em = state.EntityManager;
+        if (!queueQuery.IsEmptyIgnoreFilter)
+            return queueQuery.GetSingletonEntity();
 
         var e = em.CreateEntity();
         em.AddComponentData(e, new RespawnQueueTag());

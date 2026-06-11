@@ -7,6 +7,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
+        public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly DayNightSystem DayNightSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
@@ -38,6 +39,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
             float oilBarrelsPerFuelBarrel)
         {
             RuntimeBuildings = runtimeBuildings;
+            RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
             DayNightSystem = dayNightSystem;
             FactionResourceSystem = factionResourceSystem;
             ProductionUpdateSystem = productionUpdateSystem;
@@ -77,11 +79,17 @@ internal sealed class BuildingProductionRuntimeTickSystem
             ? Mathf.Max(1f, context.DayNightSystem.FullDayDurationMinutes * 60f)
             : 300f;
 
-        FactionResourceSystem.ResourceProductionTickResult result = context.FactionResourceSystem.UpdateResourceProduction(
-            context.RuntimeBuildings,
-            secondsPerDay,
-            Time.deltaTime,
-            context.OilBarrelsPerFuelBarrel);
+        FactionResourceSystem.ResourceProductionTickResult result = context.RuntimeBuildingMap != null
+            ? context.FactionResourceSystem.UpdateResourceProduction(
+                context.RuntimeBuildingMap,
+                secondsPerDay,
+                Time.deltaTime,
+                context.OilBarrelsPerFuelBarrel)
+            : context.FactionResourceSystem.UpdateResourceProduction(
+                context.RuntimeBuildings,
+                secondsPerDay,
+                Time.deltaTime,
+                context.OilBarrelsPerFuelBarrel);
         if (result.OilExtractedBarrels > 0f)
             context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
         if (result.FuelProducedBarrels > 0f)

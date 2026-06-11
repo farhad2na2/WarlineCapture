@@ -12,6 +12,7 @@ public partial struct UnitDeathSystem : ISystem
     private NativeList<Entity> _deathBeginEntities;
     private NativeList<float> _deathBeginDurations;
     private NativeList<Entity> _finalizeEntities;
+    private EntityQuery _respawnQueueQuery;
 
     private struct GameStatsDeathRecordedTag : IComponentData
     {
@@ -20,6 +21,7 @@ public partial struct UnitDeathSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitHealth>();
+        _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
         _deathBeginEntities = new NativeList<Entity>(64, Allocator.Persistent);
         _deathBeginDurations = new NativeList<float>(64, Allocator.Persistent);
         _finalizeEntities = new NativeList<Entity>(64, Allocator.Persistent);
@@ -37,7 +39,7 @@ public partial struct UnitDeathSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
         var queueState = SystemAPI.GetComponent<RespawnQueueComponent>(queueEntity);
         var em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;

@@ -11,7 +11,6 @@ public partial struct AICombatOrderSystem : ISystem
     private const float OrderRefreshSeconds = 2f;
     private EntityQuery _runtimeBuildingCombatQuery;
     private EntityQuery _diagnosticLogQueueQuery;
-    private EntityQuery _squadQuery;
 
     private readonly struct RuntimeBuildingCombatData
     {
@@ -70,7 +69,6 @@ public partial struct AICombatOrderSystem : ISystem
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
-        _squadQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -84,10 +82,11 @@ public partial struct AICombatOrderSystem : ISystem
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         EntityManager em = state.EntityManager;
-        EntityCommandBuffer ecb = new(Allocator.Temp);
+        EntityCommandBuffer ecb = default;
+        bool hasEcb = false;
         bool hasControls = SystemAPI.HasSingleton<FactionControlConfigTag>();
-        NativeArray<FactionControlEntry> controls = hasControls
-            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
+        DynamicBuffer<FactionControlEntry> controls = hasControls
+            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
         NativeArray<Entity> runtimeBuildingEntities = default;
@@ -98,14 +97,14 @@ public partial struct AICombatOrderSystem : ISystem
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
 
-        using NativeArray<Entity> squadEntities = _squadQuery.ToEntityArray(Allocator.Temp);
-
         try
         {
-            for (int i = 0; i < squadEntities.Length; i++)
+            foreach (var (squadRef, squadEntity) in SystemAPI
+                         .Query<RefRW<AISquad>>()
+                         .WithAll<AISquadUnit>()
+                         .WithEntityAccess())
             {
-                Entity squadEntity = squadEntities[i];
-                AISquad squad = em.GetComponentData<AISquad>(squadEntity);
+                AISquad squad = squadRef.ValueRO;
                 if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
                     continue;
 
@@ -139,6 +138,12 @@ public partial struct AICombatOrderSystem : ISystem
                     if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
                         continue;
 
+                    if (!hasEcb)
+                    {
+                        ecb = new EntityCommandBuffer(Allocator.Temp);
+                        hasEcb = true;
+                    }
+
                     IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
                     issued++;
                 }
@@ -148,7 +153,7 @@ public partial struct AICombatOrderSystem : ISystem
 
                 squad.LastOrderTime = now;
                 squad.LastLogTime = now;
-                em.SetComponentData(squadEntity, squad);
+                squadRef.ValueRW = squad;
                 if (shouldLog)
                     EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
             }
@@ -165,10 +170,11 @@ public partial struct AICombatOrderSystem : ISystem
                 runtimeBuildingTransforms.Dispose();
         }
 
-        if (controls.IsCreated)
-            controls.Dispose();
-        ecb.Playback(em);
-        ecb.Dispose();
+        if (hasEcb)
+        {
+            ecb.Playback(em);
+            ecb.Dispose();
+        }
     }
 
     private void EnsureBreachContext(
@@ -678,7 +684,7 @@ public partial struct AICombatOrderSystem : ISystem
             ecb.RemoveComponent<T>(entity);
     }
 
-    private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
+    private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
     {
         if (!hasControls)
             return FactionIdentitySystem.IsAiControlledByDefault(factionId);

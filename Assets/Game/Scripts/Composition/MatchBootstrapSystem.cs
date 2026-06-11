@@ -262,6 +262,7 @@ internal sealed class MatchBootstrapSystem
             _mapSurfaceRuntimeBootstrapSystem,
             _runtimeCameraReferenceSystem,
             _performanceDiagnosticsSystem);
+        gameplayRuntimeUpdateSystem.Dispose();
         _visualQualitySettingsSystem.Dispose();
 
         MainMenu = null;

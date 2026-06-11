@@ -12,9 +12,15 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - `Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputSystem.cs`
 - `Assets/Game/Scripts/Rendering/UnitAttackTraceSystem.cs`
 - `Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs`
+- `Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs`
 - `Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs`
+- `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs`
 - `Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitDeathSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitRespawnSystem.cs`
+- `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs`
+- `Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs`
 - `Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs`
 - `Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs`
 - `Assets/Game/Scripts/Systems/BuildingGridCompositionSystem.cs`
@@ -22,6 +28,7 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - `Assets/Game/Scripts/Systems/BuildingProductionSystem.cs`
 - `Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs`
 - `Assets/Game/Scripts/Systems/UnitAttackSystem.cs`
+- `Assets/Game/Scripts/Utilities/RespawnQueueUtility.cs`
 - `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
 - `Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs`
 - `Assets/Tests/Editor/MatchHudMinimapProjectionSystemTests.cs`
@@ -75,6 +82,37 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
   - Current top site: Unity Entities/Burst profiler metadata initialization, `System.RuntimeType:getFullName` through `Unity.Entities.EntitiesProfiler.StaticData.Flush`.
   - Current aggregate capture value: 830,008 bytes / 15,462 samples in the loaded raw frame.
   - This is framework/profiler initialization noise, not a project gameplay allocation site, so no gameplay file is currently justified as the next edit from this steady-state report.
+
+## 2026-06-11 battle-capture continuation update
+
+- Continued on the main project after the missile dependency fix was user-verified.
+- Used `MatchGcAllocationCallstackCapture.RunBattleState` as the profiler evidence source for the next edits.
+- Baseline entering this continuation:
+  - Battle report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`.
+  - Earlier battle capture after loading/menu/building work: 117,284 bytes / 2,897 samples.
+- Confirmed and fixed additional project-owned allocation sites:
+  - `BuildingProductionUpdateSystem.UpdatePendingProductions`: reused the concrete runtime-building dictionary instead of enumerating the `IReadOnlyDictionary` interface path.
+    - Result: battle capture reduced to 117,284 bytes / 2,897 samples from the previous 128,272-byte building pass, with `ProcessPendingProductions` reduced from 16,744 bytes to 5,528 bytes.
+  - `MatchHudMinimapInputSystem.Update`: cached the `GridConfig` query and moved marker data to an ECS minimap marker read-model buffer.
+    - Result: `GameplayRuntimeUpdate.MainMenu > MainMenuPlayUI.MinimapUpdate` dropped from 12,088 bytes / 302 samples to a residual 88 bytes / 2 samples.
+  - `SelectionGameplayStartupSystem.CountSelectedTags`: reused `SelectionRuntimeQuerySystem.SelectedTagQuery` instead of creating a selected-tag query every selection tick.
+    - Result: `GameplayRuntimeUpdate.Selection` dropped from the top allocation sites.
+  - `RespawnQueueUtility`: added a cached-query overload and wired it into `UnitDeathSystem`, `UnitRespawnSystem`, and `VehicleWreckCleanupSystem`.
+    - Result: `UnitDeathSystem` and `UnitRespawnSystem` dropped from the top allocation sites.
+- Additional instrumentation/cleanup added during this continuation:
+  - `GameplayRuntimeUpdateSystem`, `BuildingPlacementRuntimeTickSystem`, `MainMenuPlayUI`, and `UIShellEcsPresentationSystem` now have focused profiler markers used to split aggregate battle capture buckets.
+  - `AICombatOrderSystem` no longer creates a squad entity array or faction-control native copy in its main loop, but the measured `AICombatOrderSystem` GC bucket did not change. Treat the remaining 11,960-byte bucket as not yet explained by this edit.
+- Latest battle capture:
+  - Command log: `/private/tmp/warline-main-gc-ai-combat-cache-battle.log`.
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`.
+  - Current aggregate: 63,240 bytes / 1,572 samples.
+  - Remaining top project-owned/editor-visible buckets:
+    - `UIShellEcsPresentationSystem.Update`: 14,352 bytes / 299 samples.
+    - `AICombatOrderSystem`: 11,960 bytes / 299 samples.
+    - `InitialUnitsSpawnSystem`: 11,960 bytes / 299 samples.
+    - `MenuBootstrapView.Update`: 9,568 bytes / 299 samples.
+  - Non-project editor noise still present:
+    - `UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate`: 12,000 bytes / 300 samples.
 
 ## Contracts touched
 

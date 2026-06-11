@@ -1,6 +1,6 @@
 ﻿# Match GC Allocation Call-Stack Capture
 
-Date: 2026-06-11 19:43:31 UTC
+Date: 2026-06-11 20:56:58 UTC
 Lane: Gameplay/Performance
 Capture type: automated Match battle-state after Menu -> Match route
 
@@ -10,141 +10,42 @@ Capture type: automated Match battle-state after Menu -> Match route
 - Warm-up frames before capture: 180
 - Profiler frame range: 0..0
 - Scanned frames with data: 1
-- Scanned thread views: 87
-- GC.Alloc samples: 7579
-- GC.Alloc bytes from hierarchy column: 415072
+- Scanned thread views: 88
+- GC.Alloc samples: 1572
+- GC.Alloc bytes from hierarchy column: 63240
 - Raw load status: `rawLoaded path=/private/tmp/warline-match-gc-callstack-capture-battle.raw`
 - Raw capture: `/private/tmp/warline-match-gc-callstack-capture-battle.raw`
+- Editor live conversion systems disabled before warmup: 2
 
 ## Top Allocation Sites
 
 | Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame | Hierarchy path |
 | ---: | ---: | ---: | ---: | --- | --- | --- | --- |
-| 1 | 183586 | 2093 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > InitializationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.InitializationSystemGroup > Default World Unity.Scenes.Editor.LiveConversionEditorSystemGroup > Default World Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem > GC.Alloc |
-| 2 | 91024 | 1797 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GC.Alloc |
-| 3 | 33488 | 897 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
-| 4 | 28106 | 897 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!::UIShellLoadingProgressView.Update() [Invoke] > GC.Alloc |
-| 5 | 14352 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc |
-| 6 | 12000 | 300 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate > GC.Alloc |
-| 7 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World InitialUnitsSpawnSystem > GC.Alloc |
-| 8 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World AICombatOrderSystem > GC.Alloc |
-| 9 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitDeathSystem > GC.Alloc |
-| 10 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitRespawnSystem > GC.Alloc |
-| 11 | 1076 | 8 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: MatchGcAllocationCallstackCapture.Update > Mono.JIT > GC.Alloc |
-| 12 | 614 | 7 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > InitializationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.InitializationSystemGroup > Default World Unity.Scenes.Editor.LiveConversionEditorSystemGroup > Default World Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem > GC.Alloc |
-| 13 | 560 | 14 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > HierarchyWindow.Tick > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallHierarchyHasChanged() [Invoke] > EditorApplication.hierarchyChanged: MapSurfacePreviewOverlaySystem.ClearPreview > GC.Alloc |
-| 14 | 360 | 9 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitAttackSystem > GC.Alloc |
-| 15 | 304 | 6 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode) | Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GC.Alloc |
+| 1 | 14352 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc |
+| 2 | 12000 | 300 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate > GC.Alloc |
+| 3 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World AICombatOrderSystem > GC.Alloc |
+| 4 | 11960 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World InitialUnitsSpawnSystem > GC.Alloc |
+| 5 | 9568 | 299 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
+| 6 | 1076 | 8 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: MatchGcAllocationCallstackCapture.Update > Mono.JIT > GC.Alloc |
+| 7 | 480 | 12 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > HierarchyWindow.Tick > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallHierarchyHasChanged() [Invoke] > EditorApplication.hierarchyChanged: MapSurfacePreviewOverlaySystem.ClearPreview > GC.Alloc |
+| 8 | 400 | 10 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitAttackSystem > GC.Alloc |
+| 9 | 256 | 8 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > MonoCompiler.Tick > GC.Alloc |
+| 10 | 240 | 5 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World GroundMissileFlyingRocketVisualSystem > Mono.JIT > GC.Alloc |
+| 11 | 168 | 6 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!Game.Scripts.UI::MenuDiagnosticsView.Update() [Invoke] > GC.Alloc |
+| 12 | 160 | 8 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > MonoCompiler.Tick > UnityEditor.CoreModule.dll!UnityEditor.Scripting.ScriptCompilation::EditorCompilationInterface.TickCompilationPipeline() [Invoke] > GC.Alloc |
+| 13 | 160 | 8 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > MonoCompiler.Tick > UnityEditor.Android.Extensions.dll!UnityEditor.Android::AndroidPlatformBuildSettings.get_androidBuildSubtarget() [Invoke] > GC.Alloc |
+| 14 | 144 | 3 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World AirMissileLauncherTargetAcquisitionSystem > Mono.JIT > GC.Alloc |
+| 15 | 88 | 2 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update () | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > MainMenuPlayUI.MinimapUpdate > GC.Alloc |
 
 ## Highest Allocation Frames
 
 | Rank | Profiler frame | Bytes | Samples |
 | ---: | ---: | ---: | ---: |
-| 1 | 0 | 415072 | 7579 |
+| 1 | 0 | 63240 | 1572 |
 
 ## Call Stacks
 
-### 1. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 183586
-Samples: 2093
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > InitializationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.InitializationSystemGroup > Default World Unity.Scenes.Editor.LiveConversionEditorSystemGroup > Default World Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 2. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 91024
-Samples: 1797
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 3. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 33488
-Samples: 897
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MenuBootstrapView.Update() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 4. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 28106
-Samples: 897
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!::UIShellLoadingProgressView.Update() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 5. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 1. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
 Bytes: 14352
 Samples: 299
@@ -153,23 +54,13 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 6. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 2. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
 Bytes: 12000
 Samples: 300
@@ -178,48 +69,13 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 7. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 11960
-Samples: 299
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World InitialUnitsSpawnSystem > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 8. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 3. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
 Bytes: 11960
 Samples: 299
@@ -228,73 +84,43 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World AICombatOrderSystem > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 9. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 4. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
 Bytes: 11960
 Samples: 299
 Frames: 1
 Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitDeathSystem > GC.Alloc
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World InitialUnitsSpawnSystem > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 10. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 5. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
-Bytes: 11960
+Bytes: 9568
 Samples: 299
 Frames: 1
 Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitRespawnSystem > GC.Alloc
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MenuBootstrapView.Update() [Invoke] > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 11. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 6. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
 Bytes: 1076
 Samples: 8
@@ -303,119 +129,144 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: MatchGcAllocationCallstackCapture.Update > Mono.JIT > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 12. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 7. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
-Bytes: 614
-Samples: 7
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > InitializationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.InitializationSystemGroup > Default World Unity.Scenes.Editor.LiveConversionEditorSystemGroup > Default World Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem > GC.Alloc
-
-```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 13. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
-
-Bytes: 560
-Samples: 14
+Bytes: 480
+Samples: 12
 Frames: 1
 Thread: Main Thread
 Hierarchy path: Application.Tick > HierarchyWindow.Tick > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallHierarchyHasChanged() [Invoke] > EditorApplication.hierarchyChanged: MapSurfacePreviewOverlaySystem.ClearPreview > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 14. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 8. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
-Bytes: 360
-Samples: 9
+Bytes: 400
+Samples: 10
 Frames: 1
 Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World UnitAttackSystem > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 
-### 15. #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
+### 9. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
 
-Bytes: 304
+Bytes: 256
+Samples: 8
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > MonoCompiler.Tick > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 10. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 240
+Samples: 5
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World GroundMissileFlyingRocketVisualSystem > Mono.JIT > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 11. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 168
 Samples: 6
 Frames: 1
 Thread: Main Thread
-Hierarchy path: Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GC.Alloc
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.UI.Runtime.dll!Game.Scripts.UI::MenuDiagnosticsView.Update() [Invoke] > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [LiveConversionConnection.cs:354] Unity.Scenes.Editor.LiveConversionConnection:Update (System.Collections.Generic.List`1<Unity.Scenes.LiveConversionChangeSet>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Collections.NativeList`1<Unity.Entities.Hash128>,Unity.Scenes.LiveConversionMode)
- #1  (Mono JIT Code) [EditorSubSceneLiveConversionSystem.cs:62] Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem:OnUpdate ()
- #2  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #3  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #4  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #5  (Mono JIT Code) [LiveConversionEditorSystemGroup.cs:15] Unity.Scenes.Editor.LiveConversionEditorSystemGroup:OnUpdate ()
- #6  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #7  (Mono JIT Code) [ComponentSystemGroup.cs:734] Unity.Entities.ComponentSystemGroup:UpdateAllSystems ()
- #8  (Mono JIT Code) [ComponentSystemGroup.cs:687] Unity.Entities.ComponentSystemGroup:OnUpdate ()
- #9  (Mono JIT Code) [DefaultWorld.cs:169] Unity.Entities.InitializationSystemGroup:OnUpdate ()
- #10  (Mono JIT Code) [SystemBase.cs:404] Unity.Entities.SystemBase:Update ()
- #11  (Mono JIT Code) [ScriptBehaviourUpdateOrder.cs:523] Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate ()
- #12  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 12. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 160
+Samples: 8
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > MonoCompiler.Tick > UnityEditor.CoreModule.dll!UnityEditor.Scripting.ScriptCompilation::EditorCompilationInterface.TickCompilationPipeline() [Invoke] > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 13. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 160
+Samples: 8
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > MonoCompiler.Tick > UnityEditor.Android.Extensions.dll!UnityEditor.Android::AndroidPlatformBuildSettings.get_androidBuildSubtarget() [Invoke] > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 14. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 144
+Samples: 3
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World AirMissileLauncherTargetAcquisitionSystem > Mono.JIT > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+
+```
+
+### 15. #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+
+Bytes: 88
+Samples: 2
+Frames: 1
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > MainMenuPlayUI.MinimapUpdate > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [MatchGcAllocationCallstackCapture.cs:242] MatchGcAllocationCallstackCapture:Update ()
+ #1  (Mono JIT Code) [EditorApplication.cs:401] UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+ #2  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
 
 ```
 

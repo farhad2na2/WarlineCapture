@@ -48,6 +48,7 @@ public static class MatchGcAllocationCallstackCapture
     private const string MemoryCategoryWasEnabledKey = "MatchGcAllocationCallstackCapture.MemoryCategoryWasEnabled";
     private const string WarningStackTraceLogTypeKey = "MatchGcAllocationCallstackCapture.WarningStackTraceLogType";
     private const string ProfilerStateStoredKey = "MatchGcAllocationCallstackCapture.ProfilerStateStored";
+    private const string EditorLiveConversionDisabledCountKey = "MatchGcAllocationCallstackCapture.EditorLiveConversionDisabledCount";
 
     private enum Phase
     {
@@ -268,10 +269,12 @@ public static class MatchGcAllocationCallstackCapture
 
     private static void BeginWarmup()
     {
+        int disabledLiveConversionSystems = DisableEditorLiveConversionSystems();
+        SessionState.SetInt(EditorLiveConversionDisabledCountKey, disabledLiveConversionSystems);
         EnableProfilerWarmup();
         SessionState.SetInt(WarmupStartFrameKey, Time.frameCount);
         SessionState.SetInt(PhaseKey, (int)Phase.WarmingUp);
-        Debug.Log($"[MatchGcAllocationCallstackCapture] warmupStarted frames={WarmupFrameCount}");
+        Debug.Log($"[MatchGcAllocationCallstackCapture] warmupStarted frames={WarmupFrameCount} disabledEditorLiveConversionSystems={disabledLiveConversionSystems}");
     }
 
     private static void EnableProfilerWarmup()
@@ -405,6 +408,7 @@ public static class MatchGcAllocationCallstackCapture
         builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
         builder.AppendLine($"- Raw load status: `{loadStatus}`");
         builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
+        builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
         builder.AppendLine();
         builder.AppendLine("## Top Allocation Sites");
         builder.AppendLine();
@@ -510,6 +514,32 @@ public static class MatchGcAllocationCallstackCapture
         : ProfilerLogPrefix;
 
     private static string ProfilerRawPath => ProfilerLogPath + ".raw";
+
+    private static int DisableEditorLiveConversionSystems()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return 0;
+
+        int disabled = 0;
+        disabled += DisableManagedSystemIfPresent(world, "Unity.Scenes.Editor.LiveConversionEditorSystemGroup, Unity.Scenes.Editor");
+        disabled += DisableManagedSystemIfPresent(world, "Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem, Unity.Scenes.Editor");
+        return disabled;
+    }
+
+    private static int DisableManagedSystemIfPresent(World world, string assemblyQualifiedTypeName)
+    {
+        Type type = Type.GetType(assemblyQualifiedTypeName, false);
+        if (type == null)
+            return 0;
+
+        ComponentSystemBase system = world.GetExistingSystemManaged(type);
+        if (system == null || !system.Enabled)
+            return 0;
+
+        system.Enabled = false;
+        return 1;
+    }
 
     private static void ScanHierarchyFrame(
         HierarchyFrameDataView frame,
@@ -1159,6 +1189,7 @@ public static class MatchGcAllocationCallstackCapture
         SessionState.EraseInt(CaptureStartFrameKey);
         SessionState.EraseInt(WarmupStartFrameKey);
         SessionState.EraseBool(ProfilerStateStoredKey);
+        SessionState.EraseInt(EditorLiveConversionDisabledCountKey);
     }
 }
 #endif

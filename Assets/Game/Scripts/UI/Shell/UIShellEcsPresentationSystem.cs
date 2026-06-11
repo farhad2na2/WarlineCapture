@@ -1,15 +1,21 @@
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Profiling;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 {
+    private static readonly ProfilerMarker TryGetBoundaryMarker = new("UIShellEcsPresentation.TryGetBoundary");
+    private static readonly ProfilerMarker FlushCompletionMarker = new("UIShellEcsPresentation.FlushCompletion");
+    private static readonly ProfilerMarker ReadCommandsMarker = new("UIShellEcsPresentation.ReadCommands");
+
     [SerializeField] private UIShellView shellView;
 
     private readonly List<UiShellPresentationCommandComponent> commandScratch = new();
     private World cachedWorld;
     private EntityQuery boundaryQuery;
+    private Entity cachedBoundaryEntity;
     private bool hasBoundaryQuery;
     private bool isExecuting;
     private int activeSequenceId = -1;
@@ -24,18 +30,29 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 
     private void Update()
     {
-        if (!TryGetBoundaryEntity(out EntityManager entityManager, out Entity boundary))
-            return;
+        EntityManager entityManager;
+        Entity boundary;
+        using (TryGetBoundaryMarker.Auto())
+        {
+            if (!TryGetBoundaryEntity(out entityManager, out boundary))
+                return;
+        }
 
-        FlushPendingCompletion(entityManager, boundary);
+        using (FlushCompletionMarker.Auto())
+        {
+            FlushPendingCompletion(entityManager, boundary);
+        }
 
         if (isExecuting || shellView == null)
             return;
 
-        DynamicBuffer<UiShellPresentationCommandComponent> commands =
-            entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
-        if (commands.Length == 0)
-            return;
+        DynamicBuffer<UiShellPresentationCommandComponent> commands;
+        using (ReadCommandsMarker.Auto())
+        {
+            commands = entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
+            if (commands.Length == 0)
+                return;
+        }
 
         commandScratch.Clear();
         for (int i = 0; i < commands.Length; i++)
@@ -79,6 +96,7 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
         if (cachedWorld != world || !hasBoundaryQuery)
         {
             cachedWorld = world;
+            cachedBoundaryEntity = Entity.Null;
             boundaryQuery = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<UiShellBoundaryComponent>(),
                 ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
@@ -86,11 +104,22 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
             hasBoundaryQuery = true;
         }
 
+        entityManager = world.EntityManager;
+        if (cachedBoundaryEntity != Entity.Null &&
+            entityManager.Exists(cachedBoundaryEntity) &&
+            entityManager.HasComponent<UiShellBoundaryComponent>(cachedBoundaryEntity) &&
+            entityManager.HasBuffer<UiShellPresentationCommandComponent>(cachedBoundaryEntity) &&
+            entityManager.HasBuffer<UiShellTransitionCompleteComponent>(cachedBoundaryEntity))
+        {
+            boundary = cachedBoundaryEntity;
+            return true;
+        }
+
         if (boundaryQuery.IsEmptyIgnoreFilter)
             return false;
 
-        entityManager = world.EntityManager;
         boundary = boundaryQuery.GetSingletonEntity();
+        cachedBoundaryEntity = boundary;
         return true;
     }
 

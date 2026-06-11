@@ -17,8 +17,8 @@ public sealed class SoldierAnimatorComboBakerWindow : EditorWindow
         "Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/AnimatorControllers/HumanM@SoldierAnimations.controller";
 
     private const string DefaultOutputFolder = "Assets/Game/Animations/BakedSoldierCombos";
-    private const string HumanSoldierControllerTypeName = "KevinIglesias.HumanSoldierController, Assembly-CSharp";
-    private const string SpineProxyTypeName = "KevinIglesias.SpineProxy, Assembly-CSharp";
+    private const string HumanSoldierControllerTypeName = "KevinIglesias.HumanSoldierController, KevinIglesias.HumanSoldierDemo";
+    private const string SpineProxyTypeName = "KevinIglesias.SpineProxy, KevinIglesias.HumanAnimations";
 
     [SerializeField] private GameObject sourcePrefab;
     [SerializeField] private RuntimeAnimatorController sourceController;

@@ -33,7 +33,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         BlobAssetReference<MapSurfaceBlob> authoredSourceBlob = default;
         MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
         object bootstrap = Activator.CreateInstance(
-            Type.GetType("MapSurfaceRuntimeBootstrapSystem, Assembly-CSharp", throwOnError: true),
+            typeof(MapSurfaceRuntimeBootstrapSystem),
             nonPublic: true);
         try
         {

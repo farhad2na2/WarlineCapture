@@ -1,0 +1,19 @@
+{
+    "name": "ProjectTools.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Unity.ProBuilder",
+        "Unity.ProBuilder.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

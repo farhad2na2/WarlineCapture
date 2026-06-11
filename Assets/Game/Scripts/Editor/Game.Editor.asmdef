@@ -1,0 +1,26 @@
+{
+    "name": "Game.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Game.Runtime",
+        "sniveler-code.gpu-animation",
+        "sniveler-code.gpu-animation.Editor",
+        "Unity.Collections",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.TextMeshPro",
+        "Unity.Transforms",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

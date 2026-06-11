@@ -1,3 +1,5 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
+[assembly: InternalsVisibleTo("Game.Editor")]
+[assembly: InternalsVisibleTo("Game.Tests.Editor")]
+[assembly: InternalsVisibleTo("Game.Tests.PlayMode")]

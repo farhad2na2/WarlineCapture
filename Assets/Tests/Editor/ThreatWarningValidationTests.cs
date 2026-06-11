@@ -69,7 +69,7 @@ public sealed class ThreatWarningValidationTests
     public void MatchScene_DoesNotContainLegacyMenuViewWarningPanel()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
-        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView"));
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("::Game.Scripts.UI.MenuView"));
         Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_Name: UI_Canvas"));
     }
 

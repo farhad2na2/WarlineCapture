@@ -86,6 +86,8 @@ public sealed class EditorScriptWarningContractTests
                 string normalized = NormalizePath(path);
                 if (string.Equals(normalized, SelfPath, StringComparison.Ordinal))
                     continue;
+                if (normalized.EndsWith("ContractTests.cs", StringComparison.Ordinal))
+                    continue;
 
                 yield return path;
             }

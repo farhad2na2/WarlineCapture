@@ -28,11 +28,11 @@ public sealed class FactionEconomyStartupSystemValidationTests
         system.Initialize(world.EntityManager, new[] { enemy });
 
         EntityManager em = world.EntityManager;
-        Entity economyEntity = GetEntityForFaction(em, 1);
+        Entity economyEntity = GetEntityForFaction(em, FactionIdentitySystem.EnemyFactionId);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(economyEntity);
 
-        Assert.AreEqual(1, economy.FactionId);
+        Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, economy.FactionId);
         Assert.AreEqual(75000, economy.Money);
         Assert.AreEqual(0f, economy.Oil);
         Assert.AreEqual(0f, economy.Fuel);
@@ -55,7 +55,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         system.Initialize(world.EntityManager, new[] { playerAuto });
 
         EntityManager em = world.EntityManager;
-        Entity economyEntity = GetEntityForFaction(em, 0);
+        Entity economyEntity = GetEntityForFaction(em, FactionIdentitySystem.PlayerFactionId);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(economyEntity);
 
@@ -71,7 +71,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         using var world = new World("FactionEconomyStartupSystemExistingEntityTests");
         EntityManager em = world.EntityManager;
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
-        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 1 });
+        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentitySystem.EnemyFactionId, Money = 1 });
 
         FactionEconomyStartupSystem system = new();
         system.Initialize(em, new[] { enemy });

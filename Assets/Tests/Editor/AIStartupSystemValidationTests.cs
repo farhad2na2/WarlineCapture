@@ -42,13 +42,13 @@ public sealed class AIStartupSystemValidationTests
             aiSettings);
 
         EntityManager em = world.EntityManager;
-        Entity enemyEconomyEntity = GetEntityForFaction<FactionEconomy>(em, 1, economy => economy.FactionId);
-        FactionEconomy enemyEconomy = GetComponentForFaction<FactionEconomy>(em, 1, economy => economy.FactionId);
+        Entity enemyEconomyEntity = GetEntityForFaction<FactionEconomy>(em, FactionIdentitySystem.EnemyFactionId, economy => economy.FactionId);
+        FactionEconomy enemyEconomy = GetComponentForFaction<FactionEconomy>(em, FactionIdentitySystem.EnemyFactionId, economy => economy.FactionId);
         FactionEconomyPolicy enemyPolicy = em.GetComponentData<FactionEconomyPolicy>(enemyEconomyEntity);
-        AIBuildPlan enemyBuildPlan = GetComponentForFaction<AIBuildPlan>(em, 1, plan => plan.FactionId);
-        AIProductionPlan enemyProductionPlan = GetComponentForFaction<AIProductionPlan>(em, 1, plan => plan.FactionId);
-        AISquadPlan enemySquadPlan = GetComponentForFaction<AISquadPlan>(em, 1, plan => plan.FactionId);
-        AITargetPrioritySetting enemyTargetPriority = GetComponentForFaction<AITargetPrioritySetting>(em, 1, setting => setting.FactionId);
+        AIBuildPlan enemyBuildPlan = GetComponentForFaction<AIBuildPlan>(em, FactionIdentitySystem.EnemyFactionId, plan => plan.FactionId);
+        AIProductionPlan enemyProductionPlan = GetComponentForFaction<AIProductionPlan>(em, FactionIdentitySystem.EnemyFactionId, plan => plan.FactionId);
+        AISquadPlan enemySquadPlan = GetComponentForFaction<AISquadPlan>(em, FactionIdentitySystem.EnemyFactionId, plan => plan.FactionId);
+        AITargetPrioritySetting enemyTargetPriority = GetComponentForFaction<AITargetPrioritySetting>(em, FactionIdentitySystem.EnemyFactionId, setting => setting.FactionId);
 
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsTrue(result.PlayerAutoModeEnabled);
@@ -66,13 +66,13 @@ public sealed class AIStartupSystemValidationTests
         Assert.Greater(productionEntryQuery.CalculateEntityCount(), 0);
 
         DynamicBuffer<FactionControlEntry> controlEntries = GetFactionControlEntries(em);
-        Assert.IsTrue(ContainsFactionControl(controlEntries, 0, true, true));
-        Assert.IsTrue(ContainsFactionControl(controlEntries, 1, true, false));
+        Assert.IsTrue(ContainsFactionControl(controlEntries, FactionIdentitySystem.PlayerFactionId, true, true));
+        Assert.IsTrue(ContainsFactionControl(controlEntries, FactionIdentitySystem.EnemyFactionId, true, false));
     }
 
     private static bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell)
     {
-        if (factionId == 1)
+        if (factionId == FactionIdentitySystem.EnemyFactionId)
         {
             spawnCell = new int2(42, 54);
             return true;

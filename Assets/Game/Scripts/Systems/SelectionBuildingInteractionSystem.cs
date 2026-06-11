@@ -31,7 +31,7 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionHudFeedbackSystem.ResetViewCache();
     }
 
-    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+    public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
     {
         _selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
     }

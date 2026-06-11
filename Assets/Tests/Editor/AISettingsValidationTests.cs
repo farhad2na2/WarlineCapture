@@ -33,16 +33,16 @@ public sealed class AISettingsValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity economy = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
-            em.SetComponentData(economy, new FactionEconomy { FactionId = 1 });
+            em.SetComponentData(economy, new FactionEconomy { FactionId = FactionIdentitySystem.EnemyFactionId });
             em.SetComponentData(economy, new FactionEconomyPolicy { Enabled = 1, IncomeMultiplier = 1f });
             Entity buildPlan = em.CreateEntity(typeof(AIBuildPlan));
-            em.SetComponentData(buildPlan, new AIBuildPlan { FactionId = 1, Enabled = 1, BuildIntervalSeconds = 8f });
+            em.SetComponentData(buildPlan, new AIBuildPlan { FactionId = FactionIdentitySystem.EnemyFactionId, Enabled = 1, BuildIntervalSeconds = 8f });
             Entity productionPlan = em.CreateEntity(typeof(AIProductionPlan));
-            em.SetComponentData(productionPlan, new AIProductionPlan { FactionId = 1, Enabled = 1, UnitProductionIntervalSeconds = 6f });
+            em.SetComponentData(productionPlan, new AIProductionPlan { FactionId = FactionIdentitySystem.EnemyFactionId, Enabled = 1, UnitProductionIntervalSeconds = 6f });
             Entity squadPlan = em.CreateEntity(typeof(AISquadPlan));
-            em.SetComponentData(squadPlan, new AISquadPlan { FactionId = 1, Enabled = 1, MinUnits = 3, MaxUnits = 8, MaxActiveSquads = 2 });
+            em.SetComponentData(squadPlan, new AISquadPlan { FactionId = FactionIdentitySystem.EnemyFactionId, Enabled = 1, MinUnits = 3, MaxUnits = 8, MaxActiveSquads = 2 });
             Entity targetPriority = em.CreateEntity(typeof(AITargetPrioritySetting));
-            em.SetComponentData(targetPriority, new AITargetPrioritySetting { FactionId = 1, Priority = (byte)AITargetPriority.Balanced });
+            em.SetComponentData(targetPriority, new AITargetPrioritySetting { FactionId = FactionIdentitySystem.EnemyFactionId, Priority = (byte)AITargetPriority.Balanced });
 
             AISettingsRuntimeState.Difficulty = AIDifficultySetting.Hard;
             AISettingsRuntimeState.IncomeMultiplier = 1.5f;

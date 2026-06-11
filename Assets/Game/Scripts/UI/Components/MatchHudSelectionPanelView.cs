@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 [DisallowMultipleComponent]
-public sealed class MatchHudSelectionPanelView : MonoBehaviour
+public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelectionPanelView
 {
     [SerializeField] private GameObject selectedSquadPanel;
     [SerializeField] private Image selectedPortraitImage;

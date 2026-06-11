@@ -40,9 +40,9 @@ public sealed class SelectionStateSystemTests
     public void CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits()
     {
         var selectionState = new SelectionStateSystem();
-        Entity playerUnit = CreateMoveUnit(0);
-        Entity enemyUnit = CreateMoveUnit(1);
-        Entity passengerUnit = CreateMoveUnit(0);
+        Entity playerUnit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        Entity enemyUnit = CreateMoveUnit(FactionIdentitySystem.EnemyFactionId);
+        Entity passengerUnit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
         _entityManager.AddComponentData(passengerUnit, new UnitTransportPassenger { Transport = Entity.Null });
 
         selectionState.CacheSelectedMoveEntity(_entityManager, playerUnit);

@@ -25,7 +25,7 @@ public sealed class SelectionHudFeedbackSystem
     }
 
     private BattleHudRuntimeFeedbackView _battleHudView;
-    private MatchHudSelectionPanelView _matchHudSelectionPanelView;
+    private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
     private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
@@ -35,7 +35,7 @@ public sealed class SelectionHudFeedbackSystem
         _battleHudView = null;
     }
 
-    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+    public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
     {
         _matchHudSelectionPanelView = view;
     }

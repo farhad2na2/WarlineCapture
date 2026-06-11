@@ -43,7 +43,7 @@ public sealed class BaseBreachValidationTests
                 out _));
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate, "Enemy units should shoot the Road Barrier gate first when the target is inside a walled base.");
-            Assert.AreEqual(0, ownerFactionId);
+            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
         });
     }
 
@@ -66,7 +66,7 @@ public sealed class BaseBreachValidationTests
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool isGate, out bool isWall, out byte ownerFactionId));
             Assert.IsFalse(isGate);
             Assert.IsTrue(isWall, "Enemy units should shoot a wall segment when no Road Barrier gate exists.");
-            Assert.AreEqual(0, ownerFactionId);
+            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
         });
     }
 
@@ -338,7 +338,7 @@ public sealed class BaseBreachValidationTests
             Assert.AreNotEqual(target, engage.Target);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(engage.Target, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate);
-            Assert.AreEqual(0, ownerFactionId);
+            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
             Assert.AreEqual(BaseBreachOrder.StageAttackingBreach, em.GetComponentData<BaseBreachOrder>(attacker).Stage);
         });
     }
@@ -397,7 +397,7 @@ public sealed class BaseBreachValidationTests
             Assert.AreNotEqual(target, engage.Target);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(engage.Target, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate);
-            Assert.AreEqual(0, ownerFactionId);
+            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
             Assert.IsFalse(em.HasComponent<UnitPathRequest>(attacker));
             Assert.AreEqual(BaseBreachOrder.StageAttackingBreach, em.GetComponentData<BaseBreachOrder>(attacker).Stage);
         });
@@ -432,7 +432,7 @@ public sealed class BaseBreachValidationTests
             int gateIndex = GridUtils.CellToIndex(gateCell, grid.Width);
 
             Assert.IsTrue(blockerData.Blocked.IsSet(gateIndex), "The road barrier must still block non-friendly pathing.");
-            Assert.AreEqual(1, blockerData.FriendlyPassFactionIds[gateIndex], "The road barrier pass faction must match the owning faction.");
+            Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, blockerData.FriendlyPassFactionIds[gateIndex], "The road barrier pass faction must match the owning faction.");
             Assert.IsTrue(UnitFootprintUtility.CanPlace(
                 grid,
                 walkable,
@@ -442,7 +442,7 @@ public sealed class BaseBreachValidationTests
                 gateCell,
                 new int2(1, 1),
                 new int2(80, 50),
-                1));
+                FactionIdentitySystem.EnemyFactionId));
             Assert.IsFalse(UnitFootprintUtility.CanPlace(
                 grid,
                 walkable,
@@ -452,7 +452,7 @@ public sealed class BaseBreachValidationTests
                 gateCell,
                 new int2(1, 1),
                 new int2(80, 50),
-                0));
+                FactionIdentitySystem.PlayerFactionId));
         });
     }
 
@@ -502,7 +502,7 @@ public sealed class BaseBreachValidationTests
             int2 gateCenter = new(
                 gateOrigin.x + Mathf.Max(1, gateFootprint.x) / 2,
                 gateOrigin.y + Mathf.Max(1, gateFootprint.y) / 2);
-            CreateDoorTriggerUnit(em, 0, gateCenter + new int2(0, 6));
+            CreateDoorTriggerUnit(em, FactionIdentitySystem.PlayerFactionId, gateCenter + new int2(0, 6));
 
             buildingPlacement.UpdateRoadBarrierDoorsForTests(1f);
 

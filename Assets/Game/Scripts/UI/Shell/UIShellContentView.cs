@@ -20,7 +20,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private BuildingUiQuerySystem _buildingUiQuerySystem;
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private MainMenuPlayUI _mainMenuPlayUi;
-    private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
     private MatchHudFooterContentView _matchHudFooterContentView;
@@ -85,7 +85,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public void BindGameplayRuntimeDependencies(
         SelectionUiCommandSystem selectionUiCommandSystem,
         MainMenuPlayUI mainMenuPlayUi = null,
-        System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel = null,
+        System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel = null,
         BuildingUiCommandSystem buildingUiCommandSystem = null,
         BuildingUiCommandSystem.Context buildingUiCommandContext = default)
     {

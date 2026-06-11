@@ -46,6 +46,12 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "BuildingPlacementAdapterSystem",
     };
 
+    private static readonly HashSet<string> SelectionPanelConcreteSystemBindingAllowlist = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs",
+        "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs",
+    };
+
     private static readonly HashSet<string> StaticUiRegistryDebtAllowlist = new(StringComparer.Ordinal);
 
     private static readonly string[] BroadNameTokens =
@@ -209,6 +215,34 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Runtime UI scripts must not add direct Debug.Log* diagnostics. Use user-facing feedback, gated diagnostics, or ECS diagnostic buffers instead.");
+    }
+
+    [Test]
+    public void SelectionSystemsMustBindSelectionPanelThroughContract()
+    {
+        List<string> violations = new();
+
+        foreach (string path in EnumerateSourceFiles("Assets/Game/Scripts/Systems"))
+        {
+            string normalized = NormalizePath(path);
+            if (SelectionPanelConcreteSystemBindingAllowlist.Contains(normalized))
+                continue;
+
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                if (line.Contains("MatchHudSelectionPanelView", StringComparison.Ordinal) &&
+                    !line.Contains("IMatchHudSelectionPanelView", StringComparison.Ordinal))
+                {
+                    violations.Add($"{normalized}:{lineIndex + 1} binds concrete selection panel view: {line.Trim()}");
+                }
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Selection/runtime systems must bind the match HUD selection panel through `IMatchHudSelectionPanelView`. Concrete `MatchHudSelectionPanelView` lookup is limited to bootstrap scene/UI discovery.");
     }
 
     [Test]

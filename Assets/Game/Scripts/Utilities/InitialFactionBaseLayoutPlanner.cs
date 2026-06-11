@@ -71,12 +71,11 @@ public static class InitialFactionBaseLayoutPlanner
 
     public static readonly string[] TentKeys =
     {
-        "Tent",
         "Tent_Regular",
         "Tent_Contractor",
         "Tent_Expert",
         "Tent_Refugee",
-        "Tent_Portaloo"
+        "Portaloo"
     };
 
     public static void BuildPlacements(
@@ -120,12 +119,12 @@ public static class InitialFactionBaseLayoutPlanner
         AddBuilding(placements, "Building_OilPump", new Vector2Int(halfWidthCells + 30, 42));
         AddBuilding(placements, "Building_OilPump", new Vector2Int(36, halfHeightCells + 30));
 
-        AddTentCluster(placements, "Tent", new Vector2Int(-108, -12), 2);
+        AddTentCluster(placements, "Tent_Regular", new Vector2Int(-108, -12), 2);
         AddTentCluster(placements, "Tent_Regular", new Vector2Int(-94, -12), 3);
         AddTentCluster(placements, "Tent_Contractor", new Vector2Int(-80, -12), 3);
         AddTentCluster(placements, "Tent_Expert", new Vector2Int(-66, -12), 2);
         AddTentCluster(placements, "Tent_Refugee", new Vector2Int(-52, -12), 3);
-        AddTentCluster(placements, "Tent_Portaloo", new Vector2Int(-38, -12), 2);
+        AddTentCluster(placements, "Portaloo", new Vector2Int(-38, -12), 2);
     }
 
     public static void BuildWallRuns(int halfWidthCells, int halfHeightCells, List<InitialFactionBaseWallRun> wallRuns)

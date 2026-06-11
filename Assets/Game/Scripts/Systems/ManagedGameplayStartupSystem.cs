@@ -37,7 +37,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
-        public readonly System.Action<MatchHudSelectionPanelView> BindMatchHudSelectionPanel;
+        public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandSystem SelectionUiCommand;
@@ -78,7 +78,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             System.Action<MainMenuPlayUI> bindSelectionMainMenu,
-            System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel,
+            System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
             SelectionUiCommandSystem selectionUiCommand,

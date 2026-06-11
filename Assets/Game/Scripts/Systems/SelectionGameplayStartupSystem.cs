@@ -25,7 +25,7 @@ internal sealed class SelectionGameplayStartupSystem
     public readonly struct Result
     {
         public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
-        public readonly System.Action<MatchHudSelectionPanelView> BindMatchHudSelectionPanel;
+        public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandSystem SelectionUiCommand;
@@ -38,7 +38,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         public Result(
             System.Action<MainMenuPlayUI> bindSelectionMainMenu,
-            System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel,
+            System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
             SelectionUiCommandSystem selectionUiCommand,
@@ -137,7 +137,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectedAttackSourceScratch = new List<Entity>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         MainMenuPlayUI mainMenuPlayUi = null;
-        MatchHudSelectionPanelView matchHudSelectionPanelView = null;
+        IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
         MatchHudSquadTrayView matchHudSquadTrayView = null;
         RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
@@ -187,7 +187,7 @@ internal sealed class SelectionGameplayStartupSystem
             mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
         }
 
-        void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+        void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
         {
             matchHudSelectionPanelView = view;
             selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);

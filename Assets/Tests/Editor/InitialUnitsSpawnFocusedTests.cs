@@ -93,7 +93,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         using NativeArray<Entity> economies = economyQuery.ToEntityArray(Allocator.Temp);
         Assert.AreEqual(1, economies.Length);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economies[0]);
-        Assert.AreEqual(0, economy.FactionId);
+        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, economy.FactionId);
         Assert.AreEqual(345, economy.Money);
 
         using EntityQuery policyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FactionEconomyPolicy>());

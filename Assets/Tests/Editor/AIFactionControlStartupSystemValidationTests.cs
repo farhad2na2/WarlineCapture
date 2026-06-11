@@ -33,8 +33,8 @@ public sealed class AIFactionControlStartupSystemValidationTests
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsTrue(result.PlayerAutoModeEnabled);
         Assert.IsTrue(AISettingsRuntimeState.PlayerAutoAIEnabled);
-        Assert.IsTrue(ContainsFactionControl(entries, 0, true, true));
-        Assert.IsTrue(ContainsFactionControl(entries, 1, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, true, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
     }
 
     [Test]
@@ -49,8 +49,8 @@ public sealed class AIFactionControlStartupSystemValidationTests
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsFalse(result.PlayerAutoModeEnabled);
         Assert.AreEqual(2, entries.Length);
-        Assert.IsTrue(ContainsFactionControl(entries, 0, false, true));
-        Assert.IsTrue(ContainsFactionControl(entries, 1, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, false, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
     }
 
     [Test]
@@ -67,8 +67,8 @@ public sealed class AIFactionControlStartupSystemValidationTests
         Assert.IsTrue(em.HasBuffer<FactionControlEntry>(configEntity));
         DynamicBuffer<FactionControlEntry> entries = em.GetBuffer<FactionControlEntry>(configEntity);
         Assert.AreEqual(2, entries.Length);
-        Assert.IsTrue(ContainsFactionControl(entries, 1, true, false));
-        Assert.IsTrue(ContainsFactionControl(entries, 0, false, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, false, true));
     }
 
     private static AIControllerConfig LoadAIConfig(string path)

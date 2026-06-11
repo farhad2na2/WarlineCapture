@@ -110,7 +110,7 @@ internal sealed class MatchBootstrapSystem
     private Action<MainMenuPlayUI> _bindBuildingMainMenu;
     private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<MainMenuPlayUI> _bindSelectionMainMenu;
-    private Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
     private Action _citizenPopulationRuntimeUpdate;
     private Action _disposeCitizenPopulation;
@@ -127,9 +127,9 @@ internal sealed class MatchBootstrapSystem
     private bool _mainMenuSelectionBindingApplied;
     private RuntimeGridBlockerSystem _mainMenuFeatureBoundGridBlockers;
     private RuntimeCityCompositionSystem _mainMenuFeatureBoundRuntimeCity;
-    private MatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
-    private MatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
-    private MatchHudSelectionPanelView _deferredMatchHudSelectionPanelView;
+    private IMatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
+    private IMatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
+    private IMatchHudSelectionPanelView _deferredMatchHudSelectionPanelView;
     private bool _gameplayStartPending;
     private bool _gameplayStartRequested;
     private bool _gameplayStartComplete;
@@ -488,7 +488,7 @@ internal sealed class MatchBootstrapSystem
         return MainMenu;
     }
 
-    public void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
+    public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
     {
         _pendingMatchHudSelectionPanelView = view;
         if (_bindMatchHudSelectionPanel == null)

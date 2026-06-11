@@ -2,6 +2,8 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.TestTools;
 using UnityEngine.UI;
 
 public sealed class MatchHudMinimapProjectionSystemTests
@@ -309,6 +311,8 @@ public sealed class MatchHudMinimapProjectionSystemTests
             cameraSystem.Init(null, camera);
             RuntimeGameplayStateSystem runtimeState = new();
             inputSystem = new MatchHudMinimapInputSystem();
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
             inputSystem.Bind(view, runtimeState, cameraSystem);
 
             Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");

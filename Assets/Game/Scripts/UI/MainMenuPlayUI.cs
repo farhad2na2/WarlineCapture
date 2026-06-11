@@ -14,7 +14,7 @@ public sealed class MainMenuPlayUI
     private MatchHudSquadTrayView _matchHudSquadTrayView;
     private BuildDrawerView _buildDrawerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
-    private System.Action<MatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
+    private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private System.Action<BattleHudRuntimeFeedbackView> _bindMatchHudRuntimeFeedback;
     private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
@@ -87,7 +87,7 @@ public sealed class MainMenuPlayUI
         _matchHudRightQuickRailView = rightQuickRailView;
     }
 
-    public void ConfigureMatchHudSelectionPanelBinding(System.Action<MatchHudSelectionPanelView> bindMatchHudSelectionPanel)
+    public void ConfigureMatchHudSelectionPanelBinding(System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel)
     {
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         if (_matchHudSelectionPanelView != null)

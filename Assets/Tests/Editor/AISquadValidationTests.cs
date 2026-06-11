@@ -29,12 +29,12 @@ public sealed class AISquadValidationTests
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
-        controls.Add(new FactionControlEntry { FactionId = 1, AIControlled = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.EnemyFactionId, AIControlled = 1 });
 
         Entity planEntity = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(planEntity, new AISquadPlan
         {
-            FactionId = 1,
+            FactionId = FactionIdentitySystem.EnemyFactionId,
             Enabled = 1,
             MinUnits = 3,
             MaxUnits = 4,
@@ -43,17 +43,17 @@ public sealed class AISquadValidationTests
             LastLogTime = -999f
         });
 
-        Entity enemyUnit = CreateUnit(em, 0, new int2(20, 20), false);
-        Entity unitA = CreateUnit(em, 1, new int2(4, 4), true);
-        Entity unitB = CreateUnit(em, 1, new int2(5, 4), true);
-        Entity unitC = CreateUnit(em, 1, new int2(6, 4), true);
-        Entity unitD = CreateUnit(em, 1, new int2(7, 4), true);
+        Entity playerUnit = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false);
+        Entity unitA = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(4, 4), true);
+        Entity unitB = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(5, 4), true);
+        Entity unitC = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(6, 4), true);
+        Entity unitD = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(7, 4), true);
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AISquadSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(20, 20\)"));
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(20, 20\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
@@ -64,9 +64,9 @@ public sealed class AISquadValidationTests
 
         AISquad squad = em.GetComponentData<AISquad>(squads[0]);
         Assert.AreEqual(1, squad.SquadId);
-        Assert.AreEqual(1, squad.FactionId);
+        Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, squad.FactionId);
         Assert.AreEqual((byte)AISquadPurpose.Attack, squad.Purpose);
-        Assert.AreEqual(0, squad.TargetFactionId);
+        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
         Assert.AreEqual(new int2(20, 20), squad.TargetCell);
 
         DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squads[0]);
@@ -75,7 +75,7 @@ public sealed class AISquadValidationTests
         AssertMember(em, unitB, squads[0], 1);
         AssertMember(em, unitC, squads[0], 1);
         AssertMember(em, unitD, squads[0], 1);
-        Assert.IsFalse(em.HasComponent<AISquadMember>(enemyUnit));
+        Assert.IsFalse(em.HasComponent<AISquadMember>(playerUnit));
     }
 
     private static Entity CreateUnit(EntityManager em, byte factionId, int2 cell, bool aiControlled)

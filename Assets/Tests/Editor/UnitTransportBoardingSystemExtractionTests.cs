@@ -65,7 +65,7 @@ public sealed class UnitTransportBoardingSystemExtractionTests
             typeof(UnitFootprint),
             typeof(UnitMovementBehavior),
             typeof(UnitSourcePrefabKey));
-        entityManager.SetComponentData(entity, new Faction { Id = 0 });
+        entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         entityManager.SetComponentData(entity, new UnitGrid { Cell = new int2(1, 1) });
         entityManager.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         entityManager.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(sourceName) });

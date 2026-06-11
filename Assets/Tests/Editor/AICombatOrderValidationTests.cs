@@ -59,7 +59,7 @@ public sealed class AICombatOrderValidationTests
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=1 squad=2 order=Attack target=Entity\(\d+:\d+\) units=2"));
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=2 squad=2 order=Attack target=Entity\(\d+:\d+\) units=2"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();

@@ -21,25 +21,80 @@ internal sealed class BuildingRunwaySystem
             return false;
 
         float bestDistance = float.PositiveInfinity;
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingDictionary)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingDictionary)
+            {
+                TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
+            }
+
+            return airport != null;
+        }
+
         foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
         {
-            RuntimeBuildingEntity candidate = pair.Value;
-            if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
-                continue;
-
-            Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(candidate.Definition.RunwayLocalPosition);
-            float distance = (candidateCenter - origin).sqrMagnitude;
-            if (distance >= bestDistance)
-                continue;
-
-            bestDistance = distance;
-            airport = candidate;
-            runwayCenter = candidateCenter;
-            runwayRotation = candidate.Instance.transform.rotation * candidate.Definition.RunwayLocalRotation;
-            runwayHalfExtents = Vector3.Scale(candidate.Definition.RunwayHalfExtents, candidate.Instance.transform.lossyScale);
+            TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
         }
 
         return airport != null;
+    }
+
+    public bool HasAvailableAirportRunway(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+    {
+        if (runtimeBuildings == null)
+            return false;
+
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingDictionary)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingDictionary)
+            {
+                if (IsAvailableAirportRunway(pair.Value))
+                    return true;
+            }
+
+            return false;
+        }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+        {
+            if (IsAvailableAirportRunway(pair.Value))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsAvailableAirportRunway(RuntimeBuildingEntity candidate)
+    {
+        return candidate != null &&
+               !candidate.IsDestroyed &&
+               candidate.Instance != null &&
+               candidate.Definition != null &&
+               candidate.Definition.HasRunway;
+    }
+
+    private static void TryUseNearestAirportRunway(
+        RuntimeBuildingEntity candidate,
+        Vector3 origin,
+        ref float bestDistance,
+        ref RuntimeBuildingEntity airport,
+        ref Vector3 runwayCenter,
+        ref Quaternion runwayRotation,
+        ref Vector3 runwayHalfExtents)
+    {
+        if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
+            return;
+
+        Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(candidate.Definition.RunwayLocalPosition);
+        float distance = (candidateCenter - origin).sqrMagnitude;
+        if (distance >= bestDistance)
+            return;
+
+        bestDistance = distance;
+        airport = candidate;
+        runwayCenter = candidateCenter;
+        runwayRotation = candidate.Instance.transform.rotation * candidate.Definition.RunwayLocalRotation;
+        runwayHalfExtents = Vector3.Scale(candidate.Definition.RunwayHalfExtents, candidate.Instance.transform.lossyScale);
     }
 
     public RectInt GetEffectivePlacementRect(

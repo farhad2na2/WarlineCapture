@@ -8,6 +8,7 @@ public sealed class BuildingProductionSystem
     private const string HelicopterTransportLookupKey = "unit_veh_helicopter_transport";
     private const string PlaneTransportPrefabName = "Unit_Veh_Plane_Transport";
     private const string PlaneTransportLookupKey = "unit_veh_plane_transport";
+    private const int DefaultPendingProductionPoolPrewarmCount = 256;
 
     public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
     public delegate bool TryGetUnitProductionMetadataDelegate(GameObject prefab, out UnitProductionMetadata metadata);
@@ -103,6 +104,8 @@ public sealed class BuildingProductionSystem
     private GameObject _cachedDefaultHelicopterTransportPrefab;
     private GameObject _cachedDefaultPlaneTransportPrefab;
     private TryGetUnitProductionMetadataDelegate _tryGetUnitProductionMetadata;
+    private readonly Stack<RuntimeBuildingEntity.PendingProduction> _pendingProductionPool = new();
+    private int _createdPendingProductionCount;
 
     public readonly struct PendingProductionProgress
     {
@@ -179,7 +182,7 @@ public sealed class BuildingProductionSystem
             context.UnitSpawnPrefabsByKey,
             context.TryGetPrefabLocalBounds);
 
-        RuntimeBuildingEntity.PendingProduction queuedProduction = new();
+        RuntimeBuildingEntity.PendingProduction queuedProduction = AcquirePendingProduction();
         InitializePendingProduction(
             queuedProduction,
             productionIndex,
@@ -226,6 +229,43 @@ public sealed class BuildingProductionSystem
         pending.TransportMaxConcurrent = transportMaxConcurrent;
         pending.TransportMode = transportMode;
         pending.TransportRequiresAirportRunway = transportRequiresAirportRunway;
+    }
+
+    public void PrewarmPendingProductionPool(int count = DefaultPendingProductionPoolPrewarmCount)
+    {
+        while (_createdPendingProductionCount < count)
+        {
+            _pendingProductionPool.Push(new RuntimeBuildingEntity.PendingProduction());
+            _createdPendingProductionCount++;
+        }
+    }
+
+    internal void ReleasePendingProduction(RuntimeBuildingEntity.PendingProduction pending)
+    {
+        if (pending == null)
+            return;
+
+        pending.ProductionIndex = 0;
+        pending.Prefab = null;
+        pending.StartedAt = 0f;
+        pending.ReadyAt = 0f;
+        pending.ReservedProductionSlotIndex = 0;
+        pending.TransportPrefab = null;
+        pending.TransportArrivalSeconds = 0f;
+        pending.TransportHoldForNextReadySeconds = 0f;
+        pending.TransportMaxConcurrent = 0;
+        pending.TransportMode = default;
+        pending.TransportRequiresAirportRunway = false;
+        _pendingProductionPool.Push(pending);
+    }
+
+    private RuntimeBuildingEntity.PendingProduction AcquirePendingProduction()
+    {
+        if (_pendingProductionPool.Count > 0)
+            return _pendingProductionPool.Pop();
+
+        _createdPendingProductionCount++;
+        return new RuntimeBuildingEntity.PendingProduction();
     }
 
     public float ResolveProductionDurationSeconds(GameObject spawnUnitPrefab)
@@ -574,7 +614,10 @@ public sealed class BuildingProductionSystem
         if (pendingProductions == null || index < 0 || index >= pendingProductions.Count)
             return false;
 
+        TPending pending = pendingProductions[index];
         pendingProductions.RemoveAt(index);
+        if (pending is RuntimeBuildingEntity.PendingProduction runtimePending)
+            ReleasePendingProduction(runtimePending);
         return true;
     }
 

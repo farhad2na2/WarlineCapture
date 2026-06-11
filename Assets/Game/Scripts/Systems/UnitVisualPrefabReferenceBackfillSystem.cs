@@ -4,8 +4,28 @@ using Unity.Entities;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
 {
+    private EntityQuery _unitsToPatchQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _unitsToPatchQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<UnitSourcePrefabKey>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<UnitVisualPrefabReferencesBackfilledTag>()
+            }
+        });
+    }
+
     public void OnUpdate(ref SystemState state)
     {
+        if (_unitsToPatchQuery.IsEmptyIgnoreFilter)
+            return;
+
         EntityManager em = state.EntityManager;
         using var referencesBySourceKey = new NativeHashMap<FixedString64Bytes, UnitVisualPrefabReferenceSet>(64, Allocator.Temp);
         UnitVisualPrefabReferenceSet defaultReferences = BuildReferenceLookup(em, referencesBySourceKey);
@@ -15,13 +35,14 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
             return;
 
         var unitsToPatch = new NativeList<Entity>(Allocator.Temp);
-        foreach (var (sourceKey, entity) in SystemAPI
-                 .Query<RefRO<UnitSourcePrefabKey>>()
-                 .WithNone<UnitVisualPrefabReferencesBackfilledTag>()
-                 .WithEntityAccess())
+        using NativeArray<Entity> entities = _unitsToPatchQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
         {
-            if (sourceKey.ValueRO.Value.Length == 0)
+            Entity entity = entities[i];
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+            if (sourceKey.Value.Length == 0)
             {
+                AddBackfilledTag(em, entity);
                 continue;
             }
 

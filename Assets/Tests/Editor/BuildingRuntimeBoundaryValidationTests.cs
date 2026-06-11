@@ -91,7 +91,10 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             null,
             default,
             null,
-            null);
+            null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));

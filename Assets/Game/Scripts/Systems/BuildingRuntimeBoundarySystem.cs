@@ -140,13 +140,15 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingFactionUnitProductionRequest.Pending)
                 continue;
 
+            string unitId = productionRequestSystem.GetCachedUnitIdString(request.UnitId);
             bool queued = productionRequestSystem.QueueFactionUnitProductionRequest(
                 productionRequestContext,
                 request.FactionId,
-                request.UnitId.ToString(),
+                unitId,
                 em,
                 now,
-                ref request);
+                ref request,
+                unitIdIsNormalized: true);
             if (queued)
                 _forcePublishNextUpdate = true;
             request.Status = queued
@@ -154,7 +156,6 @@ public sealed class BuildingRuntimeBoundarySystem
                 : BuildingFactionUnitProductionRequest.Failed;
             if (request.ResultCode != BuildingFactionUnitProductionRequest.MissingUnitConfig)
             {
-                string unitId = request.UnitId.ToString();
                 request.QueueCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, request.FactionId, unitId);
                 request.ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, request.FactionId, unitId);
             }
@@ -421,19 +422,15 @@ public sealed class BuildingRuntimeBoundarySystem
 
         if (runtimeBuildings != null)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building == null ||
-                    building.IsDestroyed ||
-                    !building.HasOwnerFaction ||
-                    building.Definition == null)
-                {
-                    continue;
-                }
-
-                FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
-                AddOrIncrementOwnedBuildingSummary(buffer, building.OwnerFactionId, buildingId, 1);
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                    PublishOwnedBuildingSummary(buffer, pair.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                    PublishOwnedBuildingSummary(buffer, pair.Value);
             }
         }
 
@@ -451,6 +448,22 @@ public sealed class BuildingRuntimeBoundarySystem
                 AddOrIncrementOwnedBuildingSummary(buffer, factionId, buildingId, 0);
             }
         }
+    }
+
+    private void PublishOwnedBuildingSummary(
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
+        RuntimeBuildingEntity building)
+    {
+        if (building == null ||
+            building.IsDestroyed ||
+            !building.HasOwnerFaction ||
+            building.Definition == null)
+        {
+            return;
+        }
+
+        FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
+        AddOrIncrementOwnedBuildingSummary(buffer, building.OwnerFactionId, buildingId, 1);
     }
 
     private static void AddOrIncrementOwnedBuildingSummary(
@@ -496,48 +509,73 @@ public sealed class BuildingRuntimeBoundarySystem
         EntityManager producedUnitEntityManager = default;
         bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
                                 runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
-                continue;
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                PublishRuntimeUnitProductionSummaryForBuilding(
+                    runtimeQueryContext,
+                    buffer,
+                    producedUnitEntityManager,
+                    hasEntityManager,
+                    pair.Value);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                PublishRuntimeUnitProductionSummaryForBuilding(
+                    runtimeQueryContext,
+                    buffer,
+                    producedUnitEntityManager,
+                    hasEntityManager,
+                    pair.Value);
+        }
+    }
 
-            byte factionId = building.OwnerFactionId;
-            if (building.PendingProductions != null)
+    private void PublishRuntimeUnitProductionSummaryForBuilding(
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+        EntityManager producedUnitEntityManager,
+        bool hasEntityManager,
+        RuntimeBuildingEntity building)
+    {
+        if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
+            return;
+
+        byte factionId = building.OwnerFactionId;
+        if (building.PendingProductions != null)
+        {
+            for (int i = 0; i < building.PendingProductions.Count; i++)
             {
-                for (int i = 0; i < building.PendingProductions.Count; i++)
-                {
-                    RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
-                    if (pending?.Prefab == null)
-                        continue;
+                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+                if (pending?.Prefab == null)
+                    continue;
 
-                    FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
-                    IncrementExistingProductionSummary(buffer, factionId, unitId, 0, 1);
-                }
+                FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
+                IncrementExistingProductionSummary(buffer, factionId, unitId, 0, 1);
+            }
+        }
+
+        if (!hasEntityManager || building.ProducedUnits == null)
+            return;
+
+        runtimeQueryContext.ProductionSystem?.PruneProducedUnits(
+            building.ProducedUnits,
+            building.ProducedUnitSlots,
+            building.ProducedUnitPrefabs,
+            producedUnitEntityManager);
+        for (int i = 0; i < building.ProducedUnits.Count; i++)
+        {
+            Entity unit = building.ProducedUnits[i];
+            if (producedUnitEntityManager.HasComponent<Faction>(unit) &&
+                producedUnitEntityManager.GetComponentData<Faction>(unit).Id != factionId)
+            {
+                continue;
             }
 
-            if (!hasEntityManager || building.ProducedUnits == null)
+            if (!TryResolveProducedUnitId(building, unit, producedUnitEntityManager, out FixedString128Bytes unitId))
                 continue;
 
-            runtimeQueryContext.ProductionSystem?.PruneProducedUnits(
-                building.ProducedUnits,
-                building.ProducedUnitSlots,
-                building.ProducedUnitPrefabs,
-                producedUnitEntityManager);
-            for (int i = 0; i < building.ProducedUnits.Count; i++)
-            {
-                Entity unit = building.ProducedUnits[i];
-                if (producedUnitEntityManager.HasComponent<Faction>(unit) &&
-                    producedUnitEntityManager.GetComponentData<Faction>(unit).Id != factionId)
-                {
-                    continue;
-                }
-
-                if (!TryResolveProducedUnitId(building, unit, producedUnitEntityManager, out FixedString128Bytes unitId))
-                    continue;
-
-                IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
-            }
+            IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
         }
     }
 
@@ -632,38 +670,51 @@ public sealed class BuildingRuntimeBoundarySystem
         if (!TryGetGridConfig(em, out GridConfig grid))
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = entry.Value;
-            if (building == null ||
-                building.IsDestroyed ||
-                !building.HasOwnerFaction ||
-                building.Instance == null ||
-                building.Definition == null ||
-                building.Definition.Prefab == null ||
-                building.ProductionSpawnLocalPositions == null ||
-                building.ProductionSpawnLocalPositions.Length == 0)
-            {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+                PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
+        }
+    }
+
+    private void PublishFactionProductionSpawnPointsForBuilding(
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer,
+        GridConfig grid,
+        RuntimeBuildingEntity building)
+    {
+        if (building == null ||
+            building.IsDestroyed ||
+            !building.HasOwnerFaction ||
+            building.Instance == null ||
+            building.Definition == null ||
+            building.Definition.Prefab == null ||
+            building.ProductionSpawnLocalPositions == null ||
+            building.ProductionSpawnLocalPositions.Length == 0)
+        {
+            return;
+        }
+
+        FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
+        for (int i = 0; i < building.ProductionSpawnLocalPositions.Length; i++)
+        {
+            Vector3 world = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
+            int2 cell = GridUtils.WorldToCell(grid, world);
+            if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
                 continue;
-            }
 
-            FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
-            for (int i = 0; i < building.ProductionSpawnLocalPositions.Length; i++)
+            buffer.Add(new BuildingFactionProductionSpawnPointReadModel
             {
-                Vector3 world = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
-                int2 cell = GridUtils.WorldToCell(grid, world);
-                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
-                    continue;
-
-                buffer.Add(new BuildingFactionProductionSpawnPointReadModel
-                {
-                    FactionId = building.OwnerFactionId,
-                    BuildingId = buildingId,
-                    SlotIndex = i,
-                    Cell = cell,
-                    WorldPosition = new float3(world.x, world.y, world.z)
-                });
-            }
+                FactionId = building.OwnerFactionId,
+                BuildingId = buildingId,
+                SlotIndex = i,
+                Cell = cell,
+                WorldPosition = new float3(world.x, world.y, world.z)
+            });
         }
     }
 
@@ -701,14 +752,24 @@ public sealed class BuildingRuntimeBoundarySystem
     private void RefreshFactionIds(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
         _factionIds.Clear();
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || !building.HasOwnerFaction)
-                continue;
-
-            AddFactionId(building.OwnerFactionId);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                AddFactionIdForBuilding(pair.Value);
         }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                AddFactionIdForBuilding(pair.Value);
+        }
+    }
+
+    private void AddFactionIdForBuilding(RuntimeBuildingEntity building)
+    {
+        if (building == null || !building.HasOwnerFaction)
+            return;
+
+        AddFactionId(building.OwnerFactionId);
     }
 
     private void AddFactionId(byte factionId)
@@ -730,20 +791,31 @@ public sealed class BuildingRuntimeBoundarySystem
         unchecked
         {
             int hash = 17;
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
-                RuntimeBuildingEntity building = pair.Value;
-                hash = (hash * 31) + pair.Key;
-                if (building == null)
-                    continue;
-
-                hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
-                hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
-                hash = (hash * 31) + (building.ProductionSpawnLocalPositions?.Length ?? 0);
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                    hash = AddRuntimeBuildingSignature(hash, pair.Key, pair.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                    hash = AddRuntimeBuildingSignature(hash, pair.Key, pair.Value);
             }
 
             return hash;
         }
+    }
+
+    private static int AddRuntimeBuildingSignature(int hash, int key, RuntimeBuildingEntity building)
+    {
+        hash = (hash * 31) + key;
+        if (building == null)
+            return hash;
+
+        hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+        hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+        hash = (hash * 31) + (building.ProductionSpawnLocalPositions?.Length ?? 0);
+        return hash;
     }
 
     private static bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)

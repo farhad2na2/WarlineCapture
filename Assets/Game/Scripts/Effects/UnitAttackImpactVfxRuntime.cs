@@ -3,6 +3,10 @@ using UnityEngine;
 
 public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
 {
+    private const int InitialActiveCapacity = 128;
+    private const int InitialPrefabPoolCapacity = 32;
+    private const int GrowthPrefabPoolCapacity = 16;
+
     private sealed class PooledInstance
     {
         public GameObject Root;
@@ -15,7 +19,7 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
 
     private static UnitAttackImpactVfxRuntime _instance;
     private readonly Dictionary<GameObject, Stack<PooledInstance>> _availableByPrefab = new();
-    private readonly List<PooledInstance> _active = new();
+    private readonly List<PooledInstance> _active = new(InitialActiveCapacity);
 
     public static void Play(GameObject prefab, Vector3 position)
     {
@@ -45,6 +49,15 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         EnsureInstance();
 
         _instance.PlayTimedLoopInternal(prefab, position, rotation, emitSeconds, totalActiveSeconds);
+    }
+
+    public static void Prewarm(GameObject prefab, int count = InitialPrefabPoolCapacity)
+    {
+        if (prefab == null || count <= 0)
+            return;
+
+        EnsureInstance();
+        _instance.PrewarmInternal(prefab, count);
     }
 
     private static void EnsureInstance()
@@ -115,9 +128,50 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
 
     private PooledInstance GetOrCreate(GameObject prefab)
     {
-        if (_availableByPrefab.TryGetValue(prefab, out Stack<PooledInstance> pool) && pool.Count > 0)
+        bool hadPool = _availableByPrefab.TryGetValue(prefab, out Stack<PooledInstance> pool);
+        if (!hadPool)
+        {
+            pool = GetOrCreatePool(prefab, InitialPrefabPoolCapacity);
+            PopulatePool(prefab, pool, InitialPrefabPoolCapacity);
+        }
+        else if (pool.Count == 0)
+        {
+            PopulatePool(prefab, pool, GrowthPrefabPoolCapacity);
+        }
+
+        if (pool.Count > 0)
             return pool.Pop();
 
+        return CreateInstance(prefab);
+    }
+
+    private void PrewarmInternal(GameObject prefab, int count)
+    {
+        Stack<PooledInstance> pool = GetOrCreatePool(prefab, count);
+        int missingCount = Mathf.Max(0, count - pool.Count);
+        PopulatePool(prefab, pool, missingCount);
+    }
+
+    private Stack<PooledInstance> GetOrCreatePool(GameObject prefab, int capacity)
+    {
+        if (_availableByPrefab.TryGetValue(prefab, out Stack<PooledInstance> pool))
+            return pool;
+
+        pool = new Stack<PooledInstance>(Mathf.Max(1, capacity));
+        _availableByPrefab.Add(prefab, pool);
+        return pool;
+    }
+
+    private void PopulatePool(GameObject prefab, Stack<PooledInstance> pool, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            pool.Push(CreateInstance(prefab));
+        }
+    }
+
+    private PooledInstance CreateInstance(GameObject prefab)
+    {
         GameObject root = Instantiate(prefab, transform);
         root.SetActive(false);
         return new PooledInstance

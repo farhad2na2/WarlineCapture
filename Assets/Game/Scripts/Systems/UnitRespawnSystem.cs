@@ -20,6 +20,9 @@ public partial struct UnitRespawnSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
+        var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
+        if (buffer.Length == 0)
+            return;
 
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
@@ -31,7 +34,6 @@ public partial struct UnitRespawnSystem : ISystem
         var queueState = SystemAPI.GetComponentRW<RespawnQueueComponent>(queueEntity);
         var rng = new Unity.Mathematics.Random(queueState.ValueRW.RandomState == 0 ? 1u : queueState.ValueRW.RandomState);
 
-        var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
         double now = SystemAPI.Time.ElapsedTime;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);

@@ -62,7 +62,7 @@ public sealed class AIPlanEntryStartupSystem
             if (string.IsNullOrWhiteSpace(unitId))
                 continue;
 
-            entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(unitId) });
+            entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(unitId)) });
         }
     }
 }

@@ -57,6 +57,7 @@ internal sealed class BuildingBarrierSystem
     }
 
     private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
+    private readonly Dictionary<BuildingDefinition, bool> _wallGateDefinitionCache = new();
 
     private const float BarrierDoorOpenCloseSpeed = 2f;
     private const int BarrierDoorDetectPaddingCells = 8;
@@ -312,16 +313,7 @@ internal sealed class BuildingBarrierSystem
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
             return;
 
-        bool hasRoadGate = false;
-        foreach (var entry in context.RuntimeBuildings)
-        {
-            if (IsActiveRoadGateBuilding(context, entry.Value))
-            {
-                hasRoadGate = true;
-                break;
-            }
-        }
-        if (!hasRoadGate)
+        if (!HasActiveRoadGateBuilding(context))
             return;
 
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
@@ -330,11 +322,15 @@ internal sealed class BuildingBarrierSystem
         context.EnsureEntityQueries?.Invoke(em);
         if (context.GetLiveFactionUnitsQuery == null)
         {
-            foreach (var entry in context.RuntimeBuildings)
+            if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
-                RuntimeBuildingEntity building = entry.Value;
-                if (IsActiveRoadGateBuilding(context, building))
-                    UpdateRoadBarrierDoorVisual(context, building, false, deltaTime);
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
             }
             return;
         }
@@ -342,11 +338,15 @@ internal sealed class BuildingBarrierSystem
         EntityQuery liveFactionUnitsQuery = context.GetLiveFactionUnitsQuery();
         if (liveFactionUnitsQuery.IsEmptyIgnoreFilter)
         {
-            foreach (var entry in context.RuntimeBuildings)
+            if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
-                RuntimeBuildingEntity building = entry.Value;
-                if (IsActiveRoadGateBuilding(context, building))
-                    UpdateRoadBarrierDoorVisual(context, building, false, deltaTime);
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
             }
             return;
         }
@@ -355,16 +355,56 @@ internal sealed class BuildingBarrierSystem
         using var unitGrids = liveFactionUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
         using var footprints = liveFactionUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
 
-        foreach (var entry in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
-            RuntimeBuildingEntity building = entry.Value;
-            if (!IsActiveRoadGateBuilding(context, building))
-                continue;
-
-            bool shouldOpen = building.HasOwnerFaction &&
-                HasNearbyFriendlyUnit(building, factions, unitGrids, footprints, building.OwnerFactionId);
-            UpdateRoadBarrierDoorVisual(context, building, shouldOpen, deltaTime);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+                UpdateRoadBarrierDoorForBuilding(context, entry.Value, true, factions, unitGrids, footprints, deltaTime);
         }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+                UpdateRoadBarrierDoorForBuilding(context, entry.Value, true, factions, unitGrids, footprints, deltaTime);
+        }
+    }
+
+    private void UpdateRoadBarrierDoorForBuilding(
+        Context context,
+        RuntimeBuildingEntity building,
+        bool hasLiveFactionUnits,
+        NativeArray<Faction> factions,
+        NativeArray<UnitGrid> unitGrids,
+        NativeArray<UnitFootprint> footprints,
+        float deltaTime)
+    {
+        if (!IsActiveRoadGateBuilding(context, building))
+            return;
+
+        bool shouldOpen = hasLiveFactionUnits &&
+            building.HasOwnerFaction &&
+            HasNearbyFriendlyUnit(building, factions, unitGrids, footprints, building.OwnerFactionId);
+        UpdateRoadBarrierDoorVisual(context, building, shouldOpen, deltaTime);
+    }
+
+    private bool HasActiveRoadGateBuilding(Context context)
+    {
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+            {
+                if (IsActiveRoadGateBuilding(context, entry.Value))
+                    return true;
+            }
+
+            return false;
+        }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+        {
+            if (IsActiveRoadGateBuilding(context, entry.Value))
+                return true;
+        }
+
+        return false;
     }
 
     public int GetRuntimeRoadBarrierGateRects(Context context, byte factionId, List<RectInt> rects, List<int> buildingIds = null)
@@ -489,6 +529,20 @@ internal sealed class BuildingBarrierSystem
         string prefabName = definition.Prefab != null ? definition.Prefab.name : string.Empty;
         return displayName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    public bool IsWallGateDefinitionCached(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return false;
+
+        if (!_wallGateDefinitionCache.TryGetValue(definition, out bool isWallGate))
+        {
+            isWallGate = IsWallGateDefinition(definition);
+            _wallGateDefinitionCache[definition] = isWallGate;
+        }
+
+        return isWallGate;
     }
 
     public static bool ShouldUseExpandedSelectionArea(BuildingDefinition definition)

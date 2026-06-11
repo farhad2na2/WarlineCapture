@@ -81,4 +81,5 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
     internal readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+    internal BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
 }

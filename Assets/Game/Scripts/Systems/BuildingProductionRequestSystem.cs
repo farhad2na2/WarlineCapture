@@ -154,6 +154,7 @@ internal sealed class BuildingProductionRequestSystem
     private int _armedProductionFrame = -1;
     private RuntimeBuildingEntity _lastCampProductionFocusBuilding;
     private GameObject _lastCampProductionFocusPrefab;
+    private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new();
 
     public void CreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex, int frameCount)
     {
@@ -292,6 +293,28 @@ internal sealed class BuildingProductionRequestSystem
             context.UnitSpawnPrefabsByKey,
             context.TryGetPrefabLocalBounds);
 
+        return CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, transportSettings, logReason);
+    }
+
+    private bool CanQueueUnitFromBuilding(
+        Context context,
+        RuntimeBuildingEntity building,
+        GameObject spawnUnitPrefab,
+        BuildingProductionSystem.ProductionTransportSettings transportSettings,
+        bool logReason)
+    {
+        if (building == null || spawnUnitPrefab == null)
+            return false;
+
+        return CanQueueTransportForAnyProducer(context, spawnUnitPrefab, transportSettings, logReason);
+    }
+
+    private static bool CanQueueTransportForAnyProducer(
+        Context context,
+        GameObject spawnUnitPrefab,
+        BuildingProductionSystem.ProductionTransportSettings transportSettings,
+        bool logReason)
+    {
         if (transportSettings.TransportPrefab == null)
             return true;
 
@@ -299,13 +322,7 @@ internal sealed class BuildingProductionRequestSystem
             transportSettings.Mode == ProductionTransportMode.Plane &&
             (context.RuntimeBuildings == null ||
              context.RunwaySystem == null ||
-             !context.RunwaySystem.TryGetNearestAirportRunway(
-                 context.RuntimeBuildings,
-                 building.Instance != null ? building.Instance.transform.position : Vector3.zero,
-                 out _,
-                 out _,
-                 out _,
-                 out _)))
+             !context.RunwaySystem.HasAvailableAirportRunway(context.RuntimeBuildings)))
         {
             if (logReason)
                 context.LogWarning?.Invoke($"[BuildingSpawn] No airport runway is available for '{spawnUnitPrefab.name}'.");
@@ -321,9 +338,10 @@ internal sealed class BuildingProductionRequestSystem
         string unitId,
         EntityManager entityManager,
         float now,
-        ref BuildingFactionUnitProductionRequest request)
+        ref BuildingFactionUnitProductionRequest request,
+        bool unitIdIsNormalized = false)
     {
-        if (!TryResolveConfiguredUnit(context, unitId, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
+        if (!TryResolveConfiguredUnit(context, unitId, unitIdIsNormalized, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
             unitPrefab == null ||
             !canRequest)
         {
@@ -370,10 +388,23 @@ internal sealed class BuildingProductionRequestSystem
         return true;
     }
 
+    public string GetCachedUnitIdString(FixedString128Bytes unitId)
+    {
+        if (unitId.Length == 0)
+            return string.Empty;
+
+        if (_unitIdStringCache.TryGetValue(unitId, out string cached))
+            return cached;
+
+        cached = unitId.ToString();
+        _unitIdStringCache[unitId] = cached;
+        return cached;
+    }
+
     public bool TryQueueFactionUnitProduction(Context context, byte factionId, string unitId, out FactionUnitProductionResult result)
     {
         result = default;
-        if (!TryResolveConfiguredUnit(context, unitId, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
+        if (!TryResolveConfiguredUnit(context, unitId, false, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
             unitPrefab == null ||
             !canRequest)
         {
@@ -439,32 +470,102 @@ internal sealed class BuildingProductionRequestSystem
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
+        BuildingProductionSystem.ProductionTransportSettings transportSettings =
+            ResolveProductionTransportSettings(context, unitPrefab);
+        if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
+            return false;
+
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            for (int pass = 0; pass < 2; pass++)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                {
+                    if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, pair, out buildingId, out productionIndex, out buildingDisplayName))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         for (int pass = 0; pass < 2; pass++)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building?.Definition == null || building.IsDestroyed)
-                    continue;
-                if (building.IsCityGenerated)
-                    continue;
-                if (!IsFriendlyProducerBuildingForPass(building, pass))
-                    continue;
-
-                int productionCount = GetProductionCount(building.Definition);
-                for (int i = 0; i < productionCount; i++)
-                {
-                    if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
-                        continue;
-                    if (!CanQueueUnitFromBuilding(context, building, unitPrefab, false))
-                        continue;
-
-                    buildingId = pair.Key;
-                    productionIndex = i;
-                    buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+                if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, pair, out buildingId, out productionIndex, out buildingDisplayName))
                     return true;
-                }
             }
+        }
+
+        return false;
+    }
+
+    private bool TryUseFriendlyProducerBuilding(
+        Context context,
+        GameObject unitPrefab,
+        int pass,
+        KeyValuePair<int, RuntimeBuildingEntity> pair,
+        out int buildingId,
+        out int productionIndex,
+        out string buildingDisplayName)
+    {
+        buildingId = 0;
+        productionIndex = -1;
+        buildingDisplayName = string.Empty;
+
+        RuntimeBuildingEntity building = pair.Value;
+        if (building?.Definition == null || building.IsDestroyed)
+            return false;
+        if (building.IsCityGenerated)
+            return false;
+        if (!IsFriendlyProducerBuildingForPass(building, pass))
+            return false;
+
+        int productionCount = GetProductionCount(building.Definition);
+        for (int i = 0; i < productionCount; i++)
+        {
+            if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                continue;
+            buildingId = pair.Key;
+            productionIndex = i;
+            buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryUseFactionProducerBuilding(
+        Context context,
+        byte factionId,
+        GameObject unitPrefab,
+        KeyValuePair<int, RuntimeBuildingEntity> pair,
+        out int buildingId,
+        out int productionIndex,
+        out string buildingDisplayName)
+    {
+        buildingId = 0;
+        productionIndex = -1;
+        buildingDisplayName = string.Empty;
+
+        RuntimeBuildingEntity building = pair.Value;
+        if (building?.Definition == null || building.IsDestroyed)
+            return false;
+        if (building.IsCityGenerated)
+            return false;
+        if (!building.HasOwnerFaction || building.OwnerFactionId != factionId)
+            return false;
+
+        int productionCount = GetProductionCount(building.Definition);
+        for (int i = 0; i < productionCount; i++)
+        {
+            if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                continue;
+            buildingId = pair.Key;
+            productionIndex = i;
+            buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+            return true;
         }
 
         return false;
@@ -492,32 +593,40 @@ internal sealed class BuildingProductionRequestSystem
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
+        BuildingProductionSystem.ProductionTransportSettings transportSettings =
+            ResolveProductionTransportSettings(context, unitPrefab);
+        if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
+            return false;
+
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+            {
+                if (TryUseFactionProducerBuilding(context, factionId, unitPrefab, pair, out buildingId, out productionIndex, out buildingDisplayName))
+                    return true;
+            }
+
+            return false;
+        }
+
         foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-            if (building.IsCityGenerated)
-                continue;
-            if (!building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-
-            int productionCount = GetProductionCount(building.Definition);
-            for (int i = 0; i < productionCount; i++)
-            {
-                if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
-                    continue;
-                if (!CanQueueUnitFromBuilding(context, building, unitPrefab, false))
-                    continue;
-
-                buildingId = pair.Key;
-                productionIndex = i;
-                buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+            if (TryUseFactionProducerBuilding(context, factionId, unitPrefab, pair, out buildingId, out productionIndex, out buildingDisplayName))
                 return true;
-            }
         }
 
         return false;
+    }
+
+    private static BuildingProductionSystem.ProductionTransportSettings ResolveProductionTransportSettings(
+        Context context,
+        GameObject unitPrefab)
+    {
+        return context.ProductionSystem.ResolveProductionTransportSettings(
+            unitPrefab,
+            context.UnitSpawnPrefabs,
+            context.UnitSpawnPrefabsByKey,
+            context.TryGetPrefabLocalBounds);
     }
 
     private static int CountPendingProductionsForFaction(Context context, byte factionId, string unitId)
@@ -537,6 +646,7 @@ internal sealed class BuildingProductionRequestSystem
     private static bool TryResolveConfiguredUnit(
         Context context,
         string unitId,
+        bool unitIdIsNormalized,
         out GameObject unitPrefab,
         out string displayName,
         out int price,
@@ -547,7 +657,7 @@ internal sealed class BuildingProductionRequestSystem
         price = 0;
         canRequest = false;
 
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        string normalized = unitIdIsNormalized ? unitId : BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
         if (string.IsNullOrEmpty(normalized))
             return false;
 
@@ -564,7 +674,7 @@ internal sealed class BuildingProductionRequestSystem
         for (int i = 0; i < context.UnitSpawnPrefabs.Count; i++)
         {
             GameObject candidate = context.UnitSpawnPrefabs[i];
-            if (candidate == null || !BuildingDefinitionSystem.UnitPrefabMatchesId(candidate, normalized))
+            if (candidate == null || !ConfiguredUnitMatchesId(context, i, candidate, normalized))
                 continue;
 
             unitPrefab = candidate;
@@ -572,6 +682,27 @@ internal sealed class BuildingProductionRequestSystem
         }
 
         return false;
+    }
+
+    private static bool ConfiguredUnitMatchesId(Context context, int index, GameObject prefab, string normalizedUnitId)
+    {
+        if (string.IsNullOrEmpty(normalizedUnitId))
+            return true;
+        if (prefab == null)
+            return false;
+
+        if (BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name) == normalizedUnitId)
+            return true;
+
+        return context.TryGetConfiguredUnitReadModel != null &&
+               context.TryGetConfiguredUnitReadModel(
+                   index,
+                   out _,
+                   out string displayName,
+                   out _,
+                   out _,
+                   out _) &&
+               BuildingDefinitionSystem.NormalizeSpawnableKey(displayName) == normalizedUnitId;
     }
 
     private static bool TryBuildConfiguredUnit(Context context, GameObject prefab, out string displayName, out int price, out bool canRequest)

@@ -654,7 +654,10 @@ public sealed class BuildingProductionSystemTests
                 roadFootprintQuerySystem: null,
                 roadFootprintQueryContext: default,
                 factionVisuals: null,
-                dayNight: null);
+                dayNight: null,
+                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
 
             Assert.AreEqual(12345, result.UiCommand.CurrentDollars(result.UiCommandContext));
         }
@@ -688,7 +691,10 @@ public sealed class BuildingProductionSystemTests
                 roadFootprintQuerySystem: null,
                 roadFootprintQueryContext: default,
                 factionVisuals: null,
-                dayNight: null);
+                dayNight: null,
+                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
 
             BuildingUiCommandSystem.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
                 result.UiCommandContext,

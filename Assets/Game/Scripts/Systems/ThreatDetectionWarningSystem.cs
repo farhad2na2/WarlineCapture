@@ -11,6 +11,9 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 
     private NativeParallelHashSet<Entity> _previousGroundThreats;
     private NativeParallelHashSet<Entity> _previousAirThreats;
+    private EntityQuery _sensorQuery;
+    private EntityQuery _targetQuery;
+    private EntityQuery _gridQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -18,6 +21,16 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
         _previousGroundThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
         _previousAirThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
+        _sensorQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<ThreatDetector>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        _targetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
     }
 
     public void OnDestroy(ref SystemState state)
@@ -37,20 +50,10 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         }
 
         EntityManager em = state.EntityManager;
-        float cellSize = TryGetCellSize(em);
+        float cellSize = TryGetCellSize(em, _gridQuery);
 
-        using EntityQuery sensorQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<ThreatDetector>(),
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>());
-        using EntityQuery targetQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>());
-
-        using NativeArray<Entity> sensors = sensorQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<Entity> targets = targetQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<Entity> sensors = _sensorQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
         using NativeParallelHashSet<Entity> currentGroundThreats = new(math.max(16, targets.Length * 2), Allocator.Temp);
         using NativeParallelHashSet<Entity> currentAirThreats = new(math.max(16, targets.Length * 2), Allocator.Temp);
         using NativeList<Entity> currentGroundThreatList = new(Allocator.Temp);
@@ -169,9 +172,8 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             previousThreats.Add(currentThreats[i]);
     }
 
-    private static float TryGetCellSize(EntityManager em)
+    private static float TryGetCellSize(EntityManager em, EntityQuery gridQuery)
     {
-        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
         using NativeArray<Entity> grids = gridQuery.ToEntityArray(Allocator.Temp);
         if (grids.Length == 0 || !em.Exists(grids[0]))
             return 1f;

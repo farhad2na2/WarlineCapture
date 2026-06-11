@@ -8,26 +8,50 @@ using UnityEngine.InputSystem;
 public partial struct SelectedUnitDebugFireSystem : ISystem
 {
     private const int DebugTargetHealth = 1_000_000_000;
+    private EntityQuery _activeSourceQuery;
+    private EntityQuery _targetQuery;
+    private EntityQuery _selectedQuery;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
+        _activeSourceQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitDebugFireState>());
+        _targetQuery = state.GetEntityQuery(ComponentType.ReadOnly<DebugFireTargetTag>());
+        _selectedQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitCombat>(),
+            ComponentType.ReadOnly<UnitAttack>(),
+            ComponentType.ReadOnly<UnitAttackCooldownComponent>(),
+            ComponentType.ReadOnly<UnitAttackTraceComponent>(),
+            ComponentType.ReadOnly<UnitAttackAnimationComponent>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<LocalTransform>());
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        bool fireHeld = IsDebugFireHeld();
+        if (!fireHeld &&
+            _activeSourceQuery.IsEmptyIgnoreFilter &&
+            _targetQuery.IsEmptyIgnoreFilter)
+        {
+            return;
+        }
+
         state.Dependency.Complete();
-        ApplyDebugFire(state.EntityManager, SystemAPI.GetSingleton<GridConfig>(), IsDebugFireHeld());
+        ApplyDebugFire(
+            state.EntityManager,
+            SystemAPI.GetSingleton<GridConfig>(),
+            fireHeld,
+            _activeSourceQuery,
+            _targetQuery,
+            _selectedQuery);
     }
 
     public static void ApplyDebugFire(EntityManager em, GridConfig grid, bool fireHeld)
     {
-        CleanupInactiveSources(em, fireHeld);
-        CleanupOrphanTargets(em);
-
-        if (!fireHeld)
-            return;
-
+        using EntityQuery activeSourceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitDebugFireState>());
+        using EntityQuery targetQuery = em.CreateEntityQuery(ComponentType.ReadOnly<DebugFireTargetTag>());
         using EntityQuery selectedQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitCombat>(),
@@ -37,6 +61,22 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             ComponentType.ReadOnly<UnitAttackAnimationComponent>(),
             ComponentType.ReadOnly<UnitHealth>(),
             ComponentType.ReadOnly<LocalTransform>());
+        ApplyDebugFire(em, grid, fireHeld, activeSourceQuery, targetQuery, selectedQuery);
+    }
+
+    private static void ApplyDebugFire(
+        EntityManager em,
+        GridConfig grid,
+        bool fireHeld,
+        EntityQuery activeSourceQuery,
+        EntityQuery targetQuery,
+        EntityQuery selectedQuery)
+    {
+        CleanupInactiveSources(em, fireHeld, activeSourceQuery);
+        CleanupOrphanTargets(em, targetQuery);
+
+        if (!fireHeld)
+            return;
 
         using NativeArray<Entity> selected = selectedQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < selected.Length; i++)
@@ -280,9 +320,11 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         return target;
     }
 
-    private static void CleanupInactiveSources(EntityManager em, bool fireHeld)
+    private static void CleanupInactiveSources(EntityManager em, bool fireHeld, EntityQuery activeQuery)
     {
-        using EntityQuery activeQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitDebugFireState>());
+        if (activeQuery.IsEmptyIgnoreFilter)
+            return;
+
         using NativeArray<Entity> activeSources = activeQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < activeSources.Length; i++)
         {
@@ -327,9 +369,11 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         em.RemoveComponent<SelectedUnitDebugFireState>(source);
     }
 
-    private static void CleanupOrphanTargets(EntityManager em)
+    private static void CleanupOrphanTargets(EntityManager em, EntityQuery targetQuery)
     {
-        using EntityQuery targetQuery = em.CreateEntityQuery(ComponentType.ReadOnly<DebugFireTargetTag>());
+        if (targetQuery.IsEmptyIgnoreFilter)
+            return;
+
         using NativeArray<Entity> targets = targetQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < targets.Length; i++)
         {

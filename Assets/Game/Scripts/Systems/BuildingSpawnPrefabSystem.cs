@@ -6,23 +6,28 @@ using UnityEngine;
 
 internal sealed class BuildingSpawnPrefabSystem
 {
+    public delegate string ResolveSpawnableLookupKeyDelegate(GameObject prefab);
+
     public readonly struct Context
     {
         public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
         public readonly EntityQuery UnitPrefabRegistryQuery;
         public readonly EntityQuery SpawnPrefabCandidatesQuery;
         public readonly EntityQuery LivePlayerUnitsQuery;
+        public readonly ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
 
         public Context(
             IReadOnlyList<GameObject> unitSpawnPrefabs,
             EntityQuery unitPrefabRegistryQuery,
             EntityQuery spawnPrefabCandidatesQuery,
-            EntityQuery livePlayerUnitsQuery)
+            EntityQuery livePlayerUnitsQuery,
+            ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null)
         {
             UnitSpawnPrefabs = unitSpawnPrefabs;
             UnitPrefabRegistryQuery = unitPrefabRegistryQuery;
             SpawnPrefabCandidatesQuery = spawnPrefabCandidatesQuery;
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
+            ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
         }
     }
 
@@ -78,7 +83,7 @@ internal sealed class BuildingSpawnPrefabSystem
 
         Entity registryEntity = context.UnitPrefabRegistryQuery.GetSingletonEntity();
         DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        string targetKey = GetSpawnableLookupKey(spawnUnitPrefab);
+        string targetKey = GetSpawnableLookupKey(context, spawnUnitPrefab);
         int count = math.min(registry.Length, context.UnitSpawnPrefabs.Count);
         if (string.IsNullOrEmpty(targetKey) || count <= 0)
             return false;
@@ -89,7 +94,7 @@ internal sealed class BuildingSpawnPrefabSystem
             if (configuredPrefab == null)
                 continue;
 
-            if (!NamesMatch(GetSpawnableLookupKey(configuredPrefab), targetKey))
+            if (!NamesMatch(GetSpawnableLookupKey(context, configuredPrefab), targetKey))
                 continue;
 
             prefabEntity = registry[i].Prefab;
@@ -144,14 +149,14 @@ internal sealed class BuildingSpawnPrefabSystem
         return false;
     }
 
-    private static string GetSpawnableLookupKey(GameObject prefab)
+    private static string GetSpawnableLookupKey(Context context, GameObject prefab)
     {
         if (prefab == null)
             return string.Empty;
 
-        BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return NormalizeSpawnableKey(authoring.ConfiguredDisplayName);
+        string configuredKey = context.ResolveSpawnableLookupKey?.Invoke(prefab);
+        if (!string.IsNullOrWhiteSpace(configuredKey))
+            return NormalizeSpawnableKey(configuredKey);
 
         return NormalizeSpawnableKey(prefab.name);
     }

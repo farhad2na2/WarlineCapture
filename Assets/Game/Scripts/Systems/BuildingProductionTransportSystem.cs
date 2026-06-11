@@ -11,8 +11,23 @@ using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode
 internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
+    private const int DefaultTransportPoolPrewarmCount = 2;
+    private const int DefaultTransportStatePoolPrewarmCount = 32;
 
     public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
+
+    private readonly Dictionary<GameObject, Stack<GameObject>> _transportPoolByPrefab = new();
+    private readonly Dictionary<GameObject, Renderer[]> _transportRenderersByInstance = new();
+    private readonly Dictionary<GameObject, Transform> _transportDoorByInstance = new();
+    private readonly HashSet<GameObject> _transportDoorLookupCompleted = new();
+    private readonly Dictionary<GameObject, List<Transform>> _transportBladeTransformsByInstance = new();
+    private readonly Dictionary<GameObject, int> _prewarmedTransportCountByPrefab = new();
+    private readonly Stack<RuntimeBuildingEntity.ActiveProductionTransport> _transportStatePool = new();
+    private readonly List<Transform> _transformSearchBuffer = new(64);
+    private IReadOnlyList<GameObject> _configuredPoolSourcePrefabs;
+    private IReadOnlyDictionary<string, GameObject> _configuredPoolSourcePrefabsByKey;
+    private bool[] _laneUsage = new bool[4];
+    private int _createdTransportStateCount;
 
     public readonly struct Context
     {
@@ -136,35 +151,32 @@ internal sealed class BuildingProductionTransportSystem
             exitRotation = Quaternion.LookRotation((exitPosition - hoverPosition).normalized, Vector3.up);
         }
 
-        GameObject instance = Instantiate(pending.TransportPrefab);
-        instance.name = $"{pending.TransportPrefab.name}_Delivery_{building.Id}";
-        HideTransportRuntimeMarkers(instance.transform);
-        Transform doorTransform = context.VisualSystem.FindDescendantByName(instance.transform, "Door_X");
+        GameObject instance = AcquireProductionTransportInstance(pending.TransportPrefab, context.VisualSystem);
+        Transform doorTransform = GetProductionTransportDoorTransform(instance, context.VisualSystem);
 
-        RuntimeBuildingEntity.ActiveProductionTransport transport = new()
-        {
-            LaneIndex = laneIndex,
-            Prefab = pending.TransportPrefab,
-            Instance = instance,
-            Transform = instance.transform,
-            VisualRenderers = instance.GetComponentsInChildren<Renderer>(true),
-            DoorTransform = doorTransform,
-            DoorOpenLocalEulerX = doorTransform != null ? doorTransform.localEulerAngles.x : 0f,
-            HoverPosition = hoverPosition,
-            EntryPosition = entryPosition,
-            TouchdownPosition = touchdownPosition,
-            ExitPosition = exitPosition,
-            HoverRotation = hoverRotation,
-            EntryRotation = entryRotation,
-            ExitRotation = exitRotation,
-            ArrivalSeconds = Mathf.Max(0.5f, pending.TransportArrivalSeconds),
-            HoldForNextReadySeconds = Mathf.Max(0.5f, pending.TransportHoldForNextReadySeconds),
-            PhaseStartedAt = now,
-            HoverEnteredAt = -1f,
-            NextDropReadyAt = now,
-            Phase = 0,
-            Mode = pending.TransportMode
-        };
+        RuntimeBuildingEntity.ActiveProductionTransport transport = AcquireProductionTransportState();
+        transport.LaneIndex = laneIndex;
+        transport.Prefab = pending.TransportPrefab;
+        transport.Instance = instance;
+        transport.Transform = instance.transform;
+        transport.VisualRenderers = GetProductionTransportRenderers(instance);
+        transport.DoorTransform = doorTransform;
+        transport.DoorOpenLocalEulerX = doorTransform != null ? doorTransform.localEulerAngles.x : 0f;
+        transport.HoverPosition = hoverPosition;
+        transport.EntryPosition = entryPosition;
+        transport.TouchdownPosition = touchdownPosition;
+        transport.ExitPosition = exitPosition;
+        transport.HoverRotation = hoverRotation;
+        transport.EntryRotation = entryRotation;
+        transport.ExitRotation = exitRotation;
+        transport.ArrivalSeconds = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
+        transport.HoldForNextReadySeconds = Mathf.Max(0.5f, pending.TransportHoldForNextReadySeconds);
+        transport.PhaseStartedAt = now;
+        transport.HoverEnteredAt = -1f;
+        transport.NextDropReadyAt = now;
+        transport.Phase = 0;
+        transport.Mode = pending.TransportMode;
+        transport.ActiveDrop = null;
 
         transport.Transform.position = transport.EntryPosition;
         transport.Transform.rotation = transport.EntryRotation;
@@ -180,7 +192,7 @@ internal sealed class BuildingProductionTransportSystem
 
         RuntimeBuildingEntity.ActiveProductionTransport transport = building.ActiveTransport;
         if (transport.Mode == ProductionTransportMode.Helicopter || transport.Mode == ProductionTransportMode.AirSelf)
-            RotateProductionTransportBlades(transport.Transform, deltaTime);
+            RotateProductionTransportBlades(transport.Instance, deltaTime);
 
         switch (transport.Phase)
         {
@@ -289,9 +301,12 @@ internal sealed class BuildingProductionTransportSystem
             int2 airCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
             if (TrySpawnPlayerUnitNearBuilding(context, building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell, ref randomState))
             {
-                if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending))
+                bool removedPending = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending);
+                if (removedPending)
                     context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
                 AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
+                if (removedPending)
+                    context.ProductionSystem.ReleasePendingProduction(readyAirPending);
             }
 
             DestroyTransport(building, transport);
@@ -318,11 +333,14 @@ internal sealed class BuildingProductionTransportSystem
             runwayCell,
             ref randomState))
         {
-            if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending))
+            bool removedPending = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending);
+            if (removedPending)
                 context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
             AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
             ConfigureNewestRunwayUnit(building, readySelfArrivalPending, transport, runwayCell, context);
             MoveNewestProducedUnitToCell(context, building, finalGoalCell);
+            if (removedPending)
+                context.ProductionSystem.ReleasePendingProduction(readySelfArrivalPending);
         }
 
         DestroyTransport(building, transport);
@@ -365,7 +383,7 @@ internal sealed class BuildingProductionTransportSystem
         em.SetComponentData(newest, airState);
     }
 
-    private static void UpdateDeparturePhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
+    private void UpdateDeparturePhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
     {
         float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
         float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
@@ -380,10 +398,11 @@ internal sealed class BuildingProductionTransportSystem
         DestroyTransport(building, transport);
     }
 
-    private static bool TryAcquireProductionTransportLane(Context context, GameObject transportPrefab, int maxConcurrent, out int laneIndex)
+    private bool TryAcquireProductionTransportLane(Context context, GameObject transportPrefab, int maxConcurrent, out int laneIndex)
     {
         int safeMax = Mathf.Max(1, maxConcurrent);
-        bool[] used = new bool[safeMax];
+        EnsureLaneUsageCapacity(safeMax);
+        System.Array.Clear(_laneUsage, 0, safeMax);
         if (context.RuntimeBuildings != null)
         {
             foreach (var pair in context.RuntimeBuildings)
@@ -392,14 +411,14 @@ internal sealed class BuildingProductionTransportSystem
                 if (transport == null || transport.Prefab != transportPrefab)
                     continue;
 
-                if (transport.LaneIndex >= 0 && transport.LaneIndex < used.Length)
-                    used[transport.LaneIndex] = true;
+                if (transport.LaneIndex >= 0 && transport.LaneIndex < safeMax)
+                    _laneUsage[transport.LaneIndex] = true;
             }
         }
 
-        for (int i = 0; i < used.Length; i++)
+        for (int i = 0; i < safeMax; i++)
         {
-            if (used[i])
+            if (_laneUsage[i])
                 continue;
 
             laneIndex = i;
@@ -408,6 +427,75 @@ internal sealed class BuildingProductionTransportSystem
 
         laneIndex = -1;
         return false;
+    }
+
+    public void PrewarmProductionTransportPools(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        BuildingVisualSystem visualSystem)
+    {
+        if (runtimeBuildings == null)
+            return;
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+        {
+            List<RuntimeBuildingEntity.PendingProduction> pendingProductions = pair.Value?.PendingProductions;
+            if (pendingProductions == null)
+                continue;
+
+            for (int i = 0; i < pendingProductions.Count; i++)
+            {
+                RuntimeBuildingEntity.PendingProduction pending = pendingProductions[i];
+                if (pending?.TransportPrefab == null)
+                    continue;
+
+                int count = Mathf.Max(DefaultTransportPoolPrewarmCount, pending.TransportMaxConcurrent);
+                PrewarmProductionTransportPool(pending.TransportPrefab, visualSystem, count);
+            }
+        }
+    }
+
+    public void PrewarmConfiguredProductionTransportPools(
+        BuildingProductionSystem productionSystem,
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
+        BuildingVisualSystem visualSystem)
+    {
+        if (productionSystem == null || unitSpawnPrefabs == null)
+            return;
+
+        if (ReferenceEquals(_configuredPoolSourcePrefabs, unitSpawnPrefabs) &&
+            ReferenceEquals(_configuredPoolSourcePrefabsByKey, unitSpawnPrefabsByKey))
+        {
+            return;
+        }
+
+        _configuredPoolSourcePrefabs = unitSpawnPrefabs;
+        _configuredPoolSourcePrefabsByKey = unitSpawnPrefabsByKey;
+
+        productionSystem.PrewarmProductionTransportSettings(
+            unitSpawnPrefabs,
+            unitSpawnPrefabsByKey,
+            tryGetPrefabLocalBounds);
+
+        for (int i = 0; i < unitSpawnPrefabs.Count; i++)
+        {
+            GameObject unitPrefab = unitSpawnPrefabs[i];
+            if (unitPrefab == null)
+                continue;
+
+            BuildingProductionSystem.ProductionTransportSettings settings =
+                productionSystem.ResolveProductionTransportSettings(
+                    unitPrefab,
+                    unitSpawnPrefabs,
+                    unitSpawnPrefabsByKey,
+                    tryGetPrefabLocalBounds);
+            if (settings.TransportPrefab == null)
+                continue;
+
+            int count = Mathf.Max(DefaultTransportPoolPrewarmCount, settings.MaxConcurrent);
+            PrewarmProductionTransportPool(settings.TransportPrefab, visualSystem, count);
+        }
     }
 
     private static Vector3 ResolveProductionTransportLaneOffset(Context context, int laneIndex, int maxConcurrent)
@@ -569,7 +657,8 @@ internal sealed class BuildingProductionTransportSystem
             Destroy(drop.Rope.gameObject);
 
         RuntimeBuildingEntity.PendingProduction production = drop.Production;
-        if (context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production))
+        bool removedProduction = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production);
+        if (removedProduction)
             context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
 
         if (transport.Mode == ProductionTransportMode.Plane)
@@ -586,6 +675,8 @@ internal sealed class BuildingProductionTransportSystem
             MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
         }
 
+        if (removedProduction)
+            context.ProductionSystem.ReleasePendingProduction(production);
         transport.ActiveDrop = null;
         transport.NextDropReadyAt = now;
     }
@@ -781,14 +872,19 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private static void RotateProductionTransportBlades(Transform root, float deltaTime)
+    private void RotateProductionTransportBlades(GameObject instance, float deltaTime)
     {
-        if (root == null)
+        if (instance == null)
             return;
 
         float degrees = 1440f * deltaTime;
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+        List<Transform> bladeTransforms = GetProductionTransportBladeTransforms(instance);
+        for (int i = 0; i < bladeTransforms.Count; i++)
         {
+            Transform child = bladeTransforms[i];
+            if (child == null)
+                continue;
+
             string name = child.name;
             if (name.EndsWith("_X", System.StringComparison.Ordinal))
                 child.Rotate(Vector3.right, degrees, Space.Self);
@@ -799,10 +895,226 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private static void DestroyTransport(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport)
+    private void DestroyTransport(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport)
     {
         if (transport.Instance != null)
-            Destroy(transport.Instance);
+            ReturnProductionTransportInstance(transport.Prefab, transport.Instance);
+        ReturnProductionTransportState(transport);
         building.ActiveTransport = null;
     }
+
+    private void EnsureLaneUsageCapacity(int capacity)
+    {
+        if (_laneUsage.Length >= capacity)
+            return;
+
+        _laneUsage = new bool[capacity];
+    }
+
+    private void PrewarmProductionTransportPool(GameObject prefab, BuildingVisualSystem visualSystem, int count)
+    {
+        if (prefab == null || count <= 0)
+            return;
+
+        PrewarmProductionTransportStatePool(DefaultTransportStatePoolPrewarmCount);
+
+        if (_prewarmedTransportCountByPrefab.TryGetValue(prefab, out int prewarmedCount) &&
+            prewarmedCount >= count)
+        {
+            return;
+        }
+
+        Stack<GameObject> pool = GetProductionTransportPool(prefab);
+        int missingCount = count - Mathf.Max(0, prewarmedCount);
+        for (int i = 0; i < missingCount; i++)
+        {
+            GameObject instance = CreateProductionTransportInstance(prefab, visualSystem);
+            pool.Push(instance);
+        }
+
+        _prewarmedTransportCountByPrefab[prefab] = count;
+    }
+
+    private GameObject AcquireProductionTransportInstance(GameObject prefab, BuildingVisualSystem visualSystem)
+    {
+        Stack<GameObject> pool = GetProductionTransportPool(prefab);
+        GameObject instance = pool.Count > 0
+            ? pool.Pop()
+            : CreateProductionTransportInstance(prefab, visualSystem);
+
+        instance.SetActive(true);
+        return instance;
+    }
+
+    private void ReturnProductionTransportInstance(GameObject prefab, GameObject instance)
+    {
+        if (prefab == null || instance == null)
+            return;
+
+        Transform instanceTransform = instance.transform;
+        instanceTransform.SetParent(null, false);
+        instanceTransform.position = Vector3.zero;
+        instanceTransform.rotation = Quaternion.identity;
+        instance.SetActive(false);
+        GetProductionTransportPool(prefab).Push(instance);
+    }
+
+    private GameObject CreateProductionTransportInstance(GameObject prefab, BuildingVisualSystem visualSystem)
+    {
+        GameObject instance = Instantiate(prefab);
+        HideTransportRuntimeMarkers(instance.transform);
+        CacheProductionTransportInstanceMetadata(instance, visualSystem);
+        instance.SetActive(false);
+        return instance;
+    }
+
+    private Stack<GameObject> GetProductionTransportPool(GameObject prefab)
+    {
+        if (!_transportPoolByPrefab.TryGetValue(prefab, out Stack<GameObject> pool))
+        {
+            pool = new Stack<GameObject>();
+            _transportPoolByPrefab[prefab] = pool;
+        }
+
+        return pool;
+    }
+
+    private RuntimeBuildingEntity.ActiveProductionTransport AcquireProductionTransportState()
+    {
+        if (_transportStatePool.Count > 0)
+            return _transportStatePool.Pop();
+
+        _createdTransportStateCount++;
+        return new RuntimeBuildingEntity.ActiveProductionTransport();
+    }
+
+    private void PrewarmProductionTransportStatePool(int count)
+    {
+        while (_createdTransportStateCount < count)
+        {
+            _transportStatePool.Push(new RuntimeBuildingEntity.ActiveProductionTransport());
+            _createdTransportStateCount++;
+        }
+    }
+
+    private void ReturnProductionTransportState(RuntimeBuildingEntity.ActiveProductionTransport transport)
+    {
+        if (transport == null)
+            return;
+
+        transport.LaneIndex = 0;
+        transport.Prefab = null;
+        transport.Instance = null;
+        transport.Transform = null;
+        transport.VisualRenderers = null;
+        transport.DoorTransform = null;
+        transport.DoorOpenLocalEulerX = 0f;
+        transport.EntryPosition = default;
+        transport.TouchdownPosition = default;
+        transport.HoverPosition = default;
+        transport.ExitPosition = default;
+        transport.HoverRotation = default;
+        transport.EntryRotation = default;
+        transport.ExitRotation = default;
+        transport.ArrivalSeconds = 0f;
+        transport.HoldForNextReadySeconds = 0f;
+        transport.PhaseStartedAt = 0f;
+        transport.Phase = 0;
+        transport.HoverEnteredAt = 0f;
+        transport.NextDropReadyAt = 0f;
+        transport.Mode = default;
+        transport.ActiveDrop = null;
+        _transportStatePool.Push(transport);
+    }
+
+    private Renderer[] GetProductionTransportRenderers(GameObject instance)
+    {
+        if (instance == null)
+            return null;
+
+        if (!_transportRenderersByInstance.TryGetValue(instance, out Renderer[] renderers))
+            CacheProductionTransportInstanceMetadata(instance, null);
+
+        return _transportRenderersByInstance.TryGetValue(instance, out renderers) ? renderers : null;
+    }
+
+    private Transform GetProductionTransportDoorTransform(GameObject instance, BuildingVisualSystem visualSystem)
+    {
+        if (instance == null)
+            return null;
+
+        if (!_transportDoorByInstance.TryGetValue(instance, out Transform doorTransform) ||
+            (!_transportDoorLookupCompleted.Contains(instance) && visualSystem != null))
+        {
+            CacheProductionTransportInstanceMetadata(instance, visualSystem);
+        }
+
+        return _transportDoorByInstance.TryGetValue(instance, out doorTransform) ? doorTransform : null;
+    }
+
+    private List<Transform> GetProductionTransportBladeTransforms(GameObject instance)
+    {
+        if (instance == null)
+            return EmptyTransformList;
+
+        if (_transportBladeTransformsByInstance.TryGetValue(instance, out List<Transform> bladeTransforms))
+            return bladeTransforms;
+
+        CacheProductionTransportInstanceMetadata(instance, null);
+        return _transportBladeTransformsByInstance.TryGetValue(instance, out bladeTransforms)
+            ? bladeTransforms
+            : EmptyTransformList;
+    }
+
+    private void CacheProductionTransportInstanceMetadata(GameObject instance, BuildingVisualSystem visualSystem)
+    {
+        if (instance == null)
+            return;
+
+        if (!_transportRenderersByInstance.ContainsKey(instance))
+            _transportRenderersByInstance[instance] = instance.GetComponentsInChildren<Renderer>(true);
+
+        if (!_transportDoorLookupCompleted.Contains(instance) && visualSystem != null)
+        {
+            Transform doorTransform = visualSystem.FindDescendantByName(instance.transform, "Door_X");
+            _transportDoorByInstance[instance] = doorTransform;
+            _transportDoorLookupCompleted.Add(instance);
+        }
+        else if (!_transportDoorByInstance.ContainsKey(instance))
+        {
+            _transportDoorByInstance[instance] = null;
+        }
+
+        if (!_transportBladeTransformsByInstance.ContainsKey(instance))
+            _transportBladeTransformsByInstance[instance] = FindProductionTransportBladeTransforms(instance.transform);
+    }
+
+    private List<Transform> FindProductionTransportBladeTransforms(Transform root)
+    {
+        List<Transform> bladeTransforms = new();
+        if (root == null)
+            return bladeTransforms;
+
+        _transformSearchBuffer.Clear();
+        root.GetComponentsInChildren(true, _transformSearchBuffer);
+        for (int i = 0; i < _transformSearchBuffer.Count; i++)
+        {
+            Transform child = _transformSearchBuffer[i];
+            if (child == null)
+                continue;
+
+            string name = child.name;
+            if (name.EndsWith("_X", System.StringComparison.Ordinal) ||
+                name.EndsWith("_Y", System.StringComparison.Ordinal) ||
+                name.EndsWith("_Z", System.StringComparison.Ordinal))
+            {
+                bladeTransforms.Add(child);
+            }
+        }
+
+        _transformSearchBuffer.Clear();
+        return bladeTransforms;
+    }
+
+    private static readonly List<Transform> EmptyTransformList = new(0);
 }

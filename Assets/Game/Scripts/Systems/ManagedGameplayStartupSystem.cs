@@ -145,6 +145,9 @@ internal sealed class ManagedGameplayStartupSystem
         System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
         BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
+        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey,
+        BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
+        BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
         Transform mapBuildingAuthoringRoot)
     {
         var dayNight = new DayNightSystem();
@@ -172,7 +175,10 @@ internal sealed class ManagedGameplayStartupSystem
             mapBuildingAuthoringRoot,
             resolveSelectionPortraitSpriteFromPrefab,
             tryGetUnitProductionMetadata,
-            prepareTransportDropVisual);
+            prepareTransportDropVisual,
+            resolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata);
 
         Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
         {

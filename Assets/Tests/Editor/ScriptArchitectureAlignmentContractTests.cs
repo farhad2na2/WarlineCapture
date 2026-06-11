@@ -89,10 +89,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.BuildingProductionSystemMustNotReadAuthoringComponents();
             tests.BuildingProductionRequestSystemMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
+            tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
+            tests.BuildingDefinitionSystemMustNotReadAuthoringComponents();
             tests.SceneAndMapAuthoringBootstrapMustStayInComposition();
+            tests.RuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=8");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=11");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -153,6 +156,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.UI.Runtime\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Game.UI.Runtime`. Runtime code can depend on `Game.UI.Contracts`; Composition owns concrete UI wiring.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceAuthoringAssembly()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Game.Authoring`. Composition and authoring assemblies own prefab authoring reads.");
     }
 
     [Test]
@@ -309,6 +323,30 @@ public sealed class ScriptArchitectureAlignmentContractTests
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
             "`BuildingProductionTransportSystem` must not read authoring components. Composition can inject transport-drop visual preparation.");
+    }
+
+    [Test]
+    public void BuildingSpawnPrefabSystemMustNotReadAuthoringComponents()
+    {
+        string spawnPrefabPath = Path.Combine(GameScriptsRoot, "Systems/BuildingSpawnPrefabSystem.cs");
+        string source = File.ReadAllText(spawnPrefabPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`BuildingSpawnPrefabSystem` must not read authoring components. Composition can inject spawn-prefab lookup keys.");
+    }
+
+    [Test]
+    public void BuildingDefinitionSystemMustNotReadAuthoringComponents()
+    {
+        string definitionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingDefinitionSystem.cs");
+        string source = File.ReadAllText(definitionPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`BuildingDefinitionSystem` must not read authoring components. Composition can inject building and unit definition metadata.");
     }
 
     [Test]

@@ -399,6 +399,9 @@ internal sealed class MatchBootstrapSystem
             SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite,
             BuildingProductionUnitMetadataSystem.TryGetMetadata,
             BuildingProductionUnitMetadataSystem.PrepareTransportDropVisual,
+            BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata,
             mapBuildingAuthoringRoot);
     }
 

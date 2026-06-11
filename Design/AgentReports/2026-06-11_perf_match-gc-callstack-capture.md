@@ -1,6 +1,6 @@
 ﻿# Match GC Allocation Call-Stack Capture
 
-Date: 2026-06-11 17:14:29 UTC
+Date: 2026-06-11 17:47:41 UTC
 Lane: Gameplay/Performance
 Capture type: automated Match steady-state after Menu -> Match route
 
@@ -10,8 +10,8 @@ Capture type: automated Match steady-state after Menu -> Match route
 - Profiler frame range: 0..0
 - Scanned frames with data: 1
 - Scanned thread views: 90
-- GC.Alloc samples: 15462
-- GC.Alloc bytes from hierarchy column: 830008
+- GC.Alloc samples: 15452
+- GC.Alloc bytes from hierarchy column: 829450
 - Raw load status: `rawLoaded path=/private/tmp/warline-match-gc-callstack-capture.raw`
 - Raw capture: `/private/tmp/warline-match-gc-callstack-capture.raw`
 
@@ -19,20 +19,20 @@ Capture type: automated Match steady-state after Menu -> Match route
 
 | Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame |
 | ---: | ---: | ---: | ---: | --- | --- | --- |
-| 1 | 830008 | 15462 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool) |
+| 1 | 829450 | 15452 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool) |
 
 ## Highest Allocation Frames
 
 | Rank | Profiler frame | Bytes | Samples |
 | ---: | ---: | ---: | ---: |
-| 1 | 0 | 830008 | 15462 |
+| 1 | 0 | 829450 | 15452 |
 
 ## Call Stacks
 
 ### 1. #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool)
 
-Bytes: 830008
-Samples: 15462
+Bytes: 829450
+Samples: 15452
 Frames: 1
 Thread: Main Thread
 

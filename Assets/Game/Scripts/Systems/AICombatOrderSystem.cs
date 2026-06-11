@@ -11,6 +11,7 @@ public partial struct AICombatOrderSystem : ISystem
     private const float OrderRefreshSeconds = 2f;
     private EntityQuery _runtimeBuildingCombatQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private EntityQuery _squadQuery;
 
     private readonly struct RuntimeBuildingCombatData
     {
@@ -69,6 +70,7 @@ public partial struct AICombatOrderSystem : ISystem
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        _squadQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -96,9 +98,7 @@ public partial struct AICombatOrderSystem : ISystem
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
 
-        EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
-        using NativeArray<Entity> squadEntities = squadQuery.ToEntityArray(Allocator.Temp);
-        squadQuery.Dispose();
+        using NativeArray<Entity> squadEntities = _squadQuery.ToEntityArray(Allocator.Temp);
 
         try
         {
@@ -726,7 +726,7 @@ public partial struct AICombatOrderSystem : ISystem
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
         if (Application.isBatchMode)
-            return true;
+            return false;
 
         return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;

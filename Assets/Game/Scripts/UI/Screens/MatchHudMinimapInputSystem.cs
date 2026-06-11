@@ -317,7 +317,7 @@ public sealed class MatchHudMinimapInputSystem
             return false;
 
         EnsureCaptureResources();
-        bool captured = worldCamera != null;
+        bool captured = worldCamera != null && !Application.isBatchMode;
 
         bool readbackMatchesRenderTexture = false;
         if (captured)

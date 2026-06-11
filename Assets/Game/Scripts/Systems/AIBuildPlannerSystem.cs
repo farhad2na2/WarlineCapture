@@ -10,6 +10,8 @@ public partial struct AIBuildPlannerSystem : ISystem
     private int _nextBuildSpawnRequestId;
     private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private EntityQuery _planQuery;
+    private EntityQuery _economyQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -22,6 +24,8 @@ public partial struct AIBuildPlannerSystem : ISystem
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
+        _economyQuery = state.GetEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
         state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<AIBuildPlan>();
         state.RequireForUpdate<FactionEconomy>();
@@ -47,9 +51,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
-        EntityQuery planQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
-        using NativeArray<Entity> planEntities = planQuery.ToEntityArray(Allocator.Temp);
-        planQuery.Dispose();
+        using NativeArray<Entity> planEntities = _planQuery.ToEntityArray(Allocator.Temp);
 
         for (int i = 0; i < planEntities.Length; i++)
         {
@@ -58,7 +60,7 @@ public partial struct AIBuildPlannerSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
-            if (!TryFindEconomyEntity(em, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
+            if (!TryFindEconomyEntity(em, _economyQuery, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
                 continue;
 
             ProcessCompletedSpawnRequests(ref state, boundaryEntity, planEntity, ref plan, ref economy, shouldLog);
@@ -146,11 +148,9 @@ public partial struct AIBuildPlannerSystem : ISystem
             controls.Dispose();
     }
 
-    private static bool TryFindEconomyEntity(EntityManager em, byte factionId, out Entity entity, out FactionEconomy economy)
+    private static bool TryFindEconomyEntity(EntityManager em, EntityQuery economyQuery, byte factionId, out Entity entity, out FactionEconomy economy)
     {
-        EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        query.Dispose();
+        using NativeArray<Entity> entities = economyQuery.ToEntityArray(Allocator.Temp);
 
         for (int i = 0; i < entities.Length; i++)
         {
@@ -408,7 +408,7 @@ public partial struct AIBuildPlannerSystem : ISystem
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
         if (Application.isBatchMode)
-            return true;
+            return false;
 
         return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;

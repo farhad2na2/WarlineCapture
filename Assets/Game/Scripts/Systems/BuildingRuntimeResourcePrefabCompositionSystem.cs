@@ -16,7 +16,8 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
             source.BuildingGameplayEcsQuerySystem.UnitPrefabRegistryQuery,
             source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
             source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
-            () => Create(source));
+            resolveSpawnableLookupKey: source.ResolveSpawnableLookupKey,
+            createCurrentSource: () => Create(source));
     }
 
     private static bool TryGetEntityManager(out EntityManager entityManager)

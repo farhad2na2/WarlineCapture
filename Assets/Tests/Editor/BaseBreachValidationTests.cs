@@ -1433,7 +1433,10 @@ public sealed class BaseBreachValidationTests
                 null,
                 default,
                 null,
-                null);
+                null,
+                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
         }
 
         public void Dispose()

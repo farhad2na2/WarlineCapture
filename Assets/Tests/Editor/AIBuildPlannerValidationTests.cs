@@ -83,7 +83,10 @@ public sealed class AIBuildPlannerValidationTests
             null,
             default,
             null,
-            null);
+            null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 

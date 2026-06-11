@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Globalization;
-using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using UnityEngine;
 using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
 using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
@@ -8,10 +7,45 @@ using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
 internal sealed class BuildingDefinitionSystem
 {
     public delegate void ObjectAction(UnityEngine.Object target);
+    public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);
+    public delegate bool TryGetUnitDefinitionMetadataDelegate(GameObject prefab, out UnitDefinitionMetadata metadata);
+
+    public struct BuildingDefinitionMetadata
+    {
+        public string DisplayName;
+        public string Description;
+        public int MaxHealth;
+        public GameObject DestroyedVisualPrefab;
+        public Vector2Int FootprintCells;
+        public BuildingRole Role;
+        public bool IsWall;
+        public bool CanRequest;
+        public int Price;
+        public float ProductionDurationSeconds;
+        public float OilBarrelsPerDay;
+        public int OilStorageCapacity;
+        public float FuelBarrelsPerDay;
+        public int FuelStorageCapacity;
+        public int RefugeeCapacity;
+        public int RefugeeUpkeepPerCitizenPerDay;
+        public ThreatDetectionKind ThreatDetectionKind;
+        public int ThreatDetectionRadiusCells;
+        public GameObject[] ProductionSpawnUnitPrefabs;
+    }
+
+    public struct UnitDefinitionMetadata
+    {
+        public string DisplayName;
+        public string Description;
+        public Vector2Int FootprintCells;
+        public bool CanRequest;
+        public int Price;
+    }
 
     private sealed class CachedRuntimeBuildingMetadata
     {
-        public BuildingDefinitionAuthoring Authoring;
+        public bool HasDefinitionMetadata;
+        public BuildingDefinitionMetadata DefinitionMetadata;
         public bool HasVisualFootprint;
         public Vector2Int VisualFootprint;
         public Bounds LocalBounds;
@@ -33,6 +67,8 @@ internal sealed class BuildingDefinitionSystem
     private readonly List<ConfiguredSpawnableEntry> _configuredSpawnableEntries = new();
     private readonly Dictionary<GameObject, ConfiguredSpawnableEntry> _configuredSpawnableEntriesByPrefab = new();
     private readonly List<ConfiguredUnitEntry> _configuredUnitEntries = new();
+    private TryGetBuildingDefinitionMetadataDelegate _tryGetBuildingDefinitionMetadata;
+    private TryGetUnitDefinitionMetadataDelegate _tryGetUnitDefinitionMetadata;
 
     public IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey => _unitSpawnPrefabsByKey;
     public IReadOnlyList<GameObject> ConfiguredSpawnablePrefabs => _configuredSpawnablePrefabs;
@@ -41,6 +77,14 @@ internal sealed class BuildingDefinitionSystem
     public IReadOnlyDictionary<GameObject, BuildingDefinition> ConfiguredDefinitionsByPrefab => _configuredDefinitionsByPrefab;
     public int ConfiguredSpawnableCount => _configuredSpawnableDefinitions.Count;
     public int ConfiguredUnitCount => _configuredUnitSpawnPrefabs.Count;
+
+    public void ConfigureAuthoringMetadataResolvers(
+        TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
+        TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata)
+    {
+        _tryGetBuildingDefinitionMetadata = tryGetBuildingDefinitionMetadata;
+        _tryGetUnitDefinitionMetadata = tryGetUnitDefinitionMetadata;
+    }
 
     public void RebuildSpawnablesLookup(IReadOnlyList<GameObject> spawnables, IReadOnlyList<GameObject> unitSpawnPrefabs)
     {
@@ -104,7 +148,7 @@ internal sealed class BuildingDefinitionSystem
             CacheBuildingBounds(definition, destroyObject);
             _configuredSpawnableDefinitions.Add(definition);
             _configuredDefinitionsByPrefab[prefab] = definition;
-            ConfiguredSpawnableEntry entry = BuildConfiguredSpawnableEntry(definition);
+            ConfiguredSpawnableEntry entry = BuildConfiguredSpawnableEntryForDefinition(definition);
             _configuredSpawnableEntries.Add(entry);
             _configuredSpawnableEntriesByPrefab[prefab] = entry;
         }
@@ -277,23 +321,23 @@ internal sealed class BuildingDefinitionSystem
         return true;
     }
 
-    private static ConfiguredUnitEntry BuildConfiguredUnitEntry(GameObject prefab)
+    private ConfiguredUnitEntry BuildConfiguredUnitEntry(GameObject prefab)
     {
-        UnitGridAuthoring authoring = prefab != null ? prefab.GetComponent<UnitGridAuthoring>() : null;
-        string displayName = ResolveConfiguredUnitDisplayName(prefab, authoring);
-        string description = authoring != null ? authoring.ConfiguredDescription : string.Empty;
-        Vector2Int footprint = authoring != null ? authoring.GetConfiguredFootprintCells() : Vector2Int.one;
+        bool hasMetadata = TryGetUnitDefinitionMetadata(prefab, out UnitDefinitionMetadata metadata);
+        string displayName = ResolveConfiguredUnitDisplayName(prefab, hasMetadata, metadata);
+        string description = hasMetadata ? metadata.Description : string.Empty;
+        Vector2Int footprint = hasMetadata ? metadata.FootprintCells : Vector2Int.one;
         bool isVehicle = footprint.x > 1 ||
                          footprint.y > 1 ||
                          (prefab != null && prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0);
-        int price = authoring != null ? authoring.Price : (isVehicle ? 15000 : 10000);
-        return new ConfiguredUnitEntry(displayName, description, prefab, isVehicle, authoring == null || authoring.CanRequest, price);
+        int price = hasMetadata ? metadata.Price : (isVehicle ? 15000 : 10000);
+        return new ConfiguredUnitEntry(displayName, description, prefab, isVehicle, !hasMetadata || metadata.CanRequest, price);
     }
 
-    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
+    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, bool hasMetadata, UnitDefinitionMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return authoring.ConfiguredDisplayName;
+        if (hasMetadata && !string.IsNullOrWhiteSpace(metadata.DisplayName))
+            return metadata.DisplayName;
 
         return prefab != null ? prefab.name : "Unit";
     }
@@ -307,34 +351,40 @@ internal sealed class BuildingDefinitionSystem
         BuildingRunwaySystem runwaySystem)
     {
         CachedRuntimeBuildingMetadata metadata = GetOrCreateRuntimeBuildingMetadata(prefab, runwaySystem);
-        List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(metadata.Authoring, null, null, null, null);
+        List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(
+            metadata.HasDefinitionMetadata,
+            metadata.DefinitionMetadata,
+            null,
+            null,
+            null,
+            null);
 
         return new BuildingDefinition
         {
-            DisplayName = metadata.Authoring != null && !string.IsNullOrWhiteSpace(metadata.Authoring.ConfiguredDisplayName) ? metadata.Authoring.ConfiguredDisplayName : fallbackDisplayName,
-            Description = metadata.Authoring != null && !string.IsNullOrWhiteSpace(metadata.Authoring.ConfiguredDescription) ? metadata.Authoring.ConfiguredDescription : fallbackDescription,
-            MaxHealth = metadata.Authoring != null ? Mathf.Max(1, metadata.Authoring.ConfiguredMaxHealth) : Mathf.Max(1, fallbackMaxHealth),
+            DisplayName = metadata.HasDefinitionMetadata && !string.IsNullOrWhiteSpace(metadata.DefinitionMetadata.DisplayName) ? metadata.DefinitionMetadata.DisplayName : fallbackDisplayName,
+            Description = metadata.HasDefinitionMetadata && !string.IsNullOrWhiteSpace(metadata.DefinitionMetadata.Description) ? metadata.DefinitionMetadata.Description : fallbackDescription,
+            MaxHealth = metadata.HasDefinitionMetadata ? Mathf.Max(1, metadata.DefinitionMetadata.MaxHealth) : Mathf.Max(1, fallbackMaxHealth),
             ProductionSlots = productionSlots,
             SpawnUnitPrefab = GetProductionPrefab(productionSlots, 0),
             SecondarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 1),
             TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
             QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
             Prefab = prefab,
-            DestroyedVisualPrefab = metadata.Authoring != null ? metadata.Authoring.ConfiguredDestroyedVisualPrefab : null,
+            DestroyedVisualPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.DestroyedVisualPrefab : null,
             FootprintCells = metadata.HasVisualFootprint
                 ? metadata.VisualFootprint
-                : metadata.Authoring != null
-                    ? new Vector2Int(Mathf.Max(1, metadata.Authoring.ConfiguredFootprintCells.x), Mathf.Max(1, metadata.Authoring.ConfiguredFootprintCells.y))
+                : metadata.HasDefinitionMetadata
+                    ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells)
                     : fallbackFootprint,
-            Role = metadata.Authoring != null ? metadata.Authoring.ConfiguredRole : BuildingRole.None,
-            IsWall = metadata.Authoring != null && metadata.Authoring.ConfiguredIsWall,
-            ProductionDurationSeconds = metadata.Authoring != null ? Mathf.Max(0.01f, metadata.Authoring.ConfiguredProductionDurationSeconds) : 30f,
-            OilBarrelsPerDay = metadata.Authoring != null ? Mathf.Max(0f, metadata.Authoring.ConfiguredOilBarrelsPerDay) : 0f,
-            OilStorageCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredOilStorageCapacity) : 0,
-            FuelBarrelsPerDay = metadata.Authoring != null ? Mathf.Max(0f, metadata.Authoring.ConfiguredFuelBarrelsPerDay) : 0f,
-            FuelStorageCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredFuelStorageCapacity) : 0,
-            RefugeeCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredRefugeeCapacity) : 0,
-            RefugeeUpkeepPerCitizenPerDay = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredRefugeeUpkeepPerCitizenPerDay) : 0,
+            Role = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.Role : BuildingRole.None,
+            IsWall = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.IsWall,
+            ProductionDurationSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.ProductionDurationSeconds) : 30f,
+            OilBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.OilBarrelsPerDay) : 0f,
+            OilStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.OilStorageCapacity) : 0,
+            FuelBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.FuelBarrelsPerDay) : 0f,
+            FuelStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.FuelStorageCapacity) : 0,
+            RefugeeCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeCapacity) : 0,
+            RefugeeUpkeepPerCitizenPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeUpkeepPerCitizenPerDay) : 0,
             LocalBounds = metadata.LocalBounds,
             HasLocalBounds = metadata.HasLocalBounds,
             ProductionSpawnLocalPositions = metadata.ProductionSpawnLocalPositions,
@@ -355,20 +405,17 @@ internal sealed class BuildingDefinitionSystem
         GameObject fallbackTertiarySpawnUnitPrefab,
         BuildingRunwaySystem runwaySystem)
     {
-        BuildingDefinitionAuthoring authoring = prefab != null ? prefab.GetComponent<BuildingDefinitionAuthoring>() : null;
-        if (authoring != null)
-            authoring.ApplyConfigIfAvailable();
+        bool hasMetadata = TryGetBuildingDefinitionMetadata(prefab, out BuildingDefinitionMetadata metadata);
 
         List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(
-            authoring,
+            hasMetadata,
+            metadata,
             fallbackPrimarySpawnUnitPrefab,
             fallbackSecondarySpawnUnitPrefab,
             fallbackTertiarySpawnUnitPrefab);
 
         bool hasVisualFootprint = TryGetFootprintFromVisualBounds(prefab, out Vector2Int visualFootprint);
-        Vector2Int authoringFootprint = authoring != null
-            ? new Vector2Int(Mathf.Max(1, authoring.ConfiguredFootprintCells.x), Mathf.Max(1, authoring.ConfiguredFootprintCells.y))
-            : Vector2Int.one;
+        Vector2Int configuredFootprint = hasMetadata ? NormalizeFootprint(metadata.FootprintCells) : Vector2Int.one;
         bool hasLocalBounds = TryGetPrefabLocalBounds(prefab, out Bounds localBounds);
         Vector3 runwayLocalPosition = default;
         Quaternion runwayLocalRotation = Quaternion.identity;
@@ -378,28 +425,28 @@ internal sealed class BuildingDefinitionSystem
 
         return new BuildingDefinition
         {
-            DisplayName = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName) ? authoring.ConfiguredDisplayName : fallbackDisplayName,
-            Description = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription) ? authoring.ConfiguredDescription : fallbackDescription,
-            MaxHealth = authoring != null ? Mathf.Max(1, authoring.ConfiguredMaxHealth) : Mathf.Max(1, fallbackMaxHealth),
+            DisplayName = hasMetadata && !string.IsNullOrWhiteSpace(metadata.DisplayName) ? metadata.DisplayName : fallbackDisplayName,
+            Description = hasMetadata && !string.IsNullOrWhiteSpace(metadata.Description) ? metadata.Description : fallbackDescription,
+            MaxHealth = hasMetadata ? Mathf.Max(1, metadata.MaxHealth) : Mathf.Max(1, fallbackMaxHealth),
             ProductionSlots = productionSlots,
             SpawnUnitPrefab = GetProductionPrefab(productionSlots, 0),
             SecondarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 1),
             TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
             QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
             Prefab = prefab,
-            DestroyedVisualPrefab = authoring != null ? authoring.ConfiguredDestroyedVisualPrefab : null,
-            FootprintCells = hasVisualFootprint ? visualFootprint : authoringFootprint,
-            Role = authoring != null ? authoring.ConfiguredRole : BuildingRole.None,
-            IsWall = authoring != null && authoring.ConfiguredIsWall,
-            ProductionDurationSeconds = authoring != null ? Mathf.Max(0.01f, authoring.ConfiguredProductionDurationSeconds) : 30f,
-            OilBarrelsPerDay = authoring != null ? Mathf.Max(0f, authoring.ConfiguredOilBarrelsPerDay) : 0f,
-            OilStorageCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredOilStorageCapacity) : 0,
-            FuelBarrelsPerDay = authoring != null ? Mathf.Max(0f, authoring.ConfiguredFuelBarrelsPerDay) : 0f,
-            FuelStorageCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredFuelStorageCapacity) : 0,
-            RefugeeCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredRefugeeCapacity) : 0,
-            RefugeeUpkeepPerCitizenPerDay = authoring != null ? Mathf.Max(0, authoring.ConfiguredRefugeeUpkeepPerCitizenPerDay) : 0,
-            ThreatDetectionKind = authoring != null ? authoring.ConfiguredThreatDetectionKind : ThreatDetectionKind.None,
-            ThreatDetectionRadiusCells = authoring != null ? Mathf.Max(0, authoring.ConfiguredThreatDetectionRadiusCells) : 0,
+            DestroyedVisualPrefab = hasMetadata ? metadata.DestroyedVisualPrefab : null,
+            FootprintCells = hasVisualFootprint ? visualFootprint : configuredFootprint,
+            Role = hasMetadata ? metadata.Role : BuildingRole.None,
+            IsWall = hasMetadata && metadata.IsWall,
+            ProductionDurationSeconds = hasMetadata ? Mathf.Max(0.01f, metadata.ProductionDurationSeconds) : 30f,
+            OilBarrelsPerDay = hasMetadata ? Mathf.Max(0f, metadata.OilBarrelsPerDay) : 0f,
+            OilStorageCapacity = hasMetadata ? Mathf.Max(0, metadata.OilStorageCapacity) : 0,
+            FuelBarrelsPerDay = hasMetadata ? Mathf.Max(0f, metadata.FuelBarrelsPerDay) : 0f,
+            FuelStorageCapacity = hasMetadata ? Mathf.Max(0, metadata.FuelStorageCapacity) : 0,
+            RefugeeCapacity = hasMetadata ? Mathf.Max(0, metadata.RefugeeCapacity) : 0,
+            RefugeeUpkeepPerCitizenPerDay = hasMetadata ? Mathf.Max(0, metadata.RefugeeUpkeepPerCitizenPerDay) : 0,
+            ThreatDetectionKind = hasMetadata ? metadata.ThreatDetectionKind : ThreatDetectionKind.None,
+            ThreatDetectionRadiusCells = hasMetadata ? Mathf.Max(0, metadata.ThreatDetectionRadiusCells) : 0,
             LocalBounds = localBounds,
             HasLocalBounds = hasLocalBounds,
             ProductionSpawnLocalPositions = FindProductionSpawnLocalPositions(prefab),
@@ -410,21 +457,28 @@ internal sealed class BuildingDefinitionSystem
         };
     }
 
-    public static ConfiguredSpawnableEntry BuildConfiguredSpawnableEntry(BuildingDefinition definition)
+    private ConfiguredSpawnableEntry BuildConfiguredSpawnableEntryForDefinition(BuildingDefinition definition)
     {
         if (definition == null)
             return default;
 
         bool canRequest = true;
         int price = 20000;
-        BuildingDefinitionAuthoring authoring = definition.Prefab != null ? definition.Prefab.GetComponent<BuildingDefinitionAuthoring>() : null;
-        if (authoring != null)
+        if (TryGetBuildingDefinitionMetadata(definition.Prefab, out BuildingDefinitionMetadata metadata))
         {
-            canRequest = authoring.ConfiguredCanRequest;
-            price = authoring.ConfiguredPrice;
+            canRequest = metadata.CanRequest;
+            price = Mathf.Max(0, metadata.Price);
         }
 
         return new ConfiguredSpawnableEntry(definition.DisplayName, definition.Description, definition.Prefab, canRequest, price);
+    }
+
+    public static ConfiguredSpawnableEntry BuildConfiguredSpawnableEntry(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return default;
+
+        return new ConfiguredSpawnableEntry(definition.DisplayName, definition.Description, definition.Prefab, true, 20000);
     }
 
     public static int GetProductionCount(BuildingDefinition definition)
@@ -466,10 +520,6 @@ internal sealed class BuildingDefinitionSystem
         if (prefab == null)
             return string.Empty;
 
-        BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return NormalizeSpawnableKey(authoring.ConfiguredDisplayName);
-
         return NormalizeSpawnableKey(prefab.name);
     }
 
@@ -498,14 +548,7 @@ internal sealed class BuildingDefinitionSystem
         if (prefab == null)
             return false;
 
-        if (NormalizeSpawnableKey(prefab.name) == normalizedUnitId)
-            return true;
-
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        if (authoring != null && NormalizeSpawnableKey(authoring.ConfiguredDisplayName) == normalizedUnitId)
-            return true;
-
-        return false;
+        return NormalizeSpawnableKey(prefab.name) == normalizedUnitId;
     }
 
     public static bool RuntimeDefinitionMatchesId(BuildingDefinition definition, string normalizedBuildingId)
@@ -517,14 +560,7 @@ internal sealed class BuildingDefinitionSystem
             return true;
 
         if (definition.Prefab != null)
-        {
-            if (NormalizeSpawnableKey(definition.Prefab.name) == normalizedBuildingId)
-                return true;
-
-            BuildingDefinitionAuthoring authoring = definition.Prefab.GetComponent<BuildingDefinitionAuthoring>();
-            if (authoring != null && NormalizeSpawnableKey(authoring.ConfiguredDisplayName) == normalizedBuildingId)
-                return true;
-        }
+            return NormalizeSpawnableKey(definition.Prefab.name) == normalizedBuildingId;
 
         return false;
     }
@@ -538,6 +574,47 @@ internal sealed class BuildingDefinitionSystem
         return TryGetLocalBounds(prefab, out localBounds);
     }
 
+    private bool TryGetBuildingDefinitionMetadata(GameObject prefab, out BuildingDefinitionMetadata metadata)
+    {
+        metadata = default;
+        return prefab != null &&
+               _tryGetBuildingDefinitionMetadata != null &&
+               _tryGetBuildingDefinitionMetadata(prefab, out metadata);
+    }
+
+    private bool TryGetUnitDefinitionMetadata(GameObject prefab, out UnitDefinitionMetadata metadata)
+    {
+        metadata = default;
+        return prefab != null &&
+               _tryGetUnitDefinitionMetadata != null &&
+               _tryGetUnitDefinitionMetadata(prefab, out metadata);
+    }
+
+    private string ResolveConfiguredSpawnableLookupKey(GameObject prefab)
+    {
+        if (prefab == null)
+            return string.Empty;
+
+        if (TryGetBuildingDefinitionMetadata(prefab, out BuildingDefinitionMetadata buildingMetadata) &&
+            !string.IsNullOrWhiteSpace(buildingMetadata.DisplayName))
+        {
+            return NormalizeSpawnableKey(buildingMetadata.DisplayName);
+        }
+
+        if (TryGetUnitDefinitionMetadata(prefab, out UnitDefinitionMetadata unitMetadata) &&
+            !string.IsNullOrWhiteSpace(unitMetadata.DisplayName))
+        {
+            return NormalizeSpawnableKey(unitMetadata.DisplayName);
+        }
+
+        return NormalizeSpawnableKey(prefab.name);
+    }
+
+    private static Vector2Int NormalizeFootprint(Vector2Int footprint)
+    {
+        return new Vector2Int(Mathf.Max(1, footprint.x), Mathf.Max(1, footprint.y));
+    }
+
     private CachedRuntimeBuildingMetadata GetOrCreateRuntimeBuildingMetadata(GameObject prefab, BuildingRunwaySystem runwaySystem)
     {
         if (prefab == null)
@@ -546,12 +623,8 @@ internal sealed class BuildingDefinitionSystem
         if (_runtimeBuildingMetadataCache.TryGetValue(prefab, out CachedRuntimeBuildingMetadata cached))
             return cached;
 
-        cached = new CachedRuntimeBuildingMetadata
-        {
-            Authoring = prefab.GetComponent<BuildingDefinitionAuthoring>()
-        };
-        if (cached.Authoring != null)
-            cached.Authoring.ApplyConfigIfAvailable();
+        cached = new CachedRuntimeBuildingMetadata();
+        cached.HasDefinitionMetadata = TryGetBuildingDefinitionMetadata(prefab, out cached.DefinitionMetadata);
 
         if (TryGetFootprintFromVisualBounds(prefab, out Vector2Int visualFootprint))
         {
@@ -624,18 +697,19 @@ internal sealed class BuildingDefinitionSystem
     }
 
     private static BuildingDefinition.ProductionSlotDefinition GetProductionOrFallback(
-        BuildingDefinitionAuthoring authoring,
+        bool hasMetadata,
+        BuildingDefinitionMetadata metadata,
         int index,
         GameObject fallbackSpawnUnitPrefab)
     {
-        if (authoring != null)
+        if (hasMetadata && metadata.ProductionSpawnUnitPrefabs != null && index >= 0 && index < metadata.ProductionSpawnUnitPrefabs.Length)
         {
-            BuildingDefinitionAuthoring.ProductionDefinition production = authoring.GetProductionOrDefault(index);
-            if (production != null)
+            GameObject configuredPrefab = metadata.ProductionSpawnUnitPrefabs[index];
+            if (configuredPrefab != null)
             {
                 return new BuildingDefinition.ProductionSlotDefinition
                 {
-                    SpawnUnitPrefab = production.spawnUnitPrefab
+                    SpawnUnitPrefab = configuredPrefab
                 };
             }
         }
@@ -647,17 +721,18 @@ internal sealed class BuildingDefinitionSystem
     }
 
     private static List<BuildingDefinition.ProductionSlotDefinition> BuildProductionSlots(
-        BuildingDefinitionAuthoring authoring,
+        bool hasMetadata,
+        BuildingDefinitionMetadata metadata,
         params GameObject[] fallbackSpawnUnitPrefabs)
     {
-        int configuredCount = authoring != null ? Mathf.Max(0, authoring.ConfiguredProductionCount) : 0;
+        int configuredCount = hasMetadata && metadata.ProductionSpawnUnitPrefabs != null ? metadata.ProductionSpawnUnitPrefabs.Length : 0;
         int fallbackCount = fallbackSpawnUnitPrefabs != null ? fallbackSpawnUnitPrefabs.Length : 0;
         int count = Mathf.Max(configuredCount, fallbackCount);
         var slots = new List<BuildingDefinition.ProductionSlotDefinition>(count);
         for (int i = 0; i < count; i++)
         {
             GameObject fallback = i < fallbackCount ? fallbackSpawnUnitPrefabs[i] : null;
-            BuildingDefinition.ProductionSlotDefinition slot = GetProductionOrFallback(authoring, i, fallback);
+            BuildingDefinition.ProductionSlotDefinition slot = GetProductionOrFallback(hasMetadata, metadata, i, fallback);
             if (slot == null || slot.SpawnUnitPrefab == null)
                 continue;
             slots.Add(slot);
@@ -666,7 +741,7 @@ internal sealed class BuildingDefinitionSystem
         return slots;
     }
 
-    private static void RegisterSpawnableLookupAliases(Dictionary<string, GameObject> lookup, GameObject prefab)
+    private void RegisterSpawnableLookupAliases(Dictionary<string, GameObject> lookup, GameObject prefab)
     {
         if (lookup == null || prefab == null)
             return;
@@ -675,7 +750,7 @@ internal sealed class BuildingDefinitionSystem
         if (!string.IsNullOrEmpty(prefabNameKey))
             lookup[prefabNameKey] = prefab;
 
-        string displayNameKey = GetSpawnableLookupKey(prefab);
+        string displayNameKey = ResolveConfiguredSpawnableLookupKey(prefab);
         if (!string.IsNullOrEmpty(displayNameKey) && displayNameKey != prefabNameKey && !lookup.ContainsKey(displayNameKey))
             lookup[displayNameKey] = prefab;
     }

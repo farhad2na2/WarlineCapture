@@ -215,6 +215,17 @@ internal sealed class BuildingProductionContextSystem
 
     public BuildingProductionUpdateSystem.Context CreateProductionUpdateContext(Source source)
     {
+        source.ProductionSystem?.PrewarmPendingProductionPool();
+        source.TransportSystem?.PrewarmConfiguredProductionTransportPools(
+            source.ProductionSystem,
+            source.DefinitionSystem?.ConfiguredUnitSpawnPrefabs,
+            source.DefinitionSystem?.UnitSpawnPrefabsByKey,
+            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
+            source.VisualSystem);
+        source.TransportSystem?.PrewarmProductionTransportPools(
+            source.RuntimeBuildings,
+            source.VisualSystem);
+
         return new BuildingProductionUpdateSystem.Context(
             source.RuntimeBuildings,
             source.ProductionSystem,
@@ -250,6 +261,7 @@ internal sealed class BuildingProductionContextSystem
 
     public BuildingProductionRequestSystem.Context CreateProductionRequestContext(Source source)
     {
+        source.ProductionSystem?.PrewarmPendingProductionPool();
         source.ProductionSystem?.PrewarmProductionTransportSettings(
             source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem.UnitSpawnPrefabsByKey,

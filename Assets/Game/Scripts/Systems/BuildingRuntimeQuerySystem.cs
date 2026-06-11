@@ -75,13 +75,15 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-
-            count++;
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                count += CountBuildingForFaction(pair.Value, factionId);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                count += CountBuildingForFaction(pair.Value, factionId);
         }
 
         return count;
@@ -97,15 +99,15 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (context.RuntimeBuildingMatchesId == null || !context.RuntimeBuildingMatchesId(building, normalized))
-                continue;
-
-            count++;
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                count += CountBuildingForFactionAndId(context, pair.Value, factionId, normalized);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                count += CountBuildingForFactionAndId(context, pair.Value, factionId, normalized);
         }
 
         return count;
@@ -122,25 +124,15 @@ internal sealed class BuildingRuntimeQuerySystem
             return 0;
         }
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (building.ProducedUnits == null)
-                continue;
-
-            context.ProductionSystem?.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
-            for (int i = 0; i < building.ProducedUnits.Count; i++)
-            {
-                Entity unit = building.ProducedUnits[i];
-                if (em.HasComponent<Faction>(unit) && em.GetComponentData<Faction>(unit).Id != factionId)
-                    continue;
-                if (!RuntimeProducedUnitMatchesId(context, building, unit, normalized, em))
-                    continue;
-
-                count++;
-            }
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                count += CountProducedUnitsForBuilding(context, pair.Value, factionId, normalized, em);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                count += CountProducedUnitsForBuilding(context, pair.Value, factionId, normalized, em);
         }
 
         return count;
@@ -153,24 +145,15 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (building.PendingProductions == null)
-                continue;
-
-            for (int i = 0; i < building.PendingProductions.Count; i++)
-            {
-                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null)
-                    continue;
-                if (context.UnitPrefabMatchesId == null || !context.UnitPrefabMatchesId(pending.Prefab, normalized))
-                    continue;
-
-                count++;
-            }
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                count += CountPendingProductionsForBuilding(context, pair.Value, factionId, normalized);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                count += CountPendingProductionsForBuilding(context, pair.Value, factionId, normalized);
         }
 
         return count;
@@ -185,15 +168,15 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building == null || building.IsDestroyed || building.Instance == null)
-                continue;
-            if (context.IsHouseBuilding == null || !context.IsHouseBuilding(building))
-                continue;
-
-            results.Add(pair.Key);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                AddHouseBuildingId(context, results, pair.Key, pair.Value);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                AddHouseBuildingId(context, results, pair.Key, pair.Value);
         }
     }
 
@@ -206,16 +189,15 @@ internal sealed class BuildingRuntimeQuerySystem
         if (context.RuntimeBuildings == null)
             return;
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-
-            if (building.Definition.Role != role)
-                continue;
-
-            results.Add(pair.Key);
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                AddBuildingIdByRole(results, role, pair.Key, pair.Value);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                AddBuildingIdByRole(results, role, pair.Key, pair.Value);
         }
     }
 
@@ -349,17 +331,148 @@ internal sealed class BuildingRuntimeQuerySystem
         if (combatEntity == Entity.Null || context.RuntimeBuildings == null)
             return false;
 
-        foreach (var entry in context.RuntimeBuildings)
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
-            RuntimeBuildingEntity candidate = entry.Value;
-            if (candidate == null || candidate.CombatEntity != combatEntity)
-                continue;
-
-            building = candidate;
-            return true;
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+            {
+                if (IsBuildingCombatEntity(entry.Value, combatEntity))
+                {
+                    building = entry.Value;
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
+            {
+                if (IsBuildingCombatEntity(entry.Value, combatEntity))
+                {
+                    building = entry.Value;
+                    return true;
+                }
+            }
         }
 
         return false;
+    }
+
+    private static int CountBuildingForFaction(RuntimeBuildingEntity building, byte factionId)
+    {
+        return building != null &&
+               !building.IsDestroyed &&
+               building.HasOwnerFaction &&
+               building.OwnerFactionId == factionId
+            ? 1
+            : 0;
+    }
+
+    private static int CountBuildingForFactionAndId(
+        Context context,
+        RuntimeBuildingEntity building,
+        byte factionId,
+        string normalized)
+    {
+        return CountBuildingForFaction(building, factionId) == 1 &&
+               context.RuntimeBuildingMatchesId != null &&
+               context.RuntimeBuildingMatchesId(building, normalized)
+            ? 1
+            : 0;
+    }
+
+    private static int CountProducedUnitsForBuilding(
+        Context context,
+        RuntimeBuildingEntity building,
+        byte factionId,
+        string normalized,
+        EntityManager em)
+    {
+        if (building == null ||
+            building.IsDestroyed ||
+            !building.HasOwnerFaction ||
+            building.OwnerFactionId != factionId ||
+            building.ProducedUnits == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        context.ProductionSystem?.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
+        for (int i = 0; i < building.ProducedUnits.Count; i++)
+        {
+            Entity unit = building.ProducedUnits[i];
+            if (em.HasComponent<Faction>(unit) && em.GetComponentData<Faction>(unit).Id != factionId)
+                continue;
+            if (!RuntimeProducedUnitMatchesId(context, building, unit, normalized, em))
+                continue;
+
+            count++;
+        }
+
+        return count;
+    }
+
+    private static int CountPendingProductionsForBuilding(
+        Context context,
+        RuntimeBuildingEntity building,
+        byte factionId,
+        string normalized)
+    {
+        if (building == null ||
+            building.IsDestroyed ||
+            !building.HasOwnerFaction ||
+            building.OwnerFactionId != factionId ||
+            building.PendingProductions == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = 0; i < building.PendingProductions.Count; i++)
+        {
+            RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+            if (pending == null)
+                continue;
+            if (context.UnitPrefabMatchesId == null || !context.UnitPrefabMatchesId(pending.Prefab, normalized))
+                continue;
+
+            count++;
+        }
+
+        return count;
+    }
+
+    private static void AddHouseBuildingId(
+        Context context,
+        List<int> results,
+        int buildingId,
+        RuntimeBuildingEntity building)
+    {
+        if (building == null || building.IsDestroyed || building.Instance == null)
+            return;
+        if (context.IsHouseBuilding == null || !context.IsHouseBuilding(building))
+            return;
+
+        results.Add(buildingId);
+    }
+
+    private static void AddBuildingIdByRole(
+        List<int> results,
+        BuildingRole role,
+        int buildingId,
+        RuntimeBuildingEntity building)
+    {
+        if (building?.Definition == null || building.IsDestroyed)
+            return;
+        if (building.Definition.Role != role)
+            return;
+
+        results.Add(buildingId);
+    }
+
+    private static bool IsBuildingCombatEntity(RuntimeBuildingEntity building, Entity combatEntity)
+    {
+        return building != null && building.CombatEntity == combatEntity;
     }
 
     private static bool RuntimeProducedUnitMatchesId(Context context, RuntimeBuildingEntity building, Entity unit, string normalizedUnitId, EntityManager em)

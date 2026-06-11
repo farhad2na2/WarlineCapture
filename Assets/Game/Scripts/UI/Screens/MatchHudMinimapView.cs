@@ -18,6 +18,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     private bool _hasManualViewportOverride;
     private Rect _manualViewportNormalizedRect;
     private Vector2 _viewportDragOffset;
+    private readonly Vector3[] _worldCorners = new Vector3[4];
 
     public Image MapImage => mapImage;
     public RectTransform MapRect => mapRect != null ? mapRect : mapImage != null ? mapImage.rectTransform : null;
@@ -125,13 +126,12 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         if (parent == null)
             return false;
 
-        Vector3[] corners = new Vector3[4];
-        map.GetWorldCorners(corners);
+        map.GetWorldCorners(_worldCorners);
         Vector2 min = new(float.PositiveInfinity, float.PositiveInfinity);
         Vector2 max = new(float.NegativeInfinity, float.NegativeInfinity);
-        for (int i = 0; i < corners.Length; i++)
+        for (int i = 0; i < _worldCorners.Length; i++)
         {
-            Vector3 local = parent.InverseTransformPoint(corners[i]);
+            Vector3 local = parent.InverseTransformPoint(_worldCorners[i]);
             min = Vector2.Min(min, local);
             max = Vector2.Max(max, local);
         }

@@ -258,3 +258,82 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 ## Next recommended task
 
 Run a warmed second steady-state capture and then the required Match battle/spike Profiler capture with `GC.Alloc` call stacks enabled. Fix the next project-owned allocation site named by those captures only; do not chase the current Unity Entities profiler metadata initialization site as gameplay work.
+
+## 2026-06-11 battle continuation update
+
+Lane: Gameplay/Performance
+
+Task: Continue Match battle-state GC allocation reduction after Unity batchmode was restored.
+
+Files changed in this continuation:
+
+- `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs`
+- `Assets/Game/Scripts/Systems/BuildingProductionContextSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingProductionSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingBarrierSystem.cs`
+- `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+- `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
+
+Contracts touched:
+
+- No UI/API contract changes.
+- `BuildingProductionSystem` now pools `RuntimeBuildingEntity.PendingProduction` internally and exposes `internal ReleasePendingProduction(...)` for transport completion paths.
+- `GroundMissileProjectileFlightSystem` now uses a cached `EntityQuery` plus component lookups instead of the hot `SystemAPI.Query` foreach.
+- No pathfinding files were modified.
+
+User-visible behavior:
+
+- Intended behavior is unchanged.
+- Production transport visuals are pooled and reused instead of instantiated/destroyed per delivery.
+- Production transport blade rotation now uses cached blade transforms.
+- Pending unit-production entries are pooled and released on completion/cancel.
+
+Profiler-backed sites addressed:
+
+- `GroundMissileProjectileFlightSystem.OnUpdate`: replaced the hot generated `SystemAPI.Query` iterator with cached query/component lookup iteration. A first `IJobEntity` attempt was rejected after capture because it introduced editor Burst reflection allocation; it was replaced before final validation.
+- `BuildingProductionTransportSystem.TryEnsureActiveProductionTransport`: pooled `ActiveProductionTransport` state objects and prewarmed them with transport visual pools.
+- `BuildingBarrierSystem.UpdateRoadBarrierDoors`: removed boxed `IReadOnlyDictionary` enumeration from the road-gate existence probe.
+- `BuildingProductionTransportSystem.RotateProductionTransportBlades`: cached blade transform lists per pooled transport instance instead of `GetComponentsInChildren<Transform>()` each frame.
+- `BuildingProductionTransportSystem.GetProductionTransportDoorTransform`: cached missing `Door_X` lookups so doorless transports do not repeatedly recurse through transform names.
+- `BuildingProductionRequestSystem.QueueFactionUnitProductionRequest` / `BuildingProductionSystem.TryQueuePlayerUnitFromBuilding`: pooled pending-production request objects.
+
+Validation run:
+
+- Main project Unity compile:
+  - Command log: `/private/tmp/warline-main-gc-pending-production-pool2-compile.log`
+  - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, or `Compilation failed` entries.
+- Main project battle capture:
+  - Command log: `/private/tmp/warline-main-gc-callstack-capture-battle-37.log`
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+  - Result: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
+  - Latest aggregate capture: 415,072 bytes / 7,579 samples in the loaded raw frame.
+  - Latest top site: Unity editor live conversion, `Unity.Scenes.Editor.LiveConversionConnection.Update`, not a project gameplay stack.
+- Focused EditMode tests:
+  - `BuildingProductionSystemTests`: `/private/tmp/warline-main-gc-building-production-tests.xml`, 21 passed / 0 failed.
+  - `GroundMissileLauncherRuntimeTests`: `/private/tmp/warline-main-gc-ground-missile-tests.xml`, 13 passed / 1 failed.
+- Static check:
+  - `git diff --check`: passed.
+
+Validation result:
+
+- Compile: PASS.
+- Battle capture command: PASS.
+- Production focused tests: PASS.
+- Ground missile focused tests: PARTIAL. `MissileProjectile_ImpactsAndDamagesEnemyArea` failed because the target health was 10 while the test expects 0. The impact did occur and this path is outside the allocation edits: the test fixture sets launcher `Damage = 90`, and `ApplyDirectHitDamage` subtracts that once from 100 health. I did not change missile damage semantics in this GC pass.
+
+Known gaps:
+
+- The latest battle capture is still an aggregate loaded raw frame, not a reliable per-frame steady-state byte average.
+- Remaining reported top allocation is Unity editor live conversion noise. Do not edit gameplay code from that site.
+- The capture still logs a shutdown-only `NullReferenceException` after the success line while Unity exits batchmode.
+- `GroundMissileLauncherRuntimeTests.MissileProjectile_ImpactsAndDamagesEnemyArea` needs a separate gameplay/test-owner decision: either direct missile impact should kill 100 health despite `Damage = 90`, or the test expectation should be updated.
+
+Cross-lane impacts:
+
+- No expected UI, Art, or asset pipeline impact.
+- QA should regression-check production delivery visuals because transport instances are now pooled/reused.
+
+Next recommended task:
+
+Run a player/build-style capture or disable editor live conversion in the capture harness, then reprofile the same battle scenario. If a project-owned stack reappears under the Unity editor noise, continue with the next confirmed allocation site only.

@@ -8,12 +8,24 @@ public partial struct AISquadSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
     private EntityQuery _diagnosticLogQueueQuery;
+    private EntityQuery _planQuery;
+    private EntityQuery _unitQuery;
+    private EntityQuery _squadQuery;
+    private EntityQuery _factionGridQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
+        _unitQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<AIControlledTag>());
+        _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
+        _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
         state.RequireForUpdate<AISquadPlan>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitGrid>();
@@ -34,17 +46,8 @@ public partial struct AISquadSystem : ISystem
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
-        EntityQuery planQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
-        using NativeArray<Entity> planEntities = planQuery.ToEntityArray(Allocator.Temp);
-        planQuery.Dispose();
-
-        EntityQuery unitQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>(),
-            ComponentType.ReadOnly<AIControlledTag>());
-        using NativeArray<Entity> unitEntities = unitQuery.ToEntityArray(Allocator.Temp);
-        unitQuery.Dispose();
+        using NativeArray<Entity> planEntities = _planQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<Entity> unitEntities = _unitQuery.ToEntityArray(Allocator.Temp);
 
         for (int i = 0; i < planEntities.Length; i++)
         {
@@ -53,7 +56,7 @@ public partial struct AISquadSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
-            int activeSquads = CountActiveSquads(em, plan.FactionId);
+            int activeSquads = CountActiveSquads(em, _squadQuery, plan.FactionId);
             int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
             if (activeSquads >= maxActiveSquads)
             {
@@ -108,7 +111,7 @@ public partial struct AISquadSystem : ISystem
             int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
             byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
             int2 rallyCell = cellSum / members.Length;
-            int2 targetCell = ResolveInitialTargetCell(em, targetFactionId, rallyCell);
+            int2 targetCell = ResolveInitialTargetCell(em, _factionGridQuery, targetFactionId, rallyCell);
             em.SetComponentData(squadEntity, new AISquad
             {
                 SquadId = squadId,
@@ -153,11 +156,9 @@ public partial struct AISquadSystem : ISystem
             controls.Dispose();
     }
 
-    private static int CountActiveSquads(EntityManager em, byte factionId)
+    private static int CountActiveSquads(EntityManager em, EntityQuery squadQuery, byte factionId)
     {
-        EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<AISquad>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        query.Dispose();
+        using NativeArray<Entity> entities = squadQuery.ToEntityArray(Allocator.Temp);
 
         int count = 0;
         for (int i = 0; i < entities.Length; i++)
@@ -170,11 +171,9 @@ public partial struct AISquadSystem : ISystem
         return count;
     }
 
-    private static int2 ResolveInitialTargetCell(EntityManager em, byte targetFactionId, int2 fallbackCell)
+    private static int2 ResolveInitialTargetCell(EntityManager em, EntityQuery factionGridQuery, byte targetFactionId, int2 fallbackCell)
     {
-        EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        query.Dispose();
+        using NativeArray<Entity> entities = factionGridQuery.ToEntityArray(Allocator.Temp);
 
         int bestDistance = int.MaxValue;
         int2 bestCell = fallbackCell;
@@ -216,7 +215,7 @@ public partial struct AISquadSystem : ISystem
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
         if (Application.isBatchMode)
-            return true;
+            return false;
 
         return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;

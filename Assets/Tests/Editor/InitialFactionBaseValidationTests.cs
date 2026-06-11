@@ -622,7 +622,10 @@ public sealed class InitialFactionBaseValidationTests
             null,
             default,
             null,
-            null);
+            null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
     }
 
     private static Entity GetGridEntity(EntityManager em)

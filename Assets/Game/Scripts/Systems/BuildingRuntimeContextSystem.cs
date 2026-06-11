@@ -448,7 +448,7 @@ internal sealed class BuildingRuntimeContextSystem
                     building,
                     currentCell,
                     unitFootprint),
-            BuildingBarrierSystem.IsWallGateDefinition,
+            source.BarrierSystem.IsWallGateDefinitionCached,
             (byte attackerFactionId,
                 Entity finalTarget,
                 int2 finalTargetCell,
@@ -478,7 +478,7 @@ internal sealed class BuildingRuntimeContextSystem
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
             () => source.LiveFactionUnitsQuery,
-            BuildingBarrierSystem.IsWallGateDefinition,
+            source.BarrierSystem.IsWallGateDefinitionCached,
             (RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
             {
                 goal = default;

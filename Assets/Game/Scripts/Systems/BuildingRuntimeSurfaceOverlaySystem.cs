@@ -6,6 +6,9 @@ using UnityEngine;
 internal sealed class BuildingRuntimeSurfaceOverlaySystem
 {
     private const float OverlayPadding = 0.25f;
+    private readonly List<Renderer> _rendererBuffer = new(32);
+    private readonly Dictionary<int, Transform> _runwayTransformByBuildingId = new();
+    private readonly Dictionary<Renderer, bool> _runwaySurfaceRendererCache = new();
 
     public void Publish(
         EntityManager em,
@@ -34,17 +37,20 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         }
     }
 
-    private static bool TryBuildRunwayOverlay(RuntimeBuildingEntity building, out BuildingRuntimeSurfaceOverlay overlay)
+    private bool TryBuildRunwayOverlay(RuntimeBuildingEntity building, out BuildingRuntimeSurfaceOverlay overlay)
     {
         overlay = default;
         Transform instanceTransform = building.Instance.transform;
         BuildingDefinition definition = building.Definition;
+        if (!definition.HasRunway)
+            return false;
+
         Vector3 runwaySurfaceCenter = instanceTransform.TransformPoint(definition.RunwayLocalPosition);
         Vector3 center = runwaySurfaceCenter;
         Quaternion rotation = instanceTransform.rotation * definition.RunwayLocalRotation;
 
         float height = ResolveRunwayOverlayHeight(runwaySurfaceCenter);
-        if (!TryResolveRunwayBounds(instanceTransform, out Bounds visualBounds))
+        if (!TryResolveRunwayBounds(building.Id, instanceTransform, out Bounds visualBounds))
             return false;
 
         center = visualBounds.center;
@@ -73,22 +79,23 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         return runwaySurfaceCenter.y;
     }
 
-    private static bool TryResolveRunwayBounds(Transform root, out Bounds bounds)
+    private bool TryResolveRunwayBounds(int buildingRuntimeId, Transform root, out Bounds bounds)
     {
         bounds = default;
-        Transform runway = FindChildRecursive(root, "Runway");
-        if (runway == null)
+        if (!TryGetRunwayTransform(buildingRuntimeId, root, out Transform runway))
             return false;
 
-        Renderer[] renderers = runway.GetComponentsInChildren<Renderer>(true);
-        bool found = TryEncapsulateRunwayRenderers(renderers, filteredSurfaceOnly: true, out bounds);
+        _rendererBuffer.Clear();
+        runway.GetComponentsInChildren(true, _rendererBuffer);
+
+        bool found = TryEncapsulateRunwayRenderers(_rendererBuffer, filteredSurfaceOnly: true, out bounds);
         if (found)
             return true;
 
         found = false;
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; i < _rendererBuffer.Count; i++)
         {
-            Renderer renderer = renderers[i];
+            Renderer renderer = _rendererBuffer[i];
             if (renderer == null)
                 continue;
 
@@ -102,14 +109,14 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         return found;
     }
 
-    private static bool TryEncapsulateRunwayRenderers(Renderer[] renderers, bool filteredSurfaceOnly, out Bounds bounds)
+    private bool TryEncapsulateRunwayRenderers(List<Renderer> renderers, bool filteredSurfaceOnly, out Bounds bounds)
     {
         bounds = default;
         bool found = false;
         if (renderers == null)
             return false;
 
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; i < renderers.Count; i++)
         {
             Renderer renderer = renderers[i];
             if (renderer == null)
@@ -127,23 +134,64 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         return found;
     }
 
-    private static bool IsRunwaySurfaceRenderer(Renderer renderer)
+    private bool IsRunwaySurfaceRenderer(Renderer renderer)
+    {
+        if (_runwaySurfaceRendererCache.TryGetValue(renderer, out bool isSurfaceRenderer))
+            return isSurfaceRenderer;
+
+        isSurfaceRenderer = ResolveRunwaySurfaceRenderer(renderer);
+        _runwaySurfaceRendererCache[renderer] = isSurfaceRenderer;
+        return isSurfaceRenderer;
+    }
+
+    private static bool ResolveRunwaySurfaceRenderer(Renderer renderer)
     {
         string objectName = renderer.transform.name;
-        string meshName = renderer is MeshRenderer
-            ? renderer.GetComponent<MeshFilter>()?.sharedMesh?.name
-            : string.Empty;
-        string name = $"{objectName} {meshName}";
-        if (name.IndexOf("Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            name.IndexOf("Fence", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            name.IndexOf("Sign", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            name.IndexOf("Light", System.StringComparison.OrdinalIgnoreCase) >= 0)
-        {
+        if (IsRunwayExcludedName(objectName))
             return false;
-        }
 
-        return name.IndexOf("Runway", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               name.IndexOf("Road", System.StringComparison.OrdinalIgnoreCase) >= 0;
+        bool isRunwaySurface = IsRunwaySurfaceName(objectName);
+        if (renderer is not MeshRenderer)
+            return isRunwaySurface;
+
+        MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
+        string meshName = meshFilter != null && meshFilter.sharedMesh != null
+            ? meshFilter.sharedMesh.name
+            : null;
+        if (IsRunwayExcludedName(meshName))
+            return false;
+
+        return isRunwaySurface || IsRunwaySurfaceName(meshName);
+    }
+
+    private bool TryGetRunwayTransform(int buildingRuntimeId, Transform root, out Transform runway)
+    {
+        if (_runwayTransformByBuildingId.TryGetValue(buildingRuntimeId, out runway))
+            return runway != null;
+
+        runway = FindChildRecursive(root, "Runway");
+        _runwayTransformByBuildingId[buildingRuntimeId] = runway;
+        return runway != null;
+    }
+
+    private static bool IsRunwayExcludedName(string name)
+    {
+        return ContainsOrdinalIgnoreCase(name, "Barrier") ||
+               ContainsOrdinalIgnoreCase(name, "Fence") ||
+               ContainsOrdinalIgnoreCase(name, "Sign") ||
+               ContainsOrdinalIgnoreCase(name, "Light");
+    }
+
+    private static bool IsRunwaySurfaceName(string name)
+    {
+        return ContainsOrdinalIgnoreCase(name, "Runway") ||
+               ContainsOrdinalIgnoreCase(name, "Road");
+    }
+
+    private static bool ContainsOrdinalIgnoreCase(string value, string part)
+    {
+        return !string.IsNullOrEmpty(value) &&
+               value.IndexOf(part, System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     private static Transform FindChildRecursive(Transform root, string childName)

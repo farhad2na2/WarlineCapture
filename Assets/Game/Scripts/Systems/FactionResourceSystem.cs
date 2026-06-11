@@ -142,16 +142,15 @@ public sealed class FactionResourceSystem
         if (buildings == null)
             return;
 
-        foreach (var entry in buildings)
+        if (buildings is Dictionary<int, TBuilding> buildingMap)
         {
-            TBuilding building = entry.Value;
-            if (!IsResourceStorageBuilding(building))
-                continue;
-
-            if (building.OilStorageCapacity > 0)
-                oilBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredOilBarrels));
-            if (building.FuelStorageCapacity > 0)
-                fuelBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredFuelBarrels));
+            foreach (KeyValuePair<int, TBuilding> entry in buildingMap)
+                AddResourceTotals(entry.Value, ref oilBarrels, ref fuelBarrels);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, TBuilding> entry in buildings)
+                AddResourceTotals(entry.Value, ref oilBarrels, ref fuelBarrels);
         }
     }
 
@@ -166,17 +165,15 @@ public sealed class FactionResourceSystem
 
         if (buildings != null)
         {
-            foreach (var entry in buildings)
+            if (buildings is Dictionary<int, TBuilding> buildingMap)
             {
-                TBuilding building = entry.Value;
-                if (!IsFactionResourceBuilding(building, factionId))
-                    continue;
-
-                resourceBuildingCount++;
-                oil += Mathf.Max(0f, building.StoredOilBarrels);
-                fuel += Mathf.Max(0f, building.StoredFuelBarrels);
-                oilRate += Mathf.Max(0f, building.OilBarrelsPerDay);
-                fuelRate += Mathf.Max(0f, building.FuelBarrelsPerDay);
+                foreach (KeyValuePair<int, TBuilding> entry in buildingMap)
+                    AddFactionResourceEconomy(entry.Value, factionId, ref oil, ref fuel, ref oilRate, ref fuelRate, ref resourceBuildingCount);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, TBuilding> entry in buildings)
+                    AddFactionResourceEconomy(entry.Value, factionId, ref oil, ref fuel, ref oilRate, ref fuelRate, ref resourceBuildingCount);
             }
         }
 
@@ -195,25 +192,23 @@ public sealed class FactionResourceSystem
             return 0f;
 
         float remaining = requestedBarrels;
-        foreach (var entry in buildings)
+        if (buildings is Dictionary<int, TBuilding> buildingMap)
         {
-            TBuilding building = entry.Value;
-            if (!IsFactionResourceBuilding(building, factionId))
-                continue;
-
-            float stored = resourceKind == ResourceKind.Fuel ? building.StoredFuelBarrels : building.StoredOilBarrels;
-            float drained = Mathf.Min(Mathf.Max(0f, stored), remaining);
-            if (drained <= 0f)
-                continue;
-
-            if (resourceKind == ResourceKind.Fuel)
-                building.StoredFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels - drained);
-            else
-                building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - drained);
-
-            remaining -= drained;
-            if (remaining <= 0.001f)
-                break;
+            foreach (KeyValuePair<int, TBuilding> entry in buildingMap)
+            {
+                DrainFactionResource(entry.Value, factionId, resourceKind, ref remaining);
+                if (remaining <= 0.001f)
+                    break;
+            }
+        }
+        else
+        {
+            foreach (KeyValuePair<int, TBuilding> entry in buildings)
+            {
+                DrainFactionResource(entry.Value, factionId, resourceKind, ref remaining);
+                if (remaining <= 0.001f)
+                    break;
+            }
         }
 
         return requestedBarrels - remaining;
@@ -236,53 +231,137 @@ public sealed class FactionResourceSystem
         float oilExtracted = 0f;
         float fuelProduced = 0f;
 
-        foreach (var pair in buildings)
+        if (buildings is Dictionary<int, TBuilding> buildingMap)
         {
-            TBuilding building = pair.Value;
-            if (building == null || building.IsDestroyed)
-                continue;
-
-            int oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
-            float oilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
-            if (oilCapacity > 0 && oilBarrelsPerDay > 0f)
-            {
-                if (building.StoredOilBarrels >= oilCapacity)
-                {
-                    building.StoredOilBarrels = oilCapacity;
-                }
-                else
-                {
-                    float barrelsPerSecond = oilBarrelsPerDay / secondsPerDay;
-                    float previousOil = building.StoredOilBarrels;
-                    building.StoredOilBarrels = Mathf.Min(oilCapacity, building.StoredOilBarrels + barrelsPerSecond * deltaTime);
-                    oilExtracted += building.StoredOilBarrels - previousOil;
-                }
-            }
-
-            float fuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
-            int fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
-            if (fuelBarrelsPerDay <= 0f)
-                continue;
-
-            float maxFuelFromOil = building.StoredOilBarrels / oilBarrelsPerFuelBarrel;
-            if (maxFuelFromOil <= 0f)
-                continue;
-
-            float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
-            float producedFuel = Mathf.Min(desiredFuel, maxFuelFromOil);
-            if (fuelCapacity > 0)
-                producedFuel = Mathf.Min(producedFuel, Mathf.Max(0f, fuelCapacity - building.StoredFuelBarrels));
-
-            if (producedFuel <= 0f)
-                continue;
-
-            building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - (producedFuel * oilBarrelsPerFuelBarrel));
-            if (fuelCapacity > 0)
-                building.StoredFuelBarrels = Mathf.Min(fuelCapacity, building.StoredFuelBarrels + producedFuel);
-            fuelProduced += producedFuel;
+            foreach (KeyValuePair<int, TBuilding> pair in buildingMap)
+                UpdateResourceProductionForBuilding(
+                    pair.Value,
+                    secondsPerDay,
+                    deltaTime,
+                    oilBarrelsPerFuelBarrel,
+                    ref oilExtracted,
+                    ref fuelProduced);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, TBuilding> pair in buildings)
+                UpdateResourceProductionForBuilding(
+                    pair.Value,
+                    secondsPerDay,
+                    deltaTime,
+                    oilBarrelsPerFuelBarrel,
+                    ref oilExtracted,
+                    ref fuelProduced);
         }
 
         return new ResourceProductionTickResult(oilExtracted, fuelProduced);
+    }
+
+    private void AddResourceTotals<TBuilding>(TBuilding building, ref int oilBarrels, ref int fuelBarrels)
+        where TBuilding : class, IResourceBuilding
+    {
+        if (!IsResourceStorageBuilding(building))
+            return;
+
+        if (building.OilStorageCapacity > 0)
+            oilBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredOilBarrels));
+        if (building.FuelStorageCapacity > 0)
+            fuelBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredFuelBarrels));
+    }
+
+    private void AddFactionResourceEconomy<TBuilding>(
+        TBuilding building,
+        byte factionId,
+        ref float oil,
+        ref float fuel,
+        ref float oilRate,
+        ref float fuelRate,
+        ref int resourceBuildingCount)
+        where TBuilding : class, IResourceBuilding
+    {
+        if (!IsFactionResourceBuilding(building, factionId))
+            return;
+
+        resourceBuildingCount++;
+        oil += Mathf.Max(0f, building.StoredOilBarrels);
+        fuel += Mathf.Max(0f, building.StoredFuelBarrels);
+        oilRate += Mathf.Max(0f, building.OilBarrelsPerDay);
+        fuelRate += Mathf.Max(0f, building.FuelBarrelsPerDay);
+    }
+
+    private void DrainFactionResource<TBuilding>(
+        TBuilding building,
+        byte factionId,
+        ResourceKind resourceKind,
+        ref float remaining)
+        where TBuilding : class, IResourceBuilding
+    {
+        if (!IsFactionResourceBuilding(building, factionId))
+            return;
+
+        float stored = resourceKind == ResourceKind.Fuel ? building.StoredFuelBarrels : building.StoredOilBarrels;
+        float drained = Mathf.Min(Mathf.Max(0f, stored), remaining);
+        if (drained <= 0f)
+            return;
+
+        if (resourceKind == ResourceKind.Fuel)
+            building.StoredFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels - drained);
+        else
+            building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - drained);
+
+        remaining -= drained;
+    }
+
+    private static void UpdateResourceProductionForBuilding<TBuilding>(
+        TBuilding building,
+        float secondsPerDay,
+        float deltaTime,
+        float oilBarrelsPerFuelBarrel,
+        ref float oilExtracted,
+        ref float fuelProduced)
+        where TBuilding : class, IResourceBuilding
+    {
+        if (building == null || building.IsDestroyed)
+            return;
+
+        int oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
+        float oilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
+        if (oilCapacity > 0 && oilBarrelsPerDay > 0f)
+        {
+            if (building.StoredOilBarrels >= oilCapacity)
+            {
+                building.StoredOilBarrels = oilCapacity;
+            }
+            else
+            {
+                float barrelsPerSecond = oilBarrelsPerDay / secondsPerDay;
+                float previousOil = building.StoredOilBarrels;
+                building.StoredOilBarrels = Mathf.Min(oilCapacity, building.StoredOilBarrels + barrelsPerSecond * deltaTime);
+                oilExtracted += building.StoredOilBarrels - previousOil;
+            }
+        }
+
+        float fuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
+        int fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
+        if (fuelBarrelsPerDay <= 0f)
+            return;
+
+        float maxFuelFromOil = building.StoredOilBarrels / oilBarrelsPerFuelBarrel;
+        if (maxFuelFromOil <= 0f)
+            return;
+
+        float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
+        float producedFuel = Mathf.Min(desiredFuel, maxFuelFromOil);
+        if (fuelCapacity > 0)
+            producedFuel = Mathf.Min(producedFuel, Mathf.Max(0f, fuelCapacity - building.StoredFuelBarrels));
+
+        if (producedFuel <= 0f)
+            return;
+
+        building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - (producedFuel * oilBarrelsPerFuelBarrel));
+        if (fuelCapacity > 0)
+            building.StoredFuelBarrels = Mathf.Min(fuelCapacity, building.StoredFuelBarrels + producedFuel);
+        fuelProduced += producedFuel;
     }
 
     public bool IsResourceStorageBuilding(IResourceBuilding building)

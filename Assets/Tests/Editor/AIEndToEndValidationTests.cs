@@ -189,7 +189,10 @@ public sealed class AIEndToEndValidationTests
             null,
             default,
             null,
-            null);
+            null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
     }
 

@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Game.Components",
+        "Game.Configs",
         "Game.Runtime",
         "sniveler-code.gpu-animation",
         "sniveler-code.gpu-animation.Editor",

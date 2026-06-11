@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Game.Components",
+        "Game.Configs",
         "sniveler-code.gpu-animation",
         "Unity.Burst",
         "Unity.Collections",

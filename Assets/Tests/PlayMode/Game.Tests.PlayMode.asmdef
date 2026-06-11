@@ -2,6 +2,7 @@
     "name": "Game.Tests.PlayMode",
     "rootNamespace": "",
     "references": [
+        "Game.Components",
         "Game.Runtime",
         "Unity.Collections",
         "Unity.Entities",

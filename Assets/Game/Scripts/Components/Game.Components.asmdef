@@ -1,22 +1,15 @@
 {
-    "name": "Game.Tests.Editor",
+    "name": "Game.Components",
     "rootNamespace": "",
     "references": [
-        "Game.Components",
-        "Game.Editor",
-        "Game.Runtime",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",
-        "Unity.TextMeshPro",
-        "Unity.Transforms",
-        "UnityEngine.UI"
+        "Unity.Transforms"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
@@ -24,8 +17,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
     "noEngineReferences": false
 }

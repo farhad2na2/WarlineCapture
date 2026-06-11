@@ -2,6 +2,7 @@
     "name": "Game.Editor",
     "rootNamespace": "",
     "references": [
+        "Game.Components",
         "Game.Runtime",
         "sniveler-code.gpu-animation",
         "sniveler-code.gpu-animation.Editor",

@@ -2,6 +2,7 @@
     "name": "Game.Runtime",
     "rootNamespace": "",
     "references": [
+        "Game.Components",
         "sniveler-code.gpu-animation",
         "Unity.Burst",
         "Unity.Collections",

@@ -288,6 +288,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             dummyQuery,
             dummyQuery,
             pendingInitQuery,
+            pendingInitQuery,
             dummyQuery);
 
         new InitialUnitsSpawnProgressSystem().InitializePending(em, context);

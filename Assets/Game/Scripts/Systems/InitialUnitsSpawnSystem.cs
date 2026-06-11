@@ -46,8 +46,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         _diagnosticLogSystem.EnsureQueue(state.EntityManager);
         state.RequireForUpdate(_queryContext.BuildingRuntimeBoundaryQuery);
         state.RequireForUpdate(_queryContext.GridContextQuery);
-        state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<InitialUnitsSpawnConfig>();
+        state.RequireForUpdate(_queryContext.ActiveConfigQuery);
         state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }

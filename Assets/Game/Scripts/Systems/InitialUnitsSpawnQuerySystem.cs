@@ -7,6 +7,7 @@ public readonly struct InitialUnitsSpawnQuerySystem
         public readonly EntityQuery BuildingRuntimeBoundaryQuery;
         public readonly EntityQuery RuntimeGameplayStateQuery;
         public readonly EntityQuery GridContextQuery;
+        public readonly EntityQuery ActiveConfigQuery;
         public readonly EntityQuery PendingInitQuery;
         public readonly EntityQuery ProgressQuery;
 
@@ -14,12 +15,14 @@ public readonly struct InitialUnitsSpawnQuerySystem
             EntityQuery buildingRuntimeBoundaryQuery,
             EntityQuery runtimeGameplayStateQuery,
             EntityQuery gridContextQuery,
+            EntityQuery activeConfigQuery,
             EntityQuery pendingInitQuery,
             EntityQuery progressQuery)
         {
             BuildingRuntimeBoundaryQuery = buildingRuntimeBoundaryQuery;
             RuntimeGameplayStateQuery = runtimeGameplayStateQuery;
             GridContextQuery = gridContextQuery;
+            ActiveConfigQuery = activeConfigQuery;
             PendingInitQuery = pendingInitQuery;
             ProgressQuery = progressQuery;
         }
@@ -41,6 +44,18 @@ public readonly struct InitialUnitsSpawnQuerySystem
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<DynamicBlockerComponent>(),
             ComponentType.ReadOnly<DynamicOccupancyComponent>());
+
+        EntityQuery activeConfigQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnConfig>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnInitialized>()
+            }
+        });
 
         EntityQuery pendingInitQuery = state.GetEntityQuery(new EntityQueryDesc
         {
@@ -72,6 +87,7 @@ public readonly struct InitialUnitsSpawnQuerySystem
             buildingRuntimeBoundaryQuery,
             runtimeGameplayStateQuery,
             gridContextQuery,
+            activeConfigQuery,
             pendingInitQuery,
             progressQuery);
     }

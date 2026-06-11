@@ -27,11 +27,11 @@ public static class GroundVariationMaterialSwapTool
         "SM_Env_DirtRoad",
         "SM_Env_Road",
         "SM_Env_Sidewalk",
-        "SM_Env_Grass_Square",
-        "SM_Env_Grass_Circle",
+        "SM_Env_Grass",
         "SM_Env_Port_Concrete_Slab",
         "SM_Env_Mountain",
         "SM_Env_Runway",
+        "SM_Env_Beach",
     };
 
     [MenuItem("Tools/Game/Rendering/Ground Variation/Apply To Open Scene")]
@@ -58,7 +58,7 @@ public static class GroundVariationMaterialSwapTool
                 Material original = materials[i];
                 if (original == null || original.shader == groundShader)
                     continue;
-                if (!original.HasProperty("_BaseMap") || original.GetTexture("_BaseMap") == null)
+                if (GetSourceAtlas(original) == null)
                     continue;
 
                 if (!variationByOriginal.TryGetValue(original, out Material variation))
@@ -157,10 +157,26 @@ public static class GroundVariationMaterialSwapTool
         }
     }
 
+    /// <summary>
+    /// Resolves the atlas texture across the shaders used by the Synty packs:
+    /// URP Lit (_BaseMap), Synty Generic_Basic shadergraph (_Albedo_Map),
+    /// and legacy/standard (_MainTex).
+    /// </summary>
+    private static Texture GetSourceAtlas(Material material)
+    {
+        if (material.HasProperty("_BaseMap") && material.GetTexture("_BaseMap") != null)
+            return material.GetTexture("_BaseMap");
+        if (material.HasProperty("_Albedo_Map") && material.GetTexture("_Albedo_Map") != null)
+            return material.GetTexture("_Albedo_Map");
+        if (material.HasProperty("_MainTex") && material.GetTexture("_MainTex") != null)
+            return material.GetTexture("_MainTex");
+        return null;
+    }
+
     private static Material GetOrCreateVariationMaterial(Material original, Shader groundShader)
     {
         Material template = LoadTemplateMaterial();
-        Texture originalAtlas = original.GetTexture("_BaseMap");
+        Texture originalAtlas = GetSourceAtlas(original);
 
         // The hand-authored template already points at the PolygonMilitary atlas;
         // reuse it whenever the source material uses the same atlas.
@@ -186,6 +202,8 @@ public static class GroundVariationMaterialSwapTool
         variation.SetTexture("_BaseMap", originalAtlas);
         if (original.HasProperty("_BaseColor"))
             variation.SetColor("_BaseColor", original.GetColor("_BaseColor"));
+        else if (original.HasProperty("_Color"))
+            variation.SetColor("_BaseColor", original.GetColor("_Color"));
         if (original.HasProperty("_Smoothness"))
             variation.SetFloat("_Smoothness", original.GetFloat("_Smoothness"));
 
@@ -210,7 +228,7 @@ public static class GroundVariationMaterialSwapTool
             var candidate = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (candidate == null || candidate.shader == variation.shader)
                 continue;
-            if (!candidate.HasProperty("_BaseMap") || candidate.GetTexture("_BaseMap") != atlas)
+            if (GetSourceAtlas(candidate) != atlas)
                 continue;
 
             if (originalName != null)

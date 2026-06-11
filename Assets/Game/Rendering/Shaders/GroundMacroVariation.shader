@@ -29,6 +29,15 @@ Shader "Game/Environment/GroundMacroVariation"
         _DetailScale("Detail Noise Scale (1/m)", Range(0.05, 4)) = 0.7
         _DetailFadeStart("Detail Fade Start (m)", Float) = 40
         _DetailFadeEnd("Detail Fade End (m)", Float) = 120
+
+        [Header(Detail Textures World Projected)]
+        _DesertDetailMap("Desert Detail (stones, thorn scrub)", 2D) = "gray" {}
+        _DesertDetailNormal("Desert Detail Normal", 2D) = "bump" {}
+        _GreenDetailMap("Green Patch Detail (scrub grass)", 2D) = "gray" {}
+        _GroundDetailTiling("Detail Tiling (1/m)", Range(0.01, 2)) = 0.18
+        _GroundDetailStrength("Detail Albedo Strength", Range(0, 1)) = 0.7
+        _GroundDetailNormalStrength("Detail Normal Strength", Range(0, 2)) = 0.8
+        _GreenPatchThreshold("Green Patch Threshold", Range(0, 1)) = 0.5
     }
 
     SubShader
@@ -71,6 +80,10 @@ Shader "Game/Environment/GroundMacroVariation"
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
+            TEXTURE2D(_DesertDetailMap);
+            SAMPLER(sampler_DesertDetailMap);
+            TEXTURE2D(_DesertDetailNormal);
+            TEXTURE2D(_GreenDetailMap);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
@@ -87,6 +100,10 @@ Shader "Game/Environment/GroundMacroVariation"
                 float _DetailScale;
                 float _DetailFadeStart;
                 float _DetailFadeEnd;
+                float _GroundDetailTiling;
+                half _GroundDetailStrength;
+                half _GroundDetailNormalStrength;
+                half _GreenPatchThreshold;
             CBUFFER_END
 
             // Global runtime toggle (0 = enabled, 1 = disabled). Globals default
@@ -141,9 +158,14 @@ Shader "Game/Environment/GroundMacroVariation"
             }
             // ------------------------------------------------------------------
 
-            half3 ApplyGroundVariation(half3 albedo, float3 positionWS)
+            // Computes the world-projected variation multiplier and perturbs the
+            // normal with the stone detail normal map. Detail textures are
+            // selected by the same noise that places the green patches, so dry
+            // areas get stones + thorn scrub and green patches get scrub grass.
+            void ApplyGroundVariation(float3 positionWS, inout half3 albedo, inout half3 normalWS)
             {
                 float2 p = positionWS.xz;
+                half enabled = 1.0 - saturate(_GroundVariationDisabled);
 
                 // Large-scale patches: blend between two earth tones.
                 float patchMask = Fbm(p * _MacroScale);
@@ -152,15 +174,37 @@ Shader "Game/Environment/GroundMacroVariation"
                 half w = _MacroStrength * smoothstep(_MacroContrastLow, _MacroContrastHigh, patchMask);
                 half3 variation = lerp(half3(1, 1, 1), tint, w);
 
-                // Close-up brightness jitter, faded out with camera distance.
+                // Fades: camera distance + slope (keeps cliffs from streaking).
                 float dist = distance(positionWS, _WorldSpaceCameraPos);
-                float detailFade = 1.0 - saturate((dist - _DetailFadeStart) / max(_DetailFadeEnd - _DetailFadeStart, 0.001));
-                float detail = ValueNoise(p * _DetailScale);
-                variation *= 1.0 + (detail - 0.5) * 2.0 * _DetailStrength * detailFade;
+                float distFade = 1.0 - saturate((dist - _DetailFadeStart) / max(_DetailFadeEnd - _DetailFadeStart, 0.001));
+                float slopeFade = smoothstep(0.35, 0.65, normalWS.y);
+                float detailFade = distFade * slopeFade;
 
-                half enabled = 1.0 - saturate(_GroundVariationDisabled);
+                // Close-up brightness jitter.
+                float jitter = ValueNoise(p * _DetailScale);
+                variation *= 1.0 + (jitter - 0.5) * 2.0 * _DetailStrength * distFade;
+
+                // World-projected detail textures (stored around mid-gray, so
+                // *2 makes 0.5 neutral): stones/thorn in dry areas, scrub grass
+                // inside the green patches.
+                float2 duv = p * _GroundDetailTiling;
+                half3 desertDetail = SAMPLE_TEXTURE2D(_DesertDetailMap, sampler_DesertDetailMap, duv).rgb;
+                half3 greenDetail = SAMPLE_TEXTURE2D(_GreenDetailMap, sampler_DesertDetailMap, duv * 0.93).rgb;
+                half greenMask = smoothstep(_GreenPatchThreshold, _GreenPatchThreshold + 0.25, tintSelect)
+                               * smoothstep(0.2, 0.6, patchMask);
+                half3 detailColor = lerp(desertDetail, greenDetail, greenMask);
+                half detailWeight = _GroundDetailStrength * detailFade * enabled;
+                variation *= lerp(half3(1, 1, 1), detailColor * 2.0, detailWeight);
+
                 variation = lerp(half3(1, 1, 1), variation, enabled);
-                return albedo * variation;
+                albedo *= variation;
+
+                // Stone detail normal, projected top-down (x -> world X, y -> world Z),
+                // reduced inside green patches where stones are sparse.
+                half normalScale = _GroundDetailNormalStrength * detailFade * enabled * (1.0 - greenMask * 0.6);
+                half3 detailNormalTS = UnpackNormalScale(
+                    SAMPLE_TEXTURE2D(_DesertDetailNormal, sampler_DesertDetailMap, duv), normalScale);
+                normalWS = normalize(half3(normalWS.x + detailNormalTS.x, normalWS.y, normalWS.z + detailNormalTS.y));
             }
 
             Varyings GroundVertex(Attributes input)
@@ -190,11 +234,12 @@ Shader "Game/Environment/GroundMacroVariation"
 
                 half4 atlas = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
                 half3 albedo = atlas.rgb * _BaseColor.rgb;
-                albedo = ApplyGroundVariation(albedo, input.positionWS);
+                half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
+                ApplyGroundVariation(input.positionWS, albedo, normalWS);
 
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;
-                inputData.normalWS = NormalizeNormalPerPixel(input.normalWS);
+                inputData.normalWS = normalWS;
                 inputData.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
                 inputData.shadowCoord = TransformWorldToShadowCoord(input.positionWS);
                 inputData.fogCoord = input.fogFactor;

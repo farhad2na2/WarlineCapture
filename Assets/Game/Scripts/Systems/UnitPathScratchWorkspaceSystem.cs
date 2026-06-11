@@ -10,7 +10,7 @@ internal struct UnitPathScratchWorkspaceSystem
     public NativeArray<byte> Closed;
     public NativeArray<byte> InOpen;
     public NativeArray<int> Epoch;
-    public NativeArray<int> Open;
+    public NativeArray<long> Open; // binary heap of packed (fScore << 32 | cellIndex) entries
     public NativeArray<int> Path;
 
     private int _gridSize;
@@ -39,7 +39,7 @@ internal struct UnitPathScratchWorkspaceSystem
         Closed = new NativeArray<byte>(total, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         InOpen = new NativeArray<byte>(total, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         Epoch = new NativeArray<int>(total, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-        Open = new NativeArray<int>(total, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+        Open = new NativeArray<long>(total, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         Path = new NativeArray<int>(total, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         _searchEpoch = 1;
         return true;

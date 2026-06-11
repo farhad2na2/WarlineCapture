@@ -6,6 +6,7 @@
         "Game.Components",
         "Game.Configs",
         "Game.Editor",
+        "Game.UI.Shell.Ecs",
         "Game.Runtime",
         "Unity.Collections",
         "Unity.Entities",

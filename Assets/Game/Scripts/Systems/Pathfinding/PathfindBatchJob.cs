@@ -71,7 +71,7 @@ internal struct PathfindBatchJob : IJobFor
     [NativeDisableParallelForRestriction] public NativeArray<byte> ScratchClosed;
     [NativeDisableParallelForRestriction] public NativeArray<byte> ScratchInOpen;
     [NativeDisableParallelForRestriction] public NativeArray<int> ScratchEpoch;
-    [NativeDisableParallelForRestriction] public NativeArray<int> ScratchOpen;
+    [NativeDisableParallelForRestriction] public NativeArray<long> ScratchOpen;
     [NativeDisableParallelForRestriction] public NativeArray<int> ScratchPath;
     public int SearchEpochBase;
 
@@ -337,9 +337,8 @@ internal struct PathfindBatchJob : IJobFor
 
         InitializeScratchNode(threadOffset, startIndex, searchEpoch);
         ScratchGScore[threadOffset + startIndex] = 0;
-        ScratchOpen[threadOffset + 0] = startIndex;
-        ScratchInOpen[threadOffset + startIndex] = 1;
-        int openCount = 1;
+        int heapCount = 0;
+        HeapPush(threadOffset, ref heapCount, PackHeapEntry(HeuristicOctile(start, goal), startIndex));
         int expansions = 0;
         int maxExpansions = isVehicle
             ? VehicleMaxAStarExpansions
@@ -347,33 +346,15 @@ internal struct PathfindBatchJob : IJobFor
 
         bool found = false;
 
-        while (openCount > 0)
+        while (heapCount > 0)
         {
+            int current = UnpackHeapIndex(HeapPop(threadOffset, ref heapCount));
+            if (ScratchClosed[threadOffset + current] != 0)
+                continue; // stale duplicate heap entry (node already expanded with a better f)
+
             expansions++;
             if (expansions > maxExpansions)
                 return false;
-
-            int bestOpenIdx = 0;
-            int current = ScratchOpen[threadOffset + 0];
-            int bestF = int.MaxValue;
-
-            for (int i = 0; i < openCount; i++)
-            {
-                int idx = ScratchOpen[threadOffset + i];
-                int g = ScratchGScore[threadOffset + idx];
-                int2 c = GridUtils.IndexToCell(idx, Grid.Width);
-                int f = g + HeuristicOctile(c, goal);
-                if (f < bestF)
-                {
-                    bestF = f;
-                    current = idx;
-                    bestOpenIdx = i;
-                }
-            }
-
-            openCount--;
-            ScratchOpen[threadOffset + bestOpenIdx] = ScratchOpen[threadOffset + openCount];
-            ScratchInOpen[threadOffset + current] = 0;
 
             if (current == goalIndex)
             {
@@ -488,12 +469,8 @@ internal struct PathfindBatchJob : IJobFor
                 ScratchCameFrom[threadOffset + nextIndex] = current;
                 ScratchGScore[threadOffset + nextIndex] = tentative;
 
-                if (ScratchInOpen[threadOffset + nextIndex] == 0)
-                {
-                    ScratchInOpen[threadOffset + nextIndex] = 1;
-                    ScratchOpen[threadOffset + openCount] = nextIndex;
-                    openCount++;
-                }
+                if (heapCount < GridSize)
+                    HeapPush(threadOffset, ref heapCount, PackHeapEntry(tentative + HeuristicOctile(nextCell, goal), nextIndex));
             }
         }
 
@@ -659,6 +636,62 @@ internal struct PathfindBatchJob : IJobFor
         }
 
         return true;
+    }
+
+    // Binary min-heap over packed (fScore << 32 | cellIndex) entries stored in ScratchOpen.
+    // Relaxations push duplicate entries instead of decrease-key; stale entries are
+    // skipped on pop via the Closed check. Packing keeps the comparison branch-free and
+    // makes tie-breaking on cell index deterministic.
+    private static long PackHeapEntry(int fScore, int cellIndex)
+    {
+        return ((long)fScore << 32) | (uint)cellIndex;
+    }
+
+    private static int UnpackHeapIndex(long entry)
+    {
+        return (int)(entry & 0xFFFFFFFF);
+    }
+
+    private void HeapPush(int threadOffset, ref int heapCount, long entry)
+    {
+        int child = heapCount;
+        heapCount++;
+        while (child > 0)
+        {
+            int parent = (child - 1) >> 1;
+            long parentEntry = ScratchOpen[threadOffset + parent];
+            if (parentEntry <= entry)
+                break;
+            ScratchOpen[threadOffset + child] = parentEntry;
+            child = parent;
+        }
+
+        ScratchOpen[threadOffset + child] = entry;
+    }
+
+    private long HeapPop(int threadOffset, ref int heapCount)
+    {
+        long root = ScratchOpen[threadOffset];
+        heapCount--;
+        long last = ScratchOpen[threadOffset + heapCount];
+        int parent = 0;
+        while (true)
+        {
+            int left = (parent << 1) + 1;
+            if (left >= heapCount)
+                break;
+            int right = left + 1;
+            int smallest = right < heapCount && ScratchOpen[threadOffset + right] < ScratchOpen[threadOffset + left]
+                ? right
+                : left;
+            if (ScratchOpen[threadOffset + smallest] >= last)
+                break;
+            ScratchOpen[threadOffset + parent] = ScratchOpen[threadOffset + smallest];
+            parent = smallest;
+        }
+
+        ScratchOpen[threadOffset + parent] = last;
+        return root;
     }
 
     private static int HeuristicOctile(int2 a, int2 b)

@@ -26,6 +26,7 @@ internal struct UnitPathfindingScheduleSystem
         ref SystemState state,
         ref UnitPathfindingQuerySystem queries,
         ref UnitPathScratchWorkspaceSystem scratchWorkspace,
+        ref UnitPathGridSnapshotSystem gridSnapshot,
         ref UnitPathLiveUnitSnapshotSystem liveUnitSnapshot,
         ref UnitPathRequestBufferSystem requestBuffers,
         ref UnitPathIgnoredOccupancySystem ignoredOccupancy,
@@ -219,22 +220,34 @@ internal struct UnitPathfindingScheduleSystem
 
             var pendingPathStream = new NativeStream(requestCount, Allocator.Persistent);
 
+            // Snapshot every grid container the job reads so the in-flight batch holds no
+            // references to live ECS data. This keeps the job off the ECS dependency chain:
+            // downstream systems and structural changes can never be forced to wait on it.
+            gridSnapshot.Capture(
+                walkable.AsNativeArray(),
+                roads.AsNativeArray(),
+                sidewalks.AsNativeArray(),
+                dirtRoads.AsNativeArray(),
+                dynamicBlockers,
+                friendlyPassFactionIds,
+                occupied);
+
             var job = new PathfindBatchJob
             {
                 Grid = grid,
-                Walkable = walkable.AsNativeArray(),
-                Roads = roads.AsNativeArray(),
-                Sidewalks = sidewalks.AsNativeArray(),
-                DirtRoads = dirtRoads.AsNativeArray(),
+                Walkable = gridSnapshot.Walkable,
+                Roads = gridSnapshot.Roads,
+                Sidewalks = gridSnapshot.Sidewalks,
+                DirtRoads = gridSnapshot.DirtRoads,
                 MapSurface = surfaceContext.Surface,
                 HasMapSurface = surfaceContext.HasSurfaceData,
                 SurfaceValidation = new MapSurfacePathingValidationSystem(),
                 MapSurfacePathCost = surfaceContext.PathCost,
                 SurfacePathCost = new MapSurfacePathCostSystem(),
                 SurfaceRoadPriority = new MapSurfaceRoadPrioritySystem(),
-                DynamicBlocked = dynamicBlockers,
-                FriendlyPassFactionIds = friendlyPassFactionIds,
-                Occupied = occupied,
+                DynamicBlocked = gridSnapshot.DynamicBlocked,
+                FriendlyPassFactionIds = gridSnapshot.FriendlyPassFactionIds,
+                Occupied = gridSnapshot.Occupied,
                 LiveUnitEntities = liveUnitEntities,
                 LiveUnitGrids = liveUnitGrids,
                 LiveUnitFootprints = liveUnitFootprints,
@@ -267,11 +280,13 @@ internal struct UnitPathfindingScheduleSystem
                 SearchEpochBase = scratchSearchEpochBase,
             };
 
-            JobHandle pendingPathHandle = job.Schedule(requestCount, state.Dependency);
+            // Scheduled against an empty dependency on purpose: all job inputs are
+            // system-owned snapshots, so the batch runs fully detached from the ECS
+            // dependency chain and can span multiple frames without stalling anyone.
+            JobHandle pendingPathHandle = job.Schedule(requestCount, default);
             afterScheduleTime = Time.realtimeSinceStartupAsDouble;
             afterCompleteTime = afterScheduleTime;
             afterApplyTime = afterScheduleTime;
-            state.Dependency = pendingPathHandle;
 
             return new Result
             {

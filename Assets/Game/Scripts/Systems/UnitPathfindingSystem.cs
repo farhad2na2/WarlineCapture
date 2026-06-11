@@ -13,6 +13,7 @@ public partial struct UnitPathfindingSystem : ISystem
     private EntityQuery _pendingStateQuery;
     private UnitPathfindingQuerySystem _queries;
     private UnitPathScratchWorkspaceSystem _scratchWorkspace;
+    private UnitPathGridSnapshotSystem _gridSnapshot;
     private UnitPathReservedGoalSystem _reservedGoals;
     private UnitPathCoarseWorkspaceSystem _coarseWorkspace;
     private UnitHierarchicalPathSystem _hierarchicalPath;
@@ -59,6 +60,7 @@ public partial struct UnitPathfindingSystem : ISystem
     {
         DisposePendingPathJob(ref state);
         _scratchWorkspace.Dispose();
+        _gridSnapshot.Dispose();
         _reservedGoals.Dispose();
         _coarseWorkspace.Dispose();
         _requestBuffers.Dispose();
@@ -79,7 +81,9 @@ public partial struct UnitPathfindingSystem : ISystem
             if (!_pendingPathHandle.IsCompleted)
             {
                 _budget.ReduceForPendingJob(Time.frameCount, _pendingScheduleFrame, _pendingRequestBudget);
-                state.Dependency = _pendingPathHandle;
+                // Intentionally NOT chained into state.Dependency: the job only reads
+                // system-owned snapshots (see UnitPathGridSnapshotSystem), so nothing on
+                // the main thread should ever be forced to wait for it.
                 PublishPendingState(ref state);
                 return;
             }
@@ -113,6 +117,7 @@ public partial struct UnitPathfindingSystem : ISystem
             ref state,
             ref _queries,
             ref _scratchWorkspace,
+            ref _gridSnapshot,
             ref _liveUnitSnapshot,
             ref _requestBuffers,
             ref _ignoredOccupancy,

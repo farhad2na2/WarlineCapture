@@ -1,16 +1,9 @@
 {
-    "name": "Game.Tests.PlayMode",
+    "name": "Game.UI.Shell.Ecs",
     "rootNamespace": "",
     "references": [
-        "Game.Authoring",
-        "Game.Components",
-        "Game.Configs",
-        "Game.UI.Shell.Ecs",
-        "Game.Runtime",
         "Unity.Collections",
-        "Unity.Entities",
-        "Unity.Mathematics",
-        "Unity.Transforms"
+        "Unity.Entities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -20,8 +13,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
     "noEngineReferences": false
 }

@@ -5,6 +5,7 @@
         "Game.Authoring",
         "Game.Components",
         "Game.Configs",
+        "Game.UI.Shell.Ecs",
         "Game.Runtime",
         "sniveler-code.gpu-animation",
         "sniveler-code.gpu-animation.Editor",

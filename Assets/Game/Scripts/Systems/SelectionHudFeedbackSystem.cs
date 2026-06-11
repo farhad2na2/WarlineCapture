@@ -24,9 +24,8 @@ public sealed class SelectionHudFeedbackSystem
         }
     }
 
-    private BattleHudRuntimeFeedbackView _battleHudView;
+    private IBattleHudRuntimeFeedbackView _battleHudView;
     private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
-    private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
 
@@ -40,7 +39,7 @@ public sealed class SelectionHudFeedbackSystem
         _matchHudSelectionPanelView = view;
     }
 
-    public void BindBattleHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
+    public void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
     {
         _battleHudView = view;
     }
@@ -152,7 +151,7 @@ public sealed class SelectionHudFeedbackSystem
         if (feedback.Length == 0)
             return;
 
-        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
         if (view == null)
         {
             feedback.Clear();
@@ -251,15 +250,15 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
-        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
         if (!HasStickyCommandMode())
-            _commandTabFeedbackSystem.ClearCommandMode(view != null ? view.CommandTabGroups : null);
+            view?.ClearCommandModeTabs();
         _matchHudSelectionPanelView?.SetBoardActionSelected(false);
     }
 
     public bool HasStickyCommandMode()
     {
-        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
         return view != null &&
                BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode != TacticalCommandMode.None;
     }
@@ -307,7 +306,7 @@ public sealed class SelectionHudFeedbackSystem
                context.TryGetDefaultEntityManager(out em);
     }
 
-    private void ApplyFeedback(BattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
+    private void ApplyFeedback(IBattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
     {
         switch (feedback.Kind)
         {
@@ -346,7 +345,7 @@ public sealed class SelectionHudFeedbackSystem
         return result;
     }
 
-    private BattleHudRuntimeFeedbackView ResolveBattleHudView()
+    private IBattleHudRuntimeFeedbackView ResolveBattleHudView()
     {
         return _battleHudView;
     }

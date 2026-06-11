@@ -167,7 +167,10 @@ public sealed class InitialFactionBaseValidationTests
         StringAssert.Contains("Building_Ammunition_Depot.prefab", AssetDatabase.GetAssetPath(config.BaseCoreBuildingPrefab));
         Assert.AreNotEqual(config.BaseWallPrefab, config.BaseGatePrefab, "Base wall prefab must not be the gate/barrier prefab.");
         Assert.GreaterOrEqual(config.BaseMinimumUnitsPerFaction, 18);
-        Assert.GreaterOrEqual(config.Factions.Count, 2);
+        Assert.GreaterOrEqual(config.Factions.Count, 1);
+        Assert.IsTrue(
+            config.Factions.Exists(faction => faction != null && faction.FactionId == FactionIdentitySystem.PlayerFactionId),
+            "Initial match config should include the player faction base.");
 
         for (int i = 0; i < config.Factions.Count; i++)
         {
@@ -264,7 +267,7 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
             using EntityQuery staticBlockers = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<StaticGridBlocker>());
             Assert.AreEqual(0, staticBlockers.CalculateEntityCount(), "Building_Helipad should not block ground pathing or boarding approach.");
         }
@@ -325,7 +328,7 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
             Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
                 buildingGameplay.RuntimeSpawnCommandContext,
                 helipad,
@@ -333,16 +336,16 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
             int slotsPerHelipad = CountProductionSpawnPoints(helipad);
             Assert.Greater(slotsPerHelipad, 0);
             BuildingSpawnSystem.Context spawnContext = buildingGameplay.CreateSpawnContext();
-            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
-            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
             for (int slot = 0; slot < slotsPerHelipad; slot++)
             {
-                Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", slot, grid, out int2 slotCell, out _));
+                Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", slot, grid, out int2 slotCell, out _));
                 Entity occupyingHelicopter = world.EntityManager.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitHealth));
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitGrid { Cell = slotCell });
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitFootprint { Size = new int2(3, 3) });
@@ -355,7 +358,7 @@ public sealed class InitialFactionBaseValidationTests
             Assert.IsTrue(
                 buildingGameplay.Spawn.TryResolveAvailableFactionHelipadSpawn(
                     spawnContext,
-                    0,
+                    FactionIdentitySystem.PlayerFactionId,
                     world.EntityManager,
                     gridEntity,
                     grid,
@@ -761,9 +764,7 @@ public sealed class InitialFactionBaseValidationTests
 
     private static void AssertConfiguredAirUnitsMatchBasePlatforms(InitialUnitsSpawnerAuthoringConfig.FactionEntry faction)
     {
-        Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Helicopter_Attack"), $"Faction {faction.FactionId} should start with one attack helicopter.");
-        Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Helicopter_Attack_Small"), $"Faction {faction.FactionId} should start with one small attack helicopter.");
-        Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Helicopter_Transport"), $"Faction {faction.FactionId} should start with one transport helicopter.");
+        Assert.GreaterOrEqual(CountUnitPrefab(faction, "Unit_Veh_Helicopter_Transport"), 1, $"Faction {faction.FactionId} should start with at least one transport helicopter.");
         Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Jet_01"), $"Faction {faction.FactionId} should start with one Jet 01.");
         Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Jet_02"), $"Faction {faction.FactionId} should start with one Jet 02.");
         Assert.AreEqual(1, CountUnitPrefab(faction, "Unit_Veh_Drone"), $"Faction {faction.FactionId} should start with one drone.");

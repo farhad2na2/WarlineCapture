@@ -23,7 +23,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
-        MainMenuPlayUI mainMenu,
+        IMatchRuntimeUi mainMenu,
         UnitImpostorRenderSystem unitImpostors,
         ref bool gameplayStartPending)
     {
@@ -135,7 +135,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         Action roadBuildOnGui,
-        SelectionRectangleView selectionRectangleView)
+        ISelectionRectangleView selectionRectangleView)
     {
         if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
             return;

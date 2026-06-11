@@ -1,4 +1,3 @@
-using Game.Scripts.UI;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -19,8 +18,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly System.Action RoadRuntimeUpdate;
         public readonly System.Action RoadOnGui;
         public readonly System.Action DisposeRoad;
-        public readonly System.Action<MainMenuPlayUI> BindRoadMainMenu;
-        public readonly System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> BindRoadGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi> BindRoadMainMenu;
+        public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> BindRoadGameplayFeatures;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
@@ -31,12 +30,12 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
-        public readonly System.Action<MainMenuPlayUI> BindBuildingMainMenu;
-        public readonly System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
+        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
-        public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
+        public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
         public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
@@ -45,7 +44,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly SelectionUiCameraSystem SelectionUiCamera;
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
-        public readonly SelectionRectangleView SelectionRectangleView;
+        public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly UnitAttackTraceSystem UnitAttackTraces;
         public readonly UnitImpostorRenderSystem UnitImpostors;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
@@ -60,8 +59,8 @@ internal sealed class ManagedGameplayStartupSystem
             System.Action roadRuntimeUpdate,
             System.Action roadOnGui,
             System.Action disposeRoad,
-            System.Action<MainMenuPlayUI> bindRoadMainMenu,
-            System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
+            System.Action<IMatchRuntimeUi> bindRoadMainMenu,
+            System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
@@ -72,12 +71,12 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingUiQuerySystem.Context buildingUiQueryContext,
             BuildingPlacementInteractionSystem buildingPlacementInteraction,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-            System.Action<MainMenuPlayUI> bindBuildingMainMenu,
-            System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
+            System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
+            System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
-            System.Action<MainMenuPlayUI> bindSelectionMainMenu,
+            System.Action<IMatchRuntimeUi> bindSelectionMainMenu,
             System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
@@ -86,7 +85,7 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionUiCameraSystem selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerSystem selectionScreenMarkers,
-            SelectionRectangleView selectionRectangleView,
+            ISelectionRectangleView selectionRectangleView,
             UnitAttackTraceSystem unitAttackTraces,
             UnitImpostorRenderSystem unitImpostors,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
@@ -149,6 +148,7 @@ internal sealed class ManagedGameplayStartupSystem
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
+        System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         Transform mapBuildingAuthoringRoot,
         int ownerLayer)
     {
@@ -241,6 +241,7 @@ internal sealed class ManagedGameplayStartupSystem
             rtsSelectionConfig,
             worldCamera,
             runtimeUiRoot,
+            createSelectionRectangleView,
             roadBuildReadModel,
             building.Interaction,
             building.InteractionContext,
@@ -276,13 +277,13 @@ internal sealed class ManagedGameplayStartupSystem
 
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
-        System.Action<MainMenuPlayUI> bindRoadMainMenu = mainMenu =>
+        System.Action<IMatchRuntimeUi> bindRoadMainMenu = mainMenu =>
             _roadBuildCompositionSystem.BindMainMenu(
                 road,
                 building.Interaction,
                 building.InteractionContext,
                 mainMenu);
-        System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
+        System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
             _roadBuildCompositionSystem.BindRuntimeGameplayFeatures(
                 road,
                 building.Interaction,

@@ -58,13 +58,13 @@ public sealed class MatchHudSquadTraySelectionSystem
 
     public MatchHudSquadTraySlot ActiveSlot => _activeSlot;
 
-    public void ClearActiveSlot(MatchHudSquadTrayView view)
+    public void ClearActiveSlot(IMatchHudSquadTrayView view)
     {
         _activeSlot = MatchHudSquadTraySlot.None;
-        view?.SetSelectedSlot(MatchHudSquadTraySlot.None);
+        view?.ClearActiveSlot();
     }
 
-    public void SelectSlot(Context context, MatchHudSquadTrayView view, MatchHudSquadTraySlot slot)
+    public void SelectSlot(Context context, IMatchHudSquadTrayView view, MatchHudSquadTraySlot slot)
     {
         if (slot == MatchHudSquadTraySlot.None || view == null)
             return;

@@ -2,7 +2,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public sealed class SelectionRectangleView : MonoBehaviour
+public sealed class SelectionRectangleView : MonoBehaviour, ISelectionRectangleView
 {
     [SerializeField] private Color selectionFill = new(0.2f, 1f, 0.2f, 0.15f);
     [SerializeField] private Color selectionBorder = new(0.2f, 1f, 0.2f, 0.95f);

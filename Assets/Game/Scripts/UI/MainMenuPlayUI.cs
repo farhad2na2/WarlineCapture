@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class MainMenuPlayUI
+public sealed class MainMenuPlayUI : IMatchRuntimeUi
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
@@ -15,8 +15,8 @@ public sealed class MainMenuPlayUI
     private BuildDrawerView _buildDrawerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
-    private System.Action<BattleHudRuntimeFeedbackView> _bindMatchHudRuntimeFeedback;
-    private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
+    private System.Action<IBattleHudRuntimeFeedbackView> _bindMatchHudRuntimeFeedback;
+    private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
         SelectionUiCommandSystem selectionUiCommandSystem,
@@ -101,7 +101,7 @@ public sealed class MainMenuPlayUI
         _bindMatchHudSelectionPanel?.Invoke(_matchHudSelectionPanelView);
     }
 
-    public void ConfigureMatchHudRuntimeFeedbackBinding(System.Action<BattleHudRuntimeFeedbackView> bindMatchHudRuntimeFeedback)
+    public void ConfigureMatchHudRuntimeFeedbackBinding(System.Action<IBattleHudRuntimeFeedbackView> bindMatchHudRuntimeFeedback)
     {
         _bindMatchHudRuntimeFeedback = bindMatchHudRuntimeFeedback;
         if (_matchHudRuntimeFeedbackView != null)
@@ -124,7 +124,7 @@ public sealed class MainMenuPlayUI
         BattleHudRuntimeFeedbackSystem.ClearCommandMode(_matchHudRuntimeFeedbackView);
     }
 
-    public void ConfigureMatchHudSquadTrayBinding(System.Action<MatchHudSquadTrayView> bindMatchHudSquadTray)
+    public void ConfigureMatchHudSquadTrayBinding(System.Action<IMatchHudSquadTrayView> bindMatchHudSquadTray)
     {
         _bindMatchHudSquadTray = bindMatchHudSquadTray;
         if (_matchHudSquadTrayView != null)

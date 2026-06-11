@@ -1,5 +1,4 @@
 using System;
-using Game.Scripts.UI;
 using UnityEngine;
 
 internal sealed class BuildingGameplayCompositionResultSystem
@@ -36,8 +35,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Func<Rect, bool> trySelectFirstBuildingInScreenRect,
-        Action<MainMenuPlayUI> bindMainMenu,
-        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
+        Action<IMatchRuntimeUi> bindMainMenu,
+        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
         Action dispose)
     {
         return new Result(
@@ -110,8 +109,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
-        public readonly Action<MainMenuPlayUI> BindMainMenu;
-        public readonly Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
+        public readonly Action<IMatchRuntimeUi> BindMainMenu;
+        public readonly Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
         public readonly Action Dispose;
 
         public Result(
@@ -146,8 +145,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<Rect, bool> trySelectFirstBuildingInScreenRect,
-            Action<MainMenuPlayUI> bindMainMenu,
-            Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
+            Action<IMatchRuntimeUi> bindMainMenu,
+            Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
             Action dispose)
         {
             SelectionClick = selectionClick;

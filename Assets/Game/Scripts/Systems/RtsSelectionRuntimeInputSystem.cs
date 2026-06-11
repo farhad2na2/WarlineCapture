@@ -11,7 +11,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputSystem InputSystem;
-        public readonly MainMenuPlayUI MainMenuPlayUi;
+        public readonly IMatchRuntimeUi MainMenuPlayUi;
         public readonly float DragThresholdPixels;
         public readonly float SelectionModeHoldSeconds;
         public readonly Func<bool> GetExplicitAttackTargetModeActive;
@@ -42,7 +42,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RtsSelectionInputSystem inputSystem,
-            MainMenuPlayUI mainMenuPlayUi,
+            IMatchRuntimeUi mainMenuPlayUi,
             float dragThresholdPixels,
             float selectionModeHoldSeconds,
             Func<bool> getExplicitAttackTargetModeActive,
@@ -222,7 +222,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         RtsSelectionInputSystem input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
-        MainMenuPlayUI mainMenu = context.MainMenuPlayUi;
+        IMatchRuntimeUi mainMenu = context.MainMenuPlayUi;
         if (mainMenu != null && mainMenu.IsPointerOverSelectionCancelUi(pointerPosition))
         {
             context.LogClickDiagnostic?.Invoke($"pressSelectionCancelUi pos={pointerPosition} frame={Time.frameCount}");
@@ -695,7 +695,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         RtsSelectionInputSystem input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
-        MainMenuPlayUI mainMenu = context.MainMenuPlayUi;
+        IMatchRuntimeUi mainMenu = context.MainMenuPlayUi;
         if (!input.SelectionModeHoldArmed)
             return;
 

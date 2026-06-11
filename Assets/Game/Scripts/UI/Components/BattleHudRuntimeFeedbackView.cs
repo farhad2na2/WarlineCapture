@@ -3,8 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
+public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRuntimeFeedbackView
 {
+    private static readonly MatchOverlayCommandTabFeedbackSystem CommandTabFeedbackSystem = new();
+
     [SerializeField] private BattleHudTacticalFeedbackView tacticalFeedback;
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
     [SerializeField] private GameObject feedbackPanel;
@@ -41,31 +43,31 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     public GameObject FeedbackActionsRoot => feedbackActionsRoot;
     public Button BoardAllButton => boardAllButton;
     public Button CancelButton => cancelButton;
-    internal TacticalCommandMode CurrentCommandMode
+    public TacticalCommandMode CurrentCommandMode
     {
         get => _currentCommandMode;
         set => _currentCommandMode = value;
     }
 
-    internal TacticalCommandMode StickyCommandMode
+    public TacticalCommandMode StickyCommandMode
     {
         get => _stickyCommandMode;
         set => _stickyCommandMode = value;
     }
 
-    internal TacticalCommandResult LastCommandResult
+    public TacticalCommandResult LastCommandResult
     {
         get => _lastCommandResult;
         set => _lastCommandResult = value;
     }
 
-    internal bool HasLastCommandResult
+    public bool HasLastCommandResult
     {
         get => _hasLastCommandResult;
         set => _hasLastCommandResult = value;
     }
 
-    internal BattleHudRuntimeFeedbackState RuntimeFeedbackState =>
+    public BattleHudRuntimeFeedbackState RuntimeFeedbackState =>
         new(_currentCommandMode, _stickyCommandMode, _lastCommandResult, _hasLastCommandResult);
 
     private void Awake()
@@ -115,7 +117,7 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
         ApplyPersistentCommandFeedback(model, MatchHudCommandFeedbackActionsModel.Hidden);
     }
 
-    internal void ApplyPersistentCommandFeedback(
+    public void ApplyPersistentCommandFeedback(
         MatchHudCommandFeedbackModel model,
         MatchHudCommandFeedbackActionsModel actionsModel)
     {
@@ -135,7 +137,7 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
         ApplyCommandFeedbackActions(actionsModel);
     }
 
-    internal void ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel model, float now)
+    public void ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel model, float now)
     {
         if (!model.Visible || string.IsNullOrWhiteSpace(model.Message))
             return;
@@ -154,14 +156,14 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
         ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
     }
 
-    internal void ClearPersistentCommandFeedback()
+    public void ClearPersistentCommandFeedback()
     {
         _hasPersistentCommandFeedback = false;
         _persistentCommandFeedback = MatchHudCommandFeedbackModel.Hidden;
         _persistentCommandFeedbackActions = MatchHudCommandFeedbackActionsModel.Hidden;
     }
 
-    internal void TickFeedbackLifetime(float now)
+    public void TickFeedbackLifetime(float now)
     {
         if (!_transientFeedbackActive || now < _transientFeedbackExpiresAt)
             return;
@@ -230,6 +232,58 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
     {
         return ContainsScreenPoint(boardAllButton != null ? boardAllButton.transform as RectTransform : null, screenPosition) ||
                ContainsScreenPoint(cancelButton != null ? cancelButton.transform as RectTransform : null, screenPosition);
+    }
+
+    public void ApplyCommandModeTabs(TacticalCommandMode mode)
+    {
+        CommandTabFeedbackSystem.ApplyCommandMode(commandTabGroups, mode);
+    }
+
+    public void ClearCommandModeTabs()
+    {
+        CommandTabFeedbackSystem.ClearCommandMode(commandTabGroups);
+    }
+
+    public void ShowSelectedEntity(string displayName, string status)
+    {
+        ResolveTacticalFeedback()?.ShowSelectedEntity(displayName, status);
+    }
+
+    public void HideSelectedEntity()
+    {
+        ResolveTacticalFeedback()?.HideSelectedEntity();
+    }
+
+    public void ShowCommandMode(string mode)
+    {
+        ResolveTacticalFeedback()?.ShowCommandMode(mode);
+    }
+
+    public void HideCommandMode()
+    {
+        ResolveTacticalFeedback()?.HideCommandMode();
+    }
+
+    public void ShowInvalidCommand(string reason)
+    {
+        ResolveTacticalFeedback()?.ShowInvalidCommand(reason);
+    }
+
+    public void HideInvalidCommand()
+    {
+        ResolveTacticalFeedback()?.HideInvalidCommand();
+    }
+
+    public void SetWorldMarkersVisible(bool visible)
+    {
+        ResolveTacticalFeedback()?.SetWorldMarkersVisible(visible);
+    }
+
+    private BattleHudTacticalFeedbackView ResolveTacticalFeedback()
+    {
+        return tacticalFeedback != null
+            ? tacticalFeedback
+            : GetComponent<BattleHudTacticalFeedbackView>();
     }
 
     private void BindUnityEvents()

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Game.Scripts.UI;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -24,7 +23,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     public readonly struct Result
     {
-        public readonly System.Action<MainMenuPlayUI> BindSelectionMainMenu;
+        public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
         public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
@@ -33,11 +32,11 @@ internal sealed class SelectionGameplayStartupSystem
         public readonly SelectionUiCameraSystem SelectionUiCamera;
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
-        public readonly SelectionRectangleView SelectionRectangleView;
+        public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly System.Func<bool> ShouldBlockBuildingSelectionClick;
 
         public Result(
-            System.Action<MainMenuPlayUI> bindSelectionMainMenu,
+            System.Action<IMatchRuntimeUi> bindSelectionMainMenu,
             System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
@@ -46,7 +45,7 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionUiCameraSystem selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerSystem selectionScreenMarkers,
-            SelectionRectangleView selectionRectangleView,
+            ISelectionRectangleView selectionRectangleView,
             System.Func<bool> shouldBlockBuildingSelectionClick)
         {
             BindSelectionMainMenu = bindSelectionMainMenu;
@@ -67,6 +66,7 @@ internal sealed class SelectionGameplayStartupSystem
         RTSSelectionSystemConfig rtsSelectionConfig,
         Camera worldCamera,
         Transform runtimeUiRoot,
+        System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         RoadBuildReadModelSystem roadBuildReadModel,
         BuildingPlacementInteractionSystem buildingInteraction,
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
@@ -136,9 +136,9 @@ internal sealed class SelectionGameplayStartupSystem
         var visibleSelectionScratch = new List<Entity>();
         var selectedAttackSourceScratch = new List<Entity>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
-        MainMenuPlayUI mainMenuPlayUi = null;
+        IMatchRuntimeUi mainMenuPlayUi = null;
         IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
-        MatchHudSquadTrayView matchHudSquadTrayView = null;
+        IMatchHudSquadTrayView matchHudSquadTrayView = null;
         RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
@@ -167,7 +167,7 @@ internal sealed class SelectionGameplayStartupSystem
             selectionUiCamera,
             selectionBuildingInteraction,
             selectionScreenMarkers,
-            EnsureSelectionRectangleView(runtimeUiRoot, rtsSelectionConfig),
+            createSelectionRectangleView?.Invoke(runtimeUiRoot, rtsSelectionConfig),
             ShouldBlockBuildingSelectionClick);
 
         bool ShouldBlockBuildingSelectionClick()
@@ -176,7 +176,7 @@ internal sealed class SelectionGameplayStartupSystem
                    rtsSelectionInputSystem.HasActiveWorldTargetCommandMode(out _);
         }
 
-        void BindSelectionMainMenu(MainMenuPlayUI mainMenu)
+        void BindSelectionMainMenu(IMatchRuntimeUi mainMenu)
         {
             mainMenuPlayUi = mainMenu;
             roadBuildReadState = roadBuildReadModel;
@@ -203,7 +203,7 @@ internal sealed class SelectionGameplayStartupSystem
                 passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(passenger));
         }
 
-        void BindBattleHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
+        void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
         {
             selectionHudFeedbackSystem.BindBattleHudRuntimeFeedback(view);
         }
@@ -218,7 +218,7 @@ internal sealed class SelectionGameplayStartupSystem
                 TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Board command unavailable."));
         }
 
-        void BindMatchHudSquadTray(MatchHudSquadTrayView view)
+        void BindMatchHudSquadTray(IMatchHudSquadTrayView view)
         {
             matchHudSquadTrayView = view;
             if (view == null)
@@ -1872,18 +1872,4 @@ internal sealed class SelectionGameplayStartupSystem
         return $"{sourceName} entity={entity} cell={cell} faction={faction} health={health} seats={passengers}/{capacity}";
     }
 
-    private static SelectionRectangleView EnsureSelectionRectangleView(
-        Transform runtimeUiRoot,
-        RTSSelectionSystemConfig rtsSelectionConfig)
-    {
-        if (runtimeUiRoot == null)
-            return null;
-
-        SelectionRectangleView view = runtimeUiRoot.GetComponent<SelectionRectangleView>();
-        if (view == null)
-            view = runtimeUiRoot.gameObject.AddComponent<SelectionRectangleView>();
-
-        view.ApplyConfig(rtsSelectionConfig);
-        return view;
-    }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public sealed class MatchHudSquadTrayView : MonoBehaviour
+public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView
 {
     [Serializable]
     public sealed class Card
@@ -81,6 +81,11 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour
             card.FrameImage.sprite = selected ? selectedFrameSprite : normalFrameSprite;
             card.FrameImage.color = _frameBaseColors[i];
         }
+    }
+
+    public void ClearActiveSlot()
+    {
+        SetSelectedSlot(MatchHudSquadTraySlot.None);
     }
 
     public void FlashDisabled(MatchHudSquadTraySlot slot)

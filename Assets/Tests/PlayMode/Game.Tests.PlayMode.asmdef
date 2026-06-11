@@ -4,9 +4,11 @@
     "references": [
         "Game.Authoring",
         "Game.Components",
+        "Game.Composition",
         "Game.Configs",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
+        "Game.UI.Runtime",
         "Game.Runtime",
         "Unity.Collections",
         "Unity.Entities",

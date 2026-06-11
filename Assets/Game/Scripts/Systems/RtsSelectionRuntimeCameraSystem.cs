@@ -19,7 +19,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
         public readonly RtsCameraSystem CameraSystem;
         public readonly RtsCameraRequestSystem CameraRequestSystem;
         public readonly Camera WorldCamera;
-        public readonly MainMenuPlayUI MainMenuPlayUi;
+        public readonly IMatchRuntimeUi MainMenuPlayUi;
         public readonly RoadBuildReadModelSystem RoadBuildReadModel;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
@@ -51,7 +51,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             RtsCameraSystem cameraSystem,
             RtsCameraRequestSystem cameraRequestSystem,
             Camera worldCamera,
-            MainMenuPlayUI mainMenuPlayUi,
+            IMatchRuntimeUi mainMenuPlayUi,
             RoadBuildReadModelSystem roadBuildReadModel,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,

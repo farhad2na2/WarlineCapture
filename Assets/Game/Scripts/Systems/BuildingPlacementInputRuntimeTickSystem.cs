@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -22,7 +21,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
         public readonly Func<bool> HasActiveBuilding;
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly Func<MainMenuPlayUI> GetMainMenu;
+        public readonly Func<IMatchRuntimeUi> GetMainMenu;
         public readonly BuildingSelectionClickSystem SelectionClickSystem;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly Func<bool> ShouldBlockBuildingSelectionClick;
@@ -38,7 +37,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             BuildingPlacementPreviewSystem placementPreviewSystem,
             Func<bool> hasActiveBuilding,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            Func<MainMenuPlayUI> getMainMenu,
+            Func<IMatchRuntimeUi> getMainMenu,
             BuildingSelectionClickSystem selectionClickSystem,
             BuildingSelectionClickSystem.Context selectionClickContext,
             Func<bool> shouldBlockBuildingSelectionClick,
@@ -129,7 +128,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         if (pointer.WasPressedThisFrame)
         {
             Vector2 pointerPosition = pointer.Position;
-            MainMenuPlayUI mainMenu = context.GetMainMenu?.Invoke();
+            IMatchRuntimeUi mainMenu = context.GetMainMenu?.Invoke();
             BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
             afterUi = gate.MeasuredAt;
 
@@ -160,7 +159,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             if (_pendingBuildingSelectionClick &&
                 Vector2.Distance(_buildingSelectionPressPosition, pointerPosition) < context.ClickDragThresholdPixels)
             {
-                MainMenuPlayUI mainMenu = context.GetMainMenu?.Invoke();
+                IMatchRuntimeUi mainMenu = context.GetMainMenu?.Invoke();
                 BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
                 afterUi = Math.Max(afterUi, gate.MeasuredAt);
 
@@ -194,7 +193,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
 
     private static BuildingSelectionClickGate GetBuildingSelectionClickGate(
         Context context,
-        MainMenuPlayUI mainMenu,
+        IMatchRuntimeUi mainMenu,
         Vector2 pointerPosition)
     {
         bool ignoreBecauseCommandUiPressed = mainMenu != null &&

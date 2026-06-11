@@ -75,7 +75,7 @@ internal sealed class RoadBuildCompositionSystem
         Result result,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        MainMenuPlayUI mainMenu)
+        IMatchRuntimeUi mainMenu)
     {
         BindDependencies(
             buildingPlacementInteraction,
@@ -87,7 +87,7 @@ internal sealed class RoadBuildCompositionSystem
         Result result,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        MainMenuPlayUI mainMenu,
+        IMatchRuntimeUi mainMenu,
         RuntimeGridBlockerSystem runtimeGridBlockers)
     {
         BindDependencies(
@@ -100,7 +100,7 @@ internal sealed class RoadBuildCompositionSystem
     private void BindDependencies(
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
-        MainMenuPlayUI mainMenu = null,
+        IMatchRuntimeUi mainMenu = null,
         RuntimeGridBlockerSystem runtimeGridBlockers = null)
     {
         _roadSource?.RoadBuildCompositionLifecycleSystem.BindDependencies(

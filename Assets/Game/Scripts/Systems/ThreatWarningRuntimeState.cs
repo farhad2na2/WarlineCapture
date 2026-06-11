@@ -1,13 +1,11 @@
-namespace Game.Scripts.UI
+public enum ThreatWarningType : byte
 {
-    public enum ThreatWarningType : byte
-    {
-        Ground = 1,
-        Air = 2
-    }
+    Ground = 1,
+    Air = 2
+}
 
-    public static class ThreatWarningRuntimeState
-    {
+public static class ThreatWarningRuntimeState
+{
         public static bool HasPendingWarning { get; private set; }
         public static ThreatWarningType PendingType { get; private set; }
         public static float PendingEtaSeconds { get; private set; }
@@ -33,5 +31,4 @@ namespace Game.Scripts.UI
             PendingEtaSeconds = 0f;
             PendingThreatCount = 0;
         }
-    }
 }

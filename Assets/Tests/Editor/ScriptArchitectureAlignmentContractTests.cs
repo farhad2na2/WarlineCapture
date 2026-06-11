@@ -22,7 +22,6 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
     private static readonly Dictionary<string, int> RuntimeUiDebugLogDebtAllowlist = new(StringComparer.Ordinal)
     {
-        { "Assets/Game/Scripts/UI/GameStrings.cs|Debug.LogWarning", 1 },
         { "Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs|Debug.LogError", 2 },
         { "Assets/Game/Scripts/UI/Shell/UIShellRouteButtonView.cs|Debug.LogError", 1 },
     };
@@ -48,11 +47,27 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
     private static readonly HashSet<string> SelectionPanelConcreteSystemBindingAllowlist = new(StringComparer.Ordinal)
     {
-        "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs",
-        "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs",
     };
 
     private static readonly HashSet<string> StaticUiRegistryDebtAllowlist = new(StringComparer.Ordinal);
+
+    private static readonly string[] ConcreteUiRuntimeTypes =
+    {
+        "MainMenuPlayUI",
+        "BattleHudRuntimeFeedbackView",
+        "MatchHudSquadTrayView",
+        "MatchHudSelectionPanelView",
+        "BuildDrawerView",
+        "MatchHudMinimapView",
+        "MatchOverlayCommandControlsView",
+        "MatchHudRightQuickRailView",
+        "SelectionRectangleView",
+        "UIShellContentView",
+        "MenuBootstrapView",
+        "MatchSceneView",
+    };
 
     private static readonly string[] BroadNameTokens =
     {
@@ -95,7 +110,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
                 bool compilesGameOrTestSource =
                     line.Contains("<Compile Include=\"Assets/Game/Scripts/", StringComparison.Ordinal) ||
                     line.Contains("<Compile Include=\"Assets/Tests/", StringComparison.Ordinal);
-                if ((!isPlayerProject && compilesAssetsSource) || compilesGameOrTestSource)
+                if ((!isPlayerProject && compilesAssetsSource) || (isPlayerProject && compilesGameOrTestSource))
                     violations.Add($"{normalizedProject}:{lineIndex + 1} still compiles an Assets source file: {line.Trim()}");
             }
         }
@@ -103,6 +118,44 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Assembly-CSharp editor projects must stay empty of Assets source files, and player projects must not compile game/test source. Add or update asmdefs instead of letting new scripts fall back to default assemblies.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.UI.Runtime\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Game.UI.Runtime`. Runtime code can depend on `Game.UI.Contracts`; Composition owns concrete UI wiring.");
+    }
+
+    [Test]
+    public void RuntimeLogicMustNotReferenceConcreteUiViews()
+    {
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeLogicSourceFiles())
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                foreach (string concreteType in ConcreteUiRuntimeTypes)
+                {
+                    if (ContainsConcreteTypeReference(line, concreteType))
+                    {
+                        violations.Add($"{normalized}:{lineIndex + 1} references concrete UI type `{concreteType}`: {line.Trim()}");
+                    }
+                }
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime logic must depend on `Game.UI.Contracts`, not concrete UI views. Keep concrete view lookup in `Assets/Game/Scripts/Composition` or UI-owned files.");
     }
 
     [Test]
@@ -391,6 +444,22 @@ public sealed class ScriptArchitectureAlignmentContractTests
         }
     }
 
+    private static IEnumerable<string> EnumerateRuntimeLogicSourceFiles()
+    {
+        foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
+        {
+            if (IsEditorPath(path) ||
+                IsAuthoringPath(path) ||
+                IsUiPath(path) ||
+                IsCompositionPath(path))
+            {
+                continue;
+            }
+
+            yield return path;
+        }
+    }
+
     private static IEnumerable<string> EnumerateSourceFiles(string root)
     {
         if (!Directory.Exists(root))
@@ -443,6 +512,71 @@ public sealed class ScriptArchitectureAlignmentContractTests
         }
 
         return null;
+    }
+
+    private static bool ContainsConcreteTypeReference(string line, string concreteType)
+    {
+        if (line.Contains("I" + concreteType, StringComparison.Ordinal))
+            return false;
+
+        string trimmed = line.TrimStart();
+        return StartsWithConcreteTypeDeclaration(trimmed, concreteType) ||
+               line.Contains("<" + concreteType, StringComparison.Ordinal) ||
+               line.Contains(concreteType + ">", StringComparison.Ordinal) ||
+               line.Contains("typeof(" + concreteType + ")", StringComparison.Ordinal) ||
+               line.Contains("new " + concreteType + "(", StringComparison.Ordinal) ||
+               line.Contains("as " + concreteType, StringComparison.Ordinal) ||
+               line.Contains("is " + concreteType, StringComparison.Ordinal);
+    }
+
+    private static bool StartsWithConcreteTypeDeclaration(string trimmedLine, string concreteType)
+    {
+        string[] prefixes =
+        {
+            "public ",
+            "private ",
+            "protected ",
+            "internal ",
+            "public readonly ",
+            "private readonly ",
+            "protected readonly ",
+            "internal readonly ",
+            "public static ",
+            "private static ",
+            "protected static ",
+            "internal static ",
+            "public static readonly ",
+            "private static readonly ",
+            "protected static readonly ",
+            "internal static readonly ",
+            "readonly ",
+            "static ",
+        };
+
+        if (StartsWithBareTypeDeclaration(trimmedLine, concreteType))
+            return true;
+
+        foreach (string prefix in prefixes)
+        {
+            if (trimmedLine.StartsWith(prefix + concreteType + " ", StringComparison.Ordinal) ||
+                trimmedLine.StartsWith(prefix + concreteType + "\t", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool StartsWithBareTypeDeclaration(string trimmedLine, string concreteType)
+    {
+        string prefix = concreteType + " ";
+        if (!trimmedLine.StartsWith(prefix, StringComparison.Ordinal))
+            return false;
+
+        int variableStart = prefix.Length;
+        return variableStart < trimmedLine.Length &&
+               (char.IsLower(trimmedLine[variableStart]) || trimmedLine[variableStart] == '_');
     }
 
     private static string ResolveDebugLogKind(string line)
@@ -547,6 +681,16 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static bool IsAuthoringPath(string path)
     {
         return NormalizePath(path).Contains("/Authorings/", StringComparison.Ordinal);
+    }
+
+    private static bool IsUiPath(string path)
+    {
+        return NormalizePath(path).Contains("/UI/", StringComparison.Ordinal);
+    }
+
+    private static bool IsCompositionPath(string path)
+    {
+        return NormalizePath(path).Contains("/Composition/", StringComparison.Ordinal);
     }
 
     private static string NormalizePath(string path)

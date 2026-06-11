@@ -9,7 +9,7 @@ public sealed class RtsSelectionRuntimeCameraContextSystem
         RtsCameraSystem cameraSystem,
         RtsCameraRequestSystem cameraRequestSystem,
         SelectionRuntimeConfigSystem.State runtimeConfig,
-        MainMenuPlayUI mainMenuPlayUi,
+        IMatchRuntimeUi mainMenuPlayUi,
         RoadBuildReadModelSystem roadBuildReadModel,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,

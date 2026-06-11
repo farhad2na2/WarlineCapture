@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts.UI
+public static class GameStrings
 {
-    public static class GameStrings
-    {
         private static readonly Dictionary<string, string> Entries = new(StringComparer.Ordinal);
         private static bool _initialized;
 
@@ -70,5 +68,4 @@ namespace Game.Scripts.UI
         }
 
         public static bool IsInitialized => _initialized;
-    }
 }

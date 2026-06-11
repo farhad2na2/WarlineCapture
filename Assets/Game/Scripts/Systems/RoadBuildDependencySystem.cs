@@ -4,7 +4,7 @@ internal sealed class RoadBuildDependencySystem
     {
         public BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
-        public MainMenuPlayUI MainMenuPlayUi;
+        public IMatchRuntimeUi MainMenuPlayUi;
         public RuntimeGridBlockerSystem RuntimeGridBlockers;
     }
 
@@ -26,7 +26,7 @@ internal sealed class RoadBuildDependencySystem
         State state,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        MainMenuPlayUI mainMenuPlayUi,
+        IMatchRuntimeUi mainMenuPlayUi,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RoadMinimapEventSystem roadMinimapEventSystem)
     {

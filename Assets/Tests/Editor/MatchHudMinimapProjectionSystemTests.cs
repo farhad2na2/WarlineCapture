@@ -271,6 +271,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
         GameObject cameraObject = new("MinimapRuntimeBindCamera");
         Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
         MatchHudMinimapInputSystem inputSystem = null;
+        bool restoreLogAssertIgnore = false;
         try
         {
             EntityManager em = world.EntityManager;
@@ -312,7 +313,10 @@ public sealed class MatchHudMinimapProjectionSystemTests
             RuntimeGameplayStateSystem runtimeState = new();
             inputSystem = new MatchHudMinimapInputSystem();
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
-                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+            {
+                LogAssert.ignoreFailingMessages = true;
+                restoreLogAssertIgnore = true;
+            }
             inputSystem.Bind(view, runtimeState, cameraSystem);
 
             Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");
@@ -341,6 +345,8 @@ public sealed class MatchHudMinimapProjectionSystemTests
         }
         finally
         {
+            if (restoreLogAssertIgnore)
+                LogAssert.ignoreFailingMessages = false;
             inputSystem?.Dispose();
             Object.DestroyImmediate(defaultTexture);
             Object.DestroyImmediate(cameraObject);

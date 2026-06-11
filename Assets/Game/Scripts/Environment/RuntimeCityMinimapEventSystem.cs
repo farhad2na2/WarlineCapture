@@ -1,9 +1,9 @@
 internal sealed class RuntimeCityMinimapEventSystem
 {
-    private MainMenuPlayUI _mainMenuPlayUi;
+    private IMatchRuntimeUi _mainMenuPlayUi;
     private bool _staticMinimapChanged;
 
-    public void Configure(MainMenuPlayUI mainMenuPlayUi)
+    public void Configure(IMatchRuntimeUi mainMenuPlayUi)
     {
         _mainMenuPlayUi = mainMenuPlayUi;
     }

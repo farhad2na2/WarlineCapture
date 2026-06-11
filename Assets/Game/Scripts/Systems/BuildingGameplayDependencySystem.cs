@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class BuildingGameplayDependencySystem
 {
-    internal MainMenuPlayUI MainMenuPlayUi { get; private set; }
+    internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
     internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
     internal RuntimeGridBlockerSystem RuntimeGridBlockerSystem { get; private set; }
@@ -15,7 +15,7 @@ internal sealed class BuildingGameplayDependencySystem
     internal DayNightSystem DayNightSystem { get; private set; }
 
     internal void SetStartupDependencies(
-        MainMenuPlayUI mainMenuPlayUi,
+        IMatchRuntimeUi mainMenuPlayUi,
         FactionVisualSettings factionVisualSettings,
         DayNightSystem dayNightSystem)
     {
@@ -25,7 +25,7 @@ internal sealed class BuildingGameplayDependencySystem
     }
 
     internal void BindRuntimeDependencies(
-        MainMenuPlayUI mainMenuPlayUi,
+        IMatchRuntimeUi mainMenuPlayUi,
         DayNightSystem dayNightSystem = null,
         SelectionUiCameraSystem selectionUiCameraSystem = null,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,

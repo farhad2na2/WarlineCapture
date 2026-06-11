@@ -84,7 +84,7 @@ internal sealed class MatchBootstrapSystem
     public SelectionUiCameraSystem SelectionUiCamera { get; private set; }
     public SelectionBuildingInteractionSystem SelectionBuildingInteraction { get; private set; }
     public SelectionScreenMarkerSystem SelectionScreenMarkers { get; private set; }
-    public SelectionRectangleView SelectionRectangle { get; private set; }
+    public ISelectionRectangleView SelectionRectangle { get; private set; }
     public MainMenuPlayUI MainMenu { get; private set; }
     public DayNightSystem DayNight { get; private set; }
     public FactionVisualSettings FactionVisuals { get; private set; }
@@ -105,11 +105,11 @@ internal sealed class MatchBootstrapSystem
     private Action _roadRuntimeUpdate;
     private Action _roadOnGui;
     private Action _disposeRoad;
-    private Action<MainMenuPlayUI> _bindRoadMainMenu;
-    private Action<MainMenuPlayUI, RuntimeGridBlockerSystem> _bindRoadGameplayFeatures;
-    private Action<MainMenuPlayUI> _bindBuildingMainMenu;
-    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
-    private Action<MainMenuPlayUI> _bindSelectionMainMenu;
+    private Action<IMatchRuntimeUi> _bindRoadMainMenu;
+    private Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> _bindRoadGameplayFeatures;
+    private Action<IMatchRuntimeUi> _bindBuildingMainMenu;
+    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
+    private Action<IMatchRuntimeUi> _bindSelectionMainMenu;
     private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
     private Action _citizenPopulationRuntimeUpdate;
@@ -380,6 +380,7 @@ internal sealed class MatchBootstrapSystem
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
+        Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         Transform mapBuildingAuthoringRoot,
         int ownerLayer)
     {
@@ -398,6 +399,7 @@ internal sealed class MatchBootstrapSystem
             directionalLight,
             globalVolume,
             runtimeUiRoot,
+            createSelectionRectangleView,
             mapBuildingAuthoringRoot,
             ownerLayer);
     }
@@ -603,7 +605,7 @@ internal sealed class MatchBootstrapSystem
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
-        MainMenuPlayUI mainMenu,
+        IMatchRuntimeUi mainMenu,
         UnitImpostorRenderSystem unitImpostors,
         ref bool gameplayStartPending)
     {
@@ -646,7 +648,7 @@ internal sealed class MatchBootstrapSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         Action roadBuildOnGui,
-        SelectionRectangleView selectionRectangleView)
+        ISelectionRectangleView selectionRectangleView)
     {
         gameplayRuntimeUpdateSystem.OnGui(
             gameplayInitialized,
@@ -847,6 +849,21 @@ internal sealed class MatchBootstrapSystem
         _gameplayStartStatus = string.IsNullOrEmpty(status) ? "Starting match" : status;
     }
 
+    private static ISelectionRectangleView EnsureSelectionRectangleView(
+        Transform runtimeUiRoot,
+        RTSSelectionSystemConfig rtsSelectionConfig)
+    {
+        if (runtimeUiRoot == null)
+            return null;
+
+        SelectionRectangleView view = runtimeUiRoot.GetComponent<SelectionRectangleView>();
+        if (view == null)
+            view = runtimeUiRoot.gameObject.AddComponent<SelectionRectangleView>();
+
+        view.ApplyConfig(rtsSelectionConfig);
+        return view;
+    }
+
     private void InitializeManagedRuntimeIfNeeded()
     {
         if (_managedRuntimeInitialized)
@@ -869,6 +886,7 @@ internal sealed class MatchBootstrapSystem
             DirectionalLight,
             GlobalVolume,
             _runtimeUiRoot,
+            EnsureSelectionRectangleView,
             MapBuildingAuthoringRoot,
             MatchScene != null ? MatchScene.gameObject.layer : 0);
 

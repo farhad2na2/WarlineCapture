@@ -78,7 +78,7 @@ public sealed class RuntimeCityCompositionSystem
         BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         Transform runtimeRoot,
-        MainMenuPlayUI mainMenuPlayUi)
+        IMatchRuntimeUi mainMenuPlayUi)
     {
         _config = configAsset;
         _runtimeCityRoadBuildBridgeSystem.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);

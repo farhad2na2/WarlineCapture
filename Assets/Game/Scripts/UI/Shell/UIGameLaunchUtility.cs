@@ -4,7 +4,7 @@ using UnityEngine;
 public static class UIGameLaunchUtility
 {
     private static readonly SceneLifecycleSystem SceneLifecycleSystem = new();
-    private static readonly MatchStartSystem MatchStartSystem = new();
+    private static readonly MatchStartRequestSystem MatchStartRequestSystem = new();
 
     public static void StartExistingGameplayAndHideRouter(Component source)
     {
@@ -26,7 +26,7 @@ public static class UIGameLaunchUtility
 
         EntityManager entityManager = world.EntityManager;
         bool loadQueued = SceneLifecycleSystem.QueueLoadMatch(entityManager);
-        bool startQueued = MatchStartSystem.QueueStartAfterMatchLoaded(entityManager);
+        bool startQueued = MatchStartRequestSystem.QueueStartAfterMatchLoaded(entityManager);
         if (!loadQueued || !startQueued)
             Debug.LogError($"[GameLaunch] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");
     }

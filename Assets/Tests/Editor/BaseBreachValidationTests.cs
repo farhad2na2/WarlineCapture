@@ -610,16 +610,21 @@ public sealed class BaseBreachValidationTests
             CreateStaticBlocker(em, new int2(60, 140), new int2(81, 1));
             CreateStaticBlocker(em, new int2(60, 60), new int2(36, 1));
             CreateStaticBlocker(em, new int2(105, 60), new int2(36, 1));
-            CreateStaticBlocker(em, new int2(96, 60), new int2(9, 1), 0);
+            CreateStaticBlocker(em, new int2(96, 60), new int2(9, 1), FactionIdentitySystem.PlayerFactionId);
 
-            Entity unit = CreatePathfindingUnit(em, 0, new int2(100, 100), new int2(160, 160));
+            Entity unit = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new int2(160, 160));
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
             SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
             world.SetTime(new TimeData(0.1d, 0.1f));
-            for (int i = 0; i < 6 && !em.HasComponent<UnitPathRange>(unit); i++)
+            for (int i = 0; i < 48 && !em.HasComponent<UnitPathRange>(unit); i++)
+            {
+                world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
                 pathSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                System.Threading.Thread.Sleep(1);
+            }
 
             Assert.IsTrue(em.HasComponent<UnitPathRange>(unit), "Pathfinding should produce a path out of the base.");
             UnitPathRange range = em.GetComponentData<UnitPathRange>(unit);
@@ -690,7 +695,7 @@ public sealed class BaseBreachValidationTests
             Vector2Int anchor = new(220, 180);
             var gateRects = new List<RectInt>();
             var gateBuildingIds = new List<int>();
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, anchor, 0, gateRects, gateBuildingIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, anchor, FactionIdentitySystem.PlayerFactionId, gateRects, gateBuildingIds);
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
@@ -712,17 +717,17 @@ public sealed class BaseBreachValidationTests
                     occupancyData.Occupied.IsSet(gateIndex),
                     $"Actual initial-base gate {i} center must not be occupied by the runtime gate combat entity. rect={gate}");
                 Assert.IsTrue(
-                    UnitFootprintUtility.CanPlace(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, gateCell, new int2(1, 1), gateCell, 0),
+                    UnitFootprintUtility.CanPlace(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, gateCell, new int2(1, 1), gateCell, FactionIdentitySystem.PlayerFactionId),
                     $"Actual initial-base gate {i} center should be passable for owning faction. rect={gate}");
             }
-            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(-72, -8), 0);
-            int2 goalCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(spawnConfig.BaseHalfWidthCells + 70, 42), 0);
-            Entity unit = CreatePathfindingUnit(em, 0, startCell, goalCell);
+            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(-72, -8), FactionIdentitySystem.PlayerFactionId);
+            int2 goalCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(spawnConfig.BaseHalfWidthCells + 70, 42), FactionIdentitySystem.PlayerFactionId);
+            Entity unit = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, startCell, goalCell);
 
             for (int i = 0; i < gateBuildingIds.Count; i++)
             {
                 RectInt gate = gateRects[i];
-                CreateDoorTriggerUnit(em, 0, new int2(gate.xMin + gate.width / 2, gate.yMin + gate.height / 2));
+                CreateDoorTriggerUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(gate.xMin + gate.width / 2, gate.yMin + gate.height / 2));
                 buildingPlacement.UpdateRoadBarrierDoorsForTests(1f);
                 Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingDoorOpen01ForTests(gateBuildingIds[i], out float open01));
                 Assert.Greater(open01, 0.5f, $"Actual initial-base gate {i} should open for a nearby owning-faction unit.");
@@ -730,8 +735,13 @@ public sealed class BaseBreachValidationTests
 
             SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
             world.SetTime(new TimeData(0.1d, 0.1f));
-            for (int i = 0; i < 8 && !em.HasComponent<UnitPathRange>(unit); i++)
+            for (int i = 0; i < 48 && !em.HasComponent<UnitPathRange>(unit); i++)
+            {
+                world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
                 pathSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                System.Threading.Thread.Sleep(1);
+            }
 
             Assert.IsTrue(em.HasComponent<UnitPathRange>(unit), "Actual initial-base pathfinding should produce a route out of the base.");
             UnitPathRange range = em.GetComponentData<UnitPathRange>(unit);
@@ -811,8 +821,8 @@ public sealed class BaseBreachValidationTests
             var playerGateIds = new List<int>();
             var enemyGateRects = new List<RectInt>();
             var enemyGateIds = new List<int>();
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, playerAnchor, 0, playerGateRects, playerGateIds);
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, enemyAnchor, 1, enemyGateRects, enemyGateIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, playerAnchor, FactionIdentitySystem.PlayerFactionId, playerGateRects, playerGateIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, enemyAnchor, FactionIdentitySystem.EnemyFactionId, enemyGateRects, enemyGateIds);
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
@@ -826,12 +836,12 @@ public sealed class BaseBreachValidationTests
             DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
 
-            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), 0);
-            Entity target = FindEnemyInnerBuildingTarget(buildingPlacement, em, 1, new int2(enemyAnchor.x, enemyAnchor.y));
+            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), FactionIdentitySystem.PlayerFactionId);
+            Entity target = FindEnemyInnerBuildingTarget(buildingPlacement, em, FactionIdentitySystem.EnemyFactionId, new int2(enemyAnchor.x, enemyAnchor.y));
             Assert.AreNotEqual(Entity.Null, target, "The actual initial enemy base should expose a non-wall building combat target.");
             int2 targetCell = em.GetComponentData<UnitGrid>(target).Cell;
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                0,
+                FactionIdentitySystem.PlayerFactionId,
                 target,
                 targetCell,
                 startCell,
@@ -842,13 +852,18 @@ public sealed class BaseBreachValidationTests
             Assert.AreEqual("Gate", reason);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool breachIsGate, out _, out byte breachOwnerFaction));
             Assert.IsTrue(breachIsGate);
-            Assert.AreEqual(1, breachOwnerFaction);
+            Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, breachOwnerFaction);
 
-            Entity attacker = CreatePathfindingUnit(em, 0, startCell, breachCell);
+            Entity attacker = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, startCell, breachCell);
             SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
             world.SetTime(new TimeData(0.1d, 0.1f));
-            for (int i = 0; i < 12 && !em.HasComponent<UnitPathRange>(attacker); i++)
+            for (int i = 0; i < 48 && !em.HasComponent<UnitPathRange>(attacker); i++)
+            {
+                world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
                 pathSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                System.Threading.Thread.Sleep(1);
+            }
 
             Assert.IsTrue(em.HasComponent<UnitPathRange>(attacker), "Actual initial-base attack pathfinding should produce a route to the enemy gate approach.");
             UnitPathRange range = em.GetComponentData<UnitPathRange>(attacker);

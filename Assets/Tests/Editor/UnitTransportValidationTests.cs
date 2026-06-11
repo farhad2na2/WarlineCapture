@@ -705,6 +705,8 @@ public sealed class UnitTransportValidationTests
         _blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        for (int i = 0; i < _friendlyPassFactionIds.Length; i++)
+            _friendlyPassFactionIds[i] = byte.MaxValue;
 
         Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
@@ -736,7 +738,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitTransportCapacity),
             typeof(LocalToWorld),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = 0 });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(3, 3) });
         em.SetComponentData(entity, new UnitTransportCapacity { SoldierCapacity = 10 });
@@ -771,7 +773,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMovementBehavior),
             typeof(UnitTransportBoardingTarget),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = 0 });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
@@ -794,7 +796,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMoveVisualComponent),
             typeof(LocalTransform),
             typeof(Disabled));
-        em.SetComponentData(entity, new Faction { Id = 0 });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = new int2(0, 0) });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });

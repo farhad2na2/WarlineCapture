@@ -6,7 +6,7 @@ public sealed class RtsSelectionRuntimeInputContextSystem
     public RtsSelectionRuntimeInputSystem.Context Create(
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         RtsSelectionInputSystem inputSystem,
-        MainMenuPlayUI mainMenuPlayUi,
+        IMatchRuntimeUi mainMenuPlayUi,
         SelectionRuntimeConfigSystem.State runtimeConfig,
         Func<bool> getExplicitAttackTargetModeActive,
         Action<bool> setExplicitAttackTargetModeActive,

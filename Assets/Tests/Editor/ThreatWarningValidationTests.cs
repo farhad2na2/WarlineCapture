@@ -1,4 +1,3 @@
-using Game.Scripts.UI;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;

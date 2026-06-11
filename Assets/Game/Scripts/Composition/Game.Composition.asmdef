@@ -1,28 +1,30 @@
 {
-    "name": "Game.Tests.Editor",
+    "name": "Game.Composition",
     "rootNamespace": "",
     "references": [
         "Game.Authoring",
         "Game.Components",
-        "Game.Composition",
         "Game.Configs",
-        "Game.Editor",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",
+        "sniveler-code.gpu-animation",
+        "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",
+        "Unity.Entities.Hybrid",
+        "Unity.InputSystem",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
         "Unity.TextMeshPro",
         "Unity.Transforms",
         "UnityEngine.UI"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
@@ -30,8 +32,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
     "noEngineReferences": false
 }

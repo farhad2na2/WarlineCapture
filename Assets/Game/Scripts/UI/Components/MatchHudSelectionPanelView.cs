@@ -8,157 +8,6 @@ using System.Collections.Generic;
 [DisallowMultipleComponent]
 public sealed class MatchHudSelectionPanelView : MonoBehaviour
 {
-    public readonly struct PassengerItemModel
-    {
-        public readonly Entity Passenger;
-        public readonly string DisplayName;
-        public readonly string RoleText;
-        public readonly string HealthText;
-        public readonly float Health01;
-        public readonly Sprite PortraitSprite;
-        public readonly bool ExitEnabled;
-
-        public PassengerItemModel(
-            Entity passenger,
-            string displayName,
-            string roleText,
-            string healthText,
-            float health01,
-            Sprite portraitSprite,
-            bool exitEnabled)
-        {
-            Passenger = passenger;
-            DisplayName = displayName;
-            RoleText = roleText;
-            HealthText = healthText;
-            Health01 = health01;
-            PortraitSprite = portraitSprite;
-            ExitEnabled = exitEnabled;
-        }
-    }
-
-    public readonly struct TransportPassengersModel
-    {
-        public readonly bool Visible;
-        public readonly bool DrawerOpen;
-        public readonly Entity Transport;
-        public readonly int PassengerCount;
-        public readonly int Capacity;
-        public readonly bool ExitAllEnabled;
-        public readonly IReadOnlyList<PassengerItemModel> Passengers;
-
-        public TransportPassengersModel(
-            bool visible,
-            bool drawerOpen,
-            Entity transport,
-            int passengerCount,
-            int capacity,
-            bool exitAllEnabled,
-            IReadOnlyList<PassengerItemModel> passengers)
-        {
-            Visible = visible;
-            DrawerOpen = drawerOpen;
-            Transport = transport;
-            PassengerCount = passengerCount;
-            Capacity = capacity;
-            ExitAllEnabled = exitAllEnabled;
-            Passengers = passengers;
-        }
-
-        public static TransportPassengersModel Hidden => new(false, false, Entity.Null, 0, 0, false, null);
-    }
-
-    public readonly struct Model
-    {
-        public readonly bool Visible;
-        public readonly string Title;
-        public readonly string Subtitle;
-        public readonly string CurrentOrder;
-        public readonly string HealthText;
-        public readonly float Health01;
-        public readonly Sprite PortraitSprite;
-        public readonly SelectionSummaryPortraitKind PortraitKind;
-        public readonly bool BadgeVisible;
-        public readonly Sprite BadgeSprite;
-        public readonly bool ReturnEnabled;
-        public readonly bool DestroyEnabled;
-        public readonly bool BoardEnabled;
-
-        public Model(
-            bool visible,
-            string title,
-            string subtitle,
-            string currentOrder,
-            string healthText,
-            float health01,
-            Sprite portraitSprite,
-            bool badgeVisible,
-            Sprite badgeSprite,
-            bool returnEnabled,
-            bool destroyEnabled,
-            bool boardEnabled)
-            : this(
-                visible,
-                title,
-                subtitle,
-                currentOrder,
-                healthText,
-                health01,
-                portraitSprite,
-                SelectionSummaryPortraitKind.GenericSquad,
-                badgeVisible,
-                badgeSprite,
-                returnEnabled,
-                destroyEnabled,
-                boardEnabled)
-        {
-        }
-
-        public Model(
-            bool visible,
-            string title,
-            string subtitle,
-            string currentOrder,
-            string healthText,
-            float health01,
-            Sprite portraitSprite,
-            SelectionSummaryPortraitKind portraitKind,
-            bool badgeVisible,
-            Sprite badgeSprite,
-            bool returnEnabled,
-            bool destroyEnabled,
-            bool boardEnabled)
-        {
-            Visible = visible;
-            Title = title;
-            Subtitle = subtitle;
-            CurrentOrder = currentOrder;
-            HealthText = healthText;
-            Health01 = health01;
-            PortraitSprite = portraitSprite;
-            PortraitKind = portraitKind;
-            BadgeVisible = badgeVisible;
-            BadgeSprite = badgeSprite;
-            ReturnEnabled = returnEnabled;
-            DestroyEnabled = destroyEnabled;
-            BoardEnabled = boardEnabled;
-        }
-
-        public static Model Hidden => new(
-            false,
-            string.Empty,
-            string.Empty,
-            string.Empty,
-            string.Empty,
-            0f,
-            null,
-            false,
-            null,
-            false,
-            false,
-            false);
-    }
-
     [SerializeField] private GameObject selectedSquadPanel;
     [SerializeField] private Image selectedPortraitImage;
     [SerializeField] private TMP_Text titleText;
@@ -206,13 +55,13 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
     private bool _boardActionSelected;
     private bool _passengerDrawerOpen;
     private Entity _passengerDrawerTransport;
-    private readonly List<PassengerItemModel> _emptyPassengers = new();
+    private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
 
     private void Awake()
     {
         BindUnityEvents();
         CacheBoardActionNormalSprite();
-        ApplyTransportPassengers(TransportPassengersModel.Hidden);
+        ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
         HideSelection();
     }
 
@@ -326,7 +175,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
                (passengerDrawer != null && passengerDrawer.ContainsScreenPoint(screenPosition));
     }
 
-    public void Apply(Model model)
+    public void Apply(MatchHudSelectionPanelModel model)
     {
         SetSelectionVisible(model.Visible);
         if (!model.Visible)
@@ -355,14 +204,14 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         _passengerDrawerOpen = false;
     }
 
-    public void ApplyTransportPassengers(TransportPassengersModel model)
+    public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
     {
         if (!model.Visible || model.Transport == Entity.Null)
         {
             _passengerDrawerOpen = false;
             _passengerDrawerTransport = Entity.Null;
             ApplyPassengerChip(false, 0, 0);
-            passengerDrawer?.Apply(TransportPassengersModel.Hidden);
+            passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
             return;
         }
 
@@ -373,7 +222,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour
         }
 
         ApplyPassengerChip(true, model.PassengerCount, model.Capacity);
-        passengerDrawer?.Apply(new TransportPassengersModel(
+        passengerDrawer?.Apply(new MatchHudTransportPassengersModel(
             true,
             _passengerDrawerOpen,
             model.Transport,

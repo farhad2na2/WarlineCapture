@@ -2,22 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public enum SelectionSummaryPortraitKind
-{
-    None = 0,
-    GenericSquad = 1,
-    Soldiers = 2,
-    Vehicles = 3,
-    Aircraft = 4,
-    Transports = 5,
-    Buildings = 6,
-    MixedForce = 7,
-    MixedSoldierVehicle = 8,
-    MixedSoldierAircraft = 9,
-    MixedVehicleAircraft = 10,
-    MixedSoldierVehicleAircraft = 11
-}
-
 public sealed class SelectionSummaryQuerySystem
 {
     public readonly struct Summary

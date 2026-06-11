@@ -54,7 +54,7 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
         _exitPassengerRequested = null;
     }
 
-    public void Apply(MatchHudSelectionPanelView.TransportPassengersModel model)
+    public void Apply(MatchHudTransportPassengersModel model)
     {
         SetVisible(model.Visible && model.DrawerOpen);
         if (!model.Visible || !model.DrawerOpen)
@@ -67,7 +67,7 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
         if (exitAllButton != null)
             exitAllButton.interactable = model.ExitAllEnabled;
 
-        IReadOnlyList<MatchHudSelectionPanelView.PassengerItemModel> passengers = model.Passengers;
+        IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> passengers = model.Passengers;
         int passengerCount = passengers?.Count ?? 0;
         if (emptyStateRoot != null)
             emptyStateRoot.SetActive(passengerCount == 0);

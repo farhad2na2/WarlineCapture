@@ -53,13 +53,13 @@ public sealed class MatchHudTransportPassengerDrawerTests
         RectTransform contentRoot = GetReference<RectTransform>(new SerializedObject(drawer), "contentRoot");
         Sprite riflemanCardSprite = CreateTestSprite();
 
-        var passengers = new List<MatchHudSelectionPanelView.PassengerItemModel>
+        var passengers = new List<MatchHudSelectionPanelPassengerItemModel>
         {
             new(new Entity { Index = 12, Version = 1 }, "Rifleman", "SOLDIER", "Health: 80/100", 0.8f, riflemanCardSprite, true),
             new(new Entity { Index = 13, Version = 1 }, "Medic", "SOLDIER", "Health: 60/100", 0.6f, null, true)
         };
 
-        view.ApplyTransportPassengers(new MatchHudSelectionPanelView.TransportPassengersModel(
+        view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
             true,
             false,
             new Entity { Index = 99, Version = 1 },
@@ -73,7 +73,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsFalse(drawerRoot.activeSelf);
 
         view.ToggleTransportPassengerDrawer();
-        view.ApplyTransportPassengers(new MatchHudSelectionPanelView.TransportPassengersModel(
+        view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
             true,
             false,
             new Entity { Index = 99, Version = 1 },

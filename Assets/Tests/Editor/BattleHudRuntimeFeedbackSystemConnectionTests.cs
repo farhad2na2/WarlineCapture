@@ -158,7 +158,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
         SetPrivateField(panel, "boardAction", button);
         InvokeAwake(panel);
 
-        panel.Apply(new MatchHudSelectionPanelView.Model(
+        panel.Apply(new MatchHudSelectionPanelModel(
             true,
             "Unit",
             "Ready",
@@ -175,7 +175,7 @@ public sealed class BattleHudRuntimeFeedbackSystemConnectionTests
 
         Assert.AreEqual(colors.selectedColor, targetImage.color);
 
-        panel.Apply(new MatchHudSelectionPanelView.Model(
+        panel.Apply(new MatchHudSelectionPanelModel(
             true,
             "Unit",
             "Ready",

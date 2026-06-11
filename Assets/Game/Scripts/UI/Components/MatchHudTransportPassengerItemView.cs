@@ -28,7 +28,7 @@ public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
         UnbindButton(ref _boundExitButton, HandleExit);
     }
 
-    public void Bind(MatchHudSelectionPanelView.PassengerItemModel model, Action<Entity> exitRequested)
+    public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<Entity> exitRequested)
     {
         _passenger = model.Passenger;
         _exitRequested = exitRequested;

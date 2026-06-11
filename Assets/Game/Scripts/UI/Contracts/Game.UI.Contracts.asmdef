@@ -1,7 +1,10 @@
 {
     "name": "Game.UI.Contracts",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Unity.Collections",
+        "Unity.Entities"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -10,5 +13,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": true
+    "noEngineReferences": false
 }

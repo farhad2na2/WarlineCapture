@@ -135,7 +135,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
         var selectedAttackSourceScratch = new List<Entity>();
-        var transportPassengerPanelItems = new List<MatchHudSelectionPanelView.PassengerItemModel>();
+        var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         MainMenuPlayUI mainMenuPlayUi = null;
         MatchHudSelectionPanelView matchHudSelectionPanelView = null;
         MatchHudSquadTrayView matchHudSquadTrayView = null;
@@ -570,7 +570,7 @@ internal sealed class SelectionGameplayStartupSystem
 
             if (!TryGetDefaultEntityManager(out EntityManager em))
             {
-                matchHudSelectionPanelView.Apply(MatchHudSelectionPanelView.Model.Hidden);
+                matchHudSelectionPanelView.Apply(MatchHudSelectionPanelModel.Hidden);
                 return;
             }
 
@@ -579,7 +579,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectedCount > 1)
             {
                 matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
                 return;
             }
 
@@ -594,7 +594,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectedCount > 0)
             {
                 matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
                 return;
             }
 
@@ -602,15 +602,15 @@ internal sealed class SelectionGameplayStartupSystem
                 buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
             {
                 matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel());
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
+                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
                 return;
             }
 
-            matchHudSelectionPanelView.Apply(MatchHudSelectionPanelView.Model.Hidden);
-            matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudSelectionPanelView.TransportPassengersModel.Hidden);
+            matchHudSelectionPanelView.Apply(MatchHudSelectionPanelModel.Hidden);
+            matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
         }
 
-        MatchHudSelectionPanelView.Model BuildFocusedUnitPanelModel(EntityManager em, Entity entity)
+        MatchHudSelectionPanelModel BuildFocusedUnitPanelModel(EntityManager em, Entity entity)
         {
             Sprite portraitSprite = resolveSelectionPortraitSprite?.Invoke(em, entity);
             portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
@@ -622,7 +622,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (TryGetAttackModeOrderSnapshot(out string attackModeOrderText))
                 orderText = attackModeOrderText;
 
-            return new MatchHudSelectionPanelView.Model(
+            return new MatchHudSelectionPanelModel(
                 true,
                 selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
                 selectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity),
@@ -637,7 +637,7 @@ internal sealed class SelectionGameplayStartupSystem
                 IsBoardCommandAvailable(em, entity));
         }
 
-        MatchHudSelectionPanelView.TransportPassengersModel BuildTransportPassengersPanelModel(EntityManager em, Entity transport)
+        MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(EntityManager em, Entity transport)
         {
             transportPassengerPanelItems.Clear();
             if (!em.Exists(transport) ||
@@ -646,12 +646,12 @@ internal sealed class SelectionGameplayStartupSystem
                 !em.HasComponent<UnitTransportCapacity>(transport) ||
                 !em.HasBuffer<UnitTransportPassengerElement>(transport))
             {
-                return MatchHudSelectionPanelView.TransportPassengersModel.Hidden;
+                return MatchHudTransportPassengersModel.Hidden;
             }
 
             int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
             if (capacity <= 0)
-                return MatchHudSelectionPanelView.TransportPassengersModel.Hidden;
+                return MatchHudTransportPassengersModel.Hidden;
 
             DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
             for (int i = 0; i < passengers.Length; i++)
@@ -664,7 +664,7 @@ internal sealed class SelectionGameplayStartupSystem
                 Sprite portrait = resolveSelectionCardPortraitSprite?.Invoke(em, passenger);
                 portrait ??= resolveSelectionPortraitSprite?.Invoke(em, passenger);
                 portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
-                transportPassengerPanelItems.Add(new MatchHudSelectionPanelView.PassengerItemModel(
+                transportPassengerPanelItems.Add(new MatchHudSelectionPanelPassengerItemModel(
                     passenger,
                     selectionUiQuerySystem.ResolveFocusedUnitName(em, passenger),
                     ResolvePassengerRoleText(em, passenger),
@@ -674,7 +674,7 @@ internal sealed class SelectionGameplayStartupSystem
                     true));
             }
 
-            return new MatchHudSelectionPanelView.TransportPassengersModel(
+            return new MatchHudTransportPassengersModel(
                 true,
                 false,
                 transport,
@@ -695,7 +695,7 @@ internal sealed class SelectionGameplayStartupSystem
             return "SOLDIER";
         }
 
-        MatchHudSelectionPanelView.Model BuildSquadPanelModel(EntityManager em, int selectedCount)
+        MatchHudSelectionPanelModel BuildSquadPanelModel(EntityManager em, int selectedCount)
         {
             bool includeSelectedBuilding = buildingPlacementInteractionSystem != null &&
                                            buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
@@ -709,7 +709,7 @@ internal sealed class SelectionGameplayStartupSystem
             Sprite portraitSprite = matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
             portraitSprite ??= ResolveActiveSquadTrayPortraitSprite();
             portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
-            return new MatchHudSelectionPanelView.Model(
+            return new MatchHudSelectionPanelModel(
                 true,
                 summary.Title,
                 summary.Subtitle,
@@ -735,12 +735,12 @@ internal sealed class SelectionGameplayStartupSystem
                 : null;
         }
 
-        MatchHudSelectionPanelView.Model BuildSelectedBuildingPanelModel()
+        MatchHudSelectionPanelModel BuildSelectedBuildingPanelModel()
         {
             string label = buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext);
             Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
             portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
-            return new MatchHudSelectionPanelView.Model(
+            return new MatchHudSelectionPanelModel(
                 true,
                 string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
                 "Base structure",

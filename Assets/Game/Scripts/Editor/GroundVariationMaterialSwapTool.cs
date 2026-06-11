@@ -30,6 +30,8 @@ public static class GroundVariationMaterialSwapTool
         "SM_Env_Grass_Square",
         "SM_Env_Grass_Circle",
         "SM_Env_Port_Concrete_Slab",
+        "SM_Env_Mountain",
+        "SM_Env_Runway",
     };
 
     [MenuItem("Tools/Game/Rendering/Ground Variation/Apply To Open Scene")]

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a7c471237248bdb3f78346d4b48564, type: 3}
   m_Name: VisualQualityConfig
   m_EditorClassIdentifier: 
-  runtimeMode: 0
+  runtimeMode: 2
   lowRenderPipelineAsset: {fileID: 11400000, guid: 5e6cbd92db86f4b18aec3ed561671858, type: 2}
   mediumRenderPipelineAsset: {fileID: 11400000, guid: 5e6cbd92db86f4b18aec3ed561671858, type: 2}
   renderPipelineAsset: {fileID: 11400000, guid: 540d0d69be1d47ad8d8aabbaa70ec494, type: 2}

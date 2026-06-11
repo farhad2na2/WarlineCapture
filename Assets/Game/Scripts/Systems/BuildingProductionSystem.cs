@@ -4,7 +4,13 @@ using UnityEngine;
 
 public sealed class BuildingProductionSystem
 {
+    private const string HelicopterTransportPrefabName = "Unit_Veh_Helicopter_Transport";
+    private const string HelicopterTransportLookupKey = "unit_veh_helicopter_transport";
+    private const string PlaneTransportPrefabName = "Unit_Veh_Plane_Transport";
+    private const string PlaneTransportLookupKey = "unit_veh_plane_transport";
+
     public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
+    public delegate bool TryGetUnitProductionMetadataDelegate(GameObject prefab, out UnitProductionMetadata metadata);
     internal delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
 
     public enum ProductionTransportMode : byte
@@ -54,6 +60,49 @@ public sealed class BuildingProductionSystem
             RequiresAirportRunway = requiresAirportRunway;
         }
     }
+
+    public readonly struct UnitProductionMetadata
+    {
+        public readonly float ProductionDurationSeconds;
+        public readonly GameObject ProductionTransportPrefab;
+        public readonly bool IsAirUnit;
+        public readonly float ProductionTransportArrivalSeconds;
+        public readonly float ProductionTransportHoldForNextReadySeconds;
+        public readonly int ProductionTransportMaxConcurrent;
+        public readonly bool ProductionTransportRequiresAirportRunway;
+        public readonly bool ProductionTransportUsesRunwayLanding;
+        public readonly Vector2Int FootprintCells;
+
+        public UnitProductionMetadata(
+            float productionDurationSeconds,
+            GameObject productionTransportPrefab,
+            bool isAirUnit,
+            float productionTransportArrivalSeconds,
+            float productionTransportHoldForNextReadySeconds,
+            int productionTransportMaxConcurrent,
+            bool productionTransportRequiresAirportRunway,
+            bool productionTransportUsesRunwayLanding,
+            Vector2Int footprintCells)
+        {
+            ProductionDurationSeconds = productionDurationSeconds;
+            ProductionTransportPrefab = productionTransportPrefab;
+            IsAirUnit = isAirUnit;
+            ProductionTransportArrivalSeconds = productionTransportArrivalSeconds;
+            ProductionTransportHoldForNextReadySeconds = productionTransportHoldForNextReadySeconds;
+            ProductionTransportMaxConcurrent = productionTransportMaxConcurrent;
+            ProductionTransportRequiresAirportRunway = productionTransportRequiresAirportRunway;
+            ProductionTransportUsesRunwayLanding = productionTransportUsesRunwayLanding;
+            FootprintCells = footprintCells;
+        }
+    }
+
+    private readonly Dictionary<GameObject, ProductionTransportSettings> _productionTransportSettingsByPrefab = new();
+    private IReadOnlyList<GameObject> _cachedTransportUnitSpawnPrefabs;
+    private IReadOnlyDictionary<string, GameObject> _cachedTransportUnitSpawnPrefabsByKey;
+    private TryGetPrefabLocalBoundsDelegate _cachedTransportBoundsResolver;
+    private GameObject _cachedDefaultHelicopterTransportPrefab;
+    private GameObject _cachedDefaultPlaneTransportPrefab;
+    private TryGetUnitProductionMetadataDelegate _tryGetUnitProductionMetadata;
 
     public readonly struct PendingProductionProgress
     {
@@ -184,11 +233,10 @@ public sealed class BuildingProductionSystem
         if (spawnUnitPrefab == null)
             return 60f;
 
-        UnitGridAuthoring authoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
-        if (authoring == null)
+        if (!TryGetUnitProductionMetadata(spawnUnitPrefab, out UnitProductionMetadata metadata))
             return 60f;
 
-        return Mathf.Max(0.01f, authoring.ProductionDurationSeconds);
+        return Mathf.Max(0.01f, metadata.ProductionDurationSeconds);
     }
 
     public ProductionTransportSettings ResolveProductionTransportSettings(
@@ -206,23 +254,27 @@ public sealed class BuildingProductionSystem
         if (spawnUnitPrefab == null)
             return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
 
-        UnitGridAuthoring producedAuthoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
-        transportPrefab = producedAuthoring != null ? producedAuthoring.ProductionTransportPrefab : null;
+        EnsureProductionTransportCache(unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
+        if (_productionTransportSettingsByPrefab.TryGetValue(spawnUnitPrefab, out ProductionTransportSettings cachedSettings))
+            return cachedSettings;
+
+        bool hasProducedMetadata = TryGetUnitProductionMetadata(spawnUnitPrefab, out UnitProductionMetadata producedMetadata);
+        transportPrefab = hasProducedMetadata ? producedMetadata.ProductionTransportPrefab : null;
 
         if (transportPrefab == null)
-            transportPrefab = TryResolveDefaultProductionTransportPrefab(spawnUnitPrefab, unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
+            transportPrefab = TryResolveDefaultProductionTransportPrefab(spawnUnitPrefab, producedMetadata, hasProducedMetadata, tryGetPrefabLocalBounds);
 
-        if (transportPrefab == null && producedAuthoring != null && producedAuthoring.IsAirUnit)
+        if (transportPrefab == null && hasProducedMetadata && producedMetadata.IsAirUnit)
         {
             transportPrefab = spawnUnitPrefab;
-            arrivalSeconds = Mathf.Max(0.5f, producedAuthoring.ProductionTransportArrivalSeconds);
-            holdForNextReadySeconds = Mathf.Max(0.5f, producedAuthoring.ProductionTransportHoldForNextReadySeconds);
+            arrivalSeconds = Mathf.Max(0.5f, producedMetadata.ProductionTransportArrivalSeconds);
+            holdForNextReadySeconds = Mathf.Max(0.5f, producedMetadata.ProductionTransportHoldForNextReadySeconds);
             maxConcurrent = 64;
 
             string producedName = spawnUnitPrefab.name;
             bool usesRunwaySelfArrival =
-                producedAuthoring.ProductionTransportUsesRunwayLanding ||
-                producedAuthoring.ProductionTransportRequiresAirportRunway ||
+                producedMetadata.ProductionTransportUsesRunwayLanding ||
+                producedMetadata.ProductionTransportRequiresAirportRunway ||
                 producedName.IndexOf("Plane", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                 producedName.IndexOf("Drone", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                 producedName.IndexOf("Jet", System.StringComparison.OrdinalIgnoreCase) >= 0;
@@ -240,16 +292,19 @@ public sealed class BuildingProductionSystem
         }
 
         if (transportPrefab == null)
-            return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
-
-        UnitGridAuthoring transportAuthoring = transportPrefab.GetComponent<UnitGridAuthoring>();
-        if (transportAuthoring != null)
         {
-            arrivalSeconds = transportAuthoring.ProductionTransportArrivalSeconds;
-            holdForNextReadySeconds = transportAuthoring.ProductionTransportHoldForNextReadySeconds;
-            maxConcurrent = transportAuthoring.ProductionTransportMaxConcurrent;
-            requiresAirportRunway = transportAuthoring.ProductionTransportRequiresAirportRunway;
-            if (transportAuthoring.ProductionTransportUsesRunwayLanding)
+            return CacheProductionTransportSettings(
+                spawnUnitPrefab,
+                new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway));
+        }
+
+        if (TryGetUnitProductionMetadata(transportPrefab, out UnitProductionMetadata transportMetadata))
+        {
+            arrivalSeconds = transportMetadata.ProductionTransportArrivalSeconds;
+            holdForNextReadySeconds = transportMetadata.ProductionTransportHoldForNextReadySeconds;
+            maxConcurrent = transportMetadata.ProductionTransportMaxConcurrent;
+            requiresAirportRunway = transportMetadata.ProductionTransportRequiresAirportRunway;
+            if (transportMetadata.ProductionTransportUsesRunwayLanding)
                 transportMode = ProductionTransportMode.Plane;
         }
 
@@ -264,7 +319,106 @@ public sealed class BuildingProductionSystem
             transportMode = ProductionTransportMode.Plane;
         }
 
-        return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
+        return CacheProductionTransportSettings(
+            spawnUnitPrefab,
+            new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway));
+    }
+
+    public void PrewarmProductionTransportSettings(
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
+    {
+        EnsureProductionTransportCache(unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
+        if (unitSpawnPrefabs == null)
+            return;
+
+        for (int i = 0; i < unitSpawnPrefabs.Count; i++)
+        {
+            GameObject prefab = unitSpawnPrefabs[i];
+            if (prefab == null || _productionTransportSettingsByPrefab.ContainsKey(prefab))
+                continue;
+
+            ResolveProductionTransportSettings(prefab, unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
+        }
+    }
+
+    private void EnsureProductionTransportCache(
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
+    {
+        if (ReferenceEquals(_cachedTransportUnitSpawnPrefabs, unitSpawnPrefabs) &&
+            ReferenceEquals(_cachedTransportUnitSpawnPrefabsByKey, unitSpawnPrefabsByKey) &&
+            IsSameBoundsResolver(_cachedTransportBoundsResolver, tryGetPrefabLocalBounds))
+        {
+            return;
+        }
+
+        _cachedTransportUnitSpawnPrefabs = unitSpawnPrefabs;
+        _cachedTransportUnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
+        _cachedTransportBoundsResolver = tryGetPrefabLocalBounds;
+        _cachedDefaultHelicopterTransportPrefab = TryResolveConfiguredUnitPrefab(
+            HelicopterTransportPrefabName,
+            HelicopterTransportLookupKey,
+            unitSpawnPrefabs,
+            unitSpawnPrefabsByKey);
+        _cachedDefaultPlaneTransportPrefab = TryResolveConfiguredUnitPrefab(
+            PlaneTransportPrefabName,
+            PlaneTransportLookupKey,
+            unitSpawnPrefabs,
+            unitSpawnPrefabsByKey);
+        _productionTransportSettingsByPrefab.Clear();
+    }
+
+    private static bool IsSameBoundsResolver(
+        TryGetPrefabLocalBoundsDelegate left,
+        TryGetPrefabLocalBoundsDelegate right)
+    {
+        if (left == null || right == null)
+            return left == right;
+
+        return ReferenceEquals(left.Target, right.Target) && left.Method == right.Method;
+    }
+
+    private ProductionTransportSettings CacheProductionTransportSettings(
+        GameObject spawnUnitPrefab,
+        ProductionTransportSettings settings)
+    {
+        _productionTransportSettingsByPrefab[spawnUnitPrefab] = settings;
+        return settings;
+    }
+
+    public void ConfigureUnitProductionMetadataResolver(TryGetUnitProductionMetadataDelegate resolver)
+    {
+        if (IsSameUnitProductionMetadataResolver(_tryGetUnitProductionMetadata, resolver))
+            return;
+
+        _tryGetUnitProductionMetadata = resolver;
+        _productionTransportSettingsByPrefab.Clear();
+    }
+
+    private bool TryGetUnitProductionMetadata(GameObject prefab, out UnitProductionMetadata metadata)
+    {
+        if (prefab != null &&
+            _tryGetUnitProductionMetadata != null &&
+            _tryGetUnitProductionMetadata(prefab, out metadata))
+        {
+            return true;
+        }
+
+        metadata = default;
+        return false;
+    }
+
+    private static bool IsSameUnitProductionMetadataResolver(
+        TryGetUnitProductionMetadataDelegate left,
+        TryGetUnitProductionMetadataDelegate right)
+    {
+        if (left == null || right == null)
+            return left == right;
+
+        return ReferenceEquals(left.Target, right.Target) && left.Method == right.Method;
     }
 
     public bool IsHelicopterUnitPrefab(GameObject prefab)
@@ -465,52 +619,45 @@ public sealed class BuildingProductionSystem
 
     private GameObject TryResolveDefaultProductionTransportPrefab(
         GameObject spawnUnitPrefab,
-        IReadOnlyList<GameObject> unitSpawnPrefabs,
-        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        UnitProductionMetadata metadata,
+        bool hasMetadata,
         TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
     {
         if (spawnUnitPrefab == null)
             return null;
 
-        UnitGridAuthoring authoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
-        if (authoring == null)
+        if (!hasMetadata)
             return null;
 
-        GameObject helicopter = TryResolveConfiguredUnitPrefab(
-            "Unit_Veh_Helicopter_Transport",
-            unitSpawnPrefabs,
-            unitSpawnPrefabsByKey);
+        GameObject helicopter = _cachedDefaultHelicopterTransportPrefab;
         if (helicopter == null)
             return null;
 
-        if (authoring.IsAirUnit)
+        if (metadata.IsAirUnit)
             return null;
 
         bool isLikelyVehicle = IsLikelyGroundVehiclePrefab(spawnUnitPrefab);
         if (!isLikelyVehicle)
             return helicopter;
 
-        Vector2Int size = ResolveEffectiveProductionFootprintCells(spawnUnitPrefab, authoring, tryGetPrefabLocalBounds);
+        Vector2Int size = ResolveEffectiveProductionFootprintCells(spawnUnitPrefab, metadata.FootprintCells, tryGetPrefabLocalBounds);
         if (size.x <= 1 && size.y <= 1)
             return helicopter;
 
-        return TryResolveConfiguredUnitPrefab(
-            "Unit_Veh_Plane_Transport",
-            unitSpawnPrefabs,
-            unitSpawnPrefabsByKey);
+        return _cachedDefaultPlaneTransportPrefab;
     }
 
     private static GameObject TryResolveConfiguredUnitPrefab(
         string prefabName,
+        string prefabKey,
         IReadOnlyList<GameObject> unitSpawnPrefabs,
         IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey)
     {
-        if (string.IsNullOrWhiteSpace(prefabName))
+        if (string.IsNullOrWhiteSpace(prefabName) || string.IsNullOrWhiteSpace(prefabKey))
             return null;
 
-        string key = NormalizeLookupKey(prefabName);
         if (unitSpawnPrefabsByKey != null &&
-            unitSpawnPrefabsByKey.TryGetValue(key, out GameObject prefab) &&
+            unitSpawnPrefabsByKey.TryGetValue(prefabKey, out GameObject prefab) &&
             prefab != null)
         {
             return prefab;
@@ -552,10 +699,12 @@ public sealed class BuildingProductionSystem
 
     private static Vector2Int ResolveEffectiveProductionFootprintCells(
         GameObject spawnUnitPrefab,
-        UnitGridAuthoring authoring,
+        Vector2Int configuredFootprint,
         TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
     {
-        Vector2Int configured = authoring != null ? authoring.GetConfiguredFootprintCells() : Vector2Int.one;
+        Vector2Int configured = new(
+            Mathf.Max(1, configuredFootprint.x),
+            Mathf.Max(1, configuredFootprint.y));
         if (configured.x > 1 || configured.y > 1)
             return configured;
 

@@ -244,6 +244,11 @@ internal sealed class BuildingProductionContextSystem
 
     public BuildingProductionRequestSystem.Context CreateProductionRequestContext(Source source)
     {
+        source.ProductionSystem?.PrewarmProductionTransportSettings(
+            source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
+            source.DefinitionSystem.UnitSpawnPrefabsByKey,
+            BuildingDefinitionSystem.TryGetPrefabLocalBounds);
+
         return new BuildingProductionRequestSystem.Context(
             source.RuntimeBuildings,
             source.DefinitionSystem.ConfiguredSpawnableDefinitions,

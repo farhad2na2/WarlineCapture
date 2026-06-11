@@ -6,7 +6,6 @@
         "Unity.Entities",
         "Unity.Entities.Graphics",
         "Unity.Mathematics",
-        "Unity.Mathematics.Extensions",
         "Unity.Transforms"
     ],
     "includePlatforms": [],

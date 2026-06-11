@@ -1,6 +1,6 @@
 ﻿# Match GC Allocation Call-Stack Capture
 
-Date: 2026-06-11 16:16:39 UTC
+Date: 2026-06-11 17:14:29 UTC
 Lane: Gameplay/Performance
 Capture type: automated Match steady-state after Menu -> Match route
 
@@ -9,9 +9,9 @@ Capture type: automated Match steady-state after Menu -> Match route
 - Requested frames: 300
 - Profiler frame range: 0..0
 - Scanned frames with data: 1
-- Scanned thread views: 88
-- GC.Alloc samples: 50076
-- GC.Alloc bytes from hierarchy column: 6094392
+- Scanned thread views: 90
+- GC.Alloc samples: 15462
+- GC.Alloc bytes from hierarchy column: 830008
 - Raw load status: `rawLoaded path=/private/tmp/warline-match-gc-callstack-capture.raw`
 - Raw capture: `/private/tmp/warline-match-gc-callstack-capture.raw`
 
@@ -19,32 +19,36 @@ Capture type: automated Match steady-state after Menu -> Match route
 
 | Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame |
 | ---: | ---: | ---: | ---: | --- | --- | --- |
-| 1 | 6094392 | 50076 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RuntimeCityCompositionSystem.cs:178] RuntimeCityCompositionSystem:CreateStartupContext (int) |
+| 1 | 830008 | 15462 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool) |
 
 ## Highest Allocation Frames
 
 | Rank | Profiler frame | Bytes | Samples |
 | ---: | ---: | ---: | ---: |
-| 1 | 0 | 6094392 | 50076 |
+| 1 | 0 | 830008 | 15462 |
 
 ## Call Stacks
 
-### 1. #0  (Mono JIT Code) [RuntimeCityCompositionSystem.cs:178] RuntimeCityCompositionSystem:CreateStartupContext (int)
+### 1. #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool)
 
-Bytes: 6094392  
-Samples: 50076  
-Frames: 1  
+Bytes: 830008
+Samples: 15462
+Frames: 1
 Thread: Main Thread
 
 ```
- #0  (Mono JIT Code) [RuntimeCityCompositionSystem.cs:178] RuntimeCityCompositionSystem:CreateStartupContext (int)
- #1  (Mono JIT Code) [RuntimeCityCompositionSystem.cs:144] RuntimeCityCompositionSystem:TryAutoSpawn (int)
- #2  (Mono JIT Code) [RuntimeCityCompositionSystem.cs:102] RuntimeCityCompositionSystem:Update (int)
- #3  (Mono JIT Code) [GameplayRuntimeUpdateSystem.cs:50] GameplayRuntimeUpdateSystem:Update (bool,RuntimeGameplayStateSystem,PerformanceDiagnosticsSystem,System.Action,BuildingRuntimeUpdateSystem,BuildingRuntimeUpdateSystem/Context,System.Action,UnityEngine.Camera,RuntimeCityCompositionSystem,RuntimeGridBlockerSystem,RuntimeDecorationSpawnerSystem,DayNightSystem,System.Action,IMatchRuntimeUi,IUnitImpostorRenderer,bool&)
- #4  (Mono JIT Code) [MatchBootstrapSystem.cs:606] MatchBootstrapSystem:UpdateRuntime (bool,RuntimeGameplayStateSystem,PerformanceDiagnosticsSystem,System.Action,BuildingRuntimeUpdateSystem,BuildingRuntimeUpdateSystem/Context,System.Action,UnityEngine.Camera,RuntimeCityCompositionSystem,RuntimeGridBlockerSystem,RuntimeDecorationSpawnerSystem,DayNightSystem,System.Action,IMatchRuntimeUi,IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapSystem.cs:188] MatchBootstrapSystem:Update ()
- #6  (Mono JIT Code) [MatchSceneView.cs:85] MatchSceneView:Update ()
- #7  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+ #0  (Mono JIT Code) (wrapper managed-to-native) System.RuntimeType:getFullName (System.RuntimeType,bool,bool)
+ #1  (Mono JIT Code) System.RuntimeType:get_AssemblyQualifiedName ()
+ #2  (Mono JIT Code) [BurstRuntime.cs:104] Unity.Burst.BurstRuntime/HashCode64`1<Unity.Collections.NativeList`1<Unity.Entities.EntityArchetype>>:.cctor ()
+ #3  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+ #4  (Mono JIT Code) [SharedStatic.cs:52] Unity.Burst.SharedStatic`1<int>:GetOrCreate<Unity.Collections.NativeList`1<Unity.Entities.EntityArchetype>> (uint)
+ #5  (Mono JIT Code) [NativeList.cs:87] Unity.Collections.NativeList`1<Unity.Entities.EntityArchetype>:.cctor ()
+ #6  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+ #7  (Mono JIT Code) [EntitiesProfiler+StaticData.cs:142] Unity.Entities.EntitiesProfiler/StaticData:ResetSessionMetaData ()
+ #8  (Mono JIT Code) [EntitiesProfiler+StaticData.cs:87] Unity.Entities.EntitiesProfiler/StaticData:Flush ()
+ #9  (Mono JIT Code) [EntitiesProfiler.cs:100] Unity.Entities.EntitiesProfiler:Update ()
+ #10  (Mono JIT Code) [RuntimeApplication.cs:21] Unity.Entities.RuntimeApplication:InvokePostFrameUpdate ()
+ #11  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
 
 ```
 

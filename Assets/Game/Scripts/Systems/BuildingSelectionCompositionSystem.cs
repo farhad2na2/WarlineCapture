@@ -9,8 +9,20 @@ internal sealed class BuildingSelectionCompositionSystem
     public BuildingSelectionSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
+        System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
+        Sprite ResolveSelectionPortraitSprite(RuntimeBuildingEntity building)
+        {
+            if (building == null)
+                return null;
+
+            Sprite sprite = resolveSelectionPortraitSpriteFromPrefab?.Invoke(building.Definition?.Prefab);
+            return sprite != null
+                ? sprite
+                : resolveSelectionPortraitSpriteFromPrefab?.Invoke(building.Instance);
+        }
+
         return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
@@ -27,7 +39,7 @@ internal sealed class BuildingSelectionCompositionSystem
                     source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
             building => source.BuildingGameplayDependencySystem.ShowHudSelection(
-                SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(building)),
+                ResolveSelectionPortraitSprite(building)),
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
             source.BuildingGameplayDependencySystem.IsBoardablePlayerTransportClick,
             clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(

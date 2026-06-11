@@ -37,6 +37,7 @@ public static class MatchGcAllocationCallstackCapture
     private const string ProfilerDeepProfilingWasEnabledKey = "MatchGcAllocationCallstackCapture.DeepProfilingWasEnabled";
     private const string ScriptsCategoryWasEnabledKey = "MatchGcAllocationCallstackCapture.ScriptsCategoryWasEnabled";
     private const string MemoryCategoryWasEnabledKey = "MatchGcAllocationCallstackCapture.MemoryCategoryWasEnabled";
+    private const string WarningStackTraceLogTypeKey = "MatchGcAllocationCallstackCapture.WarningStackTraceLogType";
 
     private enum Phase
     {
@@ -193,6 +194,7 @@ public static class MatchGcAllocationCallstackCapture
         SessionState.SetBool(ProfilerDeepProfilingWasEnabledKey, ProfilerDriver.deepProfiling);
         SessionState.SetBool(ScriptsCategoryWasEnabledKey, Profiler.IsCategoryEnabled(ProfilerCategory.Scripts));
         SessionState.SetBool(MemoryCategoryWasEnabledKey, Profiler.IsCategoryEnabled(ProfilerCategory.Memory));
+        SessionState.SetInt(WarningStackTraceLogTypeKey, (int)Application.GetStackTraceLogType(LogType.Warning));
 
         if (File.Exists(ProfilerRawPath))
             File.Delete(ProfilerRawPath);
@@ -204,6 +206,7 @@ public static class MatchGcAllocationCallstackCapture
         Profiler.enableAllocationCallstacks = true;
         Profiler.SetCategoryEnabled(ProfilerCategory.Scripts, true);
         Profiler.SetCategoryEnabled(ProfilerCategory.Memory, true);
+        Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
         Profiler.enabled = true;
         SessionState.SetInt(CaptureStartFrameKey, Time.frameCount);
         Debug.Log($"[MatchGcAllocationCallstackCapture] captureStarted frames={CaptureFrameCount} raw={ProfilerRawPath}");
@@ -218,6 +221,9 @@ public static class MatchGcAllocationCallstackCapture
         ProfilerDriver.deepProfiling = SessionState.GetBool(ProfilerDeepProfilingWasEnabledKey, false);
         Profiler.SetCategoryEnabled(ProfilerCategory.Scripts, SessionState.GetBool(ScriptsCategoryWasEnabledKey, true));
         Profiler.SetCategoryEnabled(ProfilerCategory.Memory, SessionState.GetBool(MemoryCategoryWasEnabledKey, true));
+        Application.SetStackTraceLogType(
+            LogType.Warning,
+            (StackTraceLogType)SessionState.GetInt(WarningStackTraceLogTypeKey, (int)StackTraceLogType.ScriptOnly));
     }
 
     private static string LoadRawProfileForAnalysis()
@@ -367,9 +373,9 @@ public static class MatchGcAllocationCallstackCapture
             AllocationSite site = rankedSites[i];
             builder.AppendLine($"### {i + 1}. {GetTopManagedFrame(site.Callstack)}");
             builder.AppendLine();
-            builder.AppendLine($"Bytes: {site.Bytes}  ");
-            builder.AppendLine($"Samples: {site.Samples}  ");
-            builder.AppendLine($"Frames: {site.Frames}  ");
+            builder.AppendLine($"Bytes: {site.Bytes}");
+            builder.AppendLine($"Samples: {site.Samples}");
+            builder.AppendLine($"Frames: {site.Frames}");
             builder.AppendLine($"Thread: {site.ThreadName}");
             builder.AppendLine();
             builder.AppendLine("```");

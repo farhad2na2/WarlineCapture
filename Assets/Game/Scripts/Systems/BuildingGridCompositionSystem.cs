@@ -3,11 +3,9 @@ using UnityEngine;
 
 internal sealed class BuildingGridCompositionSystem
 {
-    internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-
     public bool TryGetGridData(
         BuildingGameplayCompositionSourceSystem source,
-        TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
@@ -15,7 +13,7 @@ internal sealed class BuildingGridCompositionSystem
     {
         return source.BuildingGameplayGridDataSystem.TryGetGridData(
             source.BuildingGameplayEcsQuerySystem,
-            (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+            tryGetEntityManager,
             out gridEntity,
             out grid,
             out roads,
@@ -24,23 +22,23 @@ internal sealed class BuildingGridCompositionSystem
 
     public bool TryGetGridForSelection(
         BuildingGameplayCompositionSourceSystem source,
-        TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
         return source.BuildingGameplayGridDataSystem.TryGetGridForSelection(
             source.BuildingGameplayEcsQuerySystem,
-            (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+            tryGetEntityManager,
             out grid);
     }
 
     public bool TryGetGridForPlacementInput(
         BuildingGameplayCompositionSourceSystem source,
-        TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
         return source.BuildingGameplayGridDataSystem.TryGetGridForPlacementInput(
             source.BuildingGameplayEcsQuerySystem,
-            (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+            tryGetEntityManager,
             out grid);
     }
 

@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -9,6 +10,7 @@ public partial struct UnitAttackSystem : ISystem
     private const float DamageHealthBarVisibleSeconds = 2f;
     private const int FleeCellsMin = 12;
     private const int FleeCellsMax = 24;
+    private const int InitialAttackScratchCapacity = 4096;
 
     private struct PendingAttack
     {
@@ -27,12 +29,25 @@ public partial struct UnitAttackSystem : ISystem
         public float3 AttackerPosition;
     }
 
+    private NativeParallelHashMap<Entity, int> _predictedHealth;
+    private NativeParallelHashMap<Entity, AggregatedTargetEffect> _aggregatedEffects;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<UnitCombat>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitAttackCooldownComponent>();
+        _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);
+        _aggregatedEffects = new NativeParallelHashMap<Entity, AggregatedTargetEffect>(InitialAttackScratchCapacity, Allocator.Persistent);
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        if (_predictedHealth.IsCreated)
+            _predictedHealth.Dispose();
+        if (_aggregatedEffects.IsCreated)
+            _aggregatedEffects.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -42,8 +57,12 @@ public partial struct UnitAttackSystem : ISystem
         var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
         float dt = SystemAPI.Time.DeltaTime;
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
-        var predictedHealth = new System.Collections.Generic.Dictionary<Entity, int>(64);
-        var aggregatedEffects = new System.Collections.Generic.Dictionary<Entity, AggregatedTargetEffect>(64);
+        if (!_predictedHealth.IsCreated)
+            _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);
+        if (!_aggregatedEffects.IsCreated)
+            _aggregatedEffects = new NativeParallelHashMap<Entity, AggregatedTargetEffect>(InitialAttackScratchCapacity, Allocator.Persistent);
+        _predictedHealth.Clear();
+        _aggregatedEffects.Clear();
         foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
                      .Query<RefRW<EngageTarget>, RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>, RefRW<UnitAttackAnimationComponent>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
                      .WithNone<StaticGridBlocker>()
@@ -91,7 +110,7 @@ public partial struct UnitAttackSystem : ISystem
                 continue;
             }
 
-            int targetPredictedHealth = predictedHealth.TryGetValue(engageRw.Target, out int existingPredictedHealth)
+            int targetPredictedHealth = _predictedHealth.TryGetValue(engageRw.Target, out int existingPredictedHealth)
                 ? existingPredictedHealth
                 : em.GetComponentData<UnitHealth>(engageRw.Target).Current;
             if (targetPredictedHealth <= 0)
@@ -145,18 +164,18 @@ public partial struct UnitAttackSystem : ISystem
                 continue;
 
             int2 attackerCell = GridUtils.WorldToCell(grid, selfTransform.ValueRO.Position);
-            predictedHealth[engageRw.Target] = math.max(0, targetPredictedHealth - attackRo.Damage);
-            if (aggregatedEffects.TryGetValue(engageRw.Target, out AggregatedTargetEffect effect))
+            _predictedHealth[engageRw.Target] = math.max(0, targetPredictedHealth - attackRo.Damage);
+            if (_aggregatedEffects.TryGetValue(engageRw.Target, out AggregatedTargetEffect effect))
             {
                 effect.TotalDamage += attackRo.Damage;
                 effect.Attacker = entity;
                 effect.AttackerCell = attackerCell;
                 effect.AttackerPosition = selfTransform.ValueRO.Position;
-                aggregatedEffects[engageRw.Target] = effect;
+                _aggregatedEffects[engageRw.Target] = effect;
             }
             else
             {
-                aggregatedEffects.Add(engageRw.Target, new AggregatedTargetEffect
+                _aggregatedEffects.Add(engageRw.Target, new AggregatedTargetEffect
                 {
                     TotalDamage = attackRo.Damage,
                     Attacker = entity,
@@ -166,7 +185,7 @@ public partial struct UnitAttackSystem : ISystem
             }
         }
 
-        foreach (var pair in aggregatedEffects)
+        foreach (var pair in _aggregatedEffects)
         {
             Entity target = pair.Key;
             AggregatedTargetEffect pending = pair.Value;

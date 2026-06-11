@@ -37,15 +37,4 @@ internal static class SelectionPortraitSpriteResolverSystem
 
         return null;
     }
-
-    public static Sprite ResolveSelectionPortraitSprite(RuntimeBuildingEntity building)
-    {
-        if (building == null)
-            return null;
-
-        Sprite sprite = ResolveSelectionPortraitSprite(building.Definition?.Prefab);
-        return sprite != null
-            ? sprite
-            : ResolveSelectionPortraitSprite(building.Instance);
-    }
 }

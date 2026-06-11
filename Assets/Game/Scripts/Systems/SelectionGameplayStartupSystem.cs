@@ -138,6 +138,17 @@ internal sealed class SelectionGameplayStartupSystem
         IMatchRuntimeUi mainMenuPlayUi = null;
         IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
         IMatchHudSquadTrayView matchHudSquadTrayView = null;
+        RtsSelectionRuntimeInputSystem.Context runtimeInputContext = default;
+        bool hasRuntimeInputContext = false;
+        RtsSelectionRuntimeCameraSystem.Context runtimeCameraContext = default;
+        bool hasRuntimeCameraContext = false;
+        RtsSelectionCommandResultFlushSystem.Context commandResultFlushContext = default;
+        bool hasCommandResultFlushContext = false;
+        System.Action<EntityManager, Entity> applyHudSelectionAction = ApplyHudSelection;
+        System.Action<int> applyHudSquadSelectionAction = ApplyHudSquadSelection;
+        SelectionRectangleRequestSystem.ApplyHudSelectionAction applyRectangleHudSelectionAction = ApplyHudSelection;
+        SelectionRectangleRequestSystem.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
+        System.Action clearHudSelectionAction = ClearHudSelection;
         RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
@@ -181,6 +192,9 @@ internal sealed class SelectionGameplayStartupSystem
             roadBuildReadState = roadBuildReadModel;
             buildingPlacementInteractionSystem = buildingInteraction;
             buildingPlacementInteractionContext = buildingInteractionContext;
+            hasRuntimeInputContext = false;
+            hasRuntimeCameraContext = false;
+            hasCommandResultFlushContext = false;
             mainMenuPlayUi?.ConfigureMatchHudSelectionPanelBinding(BindMatchHudSelectionPanel);
             mainMenuPlayUi?.ConfigureMatchHudRuntimeFeedbackBinding(BindBattleHudRuntimeFeedback);
             mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
@@ -191,6 +205,7 @@ internal sealed class SelectionGameplayStartupSystem
             matchHudSelectionPanelView = view;
             selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
             selectionBuildingInteraction.BindMatchHudSelectionPanel(view);
+            hasCommandResultFlushContext = false;
             view?.BindActions(
                 () => selectionUiCommand.RequestReturnToBase(),
                 () => selectionUiCommand.RequestDestroyFocusedUnit(),
@@ -205,6 +220,7 @@ internal sealed class SelectionGameplayStartupSystem
         void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
         {
             selectionHudFeedbackSystem.BindBattleHudRuntimeFeedback(view);
+            hasCommandResultFlushContext = false;
         }
 
         void RequestBoardTargetModeFromPanel()
@@ -240,15 +256,50 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessTransportCommandRequests();
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-            rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(CreateRuntimeInputContext());
+            RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
+            rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
             RefreshFocusedSelectionReadModels();
             UpdateMatchHudSelectionPanel();
-            rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
+            rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
             UpdateAttackTargetPreviewMarkers();
             UpdateBoardTargetPreviewMarkers();
 
-            if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(CreateRuntimeCameraContext()))
-                rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(CreateRuntimeInputContext());
+            RtsSelectionRuntimeCameraSystem.Context cameraContext = GetRuntimeCameraContext();
+            if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+                rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
+        }
+
+        RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()
+        {
+            if (!hasRuntimeInputContext)
+            {
+                runtimeInputContext = CreateRuntimeInputContext();
+                hasRuntimeInputContext = true;
+            }
+
+            return runtimeInputContext;
+        }
+
+        RtsSelectionRuntimeCameraSystem.Context GetRuntimeCameraContext()
+        {
+            if (!hasRuntimeCameraContext)
+            {
+                runtimeCameraContext = CreateRuntimeCameraContext();
+                hasRuntimeCameraContext = true;
+            }
+
+            return runtimeCameraContext;
+        }
+
+        RtsSelectionCommandResultFlushSystem.Context GetCommandResultFlushContext()
+        {
+            if (!hasCommandResultFlushContext)
+            {
+                commandResultFlushContext = CreateCommandResultFlushContext();
+                hasCommandResultFlushContext = true;
+            }
+
+            return commandResultFlushContext;
         }
 
         RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()
@@ -261,7 +312,7 @@ internal sealed class SelectionGameplayStartupSystem
                 () => explicitAttackTargetModeActive,
                 SetExplicitAttackTargetModeActive,
                 () => rtsCameraSystem.IsDragging,
-                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), value),
+                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                 TryIssueAttackOrderToClickedUnit,
@@ -275,7 +326,7 @@ internal sealed class SelectionGameplayStartupSystem
                 TryIssueBoardSelectedTransportOrdersToPassengerRect,
                 IsBoardSelectedTransportPassengerTarget,
                 QueueFocusUnitCommand,
-                screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
+                screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(GetRuntimeCameraContext(), screenDelta),
                 IssueMoveOrder,
                 ProcessSelectionRectangleRequests,
                 ClearSelectionCommandMode,
@@ -426,6 +477,21 @@ internal sealed class SelectionGameplayStartupSystem
                 resolveSelectionPortraitSprite);
         }
 
+        void ApplyHudSelection(EntityManager entityManager, Entity entity)
+        {
+            selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity);
+        }
+
+        void ApplyHudSquadSelection(int selectedCount)
+        {
+            selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount);
+        }
+
+        void ClearHudSelection()
+        {
+            selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
+        }
+
         MatchHudSquadTraySelectionSystem.Context CreateSquadTraySelectionContext()
         {
             return new MatchHudSquadTraySelectionSystem.Context(
@@ -436,8 +502,8 @@ internal sealed class SelectionGameplayStartupSystem
                 () => buildingPlacementInteractionSystem?.ClearSelectedBuilding(
                     buildingPlacementInteractionContext,
                     "MatchHudSquadTray"),
-                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity),
-                selectedCount => selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount),
+                applyHudSelectionAction,
+                applyHudSquadSelectionAction,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem);
@@ -954,7 +1020,7 @@ internal sealed class SelectionGameplayStartupSystem
             focusedUnitLifecycleSystem.RefreshFocusedUnit(
                 em,
                 selectionStateSystem,
-                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity));
+                applyHudSelectionAction);
         }
 
         void ProcessSelectionRectangleRequests()
@@ -977,8 +1043,8 @@ internal sealed class SelectionGameplayStartupSystem
                 visibleSelectionScratch,
                 ClearCurrentSelection,
                 selectionStateSystem.CacheSelectedMoveEntities,
-                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity),
-                selectedCount => selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount),
+                applyRectangleHudSelectionAction,
+                applyRectangleHudSquadSelectionAction,
                 selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
                 ClearSelectedBuildingAfterRectangleSelection,
                 screenRect => trySelectFirstBuildingInScreenRect != null &&
@@ -1004,7 +1070,7 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionStateSystem,
                 reason,
                 selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
-                () => selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext()));
+                clearHudSelectionAction);
         }
 
         void QueueSelectionRectangleRequest(
@@ -1022,24 +1088,24 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessMoveCommandRequests()
         {
-            rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(CreateCommandResultFlushContext());
+            rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
         }
 
         bool ProcessAttackCommandRequests()
         {
             return rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
-                CreateCommandResultFlushContext(),
+                GetCommandResultFlushContext(),
                 explicitAttackTargetModeActive);
         }
 
         bool ProcessScanCommandRequests()
         {
-            return rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(CreateCommandResultFlushContext());
+            return rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
         }
 
         bool ProcessTransportCommandRequests()
         {
-            return rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(CreateCommandResultFlushContext());
+            return rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
         }
 
         bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
@@ -1730,7 +1796,7 @@ internal sealed class SelectionGameplayStartupSystem
             focusedUnitLifecycleSystem.RefreshFocusedUnit(
                 em,
                 selectionStateSystem,
-                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity));
+                applyHudSelectionAction);
             return true;
         }
 
@@ -1751,7 +1817,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void SetCameraDragging(bool isDragging)
         {
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), isDragging);
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), isDragging);
         }
 
         void HideOrderScreenMarkers()

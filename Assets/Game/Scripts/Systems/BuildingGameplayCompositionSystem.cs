@@ -30,10 +30,13 @@ internal sealed class BuildingGameplayCompositionSystem
         DayNightSystem dayNight,
         RTSSelectionSystemConfig rtsSelectionConfig = null,
         MapBuildingPlacementConfig mapBuildingPlacementConfig = null,
-        Transform mapBuildingAuthoringRoot = null)
+        Transform mapBuildingAuthoringRoot = null,
+        Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab = null,
+        BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null)
     {
         MaterialPropertyBlock markerPropertyBlock = _markerVisualCompositionSystem.GetMarkerPropertyBlock();
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
+        childSystems.BuildingProductionSystem.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
         _startupCompositionSystem.Initialize(
             childSystems,
             buildingPlacementConfig,
@@ -49,6 +52,7 @@ internal sealed class BuildingGameplayCompositionSystem
         {
             return childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager);
         }
+        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetGridEntityManager = tryGetEntityManager;
 
         bool tryGetGridData(
             BuildingGameplayCompositionSourceSystem source,
@@ -59,7 +63,7 @@ internal sealed class BuildingGameplayCompositionSystem
         {
             return source.BuildingGridCompositionSystem.TryGetGridData(
                 source,
-                tryGetEntityManager,
+                tryGetGridEntityManager,
                 out gridEntity,
                 out grid,
                 out roads,
@@ -70,7 +74,7 @@ internal sealed class BuildingGameplayCompositionSystem
         {
             return source.BuildingGridCompositionSystem.TryGetGridForSelection(
                 source,
-                tryGetEntityManager,
+                tryGetGridEntityManager,
                 out grid);
         }
 
@@ -78,7 +82,7 @@ internal sealed class BuildingGameplayCompositionSystem
         {
             return source.BuildingGridCompositionSystem.TryGetGridForPlacementInput(
                 source,
-                tryGetEntityManager,
+                tryGetGridEntityManager,
                 out grid);
         }
 
@@ -165,6 +169,7 @@ internal sealed class BuildingGameplayCompositionSystem
             source => source.BuildingSelectionCompositionSystem.Create(
                 source,
                 tryGetGridForSelection,
+                resolveSelectionPortraitSpriteFromPrefab,
                 createRuntimeContextSource);
         BuildingPlacementAdapterSystem.IsPlacementValidDelegate isPlacementValid =
             (source, definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData) =>
@@ -453,15 +458,24 @@ internal sealed class BuildingGameplayCompositionSystem
                             createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
                         BuildingRuntimeSpawnSystem.Context mapSpawnContext =
                             source.BuildingRuntimeContextSystem.CreateSpawnContext(mapRuntimeContextSource);
-                        return () => source.MapBuildingPlacementSpawnSystem.Update(
-                            new MapBuildingPlacementSpawnSystem.Context(
+                        bool TryGetMapGridData(
+                            out Entity gridEntity,
+                            out GridConfig grid,
+                            out DynamicBuffer<GridRoad> roads,
+                            out DynamicBlockerComponent blockerData)
+                        {
+                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                        }
+
+                        MapBuildingPlacementSpawnSystem.Context mapSpawnPlacementContext =
+                            new(
                                 mapBuildingPlacementConfig,
                                 mapBuildingAuthoringRoot,
                                 source.BuildingRuntimeSpawnSystem,
                                 mapSpawnContext,
-                                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
-                                    tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
-                                Debug.LogWarning));
+                                TryGetMapGridData,
+                                Debug.LogWarning);
+                        return () => source.MapBuildingPlacementSpawnSystem.Update(mapSpawnPlacementContext);
                     },
                     DestroyedBuildingLifetimeSeconds);
                 runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);

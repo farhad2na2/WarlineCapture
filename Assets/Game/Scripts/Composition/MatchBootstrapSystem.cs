@@ -395,6 +395,9 @@ internal sealed class MatchBootstrapSystem
             globalVolume,
             runtimeUiRoot,
             createSelectionRectangleView,
+            SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite,
+            SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite,
+            BuildingProductionUnitMetadataSystem.TryGetMetadata,
             mapBuildingAuthoringRoot);
     }
 
@@ -760,6 +763,7 @@ internal sealed class MatchBootstrapSystem
 
             case GameplayStartStep.ResetStats:
                 SetGameplayStartProgress(0.10f, "Resetting match state");
+                GameRuntimeStats.ConfigureUnitPrefabClassifier(GameRuntimeStatsUnitPrefabClassifierSystem.ClassifyUnitPrefab);
                 GameRuntimeStats.Reset();
                 _pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
                 ProjectFactionVisualConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);

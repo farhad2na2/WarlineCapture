@@ -13,10 +13,21 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - `Assets/Game/Scripts/Rendering/UnitAttackTraceSystem.cs`
 - `Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs`
 - `Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs`
+- `Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs`
+- `Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingGridCompositionSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingProductionContextSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingProductionSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs`
+- `Assets/Game/Scripts/Systems/UnitAttackSystem.cs`
+- `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
 - `Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs`
 - `Assets/Tests/Editor/MatchHudMinimapProjectionSystemTests.cs`
 - `Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs`
 - `Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs.meta`
+- `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
 - `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
 
 ## 2026-06-11 continuation update
@@ -43,6 +54,27 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
   - `RuntimeCityCompositionSystem.CreateStartupContext` via `RuntimeCityCompositionSystem.TryAutoSpawn`.
   - Current capture: 5,981,668 bytes / 48,183 samples in the loaded raw frame.
   - This appears tied to runtime-city auto-spawn startup context construction and should be handled as the next profiler-backed site, separately from this pass.
+
+## 2026-06-11 second continuation update
+
+- Continued the profiler-backed sequence on the main project and fixed the next confirmed allocation sites one at a time:
+  - `RuntimeCityCompositionSystem.CreateStartupContext`: cached startup delegates in `Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs`.
+  - `SelectionGameplayStartupSystem.CreateRuntimeInputContext`: cached the runtime input context until UI/gameplay bindings change.
+  - `SelectionGameplayStartupSystem.CreateRuntimeCameraContext`: cached the runtime camera context.
+  - `RtsSelectionCommandResultContextSystem.Create`: cached the command-result flush context and invalidated it on HUD feedback binding changes.
+  - `SelectionGameplayStartupSystem.RefreshFocusedUnit` and rectangle/squad callback paths: cached HUD selection callbacks instead of allocating lambdas in hot selection paths.
+  - `BuildingProductionRequestSystem.CanQueueUnitFromBuilding`: cached and prewarmed production transport settings per configured unit prefab.
+  - `BuildingGameplayCompositionSystem` map placement update source: prebuilt the map-placement spawn context instead of constructing it every runtime tick.
+  - `BuildingGridCompositionSystem.TryGetGridData`: passed the existing grid entity-manager delegate through directly instead of wrapping it each call.
+  - `BuildingRuntimeBoundarySystem.ResolveBoundaryId`: cached normalized boundary IDs by prefab/fallback key.
+  - `BuildingDefinitionSystem.TryGetConfiguredUnitReadModel`: cached configured unit entries so runtime reads no longer call `GameObject.name`/authoring lookups each tick.
+  - `MatchGcAllocationCallstackCapture`: suppressed warning stack traces while capturing to avoid harness-side `Camera.Render` warning allocations dominating reports.
+  - `UnitAttackSystem.OnUpdate`: replaced per-frame managed dictionaries with persistent native scratch maps.
+- Latest automated steady-state report after the `UnitAttackSystem` fix:
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`.
+  - Current top site: Unity Entities/Burst profiler metadata initialization, `System.RuntimeType:getFullName` through `Unity.Entities.EntitiesProfiler.StaticData.Flush`.
+  - Current aggregate capture value: 830,008 bytes / 15,462 samples in the loaded raw frame.
+  - This is framework/profiler initialization noise, not a project gameplay allocation site, so no gameplay file is currently justified as the next edit from this steady-state report.
 
 ## Contracts touched
 
@@ -161,12 +193,48 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - Static checks:
   - `git diff --check`: passed.
   - Confirmed no pathfinding files are modified.
+- Second continuation validation in `/Users/farhad/Projects/WarlineCapture`:
+  - Compile after `RuntimeCityCompositionSystem` delegate caching:
+    - Command log: `/private/tmp/warline-main-gc-runtimecity-compile.log`
+    - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, or `Compilation failed` entries.
+  - Compile after selection context/callback caching:
+    - Command logs: `/private/tmp/warline-main-gc-selectioninput-compile-2.log`, `/private/tmp/warline-main-gc-selectioncamera-compile-2.log`, `/private/tmp/warline-main-gc-commandresult-compile.log`, `/private/tmp/warline-main-gc-focusedunit-compile-2.log`
+    - Result: passed; no compile errors or warnings.
+  - Compile after building production/grid/boundary/configured-unit cache fixes:
+    - Command logs: `/private/tmp/warline-main-gc-productiontransport-compile.log`, `/private/tmp/warline-main-gc-mapplacement-compile.log`, `/private/tmp/warline-main-gc-griddata-compile.log`, `/private/tmp/warline-main-gc-boundaryid-compile-2.log`, `/private/tmp/warline-main-gc-configuredunits-compile.log`, `/private/tmp/warline-main-gc-transportprewarm-compile.log`
+    - Result: passed; no compile errors or warnings.
+  - Compile after `UnitAttackSystem` native scratch-map fix:
+    - Command log: `/private/tmp/warline-main-gc-unitattack-compile.log`
+    - Result: passed; no compile errors or warnings.
+  - Final automated Match steady-state capture after `UnitAttackSystem` fix:
+    - Command log: `/private/tmp/warline-main-gc-callstack-capture-after-unitattack.log`
+    - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
+    - Result: report written and command exited 0; current top site is Unity Entities profiler metadata initialization, not a project gameplay file.
+  - `BuildingUiQuerySystemTests.RunFocusedValidation`:
+    - Command log: `/private/tmp/warline-main-gc-building-ui-query-2.log`
+    - Result: passed with `[BuildingUiQueryValidation] result=Passed tests=3`.
+  - `BuildDrawerCatalogQuerySystemTests.RunFocusedValidation`:
+    - Command log: `/private/tmp/warline-main-gc-builddrawer-catalog-2.log`
+    - Result: passed with `[BuildDrawerCatalogQueryValidation] result=Passed tests=21`.
+  - `BuildingRuntimeBoundaryValidationTests.RunBatchValidation`:
+    - Command log: `/private/tmp/warline-main-gc-building-boundary-3.log`
+    - Result: passed with `[BuildingRuntimeBoundaryValidation] result=Passed`.
+  - `CombatDeathValidationTests` through Unity `-runTests`:
+    - Command log: `/private/tmp/warline-main-gc-combatdeath-tests.log`
+    - Result: inconclusive; Unity exited 0 but did not emit the requested test-results XML in this session.
+  - Static check:
+    - `git diff --check`: passed.
+  - Follow-up warmed steady-state capture attempt:
+    - First command log: `/private/tmp/warline-main-gc-callstack-capture-warmed-next.log`
+    - Result: blocked inside sandbox by Unity Package Manager IPC socket failure, `listen EPERM`.
+    - Second command log: `/private/tmp/warline-main-gc-callstack-capture-warmed-next-2.log`
+    - Result: blocked because a real Unity editor instance currently has `/Users/farhad/Projects/WarlineCapture` open.
 
 ## Validation result
 
 - Compile/test validation: PASS in main workspace and earlier `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation.
 - `/Users/farhad/Projects/WarlineCapture-CodexUnity2` validation: BLOCKED by unrelated broad compile errors in that shadow project.
-- Automated profiler evidence: PARTIAL PASS. The automated Match steady-state capture now produces a call-stack report and confirmed two top sites removed from the top of the capture. The current measured top site is `RuntimeCityCompositionSystem.CreateStartupContext`.
+- Automated profiler evidence: PARTIAL PASS. The automated Match steady-state capture now produces a call-stack report and confirmed the previous project gameplay sites removed from the top of the capture. The current measured top site is Unity Entities profiler metadata initialization, not a project gameplay file.
 - Final profiler proof: PENDING. Battle/spike captures are still required to prove steady-state 0 B/frame or document remaining allocation sites across combat frames.
 
 ## Known gaps
@@ -178,6 +246,8 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - This pass now includes automated steady-state call-stack captures, but still does not include the required battle/spike Profiler capture.
 - Automated profiler capture currently loads the raw profile as one aggregate frame in batchmode, so the report is useful for ranking call stacks but not yet a trustworthy per-frame steady-state byte average.
 - `MatchGcAllocationCallstackCapture.RunSteadyState` logs a shutdown-only Unity `NullReferenceException` after the success line when exiting batchmode. The report is written and the process exits 0, but the harness exit path should be cleaned up before treating the capture command as CI-ready.
+- Latest steady-state top site is Unity Entities/Burst profiler metadata initialization. Do not edit gameplay code from that site; run a warmed second capture or a battle/spike capture to find the next project-owned allocation before making more runtime changes.
+- Follow-up warmed capture is currently blocked while the main Unity editor has `/Users/farhad/Projects/WarlineCapture` open. Do not delete the lockfile or kill the editor unless the owner explicitly allows it.
 - `UnitAttackTraceSystem.LateUpdate` and `UnitImpostorRenderSystem.DrawQuery` still use ECS query snapshots; only a GC call-stack reprofile should decide whether those need a deeper chunk-iteration pass.
 
 ## Cross-lane impacts
@@ -187,4 +257,4 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 
 ## Next recommended task
 
-Fix the next confirmed automated-capture site, `RuntimeCityCompositionSystem.CreateStartupContext`, then rerun `MatchGcAllocationCallstackCapture.RunSteadyState`. After that, run the required Match battle/spike Profiler capture with `GC.Alloc` call stacks enabled and fix the next measured site only.
+Run a warmed second steady-state capture and then the required Match battle/spike Profiler capture with `GC.Alloc` call stacks enabled. Fix the next project-owned allocation site named by those captures only; do not chase the current Unity Entities profiler metadata initialization site as gameplay work.

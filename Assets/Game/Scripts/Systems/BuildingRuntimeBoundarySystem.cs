@@ -11,6 +11,8 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private readonly List<byte> _factionIds = new();
     private readonly List<int> _pendingSpawnRequestIndices = new();
+    private readonly Dictionary<GameObject, FixedString128Bytes> _boundaryIdsByPrefab = new();
+    private readonly Dictionary<string, FixedString128Bytes> _boundaryIdsByFallback = new();
     private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
     private float _nextPublishAt;
     private bool _forcePublishNextUpdate;
@@ -591,7 +593,7 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private static bool TryResolveProducedUnitId(
+    private bool TryResolveProducedUnitId(
         RuntimeBuildingEntity building,
         Entity unit,
         EntityManager em,
@@ -787,11 +789,27 @@ public sealed class BuildingRuntimeBoundarySystem
         return em.GetBuffer<T>(entity);
     }
 
-    private static FixedString128Bytes ResolveBoundaryId(GameObject prefab, string fallback)
+    private FixedString128Bytes ResolveBoundaryId(GameObject prefab, string fallback)
     {
-        string source = prefab != null ? prefab.name : fallback;
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(source);
-        return ToFixedString128(string.IsNullOrEmpty(normalized) ? fallback : normalized);
+        if (prefab != null)
+        {
+            if (_boundaryIdsByPrefab.TryGetValue(prefab, out FixedString128Bytes cached))
+                return cached;
+
+            string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name);
+            FixedString128Bytes resolved = ToFixedString128(string.IsNullOrEmpty(normalized) ? fallback : normalized);
+            _boundaryIdsByPrefab[prefab] = resolved;
+            return resolved;
+        }
+
+        string fallbackKey = fallback ?? string.Empty;
+        if (_boundaryIdsByFallback.TryGetValue(fallbackKey, out FixedString128Bytes fallbackCached))
+            return fallbackCached;
+
+        string normalizedFallback = BuildingDefinitionSystem.NormalizeSpawnableKey(fallback);
+        FixedString128Bytes fallbackResolved = ToFixedString128(string.IsNullOrEmpty(normalizedFallback) ? fallback : normalizedFallback);
+        _boundaryIdsByFallback[fallbackKey] = fallbackResolved;
+        return fallbackResolved;
     }
 
     private static FixedString128Bytes ToFixedString128(string value)

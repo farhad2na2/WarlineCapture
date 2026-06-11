@@ -44,6 +44,9 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new();
     private readonly RuntimeCityReadModelSystem _runtimeCityReadModelSystem = new();
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
+    private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
+    private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;
     private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;
 
     private RuntimeCityConfigSystem.Snapshot cityConfig => _runtimeCityConfigSystem.Current;
@@ -59,6 +62,13 @@ public sealed class RuntimeCityCompositionSystem
     public bool HasSpawned => _runtimeCityLifecycleSystem.HasSpawned(cityCount);
     public bool IsGenerating => _runtimeCityLifecycleSystem.IsGenerating;
     public RuntimeCityReadModelSystem ReadModel => _runtimeCityReadModelSystem;
+
+    public RuntimeCityCompositionSystem()
+    {
+        _tryGetPendingInitialUnits = _runtimeCityReadinessQuerySystem.HasPendingInitialUnitsSpawn;
+        _tryGetRoadCellSize = _runtimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells;
+        _tryGetGridData = _runtimeCityReadinessQuerySystem.TryGetGridConfig;
+    }
 
     public string DescribeStartupBlocker(int frameCount)
     {
@@ -188,9 +198,9 @@ public sealed class RuntimeCityCompositionSystem
             hallPrefabs,
             shopPrefabs,
             housePrefabs,
-            _runtimeCityReadinessQuerySystem.HasPendingInitialUnitsSpawn,
-            _runtimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells,
-            _runtimeCityReadinessQuerySystem.TryGetGridConfig,
+            _tryGetPendingInitialUnits,
+            _tryGetRoadCellSize,
+            _tryGetGridData,
             _runtimeCityDiagnosticSystem);
     }
 

@@ -4,6 +4,15 @@ using Unity.Mathematics;
 
 public static class GameRuntimeStats
 {
+    public enum UnitOrderKind
+    {
+        Soldier,
+        Vehicle,
+        Ammo
+    }
+
+    public delegate UnitOrderKind ClassifyUnitPrefabDelegate(GameObject prefab);
+
     public readonly struct Snapshot
     {
         public readonly int OilExtracted;
@@ -56,6 +65,12 @@ public static class GameRuntimeStats
     private static int _capturedOrDestroyedBuildings;
     private static int _ownSoldiersDead;
     private static int _enemySoldiersDead;
+    private static ClassifyUnitPrefabDelegate _classifyUnitPrefab;
+
+    public static void ConfigureUnitPrefabClassifier(ClassifyUnitPrefabDelegate classifyUnitPrefab)
+    {
+        _classifyUnitPrefab = classifyUnitPrefab;
+    }
 
     public static void Reset()
     {
@@ -127,19 +142,20 @@ public static class GameRuntimeStats
         if (prefab == null)
             return;
 
-        if (IsAmmoPrefab(prefab))
+        switch (ClassifyUnitPrefab(prefab))
         {
-            _ammoOrdered++;
-            return;
-        }
+            case UnitOrderKind.Ammo:
+                _ammoOrdered++;
+                return;
 
-        if (IsVehiclePrefab(prefab))
-        {
-            _vehiclesOrdered++;
-            return;
-        }
+            case UnitOrderKind.Vehicle:
+                _vehiclesOrdered++;
+                return;
 
-        _soldiersOrdered++;
+            default:
+                _soldiersOrdered++;
+                return;
+        }
     }
 
     public static void RecordMilitaryDeath(byte factionId)
@@ -152,30 +168,36 @@ public static class GameRuntimeStats
 
     public static bool IsVehiclePrefab(GameObject prefab)
     {
-        if (prefab == null)
-            return false;
-
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        if (authoring != null)
-        {
-            Vector2Int footprint = authoring.GetConfiguredFootprintCells();
-            if (footprint.x > 1 || footprint.y > 1 || authoring.IsAirUnit)
-                return true;
-        }
-
-        return prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               prefab.name.IndexOf("Vehicle", System.StringComparison.OrdinalIgnoreCase) >= 0;
+        return prefab != null && ClassifyUnitPrefab(prefab) == UnitOrderKind.Vehicle;
     }
 
     public static bool IsAmmoPrefab(GameObject prefab)
     {
-        if (prefab == null)
-            return false;
+        return prefab != null && ClassifyUnitPrefab(prefab) == UnitOrderKind.Ammo;
+    }
 
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        string displayName = authoring != null ? authoring.ConfiguredDisplayName : prefab.name;
-        return displayName.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               prefab.name.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    private static UnitOrderKind ClassifyUnitPrefab(GameObject prefab)
+    {
+        return _classifyUnitPrefab != null
+            ? _classifyUnitPrefab(prefab)
+            : ClassifyUnitPrefabByName(prefab);
+    }
+
+    private static UnitOrderKind ClassifyUnitPrefabByName(GameObject prefab)
+    {
+        if (prefab == null)
+            return UnitOrderKind.Soldier;
+
+        if (prefab.name.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return UnitOrderKind.Ammo;
+
+        if (prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            prefab.name.IndexOf("Vehicle", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return UnitOrderKind.Vehicle;
+        }
+
+        return UnitOrderKind.Soldier;
     }
 
     public static bool IsMilitarySoldierEntity(EntityManager em, Entity entity)

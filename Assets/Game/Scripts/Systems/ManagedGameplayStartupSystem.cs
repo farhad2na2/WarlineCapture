@@ -141,6 +141,9 @@ internal sealed class ManagedGameplayStartupSystem
         Volume globalVolume,
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
+        System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
+        System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
+        BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
         Transform mapBuildingAuthoringRoot)
     {
         var dayNight = new DayNightSystem();
@@ -165,26 +168,28 @@ internal sealed class ManagedGameplayStartupSystem
             dayNight,
             rtsSelectionConfig,
             mapBuildingPlacementConfig,
-            mapBuildingAuthoringRoot);
+            mapBuildingAuthoringRoot,
+            resolveSelectionPortraitSpriteFromPrefab,
+            tryGetUnitProductionMetadata);
 
         Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
         {
             return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab)
+                ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
                 : null;
         }
 
         Sprite ResolveSelectionCardPortraitSprite(EntityManager em, Entity entity)
         {
             return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite(prefab)
+                ? resolveSelectionCardPortraitSpriteFromPrefab?.Invoke(prefab)
                 : null;
         }
 
         Sprite ResolveSelectedBuildingPortraitSprite()
         {
             return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
-                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab)
+                ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
                 : null;
         }
 

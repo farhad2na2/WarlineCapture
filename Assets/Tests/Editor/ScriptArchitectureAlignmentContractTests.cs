@@ -209,6 +209,88 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages()
+    {
+        string[] asmdefPaths =
+        {
+            Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef"),
+            Path.Combine(GameScriptsRoot, "Composition/Game.Composition.asmdef"),
+        };
+        string[] disallowedReferences =
+        {
+            "\"sniveler-code.gpu-animation\"",
+            "\"Unity.Burst\"",
+            "\"Unity.Mathematics.Extensions\"",
+        };
+        List<string> violations = new();
+
+        foreach (string asmdefPath in asmdefPaths)
+        {
+            string asmdef = File.ReadAllText(asmdefPath);
+            foreach (string disallowedReference in disallowedReferences)
+            {
+                if (asmdef.Contains(disallowedReference, StringComparison.Ordinal))
+                    violations.Add($"{NormalizePath(asmdefPath)} references {disallowedReference}.");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` and `Game.Composition` must not carry heavy runtime/rendering package references unless their source directly uses them.");
+    }
+
+    [Test]
+    public void GameRuntimeStatsMustNotReadAuthoringComponents()
+    {
+        string statsPath = Path.Combine(GameScriptsRoot, "Balance/GameRuntimeStats.cs");
+        string source = File.ReadAllText(statsPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`GameRuntimeStats` must not read authoring components. Composition can inject prefab classification through `ConfigureUnitPrefabClassifier`.");
+    }
+
+    [Test]
+    public void BuildingProductionSystemMustNotReadAuthoringComponents()
+    {
+        string productionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionSystem.cs");
+        string source = File.ReadAllText(productionPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`BuildingProductionSystem` must not read authoring components. Composition can inject unit production metadata through `ConfigureUnitProductionMetadataResolver`.");
+    }
+
+    [Test]
+    public void SceneAndMapAuthoringBootstrapMustStayInComposition()
+    {
+        string[] compositionOwnedFiles =
+        {
+            "GameplayFeatureStartupSystem.cs",
+            "GameplaySceneBindingSystem.cs",
+            "MapSurfaceRuntimeBootstrapSystem.cs",
+        };
+        List<string> violations = new();
+
+        foreach (string fileName in compositionOwnedFiles)
+        {
+            string runtimePath = Path.Combine(GameScriptsRoot, "Systems", fileName);
+            string compositionPath = Path.Combine(GameScriptsRoot, "Composition", fileName);
+
+            if (File.Exists(runtimePath))
+                violations.Add($"{NormalizePath(runtimePath)} exists under runtime systems.");
+            if (!File.Exists(compositionPath))
+                violations.Add($"{NormalizePath(compositionPath)} is missing from composition.");
+        }
+
+        AssertNoViolations(
+            violations,
+            "Scene binding and map-surface authoring bootstrap code must stay in `Game.Composition`, where scene authoring references are allowed.");
+    }
+
+    [Test]
     public void LegacyBootstrapFolderMustNotContainRuntimeSourceFiles()
     {
         List<string> violations = EnumerateSourceFiles(LegacyBootstrapRoot)

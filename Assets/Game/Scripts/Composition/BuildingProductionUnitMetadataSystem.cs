@@ -2,6 +2,12 @@ using UnityEngine;
 
 internal static class BuildingProductionUnitMetadataSystem
 {
+    public static void PrepareTransportDropVisual(GameObject visual)
+    {
+        if (visual != null && visual.TryGetComponent(out UnitGridAuthoring authoring))
+            authoring.enabled = false;
+    }
+
     public static bool TryGetMetadata(GameObject prefab, out BuildingProductionSystem.UnitProductionMetadata metadata)
     {
         if (prefab != null && prefab.TryGetComponent(out UnitGridAuthoring authoring))

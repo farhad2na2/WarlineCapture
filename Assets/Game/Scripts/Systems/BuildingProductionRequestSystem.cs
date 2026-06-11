@@ -54,6 +54,13 @@ internal sealed class BuildingProductionRequestSystem
     public delegate void RecordUnitOrderedDelegate(GameObject prefab);
     public delegate void LogWarningDelegate(string message);
     public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
+    public delegate bool TryGetConfiguredUnitReadModelDelegate(
+        int index,
+        out GameObject prefab,
+        out string displayName,
+        out int price,
+        out bool canRequest,
+        out bool isVehicle);
 
     public readonly struct Context
     {
@@ -83,6 +90,7 @@ internal sealed class BuildingProductionRequestSystem
         public readonly LogWarningDelegate LogWarning;
         public readonly CountFactionUnitsDelegate CountPendingProductionsForFaction;
         public readonly CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
+        public readonly TryGetConfiguredUnitReadModelDelegate TryGetConfiguredUnitReadModel;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -110,7 +118,8 @@ internal sealed class BuildingProductionRequestSystem
             RecordUnitOrderedDelegate recordUnitOrdered,
             LogWarningDelegate logWarning,
             CountFactionUnitsDelegate countPendingProductionsForFaction,
-            CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction)
+            CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
+            TryGetConfiguredUnitReadModelDelegate tryGetConfiguredUnitReadModel = null)
         {
             RuntimeBuildings = runtimeBuildings;
             ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -138,6 +147,7 @@ internal sealed class BuildingProductionRequestSystem
             LogWarning = logWarning;
             CountPendingProductionsForFaction = countPendingProductionsForFaction;
             CountRuntimeProducedUnitsForFaction = countRuntimeProducedUnitsForFaction;
+            TryGetConfiguredUnitReadModel = tryGetConfiguredUnitReadModel;
         }
     }
 
@@ -545,7 +555,7 @@ internal sealed class BuildingProductionRequestSystem
             context.UnitSpawnPrefabsByKey.TryGetValue(normalized, out unitPrefab) &&
             unitPrefab != null)
         {
-            return TryBuildConfiguredUnit(unitPrefab, out displayName, out price, out canRequest);
+            return TryBuildConfiguredUnit(context, unitPrefab, out displayName, out price, out canRequest);
         }
 
         if (context.UnitSpawnPrefabs == null)
@@ -558,13 +568,13 @@ internal sealed class BuildingProductionRequestSystem
                 continue;
 
             unitPrefab = candidate;
-            return TryBuildConfiguredUnit(candidate, out displayName, out price, out canRequest);
+            return TryBuildConfiguredUnit(context, candidate, out displayName, out price, out canRequest);
         }
 
         return false;
     }
 
-    private static bool TryBuildConfiguredUnit(GameObject prefab, out string displayName, out int price, out bool canRequest)
+    private static bool TryBuildConfiguredUnit(Context context, GameObject prefab, out string displayName, out int price, out bool canRequest)
     {
         displayName = prefab != null ? prefab.name : string.Empty;
         price = 0;
@@ -572,18 +582,36 @@ internal sealed class BuildingProductionRequestSystem
         if (prefab == null)
             return false;
 
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        displayName = ResolveConfiguredUnitDisplayName(prefab, authoring);
-        price = authoring != null ? Mathf.Max(0, authoring.Price) : 10000;
-        canRequest = authoring == null || authoring.CanRequest;
-        return true;
-    }
+        if (context.UnitSpawnPrefabs != null && context.TryGetConfiguredUnitReadModel != null)
+        {
+            for (int i = 0; i < context.UnitSpawnPrefabs.Count; i++)
+            {
+                if (context.UnitSpawnPrefabs[i] != prefab)
+                    continue;
 
-    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
-    {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return authoring.ConfiguredDisplayName;
-        return prefab != null ? prefab.name : "Unit";
+                if (context.TryGetConfiguredUnitReadModel(
+                        i,
+                        out GameObject readModelPrefab,
+                        out string readModelDisplayName,
+                        out int readModelPrice,
+                        out bool readModelCanRequest,
+                        out _) &&
+                    readModelPrefab == prefab)
+                {
+                    displayName = readModelDisplayName;
+                    price = Mathf.Max(0, readModelPrice);
+                    canRequest = readModelCanRequest;
+                    return true;
+                }
+
+                break;
+            }
+        }
+
+        displayName = prefab.name;
+        price = 10000;
+        canRequest = true;
+        return true;
     }
 
     private static FixedString128Bytes ToFixedString128(string value)

@@ -398,6 +398,7 @@ internal sealed class MatchBootstrapSystem
             SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite,
             SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite,
             BuildingProductionUnitMetadataSystem.TryGetMetadata,
+            BuildingProductionUnitMetadataSystem.PrepareTransportDropVisual,
             mapBuildingAuthoringRoot);
     }
 

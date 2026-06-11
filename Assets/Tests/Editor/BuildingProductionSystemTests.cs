@@ -53,6 +53,25 @@ public sealed class BuildingProductionSystemTests
         }
     }
 
+    public static void RunProductionMetadataValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionSystemTests();
+            tests.ResolveProductionDurationSeconds_UsesUnitAuthoringDuration();
+            tests.ResolveProductionTransportSettings_UsesConfiguredTransportAuthoring();
+            tests.ResolveProductionTransportSettings_DefaultsLargeVehicleToPlaneTransport();
+            Debug.Log("[BuildingProductionMetadataValidation] result=Passed tests=3");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingProductionMetadataValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void InitializePendingProduction_SetsReadyTimeAndTransportFields()
     {
@@ -332,7 +351,7 @@ public sealed class BuildingProductionSystemTests
             UnitGridAuthoring authoring = prefab.AddComponent<UnitGridAuthoring>();
             SetAuthoringField(authoring, "productionDurationSeconds", 12.5f);
 
-            var system = new BuildingProductionSystem();
+            BuildingProductionSystem system = CreateProductionSystem();
 
             Assert.AreEqual(12.5f, system.ResolveProductionDurationSeconds(prefab), 0.0001f);
         }
@@ -356,7 +375,7 @@ public sealed class BuildingProductionSystemTests
             SetAuthoringField(transportAuthoring, "productionTransportHoldForNextReadySeconds", 3f);
             SetAuthoringField(transportAuthoring, "productionTransportMaxConcurrent", 4);
 
-            var system = new BuildingProductionSystem();
+            BuildingProductionSystem system = CreateProductionSystem();
             BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
                 producedPrefab,
                 new[] { transportPrefab },
@@ -394,7 +413,7 @@ public sealed class BuildingProductionSystemTests
                 ["unit_veh_helicopter_transport"] = helicopterPrefab,
                 ["unit_veh_plane_transport"] = planePrefab
             };
-            var system = new BuildingProductionSystem();
+            BuildingProductionSystem system = CreateProductionSystem();
             BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
                 producedPrefab,
                 new[] { helicopterPrefab, planePrefab },
@@ -709,6 +728,13 @@ public sealed class BuildingProductionSystemTests
         FieldInfo field = typeof(UnitGridAuthoring).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field, $"{nameof(UnitGridAuthoring)} must expose serialized field '{fieldName}' for this test.");
         field.SetValue(authoring, value);
+    }
+
+    private static BuildingProductionSystem CreateProductionSystem()
+    {
+        var system = new BuildingProductionSystem();
+        system.ConfigureUnitProductionMetadataResolver(BuildingProductionUnitMetadataSystem.TryGetMetadata);
+        return system;
     }
 
     private static void SetPrivateField<T>(object target, string fieldName, T value)

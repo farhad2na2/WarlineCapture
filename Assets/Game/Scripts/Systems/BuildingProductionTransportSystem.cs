@@ -12,6 +12,8 @@ internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
 
+    public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
+
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -21,6 +23,7 @@ internal sealed class BuildingProductionTransportSystem
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
         public readonly BuildingProductionTransportBridgeSystem.Context TransportBridgeContext;
+        public readonly PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -29,7 +32,8 @@ internal sealed class BuildingProductionTransportSystem
             BuildingVisualSystem visualSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingProductionTransportBridgeSystem transportBridgeSystem,
-            BuildingProductionTransportBridgeSystem.Context transportBridgeContext)
+            BuildingProductionTransportBridgeSystem.Context transportBridgeContext,
+            PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
         {
             RuntimeBuildings = runtimeBuildings;
             WorldCamera = worldCamera;
@@ -38,6 +42,7 @@ internal sealed class BuildingProductionTransportSystem
             RunwaySystem = runwaySystem;
             TransportBridgeSystem = transportBridgeSystem;
             TransportBridgeContext = transportBridgeContext;
+            PrepareTransportDropVisual = prepareTransportDropVisual;
         }
     }
 
@@ -444,9 +449,7 @@ internal sealed class BuildingProductionTransportSystem
         visual.name = $"{pending.Prefab.name}_TransportDrop";
         HideTransportRuntimeMarkers(visual.transform);
         ApplyTemporaryCharacterIdlePose(visual);
-
-        if (visual.TryGetComponent<UnitGridAuthoring>(out UnitGridAuthoring authoring))
-            authoring.enabled = false;
+        context.PrepareTransportDropVisual?.Invoke(visual);
 
         visual.transform.position = dropStartPosition;
         if (transport.Mode == ProductionTransportMode.Plane && transport.Transform != null)

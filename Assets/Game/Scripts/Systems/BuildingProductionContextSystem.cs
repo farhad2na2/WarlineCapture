@@ -45,6 +45,7 @@ internal sealed class BuildingProductionContextSystem
         public readonly BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate GetSelectedUnitsQuery;
         public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
         public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+        public readonly BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 
         public Source(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -84,7 +85,8 @@ internal sealed class BuildingProductionContextSystem
             BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getHaulerUnitsQuery,
             BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
             BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-            BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect)
+            BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+            BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
         {
             RuntimeBuildings = runtimeBuildings;
             WorldCamera = worldCamera;
@@ -124,6 +126,7 @@ internal sealed class BuildingProductionContextSystem
             GetSelectedUnitsQuery = getSelectedUnitsQuery;
             TryGetRuntimeBuilding = tryGetRuntimeBuilding;
             GetEffectivePlacementRect = getEffectivePlacementRect;
+            PrepareTransportDropVisual = prepareTransportDropVisual;
         }
     }
 
@@ -165,7 +168,8 @@ internal sealed class BuildingProductionContextSystem
         BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getHaulerUnitsQuery,
         BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
         BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-        BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect)
+        BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+        BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
     {
         return new Source(
             runtimeBuildings,
@@ -205,7 +209,8 @@ internal sealed class BuildingProductionContextSystem
             getHaulerUnitsQuery,
             getSelectedUnitsQuery,
             tryGetRuntimeBuilding,
-            getEffectivePlacementRect);
+            getEffectivePlacementRect,
+            prepareTransportDropVisual);
     }
 
     public BuildingProductionUpdateSystem.Context CreateProductionUpdateContext(Source source)
@@ -226,7 +231,8 @@ internal sealed class BuildingProductionContextSystem
             source.VisualSystem,
             source.RunwaySystem,
             source.TransportBridgeSystem,
-            CreateProductionTransportBridgeContext(source));
+            CreateProductionTransportBridgeContext(source),
+            source.PrepareTransportDropVisual);
     }
 
     public BuildingProductionTransportBridgeSystem.Context CreateProductionTransportBridgeContext(Source source)
@@ -275,7 +281,8 @@ internal sealed class BuildingProductionContextSystem
             source.RecordUnitOrdered,
             source.LogWarning,
             source.CountPendingProductionsForFaction,
-            source.CountRuntimeProducedUnitsForFaction);
+            source.CountRuntimeProducedUnitsForFaction,
+            source.DefinitionSystem.TryGetConfiguredUnitReadModel);
     }
 
     public BuildingProductionSystem.QueueContext CreateProductionQueueContext(Source source)

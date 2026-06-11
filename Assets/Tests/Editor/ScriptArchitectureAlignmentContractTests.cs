@@ -79,6 +79,30 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "Orchestrator",
     };
 
+    public static void RunAssemblyBoundaryValidation()
+    {
+        try
+        {
+            var tests = new ScriptArchitectureAlignmentContractTests();
+            tests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages();
+            tests.GameRuntimeStatsMustNotReadAuthoringComponents();
+            tests.BuildingProductionSystemMustNotReadAuthoringComponents();
+            tests.BuildingProductionRequestSystemMustNotReadAuthoringComponents();
+            tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
+            tests.SceneAndMapAuthoringBootstrapMustStayInComposition();
+            tests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly();
+            tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=8");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ScriptArchitectureBoundaryValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void SourceFilenamesMustNotStartWithProjectName()
     {
@@ -261,6 +285,30 @@ public sealed class ScriptArchitectureAlignmentContractTests
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
             "`BuildingProductionSystem` must not read authoring components. Composition can inject unit production metadata through `ConfigureUnitProductionMetadataResolver`.");
+    }
+
+    [Test]
+    public void BuildingProductionRequestSystemMustNotReadAuthoringComponents()
+    {
+        string productionRequestPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionRequestSystem.cs");
+        string source = File.ReadAllText(productionRequestPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`BuildingProductionRequestSystem` must not read authoring components. Use configured-unit read models from `BuildingDefinitionSystem`.");
+    }
+
+    [Test]
+    public void BuildingProductionTransportSystemMustNotReadAuthoringComponents()
+    {
+        string productionTransportPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionTransportSystem.cs");
+        string source = File.ReadAllText(productionTransportPath);
+
+        Assert.IsFalse(
+            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
+            "`BuildingProductionTransportSystem` must not read authoring components. Composition can inject transport-drop visual preparation.");
     }
 
     [Test]

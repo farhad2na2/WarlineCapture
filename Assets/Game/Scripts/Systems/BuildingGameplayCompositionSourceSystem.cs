@@ -80,4 +80,5 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingEntityManagerAccessSystem BuildingEntityManagerAccessSystem = new();
     internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
     internal readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
+    internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 }

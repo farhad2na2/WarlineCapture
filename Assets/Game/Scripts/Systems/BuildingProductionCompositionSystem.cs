@@ -59,7 +59,8 @@ internal sealed class BuildingProductionCompositionSystem
             () => source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,
             () => source.BuildingGameplayEcsQuerySystem.SelectedUnitsQuery,
             runtimeSource.TryGetRuntimeBuilding,
-            runtimeSource.GetEffectivePlacementRect);
+            runtimeSource.GetEffectivePlacementRect,
+            source.PrepareTransportDropVisual);
         return productionSource;
     }
 

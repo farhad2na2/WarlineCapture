@@ -32,11 +32,13 @@ internal sealed class BuildingGameplayCompositionSystem
         MapBuildingPlacementConfig mapBuildingPlacementConfig = null,
         Transform mapBuildingAuthoringRoot = null,
         Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab = null,
-        BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null)
+        BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null,
+        BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
     {
         MaterialPropertyBlock markerPropertyBlock = _markerVisualCompositionSystem.GetMarkerPropertyBlock();
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
         childSystems.BuildingProductionSystem.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
+        childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
         _startupCompositionSystem.Initialize(
             childSystems,
             buildingPlacementConfig,

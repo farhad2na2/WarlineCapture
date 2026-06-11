@@ -47,7 +47,6 @@ public sealed class PerformanceDiagnosticsSystem
     private readonly bool _enableSlowFrameDiagnostics = true;
     private readonly System.Text.StringBuilder _freezeLogBuilder = new();
     private readonly System.Text.StringBuilder _lastStepLogBuilder = new();
-    private readonly Dictionary<string, StepPerfStats> _stepPerfStats = new();
     private readonly StepSample[] _lastStepSamples = new StepSample[MaxLastStepSamples];
     private readonly List<NamedProfilerRecorder> _markerRecorders = new();
     private double _lastUpdateTimestamp;
@@ -71,13 +70,6 @@ public sealed class PerformanceDiagnosticsSystem
     private ProfilerRecorder _setPassCallsRecorder;
     private ProfilerRecorder _trianglesRecorder;
     private ProfilerRecorder _verticesRecorder;
-
-    private struct StepPerfStats
-    {
-        public double TotalSeconds;
-        public double MaxSeconds;
-        public int Samples;
-    }
 
     private struct StepSample
     {
@@ -147,7 +139,6 @@ public sealed class PerformanceDiagnosticsSystem
     public bool EndStep(string name, double start)
     {
         double elapsed = Time.realtimeSinceStartupAsDouble - start;
-        RecordStepStats(name, elapsed);
         RecordLastStepSample(name, elapsed);
 
         if (elapsed < FreezeLogThresholdSeconds)
@@ -514,7 +505,6 @@ public sealed class PerformanceDiagnosticsSystem
         _frameRateDiagAccumulatedSeconds = 0d;
         _frameRateDiagUpdateAccumulatedSeconds = 0d;
         _frameRateDiagMaxUpdateSeconds = 0d;
-        _stepPerfStats.Clear();
         _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
     }
 
@@ -524,7 +514,6 @@ public sealed class PerformanceDiagnosticsSystem
         _frameRateDiagAccumulatedSeconds = 0d;
         _frameRateDiagUpdateAccumulatedSeconds = 0d;
         _frameRateDiagMaxUpdateSeconds = 0d;
-        _stepPerfStats.Clear();
         _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
     }
 
@@ -586,18 +575,6 @@ public sealed class PerformanceDiagnosticsSystem
             _frameRateDiagMaxUpdateSeconds = totalSeconds;
     }
 
-    private void RecordStepStats(string name, double elapsed)
-    {
-        if (!_stepPerfStats.TryGetValue(name, out StepPerfStats stats))
-            stats = default;
-
-        stats.TotalSeconds += elapsed;
-        stats.Samples++;
-        if (elapsed > stats.MaxSeconds)
-            stats.MaxSeconds = elapsed;
-        _stepPerfStats[name] = stats;
-    }
-
     private void LogSlowUpdateDiagnosticsIfNeeded(
         bool gameplayActive,
         double totalSeconds,
@@ -631,25 +608,7 @@ public sealed class PerformanceDiagnosticsSystem
 
     private string BuildStepStatsString()
     {
-        if (_stepPerfStats.Count == 0)
-            return "none";
-
-        System.Text.StringBuilder builder = new();
-        foreach (KeyValuePair<string, StepPerfStats> pair in _stepPerfStats)
-        {
-            StepPerfStats stats = pair.Value;
-            double avgMs = stats.Samples > 0 ? (stats.TotalSeconds * 1000d) / stats.Samples : 0d;
-            if (builder.Length > 0)
-                builder.Append("|");
-            builder.Append(pair.Key);
-            builder.Append(":avg=");
-            builder.Append(avgMs.ToString("F1"));
-            builder.Append("ms,max=");
-            builder.Append((stats.MaxSeconds * 1000d).ToString("F1"));
-            builder.Append("ms");
-        }
-
-        return builder.ToString();
+        return "none";
     }
 
     private string BuildMemoryDiagString()

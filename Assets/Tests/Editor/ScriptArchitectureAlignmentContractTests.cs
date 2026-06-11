@@ -12,6 +12,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private const string GameScriptsRoot = "Assets/Game/Scripts";
     private const string ProjectNamePrefix = "WarlineCapture";
     private const string SelfPath = "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs";
+    private const string LegacyBootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string MainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string MatchHudContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string ArmoryContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab";
@@ -30,7 +31,6 @@ public sealed class ScriptArchitectureAlignmentContractTests
     {
         "CampListItemViewReferences",
         "MatchHudMinimapZoomPressRelay",
-        "RuntimeBuildingEntityLink",
         "UIAccessibilityApplier",
         "UIBootstrap",
         "UIButtonAnimationState",
@@ -129,6 +129,19 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.UI.Runtime\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Game.UI.Runtime`. Runtime code can depend on `Game.UI.Contracts`; Composition owns concrete UI wiring.");
+    }
+
+    [Test]
+    public void LegacyBootstrapFolderMustNotContainRuntimeSourceFiles()
+    {
+        List<string> violations = EnumerateSourceFiles(LegacyBootstrapRoot)
+            .Select(NormalizePath)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Assets/Game/Scripts/Bootstrap` is a legacy ownership bucket. Put scene wiring in `Assets/Game/Scripts/Composition` and runtime state or logic in its owning runtime folder.");
     }
 
     [Test]

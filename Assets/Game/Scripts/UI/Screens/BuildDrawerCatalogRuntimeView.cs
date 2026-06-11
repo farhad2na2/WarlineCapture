@@ -125,7 +125,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         ApplyInstructionForCurrentSelection();
     }
 
-    internal void BindRuntimeQueries(
+    public void BindRuntimeQueries(
         BuildingUiQuerySystem uiQuerySystem,
         BuildingUiQuerySystem.Context uiQueryContext)
     {

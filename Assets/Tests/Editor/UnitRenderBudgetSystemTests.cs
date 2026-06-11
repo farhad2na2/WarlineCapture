@@ -26,7 +26,8 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.RenderSafetyPatchesBoundsAndAddsSafetyTag();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=13");
+            tests.CharacterSourceKeyPrefixCheckDoesNotAllocate();
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=14");
         }
         catch (System.Exception ex)
         {
@@ -467,6 +468,32 @@ public sealed partial class UnitRenderBudgetSystemTests
         Vector3 expectedCharacterForward = -(cameraRotation * Vector3.forward);
         Assert.Less(Vector3.Angle(expectedCharacterForward, characterRotation * Vector3.forward), 0.1f);
         Assert.Less(Vector3.Angle(Vector3.forward, vehicleRotation * Vector3.forward), 0.1f);
+    }
+
+    [Test]
+    public void CharacterSourceKeyPrefixCheckDoesNotAllocate()
+    {
+        FixedString64Bytes character = new("Unit_Chr_Rifleman");
+        FixedString64Bytes vehicle = new("Unit_Veh_APC");
+
+        _ = UnitImpostorRenderSystem.HasCharacterUnitPrefix(character);
+        _ = UnitImpostorRenderSystem.HasCharacterUnitPrefix(vehicle);
+
+        bool allMatched = false;
+        Assert.That(() =>
+        {
+            bool result = true;
+            for (int i = 0; i < 4096; i++)
+            {
+                result &= UnitImpostorRenderSystem.HasCharacterUnitPrefix(character);
+                result &= !UnitImpostorRenderSystem.HasCharacterUnitPrefix(vehicle);
+            }
+
+            allMatched = result;
+        }, new NUnit.Framework.Constraints.NotConstraint(
+            UnityEngine.TestTools.Constraints.Is.AllocatingGCMemory()));
+
+        Assert.IsTrue(allMatched);
     }
 
     private static Entity TestEntity(int index)

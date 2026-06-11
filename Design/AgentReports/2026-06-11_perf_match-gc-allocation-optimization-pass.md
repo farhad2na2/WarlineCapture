@@ -12,10 +12,16 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - `Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputSystem.cs`
 - `Assets/Game/Scripts/Rendering/UnitAttackTraceSystem.cs`
 - `Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs`
+- `Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs`
+- `Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs`
+- `Assets/Tests/Editor/MatchHudMinimapProjectionSystemTests.cs`
+- `Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs`
+- `Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs.meta`
+- `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
 
 ## Contracts touched
 
-- No public gameplay contract changes.
+- `BuildingUiQuerySystem.Context` is now a public handle with internal payload fields/constructor so the current UI runtime assembly split can store/pass the context without exposing internals.
 - Added `UnitImpostorRenderSystem.HasCharacterUnitPrefix(FixedString64Bytes)` as an internal no-allocation prefix helper used by render-budget classification.
 - Did not modify `PathfindBatchJob`, `UnitPathfindingScheduleSystem`, `UnitPathfindingSystem`, or `UnitPathGridSnapshotSystem`.
 
@@ -29,7 +35,8 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
   - After: shared no-allocation prefix helper.
 - `PerformanceDiagnosticsSystem.EndStep`
   - Before: every runtime update step formatted elapsed time with `ToString("F1")` into `_lastStepLogBuilder`, even on frames with no diagnostics log.
-  - After: stores raw step samples per frame and builds formatted strings only when a diagnostic log is emitted.
+  - After: stores raw last-step samples per frame and builds formatted strings only when a diagnostic log is emitted.
+  - Follow-up in this pass: removed the rolling dictionary-backed `stepStats` aggregation from the `EndStep` hot path after the allocation guard proved it still allocated. Periodic low-FPS logs now report `stepStats=none`; freeze/pre-game `lastSteps` diagnostics remain.
 - `MatchHudMinimapProjectionSystem`
   - Before: repeated `Vector3[]` viewport-corner arrays inside camera projection helpers.
   - After: shared static viewport-corner array.
@@ -43,11 +50,15 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 ## User-visible behavior
 
 - No intended visual or gameplay behavior changes.
-- Impostors, minimap projection, minimap markers, attack traces, and diagnostic output format should remain equivalent.
+- Impostors, minimap projection, minimap markers, and attack traces should remain equivalent.
+- Diagnostic-only low-FPS `stepStats` aggregation is intentionally disabled to keep `PerformanceDiagnosticsSystem.EndStep` allocation-free. The per-frame `lastSteps` diagnostic remains available for freeze/pre-game logs.
 
 ## Validation run
 
-- Main project Unity compile attempt:
+- Main project Unity compile:
+  - Command: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/warline-gc-guards-main-compile-5.log`
+  - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, or `Compilation failed` entries.
+- Earlier main project Unity compile attempt:
   - Command: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/warline-gc-compile.log`
   - Result: blocked because `/Users/farhad/Projects/WarlineCapture` was already open in another Unity instance.
 - Shadow validation setup:
@@ -59,18 +70,26 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
   - `UnitRenderBudgetSystemTests`: 13 passed, 0 failed.
   - `MatchHudMinimapProjectionSystemTests`: 11 passed, 0 failed.
   - `RuntimeDiagnosticsSystemTests`: 4 passed, 0 failed.
+- Focused EditMode tests in `/Users/farhad/Projects/WarlineCapture`:
+  - `UnitRenderBudgetSystemTests.RunFocusedValidation`: passed with `[UnitRenderBudgetFocusedValidation] result=Passed tests=14`.
+  - `MatchHudMinimapProjectionSystemTests.RunFocusedValidation`: passed with `[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=11`.
+  - `PerformanceDiagnosticsSystemAllocationTests.RunFocusedValidation`: passed with `[PerformanceDiagnosticsAllocationValidation] result=Passed tests=1`.
+  - Note: Unity `-runTests` parsed the Test Runner arguments but did not emit XML in this session, so the execute-method focused validations were used. The minimap execute-method excludes the existing `RuntimeMinimapReplacesDefaultSpriteOnExistingImageAndCentersViewportOnBind` case because it depends on Test Runner `LogAssert` scope.
+- Attempted shadow validation in `/Users/farhad/Projects/WarlineCapture-CodexUnity2`:
+  - Result: blocked by broad pre-existing compile errors unrelated to this GC pass, including duplicate `PathfindBatchJob`/tactical feedback symbols and missing component types such as `DynamicBlockerComponent`.
 - Static checks:
   - `git diff --check`: passed.
   - Confirmed no pathfinding files are modified.
 
 ## Validation result
 
-- Compile/test validation: PASS in shadow workspace.
+- Compile/test validation: PASS in main workspace and earlier `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation.
+- `/Users/farhad/Projects/WarlineCapture-CodexUnity2` validation: BLOCKED by unrelated broad compile errors in that shadow project.
 - Final profiler proof: PENDING. Interactive Unity Profiler re-capture with `GC.Alloc` call stacks is still required to prove steady-state 0 B/frame or document remaining allocation sites.
 
 ## Known gaps
 
-- The main project could not be batchmode-validated because it was open in Unity.
+- The first main-project validation attempt was blocked by an open Unity instance, then rerun successfully once the lock was gone.
 - `dotnet build` is not a reliable substitute for this Unity project:
   - `Game.Runtime.csproj` failed inside Unity package RenderGraph generated code.
   - `WarlineCapture.Runtime.csproj --no-dependencies` references stale moved source paths.

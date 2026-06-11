@@ -11,30 +11,30 @@ public sealed class BuildingUiQuerySystem
     public delegate bool TryGetRuntimeBuildingOwnerFactionDelegate(int buildingId, out byte ownerFactionId);
     public delegate bool TryResolveLiveUnitPreviewPrefabDelegate(Entity unitEntity, out GameObject prefab);
 
-    internal readonly struct Context
+    public readonly struct Context
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
-        public readonly Func<int?> GetActiveBuildingId;
-        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly BuildingProductionSystem ProductionSystem;
-        public readonly Func<float> GetNow;
-        public readonly Func<bool> HasSelectedBuilding;
-        public readonly Func<bool> HasActiveBuilding;
-        public readonly Func<string> GetPlacementStatusText;
-        public readonly Func<string> GetSelectedBuildingLabel;
-        public readonly Func<string> GetSelectedBuildingDisplayName;
-        public readonly Func<string> GetSelectedBuildingDescription;
-        public readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
-        public readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
-        public readonly BuildingProductionRequestSystem ProductionRequestSystem;
-        public readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
-        public readonly Func<int, bool> IsRuntimeBuildingWall;
-        public readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
-        public readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
-        public readonly Func<Camera, bool> HasVisibleSelectableBuilding;
-        public readonly TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
+        internal readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
+        internal readonly Func<int?> GetActiveBuildingId;
+        internal readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        internal readonly BuildingProductionSystem ProductionSystem;
+        internal readonly Func<float> GetNow;
+        internal readonly Func<bool> HasSelectedBuilding;
+        internal readonly Func<bool> HasActiveBuilding;
+        internal readonly Func<string> GetPlacementStatusText;
+        internal readonly Func<string> GetSelectedBuildingLabel;
+        internal readonly Func<string> GetSelectedBuildingDisplayName;
+        internal readonly Func<string> GetSelectedBuildingDescription;
+        internal readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
+        internal readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
+        internal readonly BuildingProductionRequestSystem ProductionRequestSystem;
+        internal readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
+        internal readonly Func<int, bool> IsRuntimeBuildingWall;
+        internal readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
+        internal readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
+        internal readonly Func<Camera, bool> HasVisibleSelectableBuilding;
+        internal readonly TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
 
-        public Context(
+        internal Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<int?> getActiveBuildingId,
             TryGetEntityManagerDelegate tryGetEntityManager,

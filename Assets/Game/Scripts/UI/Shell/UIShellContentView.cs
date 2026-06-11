@@ -100,7 +100,7 @@ public sealed class UIShellContentView : MonoBehaviour
         BindBuildPlacementConfirmationBarInRegion();
     }
 
-    internal void BindBuildDrawerRuntimeQueries(
+    public void BindBuildDrawerRuntimeQueries(
         BuildingUiQuerySystem buildingUiQuerySystem,
         BuildingUiQuerySystem.Context buildingUiQueryContext)
     {

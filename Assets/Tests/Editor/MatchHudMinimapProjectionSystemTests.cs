@@ -8,6 +8,32 @@ using UnityEngine.UI;
 
 public sealed class MatchHudMinimapProjectionSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new MatchHudMinimapProjectionSystemTests();
+            tests.WorldAndNormalizedProjectionRoundTripUsesGridBounds();
+            tests.CameraViewportRectProjectsToNormalizedMapRect();
+            tests.CameraCenteredGridUsesLocalWindowAroundCamera();
+            tests.CameraCenteredGridCentersPerspectiveViewportFootprint();
+            tests.CameraCenteredGridKeepsViewportCenteredNearMapEdge();
+            tests.CameraProjectionHelpersDoNotAllocateAfterWarmup();
+            tests.CaptureCameraUsesProjectionGridAspectAndCenter();
+            tests.CenteredGridAllowsWindowPastMapEdgeToKeepRequestedCenter();
+            tests.ClampWorldToGridKeepsFocusInsideAuthoredMap();
+            tests.NormalizedToWorldClampsOutOfRangeInput();
+            tests.ViewportRectUsesMapPositionWhenViewportIsNotMapChild();
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=11");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[MatchHudMinimapProjectionFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
     [Test]
     public void WorldAndNormalizedProjectionRoundTripUsesGridBounds()
     {
@@ -143,6 +169,54 @@ public sealed class MatchHudMinimapProjectionSystemTests
             Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, localGrid, out Rect rect));
             Assert.AreEqual(0.5f, rect.center.x, 0.01f);
             Assert.AreEqual(0.5f, rect.center.y, 0.01f);
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void CameraProjectionHelpersDoNotAllocateAfterWarmup()
+    {
+        GameObject cameraObject = new("MinimapProjectionAllocationTestCamera");
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = 1.5f;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            GridConfig gridConfig = new()
+            {
+                Width = 100,
+                Height = 100,
+                CellSize = 10f,
+                Origin = float3.zero
+            };
+            MatchHudMinimapProjectionGrid grid = new(Vector3.zero, 1000f, 1000f);
+
+            Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, grid, out _));
+            _ = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
+
+            bool projected = false;
+            Assert.That(() =>
+            {
+                bool result = true;
+                for (int i = 0; i < 128; i++)
+                {
+                    result &= MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, grid, out Rect rect);
+                    MatchHudMinimapProjectionGrid localGrid =
+                        MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
+                    result &= rect.width > 0f && rect.height > 0f && localGrid.Width > 0f && localGrid.Height > 0f;
+                }
+
+                projected = result;
+            }, new NUnit.Framework.Constraints.NotConstraint(
+                UnityEngine.TestTools.Constraints.Is.AllocatingGCMemory()));
+
+            Assert.IsTrue(projected);
         }
         finally
         {

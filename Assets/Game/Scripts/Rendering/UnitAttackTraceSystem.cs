@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -10,6 +9,21 @@ public sealed class UnitAttackTraceSystem
     private const int MaxBatchSize = 1023;
     private static readonly int TraceColorId = Shader.PropertyToID("_TraceColor");
     private static readonly int TraceParamsId = Shader.PropertyToID("_TraceParams");
+    private static readonly Vector3[] TraceVertices =
+    {
+        new(-0.5f, 0f, 0f),
+        new(0.5f, 0f, 0f),
+        new(-0.5f, 0f, 1f),
+        new(0.5f, 0f, 1f)
+    };
+    private static readonly Vector2[] TraceUvs =
+    {
+        new(0f, 0f),
+        new(1f, 0f),
+        new(0f, 1f),
+        new(1f, 1f)
+    };
+    private static readonly int[] TraceTriangles = { 0, 2, 1, 2, 3, 1 };
 
     private UnitAttackTraceSystemConfig config;
     private Camera worldCamera;
@@ -198,21 +212,9 @@ public sealed class UnitAttackTraceSystem
             name = "UnitAttackTraceQuad"
         };
 
-        mesh.SetVertices(new List<Vector3>
-        {
-            new(-0.5f, 0f, 0f),
-            new(0.5f, 0f, 0f),
-            new(-0.5f, 0f, 1f),
-            new(0.5f, 0f, 1f)
-        });
-        mesh.SetUVs(0, new List<Vector2>
-        {
-            new(0f, 0f),
-            new(1f, 0f),
-            new(0f, 1f),
-            new(1f, 1f)
-        });
-        mesh.SetTriangles(new[] { 0, 2, 1, 2, 3, 1 }, 0);
+        mesh.vertices = TraceVertices;
+        mesh.uv = TraceUvs;
+        mesh.triangles = TraceTriangles;
         mesh.RecalculateBounds();
         return mesh;
     }

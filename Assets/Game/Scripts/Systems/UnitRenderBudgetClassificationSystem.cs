@@ -15,6 +15,6 @@ public readonly struct UnitRenderBudgetClassificationSystem
             return false;
 
         FixedString64Bytes key = em.GetComponentData<UnitSourcePrefabKey>(unit).Value;
-        return key.ToString().StartsWith("Unit_Chr_", System.StringComparison.Ordinal);
+        return UnitImpostorRenderSystem.HasCharacterUnitPrefix(key);
     }
 }

@@ -27,6 +27,13 @@ public static class MatchHudMinimapProjectionSystem
 {
     private const float MinLocalWindowHeight = 160f;
     private const float LocalWindowVisibleScale = 4.5f;
+    private static readonly Vector3[] ViewportCorners =
+    {
+        new(0f, 0f, 0f),
+        new(1f, 0f, 0f),
+        new(1f, 1f, 0f),
+        new(0f, 1f, 0f)
+    };
 
     public static bool TryGetGrid(out GridConfig grid)
     {
@@ -100,17 +107,9 @@ public static class MatchHudMinimapProjectionSystem
         float maxX = float.NegativeInfinity;
         float maxY = float.NegativeInfinity;
         bool found = false;
-        Vector3[] viewportPoints =
+        for (int i = 0; i < ViewportCorners.Length; i++)
         {
-            new(0f, 0f, 0f),
-            new(1f, 0f, 0f),
-            new(1f, 1f, 0f),
-            new(0f, 1f, 0f)
-        };
-
-        for (int i = 0; i < viewportPoints.Length; i++)
-        {
-            if (!TryRaycastViewport(worldCamera, groundPlane, viewportPoints[i], out Vector3 worldPoint) ||
+            if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint) ||
                 !TryWorldToNormalized(grid, worldPoint, out Vector2 normalized))
             {
                 continue;
@@ -247,22 +246,14 @@ public static class MatchHudMinimapProjectionSystem
             return new Vector2(fullGrid.Width, fullGrid.Height);
 
         Plane groundPlane = new(Vector3.up, new Vector3(0f, fullGrid.Origin.y, 0f));
-        Vector3[] viewportPoints =
-        {
-            new(0f, 0f, 0f),
-            new(1f, 0f, 0f),
-            new(1f, 1f, 0f),
-            new(0f, 1f, 0f)
-        };
-
         bool found = false;
         float minX = float.PositiveInfinity;
         float minZ = float.PositiveInfinity;
         float maxX = float.NegativeInfinity;
         float maxZ = float.NegativeInfinity;
-        for (int i = 0; i < viewportPoints.Length; i++)
+        for (int i = 0; i < ViewportCorners.Length; i++)
         {
-            if (!TryRaycastViewport(worldCamera, groundPlane, viewportPoints[i], out Vector3 worldPoint))
+            if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint))
                 continue;
 
             found = true;
@@ -294,22 +285,14 @@ public static class MatchHudMinimapProjectionSystem
             return false;
 
         Plane groundPlane = new(Vector3.up, new Vector3(0f, fullGrid.Origin.y, 0f));
-        Vector3[] viewportPoints =
-        {
-            new(0f, 0f, 0f),
-            new(1f, 0f, 0f),
-            new(1f, 1f, 0f),
-            new(0f, 1f, 0f)
-        };
-
         bool found = false;
         float minX = float.PositiveInfinity;
         float minZ = float.PositiveInfinity;
         float maxX = float.NegativeInfinity;
         float maxZ = float.NegativeInfinity;
-        for (int i = 0; i < viewportPoints.Length; i++)
+        for (int i = 0; i < ViewportCorners.Length; i++)
         {
-            if (!TryRaycastViewport(worldCamera, groundPlane, viewportPoints[i], out Vector3 worldPoint))
+            if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint))
                 continue;
 
             found = true;

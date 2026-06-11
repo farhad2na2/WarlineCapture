@@ -551,8 +551,12 @@ public partial struct GroundMissileImpactSystem : ISystem
                              .WithNone<StaticGridBlocker>()
                              .WithEntityAccess())
                 {
-                    if (health.ValueRO.Current <= 0 || faction.ValueRO.Id == request.FactionId)
+                    if (target == request.TargetEntity ||
+                        health.ValueRO.Current <= 0 ||
+                        faction.ValueRO.Id == request.FactionId)
+                    {
                         continue;
+                    }
 
                     float3 delta = transform.ValueRO.Position - request.Position;
                     delta.y = 0f;
@@ -599,7 +603,11 @@ public partial struct GroundMissileImpactSystem : ISystem
         if (health.Current <= 0)
             return;
 
-        health.Current = 0;
+        int damage = math.max(0, request.Damage);
+        if (damage <= 0)
+            return;
+
+        health.Current = math.max(0, health.Current - damage);
         em.SetComponentData(target, health);
         ApplyRecentDamageState(em, ecb, target, request);
     }

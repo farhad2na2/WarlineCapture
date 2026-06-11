@@ -17,6 +17,7 @@ public sealed class PerformanceDiagnosticsSystem
     private const double RenderSceneBreakdownDiagIntervalSeconds = 10d;
     private const int MaxAutoProfilerMarkerRecorders = 200;
     private const int MaxTopSystemProfilerMarkers = 8;
+    private const int MaxLastStepSamples = 16;
     private static readonly string[] PriorityProfilerMarkerNameFragments =
     {
         "UnitEngagementSystem",
@@ -47,6 +48,7 @@ public sealed class PerformanceDiagnosticsSystem
     private readonly System.Text.StringBuilder _freezeLogBuilder = new();
     private readonly System.Text.StringBuilder _lastStepLogBuilder = new();
     private readonly Dictionary<string, StepPerfStats> _stepPerfStats = new();
+    private readonly StepSample[] _lastStepSamples = new StepSample[MaxLastStepSamples];
     private readonly List<NamedProfilerRecorder> _markerRecorders = new();
     private double _lastUpdateTimestamp;
     private double _suppressFrameGapUntilTimestamp;
@@ -58,6 +60,7 @@ public sealed class PerformanceDiagnosticsSystem
     private double _frameRateDiagMaxUpdateSeconds;
     private double _frameStartTimestamp;
     private int _frameRateDiagFrames;
+    private int _lastStepSampleCount;
     private bool _lastApplicationFocused;
     private bool _applicationPaused;
     private int _lastGcGen0Count;
@@ -74,6 +77,12 @@ public sealed class PerformanceDiagnosticsSystem
         public double TotalSeconds;
         public double MaxSeconds;
         public int Samples;
+    }
+
+    private struct StepSample
+    {
+        public string Name;
+        public double Seconds;
     }
 
     private struct NamedProfilerRecorder
@@ -119,7 +128,7 @@ public sealed class PerformanceDiagnosticsSystem
             double gapSeconds = now - _lastUpdateTimestamp;
             if (gapSeconds >= FreezeLogThresholdSeconds)
             {
-                Debug.Log($"[FreezeDetect] Frame gap frame={Time.frameCount} Gap={(gapSeconds * 1000d):F1}ms GC={BuildGcDeltaString()} LastSteps={_lastStepLogBuilder}");
+                Debug.Log($"[FreezeDetect] Frame gap frame={Time.frameCount} Gap={FormatMilliseconds(gapSeconds)}ms GC={BuildGcDeltaString()} LastSteps={BuildLastStepLogString()}");
             }
         }
 
@@ -127,6 +136,7 @@ public sealed class PerformanceDiagnosticsSystem
         _frameStartTimestamp = Time.realtimeSinceStartupAsDouble;
         _freezeLogBuilder.Clear();
         _lastStepLogBuilder.Clear();
+        _lastStepSampleCount = 0;
     }
 
     public double BeginStep()
@@ -138,14 +148,7 @@ public sealed class PerformanceDiagnosticsSystem
     {
         double elapsed = Time.realtimeSinceStartupAsDouble - start;
         RecordStepStats(name, elapsed);
-
-        if (_lastStepLogBuilder.Length > 0)
-            _lastStepLogBuilder.Append(", ");
-
-        _lastStepLogBuilder.Append(name);
-        _lastStepLogBuilder.Append('=');
-        _lastStepLogBuilder.Append((elapsed * 1000d).ToString("F1"));
-        _lastStepLogBuilder.Append("ms");
+        RecordLastStepSample(name, elapsed);
 
         if (elapsed < FreezeLogThresholdSeconds)
             return false;
@@ -153,11 +156,61 @@ public sealed class PerformanceDiagnosticsSystem
         if (_freezeLogBuilder.Length > 0)
             _freezeLogBuilder.Append(", ");
 
-        _freezeLogBuilder.Append(name);
-        _freezeLogBuilder.Append('=');
-        _freezeLogBuilder.Append((elapsed * 1000d).ToString("F1"));
-        _freezeLogBuilder.Append("ms");
+        AppendStepTiming(_freezeLogBuilder, name, elapsed);
         return true;
+    }
+
+    private void RecordLastStepSample(string name, double elapsed)
+    {
+        if (_lastStepSampleCount >= _lastStepSamples.Length)
+            return;
+
+        _lastStepSamples[_lastStepSampleCount++] = new StepSample
+        {
+            Name = name,
+            Seconds = elapsed
+        };
+    }
+
+    private string BuildLastStepLogString()
+    {
+        if (_lastStepSampleCount == 0)
+            return "none";
+
+        _lastStepLogBuilder.Clear();
+        for (int i = 0; i < _lastStepSampleCount; i++)
+        {
+            StepSample sample = _lastStepSamples[i];
+            if (_lastStepLogBuilder.Length > 0)
+                _lastStepLogBuilder.Append(", ");
+
+            AppendStepTiming(_lastStepLogBuilder, sample.Name, sample.Seconds);
+        }
+
+        return _lastStepLogBuilder.ToString();
+    }
+
+    private static void AppendStepTiming(System.Text.StringBuilder builder, string name, double seconds)
+    {
+        builder.Append(name);
+        builder.Append('=');
+        AppendMilliseconds(builder, seconds);
+        builder.Append("ms");
+    }
+
+    private static void AppendMilliseconds(System.Text.StringBuilder builder, double seconds)
+    {
+        int tenths = (int)Math.Round(seconds * 10000d, MidpointRounding.AwayFromZero);
+        int whole = tenths / 10;
+        int fraction = Math.Abs(tenths % 10);
+        builder.Append(whole);
+        builder.Append('.');
+        builder.Append(fraction);
+    }
+
+    private static string FormatMilliseconds(double seconds)
+    {
+        return (seconds * 1000d).ToString("F1");
     }
 
     public void EndUpdate(
@@ -179,7 +232,7 @@ public sealed class PerformanceDiagnosticsSystem
             _freezeLogBuilder.Append(BuildGcDeltaString());
             _freezeLogBuilder.Append(", ");
             _freezeLogBuilder.Append("Total=");
-            _freezeLogBuilder.Append((totalSeconds * 1000d).ToString("F1"));
+            AppendMilliseconds(_freezeLogBuilder, totalSeconds);
             _freezeLogBuilder.Append("ms");
             Debug.Log($"[FreezeDetect] Update hitch frame={Time.frameCount} {_freezeLogBuilder}");
         }
@@ -212,14 +265,14 @@ public sealed class PerformanceDiagnosticsSystem
     {
         double elapsed = Time.realtimeSinceStartupAsDouble - start;
         if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] LateUpdate hitch frame={Time.frameCount} UnitRenderLate={(elapsed * 1000d):F1}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
+            Debug.Log($"[FreezeDetect] LateUpdate hitch frame={Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
     }
 
     public void EndOnGui(double start)
     {
         double elapsed = Time.realtimeSinceStartupAsDouble - start;
         if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] OnGUI hitch frame={Time.frameCount} Total={(elapsed * 1000d):F1}ms GC={BuildGcDeltaString()}");
+            Debug.Log($"[FreezeDetect] OnGUI hitch frame={Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
     }
 
     public void Dispose()
@@ -444,7 +497,7 @@ public sealed class PerformanceDiagnosticsSystem
             string label = gameplayActive ? "FrameRateDiag" : "FrameRateDiag:PreGame";
             string preGameDetails = gameplayActive
                 ? string.Empty
-                : $" vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} lastSteps={_lastStepLogBuilder}";
+                : $" vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} lastSteps={BuildLastStepLogString()}";
             Debug.Log(
                 $"[{label}] fps={averageFps:F1} avgFrame={averageFrameMs:F1}ms " +
                 $"updateAvg={updateAverageMs:F1}ms updateMax={_frameRateDiagMaxUpdateSeconds * 1000d:F1}ms " +
@@ -567,7 +620,7 @@ public sealed class PerformanceDiagnosticsSystem
         string label = gameplayActive ? "PerfDiag" : "PerfDiag:PreGame";
         Debug.Log(
             $"[{label}] slowUpdate frame={Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
-            $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={_lastStepLogBuilder} units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
+            $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={BuildLastStepLogString()} units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
             $"memory={BuildMemoryDiagString()} uiToolkit=0 " +

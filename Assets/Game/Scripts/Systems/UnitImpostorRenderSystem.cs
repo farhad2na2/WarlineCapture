@@ -25,6 +25,25 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private const float CharacterTacticalBillboardFullCameraY = 200f;
     private const float CharacterTacticalBillboardMaxScale = 16f;
     private const string ImpostorShaderName = "Game/Unit Impostor Unlit";
+    private static readonly Vector3[] BillboardVertices =
+    {
+        new(-0.5f, 0f, 0f),
+        new(0.5f, 0f, 0f),
+        new(-0.5f, 1f, 0f),
+        new(0.5f, 1f, 0f)
+    };
+    private static readonly Vector2[] BillboardUvs =
+    {
+        new(0f, 0f),
+        new(1f, 0f),
+        new(0f, 1f),
+        new(1f, 1f)
+    };
+    private static readonly int[] BillboardTriangles =
+    {
+        0, 1, 2,
+        2, 1, 3
+    };
 
     private sealed class ImpostorStyle
     {
@@ -37,6 +56,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private sealed class BatchState
     {
         public readonly Matrix4x4[] Matrices = new Matrix4x4[MaxBatchSize];
+        public Material Material;
         public int Count;
     }
 
@@ -47,6 +67,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private readonly Dictionary<FixedString64Bytes, UnitImpostorAtlasEntry> _atlasByKey = new();
     private readonly Dictionary<FixedString64Bytes, ImpostorStyle> _styleByKey = new();
     private readonly Dictionary<Material, BatchState> _batchByMaterial = new();
+    private readonly List<BatchState> _batches = new();
     private World _cachedWorld;
     private EntityQuery _query;
     private EntityQuery _sourceKeyFallbackQuery;
@@ -122,6 +143,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         _atlasByKey.Clear();
         _styleByKey.Clear();
         _batchByMaterial.Clear();
+        _batches.Clear();
         _quadMesh = null;
         _fallbackMaterial = null;
         _camera = null;
@@ -353,31 +375,33 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
 
     private void ResetBatches()
     {
-        foreach (KeyValuePair<Material, BatchState> pair in _batchByMaterial)
-            pair.Value.Count = 0;
+        for (int i = 0; i < _batches.Count; i++)
+            _batches[i].Count = 0;
     }
 
     private void AddToBatch(Material material, Matrix4x4 matrix)
     {
         if (!_batchByMaterial.TryGetValue(material, out BatchState batch))
         {
-            batch = new BatchState();
+            batch = new BatchState { Material = material };
             _batchByMaterial[material] = batch;
+            _batches.Add(batch);
         }
 
         batch.Matrices[batch.Count++] = matrix;
         if (batch.Count >= MaxBatchSize)
-            FlushBatch(material, batch);
+            FlushBatch(batch);
     }
 
     private void FlushBatches()
     {
-        foreach (KeyValuePair<Material, BatchState> pair in _batchByMaterial)
-            FlushBatch(pair.Key, pair.Value);
+        for (int i = 0; i < _batches.Count; i++)
+            FlushBatch(_batches[i]);
     }
 
-    private void FlushBatch(Material material, BatchState batch)
+    private void FlushBatch(BatchState batch)
     {
+        Material material = batch?.Material;
         if (batch == null || batch.Count <= 0 || material == null || _quadMesh == null)
             return;
 
@@ -709,7 +733,21 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
 
     private static bool IsCharacterSourceKey(FixedString64Bytes sourceKey)
     {
-        return sourceKey.ToString().StartsWith("Unit_Chr_", System.StringComparison.Ordinal);
+        return HasCharacterUnitPrefix(sourceKey);
+    }
+
+    internal static bool HasCharacterUnitPrefix(FixedString64Bytes sourceKey)
+    {
+        return sourceKey.Length >= 9 &&
+               sourceKey[0] == (byte)'U' &&
+               sourceKey[1] == (byte)'n' &&
+               sourceKey[2] == (byte)'i' &&
+               sourceKey[3] == (byte)'t' &&
+               sourceKey[4] == (byte)'_' &&
+               sourceKey[5] == (byte)'C' &&
+               sourceKey[6] == (byte)'h' &&
+               sourceKey[7] == (byte)'r' &&
+               sourceKey[8] == (byte)'_';
     }
 
     public static float ResolveCharacterTacticalScale(float cameraY)
@@ -792,25 +830,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             name = "Unit Impostor Billboard Quad",
             hideFlags = HideFlags.HideAndDontSave
         };
-        mesh.vertices = new[]
-        {
-            new Vector3(-0.5f, 0f, 0f),
-            new Vector3(0.5f, 0f, 0f),
-            new Vector3(-0.5f, 1f, 0f),
-            new Vector3(0.5f, 1f, 0f)
-        };
-        mesh.uv = new[]
-        {
-            new Vector2(0f, 0f),
-            new Vector2(1f, 0f),
-            new Vector2(0f, 1f),
-            new Vector2(1f, 1f)
-        };
-        mesh.triangles = new[]
-        {
-            0, 1, 2,
-            2, 1, 3
-        };
+        mesh.vertices = BillboardVertices;
+        mesh.uv = BillboardUvs;
+        mesh.triangles = BillboardTriangles;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
         return mesh;

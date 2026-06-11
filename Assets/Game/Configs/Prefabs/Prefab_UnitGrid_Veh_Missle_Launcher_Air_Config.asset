@@ -63,6 +63,7 @@ MonoBehaviour:
   attackDamage: 80
   maxHealth: 400
   attackImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  airMissileLauncherConfig: {fileID: 11400000, guid: e88ab1c7a4ed4765abff1d57be116a05, type: 2}
   attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
   attackTraceWidth: 0.18
   attackTraceScrollSpeed: 10

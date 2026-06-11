@@ -50,6 +50,9 @@ public partial struct UnitAttackSystem : ISystem
                      .WithNone<UnitDeathAnimationComponent>()
                      .WithEntityAccess())
         {
+            if (em.HasComponent<AirMissileLauncherComponent>(entity))
+                continue;
+
             if (em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
                 continue;
 

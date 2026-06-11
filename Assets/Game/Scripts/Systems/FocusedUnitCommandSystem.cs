@@ -222,8 +222,6 @@ public sealed class FocusedUnitCommandSystem
             return MissileLauncherTargetMode.None;
 
         string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(launcher).Value.ToString();
-        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Air", System.StringComparison.OrdinalIgnoreCase))
-            return MissileLauncherTargetMode.Air;
         if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Ground", System.StringComparison.OrdinalIgnoreCase))
             return MissileLauncherTargetMode.Ground;
 

@@ -25,7 +25,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
     }
 
     [Test]
-    public void AirMissileLauncherAttackButton_TargetsAirUnitInsideFriendlyAirRadar()
+    public void AirMissileLauncherAttackButton_DoesNotIssueManualRadarAttack()
     {
         using var world = new World("AirMissileLauncherRadarAttack");
         World previousWorld = World.DefaultGameObjectInjectionWorld;
@@ -39,13 +39,9 @@ public sealed class MissileLauncherRadarAttackValidationTests
             CreateUnit(em, 1, new int2(45, 20), false, true);
             CreateUnit(em, 1, new int2(80, 20), true, true);
 
-            Assert.IsTrue(IssueFocusedMissileLauncherRadarAttack(em, launcher));
-
-            Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
-            EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);
-            Assert.AreEqual(airTarget, engage.Target);
-            Assert.AreEqual(new int2(40, 20), engage.Cell);
-            Assert.AreEqual(1, engage.IsCommanded);
+            Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
+            Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
+            Assert.IsTrue(em.Exists(airTarget));
         }
         finally
         {

@@ -348,6 +348,106 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void AttackTargetMode_AirDefenseLauncherShowsAutoEngageFeedbackInsteadOfTargetMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity launcher = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(UnitHealth),
+            typeof(AirMissileLauncherComponent),
+            typeof(AirMissileLauncherStateComponent),
+            typeof(LocalTransform));
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(launcher, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(launcher, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(launcher, new AirMissileLauncherComponent
+        {
+            MinRange = 8f,
+            BaseDetectionRange = 220f,
+            MaxDetectionRange = 420f,
+            LockSeconds = 0.35f,
+            LaunchDelaySeconds = 0.12f,
+            ReloadSeconds = 1.8f,
+            MissileSpeed = 95f,
+            MissileTurnRateDegreesPerSecond = 220f,
+            MissileLifetimeSeconds = 7f,
+            ProximityFuseRadius = 4f,
+            AirTargetDamage = 120,
+            IncomingMissileDamage = 9999,
+            TrackingQuality = 0.75f
+        });
+        em.SetComponentData(launcher, new AirMissileLauncherStateComponent { Phase = (byte)AirMissileLauncherPhase.Idle });
+        em.SetComponentData(launcher, LocalTransform.FromPosition(float3.zero));
+
+        var inputSystem = new RtsSelectionInputSystem();
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(launcher);
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        TacticalCommandMode appliedMode = TacticalCommandMode.None;
+        TacticalCommandResult commandResult = default;
+        bool explicitAttackMode = false;
+        bool worldMarkersVisible = true;
+
+        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
+        var context = new RtsSelectionFocusCommandSystem.Context(
+            new RuntimeGameplayStateSystem(),
+            inputSystem,
+            selectionState,
+            new FocusedUnitLifecycleSystem(),
+            new UnitTargetOrderSystem(),
+            null,
+            default,
+            null,
+            (out EntityManager entityManager) =>
+            {
+                entityManager = em;
+                return true;
+            },
+            _ => { },
+            null,
+            null,
+            null,
+            null,
+            result => commandResult = result,
+            mode => appliedMode = mode,
+            null,
+            null,
+            null,
+            visible => worldMarkersVisible = visible,
+            _ => { },
+            value => explicitAttackMode = value,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
+
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.AreEqual(TacticalCommandMode.None, appliedMode);
+        Assert.IsFalse(explicitAttackMode);
+        Assert.IsFalse(worldMarkersVisible);
+        Assert.IsTrue(commandResult.Accepted);
+        Assert.AreEqual("Air defense auto-engages aircraft and incoming missiles.", commandResult.Message);
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_BoardButtonQueuesEnterBoardTargetModeAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();

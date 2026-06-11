@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7c91117d11647858d2c3f9025d4a611, type: 3}
+  m_Name: AirMissileLauncher_Air_Config
+  m_EditorClassIdentifier: 
+  minRange: 8
+  baseDetectionRange: 220
+  maxDetectionRange: 420
+  airTargetPriority: 25
+  incomingMissilePriority: 100
+  turretYawSpeedDegreesPerSecond: 280
+  aimToleranceDegrees: 7.5
+  lockSeconds: 0.35
+  launchDelaySeconds: 0.12
+  reloadSeconds: 1.8
+  missileSpeed: 95
+  missileAcceleration: 35
+  missileTurnRateDegreesPerSecond: 220
+  missileLifetimeSeconds: 7
+  proximityFuseRadius: 4
+  airTargetDamage: 120
+  incomingMissileDamage: 9999
+  trackingQuality: 0.75
+  radarSupportRangeBonus: 80
+  radarLockTimeMultiplier: 0.75
+  radarTrackingBonus: 0.12
+  radarTurnRateBonus: 35
+  satelliteSupportRangeBonus: 120
+  satelliteLockTimeMultiplier: 0.65
+  satelliteTrackingBonus: 0.18
+  satelliteTurnRateBonus: 50
+  maxSupportRangeBonus: 180
+  maxSupportTrackingBonus: 0.3
+  missileVisualPrefab: {fileID: 0}
+  launchFlashPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  launchSmokePrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}
+  missileTrailPrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}
+  airburstExplosionPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  airTargetImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  interceptExplosionPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}

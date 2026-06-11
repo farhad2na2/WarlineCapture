@@ -766,6 +766,10 @@ internal sealed class SelectionGameplayStartupSystem
             {
                 SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
                 SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
+                SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
+                SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
+                SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
+                SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
                 SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
                 SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
                 _ => "Idle"

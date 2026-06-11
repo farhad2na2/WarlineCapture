@@ -32,12 +32,7 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         if (prefab == null)
             return;
 
-        if (_instance == null)
-        {
-            GameObject root = new("UnitAttackImpactVfxRuntime");
-            DontDestroyOnLoad(root);
-            _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
-        }
+        EnsureInstance();
 
         _instance.PlayInternal(prefab, position, rotation, maxActiveSeconds);
     }
@@ -47,14 +42,20 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         if (prefab == null)
             return;
 
-        if (_instance == null)
-        {
-            GameObject root = new("UnitAttackImpactVfxRuntime");
-            DontDestroyOnLoad(root);
-            _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
-        }
+        EnsureInstance();
 
         _instance.PlayTimedLoopInternal(prefab, position, rotation, emitSeconds, totalActiveSeconds);
+    }
+
+    private static void EnsureInstance()
+    {
+        if (_instance != null)
+            return;
+
+        GameObject root = new("UnitAttackImpactVfxRuntime");
+        if (Application.isPlaying)
+            DontDestroyOnLoad(root);
+        _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
     }
 
     private void Update()

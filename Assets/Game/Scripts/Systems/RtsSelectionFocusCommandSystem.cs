@@ -464,6 +464,18 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ClearQueuedMoveOrder();
         context.InputSystem.ClearPendingMoveCommandRequests();
 
+        if (TryHasSelectedAirDefenseLauncherOnly(context))
+        {
+            context.InputSystem.ClearActiveCommandMode();
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+                "Air defense auto-engages aircraft and incoming missiles."));
+            context.SetCameraDragging?.Invoke(false);
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=False reason=AirDefenseAutoEngage frame={Time.frameCount}");
+            return;
+        }
+
         if (!TryHasSelectedAttackCapableUnit(context, out TacticalCommandReasonCode rejectionReason))
         {
             context.InputSystem.ClearActiveCommandMode();
@@ -612,6 +624,61 @@ public sealed class RtsSelectionFocusCommandSystem
         return false;
     }
 
+    private static bool TryHasSelectedAirDefenseLauncherOnly(Context context)
+    {
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        context.EnsureEntityQueries?.Invoke(em);
+        bool hasSelected = false;
+        bool hasAirDefenseLauncher = false;
+        bool hasNonAirDefenseAttackSource = false;
+
+        Entity focused = context.SelectionStateSystem.FocusedUnit;
+        if (focused != Entity.Null && em.Exists(focused))
+            IncludeSelectedAttackModeCandidate(em, focused, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+
+        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < cached.Count; i++)
+        {
+            Entity entity = cached[i];
+            if (em.Exists(entity))
+                IncludeSelectedAttackModeCandidate(em, entity, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+        }
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < selectedEntities.Length; i++)
+            {
+                Entity entity = selectedEntities[i];
+                if (em.Exists(entity))
+                    IncludeSelectedAttackModeCandidate(em, entity, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+            }
+        }
+
+        return hasSelected && hasAirDefenseLauncher && !hasNonAirDefenseAttackSource;
+    }
+
+    private static void IncludeSelectedAttackModeCandidate(
+        EntityManager em,
+        Entity entity,
+        ref bool hasSelected,
+        ref bool hasAirDefenseLauncher,
+        ref bool hasNonAirDefenseAttackSource)
+    {
+        hasSelected = true;
+        if (IsAirDefenseLauncher(em, entity))
+        {
+            hasAirDefenseLauncher = true;
+            return;
+        }
+
+        if (IsSelectedAttackCapableUnit(em, entity))
+            hasNonAirDefenseAttackSource = true;
+    }
+
     private static bool TryHasSelectedAttackCapableUnit(
         Context context,
         out TacticalCommandReasonCode rejectionReason)
@@ -754,6 +821,9 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private static bool IsSelectedAttackCapableUnit(EntityManager em, Entity entity)
     {
+        if (IsAirDefenseLauncher(em, entity))
+            return false;
+
         if (!em.HasComponent<Faction>(entity) ||
             !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitMove>(entity) ||
@@ -761,6 +831,21 @@ public sealed class RtsSelectionFocusCommandSystem
             !em.HasComponent<UnitAttack>(entity) ||
             !em.HasComponent<LocalTransform>(entity) ||
             em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
+        {
+            return false;
+        }
+
+        return !em.HasComponent<UnitHealth>(entity) ||
+               em.GetComponentData<UnitHealth>(entity).Current > 0;
+    }
+
+    private static bool IsAirDefenseLauncher(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<AirMissileLauncherComponent>(entity))
+            return false;
+
+        if (em.HasComponent<Faction>(entity) &&
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
         {
             return false;
         }

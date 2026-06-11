@@ -29,7 +29,11 @@ public sealed class SelectionUiQuerySystem
         Moving = 1,
         Engaged = 2,
         ReturningToBase = 3,
-        MissileLaunched = 4
+        MissileLaunched = 4,
+        AirspaceClear = 5,
+        TrackingAirTarget = 6,
+        InterceptingMissile = 7,
+        AirDefenseReloading = 8
     }
 
     public bool HasFocusedUnit(EntityManager entityManager, Entity focusedUnit)
@@ -277,6 +281,9 @@ public sealed class SelectionUiQuerySystem
         if (HasAutoGroundMissileTarget(entityManager, entity))
             return FocusedUnitUiStatus.Idle;
 
+        if (TryGetAirMissileLauncherStatus(entityManager, entity, out FocusedUnitUiStatus airDefenseStatus))
+            return airDefenseStatus;
+
         if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
             return FocusedUnitUiStatus.Idle;
 
@@ -401,6 +408,10 @@ public sealed class SelectionUiQuerySystem
         {
             parts.Add("IDLE");
         }
+        else if (TryGetAirMissileLauncherStatus(entityManager, entity, out FocusedUnitUiStatus airDefenseStatus))
+        {
+            parts.Add(ToAirMissileLauncherStatusText(airDefenseStatus));
+        }
         else if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
             parts.Add("HOLDING");
         else if (entityManager.HasComponent<EngageTarget>(entity))
@@ -411,6 +422,49 @@ public sealed class SelectionUiQuerySystem
             parts.Add("IDLE");
 
         return string.Join(" / ", parts);
+    }
+
+    private static bool TryGetAirMissileLauncherStatus(
+        EntityManager entityManager,
+        Entity entity,
+        out FocusedUnitUiStatus status)
+    {
+        status = FocusedUnitUiStatus.Idle;
+        if (!entityManager.HasComponent<AirMissileLauncherComponent>(entity) ||
+            !entityManager.HasComponent<AirMissileLauncherStateComponent>(entity))
+        {
+            return false;
+        }
+
+        AirMissileLauncherStateComponent launcherState = entityManager.GetComponentData<AirMissileLauncherStateComponent>(entity);
+        if (launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading)
+        {
+            status = FocusedUnitUiStatus.AirDefenseReloading;
+            return true;
+        }
+
+        if (launcherState.TargetEntity != Entity.Null)
+        {
+            status = launcherState.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile
+                ? FocusedUnitUiStatus.InterceptingMissile
+                : FocusedUnitUiStatus.TrackingAirTarget;
+            return true;
+        }
+
+        status = FocusedUnitUiStatus.AirspaceClear;
+        return true;
+    }
+
+    private static string ToAirMissileLauncherStatusText(FocusedUnitUiStatus status)
+    {
+        return status switch
+        {
+            FocusedUnitUiStatus.TrackingAirTarget => "TRACKING AIR TARGET",
+            FocusedUnitUiStatus.InterceptingMissile => "INTERCEPTING MISSILE",
+            FocusedUnitUiStatus.AirDefenseReloading => "RELOADING",
+            FocusedUnitUiStatus.AirspaceClear => "AIRSPACE CLEAR",
+            _ => "IDLE"
+        };
     }
 
     private static void ResolveForward(EntityManager entityManager, Entity entity, out Vector3 forward)

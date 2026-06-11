@@ -141,6 +141,7 @@ internal sealed class BuildingRuntimeEntitySystem
                 Kind = (byte)definition.ThreatDetectionKind,
                 RadiusCells = Mathf.Max(0, definition.ThreatDetectionRadiusCells)
             });
+            AddAirDefenseSupportProvider(em, entity, definition.ThreatDetectionKind, definition.ThreatDetectionRadiusCells);
         }
         em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
         em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
@@ -150,5 +151,29 @@ internal sealed class BuildingRuntimeEntitySystem
             DeathAnimationSeconds = 0.01f
         });
         return entity;
+    }
+
+    private static void AddAirDefenseSupportProvider(
+        EntityManager em,
+        Entity entity,
+        ThreatDetectionKind kind,
+        int radiusCells)
+    {
+        if (kind == ThreatDetectionKind.None || radiusCells <= 0)
+            return;
+
+        byte supportKind = kind == ThreatDetectionKind.Air
+            ? (byte)AirDefenseSupportProviderKind.Satellite
+            : (byte)AirDefenseSupportProviderKind.Radar;
+        em.AddComponentData(entity, new AirDefenseSupportProviderComponent
+        {
+            Kind = supportKind,
+            Level = 1,
+            SupportRadius = math.max(0, radiusCells),
+            RangeBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 120f : 80f,
+            LockTimeMultiplier = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.65f : 0.75f,
+            TrackingBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.18f : 0.12f,
+            TurnRateBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 50f : 35f
+        });
     }
 }

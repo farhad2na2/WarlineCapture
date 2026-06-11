@@ -58,6 +58,9 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         if (!IsEligibleDebugFireSource(em, entity))
             return;
 
+        if (TryArmAirMissileLauncherDebugFire(em, grid, entity))
+            return;
+
         UnitAttack attack = em.GetComponentData<UnitAttack>(entity);
         LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(entity);
         Entity target = EnsureDebugTarget(em, entity);
@@ -81,6 +84,95 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             em.AddComponentData(entity, debugEngage);
 
         TryArmGroundMissileLauncherDebugFire(em, entity, target, targetCell, targetPosition);
+    }
+
+    private static bool TryArmAirMissileLauncherDebugFire(EntityManager em, GridConfig grid, Entity launcherEntity)
+    {
+        if (!em.HasComponent<AirMissileLauncherComponent>(launcherEntity) ||
+            !em.HasComponent<AirMissileLauncherStateComponent>(launcherEntity) ||
+            !em.HasComponent<LocalTransform>(launcherEntity))
+        {
+            return false;
+        }
+
+        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcherEntity);
+        if (launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading)
+            return true;
+
+        AirMissileLauncherComponent launcher = em.GetComponentData<AirMissileLauncherComponent>(launcherEntity);
+        LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(launcherEntity);
+        Entity target = EnsureDebugTarget(em, launcherEntity);
+        EnsureDebugAirTargetComponents(em, target);
+
+        float3 targetPosition = ResolveAirMissileDebugTargetPosition(grid, sourceTransform, launcher);
+        em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        em.SetComponentData(target, new UnitHealth { Current = DebugTargetHealth, Max = DebugTargetHealth });
+
+        AirMissileLauncherTargetComponent debugTarget = new()
+        {
+            Target = target,
+            TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit,
+            TargetWorldPosition = targetPosition,
+            TargetVelocity = float3.zero,
+            PredictedInterceptPosition = targetPosition,
+            Score = launcher.AirTargetPriority + 1000f
+        };
+
+        if (em.HasComponent<AirMissileLauncherTargetComponent>(launcherEntity))
+            em.SetComponentData(launcherEntity, debugTarget);
+        else
+            em.AddComponentData(launcherEntity, debugTarget);
+
+        launcherState.Phase = (byte)AirMissileLauncherPhase.Tracking;
+        launcherState.TargetEntity = target;
+        launcherState.TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit;
+        launcherState.TargetWorldPosition = targetPosition;
+        launcherState.PredictedInterceptPosition = targetPosition;
+        launcherState.Timer = math.max(0.01f, launcherState.EffectiveLockSeconds > 0f ? launcherState.EffectiveLockSeconds : launcher.LockSeconds);
+        em.SetComponentData(launcherEntity, launcherState);
+
+        if (em.HasComponent<EngageTarget>(launcherEntity))
+            em.RemoveComponent<EngageTarget>(launcherEntity);
+        if (em.HasComponent<UnitAttackTraceComponent>(launcherEntity))
+        {
+            UnitAttackTraceComponent trace = em.GetComponentData<UnitAttackTraceComponent>(launcherEntity);
+            trace.TimeRemaining = 0f;
+            em.SetComponentData(launcherEntity, trace);
+        }
+
+        return true;
+    }
+
+    private static void EnsureDebugAirTargetComponents(EntityManager em, Entity target)
+    {
+        if (!em.HasComponent<UnitAirMovement>(target))
+        {
+            em.AddComponentData(target, new UnitAirMovement
+            {
+                CruiseHeight = 28f,
+                RunwayTaxiSpeed = 0f
+            });
+        }
+    }
+
+    private static float3 ResolveAirMissileDebugTargetPosition(
+        GridConfig grid,
+        LocalTransform sourceTransform,
+        AirMissileLauncherComponent launcher)
+    {
+        float3 forward = math.rotate(sourceTransform.Rotation, new float3(0f, 0f, 1f));
+        forward.y = 0f;
+        forward = math.normalizesafe(forward, new float3(0f, 0f, 1f));
+        float minDistance = math.max(launcher.MinRange + math.max(0.1f, grid.CellSize), grid.CellSize * 4f);
+        float maxDistance = math.max(minDistance, launcher.BaseDetectionRange * 0.65f);
+        float distance = math.clamp(launcher.BaseDetectionRange * 0.45f, minDistance, maxDistance);
+        return sourceTransform.Position + forward * distance + new float3(0f, math.max(22f, grid.CellSize * 8f), 0f);
+    }
+
+    private static void ClearAirMissileDebugTarget(EntityManager em, Entity source)
+    {
+        if (em.Exists(source) && em.HasComponent<AirMissileLauncherTargetComponent>(source))
+            em.RemoveComponent<AirMissileLauncherTargetComponent>(source);
     }
 
     private static void TryArmGroundMissileLauncherDebugFire(
@@ -231,6 +323,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             em.RemoveComponent<EngageTarget>(source);
         }
 
+        ClearAirMissileDebugTarget(em, source);
         em.RemoveComponent<SelectedUnitDebugFireState>(source);
     }
 

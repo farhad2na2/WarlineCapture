@@ -1,6 +1,8 @@
 using System;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -16,10 +18,13 @@ public static class MatchRuntimeShellSmokeValidation
     private const string StartedAtKey = "MatchRuntimeShellSmokeValidation.StartedAt";
     private const string ErrorCountKey = "MatchRuntimeShellSmokeValidation.ErrorCount";
     private const string RequireFrameDiagKey = "MatchRuntimeShellSmokeValidation.RequireFrameDiag";
+    private const string RequireAirMissileSmokeKey = "MatchRuntimeShellSmokeValidation.RequireAirMissileSmoke";
     private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
     private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
+    private const double AirMissileSmokeTimeoutSeconds = 20d;
     private const double TimeoutSeconds = 120d;
     private const double StableFrameDiagObservationSeconds = 4d;
+    private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
     private enum Phase
     {
@@ -27,8 +32,15 @@ public static class MatchRuntimeShellSmokeValidation
         WaitingForPlayMode = 1,
         WaitingForShellReady = 2,
         WaitingForMatchReady = 3,
-        WaitingForFrameDiag = 4
+        WaitingForFrameDiag = 4,
+        WaitingForAirMissileSmoke = 5
     }
+
+    private static Entity _airSmokeLauncher = Entity.Null;
+    private static Entity _airSmokeTarget = Entity.Null;
+    private static bool _airSmokeProjectileSeen;
+    private static bool _airSmokeTrailSeen;
+    private static double _airSmokeStartedAt;
 
     [InitializeOnLoadMethod]
     private static void ResumeActiveValidation()
@@ -46,18 +58,30 @@ public static class MatchRuntimeShellSmokeValidation
 
     public static void RunFrameRateDiagnostics()
     {
-        RunInternal(requireFrameDiag: true);
+        RunInternal(requireFrameDiag: true, requireAirMissileSmoke: false);
+    }
+
+    public static void RunAirMissileLauncherSmoke()
+    {
+        RunInternal(requireFrameDiag: false, requireAirMissileSmoke: true);
     }
 
     private static void RunInternal(bool requireFrameDiag)
     {
+        RunInternal(requireFrameDiag, requireAirMissileSmoke: false);
+    }
+
+    private static void RunInternal(bool requireFrameDiag, bool requireAirMissileSmoke)
+    {
         try
         {
+            ResetAirMissileSmokeState();
             SessionState.SetBool(ActiveKey, true);
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
             SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
             SessionState.SetInt(ErrorCountKey, 0);
             SessionState.SetBool(RequireFrameDiagKey, requireFrameDiag);
+            SessionState.SetBool(RequireAirMissileSmokeKey, requireAirMissileSmoke);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseFloat(ReadyAtKey);
 
@@ -168,10 +192,36 @@ public static class MatchRuntimeShellSmokeValidation
             return;
         }
 
+        if (phase == Phase.WaitingForAirMissileSmoke)
+        {
+            if (UpdateAirMissileSmoke(out bool complete, out bool failed, out string smokeStatus))
+            {
+                Finish(!failed, smokeStatus);
+                return;
+            }
+
+            int smokeErrorCount = SessionState.GetInt(ErrorCountKey, 0);
+            if (smokeErrorCount > 0)
+            {
+                CleanupAirMissileSmoke();
+                Finish(false, $"Air missile smoke logged {smokeErrorCount} runtime error(s). status={smokeStatus}");
+                return;
+            }
+
+            if (complete)
+            {
+                Finish(true, smokeStatus);
+                return;
+            }
+
+            return;
+        }
+
         if (phase != Phase.WaitingForMatchReady)
             return;
 
-        if (!IsMatchRuntimeReady(out string status))
+        bool requireCurtainHidden = !SessionState.GetBool(RequireAirMissileSmokeKey, false);
+        if (!IsMatchRuntimeReady(out string status, requireCurtainHidden))
             return;
 
         int errorCount = SessionState.GetInt(ErrorCountKey, 0);
@@ -186,6 +236,13 @@ public static class MatchRuntimeShellSmokeValidation
             Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady waitingFrameRateDiag {status}");
             SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForFrameDiag);
+            return;
+        }
+
+        if (SessionState.GetBool(RequireAirMissileSmokeKey, false))
+        {
+            Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady startingAirMissileSmoke {status}");
+            SessionState.SetInt(PhaseKey, (int)Phase.WaitingForAirMissileSmoke);
             return;
         }
 
@@ -235,6 +292,11 @@ public static class MatchRuntimeShellSmokeValidation
 
     private static bool IsMatchRuntimeReady(out string status)
     {
+        return IsMatchRuntimeReady(out status, requireCurtainHidden: true);
+    }
+
+    private static bool IsMatchRuntimeReady(out string status, bool requireCurtainHidden)
+    {
         status = "waiting";
         if (!TryGetShellState(out UiShellStateComponent shellState))
             return false;
@@ -263,7 +325,7 @@ public static class MatchRuntimeShellSmokeValidation
                matchIntro.InputLocked == 0 &&
                matchSceneLoaded &&
                hudLoaded &&
-               curtainHidden;
+               (!requireCurtainHidden || curtainHidden);
     }
 
     private static bool TryGetShellState(out UiShellStateComponent shellState)
@@ -475,6 +537,213 @@ public static class MatchRuntimeShellSmokeValidation
                sourceKeyCount > 0;
     }
 
+    private static bool UpdateAirMissileSmoke(out bool complete, out bool failed, out string status)
+    {
+        complete = false;
+        failed = false;
+        status = "airSmoke=waiting";
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            failed = true;
+            status = "airSmoke=failed world=missing";
+            return true;
+        }
+
+        EntityManager em = world.EntityManager;
+        if (_airSmokeLauncher == Entity.Null)
+        {
+            CreateAirMissileSmokeScenario(em);
+            status = "airSmoke=created";
+            return false;
+        }
+
+        if (!em.Exists(_airSmokeLauncher) || !em.Exists(_airSmokeTarget))
+        {
+            failed = true;
+            status = "airSmoke=failed scenarioEntityMissing";
+            return true;
+        }
+
+        TrackAirMissileProjectileState(em);
+        UnitHealth targetHealth = em.GetComponentData<UnitHealth>(_airSmokeTarget);
+        byte phase = em.HasComponent<AirMissileLauncherStateComponent>(_airSmokeLauncher)
+            ? em.GetComponentData<AirMissileLauncherStateComponent>(_airSmokeLauncher).Phase
+            : (byte)AirMissileLauncherPhase.Idle;
+        bool hasTarget = em.HasComponent<AirMissileLauncherTargetComponent>(_airSmokeLauncher);
+        bool damaged = targetHealth.Current < targetHealth.Max;
+        status =
+            $"airSmoke=running phase={(AirMissileLauncherPhase)phase} hasTarget={(hasTarget ? 1 : 0)} " +
+            $"projectileSeen={(_airSmokeProjectileSeen ? 1 : 0)} trailSeen={(_airSmokeTrailSeen ? 1 : 0)} " +
+            $"health={targetHealth.Current}/{targetHealth.Max}";
+
+        if (_airSmokeProjectileSeen && _airSmokeTrailSeen && damaged)
+        {
+            CleanupAirMissileSmoke();
+            complete = true;
+            status =
+                $"[AirMissileLauncherMatchSmoke] result=Passed projectileSeen=1 trailSeen=1 " +
+                $"targetHealth={targetHealth.Current}/{targetHealth.Max}";
+            return false;
+        }
+
+        if (EditorApplication.timeSinceStartup - _airSmokeStartedAt > AirMissileSmokeTimeoutSeconds)
+        {
+            CleanupAirMissileSmoke();
+            failed = true;
+            status = $"[AirMissileLauncherMatchSmoke] result=Failed timeout {status}";
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void CreateAirMissileSmokeScenario(EntityManager em)
+    {
+        _airSmokeStartedAt = EditorApplication.timeSinceStartup;
+        _airSmokeProjectileSeen = false;
+        _airSmokeTrailSeen = false;
+
+        _airSmokeLauncher = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(LocalTransform),
+            typeof(AirMissileLauncherComponent),
+            typeof(AirMissileLauncherStateComponent),
+            typeof(AirDefenseSupportLinkComponent));
+        em.SetComponentData(_airSmokeLauncher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(_airSmokeLauncher, new UnitHealth { Current = 500, Max = 500 });
+        em.SetComponentData(_airSmokeLauncher, LocalTransform.FromPosition(new float3(0f, 0f, 0f)));
+        em.SetComponentData(_airSmokeLauncher, new AirMissileLauncherComponent
+        {
+            MinRange = 1f,
+            BaseDetectionRange = 320f,
+            MaxDetectionRange = 420f,
+            AirTargetPriority = 25f,
+            IncomingMissilePriority = 100f,
+            TurretYawSpeedDegreesPerSecond = 900f,
+            AimToleranceDegrees = 15f,
+            LockSeconds = 0.04f,
+            LaunchDelaySeconds = 0.02f,
+            ReloadSeconds = 1.2f,
+            MissileSpeed = 100f,
+            MissileAcceleration = 0f,
+            MissileTurnRateDegreesPerSecond = 360f,
+            MissileLifetimeSeconds = 5f,
+            ProximityFuseRadius = 10f,
+            AirTargetDamage = 60,
+            IncomingMissileDamage = 9999,
+            TrackingQuality = 1f,
+            MaxSupportRangeBonus = 180f,
+            MaxSupportTrackingBonus = 0.3f
+        });
+        em.SetComponentData(_airSmokeLauncher, new AirMissileLauncherStateComponent
+        {
+            Phase = (byte)AirMissileLauncherPhase.Idle,
+            TargetEntity = Entity.Null,
+            TargetKind = (byte)AirMissileTargetKind.None,
+            EffectiveRange = 320f,
+            EffectiveLockSeconds = 0.04f,
+            EffectiveTrackingQuality = 1f,
+            EffectiveTurnRateDegreesPerSecond = 360f
+        });
+        em.SetComponentData(_airSmokeLauncher, new AirDefenseSupportLinkComponent
+        {
+            LockTimeMultiplier = 1f
+        });
+        AddAirMissileVfxReference(em, _airSmokeLauncher);
+
+        _airSmokeTarget = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(LocalTransform),
+            typeof(UnitAirMovement));
+        em.SetComponentData(_airSmokeTarget, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(_airSmokeTarget, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(_airSmokeTarget, LocalTransform.FromPosition(new float3(42f, 12f, 0f)));
+        em.SetComponentData(_airSmokeTarget, new UnitAirMovement
+        {
+            CruiseHeight = 12f,
+            RunwayTaxiSpeed = 5f
+        });
+    }
+
+    private static void AddAirMissileVfxReference(EntityManager em, Entity launcher)
+    {
+        AirMissileLauncherConfig config = AssetDatabase.LoadAssetAtPath<AirMissileLauncherConfig>(AirLauncherConfigPath);
+        if (config == null)
+            return;
+
+        em.AddComponentObject(launcher, new AirMissileLauncherVfxReferenceComponent
+        {
+            MissileVisualPrefab = config.MissileVisualPrefab,
+            LaunchFlashPrefab = config.LaunchFlashPrefab,
+            LaunchSmokePrefab = config.LaunchSmokePrefab,
+            MissileTrailPrefab = config.MissileTrailPrefab,
+            AirburstExplosionPrefab = config.AirburstExplosionPrefab,
+            AirTargetImpactPrefab = config.AirTargetImpactPrefab,
+            InterceptExplosionPrefab = config.InterceptExplosionPrefab
+        });
+    }
+
+    private static void TrackAirMissileProjectileState(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<AirMissileProjectileComponent>());
+        using NativeArray<Entity> projectiles = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < projectiles.Length; i++)
+        {
+            Entity projectile = projectiles[i];
+            AirMissileProjectileComponent projectileData = em.GetComponentData<AirMissileProjectileComponent>(projectile);
+            if (projectileData.Source != _airSmokeLauncher)
+                continue;
+
+            _airSmokeProjectileSeen = true;
+            if (em.HasComponent<AirMissileProjectileTrailComponent>(projectile))
+                _airSmokeTrailSeen = true;
+        }
+    }
+
+    private static void CleanupAirMissileSmoke()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            ResetAirMissileSmokeState();
+            return;
+        }
+
+        EntityManager em = world.EntityManager;
+        DestroyIfExists(em, _airSmokeLauncher);
+        DestroyIfExists(em, _airSmokeTarget);
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<AirMissileProjectileComponent>());
+        using NativeArray<Entity> projectiles = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < projectiles.Length; i++)
+        {
+            Entity projectile = projectiles[i];
+            if (em.GetComponentData<AirMissileProjectileComponent>(projectile).Source == _airSmokeLauncher)
+                DestroyIfExists(em, projectile);
+        }
+
+        ResetAirMissileSmokeState();
+    }
+
+    private static void DestroyIfExists(EntityManager em, Entity entity)
+    {
+        if (entity != Entity.Null && em.Exists(entity))
+            em.DestroyEntity(entity);
+    }
+
+    private static void ResetAirMissileSmokeState()
+    {
+        _airSmokeLauncher = Entity.Null;
+        _airSmokeTarget = Entity.Null;
+        _airSmokeProjectileSeen = false;
+        _airSmokeTrailSeen = false;
+        _airSmokeStartedAt = 0d;
+    }
+
     private static void Finish(bool passed, string details)
     {
         Debug.Log(
@@ -489,11 +758,13 @@ public static class MatchRuntimeShellSmokeValidation
         EditorApplication.update -= Update;
         EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         Application.logMessageReceived -= OnLogMessageReceived;
+        CleanupAirMissileSmoke();
         SessionState.EraseBool(ActiveKey);
         SessionState.EraseInt(PhaseKey);
         SessionState.EraseFloat(StartedAtKey);
         SessionState.EraseInt(ErrorCountKey);
         SessionState.EraseBool(RequireFrameDiagKey);
+        SessionState.EraseBool(RequireAirMissileSmokeKey);
         SessionState.EraseString(FrameDiagKey);
         SessionState.EraseFloat(ReadyAtKey);
     }

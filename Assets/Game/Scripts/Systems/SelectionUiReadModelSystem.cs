@@ -27,7 +27,11 @@ public sealed class SelectionUiReadModelSystem
         Moving = 1,
         Engaged = 2,
         ReturningToBase = 3,
-        MissileLaunched = 4
+        MissileLaunched = 4,
+        AirspaceClear = 5,
+        TrackingAirTarget = 6,
+        InterceptingMissile = 7,
+        AirDefenseReloading = 8
     }
 
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
@@ -227,6 +231,10 @@ public sealed class SelectionUiReadModelSystem
             SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
             SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
             SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => FocusedUnitUiStatus.AirspaceClear,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => FocusedUnitUiStatus.TrackingAirTarget,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => FocusedUnitUiStatus.InterceptingMissile,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => FocusedUnitUiStatus.AirDefenseReloading,
             _ => FocusedUnitUiStatus.Idle
         };
     }

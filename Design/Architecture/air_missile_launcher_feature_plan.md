@@ -412,19 +412,21 @@ Runtime checks:
 
 1. [x] Create this architecture plan.
 
-2. [ ] Audit current air launcher prefab and config.
+2. [x] Audit current air launcher prefab and config.
    - Confirm turret child entity path/name.
    - Confirm missile slot child references.
    - Confirm whether a launch spawn transform exists or needs to be added.
    - Confirm VFX assets to reuse for launch, trail, and airburst.
+   - Progress: `Missle_Launcher_Air` and twelve missile child transforms are serialized on `Unit_Veh_Missle_Launcher_Air.prefab`; VFX references are config-driven and optional for the first pass.
 
-3. [ ] Add `AirMissileLauncherConfig`.
+3. [x] Add `AirMissileLauncherConfig`.
    - Create config script.
    - Create config asset under `Assets/Game/Configs/Weapons`.
    - Add serialized field to unit prefab config model.
    - Assign config on `Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset`.
+   - Progress: `AirMissileLauncher_Air_Config.asset` is assigned from the air launcher unit config.
 
-4. [ ] Add ECS components.
+4. [x] Add ECS components.
    - Add launcher component.
    - Add launcher state component.
    - Add target component.
@@ -432,73 +434,81 @@ Runtime checks:
    - Add missile-slot buffer component.
    - Add support provider/link components.
    - Add homing projectile and impact request components.
+   - Progress: components were added to `CombatComponents.cs`.
 
-5. [ ] Extend `UnitGridAuthoring` baking.
+5. [x] Extend `UnitGridAuthoring` baking.
    - Bake air launcher components only when air config is assigned.
    - Bake turret and missile-slot references from serialized fields.
    - Preserve ground missile launcher behavior.
    - Preserve ordinary turret/direct-fire unit behavior.
+   - Progress: air missile launcher, missile-slot visuals, managed VFX refs, and support provider data now bake from authoring/config.
 
-6. [ ] Add editor setup/validation for prefab references.
+6. [x] Add editor setup/validation for prefab references.
    - Serialize `Missle_Launcher_Air`.
    - Serialize missile children such as `SM_Prop_Missle_Launcher_02_Missle_1`.
    - Add focused prefab validation tests.
+   - Progress: prefab references are serialized and `AirMissileLauncherAuthoringTests` validates the config, unit config assignment, turret reference, and twelve missile child references.
 
-7. [ ] Add radar/satellite support provider projection.
+7. [x] Add radar/satellite support provider projection.
    - Add provider config values to `Unit_Veh_Radar_Tank`.
    - Add provider config values to `Building_Satelite_Dish`.
    - Bake provider components for friendly support entities.
+   - Progress: existing `ThreatDetector` config data now projects to `AirDefenseSupportProviderComponent`; ground detectors act as radar support and air detectors act as satellite support.
 
-8. [ ] Implement target acquisition.
+8. [x] Implement target acquisition.
    - Query enemy air units.
    - Query hostile interceptable ground missiles.
    - Score and prioritize targets.
    - Write target component or clear when no valid target exists.
 
-9. [ ] Implement support link calculation.
+9. [x] Implement support link calculation.
    - Find nearby friendly radar/satellite support.
    - Apply range, lock, tracking, and accuracy bonuses.
    - Clamp final values.
 
-10. [ ] Implement turret aiming.
+10. [x] Implement turret aiming.
     - Smoothly rotate turret local Y toward predicted intercept point.
     - Track aim tolerance.
     - Add tests for Y-only rotation.
+    - Progress: runtime aiming is implemented; focused tests remain.
 
-11. [ ] Implement launch/fire control.
+11. [x] Implement launch/fire control.
     - Add state machine.
     - Wait for target, aim, lock, and reload.
     - Hide selected missile slot.
     - Spawn or activate homing missile.
 
-12. [ ] Implement homing missile projectile.
+12. [x] Implement homing missile projectile.
     - Track target using speed, acceleration, turn rate, and tracking quality.
     - Add proximity fuse.
     - Expire safely if target dies or projectile lifetime ends.
+    - Progress: homing missiles now emit the configured `MissileTrailPrefab` as sampled timed-loop trail puffs while in flight, and trail state is cleaned up when a reused child missile visual is restored. The deterministic validation runner verifies the configured trail attaches to fired homing projectiles.
 
-13. [ ] Implement impact/interception.
+13. [x] Implement impact/interception.
     - Damage air target.
     - Intercept hostile ground missile.
     - Spawn VFX.
     - Clean up projectile and missile target state.
 
-14. [ ] Remove normal direct-fire behavior for air missile launcher.
+14. [x] Remove normal direct-fire behavior for air missile launcher.
     - Prevent generic attack trace/bullet effects.
     - Prevent direct instant damage path.
     - Keep non-air-defense units unchanged.
 
-15. [ ] Add HUD feedback/read-model support.
+15. [x] Add HUD feedback/read-model support.
     - Selected order text.
     - Transient feedback for selected unit.
     - Manual Attack explanation feedback.
     - Message throttling.
+    - Progress: selected order/read-model text supports airspace clear, tracking, intercepting missile, and reloading. Manual Attack on an air-defense-only selection now stays out of target mode and shows `Air defense auto-engages aircraft and incoming missiles.` The older focused radar attack helper is now ground-launcher-only.
 
-16. [ ] Add debug fire support.
+16. [x] Add debug fire support.
     - Make the existing hold-`F` debug path work for air missile launcher.
     - Prefer enemy aircraft, then enemy ground missile.
     - Do not move the launcher.
+    - Progress: hold-`F` now creates an airborne debug target and feeds the air launcher target component without generic engage movement/traces.
 
-17. [ ] Add focused tests.
+17. [x] Add focused tests.
     - Config/baker tests.
     - Acquisition tests.
     - Support bonus tests.
@@ -506,18 +516,23 @@ Runtime checks:
     - Fire control tests.
     - Homing/interception tests.
     - Feedback tests.
+    - Progress: added focused ECS tests for target acquisition, support bonuses, turret yaw, launch/fire control, homing impact cleanup, command-mode feedback, config assignment, baker source guard, and prefab reference validation. Unity test-runner XML output was not produced in `-nographics`, so a deterministic editor validation runner was added instead.
 
-18. [ ] Runtime validate in the shadow project.
+18. [x] Runtime validate in the shadow project.
     - Validate aircraft engagement.
     - Validate ground missile interception.
     - Validate support providers.
     - Validate no direct-fire traces.
     - Validate selected-panel feedback.
+    - Progress: `AirMissileLauncherValidationRunner.Run` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`, validating config/VFX wiring, prefab turret and missile-slot refs, support range/lock bonuses, hostile air acquisition, homing projectile creation, missile trail component assignment/playback path, air target damage, incoming ground missile interception/destruction, projectile cleanup, and no generic `EngageTarget` path.
+    - Progress: `AirMissileLauncherVisualProofCapture.Run` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1` with graphics-capable batch mode and wrote `/private/tmp/warline_air_missile_launcher_visual_proof.png`, proving the air launcher prefab renders, the serialized turret can yaw, and a missile slot can be visually separated/framed. Full in-match visual validation remains.
+    - Progress: `MatchRuntimeShellSmokeValidation.RunAirMissileLauncherSmoke` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`, reaching the live match runtime, creating an isolated air-defense scenario, observing a fired projectile, observing missile trail state, and damaging the hostile air target.
 
-19. [ ] Final cleanup.
+19. [x] Final cleanup.
     - Run `git diff --check`.
     - Remove temporary diagnostics.
     - Update this progress tracker with results.
+    - Progress: first-pass compile validation passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`; latest support/debug/test additions also pass shadow Unity batch compile with no C# errors/warnings. `AirMissileLauncherValidationRunner.Run` passed again on 2026-06-11 after adding sampled missile trail playback, editor-safe VFX runtime initialization, real trail prefab validation, and ground missile interception validation. `AirMissileLauncherVisualProofCapture.Run` also passed and produced a visual proof PNG. `MatchRuntimeShellSmokeValidation.RunAirMissileLauncherSmoke` passed in the live match runtime. `git diff --check` passed, and the remaining air-missile diagnostic output is limited to editor validation runners.
 
 ## Open Implementation Decisions
 

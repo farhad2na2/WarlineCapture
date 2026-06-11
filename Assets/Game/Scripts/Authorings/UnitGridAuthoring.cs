@@ -65,6 +65,10 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private Transform groundMissileLauncherBattery;
     [SerializeField, HideInInspector] private Transform groundMissileLauncherSmokeSpawn;
     [SerializeField, HideInInspector] private List<Transform> groundMissileLauncherRockets = new();
+    [SerializeField, HideInInspector] private AirMissileLauncherConfig airMissileLauncherConfig;
+    [SerializeField, HideInInspector] private Transform airMissileLauncherTurret;
+    [SerializeField, HideInInspector] private Transform airMissileLauncherLaunchSpawn;
+    [SerializeField, HideInInspector] private List<Transform> airMissileLauncherMissiles = new();
     [SerializeField, HideInInspector] private Color attackTraceColor = new(1f, 0.85f, 0.2f, 1f);
     [Header("Attack Trace")]
     [SerializeField, HideInInspector, Min(0.01f)] private float attackTraceWidth = 0.18f;
@@ -141,6 +145,7 @@ public class UnitGridAuthoring : MonoBehaviour
         maxHealth = config.MaxHealth;
         attackImpactPrefab = config.AttackImpactPrefab;
         groundMissileLauncherConfig = config.GroundMissileLauncherConfig;
+        airMissileLauncherConfig = config.AirMissileLauncherConfig;
         attackTraceColor = config.AttackTraceColor;
         attackTraceWidth = config.AttackTraceWidth;
         attackTraceScrollSpeed = config.AttackTraceScrollSpeed;
@@ -175,9 +180,13 @@ public class UnitGridAuthoring : MonoBehaviour
     public int ConfiguredAttackDamage => Mathf.Max(0, config != null ? config.AttackDamage : attackDamage);
     public int ConfiguredMaxHealth => Mathf.Max(1, config != null ? config.MaxHealth : maxHealth);
     public GroundMissileLauncherConfig GroundMissileLauncherConfig => config != null ? config.GroundMissileLauncherConfig : groundMissileLauncherConfig;
+    public AirMissileLauncherConfig AirMissileLauncherConfig => config != null ? config.AirMissileLauncherConfig : airMissileLauncherConfig;
     public Transform GroundMissileLauncherBattery => groundMissileLauncherBattery;
     public Transform GroundMissileLauncherSmokeSpawn => groundMissileLauncherSmokeSpawn;
     public IReadOnlyList<Transform> GroundMissileLauncherRockets => groundMissileLauncherRockets;
+    public Transform AirMissileLauncherTurret => airMissileLauncherTurret;
+    public Transform AirMissileLauncherLaunchSpawn => airMissileLauncherLaunchSpawn;
+    public IReadOnlyList<Transform> AirMissileLauncherMissiles => airMissileLauncherMissiles;
     public GameObject MidLodPrefab => config != null ? config.MidLodPrefab : null;
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
@@ -314,6 +323,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     Kind = (byte)authoring.threatDetectionKind,
                     RadiusCells = math.max(0, authoring.threatDetectionRadiusCells)
                 });
+                AddAirDefenseSupportProvider(entity, authoring.threatDetectionKind, authoring.threatDetectionRadiusCells);
             }
 
             AddComponent(entity, new UnitAttack
@@ -335,6 +345,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 });
             }
             AddGroundMissileLauncherComponents(authoring, entity);
+            AddAirMissileLauncherComponents(authoring, entity);
 
             int maxHp = math.max(1, authoring.maxHealth);
             AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
@@ -524,6 +535,128 @@ public class UnitGridAuthoring : MonoBehaviour
                 RocketTrailPrefab = missileConfig.RocketTrailPrefab,
                 ImpactExplosionPrefab = missileConfig.ImpactExplosionPrefab,
                 ImpactSmokePrefab = missileConfig.ImpactSmokePrefab
+            });
+        }
+
+        private void AddAirMissileLauncherComponents(UnitGridAuthoring authoring, Entity entity)
+        {
+            AirMissileLauncherConfig missileConfig = authoring.AirMissileLauncherConfig;
+            if (missileConfig == null)
+                return;
+
+            DependsOn(missileConfig);
+            AddComponent(entity, new AirMissileLauncherComponent
+            {
+                MinRange = missileConfig.MinRange,
+                BaseDetectionRange = missileConfig.BaseDetectionRange,
+                MaxDetectionRange = missileConfig.MaxDetectionRange,
+                AirTargetPriority = missileConfig.AirTargetPriority,
+                IncomingMissilePriority = missileConfig.IncomingMissilePriority,
+                TurretYawSpeedDegreesPerSecond = missileConfig.TurretYawSpeedDegreesPerSecond,
+                AimToleranceDegrees = missileConfig.AimToleranceDegrees,
+                LockSeconds = missileConfig.LockSeconds,
+                LaunchDelaySeconds = missileConfig.LaunchDelaySeconds,
+                ReloadSeconds = missileConfig.ReloadSeconds,
+                MissileSpeed = missileConfig.MissileSpeed,
+                MissileAcceleration = missileConfig.MissileAcceleration,
+                MissileTurnRateDegreesPerSecond = missileConfig.MissileTurnRateDegreesPerSecond,
+                MissileLifetimeSeconds = missileConfig.MissileLifetimeSeconds,
+                ProximityFuseRadius = missileConfig.ProximityFuseRadius,
+                AirTargetDamage = missileConfig.AirTargetDamage,
+                IncomingMissileDamage = missileConfig.IncomingMissileDamage,
+                TrackingQuality = missileConfig.TrackingQuality,
+                MaxSupportRangeBonus = missileConfig.MaxSupportRangeBonus,
+                MaxSupportTrackingBonus = missileConfig.MaxSupportTrackingBonus
+            });
+            AddComponent(entity, new AirMissileLauncherStateComponent
+            {
+                Phase = (byte)AirMissileLauncherPhase.Idle,
+                TargetEntity = Entity.Null,
+                TargetKind = (byte)AirMissileTargetKind.None,
+                TargetWorldPosition = float3.zero,
+                PredictedInterceptPosition = float3.zero,
+                Timer = 0f,
+                SelectedMissileSlot = -1,
+                EffectiveRange = missileConfig.BaseDetectionRange,
+                EffectiveLockSeconds = missileConfig.LockSeconds,
+                EffectiveTrackingQuality = missileConfig.TrackingQuality,
+                EffectiveTurnRateDegreesPerSecond = missileConfig.MissileTurnRateDegreesPerSecond
+            });
+            AddComponent(entity, new AirDefenseSupportLinkComponent
+            {
+                RangeBonus = 0f,
+                LockTimeMultiplier = 1f,
+                TrackingBonus = 0f,
+                TurnRateBonus = 0f,
+                RadarProvider = Entity.Null,
+                SatelliteProvider = Entity.Null
+            });
+
+            Transform turret = authoring.AirMissileLauncherTurret;
+            if (turret != null)
+            {
+                AddComponent(entity, new AirMissileLauncherVisualReferenceComponent
+                {
+                    Turret = GetEntity(turret.gameObject, TransformUsageFlags.Dynamic),
+                    LaunchSpawn = authoring.AirMissileLauncherLaunchSpawn != null
+                        ? GetEntity(authoring.AirMissileLauncherLaunchSpawn.gameObject, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+                    TurretDefaultLocalRotation = turret.localRotation,
+                    TurretDefaultLocalPosition = turret.localPosition
+                });
+            }
+
+            DynamicBuffer<AirMissileLauncherMissileVisualComponent> missiles =
+                AddBuffer<AirMissileLauncherMissileVisualComponent>(entity);
+            IReadOnlyList<Transform> missileReferences = authoring.AirMissileLauncherMissiles;
+            if (missileReferences != null)
+            {
+                for (int i = 0; i < missileReferences.Count; i++)
+                {
+                    Transform missile = missileReferences[i];
+                    if (missile == null)
+                        continue;
+
+                    missiles.Add(new AirMissileLauncherMissileVisualComponent
+                    {
+                        Missile = GetEntity(missile.gameObject, TransformUsageFlags.Dynamic),
+                        SlotIndex = i,
+                        InitialLocalPosition = missile.localPosition,
+                        InitialLocalRotation = missile.localRotation,
+                        InitialLocalScale = missile.localScale.x
+                    });
+                }
+            }
+
+            AddComponentObject(entity, new AirMissileLauncherVfxReferenceComponent
+            {
+                MissileVisualPrefab = missileConfig.MissileVisualPrefab,
+                LaunchFlashPrefab = missileConfig.LaunchFlashPrefab,
+                LaunchSmokePrefab = missileConfig.LaunchSmokePrefab,
+                MissileTrailPrefab = missileConfig.MissileTrailPrefab,
+                AirburstExplosionPrefab = missileConfig.AirburstExplosionPrefab,
+                AirTargetImpactPrefab = missileConfig.AirTargetImpactPrefab,
+                InterceptExplosionPrefab = missileConfig.InterceptExplosionPrefab
+            });
+        }
+
+        private void AddAirDefenseSupportProvider(Entity entity, ThreatDetectionKind kind, int radiusCells)
+        {
+            if (kind == ThreatDetectionKind.None || radiusCells <= 0)
+                return;
+
+            byte supportKind = kind == ThreatDetectionKind.Air
+                ? (byte)AirDefenseSupportProviderKind.Satellite
+                : (byte)AirDefenseSupportProviderKind.Radar;
+            AddComponent(entity, new AirDefenseSupportProviderComponent
+            {
+                Kind = supportKind,
+                Level = 1,
+                SupportRadius = math.max(0, radiusCells),
+                RangeBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 120f : 80f,
+                LockTimeMultiplier = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.65f : 0.75f,
+                TrackingBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.18f : 0.12f,
+                TurnRateBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 50f : 35f
             });
         }
 

@@ -8,9 +8,11 @@ using UnityEngine;
 [UpdateBefore(typeof(UnitEngagementSystem))]
 public partial struct AICombatOrderSystem : ISystem
 {
+    private const float EvaluationIntervalSeconds = 0.25f;
     private const float OrderRefreshSeconds = 2f;
     private EntityQuery _runtimeBuildingCombatQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private float _nextEvaluationTime;
 
     private readonly struct RuntimeBuildingCombatData
     {
@@ -81,6 +83,10 @@ public partial struct AICombatOrderSystem : ISystem
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+        if (now < _nextEvaluationTime)
+            return;
+
+        _nextEvaluationTime = now + EvaluationIntervalSeconds;
         EntityManager em = state.EntityManager;
         EntityCommandBuffer ecb = default;
         bool hasEcb = false;

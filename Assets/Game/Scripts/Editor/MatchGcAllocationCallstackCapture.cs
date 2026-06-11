@@ -50,6 +50,9 @@ public static class MatchGcAllocationCallstackCapture
     private const string ProfilerStateStoredKey = "MatchGcAllocationCallstackCapture.ProfilerStateStored";
     private const string EditorLiveConversionDisabledCountKey = "MatchGcAllocationCallstackCapture.EditorLiveConversionDisabledCount";
 
+    private static bool hasPendingBatchExit;
+    private static int pendingBatchExitCode;
+
     private enum Phase
     {
         Idle = 0,
@@ -256,6 +259,7 @@ public static class MatchGcAllocationCallstackCapture
 
         Debug.Log($"[MatchGcAllocationCallstackCapture] captureStarted frames={CaptureFrameCount} raw={ProfilerRawPath}");
         ProfilerDriver.ClearAllFrames();
+        ResetRuntimeAllocationProbes();
         ProfilerDriver.deepProfiling = false;
         Profiler.logFile = ProfilerLogPath;
         Profiler.enableBinaryLog = true;
@@ -409,6 +413,7 @@ public static class MatchGcAllocationCallstackCapture
         builder.AppendLine($"- Raw load status: `{loadStatus}`");
         builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
         builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
+        AppendRuntimeAllocationProbeSummary(builder);
         builder.AppendLine();
         builder.AppendLine("## Top Allocation Sites");
         builder.AppendLine();
@@ -503,6 +508,39 @@ public static class MatchGcAllocationCallstackCapture
     private static string DescribeCaptureMode(CaptureMode mode)
     {
         return mode == CaptureMode.Battle ? "battle-state" : "steady-state";
+    }
+
+    private static void ResetRuntimeAllocationProbes()
+    {
+        UIShellEcsPresentationSystem.ResetEditorAllocationProbe();
+        MenuBootstrapView.ResetEditorAllocationProbe();
+    }
+
+    private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
+    {
+        UIShellEcsPresentationSystem.GetEditorAllocationProbe(
+            out long shellBytes,
+            out int shellAllocationSamples,
+            out int shellUpdateSamples);
+        MenuBootstrapView.GetEditorAllocationProbe(
+            out long bootstrapBytes,
+            out int bootstrapAllocationSamples,
+            out int bootstrapUpdateSamples);
+        builder.AppendLine("- Runtime allocation probe:");
+        builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
+            .Append(shellBytes)
+            .Append(" bytes / ")
+            .Append(shellAllocationSamples)
+            .Append(" allocating updates / ")
+            .Append(shellUpdateSamples)
+            .AppendLine(" total updates.");
+        builder.Append("  - `MenuBootstrapView.Update`: ")
+            .Append(bootstrapBytes)
+            .Append(" bytes / ")
+            .Append(bootstrapAllocationSamples)
+            .Append(" allocating updates / ")
+            .Append(bootstrapUpdateSamples)
+            .AppendLine(" total updates.");
     }
 
     private static string ReportPath => GetCaptureMode() == CaptureMode.Battle
@@ -1171,12 +1209,37 @@ public static class MatchGcAllocationCallstackCapture
             int exitCode = success ? 0 : 1;
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 EditorApplication.ExitPlaymode();
-            EditorApplication.delayCall += () => EditorApplication.Exit(exitCode);
+            RequestBatchExit(exitCode);
             return;
         }
 
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             EditorApplication.ExitPlaymode();
+    }
+
+    private static void RequestBatchExit(int exitCode)
+    {
+        pendingBatchExitCode = exitCode;
+        hasPendingBatchExit = true;
+        EditorApplication.update -= ExitBatchModeWhenReady;
+        EditorApplication.update += ExitBatchModeWhenReady;
+    }
+
+    private static void ExitBatchModeWhenReady()
+    {
+        if (!hasPendingBatchExit)
+        {
+            EditorApplication.update -= ExitBatchModeWhenReady;
+            return;
+        }
+
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        int exitCode = pendingBatchExitCode;
+        hasPendingBatchExit = false;
+        EditorApplication.update -= ExitBatchModeWhenReady;
+        EditorApplication.Exit(exitCode);
     }
 
     private static void ResetState()

@@ -23,6 +23,26 @@ public sealed class MenuBootstrapView : MonoBehaviour
     public UIRouterView Router => router;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
 
+#if UNITY_EDITOR
+    private static long editorAllocationBytes;
+    private static int editorAllocationSamples;
+    private static int editorUpdateSamples;
+
+    public static void ResetEditorAllocationProbe()
+    {
+        editorAllocationBytes = 0;
+        editorAllocationSamples = 0;
+        editorUpdateSamples = 0;
+    }
+
+    public static void GetEditorAllocationProbe(out long bytes, out int allocationSamples, out int updateSamples)
+    {
+        bytes = editorAllocationBytes;
+        allocationSamples = editorAllocationSamples;
+        updateSamples = editorUpdateSamples;
+    }
+#endif
+
     public void Configure(
         Camera configuredUiCamera,
         Canvas configuredUiCanvas,
@@ -51,7 +71,25 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
+        long allocationStart = System.GC.GetAllocatedBytesForCurrentThread();
+        try
+        {
+#endif
         menuBootstrapSystem.Update(this, Time.unscaledDeltaTime);
+#if UNITY_EDITOR
+        }
+        finally
+        {
+            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+            editorUpdateSamples++;
+            if (allocated > 0)
+            {
+                editorAllocationBytes += allocated;
+                editorAllocationSamples++;
+            }
+        }
+#endif
     }
 
     private void OnApplicationFocus(bool hasFocus)

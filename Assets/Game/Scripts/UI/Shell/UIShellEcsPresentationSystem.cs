@@ -22,6 +22,26 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
     private bool hasPendingCompletion;
     private UiShellTransitionCompleteComponent pendingCompletion;
 
+#if UNITY_EDITOR
+    private static long editorAllocationBytes;
+    private static int editorAllocationSamples;
+    private static int editorUpdateSamples;
+
+    public static void ResetEditorAllocationProbe()
+    {
+        editorAllocationBytes = 0;
+        editorAllocationSamples = 0;
+        editorUpdateSamples = 0;
+    }
+
+    public static void GetEditorAllocationProbe(out long bytes, out int allocationSamples, out int updateSamples)
+    {
+        bytes = editorAllocationBytes;
+        allocationSamples = editorAllocationSamples;
+        updateSamples = editorUpdateSamples;
+    }
+#endif
+
     private void Awake()
     {
         if (shellView == null)
@@ -30,6 +50,11 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
+        long allocationStart = System.GC.GetAllocatedBytesForCurrentThread();
+        try
+        {
+#endif
         EntityManager entityManager;
         Entity boundary;
         using (TryGetBoundaryMarker.Auto())
@@ -77,6 +102,19 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
             hasPendingCompletion = true;
             isExecuting = false;
         });
+#if UNITY_EDITOR
+        }
+        finally
+        {
+            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+            editorUpdateSamples++;
+            if (allocated > 0)
+            {
+                editorAllocationBytes += allocated;
+                editorAllocationSamples++;
+            }
+        }
+#endif
     }
 
     public void Configure(UIShellView view)

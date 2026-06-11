@@ -174,9 +174,13 @@ public sealed class GameplayRuntimeUpdateSystem
         if (!_hasInitialSpawnQueries)
             return;
 
-        _initialSpawnConfigQuery.Dispose();
-        _initialSpawnInitializedQuery.Dispose();
-        _initialSpawnProgressQuery.Dispose();
+        if (_initialSpawnQueryWorld != null && _initialSpawnQueryWorld.IsCreated)
+        {
+            _initialSpawnConfigQuery.Dispose();
+            _initialSpawnInitializedQuery.Dispose();
+            _initialSpawnProgressQuery.Dispose();
+        }
+
         _initialSpawnQueryWorld = null;
         _hasInitialSpawnQueries = false;
     }

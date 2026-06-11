@@ -16,6 +16,7 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
 - `Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs`
 - `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs`
+- `Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs`
 - `Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs`
 - `Assets/Game/Scripts/Systems/UnitDeathSystem.cs`
 - `Assets/Game/Scripts/Systems/UnitRespawnSystem.cs`
@@ -117,6 +118,26 @@ Task: Match runtime managed allocation reduction from `Design/GC_Allocation_Elim
     - `MenuBootstrapView.Update`: 9,568 bytes / 299 samples.
   - Non-project editor noise still present:
     - `UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate`: 12,000 bytes / 300 samples.
+
+## 2026-06-11 heartbeat update
+
+- Continued the remaining evidence-backed battle GC work on the main project.
+- `AICombatOrderSystem`:
+  - Added a conservative 0.25-second system evaluation cadence before the squad scan/order loop.
+  - Reason: the system already refreshes issued orders at a 2-second squad cadence, and the battle capture showed a per-frame allocation bucket even when no new order work was needed.
+  - Result: the measured `AICombatOrderSystem` bucket dropped from 11,960 bytes / 299 samples to a small residual bucket around 240-280 bytes / 6-7 samples.
+- Capture/teardown cleanup:
+  - `MatchGcAllocationCallstackCapture` now exits batchmode through a static editor-update callback instead of a captured `delayCall` lambda.
+  - `GameplayRuntimeUpdateSystem.Dispose` now skips cached query disposal if the cached ECS world has already been torn down, preventing the post-capture shutdown `NullReferenceException`.
+- Latest battle capture after this heartbeat:
+  - Command log: `/private/tmp/warline-main-gc-disposeguard-battle.log`.
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`.
+  - Current aggregate: 39,520 bytes / 979 samples.
+  - Remaining large buckets:
+    - `UIShellEcsPresentationSystem.Update`: 14,352 bytes / 299 samples.
+    - `UnityEditor.PackageManager.UI.Internal.ApplicationProxy.OnUpdate`: 12,000 bytes / 300 samples.
+    - `MenuBootstrapView.Update`: 9,568 bytes / 299 samples.
+  - The two UI buckets still report only the capture harness frame as the managed call stack, so the next step is to prove whether these are real runtime allocations or Editor/call-stack attribution artifacts before changing the shell architecture.
 
 ## Contracts touched
 
@@ -430,3 +451,120 @@ Cross-lane impacts:
 Next recommended task:
 
 - Continue profiling only if this hotfix stays clean in normal editor play and the next capture exposes another project-owned allocation site.
+
+## 2026-06-11 GC heartbeat continuation
+
+Lane: Gameplay/Performance
+
+Task: Continue remaining evidence-backed Match GC allocation optimization.
+
+Files changed:
+
+- `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs`
+- `Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs`
+- `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
+- `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+- `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
+
+Contracts touched:
+
+- No gameplay API contract change.
+- No pathfinding files were modified.
+
+User-visible behavior:
+
+- AI combat order evaluation now runs at a 0.25-second cadence before scanning squads. Squad order refresh remains 2 seconds, so combat orders should remain responsive while avoiding per-frame no-op scans.
+- No intended UI or missile behavior change.
+
+Validation run:
+
+- Main-project Unity compile:
+  - Command log: `/private/tmp/warline-main-gc-disposeguard-compile.log`
+  - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, `BuildFailedException`, `Compilation failed`, or `Exception` entries.
+- Main-project automated battle GC capture:
+  - Command log: `/private/tmp/warline-main-gc-disposeguard-battle.log`
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+  - Result: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
+- Static check: `git diff --check` passed.
+
+Validation result:
+
+- Compile: PASS.
+- Battle capture command: PASS.
+- Static check: PASS.
+- `AICombatOrderSystem` allocation bucket reduced from 11,960 bytes / 299 samples to 280 bytes / 7 samples in the latest capture.
+- Latest aggregate battle capture: 39,520 bytes / 979 samples.
+
+Known gaps:
+
+- Remaining large reported buckets are `UIShellEcsPresentationSystem.Update` at 14,352 bytes / 299 samples, Unity Editor package-manager noise at 12,000 bytes / 300 samples, and `MenuBootstrapView.Update` at 9,568 bytes / 299 samples.
+- The two UI buckets still collapse to the capture harness managed frame in the call stack, so they need a proof pass before architecture changes. A short retained-code experiment was not kept because it did not reduce total captured bytes.
+
+Cross-lane impacts:
+
+- QA should smoke-check enemy AI target/order responsiveness because the AI combat scan cadence changed from every frame to 0.25 seconds.
+
+Next recommended task:
+
+- Prove whether `UIShellEcsPresentationSystem.Update` and `MenuBootstrapView.Update` are true managed runtime allocations or Editor/call-stack attribution artifacts. If real, address the shell polling path with a focused design; if artifact, document the residual and continue to final warmed battle/spike validation.
+
+## 2026-06-11 UI residual proof
+
+Lane: Gameplay/Performance
+
+Task: Prove remaining UI buckets before changing shell architecture.
+
+Files changed:
+
+- `Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs`
+- `Assets/Game/Scripts/Composition/MenuBootstrapView.cs`
+- `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
+- `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+- `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
+
+Contracts touched:
+
+- No gameplay or UI behavior contract change.
+- Added editor-only allocation probe methods used by the automated GC capture harness. These are excluded from player builds by `UNITY_EDITOR`.
+
+User-visible behavior:
+
+- No intended visible behavior change.
+
+Validation run:
+
+- Main-project Unity compile:
+  - Command log: `/private/tmp/warline-main-gc-ui-probe-compile.log`
+  - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, `BuildFailedException`, `Compilation failed`, or `Exception` entries.
+- Main-project automated battle GC capture:
+  - Command log: `/private/tmp/warline-main-gc-ui-probe-battle.log`
+  - Report: `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture-battle.md`
+  - Result: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
+- Static check: `git diff --check` passed.
+
+Validation result:
+
+- Compile: PASS.
+- Battle capture command: PASS.
+- Static check: PASS.
+- Direct runtime allocation probe over the capture window:
+  - `UIShellEcsPresentationSystem.Update`: 0 bytes / 0 allocating updates / 300 total updates.
+  - `MenuBootstrapView.Update`: 0 bytes / 0 allocating updates / 300 total updates.
+- Profiler hierarchy still reports:
+  - `UIShellEcsPresentationSystem.Update`: 14,352 bytes / 299 samples.
+  - `MenuBootstrapView.Update`: 9,568 bytes / 299 samples.
+- Conclusion: these two remaining large UI rows are profiler/call-stack attribution artifacts from the automated editor capture, not confirmed runtime managed allocations inside those update methods.
+- Latest aggregate battle capture: 39,180 bytes / 969 samples.
+
+Known gaps:
+
+- The capture remains an Editor batchmode hierarchy report loaded as one raw frame. It is useful for ranking evidence-backed project call stacks, but the UI residual proof shows it can over-attribute profiler/capture allocations to MonoBehaviour update rows.
+- Spike-frame validation still needs either an interactive Profiler capture or a deterministic spike driver; no new deterministic spike driver was added in this pass.
+
+Cross-lane impacts:
+
+- None expected.
+
+Next recommended task:
+
+- Treat `InitialUnitsSpawnSystem`, `AICombatOrderSystem`, `UIShellEcsPresentationSystem.Update`, and `MenuBootstrapView.Update` as closed for this GC pass. Remaining large rows are Editor/capture noise. Future GC work should use the runtime allocation probe pattern or a player/build capture before changing shell or UI architecture.

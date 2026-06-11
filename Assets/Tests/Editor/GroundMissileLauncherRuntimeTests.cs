@@ -1,13 +1,32 @@
+using System;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class GroundMissileLauncherRuntimeTests
 {
+    public static void RunProjectileDependencyValidation()
+    {
+        try
+        {
+            var tests = new GroundMissileLauncherRuntimeTests();
+            tests.MissileProjectileFlight_CompletesVehicleSlopeAlignmentTransformDependency();
+            Debug.Log("[GroundMissileProjectileDependencyValidation] result=Passed tests=1");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[GroundMissileProjectileDependencyValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void AttackSystem_ArmsGroundMissileLauncherWithoutImmediateDamage()
     {
@@ -262,6 +281,63 @@ public sealed class GroundMissileLauncherRuntimeTests
         Assert.AreEqual(0, em.GetComponentData<UnitHealth>(target).Current);
         Assert.AreEqual(100, em.GetComponentData<UnitHealth>(friendly).Current);
         Assert.IsFalse(em.HasComponent<GroundMissileInFlightComponent>(launcher));
+    }
+
+    [Test]
+    public void MissileProjectileFlight_CompletesVehicleSlopeAlignmentTransformDependency()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_ProjectileDependency");
+        EntityManager em = world.EntityManager;
+
+        Entity vehicle = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(VehicleSurfaceAlignmentComponent),
+            typeof(UnitSurfaceComponent),
+            typeof(UnitFootprint),
+            typeof(UnitMovementBehavior));
+        em.SetComponentData(vehicle, LocalTransform.Identity);
+        em.SetComponentData(vehicle, new UnitSurfaceComponent
+        {
+            LastSampledNormal = math.normalize(new float3(0.15f, 1f, 0.05f)),
+            HasSurface = 1,
+            IsGrounded = 1
+        });
+        em.SetComponentData(vehicle, new UnitFootprint { Size = new int2(2, 2) });
+        em.SetComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+        Entity projectile = em.CreateEntity(
+            typeof(GroundMissileProjectileComponent),
+            typeof(LocalTransform),
+            typeof(MissileInterceptionTargetComponent));
+        em.SetComponentData(projectile, LocalTransform.FromPosition(float3.zero));
+        em.SetComponentData(projectile, new GroundMissileProjectileComponent
+        {
+            Source = Entity.Null,
+            TargetEntity = Entity.Null,
+            TargetCell = new int2(5, 0),
+            StartPosition = float3.zero,
+            TargetPosition = new float3(10f, 0f, 0f),
+            ElapsedSeconds = 0f,
+            DurationSeconds = 1f,
+            ArcHeight = 0f,
+            DamageRadius = 0f,
+            Damage = 0,
+            FactionId = FactionIdentitySystem.PlayerFactionId
+        });
+
+        SystemHandle slopeSystem = world.CreateSystem<VehicleSlopeAlignmentSystem>();
+        SystemHandle flightSystem = world.CreateSystem<GroundMissileProjectileFlightSystem>();
+
+        world.SetTime(new TimeData(0.25d, 0.25f));
+        slopeSystem.Update(world.Unmanaged);
+
+        Assert.DoesNotThrow(
+            () => flightSystem.Update(world.Unmanaged),
+            "Projectile flight must complete LocalTransform dependencies before main-thread lookup access.");
+        em.CompleteAllTrackedJobs();
+
+        LocalTransform projectileTransform = em.GetComponentData<LocalTransform>(projectile);
+        Assert.Greater(projectileTransform.Position.x, 0f);
     }
 
     [Test]

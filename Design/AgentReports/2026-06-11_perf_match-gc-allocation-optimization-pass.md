@@ -337,3 +337,54 @@ Cross-lane impacts:
 Next recommended task:
 
 Run a player/build-style capture or disable editor live conversion in the capture harness, then reprofile the same battle scenario. If a project-owned stack reappears under the Unity editor noise, continue with the next confirmed allocation site only.
+
+## 2026-06-11 ground missile dependency hotfix
+
+Lane: Gameplay/Performance
+
+Task: Fix runtime ECS safety exception reported after the allocation pass.
+
+Files changed:
+
+- `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs`
+- `Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs`
+- `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md`
+
+Contracts touched:
+
+- No gameplay contract change.
+- `GroundMissileProjectileFlightSystem` now explicitly completes read/write dependencies for `GroundMissileProjectileComponent` and `LocalTransform` before its synchronous cached-query lookup loop.
+
+User-visible behavior:
+
+- Intended missile behavior is unchanged.
+- Fixes the reported `InvalidOperationException` where `GroundMissileProjectileFlightSystem` read `LocalTransform` while `VehicleSlopeAlignmentSystem.AlignJob` still had a scheduled write dependency.
+
+Validation run:
+
+- Main-project Unity compile:
+  - Command log: `/private/tmp/warline-main-ground-missile-dependency-validation-compile.log`
+  - Result: passed; no `error CS`, `warning CS`, `Scripts have compiler errors`, `Compilation failed`, `Build failed`, or `Exception` entries.
+- Focused direct validation:
+  - Command log: `/private/tmp/warline-main-ground-missile-dependency-validation.log`
+  - Method: `GroundMissileLauncherRuntimeTests.RunProjectileDependencyValidation`
+  - Result: `[GroundMissileProjectileDependencyValidation] result=Passed tests=1`.
+- Static check: `git diff --check` passed.
+
+Validation result:
+
+- Static check: PASS.
+- Unity compile: PASS.
+- Dependency regression validation: PASS.
+
+Known gaps:
+
+- Unity `-runTests` accepted the Test Runner arguments but did not emit a results XML in this session, so the focused validation used the project's existing `-executeMethod` validation-runner pattern instead.
+
+Cross-lane impacts:
+
+- None expected.
+
+Next recommended task:
+
+- Continue profiling only if this hotfix stays clean in normal editor play and the next capture exposes another project-owned allocation site.

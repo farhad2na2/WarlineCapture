@@ -490,6 +490,10 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
     {
         EntityManager em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
+
+        state.EntityManager.CompleteDependencyBeforeRW<GroundMissileProjectileComponent>();
+        state.EntityManager.CompleteDependencyBeforeRW<LocalTransform>();
+
         ComponentLookup<GroundMissileProjectileComponent> projectileLookup = SystemAPI.GetComponentLookup<GroundMissileProjectileComponent>();
         ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>();
         using NativeArray<Entity> entities = _projectileQuery.ToEntityArray(Allocator.Temp);

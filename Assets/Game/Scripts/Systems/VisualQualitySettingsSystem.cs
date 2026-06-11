@@ -5,6 +5,9 @@ using UnityEngine.Rendering.Universal;
 
 public sealed class VisualQualitySettingsSystem : IDisposable
 {
+    // Read by Game/Environment/GroundMacroVariation.shader (0 = on, 1 = off).
+    private static readonly int GroundVariationDisabledId = Shader.PropertyToID("_GroundVariationDisabled");
+
     private VisualQualityProfileAsset _premiumProfile;
     private Camera _worldCamera;
     private Light _directionalLight;
@@ -168,6 +171,8 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         if (_premiumProfile == null)
             return;
 
+        Shader.SetGlobalFloat(GroundVariationDisabledId, _premiumProfile.EnableGroundVariation ? 0f : 1f);
+
         switch (mode)
         {
             case VisualQualityRuntimeMode.Low:
@@ -290,6 +295,7 @@ public sealed class VisualQualitySettingsSystem : IDisposable
 
         QualitySettings.renderPipeline = _originalRenderPipeline;
         RestoreRenderPipelineAssetScales();
+        Shader.SetGlobalFloat(GroundVariationDisabledId, 0f);
 
         if (_globalVolume != null)
             _globalVolume.sharedProfile = _originalVolumeProfile;

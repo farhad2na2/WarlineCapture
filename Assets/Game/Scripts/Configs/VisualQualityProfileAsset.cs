@@ -32,6 +32,7 @@ public sealed class VisualQualityProfileAsset : ScriptableObject
     [SerializeField] private Color premiumAmbientSkyColor = new(0.58f, 0.68f, 0.78f, 1f);
     [SerializeField] private Color premiumAmbientEquatorColor = new(0.34f, 0.36f, 0.38f, 1f);
     [SerializeField] private Color premiumAmbientGroundColor = new(0.12f, 0.13f, 0.15f, 1f);
+    [SerializeField] private bool enableGroundVariation = true;
     [SerializeField] private bool enablePremiumFog = true;
     [SerializeField] private Color premiumFogColor = new(0.44f, 0.50f, 0.55f, 1f);
     [SerializeField, Range(0f, 0.05f)] private float premiumFogDensity = 0.0085f;
@@ -56,6 +57,7 @@ public sealed class VisualQualityProfileAsset : ScriptableObject
     public Color PremiumAmbientSkyColor => premiumAmbientSkyColor;
     public Color PremiumAmbientEquatorColor => premiumAmbientEquatorColor;
     public Color PremiumAmbientGroundColor => premiumAmbientGroundColor;
+    public bool EnableGroundVariation => enableGroundVariation;
     public bool EnablePremiumFog => enablePremiumFog;
     public Color PremiumFogColor => premiumFogColor;
     public float PremiumFogDensity => premiumFogDensity;

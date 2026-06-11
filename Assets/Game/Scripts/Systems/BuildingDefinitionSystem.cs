@@ -30,6 +30,8 @@ internal sealed class BuildingDefinitionSystem
     private readonly List<GameObject> _configuredUnitSpawnPrefabs = new();
     private readonly List<BuildingDefinition> _configuredSpawnableDefinitions = new();
     private readonly Dictionary<GameObject, BuildingDefinition> _configuredDefinitionsByPrefab = new();
+    private readonly List<ConfiguredSpawnableEntry> _configuredSpawnableEntries = new();
+    private readonly Dictionary<GameObject, ConfiguredSpawnableEntry> _configuredSpawnableEntriesByPrefab = new();
 
     public IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey => _unitSpawnPrefabsByKey;
     public IReadOnlyList<GameObject> ConfiguredSpawnablePrefabs => _configuredSpawnablePrefabs;
@@ -97,6 +99,9 @@ internal sealed class BuildingDefinitionSystem
             CacheBuildingBounds(definition, destroyObject);
             _configuredSpawnableDefinitions.Add(definition);
             _configuredDefinitionsByPrefab[prefab] = definition;
+            ConfiguredSpawnableEntry entry = BuildConfiguredSpawnableEntry(definition);
+            _configuredSpawnableEntries.Add(entry);
+            _configuredSpawnableEntriesByPrefab[prefab] = entry;
         }
     }
 
@@ -107,6 +112,8 @@ internal sealed class BuildingDefinitionSystem
 
         _configuredSpawnableDefinitions.Clear();
         _configuredDefinitionsByPrefab.Clear();
+        _configuredSpawnableEntries.Clear();
+        _configuredSpawnableEntriesByPrefab.Clear();
         _runtimeBuildingMetadataCache.Clear();
     }
 
@@ -158,9 +165,22 @@ internal sealed class BuildingDefinitionSystem
 
     public bool TryGetConfiguredSpawnable(int index, out ConfiguredSpawnableEntry entry)
     {
-        if (TryGetConfiguredDefinition(index, out BuildingDefinition definition))
+        if (index >= 0 && index < _configuredSpawnableEntries.Count)
         {
-            entry = BuildConfiguredSpawnableEntry(definition);
+            entry = _configuredSpawnableEntries[index];
+            return entry.Prefab != null;
+        }
+
+        entry = default;
+        return false;
+    }
+
+    public bool TryGetConfiguredSpawnable(GameObject prefab, out ConfiguredSpawnableEntry entry)
+    {
+        if (prefab != null &&
+            _configuredSpawnableEntriesByPrefab.TryGetValue(prefab, out entry) &&
+            entry.Prefab != null)
+        {
             return true;
         }
 
@@ -174,9 +194,9 @@ internal sealed class BuildingDefinitionSystem
         if (!string.IsNullOrEmpty(normalized) &&
             _spawnablesByKey.TryGetValue(normalized, out GameObject prefab) &&
             prefab != null &&
-            _configuredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition matchedDefinition))
+            _configuredSpawnableEntriesByPrefab.TryGetValue(prefab, out entry) &&
+            entry.Prefab != null)
         {
-            entry = BuildConfiguredSpawnableEntry(matchedDefinition);
             return true;
         }
 
@@ -186,8 +206,7 @@ internal sealed class BuildingDefinitionSystem
             if (definition == null || !RuntimeDefinitionMatchesId(definition, normalized))
                 continue;
 
-            entry = BuildConfiguredSpawnableEntry(definition);
-            return true;
+            return TryGetConfiguredSpawnable(i, out entry);
         }
 
         entry = default;

@@ -54,10 +54,8 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
             source.BuildingPlacementInteractionContextSystem.CreateSource(
                 () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement,
                 () => source.BuildingPlacementLifecycleSystem.CanConfirmBuildingPlacement,
-                () => source.BuildingUiQuerySystem.HasSelectedBuilding(
-                    createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),
-                () => source.BuildingUiQuerySystem.HasActiveBuilding(
-                    createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),
+                () => source.RuntimeBuildingSystem.HasSelectedBuilding(),
+                () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
                 () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement &&
                       source.BuildingPlacementInputSystem.IsDraggingPlacement,
                 () => source.BuildingUiQuerySystem.PlacementStatusText(

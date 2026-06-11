@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-internal static class VehicleVisualEntityUtility
+public static class VehicleVisualEntityUtility
 {
     public static void DestroyVisualTree(EntityManager em, Entity root)
     {

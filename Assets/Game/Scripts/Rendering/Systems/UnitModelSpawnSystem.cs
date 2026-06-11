@@ -6,7 +6,6 @@ using Unity.Transforms;
 using UnityEngine;
 using SnivelerCode.GpuAnimation.Scripts.Components;
 
-[UpdateBefore(typeof(UnitDestroyedVisualSystem))]
 public partial struct UnitModelSpawnSystem : ISystem
 {
     private static readonly bool EnableModelSpawnDiagnostics = false;

@@ -7,14 +7,12 @@ public sealed class RuntimeCameraReferenceSystem
 
     public void SetWorldCamera(Camera camera)
     {
-        InitialUnitsRuntimeState.WorldCamera = camera;
         if (TryGetOrCreateCameraReference(out EntityManager entityManager, out Entity entity))
             entityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity).WorldCamera = camera;
     }
 
     public void ClearWorldCamera()
     {
-        InitialUnitsRuntimeState.WorldCamera = null;
         if (TryGetCameraReference(out EntityManager entityManager, out Entity entity))
             entityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity).WorldCamera = null;
     }

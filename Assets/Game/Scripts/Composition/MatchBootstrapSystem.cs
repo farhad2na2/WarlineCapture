@@ -88,8 +88,8 @@ internal sealed class MatchBootstrapSystem
     public MainMenuPlayUI MainMenu { get; private set; }
     public DayNightSystem DayNight { get; private set; }
     public FactionVisualSettings FactionVisuals { get; private set; }
-    public UnitAttackTraceSystem UnitAttackTraces { get; private set; }
-    public UnitImpostorRenderSystem UnitImpostors { get; private set; }
+    public IUnitAttackTraceRenderer UnitAttackTraces { get; private set; }
+    public IUnitImpostorRenderer UnitImpostors { get; private set; }
     public bool GameplayInitialized { get; private set; }
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
     public BuildingUiCommandSystem.Context BuildingUiCommandContext => _buildingUiCommandContext;
@@ -372,17 +372,14 @@ internal sealed class MatchBootstrapSystem
         BuildingPlacementSystemConfig buildingPlacementConfig,
         MapBuildingPlacementConfig mapBuildingPlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
-        UnitAttackTraceSystemConfig unitAttackTraceConfig,
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         GameStringsConfig gameStringsConfig,
-        PrefabPreviewCameraConfig prefabPreviewCameraConfig,
         Camera worldCamera,
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
         Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
-        Transform mapBuildingAuthoringRoot,
-        int ownerLayer)
+        Transform mapBuildingAuthoringRoot)
     {
         return managedGameplayStartupSystem.Initialize(
             dayNightConfig,
@@ -391,17 +388,14 @@ internal sealed class MatchBootstrapSystem
             buildingPlacementConfig,
             mapBuildingPlacementConfig,
             rtsSelectionConfig,
-            unitAttackTraceConfig,
             runtimeCitySpawnerConfig,
             gameStringsConfig,
-            prefabPreviewCameraConfig,
             worldCamera,
             directionalLight,
             globalVolume,
             runtimeUiRoot,
             createSelectionRectangleView,
-            mapBuildingAuthoringRoot,
-            ownerLayer);
+            mapBuildingAuthoringRoot);
     }
 
     public void ProjectFactionVisualConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
@@ -606,7 +600,7 @@ internal sealed class MatchBootstrapSystem
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
         IMatchRuntimeUi mainMenu,
-        UnitImpostorRenderSystem unitImpostors,
+        IUnitImpostorRenderer unitImpostors,
         ref bool gameplayStartPending)
     {
         gameplayRuntimeUpdateSystem.Update(
@@ -632,8 +626,8 @@ internal sealed class MatchBootstrapSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
-        UnitAttackTraceSystem unitAttackTraces,
-        UnitImpostorRenderSystem unitImpostors)
+        IUnitAttackTraceRenderer unitAttackTraces,
+        IUnitImpostorRenderer unitImpostors)
     {
         gameplayRuntimeUpdateSystem.LateUpdate(
             gameplayInitialized,
@@ -663,8 +657,8 @@ internal sealed class MatchBootstrapSystem
         Action disposeSelection,
         Action disposeBuildingGameplay,
         Action disposeRoad,
-        UnitAttackTraceSystem unitAttackTraces,
-        UnitImpostorRenderSystem unitImpostors,
+        IUnitAttackTraceRenderer unitAttackTraces,
+        IUnitImpostorRenderer unitImpostors,
         Action disposeCitizenPopulation,
         DayNightSystem dayNight,
         RuntimeDecorationSpawnerSystem runtimeDecorations,
@@ -870,6 +864,7 @@ internal sealed class MatchBootstrapSystem
             return;
 
         InitializeVisualQualitySettingsIfNeeded();
+        int ownerLayer = MatchScene != null ? MatchScene.gameObject.layer : 0;
 
         ManagedGameplayStartupSystem.Result managedSystems = InitializeManagedRuntime(
             DayNightConfig,
@@ -878,17 +873,14 @@ internal sealed class MatchBootstrapSystem
             BuildingPlacementConfig,
             MapBuildingPlacementConfig,
             RtsSelectionConfig,
-            UnitAttackTraceConfig,
             RuntimeCitySpawnerConfig,
             GameStringsConfig,
-            PrefabPreviewCameraConfig,
             WorldCamera,
             DirectionalLight,
             GlobalVolume,
             _runtimeUiRoot,
             EnsureSelectionRectangleView,
-            MapBuildingAuthoringRoot,
-            MatchScene != null ? MatchScene.gameObject.layer : 0);
+            MapBuildingAuthoringRoot);
 
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;
@@ -930,8 +922,7 @@ internal sealed class MatchBootstrapSystem
         SelectionBuildingInteraction = managedSystems.SelectionBuildingInteraction;
         SelectionScreenMarkers = managedSystems.SelectionScreenMarkers;
         SelectionRectangle = managedSystems.SelectionRectangleView;
-        UnitAttackTraces = managedSystems.UnitAttackTraces;
-        UnitImpostors = managedSystems.UnitImpostors;
+        InitializeRenderingSystems(ownerLayer);
         _disposeCitizenPopulation = managedSystems.DisposeCitizenPopulation;
         _citizenPopulationRuntimeUpdate = managedSystems.CitizenPopulationComposition != null
             ? managedSystems.CitizenPopulationComposition.RuntimeUpdateSystem.Update
@@ -949,6 +940,19 @@ internal sealed class MatchBootstrapSystem
 
         if (_pendingMatchHudSelectionPanelView != null)
             BindMatchHudSelectionPanel(_pendingMatchHudSelectionPanelView);
+    }
+
+    private void InitializeRenderingSystems(int ownerLayer)
+    {
+        var unitAttackTraces = new UnitAttackTraceSystem();
+        unitAttackTraces.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
+        UnitAttackTraces = unitAttackTraces;
+
+        var unitImpostors = new UnitImpostorRenderSystem();
+        unitImpostors.Init(WorldCamera, ownerLayer, BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
+        UnitImpostors = unitImpostors;
+
+        SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);
     }
 
     private void InitializeVisualQualitySettingsIfNeeded()

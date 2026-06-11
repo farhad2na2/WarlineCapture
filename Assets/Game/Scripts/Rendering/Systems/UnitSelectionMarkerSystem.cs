@@ -67,7 +67,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 
         Entity marker = em.Instantiate(prefabRef.Prefab);
         em.SetName(marker, "UnitSelectionMarker");
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] markerCreate unit={DescribeUnit(em, unit)} marker={marker} prefab={prefabRef.Prefab}");
+        LogSelectionClickDebug($"[SelectionClick] markerCreate unit={DescribeUnit(em, unit)} marker={marker} prefab={prefabRef.Prefab}");
         if (!em.HasComponent<Parent>(marker))
             em.AddComponentData(marker, new Parent { Value = unit });
         else
@@ -153,9 +153,15 @@ public partial struct UnitSelectionMarkerSystem : ISystem
     private static void DestroyMarker(EntityManager em, Entity unit)
     {
         UnitSelectionMarkerInstanceReference instance = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit);
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] markerDestroy unit={DescribeUnit(em, unit)} marker={instance.Instance}");
+        LogSelectionClickDebug($"[SelectionClick] markerDestroy unit={DescribeUnit(em, unit)} marker={instance.Instance}");
         VehicleVisualEntityUtility.DestroyVisualTree(em, instance.Instance);
         em.RemoveComponent<UnitSelectionMarkerInstanceReference>(unit);
+    }
+
+    [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
+    private static void LogSelectionClickDebug(string message)
+    {
+        Debug.Log(message);
     }
 
     private static string DescribeUnit(EntityManager em, Entity unit)

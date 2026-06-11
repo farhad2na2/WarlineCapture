@@ -446,20 +446,20 @@ public sealed partial class UnitRenderBudgetSystemTests
     [Test]
     public void CharacterImpostorsScaleUpAtHighTacticalCameraHeight()
     {
-        Assert.AreEqual(1f, UnitImpostorRenderSystem.ResolveCharacterTacticalScale(80f), 0.001f);
-        Assert.AreEqual(16f, UnitImpostorRenderSystem.ResolveCharacterTacticalScale(200f), 0.001f);
+        Assert.AreEqual(1f, UnitImpostorVisualUtility.ResolveCharacterTacticalScale(80f), 0.001f);
+        Assert.AreEqual(16f, UnitImpostorVisualUtility.ResolveCharacterTacticalScale(200f), 0.001f);
     }
 
     [Test]
     public void HighCameraCharacterImpostorsFaceCameraPlane()
     {
         Quaternion cameraRotation = Quaternion.Euler(70f, 35f, 0f);
-        Quaternion characterRotation = UnitImpostorRenderSystem.ResolveBillboardRotation(
+        Quaternion characterRotation = UnitImpostorVisualUtility.ResolveBillboardRotation(
             true,
             Vector3.zero,
             new Vector3(0f, 200f, 0f),
             cameraRotation);
-        Quaternion vehicleRotation = UnitImpostorRenderSystem.ResolveBillboardRotation(
+        Quaternion vehicleRotation = UnitImpostorVisualUtility.ResolveBillboardRotation(
             false,
             Vector3.zero,
             new Vector3(0f, 200f, 0f),
@@ -476,8 +476,8 @@ public sealed partial class UnitRenderBudgetSystemTests
         FixedString64Bytes character = new("Unit_Chr_Rifleman");
         FixedString64Bytes vehicle = new("Unit_Veh_APC");
 
-        _ = UnitImpostorRenderSystem.HasCharacterUnitPrefix(character);
-        _ = UnitImpostorRenderSystem.HasCharacterUnitPrefix(vehicle);
+        _ = UnitImpostorVisualUtility.HasCharacterUnitPrefix(character);
+        _ = UnitImpostorVisualUtility.HasCharacterUnitPrefix(vehicle);
 
         bool allMatched = false;
         Assert.That(() =>
@@ -485,8 +485,8 @@ public sealed partial class UnitRenderBudgetSystemTests
             bool result = true;
             for (int i = 0; i < 4096; i++)
             {
-                result &= UnitImpostorRenderSystem.HasCharacterUnitPrefix(character);
-                result &= !UnitImpostorRenderSystem.HasCharacterUnitPrefix(vehicle);
+                result &= UnitImpostorVisualUtility.HasCharacterUnitPrefix(character);
+                result &= !UnitImpostorVisualUtility.HasCharacterUnitPrefix(vehicle);
             }
 
             allMatched = result;

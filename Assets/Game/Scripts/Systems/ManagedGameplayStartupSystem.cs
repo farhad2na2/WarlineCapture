@@ -45,8 +45,6 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
-        public readonly UnitAttackTraceSystem UnitAttackTraces;
-        public readonly UnitImpostorRenderSystem UnitImpostors;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Action DisposeCitizenPopulation;
 
@@ -86,8 +84,6 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerSystem selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
-            UnitAttackTraceSystem unitAttackTraces,
-            UnitImpostorRenderSystem unitImpostors,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Action disposeCitizenPopulation)
         {
@@ -126,8 +122,6 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionBuildingInteraction = selectionBuildingInteraction;
             SelectionScreenMarkers = selectionScreenMarkers;
             SelectionRectangleView = selectionRectangleView;
-            UnitAttackTraces = unitAttackTraces;
-            UnitImpostors = unitImpostors;
             CitizenPopulationComposition = citizenPopulationComposition;
             DisposeCitizenPopulation = disposeCitizenPopulation;
         }
@@ -140,17 +134,14 @@ internal sealed class ManagedGameplayStartupSystem
         BuildingPlacementSystemConfig buildingPlacementConfig,
         MapBuildingPlacementConfig mapBuildingPlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
-        UnitAttackTraceSystemConfig unitAttackTraceConfig,
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         GameStringsConfig gameStringsConfig,
-        PrefabPreviewCameraConfig prefabPreviewCameraConfig,
         Camera worldCamera,
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
-        Transform mapBuildingAuthoringRoot,
-        int ownerLayer)
+        Transform mapBuildingAuthoringRoot)
     {
         var dayNight = new DayNightSystem();
         dayNight.Init(dayNightConfig, directionalLight, globalVolume);
@@ -262,12 +253,6 @@ internal sealed class ManagedGameplayStartupSystem
             selection.SelectionBuildingInteraction,
             selection.ShouldBlockBuildingSelectionClick);
 
-        var unitAttackTraces = new UnitAttackTraceSystem();
-        unitAttackTraces.Init(unitAttackTraceConfig, worldCamera, ownerLayer, factionVisuals);
-
-        var unitImpostors = new UnitImpostorRenderSystem();
-        unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
-
         building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig);
         building.BindCitizenPopulation(
             dayNight,
@@ -276,7 +261,6 @@ internal sealed class ManagedGameplayStartupSystem
             building.CitizenPopulationComposition.EventSystem);
 
         GameStrings.Init(gameStringsConfig);
-        SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
         System.Action<IMatchRuntimeUi> bindRoadMainMenu = mainMenu =>
             _roadBuildCompositionSystem.BindMainMenu(
                 road,
@@ -327,8 +311,6 @@ internal sealed class ManagedGameplayStartupSystem
             selection.SelectionBuildingInteraction,
             selection.SelectionScreenMarkers,
             selection.SelectionRectangleView,
-            unitAttackTraces,
-            unitImpostors,
             building.CitizenPopulationComposition,
             building.DisposeCitizenPopulation);
     }

@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class UnitAttackTraceSystem
+public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
     private static readonly int TraceColorId = Shader.PropertyToID("_TraceColor");
@@ -40,9 +40,7 @@ public sealed class UnitAttackTraceSystem
     private readonly Matrix4x4[] _matrices = new Matrix4x4[MaxBatchSize];
     private readonly Vector4[] _colors = new Vector4[MaxBatchSize];
     private readonly Vector4[] _traceParams = new Vector4[MaxBatchSize];
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-
-    public void Init(UnitAttackTraceSystemConfig configAsset, Camera sceneWorldCamera, int renderLayer, FactionVisualSettings factionVisualSettings)
+    public void Init(UnitAttackTraceSystemConfig configAsset, Camera sceneWorldCamera, int renderLayer)
     {
         config = configAsset;
         worldCamera = sceneWorldCamera;
@@ -74,9 +72,6 @@ public sealed class UnitAttackTraceSystem
 
     public void LateUpdate()
     {
-        if (!_runtimeGameplayStateSystem.PlayRequested)
-            return;
-
         if (worldCamera == null)
             return;
 

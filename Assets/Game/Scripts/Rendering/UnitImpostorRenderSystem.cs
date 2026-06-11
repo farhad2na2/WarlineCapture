@@ -8,7 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class UnitImpostorRenderSystem : System.IDisposable
+public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
 {
     private static readonly bool EnableImpostorAtlasDiagnostics = false;
     private const int MaxBatchSize = 1023;
@@ -21,9 +21,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private const int DirectionalImpostorCount = 8;
     private const float CharacterImpostorWidthScale = 1.65f;
     private const float CharacterImpostorHeightScale = 1.65f;
-    private const float CharacterTacticalBillboardStartCameraY = 80f;
-    private const float CharacterTacticalBillboardFullCameraY = 200f;
-    private const float CharacterTacticalBillboardMaxScale = 16f;
     private const string ImpostorShaderName = "Game/Unit Impostor Unlit";
     private static readonly Vector3[] BillboardVertices =
     {
@@ -738,25 +735,12 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
 
     internal static bool HasCharacterUnitPrefix(FixedString64Bytes sourceKey)
     {
-        return sourceKey.Length >= 9 &&
-               sourceKey[0] == (byte)'U' &&
-               sourceKey[1] == (byte)'n' &&
-               sourceKey[2] == (byte)'i' &&
-               sourceKey[3] == (byte)'t' &&
-               sourceKey[4] == (byte)'_' &&
-               sourceKey[5] == (byte)'C' &&
-               sourceKey[6] == (byte)'h' &&
-               sourceKey[7] == (byte)'r' &&
-               sourceKey[8] == (byte)'_';
+        return UnitImpostorVisualUtility.HasCharacterUnitPrefix(sourceKey);
     }
 
     public static float ResolveCharacterTacticalScale(float cameraY)
     {
-        float t = Mathf.InverseLerp(
-            CharacterTacticalBillboardStartCameraY,
-            CharacterTacticalBillboardFullCameraY,
-            cameraY);
-        return Mathf.Lerp(1f, CharacterTacticalBillboardMaxScale, t);
+        return UnitImpostorVisualUtility.ResolveCharacterTacticalScale(cameraY);
     }
 
     public static Quaternion ResolveBillboardRotation(
@@ -765,15 +749,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         Vector3 cameraPosition,
         Quaternion cameraRotation)
     {
-        if (isCharacter && cameraPosition.y >= CharacterTacticalBillboardStartCameraY)
-            return Quaternion.LookRotation(-(cameraRotation * Vector3.forward), cameraRotation * Vector3.up);
-
-        Vector3 toCamera = cameraPosition - position;
-        toCamera.y = 0f;
-        if (toCamera.sqrMagnitude < 0.0001f)
-            toCamera = Vector3.forward;
-
-        return Quaternion.LookRotation(toCamera.normalized, Vector3.up);
+        return UnitImpostorVisualUtility.ResolveBillboardRotation(isCharacter, position, cameraPosition, cameraRotation);
     }
 
     private void DestroyStyleMaterials(ImpostorStyle style)

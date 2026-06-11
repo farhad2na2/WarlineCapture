@@ -176,6 +176,39 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void RuntimeAssemblyMustNotReferenceEntitiesGraphicsPackage()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.Entities.Graphics\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Unity.Entities.Graphics`. Unit render/model visibility systems belong in `Game.Rendering`.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Rendering\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference `Game.Rendering`. Runtime code can depend on `Game.Rendering.Contracts`; composition owns concrete renderer creation.");
+    }
+
+    [Test]
+    public void RenderingAssemblyMustNotReferenceRuntimeAssembly()
+    {
+        string renderingAsmdefPath = Path.Combine(GameScriptsRoot, "Rendering/Game.Rendering.asmdef");
+        string asmdef = File.ReadAllText(renderingAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Runtime\"", StringComparison.Ordinal),
+            "`Game.Rendering` must not reference `Game.Runtime`. Move shared renderer-facing data into contracts/configs/components instead of creating an assembly cycle.");
+    }
+
+    [Test]
     public void LegacyBootstrapFolderMustNotContainRuntimeSourceFiles()
     {
         List<string> violations = EnumerateSourceFiles(LegacyBootstrapRoot)

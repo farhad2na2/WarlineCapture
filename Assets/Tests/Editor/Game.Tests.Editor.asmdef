@@ -7,6 +7,8 @@
         "Game.Composition",
         "Game.Configs",
         "Game.Editor",
+        "Game.Rendering",
+        "Game.Rendering.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",

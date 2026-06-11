@@ -24,7 +24,7 @@ public sealed class GameplayRuntimeUpdateSystem
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
         IMatchRuntimeUi mainMenu,
-        UnitImpostorRenderSystem unitImpostors,
+        IUnitImpostorRenderer unitImpostors,
         ref bool gameplayStartPending)
     {
         bool gameplayActive = gameplayInitialized && runtimeGameplayStateSystem.PlayRequested;
@@ -118,8 +118,8 @@ public sealed class GameplayRuntimeUpdateSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
-        UnitAttackTraceSystem unitAttackTraces,
-        UnitImpostorRenderSystem unitImpostors)
+        IUnitAttackTraceRenderer unitAttackTraces,
+        IUnitImpostorRenderer unitImpostors)
     {
         if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
             return;

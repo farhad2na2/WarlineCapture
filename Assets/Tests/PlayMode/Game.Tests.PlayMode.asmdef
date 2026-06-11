@@ -6,6 +6,7 @@
         "Game.Components",
         "Game.Composition",
         "Game.Configs",
+        "Game.Rendering.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",

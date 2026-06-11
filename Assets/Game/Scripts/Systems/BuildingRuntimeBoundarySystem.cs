@@ -200,7 +200,8 @@ public sealed class BuildingRuntimeBoundarySystem
                 continue;
             }
 
-            var spawnable = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+            if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
+                spawnable = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
             if (spawnable.Prefab == null || !spawnable.CanRequest)
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
@@ -325,7 +326,8 @@ public sealed class BuildingRuntimeBoundarySystem
             if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition definition))
                 continue;
 
-            var entry = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+            if (!definitionSystem.TryGetConfiguredSpawnable(i, out var entry))
+                continue;
             if (entry.Prefab == null)
                 continue;
 
@@ -438,10 +440,8 @@ public sealed class BuildingRuntimeBoundarySystem
             byte factionId = _factionIds[factionIndex];
             for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
             {
-                if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition definition))
+                if (!definitionSystem.TryGetConfiguredSpawnable(i, out var entry))
                     continue;
-
-                var entry = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
                 if (entry.Prefab == null)
                     continue;
 

@@ -28,7 +28,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
         for (int i = 0; i < 256; i++)
             diagnosticsSystem.EndStep("UnitRenderBudgetSystem", diagnosticsSystem.BeginStep());
 
-        int timeBaselineBlocks = CountGcAllocationBlocks(() =>
+        long timeBaselineBytes = CountAllocatedBytes(() =>
         {
             for (int i = 0; i < 128; i++)
             {
@@ -38,39 +38,23 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
         });
 
         diagnosticsSystem.BeginUpdate(gameplayActive: false);
-        int measuredBlocks = CountGcAllocationBlocks(() =>
+        long measuredBytes = CountAllocatedBytes(() =>
         {
             for (int i = 0; i < 128; i++)
                 diagnosticsSystem.EndStep("UnitRenderBudgetSystem", diagnosticsSystem.BeginStep());
         });
 
         Assert.LessOrEqual(
-            measuredBlocks,
-            timeBaselineBlocks,
-            $"EndStep allocated beyond the warmed Unity time baseline. baseline={timeBaselineBlocks} measured={measuredBlocks}");
+            measuredBytes,
+            timeBaselineBytes,
+            $"EndStep allocated beyond the warmed Unity time baseline. baseline={timeBaselineBytes}B measured={measuredBytes}B");
     }
 
-    private static int CountGcAllocationBlocks(System.Action action)
+    private static long CountAllocatedBytes(System.Action action)
     {
-        UnityEngine.Profiling.Recorder recorder = UnityEngine.Profiling.Recorder.Get("GC.Alloc");
-        recorder.enabled = false;
-#if !UNITY_WEBGL
-        recorder.FilterToCurrentThread();
-#endif
-        recorder.enabled = true;
-        try
-        {
-            action();
-        }
-        finally
-        {
-            recorder.enabled = false;
-#if !UNITY_WEBGL
-            recorder.CollectFromAllThreads();
-#endif
-        }
-
-        return recorder.sampleBlockCount;
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        action();
+        return System.GC.GetAllocatedBytesForCurrentThread() - before;
     }
 }
 #endif

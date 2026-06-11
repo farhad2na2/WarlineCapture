@@ -5,6 +5,7 @@
         "Game.Authoring",
         "Game.Components",
         "Game.Configs",
+        "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Game.Runtime",
         "Unity.Collections",

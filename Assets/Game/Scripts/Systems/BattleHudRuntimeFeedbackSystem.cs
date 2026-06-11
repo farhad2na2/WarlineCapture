@@ -1,28 +1,5 @@
 using UnityEngine;
 
-public readonly struct BattleHudRuntimeFeedbackState
-{
-    public BattleHudRuntimeFeedbackState(
-        TacticalCommandMode currentCommandMode,
-        TacticalCommandMode stickyCommandMode,
-        TacticalCommandResult lastCommandResult,
-        bool hasLastCommandResult)
-    {
-        CurrentCommandMode = currentCommandMode;
-        StickyCommandMode = stickyCommandMode;
-        LastCommandResult = lastCommandResult;
-        HasLastCommandResult = hasLastCommandResult;
-    }
-
-    public TacticalCommandMode CurrentCommandMode { get; }
-    public TacticalCommandMode StickyCommandMode { get; }
-    public TacticalCommandResult LastCommandResult { get; }
-    public bool HasLastCommandResult { get; }
-
-    public static BattleHudRuntimeFeedbackState Empty =>
-        new(TacticalCommandMode.None, TacticalCommandMode.None, TacticalCommandResult.Success(), false);
-}
-
 public sealed class BattleHudRuntimeFeedbackSystem
 {
     public const float SuccessFeedbackDurationSeconds = 1.4f;

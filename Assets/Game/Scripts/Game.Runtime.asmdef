@@ -5,6 +5,7 @@
         "Game.Authoring",
         "Game.Components",
         "Game.Configs",
+        "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "sniveler-code.gpu-animation",
         "Unity.Burst",

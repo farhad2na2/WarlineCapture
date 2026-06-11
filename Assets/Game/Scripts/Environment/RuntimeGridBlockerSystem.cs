@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RuntimeGridBlockerSystem
+public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
 {
     private enum BlockerPrefabKind
     {

@@ -1,24 +1,14 @@
 {
-    "name": "Game.Runtime",
+    "name": "Game.Authoring",
     "rootNamespace": "",
     "references": [
-        "Game.Authoring",
         "Game.Components",
         "Game.Configs",
-        "sniveler-code.gpu-animation",
-        "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
-        "Unity.Entities.Graphics",
         "Unity.Entities.Hybrid",
-        "Unity.InputSystem",
         "Unity.Mathematics",
-        "Unity.Mathematics.Extensions",
-        "Unity.RenderPipelines.Core.Runtime",
-        "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.TextMeshPro",
-        "Unity.Transforms",
-        "UnityEngine.UI"
+        "Unity.Transforms"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

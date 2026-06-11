@@ -10,7 +10,7 @@ public class GridAuthoring : MonoBehaviour
     private static readonly List<GridAuthoring> RegisteredInstances = new();
 
     [SerializeField] private GridAuthoringConfig config;
-    private RuntimeGridBlockerSystem _runtimeGridBlockers;
+    private IRuntimeGridBlockerCellLookup _runtimeGridBlockers;
     public static IReadOnlyList<GridAuthoring> Instances => RegisteredInstances;
     public int Width => config != null ? config.Width : 16;
     public int Height => config != null ? config.Height : 16;
@@ -45,7 +45,7 @@ public class GridAuthoring : MonoBehaviour
         this.config = config;
     }
 
-    public void BindRuntimeGridBlockers(RuntimeGridBlockerSystem runtimeGridBlockers)
+    public void BindRuntimeGridBlockers(IRuntimeGridBlockerCellLookup runtimeGridBlockers)
     {
         _runtimeGridBlockers = runtimeGridBlockers;
     }

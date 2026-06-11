@@ -73,6 +73,56 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void AssemblyCSharpProjectsMustNotCompileAssetsSourceFiles()
+    {
+        List<string> violations = new();
+
+        foreach (string projectFile in Directory.GetFiles(".", "Assembly-CSharp*.csproj", SearchOption.TopDirectoryOnly))
+        {
+            string normalizedProject = NormalizePath(projectFile).TrimStart('.', '/');
+            bool isPlayerProject = normalizedProject.EndsWith(".Player.csproj", StringComparison.Ordinal);
+            string[] lines = File.ReadAllLines(projectFile);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                bool compilesAssetsSource = line.Contains("<Compile Include=\"Assets/", StringComparison.Ordinal);
+                bool compilesGameOrTestSource =
+                    line.Contains("<Compile Include=\"Assets/Game/Scripts/", StringComparison.Ordinal) ||
+                    line.Contains("<Compile Include=\"Assets/Tests/", StringComparison.Ordinal);
+                if ((!isPlayerProject && compilesAssetsSource) || compilesGameOrTestSource)
+                    violations.Add($"{normalizedProject}:{lineIndex + 1} still compiles an Assets source file: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Assembly-CSharp editor projects must stay empty of Assets source files, and player projects must not compile game/test source. Add or update asmdefs instead of letting new scripts fall back to default assemblies.");
+    }
+
+    [Test]
+    public void SourceMustNotHardcodeLegacyDefaultAssemblyNames()
+    {
+        string legacyAssemblyName = "Assembly" + "-CSharp";
+        List<string> violations = new();
+
+        foreach (string path in EnumerateSourceFiles("Assets/Game/Scripts").Concat(EnumerateSourceFiles("Assets/Tests")))
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                if (line.Contains(legacyAssemblyName, StringComparison.Ordinal))
+                    violations.Add($"{normalized}:{lineIndex + 1} hardcodes `{legacyAssemblyName}`: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Source must not hardcode legacy default assembly names. Use direct type references, asmdef names, or assembly-agnostic lookup helpers.");
+    }
+
+    [Test]
     public void RuntimeScriptsMustNotAddHierarchyLookupOrObjectFindUsage()
     {
         Dictionary<string, int> occurrences = new(StringComparer.Ordinal);

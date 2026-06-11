@@ -2,6 +2,7 @@
     "name": "Game.Tests.PlayMode",
     "rootNamespace": "",
     "references": [
+        "Game.Authoring",
         "Game.Components",
         "Game.Configs",
         "Game.Runtime",

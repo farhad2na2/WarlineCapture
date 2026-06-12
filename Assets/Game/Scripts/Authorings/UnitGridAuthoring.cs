@@ -61,6 +61,8 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector, Min(0)] private int attackDamage = 10;
     [SerializeField, HideInInspector, Min(1)] private int maxHealth = 100;
     [SerializeField, HideInInspector] private GameObject attackImpactPrefab;
+    [SerializeField, HideInInspector] private GameObject muzzleFlashPrefab;
+    [SerializeField, HideInInspector, Min(0f)] private float muzzleFlashHeightOffset = 0.9f;
     [SerializeField, HideInInspector] private GroundMissileLauncherConfig groundMissileLauncherConfig;
     [SerializeField, HideInInspector] private Transform groundMissileLauncherBattery;
     [SerializeField, HideInInspector] private Transform groundMissileLauncherSmokeSpawn;
@@ -144,6 +146,8 @@ public class UnitGridAuthoring : MonoBehaviour
         attackDamage = config.AttackDamage;
         maxHealth = config.MaxHealth;
         attackImpactPrefab = config.AttackImpactPrefab;
+        muzzleFlashPrefab = config.MuzzleFlashPrefab;
+        muzzleFlashHeightOffset = config.MuzzleFlashHeightOffset;
         groundMissileLauncherConfig = config.GroundMissileLauncherConfig;
         airMissileLauncherConfig = config.AirMissileLauncherConfig;
         attackTraceColor = config.AttackTraceColor;
@@ -191,6 +195,8 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
     public GameObject AttackImpactPrefab => attackImpactPrefab;
+    public GameObject MuzzleFlashPrefab => muzzleFlashPrefab;
+    public float MuzzleFlashHeightOffset => Mathf.Max(0f, muzzleFlashHeightOffset);
     public GameObject UnitSelectionMarkerPrefab => config != null ? config.UnitSelectionMarkerPrefab : unitSelectionMarkerPrefab;
     public GameObject UnitHealthBarPrefab => config != null ? config.UnitHealthBarPrefab : unitHealthBarPrefab;
     public bool TintUnitModelRenderers => config != null ? config.TintUnitModelRenderers : tintUnitModelRenderers;
@@ -337,11 +343,30 @@ public class UnitGridAuthoring : MonoBehaviour
                 TraceDashDensity = math.max(1f, authoring.attackTraceDashDensity),
                 TraceVisibleSeconds = math.max(0.01f, authoring.attackTraceVisibleSeconds)
             });
-            if (authoring.attackImpactPrefab != null)
+            if (authoring.config != null)
+                DependsOn(authoring.config);
+            GameObject impactPrefab = authoring.config != null && authoring.config.AttackImpactPrefab != null
+                ? authoring.config.AttackImpactPrefab
+                : authoring.attackImpactPrefab;
+            GameObject muzzleFlashPrefab = authoring.config != null && authoring.config.MuzzleFlashPrefab != null
+                ? authoring.config.MuzzleFlashPrefab
+                : authoring.muzzleFlashPrefab;
+            float muzzleFlashHeightOffset = authoring.config != null
+                ? authoring.config.MuzzleFlashHeightOffset
+                : authoring.muzzleFlashHeightOffset;
+            if (impactPrefab != null)
             {
                 AddComponentObject(entity, new UnitAttackImpactVfxReference
                 {
-                    Prefab = authoring.attackImpactPrefab
+                    Prefab = impactPrefab
+                });
+            }
+            if (muzzleFlashPrefab != null)
+            {
+                AddComponentObject(entity, new UnitMuzzleFlashVfxReference
+                {
+                    Prefab = muzzleFlashPrefab,
+                    HeightOffset = math.max(0f, muzzleFlashHeightOffset)
                 });
             }
             AddGroundMissileLauncherComponents(authoring, entity);

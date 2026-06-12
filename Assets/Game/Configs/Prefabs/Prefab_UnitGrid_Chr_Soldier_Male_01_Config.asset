@@ -20,6 +20,7 @@ MonoBehaviour:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
+  usesVehicleMotion: 0
   isAirUnit: 0
   canRequest: 1
   price: 14000
@@ -31,34 +32,46 @@ MonoBehaviour:
   productionTransportMaxConcurrent: 1
   productionTransportRequiresAirportRunway: 0
   productionTransportUsesRunwayLanding: 0
+  soldierTransportCapacity: 0
   runwayTaxiSpeed: 5
   speed: 4.8
   walkSpeed: 1.7
   roadSpeedMultiplier: 1.15
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Heavy Gunner Male I
-  description: Regular soldier armed with a machine gun. Reliable frontline infantry for patrols, defense, and direct engagements.
+  description: Regular soldier armed with a machine gun. Reliable frontline infantry
+    for patrols, defense, and direct engagements.
+  midLodPrefab: {fileID: 0}
+  lowLodPrefab: {fileID: 0}
   unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   tintUnitModelRenderers: 1
+  vehicleDestroyedVisualPrefab: {fileID: 0}
+  vehicleSelectionMarkerPrefab: {fileID: 0}
+  vehicleHealthBarPrefab: {fileID: 0}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
   aggroRangeCells: 13
-  attackRange: 10.5
+  attackRange: 30
   chaseBreakDistance: 8
   attackCooldownSeconds: 0.32
   attackDamage: 10
   maxHealth: 140
   attackImpactPrefab: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  attackTraceWidth: 0.05
-  attackTraceScrollSpeed: 10
-  attackTraceDashDensity: 10
-  attackTraceVisibleSeconds: 0.08
+  groundMissileLauncherConfig: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
+  attackTraceWidth: 0.14
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 4
+  attackTraceVisibleSeconds: 0.1
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3
@@ -66,3 +79,4 @@ MonoBehaviour:
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
   animationOrder: 000102030405060708090a0b0c0d
+  airMissileLauncherConfig: {fileID: 0}

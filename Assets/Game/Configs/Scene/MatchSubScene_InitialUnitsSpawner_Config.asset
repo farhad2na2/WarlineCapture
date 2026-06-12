@@ -22,7 +22,7 @@ MonoBehaviour:
     - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
       count: 20
       spawnOffset: {x: -72, y: 36}
-    - prefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+    - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
       count: 2
       spawnOffset: {x: -88, y: 18}
     - prefab: {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}

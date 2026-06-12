@@ -167,6 +167,12 @@ public sealed class UnitAttackImpactVfxReference : IComponentData
     public GameObject Prefab;
 }
 
+public sealed class UnitMuzzleFlashVfxReference : IComponentData
+{
+    public GameObject Prefab;
+    public float HeightOffset;
+}
+
 public enum GroundMissileLauncherPhase : byte
 {
     Idle = 0,

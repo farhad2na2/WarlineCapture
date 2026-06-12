@@ -160,6 +160,7 @@ public partial struct UnitAttackSystem : ISystem
             traceRw.TimeRemaining = math.max(0.01f, attackRo.TraceVisibleSeconds);
             traceRw.Phase = math.frac(traceRw.Phase + 0.371f);
             attackAnimRw.TimeRemaining = math.max(0.01f, animationSettingsRo.AttackAnimationSeconds);
+            PlayMuzzleFlash(em, entity, engageRw.Target, selfTransform.ValueRO);
             if (attackRo.Damage <= 0)
                 continue;
 
@@ -228,7 +229,15 @@ public partial struct UnitAttackSystem : ISystem
             {
                 UnitAttackImpactVfxReference impactVfx = em.GetComponentObject<UnitAttackImpactVfxReference>(pending.Attacker);
                 if (impactVfx?.Prefab != null)
-                    UnitAttackImpactVfxRuntime.Play(impactVfx.Prefab, em.GetComponentData<LocalTransform>(target).Position);
+                {
+                    float3 targetPosition = em.GetComponentData<LocalTransform>(target).Position;
+                    float3 toAttacker = pending.AttackerPosition - targetPosition;
+                    toAttacker.y = 0f;
+                    Quaternion impactRotation = math.lengthsq(toAttacker) > 1e-4f
+                        ? Quaternion.LookRotation(toAttacker)
+                        : Quaternion.identity;
+                    UnitAttackImpactVfxRuntime.Play(impactVfx.Prefab, targetPosition, impactRotation);
+                }
             }
 
             if (em.HasComponent<RecentDamageHealthBarVisibility>(target))
@@ -249,6 +258,37 @@ public partial struct UnitAttackSystem : ISystem
 
         ecb.Playback(em);
         ecb.Dispose();
+    }
+
+    private static void PlayMuzzleFlash(EntityManager em, Entity attacker, Entity target, LocalTransform attackerTransform)
+    {
+        if (!em.HasComponent<UnitMuzzleFlashVfxReference>(attacker))
+            return;
+
+        UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentObject<UnitMuzzleFlashVfxReference>(attacker);
+        if (muzzleVfx?.Prefab == null)
+            return;
+
+        float3 muzzlePosition = attackerTransform.Position;
+        if (em.HasComponent<UnitTurretReference>(attacker))
+        {
+            UnitTurretReference turretRef = em.GetComponentData<UnitTurretReference>(attacker);
+            if (em.Exists(turretRef.Turret) && em.HasComponent<LocalToWorld>(turretRef.Turret))
+                muzzlePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
+        }
+
+        muzzlePosition.y += math.max(0f, muzzleVfx.HeightOffset);
+
+        Quaternion rotation = attackerTransform.Rotation;
+        if (target != Entity.Null && em.Exists(target) && em.HasComponent<LocalTransform>(target))
+        {
+            float3 toTarget = em.GetComponentData<LocalTransform>(target).Position - attackerTransform.Position;
+            toTarget.y = 0f;
+            if (math.lengthsq(toTarget) > 1e-4f)
+                rotation = Quaternion.LookRotation(toTarget);
+        }
+
+        UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, muzzlePosition, rotation);
     }
 
     private static float GetCombatRadius(int2 footprintSize, float cellSize)

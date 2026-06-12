@@ -808,9 +808,9 @@ internal sealed class SelectionGameplayStartupSystem
             return new MatchHudSelectionPanelModel(
                 true,
                 string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
-                "Base structure",
+                "Base Structure",
                 "Structure selected",
-                "Health: -",
+                "-",
                 0f,
                 portraitSprite,
                 false,

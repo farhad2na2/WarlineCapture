@@ -64,7 +64,7 @@ public sealed class SelectionSummaryQuerySystem
                 noSelectionBuildingCount > 0 ? "1 STRUCTURE" : "NO SELECTION",
                 noSelectionBuildingCount > 0 ? "Building selected" : string.Empty,
                 noSelectionBuildingCount > 0 ? "Structure selected" : "Idle",
-                "Health: -",
+                "-",
                 0f,
                 noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
         }
@@ -119,7 +119,7 @@ public sealed class SelectionSummaryQuerySystem
         }
 
         int buildingCount = includeSelectedBuilding ? 1 : 0;
-        string healthText = maxTotal > 0 ? $"Health: {currentTotal}/{maxTotal}" : "Health: -";
+        string healthText = maxTotal > 0 ? $"{currentTotal}/{maxTotal}" : "-";
         float health01 = maxTotal > 0 ? math.saturate((float)currentTotal / maxTotal) : 0f;
         string orderText = mixedOrders ? "Mixed orders" : ToOrderText(firstOrder);
         SelectionSummaryPortraitKind portraitKind = ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount);
@@ -162,25 +162,25 @@ public sealed class SelectionSummaryQuerySystem
     private static string ResolveSubtitle(int unitCount, int soldierCount, int vehicleCount, int aircraftCount, int transportCount, int buildingCount)
     {
         if (unitCount <= 0)
-            return buildingCount > 0 ? "Building group" : string.Empty;
+            return buildingCount > 0 ? "Building Group" : string.Empty;
         if (buildingCount > 0)
-            return $"{unitCount} units / {buildingCount} structure";
+            return $"{unitCount} Units / {buildingCount} Structure";
         if (soldierCount == unitCount)
-            return "Infantry squad";
+            return "Infantry Squad";
         if (transportCount == unitCount)
-            return "Transport group";
+            return "Transport Group";
         if (aircraftCount == unitCount)
-            return "Air wing";
+            return "Air Wing";
         if (vehicleCount == unitCount)
-            return "Vehicle squad";
+            return "Vehicle Squad";
 
         int groundCount = soldierCount + vehicleCount + transportCount;
         if (aircraftCount > 0 && groundCount > 0)
-            return $"{groundCount} ground / {aircraftCount} air";
+            return $"{groundCount} Ground / {aircraftCount} Air";
         if (soldierCount > 0 && vehicleCount + transportCount > 0)
-            return $"{soldierCount} infantry / {vehicleCount + transportCount} vehicles";
+            return $"{soldierCount} Infantry / {vehicleCount + transportCount} Vehicles";
 
-        return $"{unitCount} selected units";
+        return $"{unitCount} Selected Units";
     }
 
     private static SelectionSummaryPortraitKind ResolvePortraitKind(int soldierCount, int vehicleCount, int aircraftCount, int transportCount, int buildingCount)

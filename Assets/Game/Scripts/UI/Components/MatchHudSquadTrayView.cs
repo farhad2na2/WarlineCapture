@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,18 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
     [SerializeField] private Sprite selectedFrameSprite;
     [SerializeField] private Card[] cards = new Card[5];
     [SerializeField, Min(0.5f)] private float disabledFlashSeconds = 0.12f;
+    [SerializeField] private TMP_FontAsset cardLabelFont;
+
+    private static readonly string[] CardLabels =
+    {
+        "RIFLE SQUAD",
+        "ARMOR",
+        "GUNSHIP",
+        "JET WING",
+        "TRANSPORT"
+    };
+    private static readonly Color CardLabelColor = new(0.86f, 0.84f, 0.74f, 1f);
+    private static readonly Color CardLabelStripColor = new(0f, 0f, 0f, 0.45f);
 
     private readonly Color[] _frameBaseColors = new Color[5];
     private Action<MatchHudSquadTraySlot> _cardClicked;
@@ -26,7 +39,57 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
     private void Awake()
     {
         CacheBaseFrameColors();
+        CreateCardLabels();
         SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
+    }
+
+    private void CreateCardLabels()
+    {
+        for (int i = 0; i < cards.Length && i < CardLabels.Length; i++)
+        {
+            if (!TryGetCard(i, out Card card) || card.Button == null)
+                continue;
+
+            RectTransform cardRect = card.Button.transform as RectTransform;
+            if (cardRect == null || cardRect.Find("NameStrip") != null)
+                continue;
+
+            GameObject stripObject = new("NameStrip");
+            stripObject.transform.SetParent(cardRect, false);
+            stripObject.layer = cardRect.gameObject.layer;
+            RectTransform stripRect = stripObject.AddComponent<RectTransform>();
+            stripRect.anchorMin = new Vector2(0f, 1f);
+            stripRect.anchorMax = new Vector2(1f, 1f);
+            stripRect.pivot = new Vector2(0.5f, 1f);
+            stripRect.anchoredPosition = new Vector2(29f, -12f);
+            stripRect.sizeDelta = new Vector2(-82f, 40f);
+            Image stripImage = stripObject.AddComponent<Image>();
+            stripImage.color = CardLabelStripColor;
+            stripImage.raycastTarget = false;
+
+            GameObject labelObject = new("Label");
+            labelObject.transform.SetParent(stripRect, false);
+            labelObject.layer = stripObject.layer;
+            RectTransform labelRect = labelObject.AddComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(10f, 0f);
+            labelRect.offsetMax = new Vector2(-6f, 0f);
+            TextMeshProUGUI label = labelObject.AddComponent<TextMeshProUGUI>();
+            if (cardLabelFont != null)
+                label.font = cardLabelFont;
+            label.text = CardLabels[i];
+            label.fontStyle = FontStyles.Bold;
+            label.fontSize = 26f;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 16f;
+            label.fontSizeMax = 26f;
+            label.color = CardLabelColor;
+            label.alignment = TextAlignmentOptions.MidlineLeft;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.raycastTarget = false;
+        }
     }
 
     private void OnDestroy()

@@ -3193,6 +3193,7 @@ MonoBehaviour:
     FrameImage: {fileID: 90826302019672370}
     PortraitImage: {fileID: 3706336825426882803}
   disabledFlashSeconds: 0.12
+  cardLabelFont: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
 --- !u!1 &1904925473351383287
 GameObject:
   m_ObjectHideFlags: 0
@@ -3788,9 +3789,9 @@ MonoBehaviour:
   m_fontSize: 40
   m_fontSizeBase: 40
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 40
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -5545,9 +5546,9 @@ MonoBehaviour:
   m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 30
   m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -5931,6 +5932,7 @@ GameObject:
   - component: {fileID: 5908833055886737211}
   - component: {fileID: 4361010915776587803}
   - component: {fileID: 5838185684809585870}
+  - component: {fileID: 7741320985236650341}
   m_Layer: 0
   m_Name: Elapsed
   m_TagString: Untagged
@@ -6057,6 +6059,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7741320985236650341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3478254329820574853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d720f14df72a49f9a022008ee5447b03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MatchHudObjectivesElapsedView
+  elapsedText: {fileID: 5838185684809585870}
 --- !u!1 &3554641845282285683
 GameObject:
   m_ObjectHideFlags: 0
@@ -12102,9 +12117,9 @@ MonoBehaviour:
   m_fontSize: 32
   m_fontSizeBase: 32
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 32
   m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -19192,35 +19207,35 @@ MonoBehaviour:
   - button: {fileID: 1800108208000010001}
     frameImage: {fileID: 8291934346332526208}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000011003}
     frameImage: {fileID: 4309760835029221130}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000011006}
     frameImage: {fileID: 3447823633426373979}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000010003}
     frameImage: {fileID: 8129326074888236941}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000010002}
     frameImage: {fileID: 7493681013537766164}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000011009}
     frameImage: {fileID: 4404575027223590731}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000011012}
     frameImage: {fileID: 951771691814672871}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   - button: {fileID: 1800108208000011015}
     frameImage: {fileID: 6537184431852297042}
     normalFrameSprite: {fileID: 21300000, guid: 0db4754d06d1d4bee91401cbacc7a1d9, type: 3}
-    selectedFrameSprite: {fileID: 21300000, guid: 9429e171b48a8451b916f49ba2ac824c, type: 3}
+    selectedFrameSprite: {fileID: 21300000, guid: 1fbb2f6d54604eebaeff42130a40e6a4, type: 3}
   defaultSelectedIndex: -1
 --- !u!1 &9135909142572960363
 GameObject:

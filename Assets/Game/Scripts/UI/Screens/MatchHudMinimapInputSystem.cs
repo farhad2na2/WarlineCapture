@@ -19,7 +19,7 @@ public sealed class MatchHudMinimapInputSystem
     private static readonly Color32 RasterBlocked = new(86, 78, 70, 255);
     private static readonly Color PlayerMarkerColor = new(0.2f, 0.95f, 0.62f, 0.95f);
     private static readonly Color EnemyMarkerColor = new(1f, 0.22f, 0.18f, 0.95f);
-    private static readonly Color NeutralMarkerColor = new(0.82f, 0.88f, 0.9f, 0.9f);
+    private static readonly Color NeutralMarkerColor = new(1f, 0.78f, 0.25f, 0.95f);
     private const int MaxMarkers = 256;
     private const int WarmupStaticMapRefreshCount = 1;
     private const float WarmupStaticMapRefreshSeconds = 1f;
@@ -430,10 +430,13 @@ public sealed class MatchHudMinimapInputSystem
             markerObject.transform.SetParent(parent, false);
             markerObject.layer = parent.gameObject.layer;
             RectTransform rect = markerObject.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(7f, 7f);
+            rect.sizeDelta = new Vector2(16f, 16f);
             rect.pivot = new Vector2(0.5f, 0.5f);
             Image image = markerObject.AddComponent<Image>();
             image.raycastTarget = false;
+            Outline outline = markerObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.8f);
+            outline.effectDistance = new Vector2(2f, -2f);
             _markerPool.Add(image);
         }
 

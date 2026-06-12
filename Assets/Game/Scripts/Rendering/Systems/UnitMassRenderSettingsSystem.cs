@@ -104,18 +104,6 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
             bounds.Value.Extents = math.max(bounds.Value.Extents, UnitRenderBoundsMinExtents);
             _renderBoundsLookup[entity] = bounds;
 
-            if (em.HasComponent<RenderFilterSettings>(entity))
-            {
-                RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(entity);
-                if (settings.ShadowCastingMode != ShadowCastingMode.On || !settings.ReceiveShadows || settings.StaticShadowCaster)
-                {
-                    settings.ShadowCastingMode = ShadowCastingMode.On;
-                    settings.ReceiveShadows = true;
-                    settings.StaticShadowCaster = false;
-                    em.SetSharedComponentManaged(entity, settings);
-                }
-            }
-
             if (_meshLodLookup.HasComponent(entity))
             {
                 MeshLODComponent meshLod = _meshLodLookup[entity];
@@ -131,6 +119,22 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
             }
 
             applied++;
+        }
+
+        for (int i = 0; i < unitRenderEntities.Length; i++)
+        {
+            Entity entity = unitRenderEntities[i];
+            if (!em.HasComponent<RenderFilterSettings>(entity))
+                continue;
+
+            RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(entity);
+            if (settings.ShadowCastingMode == ShadowCastingMode.On && settings.ReceiveShadows && !settings.StaticShadowCaster)
+                continue;
+
+            settings.ShadowCastingMode = ShadowCastingMode.On;
+            settings.ReceiveShadows = true;
+            settings.StaticShadowCaster = false;
+            em.SetSharedComponentManaged(entity, settings);
         }
 
         for (int i = 0; i < processedEntities.Length; i++)

@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public sealed partial class UnitRenderBudgetSystemTests
 {
@@ -37,11 +38,12 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.RenderSafetyPatchesBoundsAndAddsSafetyTag();
             tests.RenderSafetyUsesCachedLookups();
             tests.MassRenderSettingsPatchesUnitRenderChildren();
+            tests.MassRenderSettingsPatchesRenderFiltersAfterLookupWork();
             tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.CharacterSourceKeyPrefixCheckDoesNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=27");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=28");
         }
         catch (System.Exception ex)
         {
@@ -234,6 +236,76 @@ public sealed partial class UnitRenderBudgetSystemTests
         Assert.AreEqual(0xFF, patchedGroup.ParentMask);
         Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances0);
         Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances1);
+    }
+
+    [Test]
+    public void MassRenderSettingsPatchesRenderFiltersAfterLookupWork()
+    {
+        using var world = new World(nameof(MassRenderSettingsPatchesRenderFiltersAfterLookupWork));
+        EntityManager em = world.EntityManager;
+        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
+        em.SetComponentData(unit, new Faction { Id = 1 });
+        Entity firstGroup = CreateLodGroup(em);
+        Entity secondGroup = CreateLodGroup(em);
+        Entity firstRenderChild = CreateRenderChildWithFilter(em, unit, firstGroup);
+        Entity secondRenderChild = CreateRenderChildWithFilter(em, unit, secondGroup);
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        Assert.DoesNotThrow(() => system.Update(world.Unmanaged));
+
+        AssertPatchedRenderChild(em, firstRenderChild, firstGroup);
+        AssertPatchedRenderChild(em, secondRenderChild, secondGroup);
+    }
+
+    private static Entity CreateLodGroup(EntityManager em)
+    {
+        Entity lodGroup = em.CreateEntity(typeof(MeshLODGroupComponent));
+        em.SetComponentData(lodGroup, new MeshLODGroupComponent
+        {
+            ParentMask = 1,
+            LODDistances0 = new float4(1f),
+            LODDistances1 = new float4(2f)
+        });
+        return lodGroup;
+    }
+
+    private static Entity CreateRenderChildWithFilter(EntityManager em, Entity unit, Entity lodGroup)
+    {
+        Entity renderChild = em.CreateEntity(typeof(Parent), typeof(RenderBounds), typeof(MeshLODComponent));
+        em.SetComponentData(renderChild, new Parent { Value = unit });
+        em.SetComponentData(renderChild, new RenderBounds
+        {
+            Value = new AABB { Center = float3.zero, Extents = new float3(1f, 2f, 3f) }
+        });
+        em.SetComponentData(renderChild, new MeshLODComponent
+        {
+            Group = lodGroup,
+            ParentGroup = Entity.Null,
+            LODMask = 1
+        });
+        em.AddSharedComponentManaged(renderChild, new RenderFilterSettings
+        {
+            ShadowCastingMode = ShadowCastingMode.Off,
+            ReceiveShadows = false,
+            StaticShadowCaster = true
+        });
+        return renderChild;
+    }
+
+    private static void AssertPatchedRenderChild(EntityManager em, Entity renderChild, Entity lodGroup)
+    {
+        Assert.IsTrue(em.HasComponent<UnitMassRenderSettingsApplied>(renderChild));
+        Assert.AreEqual(new float3(64f, 64f, 64f), em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
+        Assert.AreEqual(0xFF, em.GetComponentData<MeshLODComponent>(renderChild).LODMask);
+        MeshLODGroupComponent patchedGroup = em.GetComponentData<MeshLODGroupComponent>(lodGroup);
+        Assert.AreEqual(0xFF, patchedGroup.ParentMask);
+        Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances0);
+        Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances1);
+        RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(renderChild);
+        Assert.AreEqual(ShadowCastingMode.On, settings.ShadowCastingMode);
+        Assert.IsTrue(settings.ReceiveShadows);
+        Assert.IsFalse(settings.StaticShadowCaster);
     }
 
     [Test]

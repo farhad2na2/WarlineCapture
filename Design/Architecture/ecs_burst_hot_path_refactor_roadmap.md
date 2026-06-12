@@ -1281,6 +1281,15 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Fixed a runtime `ObjectDisposedException` in `UnitMassRenderSettingsSystem` caused by calling `SetSharedComponentManaged<RenderFilterSettings>` before later `ComponentLookup<MeshLODComponent>` reads in the same update. The system now performs all cached lookup-based render bounds and mesh LOD work first, then patches shared render filter settings in a separate pass where no cached lookup is used afterward.
+  - Added `UnitRenderBudgetSystemTests.MassRenderSettingsPatchesRenderFiltersAfterLookupWork` with two filtered render children so a shared-component structural change cannot invalidate subsequent mesh LOD lookup work unnoticed; focused render-budget coverage is now 28 tests.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-unit-mass-render-settings-lookup-fix-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=28`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-unit-mass-render-settings-lookup-fix-architecture-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
 
 ### Phase 9: Managed Boundary Cleanup
 

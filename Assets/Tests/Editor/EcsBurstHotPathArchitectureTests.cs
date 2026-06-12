@@ -12,9 +12,9 @@ public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
     private const int ToArrayDebtCeiling = 0;
-    private const int EntityManagerMutationDebtCeiling = 32;
-    private const int NonBurstOnUpdateFileDebtCeiling = 38;
-    private const int BurstCompileFileFloor = 23;
+    private const int EntityManagerMutationDebtCeiling = 8;
+    private const int NonBurstOnUpdateFileDebtCeiling = 32;
+    private const int BurstCompileFileFloor = 29;
 
     private static readonly Regex ToArrayRegex = new(
         @"\b(ToEntityArray|ToComponentDataArray)\s*(?:<[^>]+>)?\s*\(",

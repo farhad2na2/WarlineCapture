@@ -18,10 +18,14 @@ using Unity.Entities;
 public partial struct RuntimeGridDeduplicationSystem : ISystem
 {
     private EntityQuery _gridQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentLookup<RuntimeGridBootstrapGridTag> _runtimeGridLookup;
 
     public void OnCreate(ref SystemState state)
     {
         _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _entityType = state.GetEntityTypeHandle();
+        _runtimeGridLookup = state.GetComponentLookup<RuntimeGridBootstrapGridTag>(true);
         state.RequireForUpdate<GridConfig>();
     }
 
@@ -32,17 +36,18 @@ public partial struct RuntimeGridDeduplicationSystem : ISystem
 
         state.Dependency.Complete();
         EntityManager em = state.EntityManager;
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        _entityType.Update(ref state);
+        _runtimeGridLookup.Update(ref state);
         using NativeArray<ArchetypeChunk> chunks = _gridQuery.ToArchetypeChunkArray(Allocator.Temp);
         using var runtimeGridEntities = new NativeList<Entity>(_gridQuery.CalculateEntityCount(), Allocator.Temp);
         bool hasAuthoredGrid = false;
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(_entityType);
             for (int i = 0; i < gridEntities.Length; i++)
             {
                 Entity entity = gridEntities[i];
-                if (em.HasComponent<RuntimeGridBootstrapGridTag>(entity))
+                if (_runtimeGridLookup.HasComponent(entity))
                     runtimeGridEntities.Add(entity);
                 else
                     hasAuthoredGrid = true;

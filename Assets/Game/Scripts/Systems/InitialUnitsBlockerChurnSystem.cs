@@ -1,8 +1,10 @@
 using Unity.Collections;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[BurstCompile]
 [UpdateBefore(typeof(StaticGridBlockerUpdateSystem))]
 public partial struct InitialUnitsBlockerChurnSystem : ISystem
 {
@@ -26,6 +28,7 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
         _entityType = state.GetEntityTypeHandle();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var grid = SystemAPI.GetSingleton<GridConfig>();

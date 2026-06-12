@@ -1,13 +1,38 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
+using Unity.Core;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
+using UnityEditor;
 using Unity.Transforms;
+using UnityEngine;
 
 public sealed class VehicleVisualAdornmentsSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new VehicleVisualAdornmentsSystemTests();
+            tests.VehicleVisualPrefabReferenceBackfillCopiesMarkerReferenceFromSourcePrefab();
+            tests.VehicleVisualPrefabReferenceBackfillUsesSharedMarkerWhenSourcePrefabIsStale();
+            tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
+            tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
+            tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=5");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[VehicleVisualAdornmentsFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void VehicleVisualPrefabReferenceBackfillCopiesMarkerReferenceFromSourcePrefab()
     {
@@ -250,6 +275,51 @@ public sealed class VehicleVisualAdornmentsSystemTests
         system.Update(world.Unmanaged);
 
         Assert.IsFalse(em.HasComponent<UnitHealthBarInstanceReference>(character));
+    }
+
+    [Test]
+    public void UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales()
+    {
+        using var world = new World(nameof(UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales));
+        EntityManager em = world.EntityManager;
+        Entity aliveVisual = CreateVisualInstance(em);
+        Entity destroyedVisual = CreateVisualInstance(em);
+        Entity unit = CreateVehicle(em, health: 100);
+        em.AddComponentData(unit, new UnitDestroyedVisualReference
+        {
+            AliveVisual = aliveVisual,
+            DestroyedVisual = destroyedVisual,
+            AliveVisibleScale = 1.75f,
+            DestroyedVisibleScale = 1.25f
+        });
+
+        SystemHandle system = world.CreateSystem<UnitDestroyedVisualSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitDestroyedVisualInitialized>(unit));
+        Assert.AreEqual(1.75f, em.GetComponentData<LocalTransform>(aliveVisual).Scale, 0.001f);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(destroyedVisual).Scale, 0.001f);
+    }
+
+    [Test]
+    public void UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb()
+    {
+        using var world = new World(nameof(UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb));
+        world.SetTime(new TimeData(1d, 0.1f));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateCharacter(em, health: 50);
+        em.AddComponentData(unit, new RecentDamageHealthBarVisibility { TimeRemaining = 0.05f });
+        Entity healthBar = CreateVisualInstance(em);
+        em.AddComponentData(healthBar, new Parent { Value = unit });
+        em.AddComponentData(healthBar, new HealthBarFill { Value = 1f });
+
+        SystemHandle system = world.CreateSystem<UnitHealthBarSystem>();
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.IsFalse(em.HasComponent<RecentDamageHealthBarVisibility>(unit));
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(healthBar).Scale, 0.001f);
+        Assert.AreEqual(0.5f, em.GetComponentData<HealthBarFill>(healthBar).Value, 0.001f);
     }
 
     [Test]

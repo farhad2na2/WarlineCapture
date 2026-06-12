@@ -1,4 +1,5 @@
 using Unity.Collections;
+using Unity.Burst;
 using Unity.Entities;
 
 [UpdateAfter(typeof(UnitDeathSystem))]
@@ -21,22 +22,33 @@ public partial struct VehicleWreckCleanupSystem : ISystem
         double now = SystemAPI.Time.ElapsedTime;
         double respawnDelay = Unity.Mathematics.math.max(0.01f, queueState.RespawnDelaySeconds);
 
-        var finalize = new NativeList<Entity>(Allocator.Temp);
-        foreach (var (wreck, health, entity) in SystemAPI
-                 .Query<RefRW<VehicleWreckComponent>, RefRO<UnitHealth>>()
-                 .WithEntityAccess())
+        var finalize = new NativeList<Entity>(Allocator.TempJob);
+        new CollectExpiredWrecksJob
         {
-            if (health.ValueRO.Current > 0)
-                continue;
-
-            wreck.ValueRW.TimeRemaining -= dt;
-            if (wreck.ValueRW.TimeRemaining <= 0f)
-                finalize.Add(entity);
-        }
+            DeltaTime = dt,
+            FinalizeEntities = finalize
+        }.Run();
 
         for (int i = 0; i < finalize.Length; i++)
             UnitDeathSystem.FinalizeDeath(em, queueEntity, finalize[i], now, respawnDelay);
 
         finalize.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct CollectExpiredWrecksJob : IJobEntity
+    {
+        public float DeltaTime;
+        public NativeList<Entity> FinalizeEntities;
+
+        public void Execute(Entity entity, ref VehicleWreckComponent wreck, in UnitHealth health)
+        {
+            if (health.Current > 0)
+                return;
+
+            wreck.TimeRemaining -= DeltaTime;
+            if (wreck.TimeRemaining <= 0f)
+                FinalizeEntities.Add(entity);
+        }
     }
 }

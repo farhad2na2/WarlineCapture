@@ -1,7 +1,9 @@
 using Unity.Collections;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 
+[BurstCompile]
 [UpdateAfter(typeof(DynamicBlockerInitSystem))]
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct StaticGridBlockerUpdateSystem : ISystem
@@ -68,19 +70,21 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
         max = min + s;
     }
 
-    private static byte GetFriendlyPassFactionId(EntityManager em, Entity entity)
+    private static byte GetFriendlyPassFactionId(ComponentLookup<FriendlyPassGridBlocker> friendlyPassLookup, Entity entity)
     {
-        return em.HasComponent<FriendlyPassGridBlocker>(entity)
-            ? em.GetComponentData<FriendlyPassGridBlocker>(entity).AllowedFactionId
+        return friendlyPassLookup.HasComponent(entity)
+            ? friendlyPassLookup[entity].AllowedFactionId
             : byte.MaxValue;
     }
 
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<DynamicBlockerComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var grid = SystemAPI.GetSingleton<GridConfig>();
@@ -90,6 +94,7 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
         var counts = blockerDataRw.ValueRW.Counts;
         var blocked = blockerDataRw.ValueRW.Blocked;
         var friendlyPassFactionIds = blockerDataRw.ValueRW.FriendlyPassFactionIds;
+        var friendlyPassLookup = SystemAPI.GetComponentLookup<FriendlyPassGridBlocker>(true);
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -100,7 +105,7 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
                      .WithEntityAccess())
         {
             ComputeBounds(unitGrid.ValueRO, size.ValueRO, out var min, out var max);
-            byte friendlyPassFactionId = GetFriendlyPassFactionId(state.EntityManager, entity);
+            byte friendlyPassFactionId = GetFriendlyPassFactionId(friendlyPassLookup, entity);
             ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1);
             if (friendlyPassFactionId != byte.MaxValue)
                 ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, min, max, friendlyPassFactionId);
@@ -121,7 +126,7 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
             int2 oldMin = prev.ValueRO.Min;
             int2 oldMax = prev.ValueRO.Max;
             byte oldFriendlyPassFactionId = prev.ValueRO.FriendlyPassFactionId;
-            byte friendlyPassFactionId = GetFriendlyPassFactionId(state.EntityManager, entity);
+            byte friendlyPassFactionId = GetFriendlyPassFactionId(friendlyPassLookup, entity);
             bool boundsChanged = min.x != oldMin.x || min.y != oldMin.y || max.x != oldMax.x || max.y != oldMax.y;
             bool friendlyPassChanged = oldFriendlyPassFactionId != friendlyPassFactionId;
             if (!boundsChanged && !friendlyPassChanged)

@@ -16,23 +16,14 @@ public partial struct UnitHealthBarSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var em = state.EntityManager;
-        var expiredEntities = new NativeList<Entity>(Allocator.Temp);
-        foreach (var (recentDamage, entity) in SystemAPI.Query<RefRW<RecentDamageHealthBarVisibility>>().WithEntityAccess())
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        new ExpireRecentDamageVisibilityJob
         {
-            recentDamage.ValueRW.TimeRemaining -= deltaTime;
-            if (recentDamage.ValueRO.TimeRemaining <= 0f)
-                expiredEntities.Add(entity);
-        }
-
-        for (int i = 0; i < expiredEntities.Length; i++)
-        {
-            Entity entity = expiredEntities[i];
-            if (em.Exists(entity) && em.HasComponent<RecentDamageHealthBarVisibility>(entity))
-                em.RemoveComponent<RecentDamageHealthBarVisibility>(entity);
-        }
-
-        expiredEntities.Dispose();
+            DeltaTime = deltaTime,
+            Ecb = ecb
+        }.Run();
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
 
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
@@ -46,6 +37,20 @@ public partial struct UnitHealthBarSystem : ISystem
         }.ScheduleParallel(state.Dependency);
 
         state.Dependency = handle;
+    }
+
+    [BurstCompile]
+    private partial struct ExpireRecentDamageVisibilityJob : IJobEntity
+    {
+        public float DeltaTime;
+        public EntityCommandBuffer Ecb;
+
+        public void Execute(Entity entity, ref RecentDamageHealthBarVisibility recentDamage)
+        {
+            recentDamage.TimeRemaining -= DeltaTime;
+            if (recentDamage.TimeRemaining <= 0f)
+                Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(entity);
+        }
     }
 
     [BurstCompile]

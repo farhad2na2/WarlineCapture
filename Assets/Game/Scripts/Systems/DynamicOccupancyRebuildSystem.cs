@@ -1,14 +1,13 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Collections;
-using UnityEngine;
 
+[BurstCompile]
 [UpdateBefore(typeof(UnitEngagedMovementSystem))]
 [UpdateBefore(typeof(UnitGridMovementSystem))]
 public partial struct DynamicOccupancyRebuildSystem : ISystem
 {
-    private const double FreezeLogThresholdSeconds = 0.05d;
-    private static readonly bool EnableDynamicOccupancyFreezeLogs = false;
     private struct OccupancyRecord
     {
         public int2 Cell;
@@ -309,67 +308,58 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         _occupancyRecords[entity] = current;
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        double startTime = Time.realtimeSinceStartupAsDouble;
-        try
+        int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
+        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var grid = SystemAPI.GetSingleton<GridConfig>();
+
+        var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
+        ref var occ = ref occRw.ValueRW;
+
+        int gridSize = grid.Width * grid.Height;
+        if (occ.GridSize != gridSize || !occ.Occupied.IsCreated)
+            return;
+
+        bool gridChanged = !_changedGridUnitsQuery.IsEmptyIgnoreFilter;
+        if (trackedUnitCount == _lastTrackedUnitCount &&
+            _cachedGridSize == gridSize &&
+            _occupancyCounts.IsCreated &&
+            _occupancyRecords.IsCreated &&
+            !gridChanged)
         {
-            int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
-            var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-            var grid = SystemAPI.GetSingleton<GridConfig>();
-
-            var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
-            ref var occ = ref occRw.ValueRW;
-
-            int gridSize = grid.Width * grid.Height;
-            if (occ.GridSize != gridSize || !occ.Occupied.IsCreated)
-                return;
-
-            bool gridChanged = !_changedGridUnitsQuery.IsEmptyIgnoreFilter;
-            if (trackedUnitCount == _lastTrackedUnitCount &&
-                _cachedGridSize == gridSize &&
-                _occupancyCounts.IsCreated &&
-                _occupancyRecords.IsCreated &&
-                !gridChanged)
-            {
-                return;
-            }
-
-            bool needsInitialRebuild = _lastTrackedUnitCount < 0;
-            bool missingCounts = !_occupancyCounts.IsCreated;
-            bool gridSizeChanged = _cachedGridSize != gridSize;
-            bool missingRecords = !_occupancyRecords.IsCreated;
-            if (needsInitialRebuild ||
-                missingCounts ||
-                gridSizeChanged ||
-                missingRecords)
-            {
-                RebuildOccupancy(ref state, gridEntity, grid, ref occ, trackedUnitCount);
-                return;
-            }
-
-            if (trackedUnitCount != _lastTrackedUnitCount)
-                SyncTrackedEntitiesForCountChange(ref state, grid, ref occ, trackedUnitCount);
-
-            var unitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
-            var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
-
-            foreach (var (_, _, entity) in SystemAPI
-                         .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>()
-                         .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag>()
-                         .WithChangeFilter<UnitGrid>()
-                         .WithEntityAccess())
-            {
-                ApplyChangedEntity(entity, grid, ref occ, unitGridLookup, footprintLookup);
-            }
-
-            _lastTrackedUnitCount = trackedUnitCount;
+            return;
         }
-        finally
+
+        bool needsInitialRebuild = _lastTrackedUnitCount < 0;
+        bool missingCounts = !_occupancyCounts.IsCreated;
+        bool gridSizeChanged = _cachedGridSize != gridSize;
+        bool missingRecords = !_occupancyRecords.IsCreated;
+        if (needsInitialRebuild ||
+            missingCounts ||
+            gridSizeChanged ||
+            missingRecords)
         {
-            double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
-            if (EnableDynamicOccupancyFreezeLogs && elapsed >= FreezeLogThresholdSeconds)
-                Debug.Log($"[FreezeDetect:ECS] DynamicOccupancyRebuildSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms");
+            RebuildOccupancy(ref state, gridEntity, grid, ref occ, trackedUnitCount);
+            return;
         }
+
+        if (trackedUnitCount != _lastTrackedUnitCount)
+            SyncTrackedEntitiesForCountChange(ref state, grid, ref occ, trackedUnitCount);
+
+        var unitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
+        var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
+
+        foreach (var (_, _, entity) in SystemAPI
+                     .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>()
+                     .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag>()
+                     .WithChangeFilter<UnitGrid>()
+                     .WithEntityAccess())
+        {
+            ApplyChangedEntity(entity, grid, ref occ, unitGridLookup, footprintLookup);
+        }
+
+        _lastTrackedUnitCount = trackedUnitCount;
     }
 }

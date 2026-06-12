@@ -1,3 +1,5 @@
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
@@ -18,21 +20,17 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
         if (markers.Capacity < MaxMarkers)
             markers.Capacity = MaxMarkers;
 
-        foreach (var (health, transform, faction) in
-                 SystemAPI.Query<RefRO<UnitHealth>, RefRO<LocalTransform>, RefRO<Faction>>())
+        var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
+        new CollectMarkersJob
         {
-            if (health.ValueRO.Current <= 0)
-                continue;
+            MaxMarkers = MaxMarkers,
+            Markers = markerScratch
+        }.Run();
 
-            markers.Add(new MatchHudMinimapMarkerElement
-            {
-                Position = transform.ValueRO.Position,
-                FactionId = faction.ValueRO.Id
-            });
+        for (int i = 0; i < markerScratch.Length; i++)
+            markers.Add(markerScratch[i]);
 
-            if (markers.Length >= MaxMarkers)
-                break;
-        }
+        markerScratch.Dispose();
     }
 
     private Entity GetOrCreateMarkerBoundary(ref SystemState state, EntityManager em)
@@ -49,5 +47,24 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
         em.AddBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity);
         em.SetName(_markerBoundaryEntity, "MatchHudMinimapMarkers");
         return _markerBoundaryEntity;
+    }
+
+    [BurstCompile]
+    private partial struct CollectMarkersJob : IJobEntity
+    {
+        public int MaxMarkers;
+        public NativeList<MatchHudMinimapMarkerElement> Markers;
+
+        private void Execute(in UnitHealth health, in LocalTransform transform, in Faction faction)
+        {
+            if (health.Current <= 0 || Markers.Length >= MaxMarkers)
+                return;
+
+            Markers.Add(new MatchHudMinimapMarkerElement
+            {
+                Position = transform.Position,
+                FactionId = faction.Id
+            });
+        }
     }
 }

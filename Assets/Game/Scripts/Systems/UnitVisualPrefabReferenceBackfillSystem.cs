@@ -52,6 +52,7 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
             return;
 
         var unitsToPatch = new NativeList<Entity>(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
         using NativeArray<ArchetypeChunk> chunks = _unitsToPatchQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
@@ -64,7 +65,7 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
                 UnitSourcePrefabKey sourceKey = sourceKeys[i];
                 if (sourceKey.Value.Length == 0)
                 {
-                    AddBackfilledTag(em, entity);
+                    AddBackfilledTag(em, ref ecb, entity);
                     continue;
                 }
 
@@ -73,8 +74,10 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         }
 
         for (int i = 0; i < unitsToPatch.Length; i++)
-            PatchUnit(em, unitsToPatch[i], referencesBySourceKey, defaultReferences);
+            PatchUnit(em, ref ecb, unitsToPatch[i], referencesBySourceKey, defaultReferences);
 
+        ecb.Playback(em);
+        ecb.Dispose();
         unitsToPatch.Dispose();
     }
 
@@ -177,6 +180,7 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
 
     private static void PatchUnit(
         EntityManager em,
+        ref EntityCommandBuffer ecb,
         Entity unit,
         NativeHashMap<FixedString64Bytes, UnitVisualPrefabReferenceSet> referencesBySourceKey,
         UnitVisualPrefabReferenceSet defaultReferences)
@@ -186,7 +190,7 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
 
         if (HasAllUnitVisualPrefabReferences(em, unit))
         {
-            AddBackfilledTag(em, unit);
+            AddBackfilledTag(em, ref ecb, unit);
             return;
         }
 
@@ -205,24 +209,24 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
             em.Exists(refs.SelectionMarkerPrefab) &&
             !em.HasComponent<UnitSelectionMarkerPrefabReference>(unit))
         {
-            em.AddComponentData(unit, new UnitSelectionMarkerPrefabReference { Prefab = refs.SelectionMarkerPrefab });
+            ecb.AddComponent(unit, new UnitSelectionMarkerPrefabReference { Prefab = refs.SelectionMarkerPrefab });
         }
 
         if (refs.HealthBarPrefab != Entity.Null &&
             em.Exists(refs.HealthBarPrefab) &&
             !em.HasComponent<UnitHealthBarPrefabReference>(unit))
         {
-            em.AddComponentData(unit, new UnitHealthBarPrefabReference { Prefab = refs.HealthBarPrefab });
+            ecb.AddComponent(unit, new UnitHealthBarPrefabReference { Prefab = refs.HealthBarPrefab });
         }
 
         if (refs.DestroyedVisualPrefab != Entity.Null &&
             em.Exists(refs.DestroyedVisualPrefab) &&
             !em.HasComponent<VehicleDestroyedVisualPrefabReference>(unit))
         {
-            em.AddComponentData(unit, new VehicleDestroyedVisualPrefabReference { Prefab = refs.DestroyedVisualPrefab });
+            ecb.AddComponent(unit, new VehicleDestroyedVisualPrefabReference { Prefab = refs.DestroyedVisualPrefab });
         }
 
-        AddBackfilledTag(em, unit);
+        AddBackfilledTag(em, ref ecb, unit);
     }
 
     private static bool HasAllUnitVisualPrefabReferences(EntityManager em, Entity entity)
@@ -273,9 +277,9 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         return refs;
     }
 
-    private static void AddBackfilledTag(EntityManager em, Entity unit)
+    private static void AddBackfilledTag(EntityManager em, ref EntityCommandBuffer ecb, Entity unit)
     {
         if (!em.HasComponent<UnitVisualPrefabReferencesBackfilledTag>(unit))
-            em.AddComponent<UnitVisualPrefabReferencesBackfilledTag>(unit);
+            ecb.AddComponent<UnitVisualPrefabReferencesBackfilledTag>(unit);
     }
 }

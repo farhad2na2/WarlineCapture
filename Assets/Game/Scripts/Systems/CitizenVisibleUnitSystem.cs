@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -78,15 +79,26 @@ internal sealed class CitizenVisibleUnitSystem
 
     public void ClearVisibleCitizens(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionSystem ecsProjection)
     {
-        foreach (KeyValuePair<int, VisibleCitizenComponent> pair in state.VisibleCitizensById)
+        if (ecsProjection.HasWorld)
         {
-            if (pair.Value != null &&
-                pair.Value.UnitEntity != Entity.Null &&
-                ecsProjection.HasWorld &&
-                ecsProjection.EntityManager.Exists(pair.Value.UnitEntity))
+            EntityManager em = ecsProjection.EntityManager;
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+            bool hasDestroyCommand = false;
+
+            foreach (KeyValuePair<int, VisibleCitizenComponent> pair in state.VisibleCitizensById)
             {
-                ecsProjection.EntityManager.DestroyEntity(pair.Value.UnitEntity);
+                if (pair.Value != null &&
+                    pair.Value.UnitEntity != Entity.Null &&
+                    em.Exists(pair.Value.UnitEntity))
+                {
+                    ecb.DestroyEntity(pair.Value.UnitEntity);
+                    hasDestroyCommand = true;
+                }
             }
+
+            if (hasDestroyCommand)
+                ecb.Playback(em);
+            ecb.Dispose();
         }
 
         state.VisibleCitizensById.Clear();
@@ -201,7 +213,11 @@ internal sealed class CitizenVisibleUnitSystem
             ecsProjection.HasWorld &&
             ecsProjection.EntityManager.Exists(visibleCitizen.UnitEntity))
         {
-            ecsProjection.EntityManager.DestroyEntity(visibleCitizen.UnitEntity);
+            EntityManager em = ecsProjection.EntityManager;
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+            ecb.DestroyEntity(visibleCitizen.UnitEntity);
+            ecb.Playback(em);
+            ecb.Dispose();
         }
 
         state.VisibleCitizensById.Remove(citizenId);
@@ -234,40 +250,80 @@ internal sealed class CitizenVisibleUnitSystem
             worldPosition = groundedWorldPosition;
         }
 
+        EntityManager em = ecsProjection.EntityManager;
         Entity instance = ecsProjection.EntityManager.Instantiate(prefabEntity);
-        if (ecsProjection.EntityManager.HasComponent<UnitGrid>(instance))
-            ecsProjection.EntityManager.SetComponentData(instance, new UnitGrid { Cell = spawnCell });
-        if (ecsProjection.EntityManager.HasComponent<LocalTransform>(instance))
-            ecsProjection.EntityManager.SetComponentData(instance, LocalTransform.FromPosition(worldPosition));
-        if (ecsProjection.EntityManager.HasComponent<UnitPrevWorldPos>(instance))
-            ecsProjection.EntityManager.SetComponentData(instance, new UnitPrevWorldPos { Value = worldPosition });
-        if (ecsProjection.EntityManager.HasComponent<UnitGridInitialized>(instance))
-            ecsProjection.EntityManager.RemoveComponent<UnitGridInitialized>(instance);
-        if (ecsProjection.EntityManager.HasComponent<UnitMovementBehavior>(instance))
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        bool hasSetupCommand = false;
+
+        if (em.HasComponent<UnitGrid>(instance))
         {
-            UnitMovementBehavior movementBehavior = ecsProjection.EntityManager.GetComponentData<UnitMovementBehavior>(instance);
-            movementBehavior.AllowIdleWander = 0;
-            ecsProjection.EntityManager.SetComponentData(instance, movementBehavior);
+            ecb.SetComponent(instance, new UnitGrid { Cell = spawnCell });
+            hasSetupCommand = true;
         }
-        if (ecsProjection.EntityManager.HasComponent<UnitCombat>(instance))
+        if (em.HasComponent<LocalTransform>(instance))
         {
-            UnitCombat combat = ecsProjection.EntityManager.GetComponentData<UnitCombat>(instance);
+            ecb.SetComponent(instance, LocalTransform.FromPosition(worldPosition));
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitPrevWorldPos>(instance))
+        {
+            ecb.SetComponent(instance, new UnitPrevWorldPos { Value = worldPosition });
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitGridInitialized>(instance))
+        {
+            ecb.RemoveComponent<UnitGridInitialized>(instance);
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitMovementBehavior>(instance))
+        {
+            UnitMovementBehavior movementBehavior = em.GetComponentData<UnitMovementBehavior>(instance);
+            movementBehavior.AllowIdleWander = 0;
+            ecb.SetComponent(instance, movementBehavior);
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitCombat>(instance))
+        {
+            UnitCombat combat = em.GetComponentData<UnitCombat>(instance);
             combat.CanAttack = 0;
             combat.AutoEngage = 0;
-            ecsProjection.EntityManager.SetComponentData(instance, combat);
+            ecb.SetComponent(instance, combat);
+            hasSetupCommand = true;
         }
-        if (ecsProjection.EntityManager.HasComponent<Faction>(instance))
-            ecsProjection.EntityManager.SetComponentData(instance, new Faction { Id = 2 });
-        if (ecsProjection.EntityManager.HasComponent<UnitTarget>(instance))
-            ecsProjection.EntityManager.RemoveComponent<UnitTarget>(instance);
-        if (ecsProjection.EntityManager.HasComponent<UnitPathRequest>(instance))
-            ecsProjection.EntityManager.RemoveComponent<UnitPathRequest>(instance);
-        if (ecsProjection.EntityManager.HasComponent<UnitPathFollow>(instance))
-            ecsProjection.EntityManager.RemoveComponent<UnitPathFollow>(instance);
-        if (ecsProjection.EntityManager.HasComponent<SelectedUnitTag>(instance))
-            ecsProjection.EntityManager.RemoveComponent<SelectedUnitTag>(instance);
-        if (!ecsProjection.EntityManager.HasComponent<CivilianUnitTag>(instance))
-            ecsProjection.EntityManager.AddComponentData(instance, new CivilianUnitTag());
+        if (em.HasComponent<Faction>(instance))
+        {
+            ecb.SetComponent(instance, new Faction { Id = 2 });
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitTarget>(instance))
+        {
+            ecb.RemoveComponent<UnitTarget>(instance);
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitPathRequest>(instance))
+        {
+            ecb.RemoveComponent<UnitPathRequest>(instance);
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<UnitPathFollow>(instance))
+        {
+            ecb.RemoveComponent<UnitPathFollow>(instance);
+            hasSetupCommand = true;
+        }
+        if (em.HasComponent<SelectedUnitTag>(instance))
+        {
+            ecb.RemoveComponent<SelectedUnitTag>(instance);
+            hasSetupCommand = true;
+        }
+        if (!em.HasComponent<CivilianUnitTag>(instance))
+        {
+            ecb.AddComponent(instance, new CivilianUnitTag());
+            hasSetupCommand = true;
+        }
+
+        if (hasSetupCommand)
+            ecb.Playback(em);
+        ecb.Dispose();
 
         int2 goalCell = spawnCell;
         if (travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, worldPosition, out int2 resolvedGoalCell))

@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -5,33 +6,39 @@ internal sealed class CitizenMovementCommandSystem
 {
     public void IssueCitizenMoveCommand(CitizenPopulationEcsProjectionSystem ecsProjection, Entity entity, int2 goal)
     {
-        if (ecsProjection.EntityManager.HasComponent<EngageTarget>(entity))
-            ecsProjection.EntityManager.RemoveComponent<EngageTarget>(entity);
-        if (ecsProjection.EntityManager.HasComponent<UnitPathFollow>(entity))
-            ecsProjection.EntityManager.RemoveComponent<UnitPathFollow>(entity);
-        if (ecsProjection.EntityManager.HasComponent<UnitPathRange>(entity))
-            ecsProjection.EntityManager.RemoveComponent<UnitPathRange>(entity);
-        if (ecsProjection.EntityManager.HasComponent<AutoWanderMoveTag>(entity))
-            ecsProjection.EntityManager.RemoveComponent<AutoWanderMoveTag>(entity);
+        EntityManager em = ecsProjection.EntityManager;
+        EntityCommandBuffer ecb = new(Allocator.Temp);
 
-        if (ecsProjection.EntityManager.HasComponent<UnitTarget>(entity))
-            ecsProjection.EntityManager.SetComponentData(entity, new UnitTarget { Cell = goal });
+        if (em.HasComponent<EngageTarget>(entity))
+            ecb.RemoveComponent<EngageTarget>(entity);
+        if (em.HasComponent<UnitPathFollow>(entity))
+            ecb.RemoveComponent<UnitPathFollow>(entity);
+        if (em.HasComponent<UnitPathRange>(entity))
+            ecb.RemoveComponent<UnitPathRange>(entity);
+        if (em.HasComponent<AutoWanderMoveTag>(entity))
+            ecb.RemoveComponent<AutoWanderMoveTag>(entity);
+
+        if (em.HasComponent<UnitTarget>(entity))
+            ecb.SetComponent(entity, new UnitTarget { Cell = goal });
         else
-            ecsProjection.EntityManager.AddComponentData(entity, new UnitTarget { Cell = goal });
+            ecb.AddComponent(entity, new UnitTarget { Cell = goal });
 
-        if (!ecsProjection.EntityManager.HasComponent<UnitAirMovement>(entity))
+        if (!em.HasComponent<UnitAirMovement>(entity))
         {
-            if (ecsProjection.EntityManager.HasComponent<UnitPathRequest>(entity))
-                ecsProjection.EntityManager.SetComponentData(entity, new UnitPathRequest { Goal = goal });
+            if (em.HasComponent<UnitPathRequest>(entity))
+                ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
             else
-                ecsProjection.EntityManager.AddComponentData(entity, new UnitPathRequest { Goal = goal });
+                ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
         }
-        else if (ecsProjection.EntityManager.HasComponent<UnitPathRequest>(entity))
+        else if (em.HasComponent<UnitPathRequest>(entity))
         {
-            ecsProjection.EntityManager.RemoveComponent<UnitPathRequest>(entity);
+            ecb.RemoveComponent<UnitPathRequest>(entity);
         }
 
-        if (!ecsProjection.EntityManager.HasComponent<ManualMoveOrderTag>(entity))
-            ecsProjection.EntityManager.AddComponent<ManualMoveOrderTag>(entity);
+        if (!em.HasComponent<ManualMoveOrderTag>(entity))
+            ecb.AddComponent<ManualMoveOrderTag>(entity);
+
+        ecb.Playback(em);
+        ecb.Dispose();
     }
 }

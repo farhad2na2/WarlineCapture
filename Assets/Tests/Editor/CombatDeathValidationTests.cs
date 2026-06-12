@@ -1,9 +1,12 @@
 using NUnit.Framework;
+using System;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using Unity.Transforms;
+using UnityEngine;
 
 public sealed class CombatDeathValidationTests
 {
@@ -11,6 +14,24 @@ public sealed class CombatDeathValidationTests
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new CombatDeathValidationTests();
+            tests.SoldierAttack_KillsTargetDestroysEntityAndDoesNotRespawn();
+            tests.VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants();
+            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=2");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[CombatDeathFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
 
     [TearDown]
     public void TearDown()
@@ -81,6 +102,33 @@ public sealed class CombatDeathValidationTests
 
         Assert.AreEqual(0, CountLivingRuntimeSoldiers(em, FactionIdentitySystem.PlayerFactionId), "The killed soldier must not respawn later.");
         Assert.IsTrue(em.Exists(attacker), "The attacking soldier should remain alive.");
+    }
+
+    [Test]
+    public void VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants()
+    {
+        using var world = new World(nameof(VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants));
+        EntityManager em = world.EntityManager;
+
+        Entity wreck = em.CreateEntity(
+            typeof(UnitHealth),
+            typeof(VehicleWreckComponent),
+            typeof(Child));
+        em.SetComponentData(wreck, new UnitHealth { Current = 0, Max = 100 });
+        em.SetComponentData(wreck, new VehicleWreckComponent { TimeRemaining = 0.05f });
+        Entity child = em.CreateEntity(typeof(LocalTransform));
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(wreck);
+        children.Add(new Child { Value = child });
+
+        SystemHandle system = world.CreateSystem<VehicleWreckCleanupSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        system.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<VehicleWreckComponent>(wreck), "Expired wrecks should leave the active wreck state after finalization.");
+        Assert.IsFalse(em.HasComponent<UnitHealth>(wreck), "Expired wrecks should leave active gameplay components after finalization.");
+        Assert.IsFalse(em.Exists(child), "Finalizing a wreck must also destroy descendant visual/runtime entities.");
+        Entity queueEntity = GetRespawnQueueEntity(em);
+        Assert.IsTrue(em.Exists(queueEntity), "Wreck cleanup should preserve the respawn queue created by the finalization boundary.");
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

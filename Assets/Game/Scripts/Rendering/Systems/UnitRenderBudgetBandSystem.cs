@@ -1,6 +1,8 @@
 using System;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 public readonly struct UnitRenderBudgetBandSystem
@@ -49,47 +51,83 @@ public readonly struct UnitRenderBudgetBandSystem
         float alwaysDetailedDistanceSq,
         Allocator allocator)
     {
-        NativeHashSet<Entity> detailedUnits = new(math.max(1, distances.Length), allocator);
-        int detailedCount = 0;
-        for (int i = 0; i < distances.Length && detailedCount < maxDetailedUnits; i++)
+        Allocator jobSafeAllocator = allocator == Allocator.Temp ? Allocator.TempJob : allocator;
+        NativeHashSet<Entity> detailedUnits = new(math.max(1, distances.Length), jobSafeAllocator);
+        NativeHashSet<Entity> midLodUnits = new(math.max(1, distances.Length), jobSafeAllocator);
+        NativeHashSet<Entity> lowLodUnits = new(math.max(1, distances.Length), jobSafeAllocator);
+        using NativeArray<int> counts = new(3, Allocator.TempJob);
+        new BuildBandPlanJob
         {
-            if (distances[i].DistanceSq > alwaysDetailedDistanceSq)
-                continue;
+            Distances = distances.AsArray(),
+            DetailedUnits = detailedUnits,
+            MidLodUnits = midLodUnits,
+            LowLodUnits = lowLodUnits,
+            Counts = counts,
+            MaxDetailedUnits = maxDetailedUnits,
+            MaxMidLodUnits = maxMidLodUnits,
+            MaxLowLodUnits = maxLowLodUnits,
+            AlwaysDetailedDistanceSq = alwaysDetailedDistanceSq
+        }.Run();
 
-            if (detailedUnits.Add(distances[i].Unit))
-                detailedCount++;
-        }
+        return new Plan(detailedUnits, midLodUnits, lowLodUnits, counts[0], counts[1], counts[2]);
+    }
 
-        for (int i = 0; i < distances.Length && detailedCount < maxDetailedUnits; i++)
+    [BurstCompile]
+    private struct BuildBandPlanJob : IJob
+    {
+        [ReadOnly] public NativeArray<UnitRenderBudgetDistanceSystem.UnitDistance> Distances;
+        public NativeHashSet<Entity> DetailedUnits;
+        public NativeHashSet<Entity> MidLodUnits;
+        public NativeHashSet<Entity> LowLodUnits;
+        public NativeArray<int> Counts;
+        public int MaxDetailedUnits;
+        public int MaxMidLodUnits;
+        public int MaxLowLodUnits;
+        public float AlwaysDetailedDistanceSq;
+
+        public void Execute()
         {
-            if (detailedUnits.Add(distances[i].Unit))
-                detailedCount++;
+            int detailedCount = 0;
+            for (int i = 0; i < Distances.Length && detailedCount < MaxDetailedUnits; i++)
+            {
+                if (Distances[i].DistanceSq > AlwaysDetailedDistanceSq)
+                    continue;
+
+                if (DetailedUnits.Add(Distances[i].Unit))
+                    detailedCount++;
+            }
+
+            for (int i = 0; i < Distances.Length && detailedCount < MaxDetailedUnits; i++)
+            {
+                if (DetailedUnits.Add(Distances[i].Unit))
+                    detailedCount++;
+            }
+
+            int midCount = 0;
+            for (int i = 0; i < Distances.Length && midCount < MaxMidLodUnits; i++)
+            {
+                Entity unit = Distances[i].Unit;
+                if (DetailedUnits.Contains(unit))
+                    continue;
+
+                if (MidLodUnits.Add(unit))
+                    midCount++;
+            }
+
+            int lowCount = 0;
+            for (int i = 0; i < Distances.Length && lowCount < MaxLowLodUnits; i++)
+            {
+                Entity unit = Distances[i].Unit;
+                if (DetailedUnits.Contains(unit) || MidLodUnits.Contains(unit))
+                    continue;
+
+                if (LowLodUnits.Add(unit))
+                    lowCount++;
+            }
+
+            Counts[0] = detailedCount;
+            Counts[1] = midCount;
+            Counts[2] = lowCount;
         }
-
-        NativeHashSet<Entity> midLodUnits = new(math.max(1, distances.Length), allocator);
-        int midCount = 0;
-        for (int i = 0; i < distances.Length && midCount < maxMidLodUnits; i++)
-        {
-            Entity unit = distances[i].Unit;
-            if (detailedUnits.Contains(unit))
-                continue;
-
-            if (midLodUnits.Add(unit))
-                midCount++;
-        }
-
-        NativeHashSet<Entity> lowLodUnits = new(math.max(1, distances.Length), allocator);
-        int lowCount = 0;
-        for (int i = 0; i < distances.Length && lowCount < maxLowLodUnits; i++)
-        {
-            Entity unit = distances[i].Unit;
-            if (detailedUnits.Contains(unit) || midLodUnits.Contains(unit))
-                continue;
-
-            if (lowLodUnits.Add(unit))
-                lowCount++;
-        }
-
-        return new Plan(detailedUnits, midLodUnits, lowLodUnits, detailedCount, midCount, lowCount);
     }
 }

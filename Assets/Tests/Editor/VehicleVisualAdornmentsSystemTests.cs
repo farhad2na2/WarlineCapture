@@ -20,13 +20,13 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.VehicleVisualPrefabReferenceBackfillCopiesMarkerReferenceFromSourcePrefab();
             tests.VehicleVisualPrefabReferenceBackfillUsesSharedMarkerWhenSourcePrefabIsStale();
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
-            tests.UnitSelectionMarkerSystemCreatesMovesAndRemovesMarkersPerSelectedVehicle();
+            tests.UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
-            tests.UnitRuntimeHealthBarSystemCreatesAndRemovesRuntimeHealthBar();
+            tests.UnitRuntimeHealthBarSystemCreatesAndRetainsRuntimeHealthBar();
             tests.UnitRuntimeHealthBarSystemCreatesHealthBarForDamagedCharacterUnit();
-            tests.UnitRuntimeHealthBarSystemHidesBarsForTransportedOrImpostorOnlyCharacters();
+            tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
             Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12");
@@ -129,9 +129,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitSelectionMarkerSystemCreatesMovesAndRemovesMarkersPerSelectedVehicle()
+    public void UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle()
     {
-        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesMovesAndRemovesMarkersPerSelectedVehicle));
+        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle));
         EntityManager em = world.EntityManager;
         Entity markerPrefab = CreateVisualPrefab(em);
         Entity firstVehicle = CreateVehicle(em, health: 100);
@@ -142,6 +142,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(secondVehicle);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(firstVehicle));
@@ -157,11 +158,15 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         em.RemoveComponent<SelectedUnitTag>(firstVehicle);
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<UnitSelectionMarkerInstanceReference>(firstVehicle));
-        Assert.IsFalse(em.Exists(firstMarker), "Deselecting one vehicle must remove only that vehicle marker.");
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(firstVehicle));
+        Assert.IsTrue(em.Exists(firstMarker), "Deselecting one vehicle should retain its marker entity and hide it through the visibility system.");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(firstMarker).Scale, 0.001f);
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(secondVehicle));
         Assert.IsTrue(em.Exists(secondMarker));
+        Assert.AreEqual(4.05f, em.GetComponentData<LocalTransform>(secondMarker).Scale, 0.001f);
     }
 
     [Test]
@@ -194,6 +199,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(character);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
@@ -201,15 +207,21 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         em.AddComponentData(character, new UnitTransportPassenger { Transport = Entity.Null });
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
-        Assert.IsFalse(em.Exists(marker));
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
+        Assert.IsTrue(em.Exists(marker), "Transported characters should retain their marker instance and hide it while onboard.");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
 
         em.RemoveComponent<UnitTransportPassenger>(character);
         em.AddComponent<UnitRenderBudgetCulledUnitTag>(character);
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
+        Assert.AreEqual(1.35f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
     }
 
     [Test]
@@ -246,9 +258,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitRuntimeHealthBarSystemCreatesAndRemovesRuntimeHealthBar()
+    public void UnitRuntimeHealthBarSystemCreatesAndRetainsRuntimeHealthBar()
     {
-        using var world = new World(nameof(UnitRuntimeHealthBarSystemCreatesAndRemovesRuntimeHealthBar));
+        using var world = new World(nameof(UnitRuntimeHealthBarSystemCreatesAndRetainsRuntimeHealthBar));
         EntityManager em = world.EntityManager;
         Entity healthBarPrefab = CreateHealthBarPrefab(em);
         Entity vehicle = CreateVehicle(em, health: 60);
@@ -256,6 +268,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(vehicle, new RecentDamageHealthBarVisibility { TimeRemaining = 1f });
 
         SystemHandle system = world.CreateSystem<UnitRuntimeHealthBarSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<UnitHealthBarSystem>();
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitHealthBarInstanceReference>(vehicle));
@@ -265,9 +278,12 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         em.RemoveComponent<RecentDamageHealthBarVisibility>(vehicle);
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<UnitHealthBarInstanceReference>(vehicle));
-        Assert.IsFalse(em.Exists(healthBar));
+        Assert.IsTrue(em.HasComponent<UnitHealthBarInstanceReference>(vehicle));
+        Assert.IsTrue(em.Exists(healthBar), "Expired health-bar feedback should retain the instance and hide it for reuse.");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(healthBar).Scale, 0.001f);
     }
 
     [Test]
@@ -289,9 +305,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitRuntimeHealthBarSystemHidesBarsForTransportedOrImpostorOnlyCharacters()
+    public void UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters()
     {
-        using var world = new World(nameof(UnitRuntimeHealthBarSystemHidesBarsForTransportedOrImpostorOnlyCharacters));
+        using var world = new World(nameof(UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters));
         EntityManager em = world.EntityManager;
         Entity healthBarPrefab = CreateHealthBarPrefab(em);
         Entity character = CreateCharacter(em, health: 60);
@@ -299,6 +315,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(character, new RecentDamageHealthBarVisibility { TimeRemaining = 1f });
 
         SystemHandle system = world.CreateSystem<UnitRuntimeHealthBarSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<UnitHealthBarSystem>();
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitHealthBarInstanceReference>(character));
@@ -306,15 +323,22 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         em.AddComponentData(character, new UnitTransportPassenger { Transport = Entity.Null });
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<UnitHealthBarInstanceReference>(character));
-        Assert.IsFalse(em.Exists(healthBar));
+        Assert.IsTrue(em.HasComponent<UnitHealthBarInstanceReference>(character));
+        Assert.IsTrue(em.Exists(healthBar), "Transported characters should retain health bars and hide them while onboard.");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(healthBar).Scale, 0.001f);
 
         em.RemoveComponent<UnitTransportPassenger>(character);
         em.AddComponent<UnitRenderBudgetCulledUnitTag>(character);
         system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<UnitHealthBarInstanceReference>(character));
+        Assert.IsTrue(em.HasComponent<UnitHealthBarInstanceReference>(character));
+        Assert.IsTrue(em.Exists(healthBar));
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(healthBar).Scale, 0.001f);
     }
 
     [Test]

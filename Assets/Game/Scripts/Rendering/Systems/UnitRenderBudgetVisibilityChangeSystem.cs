@@ -6,10 +6,13 @@ using Unity.Transforms;
 public readonly struct UnitRenderBudgetVisibilityChangeSystem
 {
     public void CollectRenderVisibilityChanges(
-        EntityManager em,
         Entity root,
         bool visible,
         BufferLookup<Child> childLookup,
+        EntityStorageInfoLookup entityStorageInfoLookup,
+        ComponentLookup<Disabled> disabledLookup,
+        ComponentLookup<DisableRendering> disableRenderingLookup,
+        ComponentLookup<UnitRenderBudgetCulledTag> culledTagLookup,
         NativeList<Entity> entitiesToShow,
         NativeList<Entity> entitiesToHide,
         ref int changed)
@@ -19,23 +22,38 @@ public readonly struct UnitRenderBudgetVisibilityChangeSystem
 
         DynamicBuffer<Child> children = childLookup[root];
         for (int i = 0; i < children.Length; i++)
-            CollectRenderVisibilityChangesRecursive(em, children[i].Value, visible, childLookup, entitiesToShow, entitiesToHide, ref changed);
+        {
+            CollectRenderVisibilityChangesRecursive(
+                children[i].Value,
+                visible,
+                childLookup,
+                entityStorageInfoLookup,
+                disabledLookup,
+                disableRenderingLookup,
+                culledTagLookup,
+                entitiesToShow,
+                entitiesToHide,
+                ref changed);
+        }
     }
 
     public void CollectRenderVisibilityChangesRecursive(
-        EntityManager em,
         Entity entity,
         bool visible,
         BufferLookup<Child> childLookup,
+        EntityStorageInfoLookup entityStorageInfoLookup,
+        ComponentLookup<Disabled> disabledLookup,
+        ComponentLookup<DisableRendering> disableRenderingLookup,
+        ComponentLookup<UnitRenderBudgetCulledTag> culledTagLookup,
         NativeList<Entity> entitiesToShow,
         NativeList<Entity> entitiesToHide,
         ref int changed)
     {
-        if (!em.Exists(entity))
+        if (!entityStorageInfoLookup.Exists(entity))
             return;
 
-        bool isCulled = em.HasComponent<UnitRenderBudgetCulledTag>(entity);
-        bool isHidden = em.HasComponent<Disabled>(entity) || em.HasComponent<DisableRendering>(entity);
+        bool isCulled = culledTagLookup.HasComponent(entity);
+        bool isHidden = disabledLookup.HasComponent(entity) || disableRenderingLookup.HasComponent(entity);
         if (visible)
         {
             if (isCulled || isHidden)
@@ -55,6 +73,18 @@ public readonly struct UnitRenderBudgetVisibilityChangeSystem
 
         DynamicBuffer<Child> children = childLookup[entity];
         for (int i = 0; i < children.Length; i++)
-            CollectRenderVisibilityChangesRecursive(em, children[i].Value, visible, childLookup, entitiesToShow, entitiesToHide, ref changed);
+        {
+            CollectRenderVisibilityChangesRecursive(
+                children[i].Value,
+                visible,
+                childLookup,
+                entityStorageInfoLookup,
+                disabledLookup,
+                disableRenderingLookup,
+                culledTagLookup,
+                entitiesToShow,
+                entitiesToHide,
+                ref changed);
+        }
     }
 }

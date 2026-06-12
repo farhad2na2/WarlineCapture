@@ -10,6 +10,29 @@ using UnityEngine;
 
 public sealed class UnitHelicopterBladeSpinSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitHelicopterBladeSpinSystemTests();
+            tests.AirborneAirUnitRotatesVisibleDetailBlade();
+            tests.AirborneAirUnitRotatesBakedBladeReference();
+            tests.LandedAirUnitDoesNotRotateBakedBladeReference();
+            tests.GroundedReturningAirUnitDoesNotRotateBakedBladeReference();
+            tests.HelicopterPrefabsDoNotUseCompanionBladeSpinner();
+            tests.HelicopterUnitPrefabsExposeBakedBladeTransforms();
+            tests.MatchBootstrapProjectsConfiguredFactionVisualColorsToEcs();
+            Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=7");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UnitHelicopterBladeSpinFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void AirborneAirUnitRotatesVisibleDetailBlade()
     {

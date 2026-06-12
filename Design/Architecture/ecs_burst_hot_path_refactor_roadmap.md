@@ -85,9 +85,9 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 66 / 157 complete (42.0%).
-- In progress: 14 / 157.
-- Remaining open: 77 / 157.
+- Checklist progress: 73 / 157 complete (46.5%).
+- In progress: 13 / 157.
+- Remaining open: 71 / 157.
 - Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
@@ -991,16 +991,16 @@ Target areas:
 - helicopter/missile visual systems where pure ECS state can be separated from GameObject presentation
 
 Implementation steps:
-- [ ] Keep model/prefab/GameObject mutation managed.
+- [x] Keep model/prefab/GameObject mutation managed.
 - [~] Move pure visibility, LOD decision, distance scoring, and state-tag calculation into Burst jobs.
-- [~] Batch ECS render-state tags through ECB.
-- [ ] Avoid instantiate/destroy churn; keep pooling/retained presentation.
-- [ ] Preserve current visible-character detailed-model policy and impostor thresholds.
+- [x] Batch ECS render-state tags through ECB.
+- [x] Avoid instantiate/destroy churn; keep pooling/retained presentation.
+- [x] Preserve current visible-character detailed-model policy and impostor thresholds.
 
 Acceptance checks:
-- [ ] Unit visual LOD behavior remains correct.
-- [ ] Selection markers still display.
-- [~] Helicopter blade and missile visual behavior remain correct.
+- [x] Unit visual LOD behavior remains correct.
+- [x] Selection markers still display.
+- [x] Helicopter blade and missile visual behavior remain correct.
 - [ ] Render-budget focused scenario does not regress p95/p99.
 - [ ] No new GC during steady-state camera pan/zoom.
 
@@ -1076,6 +1076,117 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ground-missile-visual.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
   - Static guardrails remained stable: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `24`, Burst-compiled system files `37`.
+- 2026-06-12: Closed the Phase 8 selection-marker acceptance gap. `VehicleVisualAdornmentsSystemTests.RunFocusedValidation` now includes the existing unit marker creation/removal cases plus `SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState`, which verifies the Burst visibility system keeps the marker root scale stable and toggles the visible child scale from selected to hidden.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-marker-focused.log`
+  - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-selection-marker.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+- 2026-06-12: Closed the Phase 8 unit visual LOD behavior acceptance with the focused render-budget validation runner. Coverage includes budget-band caps, moving/idle visible-character detail policy, non-animatable LOD fallback, enemy far impostors, missing mesh-LOD readiness fallback, transition stability, visibility tag apply/remove, render-safety patching, high tactical camera character impostor scale/orientation, and allocation-free character source-key prefix checks.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-render-budget-focused.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=14`.
+  - This also closes the implementation guard for preserving visible-character detailed-model policy and impostor thresholds; no runtime tuning constants were changed.
+- 2026-06-12: Closed the Phase 8 helicopter/missile visual behavior acceptance. Added `UnitHelicopterBladeSpinSystemTests.RunFocusedValidation`, verified airborne baked/detail blade rotation, landed/ground-return no-spin behavior, prefab blade-transform coverage, and faction visual projection. Also gated the old one-shot `[HeliBladeDiag]` output behind `RuntimeDiagnosticsStateComponent.VerboseAILogs`, so normal runtime and focused validation no longer format or emit the diagnostic.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitHelicopterBladeSpinSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-helicopter-blade-gated.log`
+  - Log marker: `[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=7`.
+  - Log scan confirmed no `[HeliBladeDiag]` entries in the focused validation run.
+  - Missile visual coverage remains the previously passed `GroundMissileVisualValidation`, `GroundMissileProjectileDependencyValidation`, and `AirMissileLauncherValidation` entries above.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-helicopter-blade-gated.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+- 2026-06-12: Closed the Phase 8 model/prefab/GameObject mutation boundary item by adding an architecture guardrail for pure render-budget ECS files. `EcsBurstHotPathArchitectureTests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis` scans `UnitRenderBudget*.cs` files and rejects direct `GameObject`, `UnityEngine.Object`, instantiate/destroy/resource loading, `GameObject.Find`, `Camera.main`, and component lookup APIs; those remain managed presentation-boundary responsibilities.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-budget-object-api.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Started the retained-presentation/churn item with `UnitSelectionMarkerSystem`. Selection marker entities are now retained across deselect and transport-board visibility changes instead of being destroyed and recreated; `SelectionMarkerVisibilitySystem` hides retained markers when the parent is deselected, dead, or onboard a transport. Dead/stale marker references still clean up, and the existing Burst visibility path remains the renderer-facing toggle.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-marker-retain.log`
+  - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-selection-marker-retain.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Closed the retained-presentation/churn item by extending the same retained-instance pattern to runtime health bars. `UnitRuntimeHealthBarSystem` now keeps health-bar entities across damage-feedback expiry, transport hiding, and impostor-only hiding; `UnitHealthBarSystem` hides retained bars in its Burst visibility update when the parent is dead, onboard, culled, or no longer has recent-damage visibility. Stale/dead references still clean up, while spawn/death/placement instantiation remains an explicit managed boundary.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-adornment-retained-presentation.log`
+  - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-retained-presentation.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued the Phase 8 pure-visibility/state-decision split in `UnitSelectionMarkerSystem`. The per-frame selected/dead/transported/stale marker candidate scan now runs through a Burst `IJobEntity` using component lookups plus `EntityStorageInfoLookup`; marker entity instantiate, visual-child resolution, stale-reference cleanup, and destruction remain in the managed presentation boundary.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-marker-collect-job.log`
+  - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-selection-marker-collect-job.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued the Phase 8 render-budget split in `UnitRenderBudgetDistanceSystem`. The managed camera boundary now captures only camera matrices and camera position; per-unit existence/passenger filtering plus distance, viewport, screen-edge, and priority scoring run through a Burst `IJob` over `TempJob` snapshots. `UnitRenderBudgetSystem` caches and updates `EntityStorageInfoLookup` before the job, and the focused render-budget tests now cover visible-unit scoring and passenger skipping.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-distance-job.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=15`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-budget-distance-job.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Closed the Phase 8 render-state tag batching item in `UnitRenderBudgetVisibilityApplySystem`. The render-budget apply stage no longer performs direct `EntityManager.AddComponent` / `RemoveComponent` calls for cull/render tags; it batches show/hide, detailed, and far-impostor tag changes through the existing render-state ECB, with per-frame de-duplication and hide/far requests taking precedence over conflicting show/detail requests.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visibility-ecb.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=15`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-budget-visibility-ecb.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 visual-state cleanup in `UnitRenderBudgetVisualStateSystem`. Visual-state add/set operations now queue through the existing render-state ECB instead of direct `EntityManager.SetComponentData`, and the frame value is passed explicitly from `UnitRenderBudgetSystem` so this stateless policy helper no longer depends on `UnityEngine.Time`. Focused render-budget coverage was updated to play back the ECB before asserting state transitions.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visual-state-ecb.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=15`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visual-state-ecb.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 render-safety cleanup in `UnitRenderBudgetRenderSafetySystem`. Render safety now queues `RenderBounds`, `MeshLODComponent`, and `MeshLODGroupComponent` patch writes through the existing render-state ECB instead of direct `EntityManager.SetComponentData`, while the recursive read/classification logic remains in the managed render-budget boundary.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-render-safety-ecb.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=15`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-safety-ecb.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 pure LOD budget work in `UnitRenderBudgetBandSystem`. Detailed/mid/low band assignment now runs through a synchronous Burst `IJob` over the sorted distance array, using job-safe native containers for the output band sets while keeping allocation ownership and disposal at the existing render-budget boundary.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-band-job.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=15`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-band-job.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 pure render-budget ordering work in `UnitRenderBudgetSortSystem`. Distance ordering now runs inside a synchronous Burst `IJob` using Unity's native array sort and an explicit priority-then-distance comparer. Focused coverage now verifies the exact sort order before band assignment.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-sort-job.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=16`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-sort-job.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 snapshot cleanup in `UnitRenderBudgetSnapshotSystem`. The render-budget unit snapshot no longer uses `ToEntityArray` / `ToComponentDataArray`; entity and `LocalTransform` pairs are collected through a Burst `IJobChunk` with cached `EntityTypeHandle` and `ComponentTypeHandle<LocalTransform>` initialized in `UnitRenderBudgetSystem.OnCreate` and refreshed in `OnUpdate`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-snapshot-job.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=16`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-snapshot-job.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 decision-loop cleanup in `UnitRenderBudgetDecisionSystem`. Character classification, faction/selection reads, and far-impostor tag request checks now use cached component lookups from `UnitRenderBudgetSystem` instead of per-unit `EntityManager` access in the inner render-budget loop; diagnostic callers retain the managed overloads.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-lookup-decision.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=18`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-lookup-decision.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 visibility-change cleanup in `UnitRenderBudgetVisibilityChangeSystem`. Recursive render visibility collection now uses `EntityStorageInfoLookup` plus cached `Disabled`, `DisableRendering`, and `UnitRenderBudgetCulledTag` component lookups instead of direct `EntityManager.Exists` / `HasComponent` calls in the inner traversal; the visual-tree traversal remains a managed render-budget boundary.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visibility-lookup.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=19`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visibility-lookup.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 visual-state read cleanup in `UnitRenderBudgetVisualStateSystem`. Visual-state reads now use a cached `ComponentLookup<UnitRenderVisualComponent>` from `UnitRenderBudgetSystem` instead of per-unit `EntityManager.HasComponent` / `GetComponentData` calls in the render-budget decision loop; visual-state add/set writes still queue through the existing render-state ECB.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visual-state-lookup.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=19`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visual-state-lookup.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 LOD reference cleanup in `UnitRenderBudgetLodReferenceSystem`. The render-budget decision loop now resolves detailed/mid/low visual references through cached component lookups from `UnitRenderBudgetSystem`; the managed `EntityManager` overload remains available for diagnostic mismatch logging only. Focused render-budget coverage now includes `LodReferenceResolutionUsesCachedLookups`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-lod-reference-lookup.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=20`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-lod-reference-lookup.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 renderable-query cleanup in `UnitRenderBudgetRenderableQuerySystem`. The render-budget decision loop now checks safe visible LODs and recursive renderability through cached component lookups plus an `EntityQueryMask` for `RenderBounds` / shared `RenderFilterSettings`; managed `EntityManager` overloads remain for diagnostic mismatch logging and presentation-boundary callers.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-renderable-query-lookup-rerun.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=21`.
+  - Architecture guardrail validation also passed:
+    `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-renderable-query-lookup.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
 
 ### Phase 9: Managed Boundary Cleanup
 

@@ -24,7 +24,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
         if (em.HasComponent<UnitRenderSafetyPatchedTag>(entity) || taggedThisFrame.Contains(entity))
             return 0;
 
-        int patched = EnsureRenderSafetyRecursive(em, entity, childLookup, lodReferenceSystem);
+        int patched = EnsureRenderSafetyRecursive(em, ecb, entity, childLookup, lodReferenceSystem);
         taggedThisFrame.Add(entity);
         ecb.AddComponent<UnitRenderSafetyPatchedTag>(entity);
 
@@ -33,6 +33,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
 
     private static int EnsureRenderSafetyRecursive(
         EntityManager em,
+        EntityCommandBuffer ecb,
         Entity entity,
         BufferLookup<Child> childLookup,
         UnitRenderBudgetLodReferenceSystem lodReferenceSystem)
@@ -48,7 +49,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
             if (!math.all(bounds.Value.Extents == extents))
             {
                 bounds.Value.Extents = extents;
-                em.SetComponentData(entity, bounds);
+                ecb.SetComponent(entity, bounds);
                 patched++;
             }
         }
@@ -58,12 +59,12 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
             if (meshLod.LODMask != AlwaysVisibleLodMask)
             {
                 meshLod.LODMask = AlwaysVisibleLodMask;
-                em.SetComponentData(entity, meshLod);
+                ecb.SetComponent(entity, meshLod);
                 patched++;
             }
 
-            patched += PatchLodGroup(em, meshLod.Group, lodReferenceSystem);
-            patched += PatchLodGroup(em, meshLod.ParentGroup, lodReferenceSystem);
+            patched += PatchLodGroup(em, ecb, meshLod.Group, lodReferenceSystem);
+            patched += PatchLodGroup(em, ecb, meshLod.ParentGroup, lodReferenceSystem);
         }
 
         if (!childLookup.HasBuffer(entity))
@@ -71,13 +72,14 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
 
         DynamicBuffer<Child> children = childLookup[entity];
         for (int i = 0; i < children.Length; i++)
-            patched += EnsureRenderSafetyRecursive(em, children[i].Value, childLookup, lodReferenceSystem);
+            patched += EnsureRenderSafetyRecursive(em, ecb, children[i].Value, childLookup, lodReferenceSystem);
 
         return patched;
     }
 
     private static int PatchLodGroup(
         EntityManager em,
+        EntityCommandBuffer ecb,
         Entity group,
         UnitRenderBudgetLodReferenceSystem lodReferenceSystem)
     {
@@ -93,7 +95,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
         lodGroup.ParentMask = AlwaysVisibleLodMask;
         lodGroup.LODDistances0 = new float4(AlwaysVisibleLodDistance);
         lodGroup.LODDistances1 = new float4(AlwaysVisibleLodDistance);
-        em.SetComponentData(group, lodGroup);
+        ecb.SetComponent(group, lodGroup);
         return 1;
     }
 }

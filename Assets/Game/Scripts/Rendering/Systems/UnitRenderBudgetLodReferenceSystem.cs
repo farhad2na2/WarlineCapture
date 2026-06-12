@@ -4,6 +4,24 @@ using Unity.Rendering;
 
 public readonly struct UnitRenderBudgetLodReferenceSystem
 {
+    public struct Lookups
+    {
+        public ComponentLookup<UnitDetailedVisualReference> DetailedVisualReferenceLookup;
+        public ComponentLookup<UnitMidLodPrefabReference> MidLodPrefabReferenceLookup;
+        public ComponentLookup<UnitMidLodInstanceReference> MidLodInstanceReferenceLookup;
+        public ComponentLookup<UnitLowLodPrefabReference> LowLodPrefabReferenceLookup;
+        public ComponentLookup<UnitLowLodInstanceReference> LowLodInstanceReferenceLookup;
+
+        public void Update(ref SystemState state)
+        {
+            DetailedVisualReferenceLookup.Update(ref state);
+            MidLodPrefabReferenceLookup.Update(ref state);
+            MidLodInstanceReferenceLookup.Update(ref state);
+            LowLodPrefabReferenceLookup.Update(ref state);
+            LowLodInstanceReferenceLookup.Update(ref state);
+        }
+    }
+
     public readonly struct UnitReferences
     {
         public readonly bool HasDetailRoot;
@@ -37,6 +55,36 @@ public readonly struct UnitRenderBudgetLodReferenceSystem
 
         public bool HasAnyMeshLodPrefab => HasMidLodPrefab || HasLowLodPrefab;
         public bool HasAnyMeshLodInstance => HasMidLodInstance || HasLowLodInstance;
+    }
+
+    public UnitReferences ResolveUnitReferences(Entity unit, Lookups lookups)
+    {
+        bool hasDetailRoot = lookups.DetailedVisualReferenceLookup.HasComponent(unit);
+        Entity detailRoot = hasDetailRoot
+            ? lookups.DetailedVisualReferenceLookup[unit].Root
+            : Entity.Null;
+
+        bool hasMidLodPrefab = lookups.MidLodPrefabReferenceLookup.HasComponent(unit);
+        bool hasMidLodInstance = lookups.MidLodInstanceReferenceLookup.HasComponent(unit);
+        Entity midRoot = hasMidLodInstance
+            ? lookups.MidLodInstanceReferenceLookup[unit].Instance
+            : Entity.Null;
+
+        bool hasLowLodPrefab = lookups.LowLodPrefabReferenceLookup.HasComponent(unit);
+        bool hasLowLodInstance = lookups.LowLodInstanceReferenceLookup.HasComponent(unit);
+        Entity lowRoot = hasLowLodInstance
+            ? lookups.LowLodInstanceReferenceLookup[unit].Instance
+            : Entity.Null;
+
+        return new UnitReferences(
+            hasDetailRoot,
+            detailRoot,
+            hasMidLodPrefab,
+            hasMidLodInstance,
+            midRoot,
+            hasLowLodPrefab,
+            hasLowLodInstance,
+            lowRoot);
     }
 
     public UnitReferences ResolveUnitReferences(EntityManager em, Entity unit)

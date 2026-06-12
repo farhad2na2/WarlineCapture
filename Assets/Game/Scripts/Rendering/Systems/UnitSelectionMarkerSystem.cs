@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -12,51 +13,86 @@ public partial struct UnitSelectionMarkerSystem : ISystem
     private const float MarkerFootprintScaleMultiplier = 1.35f;
     private const float MarkerMinimumVehicleScale = 2.5f;
     private const float MarkerMinimumCharacterScale = 1f;
+    private EntityStorageInfoLookup _entityStorageInfoLookup;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitSelectionMarkerPrefabReference>();
+        _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;
-        var create = new NativeList<Entity>(Allocator.Temp);
-        var remove = new NativeList<Entity>(Allocator.Temp);
-
-        foreach (var (health, entity) in SystemAPI
-                 .Query<RefRO<UnitHealth>>()
-                 .WithEntityAccess())
+        var create = new NativeList<Entity>(Allocator.TempJob);
+        var removeReference = new NativeList<Entity>(Allocator.TempJob);
+        var destroy = new NativeList<Entity>(Allocator.TempJob);
+        _entityStorageInfoLookup.Update(ref state);
+        new CollectSelectionMarkerChangesJob
         {
-            bool shouldShow = health.ValueRO.Current > 0 &&
-                              em.HasComponent<SelectedUnitTag>(entity) &&
-                              em.HasComponent<UnitSelectionMarkerPrefabReference>(entity) &&
-                              !em.HasComponent<UnitTransportPassenger>(entity);
-            bool hasReference = em.HasComponent<UnitSelectionMarkerInstanceReference>(entity);
-            bool hasInstance = hasReference &&
-                               em.Exists(em.GetComponentData<UnitSelectionMarkerInstanceReference>(entity).Instance);
-            if (hasReference && !hasInstance)
-            {
-                remove.Add(entity);
-                if (shouldShow)
-                    create.Add(entity);
-                continue;
-            }
+            SelectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true),
+            PrefabReferenceLookup = SystemAPI.GetComponentLookup<UnitSelectionMarkerPrefabReference>(true),
+            PassengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true),
+            InstanceReferenceLookup = SystemAPI.GetComponentLookup<UnitSelectionMarkerInstanceReference>(true),
+            EntityStorageInfoLookup = _entityStorageInfoLookup,
+            Create = create,
+            RemoveReference = removeReference,
+            Destroy = destroy
+        }.Run();
 
-            if (shouldShow && !hasInstance)
-                create.Add(entity);
-            else if (!shouldShow && hasReference)
-                remove.Add(entity);
-        }
+        for (int i = 0; i < removeReference.Length; i++)
+            RemoveMarkerReference(em, removeReference[i]);
 
-        for (int i = 0; i < remove.Length; i++)
-            DestroyMarker(em, remove[i]);
+        for (int i = 0; i < destroy.Length; i++)
+            DestroyMarker(em, destroy[i]);
 
         for (int i = 0; i < create.Length; i++)
             CreateMarker(em, create[i]);
 
         create.Dispose();
-        remove.Dispose();
+        removeReference.Dispose();
+        destroy.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct CollectSelectionMarkerChangesJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<SelectedUnitTag> SelectedLookup;
+        [ReadOnly] public ComponentLookup<UnitSelectionMarkerPrefabReference> PrefabReferenceLookup;
+        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+        [ReadOnly] public ComponentLookup<UnitSelectionMarkerInstanceReference> InstanceReferenceLookup;
+        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
+        public NativeList<Entity> Create;
+        public NativeList<Entity> RemoveReference;
+        public NativeList<Entity> Destroy;
+
+        private void Execute(Entity entity, in UnitHealth health)
+        {
+            bool canOwnMarker = health.Current > 0 &&
+                                PrefabReferenceLookup.HasComponent(entity);
+            bool shouldShow = canOwnMarker &&
+                              SelectedLookup.HasComponent(entity) &&
+                              !PassengerLookup.HasComponent(entity);
+            bool hasReference = InstanceReferenceLookup.HasComponent(entity);
+            bool hasInstance = hasReference &&
+                               EntityStorageInfoLookup.Exists(InstanceReferenceLookup[entity].Instance);
+            if (hasReference && !hasInstance)
+            {
+                RemoveReference.Add(entity);
+                if (shouldShow)
+                    Create.Add(entity);
+                return;
+            }
+
+            if (!canOwnMarker && hasReference)
+            {
+                Destroy.Add(entity);
+                return;
+            }
+
+            if (shouldShow && !hasInstance)
+                Create.Add(entity);
+        }
     }
 
     private static void CreateMarker(EntityManager em, Entity unit)
@@ -155,6 +191,14 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         UnitSelectionMarkerInstanceReference instance = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit);
         LogSelectionClickDebug($"[SelectionClick] markerDestroy unit={DescribeUnit(em, unit)} marker={instance.Instance}");
         VehicleVisualEntityUtility.DestroyVisualTree(em, instance.Instance);
+        RemoveMarkerReference(em, unit);
+    }
+
+    private static void RemoveMarkerReference(EntityManager em, Entity unit)
+    {
+        if (!em.HasComponent<UnitSelectionMarkerInstanceReference>(unit))
+            return;
+
         em.RemoveComponent<UnitSelectionMarkerInstanceReference>(unit);
     }
 

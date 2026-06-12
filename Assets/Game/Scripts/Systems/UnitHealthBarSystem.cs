@@ -28,12 +28,16 @@ public partial struct UnitHealthBarSystem : ISystem
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
         var recentDamageLookup = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>(true);
+        var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
+        var culledLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
 
         var handle = new UpdateJob
         {
             HealthLookup = healthLookup,
             FactionLookup = factionLookup,
-            RecentDamageLookup = recentDamageLookup
+            RecentDamageLookup = recentDamageLookup,
+            PassengerLookup = passengerLookup,
+            CulledLookup = culledLookup
         }.ScheduleParallel(state.Dependency);
 
         state.Dependency = handle;
@@ -59,21 +63,27 @@ public partial struct UnitHealthBarSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
         [ReadOnly] public ComponentLookup<Faction> FactionLookup;
         [ReadOnly] public ComponentLookup<RecentDamageHealthBarVisibility> RecentDamageLookup;
+        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+        [ReadOnly] public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledLookup;
 
         public void Execute(ref HealthBarFill fill, ref LocalTransform transform, in Parent parent)
         {
             var unit = parent.Value;
             bool show = false;
-            if (RecentDamageLookup.HasComponent(unit) && RecentDamageLookup[unit].TimeRemaining > 0f)
+            if (HealthLookup.HasComponent(unit) &&
+                HealthLookup[unit].Current > 0 &&
+                RecentDamageLookup.HasComponent(unit) &&
+                RecentDamageLookup[unit].TimeRemaining > 0f &&
+                !PassengerLookup.HasComponent(unit) &&
+                !CulledLookup.HasComponent(unit))
+            {
                 show = true;
+            }
 
             float targetScale = show ? 1f : 0f;
             if (math.abs(transform.Scale - targetScale) > 0.0001f)
                 transform.Scale = targetScale;
             else if (!show)
-                return;
-
-            if (!HealthLookup.HasComponent(unit))
                 return;
 
             var h = HealthLookup[unit];

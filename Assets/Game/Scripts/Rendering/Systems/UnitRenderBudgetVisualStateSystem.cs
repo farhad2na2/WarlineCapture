@@ -1,5 +1,4 @@
 using Unity.Entities;
-using UnityEngine;
 
 public readonly struct UnitRenderBudgetVisualStateSystem
 {
@@ -7,36 +6,37 @@ public readonly struct UnitRenderBudgetVisualStateSystem
     private const int MaxVisualStateTransitionsPerUpdate = 32;
 
     public UnitRenderVisualKind ResolveStableUnitRenderVisualState(
-        EntityManager em,
+        ComponentLookup<UnitRenderVisualComponent> visualStateLookup,
         EntityCommandBuffer ecb,
         Entity unit,
         UnitRenderVisualKind desiredVisual,
         bool forceImmediate,
+        int currentFrame,
         ref int visualStateChanges,
         ref int visualStatePending,
         ref int visualTransitionsCommitted)
     {
         byte desired = (byte)desiredVisual;
-        if (!em.HasComponent<UnitRenderVisualComponent>(unit))
+        if (!visualStateLookup.HasComponent(unit))
         {
             ecb.AddComponent(unit, new UnitRenderVisualComponent
             {
                 Current = desired,
                 Desired = desired,
-                LastChangedFrame = Time.frameCount
+                LastChangedFrame = currentFrame
             });
             visualStateChanges++;
             return desiredVisual;
         }
 
-        UnitRenderVisualComponent state = em.GetComponentData<UnitRenderVisualComponent>(unit);
+        UnitRenderVisualComponent state = visualStateLookup[unit];
         if (state.Desired != desired)
         {
             state.Desired = desired;
-            state.LastChangedFrame = Time.frameCount;
+            state.LastChangedFrame = currentFrame;
             if (forceImmediate)
                 state.Current = desired;
-            em.SetComponentData(unit, state);
+            ecb.SetComponent(unit, state);
             visualStateChanges++;
             if (forceImmediate)
             {
@@ -56,20 +56,20 @@ public readonly struct UnitRenderBudgetVisualStateSystem
         {
             state.Current = desired;
             state.Desired = desired;
-            state.LastChangedFrame = Time.frameCount;
-            em.SetComponentData(unit, state);
+            state.LastChangedFrame = currentFrame;
+            ecb.SetComponent(unit, state);
             visualStateChanges++;
             visualTransitionsCommitted++;
             return desiredVisual;
         }
 
-        bool stableLongEnough = Time.frameCount - state.LastChangedFrame >= VisualTransitionStableFrames;
+        bool stableLongEnough = currentFrame - state.LastChangedFrame >= VisualTransitionStableFrames;
         bool transitionBudgetAvailable = visualTransitionsCommitted < MaxVisualStateTransitionsPerUpdate;
         if (!stableLongEnough || !transitionBudgetAvailable)
             return (UnitRenderVisualKind)state.Current;
 
         state.Current = desired;
-        em.SetComponentData(unit, state);
+        ecb.SetComponent(unit, state);
         visualStateChanges++;
         visualTransitionsCommitted++;
         return desiredVisual;

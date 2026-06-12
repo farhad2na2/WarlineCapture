@@ -11,6 +11,7 @@ using UnityEngine;
 public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
+    private const string RenderingSystemsRoot = "Assets/Game/Scripts/Rendering/Systems";
     private const int ToArrayDebtCeiling = 0;
     private const int EntityManagerMutationDebtCeiling = 1;
     private const int NonBurstOnUpdateFileDebtCeiling = 24;
@@ -30,6 +31,10 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Regex BurstCompileRegex = new(
         @"\[BurstCompile\]",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex UnityObjectApiRegex = new(
+        @"\b(GameObject|UnityEngine\.Object|Object\.Instantiate|Object\.Destroy|Resources\.Load|AssetDatabase|GameObject\.Find|Camera\.main|GetComponent(?:InChildren|sInChildren)?\s*\()",
         RegexOptions.CultureInvariant);
 
     private static readonly Dictionary<string, string> ClassifiedNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
@@ -79,7 +84,8 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.NonBurstOnUpdateDebtMustNotIncrease();
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=5");
+            tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=6");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -244,10 +250,38 @@ public sealed class EcsBurstHotPathArchitectureTests
             string.Join(Environment.NewLine, violations));
     }
 
+    [Test]
+    public void UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis()
+    {
+        List<string> violations = new();
+        foreach (string path in EnumerateUnitRenderBudgetSystemFiles())
+        {
+            string text = File.ReadAllText(path);
+            foreach (Match match in UnityObjectApiRegex.Matches(text))
+            {
+                int line = CountLines(text, match.Index);
+                violations.Add($"{path}:{line} uses `{match.Value}` in the pure render-budget ECS path.");
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "UnitRenderBudget* systems must keep model, prefab, GameObject, resource, and component lookup work in managed presentation boundaries:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
     private static IEnumerable<string> EnumerateSystemFiles()
     {
         return Directory
             .GetFiles(SystemsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> EnumerateUnitRenderBudgetSystemFiles()
+    {
+        return Directory
+            .GetFiles(RenderingSystemsRoot, "UnitRenderBudget*.cs", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
             .OrderBy(path => path, StringComparer.Ordinal);
     }

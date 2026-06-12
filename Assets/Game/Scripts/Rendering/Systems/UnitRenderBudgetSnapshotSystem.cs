@@ -1,4 +1,6 @@
 using System;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
@@ -7,10 +9,10 @@ public readonly struct UnitRenderBudgetSnapshotSystem
 {
     public struct Snapshot : IDisposable
     {
-        public NativeArray<Entity> Units;
-        public NativeArray<LocalTransform> Transforms;
+        public NativeList<Entity> Units;
+        public NativeList<LocalTransform> Transforms;
 
-        public Snapshot(NativeArray<Entity> units, NativeArray<LocalTransform> transforms)
+        public Snapshot(NativeList<Entity> units, NativeList<LocalTransform> transforms)
         {
             Units = units;
             Transforms = transforms;
@@ -25,10 +27,47 @@ public readonly struct UnitRenderBudgetSnapshotSystem
         }
     }
 
-    public Snapshot Create(EntityQuery unitQuery, Allocator allocator)
+    public Snapshot Create(
+        EntityQuery unitQuery,
+        EntityTypeHandle entityTypeHandle,
+        ComponentTypeHandle<LocalTransform> localTransformTypeHandle,
+        Allocator allocator)
     {
-        return new Snapshot(
-            unitQuery.ToEntityArray(allocator),
-            unitQuery.ToComponentDataArray<LocalTransform>(allocator));
+        int capacity = unitQuery.CalculateEntityCount();
+        NativeList<Entity> units = new(capacity, allocator);
+        NativeList<LocalTransform> transforms = new(capacity, allocator);
+        new CollectSnapshotJob
+        {
+            EntityTypeHandle = entityTypeHandle,
+            LocalTransformTypeHandle = localTransformTypeHandle,
+            Units = units,
+            Transforms = transforms
+        }.Run(unitQuery);
+
+        return new Snapshot(units, transforms);
+    }
+
+    [BurstCompile]
+    private struct CollectSnapshotJob : IJobChunk
+    {
+        [ReadOnly] public EntityTypeHandle EntityTypeHandle;
+        [ReadOnly] public ComponentTypeHandle<LocalTransform> LocalTransformTypeHandle;
+        public NativeList<Entity> Units;
+        public NativeList<LocalTransform> Transforms;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            NativeArray<Entity> entities = chunk.GetNativeArray(EntityTypeHandle);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref LocalTransformTypeHandle);
+            for (int i = 0; i < chunk.Count; i++)
+            {
+                Units.Add(entities[i]);
+                Transforms.Add(transforms[i]);
+            }
+        }
     }
 }

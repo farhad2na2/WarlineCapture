@@ -16,11 +16,15 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var selectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
+        var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
+        var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(false);
 
         state.Dependency = new UpdateSelectionMarkerJob
         {
             SelectedLookup = selectedLookup,
+            HealthLookup = healthLookup,
+            PassengerLookup = passengerLookup,
             TransformLookup = transformLookup
         }.ScheduleParallel(state.Dependency);
     }
@@ -30,11 +34,17 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
     private partial struct UpdateSelectionMarkerJob : IJobEntity
     {
         [ReadOnly] public ComponentLookup<SelectedUnitTag> SelectedLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
+        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
         [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> TransformLookup;
 
         public void Execute(Entity entity, in Parent parent, in SelectionMarkerVisualChild visualChild)
         {
-            bool selected = SelectedLookup.HasComponent(parent.Value);
+            bool visible =
+                SelectedLookup.HasComponent(parent.Value) &&
+                HealthLookup.HasComponent(parent.Value) &&
+                HealthLookup[parent.Value].Current > 0 &&
+                !PassengerLookup.HasComponent(parent.Value);
 
             if (TransformLookup.HasComponent(entity))
             {
@@ -47,7 +57,7 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
                 return;
 
             LocalTransform childTransform = TransformLookup[visualChild.Value];
-            childTransform.Scale = selected ? visualChild.VisibleScale : 0f;
+            childTransform.Scale = visible ? visualChild.VisibleScale : 0f;
             TransformLookup[visualChild.Value] = childTransform;
         }
     }

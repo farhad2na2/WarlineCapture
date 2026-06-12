@@ -18,7 +18,8 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
     {
         EntityManager em = state.EntityManager;
         var create = new NativeList<Entity>(Allocator.TempJob);
-        var remove = new NativeList<Entity>(Allocator.TempJob);
+        var removeReference = new NativeList<Entity>(Allocator.TempJob);
+        var destroy = new NativeList<Entity>(Allocator.TempJob);
         _entityStorageInfoLookup.Update(ref state);
         new CollectHealthBarChangesJob
         {
@@ -29,17 +30,22 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
             InstanceReferenceLookup = SystemAPI.GetComponentLookup<UnitHealthBarInstanceReference>(true),
             EntityStorageInfoLookup = _entityStorageInfoLookup,
             Create = create,
-            Remove = remove
+            RemoveReference = removeReference,
+            Destroy = destroy
         }.Run();
 
-        for (int i = 0; i < remove.Length; i++)
-            DestroyHealthBar(em, remove[i]);
+        for (int i = 0; i < removeReference.Length; i++)
+            RemoveHealthBarReference(em, removeReference[i]);
+
+        for (int i = 0; i < destroy.Length; i++)
+            DestroyHealthBar(em, destroy[i]);
 
         for (int i = 0; i < create.Length; i++)
             CreateHealthBar(em, create[i]);
 
         create.Dispose();
-        remove.Dispose();
+        removeReference.Dispose();
+        destroy.Dispose();
     }
 
     [BurstCompile]
@@ -52,13 +58,15 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitHealthBarInstanceReference> InstanceReferenceLookup;
         [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
         public NativeList<Entity> Create;
-        public NativeList<Entity> Remove;
+        public NativeList<Entity> RemoveReference;
+        public NativeList<Entity> Destroy;
 
         private void Execute(Entity entity, in UnitHealth health)
         {
-            bool shouldShow = health.Current > 0 &&
+            bool canOwnHealthBar = health.Current > 0 &&
+                                   PrefabReferenceLookup.HasComponent(entity);
+            bool shouldShow = canOwnHealthBar &&
                               RecentDamageLookup.HasComponent(entity) &&
-                              PrefabReferenceLookup.HasComponent(entity) &&
                               !PassengerLookup.HasComponent(entity) &&
                               !CulledLookup.HasComponent(entity);
             bool hasReference = InstanceReferenceLookup.HasComponent(entity);
@@ -66,16 +74,20 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
                                EntityStorageInfoLookup.Exists(InstanceReferenceLookup[entity].Instance);
             if (hasReference && !hasInstance)
             {
-                Remove.Add(entity);
+                RemoveReference.Add(entity);
                 if (shouldShow)
                     Create.Add(entity);
                 return;
             }
 
+            if (!canOwnHealthBar && hasReference)
+            {
+                Destroy.Add(entity);
+                return;
+            }
+
             if (shouldShow && !hasInstance)
                 Create.Add(entity);
-            else if (!shouldShow && hasReference)
-                Remove.Add(entity);
         }
     }
 
@@ -98,6 +110,14 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
     {
         UnitHealthBarInstanceReference instance = em.GetComponentData<UnitHealthBarInstanceReference>(unit);
         VehicleVisualEntityUtility.DestroyVisualTree(em, instance.Instance);
+        RemoveHealthBarReference(em, unit);
+    }
+
+    private static void RemoveHealthBarReference(EntityManager em, Entity unit)
+    {
+        if (!em.HasComponent<UnitHealthBarInstanceReference>(unit))
+            return;
+
         em.RemoveComponent<UnitHealthBarInstanceReference>(unit);
     }
 }

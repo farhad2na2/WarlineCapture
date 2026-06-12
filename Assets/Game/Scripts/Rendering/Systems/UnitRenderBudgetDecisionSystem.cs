@@ -1,6 +1,7 @@
 using SnivelerCode.GpuAnimation.Scripts.Components;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
 
@@ -15,6 +16,16 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public BufferLookup<Child> ChildLookup;
         public ComponentLookup<MaterialAnimationIndex> AnimationIndexLookup;
         public ComponentLookup<UnitMoveVisualComponent> MoveVisualLookup;
+        public ComponentLookup<UnitMovementBehavior> MovementBehaviorLookup;
+        public ComponentLookup<UnitSourcePrefabKey> SourcePrefabKeyLookup;
+        public ComponentLookup<Faction> FactionLookup;
+        public ComponentLookup<SelectedUnitTag> SelectedLookup;
+        public ComponentLookup<UnitRenderVisualComponent> VisualStateLookup;
+        public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledUnitLookup;
+        public EntityStorageInfoLookup EntityStorageInfoLookup;
+        public ComponentLookup<Disabled> DisabledLookup;
+        public ComponentLookup<DisableRendering> DisableRenderingLookup;
+        public ComponentLookup<UnitRenderBudgetCulledTag> CulledTagLookup;
         public NativeList<UnitDistance> Distances;
         public NativeHashSet<Entity> DetailedUnits;
         public NativeHashSet<Entity> MidLodUnits;
@@ -34,14 +45,17 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public UnitRenderBudgetClassificationSystem ClassificationSystem;
         public UnitRenderBudgetCharacterPolicySystem CharacterPolicySystem;
         public UnitRenderBudgetLodReferenceSystem LodReferenceSystem;
+        public UnitRenderBudgetLodReferenceSystem.Lookups LodReferenceLookups;
         public UnitRenderBudgetAnimationReadinessSystem AnimationReadinessSystem;
         public UnitRenderBudgetRenderableQuerySystem RenderableQuerySystem;
+        public UnitRenderBudgetRenderableQuerySystem.Lookups RenderableQueryLookups;
         public UnitRenderBudgetVisualStateSystem VisualStateSystem;
         public UnitRenderBudgetReadinessSystem ReadinessSystem;
         public UnitRenderBudgetRenderSafetySystem RenderSafetySystem;
         public UnitRenderBudgetVisualPlanSystem VisualPlanSystem;
         public UnitRenderBudgetVisibilityChangeSystem VisibilityChangeSystem;
         public UnitRenderBudgetImpostorTagSystem ImpostorTagSystem;
+        public int CurrentFrame;
     }
 
     public struct Result
@@ -79,14 +93,19 @@ public readonly struct UnitRenderBudgetDecisionSystem
         for (int i = 0; i < context.Distances.Length; i++)
         {
             Entity unit = context.Distances[i].Unit;
-            bool isCharacter = context.ClassificationSystem.IsCharacterUnit(em, unit);
-            byte factionId = em.GetComponentData<Faction>(unit).Id;
+            bool isCharacter = context.ClassificationSystem.IsCharacterUnit(
+                unit,
+                context.MovementBehaviorLookup,
+                context.SourcePrefabKeyLookup);
+            byte factionId = context.FactionLookup.HasComponent(unit) ? context.FactionLookup[unit].Id : (byte)0;
             bool isEnemyUnit = FactionIdentitySystem.IsHostileToPlayer(factionId);
-            bool isSelectedUnit = em.HasComponent<SelectedUnitTag>(unit);
+            bool isSelectedUnit = context.SelectedLookup.HasComponent(unit);
             bool isMovingUnit =
                 context.MoveVisualLookup.HasComponent(unit) &&
                 context.MoveVisualLookup[unit].IsMoving != 0;
-            UnitRenderBudgetLodReferenceSystem.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(em, unit);
+            UnitRenderBudgetLodReferenceSystem.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
+                unit,
+                context.LodReferenceLookups);
             bool hasMidLodPrefab = lodReferences.HasMidLodPrefab;
             bool hasMidLodInstance = lodReferences.HasMidLodInstance;
             Entity midRoot = lodReferences.MidRoot;
@@ -102,17 +121,17 @@ public readonly struct UnitRenderBudgetDecisionSystem
             bool midRootSafe =
                 isCharacter &&
                 hasMidLodInstance &&
-                context.RenderableQuerySystem.IsSafeVisibleCharacterLod(em, midRoot);
+                context.RenderableQuerySystem.IsSafeVisibleCharacterLod(midRoot, context.RenderableQueryLookups);
             bool lowRootSafe =
                 isCharacter &&
                 hasLowLodInstance &&
-                context.RenderableQuerySystem.IsSafeVisibleCharacterLod(em, lowRoot);
+                context.RenderableQuerySystem.IsSafeVisibleCharacterLod(lowRoot, context.RenderableQueryLookups);
             bool hasSafeVisibleMid =
                 midRootSafe &&
-                (isProtectedVisibleCharacter || context.RenderableQuerySystem.HasRenderableRecursive(em, midRoot, context.ChildLookup));
+                (isProtectedVisibleCharacter || context.RenderableQuerySystem.HasRenderableRecursive(midRoot, context.ChildLookup, context.RenderableQueryLookups));
             bool hasSafeVisibleLow =
                 lowRootSafe &&
-                (isProtectedVisibleCharacter || context.RenderableQuerySystem.HasRenderableRecursive(em, lowRoot, context.ChildLookup));
+                (isProtectedVisibleCharacter || context.RenderableQuerySystem.HasRenderableRecursive(lowRoot, context.ChildLookup, context.RenderableQueryLookups));
             bool midRootAnimatable = hasMidLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(midRoot, context.AnimationIndexLookup, context.ChildLookup);
             bool lowRootAnimatable = hasLowLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(lowRoot, context.AnimationIndexLookup, context.ChildLookup);
             UnitRenderBudgetVisualPlanSystem.Result visualPlan = context.VisualPlanSystem.CreateDesiredVisualPlan(
@@ -174,16 +193,17 @@ public readonly struct UnitRenderBudgetDecisionSystem
             bool shouldShowLow = visualPlan.ShouldShowLow;
             bool shouldShowFar = visualPlan.ShouldShowFar;
             UnitRenderVisualKind desiredVisual = visualPlan.DesiredVisual;
-            bool hadVisualState = em.HasComponent<UnitRenderVisualComponent>(unit);
+            bool hadVisualState = context.VisualStateLookup.HasComponent(unit);
             UnitRenderVisualKind previousVisual = hadVisualState
-                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
+                ? (UnitRenderVisualKind)context.VisualStateLookup[unit].Current
                 : UnitRenderVisualKind.Unknown;
             UnitRenderVisualKind activeVisual = context.VisualStateSystem.ResolveStableUnitRenderVisualState(
-                em,
+                context.VisualStateLookup,
                 context.RenderStateEcb,
                 unit,
                 desiredVisual,
                 visualPlan.ForceImmediateDetailVisual && desiredVisual == UnitRenderVisualKind.Detail,
+                context.CurrentFrame,
                 ref result.VisualStateChanges,
                 ref result.VisualStatePending,
                 ref result.VisualTransitionsCommitted);
@@ -199,9 +219,9 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 result.FarCount++;
 
             context.ImpostorTagSystem.CollectUnitImpostorTagRequest(
-                em,
                 unit,
                 shouldShowFar,
+                context.CulledUnitLookup,
                 context.UnitsToShowDetailed,
                 context.UnitsToShowFarImpostor,
                 ref result.Changed);
@@ -213,27 +233,27 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 {
                     if (shouldShowDetail)
                         result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, detailRoot, context.ChildLookup, context.LodReferenceSystem);
-                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(em, detailRoot, shouldShowDetail, context.ChildLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
+                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(detailRoot, shouldShowDetail, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
                 else
                 {
                     if (shouldShowDetail)
                         result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, unit, context.ChildLookup, context.LodReferenceSystem);
-                    context.VisibilityChangeSystem.CollectRenderVisibilityChanges(em, unit, shouldShowDetail, context.ChildLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
+                    context.VisibilityChangeSystem.CollectRenderVisibilityChanges(unit, shouldShowDetail, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
 
                 if (hasMidLodInstance)
                 {
                     if (shouldShowMid)
                         result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, midRoot, context.ChildLookup, context.LodReferenceSystem);
-                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(em, midRoot, shouldShowMid, context.ChildLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
+                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(midRoot, shouldShowMid, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
 
                 if (hasLowLodInstance)
                 {
                     if (shouldShowLow)
                         result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, lowRoot, context.ChildLookup, context.LodReferenceSystem);
-                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(em, lowRoot, shouldShowLow, context.ChildLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
+                    context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(lowRoot, shouldShowLow, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
             }
             else if (isProtectedVisibleCharacter && shouldShowMid && hasMidLodInstance)

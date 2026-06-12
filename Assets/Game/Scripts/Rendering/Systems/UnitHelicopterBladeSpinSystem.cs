@@ -32,6 +32,8 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         var airLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
         var airStateLookup = SystemAPI.GetComponentLookup<UnitAirComponent>(true);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
+        bool shouldLogDiagnostics = SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+                                    SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
         using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
         foreach (var (_, entity) in SystemAPI
@@ -43,7 +45,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             bool shouldSpin = ShouldSpinBlades(entity, transformLookup, airStateLookup);
             if (!shouldSpin)
             {
-                if (!s_DiagnosticLogged && IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+                if (shouldLogDiagnostics &&
+                    !s_DiagnosticLogged &&
+                    IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
                 {
                     s_DiagnosticLogged = true;
                     LogHelicopterBladeDiagnostic(
@@ -86,7 +90,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             if (bladeLookup.HasBuffer(entity))
                 bakedRotated = RotateBakedBlades(em, bladeLookup[entity], radians, rotatedBlades);
 
-            if (!s_DiagnosticLogged && IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+            if (shouldLogDiagnostics &&
+                !s_DiagnosticLogged &&
+                IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
             {
                 s_DiagnosticLogged = true;
                 LogHelicopterBladeDiagnostic(
@@ -112,7 +118,7 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             }
         }
 
-        if (!s_DiagnosticLogged)
+        if (shouldLogDiagnostics && !s_DiagnosticLogged)
         {
             foreach (var (sourceKey, entity) in SystemAPI
                          .Query<RefRO<UnitSourcePrefabKey>>()

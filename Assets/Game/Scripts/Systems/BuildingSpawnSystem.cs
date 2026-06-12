@@ -942,23 +942,31 @@ internal sealed class BuildingSpawnSystem
 
     private bool OverlapsExistingUnitFootprint(Context context, EntityManager em, int2 cell, int2 size)
     {
-        using NativeArray<Entity> entities = context.LiveUnitFootprintQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+        using NativeArray<ArchetypeChunk> chunks = context.LiveUnitFootprintQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (em.HasComponent<Prefab>(entity) ||
-                em.HasComponent<StaticGridBlocker>(entity) ||
-                em.HasComponent<RuntimeBuildingCombatTag>(entity))
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                continue;
-            }
-            if (!em.HasComponent<UnitGrid>(entity) || !em.HasComponent<UnitFootprint>(entity))
-                continue;
+                Entity entity = entities[i];
+                if (em.HasComponent<Prefab>(entity) ||
+                    em.HasComponent<StaticGridBlocker>(entity) ||
+                    em.HasComponent<RuntimeBuildingCombatTag>(entity))
+                {
+                    continue;
+                }
 
-            UnitGrid otherGrid = em.GetComponentData<UnitGrid>(entity);
-            UnitFootprint otherFootprint = em.GetComponentData<UnitFootprint>(entity);
-            if (UnitFootprintUtility.Overlaps(cell, size, otherGrid.Cell, otherFootprint.Size))
-                return true;
+                UnitGrid otherGrid = unitGrids[i];
+                UnitFootprint otherFootprint = footprints[i];
+                if (UnitFootprintUtility.Overlaps(cell, size, otherGrid.Cell, otherFootprint.Size))
+                    return true;
+            }
         }
 
         return false;

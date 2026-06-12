@@ -18,17 +18,23 @@ public sealed class FactionEconomyStartupSystem
         if (aiControllerConfigs == null)
             return;
 
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<FactionEconomy> economyType = em.GetComponentTypeHandle<FactionEconomy>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         Dictionary<byte, Entity> economyEntitiesByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<FactionEconomy>(entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                FactionEconomy economy = economies[i];
 
-            FactionEconomy economy = em.GetComponentData<FactionEconomy>(entity);
-            economyEntitiesByFaction[economy.FactionId] = entity;
+                economyEntitiesByFaction[economy.FactionId] = entity;
+            }
         }
 
         int enemyConfigIndex = 0;

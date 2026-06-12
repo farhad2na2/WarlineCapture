@@ -30,22 +30,26 @@ public sealed class InitialFactionSpawnCellSystem
         }
 
         EntityManager em = _world.EntityManager;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+            ComponentType.ReadOnly<InitialUnitsFactionSpawnEntry>());
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[entityIndex];
-            if (!em.Exists(entity) || !em.HasBuffer<InitialUnitsFactionSpawnEntry>(entity))
-                continue;
-
-            DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = em.GetBuffer<InitialUnitsFactionSpawnEntry>(entity);
-            for (int i = 0; i < factionSpawns.Length; i++)
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
-                if (factionSpawns[i].FactionId != factionId)
-                    continue;
+                DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = em.GetBuffer<InitialUnitsFactionSpawnEntry>(entities[entityIndex]);
+                for (int i = 0; i < factionSpawns.Length; i++)
+                {
+                    if (factionSpawns[i].FactionId != factionId)
+                        continue;
 
-                spawnCell = factionSpawns[i].SpawnCell;
-                return true;
+                    spawnCell = factionSpawns[i].SpawnCell;
+                    return true;
+                }
             }
         }
 

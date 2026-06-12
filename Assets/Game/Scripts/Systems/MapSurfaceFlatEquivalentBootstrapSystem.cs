@@ -24,12 +24,17 @@ public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem
         if (_ownedSurfaceQuery.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<MapSurfaceComponent> surfaces = _ownedSurfaceQuery.ToComponentDataArray<MapSurfaceComponent>(Allocator.Temp);
-        for (int i = 0; i < surfaces.Length; i++)
+        ComponentTypeHandle<MapSurfaceComponent> surfaceType = state.GetComponentTypeHandle<MapSurfaceComponent>(true);
+        using NativeArray<ArchetypeChunk> chunks = _ownedSurfaceQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            BlobAssetReference<MapSurfaceBlob> blob = surfaces[i].SurfaceBlob;
-            if (blob.IsCreated)
-                blob.Dispose();
+            NativeArray<MapSurfaceComponent> surfaces = chunks[chunkIndex].GetNativeArray(ref surfaceType);
+            for (int i = 0; i < surfaces.Length; i++)
+            {
+                BlobAssetReference<MapSurfaceBlob> blob = surfaces[i].SurfaceBlob;
+                if (blob.IsCreated)
+                    blob.Dispose();
+            }
         }
     }
 

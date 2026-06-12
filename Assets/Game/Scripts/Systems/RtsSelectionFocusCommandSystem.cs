@@ -630,11 +630,16 @@ public sealed class RtsSelectionFocusCommandSystem
         if (query.IsEmptyIgnoreFilter)
             return false;
 
-        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, selectedEntities[i]))
-                return true;
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
+            {
+                if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, selectedEntities[i]))
+                    return true;
+            }
         }
 
         return false;
@@ -663,12 +668,17 @@ public sealed class RtsSelectionFocusCommandSystem
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
         if (!query.IsEmptyIgnoreFilter)
         {
-            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selectedEntities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = selectedEntities[i];
-                if (em.Exists(entity))
-                    IncludeSelectedAttackModeCandidate(em, entity, ref selection);
+                NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < selectedEntities.Length; i++)
+                {
+                    Entity entity = selectedEntities[i];
+                    if (em.Exists(entity))
+                        IncludeSelectedAttackModeCandidate(em, entity, ref selection);
+                }
             }
         }
 
@@ -766,21 +776,26 @@ public sealed class RtsSelectionFocusCommandSystem
         if (query.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = selectedEntities[i];
-            if (!em.Exists(entity))
-                continue;
-
-            hasSelected = true;
-            if (context.IsBoardPassengerCandidate?.Invoke(em, entity) == true)
-                hasSelectedBoardPassenger = true;
-
-            if (context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
             {
-                transport = entity;
-                return;
+                Entity entity = selectedEntities[i];
+                if (!em.Exists(entity))
+                    continue;
+
+                hasSelected = true;
+                if (context.IsBoardPassengerCandidate?.Invoke(em, entity) == true)
+                    hasSelectedBoardPassenger = true;
+
+                if (context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
+                {
+                    transport = entity;
+                    return;
+                }
             }
         }
     }

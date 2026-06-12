@@ -10,23 +10,29 @@ public readonly struct InitialSpawnReservationSystem
             ComponentType.ReadOnly<StaticGridBlocker>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<GridBlockerSize>());
-        using var blockers = blockerQuery.ToEntityArray(Allocator.Temp);
-
-        for (int i = 0; i < blockers.Length; i++)
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<GridBlockerSize> blockerSizeType = em.GetComponentTypeHandle<GridBlockerSize>(true);
+        using NativeArray<ArchetypeChunk> chunks = blockerQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity blocker = blockers[i];
-            int2 origin = em.GetComponentData<UnitGrid>(blocker).Cell;
-            int2 size = em.GetComponentData<GridBlockerSize>(blocker).Size;
-            for (int y = origin.y; y < origin.y + size.y; y++)
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<GridBlockerSize> blockerSizes = chunk.GetNativeArray(ref blockerSizeType);
+            for (int i = 0; i < unitGrids.Length; i++)
             {
-                if ((uint)y >= (uint)grid.Height)
-                    continue;
-                int row = y * grid.Width;
-                for (int x = origin.x; x < origin.x + size.x; x++)
+                int2 origin = unitGrids[i].Cell;
+                int2 size = blockerSizes[i].Size;
+                for (int y = origin.y; y < origin.y + size.y; y++)
                 {
-                    if ((uint)x >= (uint)grid.Width)
+                    if ((uint)y >= (uint)grid.Height)
                         continue;
-                    reserved.Set(row + x, true);
+                    int row = y * grid.Width;
+                    for (int x = origin.x; x < origin.x + size.x; x++)
+                    {
+                        if ((uint)x >= (uint)grid.Width)
+                            continue;
+                        reserved.Set(row + x, true);
+                    }
                 }
             }
         }
@@ -46,30 +52,33 @@ public readonly struct InitialSpawnReservationSystem
                 ComponentType.ReadOnly<StaticGridBlocker>(),
             }
         });
-        using var units = unitQuery.ToEntityArray(Allocator.Temp);
-
-        for (int i = 0; i < units.Length; i++)
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+        using NativeArray<ArchetypeChunk> chunks = unitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity unit = units[i];
-            if (!em.Exists(unit))
-                continue;
-
-            int2 center = em.GetComponentData<UnitGrid>(unit).Cell;
-            int2 size = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(unit).Size);
-            int2 min = UnitFootprintUtility.GetMinCell(center, size);
-            int2 max = min + size;
-            for (int y = min.y; y < max.y; y++)
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+            for (int i = 0; i < unitGrids.Length; i++)
             {
-                if ((uint)y >= (uint)grid.Height)
-                    continue;
-
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
+                int2 center = unitGrids[i].Cell;
+                int2 size = UnitFootprintUtility.ClampSize(footprints[i].Size);
+                int2 min = UnitFootprintUtility.GetMinCell(center, size);
+                int2 max = min + size;
+                for (int y = min.y; y < max.y; y++)
                 {
-                    if ((uint)x >= (uint)grid.Width)
+                    if ((uint)y >= (uint)grid.Height)
                         continue;
 
-                    reserved.Set(row + x, true);
+                    int row = y * grid.Width;
+                    for (int x = min.x; x < max.x; x++)
+                    {
+                        if ((uint)x >= (uint)grid.Width)
+                            continue;
+
+                        reserved.Set(row + x, true);
+                    }
                 }
             }
         }

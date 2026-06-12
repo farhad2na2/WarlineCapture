@@ -130,30 +130,38 @@ public sealed class MatchHudSquadTraySelectionSystem
         _candidates.Clear();
         _ranked.Clear();
 
-        using NativeArray<Entity> entities = _unitQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<LocalToWorld> localToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true);
+        using NativeArray<ArchetypeChunk> chunks = _unitQuery.ToArchetypeChunkArray(Allocator.Temp);
         Vector3 cameraCenter = ResolveCameraCenter(context.WorldCamera);
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsSelectablePlayerUnit(em, entity))
-                continue;
-            if (excludePrevious && _lastSelected.Contains(entity))
-                continue;
-            if (!MatchesSlot(em, entity, slot))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref localToWorldType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!IsSelectablePlayerUnit(em, entity))
+                    continue;
+                if (excludePrevious && _lastSelected.Contains(entity))
+                    continue;
+                if (!MatchesSlot(em, entity, slot))
+                    continue;
 
-            Vector3 world = em.GetComponentData<LocalToWorld>(entity).Position;
-            Vector3 viewport = context.WorldCamera != null
-                ? context.WorldCamera.WorldToViewportPoint(world)
-                : new Vector3(0.5f, 0.5f, 1f);
-            bool inViewport = viewport.z > 0f &&
-                              viewport.x >= 0f && viewport.x <= 1f &&
-                              viewport.y >= 0f && viewport.y <= 1f;
-            float screenDistance = inViewport
-                ? new Vector2(viewport.x - 0.5f, viewport.y - 0.5f).sqrMagnitude
-                : float.MaxValue;
-            float worldDistance = XzDistanceSquared(world, cameraCenter);
-            _candidates.Add(new Candidate(entity, world, inViewport, screenDistance, worldDistance));
+                Vector3 world = transforms[i].Position;
+                Vector3 viewport = context.WorldCamera != null
+                    ? context.WorldCamera.WorldToViewportPoint(world)
+                    : new Vector3(0.5f, 0.5f, 1f);
+                bool inViewport = viewport.z > 0f &&
+                                  viewport.x >= 0f && viewport.x <= 1f &&
+                                  viewport.y >= 0f && viewport.y <= 1f;
+                float screenDistance = inViewport
+                    ? new Vector2(viewport.x - 0.5f, viewport.y - 0.5f).sqrMagnitude
+                    : float.MaxValue;
+                float worldDistance = XzDistanceSquared(world, cameraCenter);
+                _candidates.Add(new Candidate(entity, world, inViewport, screenDistance, worldDistance));
+            }
         }
     }
 

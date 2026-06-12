@@ -113,7 +113,14 @@ internal sealed class BuildingPlacementRedirectSystem
         EntityQuery redirectUnitsQuery = context.GetRedirectUnitsQuery != null
             ? context.GetRedirectUnitsQuery()
             : default;
-        using var units = redirectUnitsQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = redirectUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var units = new NativeList<Entity>(redirectUnitsQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            units.AddRange(entities);
+        }
 
         try
         {

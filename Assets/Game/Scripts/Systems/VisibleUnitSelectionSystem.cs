@@ -80,25 +80,33 @@ public sealed class VisibleUnitSelectionSystem
 
         EnsureEntityQueries(em);
         int count = 0;
-        using var entities = _visiblePlayerUnitQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<LocalToWorld> localToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true);
+        using NativeArray<ArchetypeChunk> chunks = _visiblePlayerUnitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsVisiblePlayerUnit(em, entity, selectionUiQuerySystem, filter))
-                continue;
-
-            float3 pos = em.GetComponentData<LocalToWorld>(entity).Position;
-            Vector3 screen = worldCamera.WorldToScreenPoint(pos);
-            if (screen.z <= 0f)
-                continue;
-
-            if (screenRect.Contains(new Vector2(screen.x, screen.y)))
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref localToWorldType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (stopAtFirst)
-                    return 1;
+                Entity entity = entities[i];
+                if (!IsVisiblePlayerUnit(em, entity, selectionUiQuerySystem, filter))
+                    continue;
 
-                selected?.Add(entity);
-                count++;
+                float3 pos = transforms[i].Position;
+                Vector3 screen = worldCamera.WorldToScreenPoint(pos);
+                if (screen.z <= 0f)
+                    continue;
+
+                if (screenRect.Contains(new Vector2(screen.x, screen.y)))
+                {
+                    if (stopAtFirst)
+                        return 1;
+
+                    selected?.Add(entity);
+                    count++;
+                }
             }
         }
 

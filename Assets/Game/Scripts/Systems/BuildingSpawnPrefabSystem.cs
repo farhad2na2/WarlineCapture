@@ -107,17 +107,22 @@ internal sealed class BuildingSpawnPrefabSystem
     private bool TryGetSpawnUnitPrefabEntityFromPrefabQuery(Context context, EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        using NativeArray<Entity> entities = context.SpawnPrefabCandidatesQuery.ToEntityArray(Allocator.Temp);
         string targetName = spawnUnitPrefab.name;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = context.SpawnPrefabCandidatesQuery.ToArchetypeChunkArray(Allocator.Temp);
 
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = entities[i];
-            if (!NamesMatch(em.GetName(candidate), targetName))
-                continue;
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if (!NamesMatch(em.GetName(candidate), targetName))
+                    continue;
 
-            prefabEntity = candidate;
-            return true;
+                prefabEntity = candidate;
+                return true;
+            }
         }
 
         return false;
@@ -127,23 +132,33 @@ internal sealed class BuildingSpawnPrefabSystem
     {
         prefabEntity = Entity.Null;
         string targetName = spawnUnitPrefab != null ? spawnUnitPrefab.name : string.Empty;
-        using NativeArray<Entity> entities = context.LivePlayerUnitsQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitRespawnPrefab> respawnPrefabType = em.GetComponentTypeHandle<UnitRespawnPrefab>(true);
+        using NativeArray<ArchetypeChunk> chunks = context.LivePlayerUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (em.HasComponent<StaticGridBlocker>(entity))
-                continue;
-            if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitRespawnPrefab> respawnPrefabs = chunk.GetNativeArray(ref respawnPrefabType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (em.HasComponent<StaticGridBlocker>(entity))
+                    continue;
+                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                    continue;
 
-            Entity candidate = em.GetComponentData<UnitRespawnPrefab>(entity).Prefab;
-            if (candidate == Entity.Null)
-                continue;
-            if (!NamesMatch(em.GetName(candidate), targetName))
-                continue;
+                Entity candidate = respawnPrefabs[i].Prefab;
+                if (candidate == Entity.Null)
+                    continue;
+                if (!NamesMatch(em.GetName(candidate), targetName))
+                    continue;
 
-            prefabEntity = candidate;
-            return true;
+                prefabEntity = candidate;
+                return true;
+            }
         }
 
         return false;

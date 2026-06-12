@@ -218,24 +218,38 @@ internal sealed class RoadBuildEcsBoundarySystem
     private static bool TryGetPlayerUnitPrefabEntity(EntityManager em, out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        using var query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitRespawnPrefab>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        using var query = em.CreateEntityQuery(new EntityQueryDesc
         {
-            Entity entity = entities[i];
-            if (em.HasComponent<StaticGridBlocker>(entity))
-                continue;
-            if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
-                continue;
+            All = new[]
+            {
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<StaticGridBlocker>(),
+            }
+        });
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitRespawnPrefab> respawnPrefabType = em.GetComponentTypeHandle<UnitRespawnPrefab>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitRespawnPrefab> respawnPrefabs = chunk.GetNativeArray(ref respawnPrefabType);
+            for (int i = 0; i < factions.Length; i++)
+            {
+                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                    continue;
 
-            Entity candidate = em.GetComponentData<UnitRespawnPrefab>(entity).Prefab;
-            if (candidate == Entity.Null)
-                continue;
+                Entity candidate = respawnPrefabs[i].Prefab;
+                if (candidate == Entity.Null)
+                    continue;
 
-            prefabEntity = candidate;
-            return true;
+                prefabEntity = candidate;
+                return true;
+            }
         }
 
         return false;

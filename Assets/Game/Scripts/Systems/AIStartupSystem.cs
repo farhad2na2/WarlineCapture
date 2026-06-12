@@ -190,16 +190,22 @@ public sealed class AIStartupSystem
         AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<AIBuildPlan> planType = em.GetComponentTypeHandle<AIBuildPlan>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         Dictionary<byte, Entity> planEntitiesByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AIBuildPlan>(entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<AIBuildPlan> plans = chunk.GetNativeArray(ref planType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                AIBuildPlan plan = plans[i];
 
-            AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(entity);
-            planEntitiesByFaction[plan.FactionId] = entity;
+                planEntitiesByFaction[plan.FactionId] = entity;
+            }
         }
 
         int enemyConfigIndex = 0;
@@ -250,16 +256,22 @@ public sealed class AIStartupSystem
         AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIProductionPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<AIProductionPlan> planType = em.GetComponentTypeHandle<AIProductionPlan>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         Dictionary<byte, Entity> planEntitiesByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AIProductionPlan>(entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<AIProductionPlan> plans = chunk.GetNativeArray(ref planType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                AIProductionPlan plan = plans[i];
 
-            AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(entity);
-            planEntitiesByFaction[plan.FactionId] = entity;
+                planEntitiesByFaction[plan.FactionId] = entity;
+            }
         }
 
         int enemyConfigIndex = 0;
@@ -311,16 +323,22 @@ public sealed class AIStartupSystem
         AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<AISquadPlan> planType = em.GetComponentTypeHandle<AISquadPlan>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         Dictionary<byte, Entity> planEntitiesByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AISquadPlan>(entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<AISquadPlan> plans = chunk.GetNativeArray(ref planType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                AISquadPlan plan = plans[i];
 
-            AISquadPlan plan = em.GetComponentData<AISquadPlan>(entity);
-            planEntitiesByFaction[plan.FactionId] = entity;
+                planEntitiesByFaction[plan.FactionId] = entity;
+            }
         }
 
         int enemyConfigIndex = 0;
@@ -368,16 +386,22 @@ public sealed class AIStartupSystem
         AISettingsSnapshot aiSettings)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AITargetPrioritySetting>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<AITargetPrioritySetting> settingType = em.GetComponentTypeHandle<AITargetPrioritySetting>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         Dictionary<byte, Entity> settingsByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AITargetPrioritySetting>(entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<AITargetPrioritySetting> settings = chunk.GetNativeArray(ref settingType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                AITargetPrioritySetting setting = settings[i];
 
-            AITargetPrioritySetting setting = em.GetComponentData<AITargetPrioritySetting>(entity);
-            settingsByFaction[setting.FactionId] = entity;
+                settingsByFaction[setting.FactionId] = entity;
+            }
         }
 
         int enemyConfigIndex = 0;

@@ -6,7 +6,15 @@ public readonly struct InitialUnitsSpawnProgressSystem
 {
     public void InitializePending(EntityManager em, InitialUnitsSpawnQuerySystem.Context queryContext)
     {
-        using var initEntities = queryContext.PendingInitQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = queryContext.PendingInitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var initEntities = new NativeList<Entity>(queryContext.PendingInitQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            initEntities.AddRange(entities);
+        }
+
         for (int i = 0; i < initEntities.Length; i++)
         {
             Entity entity = initEntities[i];

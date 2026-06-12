@@ -72,7 +72,14 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         EntityQuery haulerUnitsQuery = context.GetHaulerUnitsQuery != null
             ? context.GetHaulerUnitsQuery()
             : default;
-        using var haulerQuery = haulerUnitsQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = haulerUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var haulerQuery = new NativeList<Entity>(haulerUnitsQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            haulerQuery.AddRange(entities);
+        }
 
         if (haulerQuery.Length == 0)
             return;
@@ -94,7 +101,15 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         EntityQuery selectedUnitsQuery = context.GetSelectedUnitsQuery != null
             ? context.GetSelectedUnitsQuery()
             : default;
-        using var selected = selectedUnitsQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var selected = new NativeList<Entity>(selectedUnitsQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            selected.AddRange(entities);
+        }
+
         if (selected.Length == 0)
             return false;
 

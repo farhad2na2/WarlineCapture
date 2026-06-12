@@ -39,7 +39,7 @@ public readonly struct InitialSpawnGridContextSystem
 
     public bool TryGetGridConfig(EntityManager em, EntityQuery gridContextQuery, out GridConfig grid)
     {
-        if (!TryGetGridEntity(gridContextQuery, out Entity gridEntity))
+        if (!TryGetGridEntity(em, gridContextQuery, out Entity gridEntity))
         {
             grid = default;
             return false;
@@ -52,7 +52,7 @@ public readonly struct InitialSpawnGridContextSystem
     public bool TryCreate(EntityManager em, EntityQuery gridContextQuery, Allocator allocator, out Context context)
     {
         context = default;
-        if (!TryGetGridEntity(gridContextQuery, out Entity gridEntity))
+        if (!TryGetGridEntity(em, gridContextQuery, out Entity gridEntity))
             return false;
 
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
@@ -64,7 +64,7 @@ public readonly struct InitialSpawnGridContextSystem
         return true;
     }
 
-    private static bool TryGetGridEntity(EntityQuery gridContextQuery, out Entity gridEntity)
+    private static bool TryGetGridEntity(EntityManager em, EntityQuery gridContextQuery, out Entity gridEntity)
     {
         gridEntity = Entity.Null;
         int entityCount = gridContextQuery.CalculateEntityCount();
@@ -77,11 +77,18 @@ public readonly struct InitialSpawnGridContextSystem
             return gridEntity != Entity.Null;
         }
 
-        using NativeArray<Entity> gridEntities = gridContextQuery.ToEntityArray(Allocator.Temp);
-        if (gridEntities.Length <= 0)
-            return false;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = gridContextQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            if (gridEntities.Length <= 0)
+                continue;
 
-        gridEntity = gridEntities[0];
-        return gridEntity != Entity.Null;
+            gridEntity = gridEntities[0];
+            return gridEntity != Entity.Null;
+        }
+
+        return false;
     }
 }

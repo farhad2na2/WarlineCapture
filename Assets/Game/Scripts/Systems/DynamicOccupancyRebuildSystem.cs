@@ -221,7 +221,15 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         ref DynamicOccupancyComponent occ,
         int trackedUnitCount)
     {
-        using var currentEntities = _trackedUnitsQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _trackedUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var currentEntities = new NativeList<Entity>(_trackedUnitsQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            currentEntities.AddRange(entities);
+        }
+
         using var currentEntitySet = new NativeHashSet<Entity>(math.max(1, currentEntities.Length), Allocator.Temp);
         for (int i = 0; i < currentEntities.Length; i++)
             currentEntitySet.Add(currentEntities[i]);

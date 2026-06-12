@@ -181,9 +181,14 @@ public sealed class TransportBoardingCommandSystem
         int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
         int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
         int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
-        using NativeArray<Entity> liveUnitEntities = _pathingLiveUnitsQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<UnitGrid> liveUnitGrids = _pathingLiveUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-        using NativeArray<UnitFootprint> liveUnitFootprints = _pathingLiveUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+        int liveUnitCount = math.max(1, _pathingLiveUnitsQuery.CalculateEntityCount());
+        using NativeList<Entity> liveUnitEntities = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitGrid> liveUnitGrids = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitFootprint> liveUnitFootprints = new(liveUnitCount, Allocator.Temp);
+        CollectPathingLiveUnits(em, liveUnitEntities, liveUnitGrids, liveUnitFootprints);
+        NativeArray<Entity> liveUnitEntityArray = liveUnitEntities.AsArray();
+        NativeArray<UnitGrid> liveUnitGridArray = liveUnitGrids.AsArray();
+        NativeArray<UnitFootprint> liveUnitFootprintArray = liveUnitFootprints.AsArray();
 
         bool hasPendingAirPickupLanding = false;
         int2 pendingAirPickupCell = default;
@@ -201,9 +206,9 @@ public sealed class TransportBoardingCommandSystem
                     transportSize,
                     _selectedBoardingSourceEntities,
                     selectedCount,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
+                    liveUnitEntityArray,
+                    liveUnitGridArray,
+                    liveUnitFootprintArray,
                     out pendingAirPickupCell))
             {
                 if (shouldLogTransportBoarding)
@@ -249,9 +254,9 @@ public sealed class TransportBoardingCommandSystem
                     referenceCell,
                     passengerFootprint,
                     passenger,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
+                    liveUnitEntityArray,
+                    liveUnitGridArray,
+                    liveUnitFootprintArray,
                     transport,
                     em.GetComponentData<UnitGrid>(transport).Cell,
                     transportSize,
@@ -447,9 +452,14 @@ public sealed class TransportBoardingCommandSystem
         int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
         int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
         int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
-        using NativeArray<Entity> liveUnitEntities = _pathingLiveUnitsQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<UnitGrid> liveUnitGrids = _pathingLiveUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-        using NativeArray<UnitFootprint> liveUnitFootprints = _pathingLiveUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+        int liveUnitCount = math.max(1, _pathingLiveUnitsQuery.CalculateEntityCount());
+        using NativeList<Entity> liveUnitEntities = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitGrid> liveUnitGrids = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitFootprint> liveUnitFootprints = new(liveUnitCount, Allocator.Temp);
+        CollectPathingLiveUnits(em, liveUnitEntities, liveUnitGrids, liveUnitFootprints);
+        NativeArray<Entity> liveUnitEntityArray = liveUnitEntities.AsArray();
+        NativeArray<UnitGrid> liveUnitGridArray = liveUnitGrids.AsArray();
+        NativeArray<UnitFootprint> liveUnitFootprintArray = liveUnitFootprints.AsArray();
 
         bool hasPendingAirPickupLanding = false;
         int2 pendingAirPickupCell = default;
@@ -469,9 +479,9 @@ public sealed class TransportBoardingCommandSystem
                     transportSize,
                     _targetedBoardingSourceEntities,
                     1,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
+                    liveUnitEntityArray,
+                    liveUnitGridArray,
+                    liveUnitFootprintArray,
                     out pendingAirPickupCell))
             {
                 if (shouldLogTransportBoarding)
@@ -499,9 +509,9 @@ public sealed class TransportBoardingCommandSystem
                 referenceCell,
                 passengerFootprint,
                 passenger,
-                liveUnitEntities,
-                liveUnitGrids,
-                liveUnitFootprints,
+                liveUnitEntityArray,
+                liveUnitGridArray,
+                liveUnitFootprintArray,
                 transport,
                 em.GetComponentData<UnitGrid>(transport).Cell,
                 transportSize,
@@ -583,15 +593,14 @@ public sealed class TransportBoardingCommandSystem
         usedCachedSelection = false;
 
         EnsureEntityQueries(em);
-        using NativeArray<Entity> selectedMoveEntities = _selectedMoveQuery.ToEntityArray(Allocator.Temp);
-        selectedMoveCount = selectedMoveEntities.Length;
-        if (selectedMoveEntities.Length > 0)
+        selectedMoveCount = _selectedMoveQuery.CalculateEntityCount();
+        if (selectedMoveCount > 0)
         {
             selectionStateSystem.CachedSelectedMoveEntities.Clear();
-            for (int i = 0; i < selectedMoveEntities.Length; i++)
+            CollectEntities(em, _selectedMoveQuery, selectedEntities);
+            for (int i = 0; i < selectedEntities.Count; i++)
             {
-                Entity entity = selectedMoveEntities[i];
-                selectedEntities.Add(entity);
+                Entity entity = selectedEntities[i];
                 if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity))
                     selectionStateSystem.CachedSelectedMoveEntities.Add(entity);
             }
@@ -600,12 +609,10 @@ public sealed class TransportBoardingCommandSystem
             return selectedEntities.Count;
         }
 
-        using NativeArray<Entity> selectedTagEntities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
-        selectedTagCount = selectedTagEntities.Length;
-        if (selectedTagEntities.Length > 0)
+        selectedTagCount = _selectedTagQuery.CalculateEntityCount();
+        if (selectedTagCount > 0)
         {
-            for (int i = 0; i < selectedTagEntities.Length; i++)
-                selectedEntities.Add(selectedTagEntities[i]);
+            CollectEntities(em, _selectedTagQuery, selectedEntities);
             return selectedEntities.Count;
         }
 
@@ -625,6 +632,48 @@ public sealed class TransportBoardingCommandSystem
         if (selectedEntities.Count > 0)
             usedCachedSelection = true;
         return selectedEntities.Count;
+    }
+
+    private static void CollectEntities(EntityManager em, EntityQuery query, List<Entity> entities)
+    {
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+                entities.Add(chunkEntities[i]);
+        }
+    }
+
+    private void CollectPathingLiveUnits(
+        EntityManager em,
+        NativeList<Entity> entities,
+        NativeList<UnitGrid> grids,
+        NativeList<UnitFootprint> footprints)
+    {
+        entities.Clear();
+        grids.Clear();
+        footprints.Clear();
+
+        EnsureEntityQueries(em);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitGrid> gridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+        using NativeArray<ArchetypeChunk> chunks = _pathingLiveUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> chunkEntities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitGrid> chunkGrids = chunk.GetNativeArray(ref gridType);
+            NativeArray<UnitFootprint> chunkFootprints = chunk.GetNativeArray(ref footprintType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+            {
+                entities.Add(chunkEntities[i]);
+                grids.Add(chunkGrids[i]);
+                footprints.Add(chunkFootprints[i]);
+            }
+        }
     }
 
     private bool TryGetClickedOrNearbyBoardableTransport(
@@ -691,27 +740,32 @@ public sealed class TransportBoardingCommandSystem
     {
         transport = Entity.Null;
         EnsureEntityQueries(em);
-        using NativeArray<Entity> entities = _allSelectableQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _allSelectableQuery.ToArchetypeChunkArray(Allocator.Temp);
         int bestScore = int.MaxValue;
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = entities[i];
-            if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, candidate))
-                continue;
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, candidate))
+                    continue;
 
-            int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
-            int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
-            int clickPaddingCells = transportBoardingQuerySystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
-            if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
-                continue;
+                int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
+                int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
+                int clickPaddingCells = transportBoardingQuerySystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
+                if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
+                    continue;
 
-            int2 delta = clickedCell - cell;
-            int score = math.abs(delta.x) + math.abs(delta.y);
-            if (score >= bestScore)
-                continue;
+                int2 delta = clickedCell - cell;
+                int score = math.abs(delta.x) + math.abs(delta.y);
+                if (score >= bestScore)
+                    continue;
 
-            bestScore = score;
-            transport = candidate;
+                bestScore = score;
+                transport = candidate;
+            }
         }
 
         return transport != Entity.Null;
@@ -720,16 +774,21 @@ public sealed class TransportBoardingCommandSystem
     private int CountPendingBoardingOrders(EntityManager em, Entity transport)
     {
         EnsureEntityQueries(em);
-        using NativeArray<Entity> entities = _transportBoardingTargetQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _transportBoardingTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
         int count = 0;
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (em.Exists(entity) &&
-                em.HasComponent<UnitTransportBoardingTarget>(entity) &&
-                em.GetComponentData<UnitTransportBoardingTarget>(entity).Transport == transport)
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                count++;
+                Entity entity = entities[i];
+                if (em.Exists(entity) &&
+                    em.HasComponent<UnitTransportBoardingTarget>(entity) &&
+                    em.GetComponentData<UnitTransportBoardingTarget>(entity).Transport == transport)
+                {
+                    count++;
+                }
             }
         }
 

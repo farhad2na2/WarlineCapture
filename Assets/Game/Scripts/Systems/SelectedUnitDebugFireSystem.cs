@@ -78,7 +78,15 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         if (!fireHeld)
             return;
 
-        using NativeArray<Entity> selected = selectedQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<Entity> selected = new(selectedQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            selected.AddRange(entities);
+        }
+
         for (int i = 0; i < selected.Length; i++)
             EnsureDebugFireForSelectedUnit(em, grid, selected[i]);
     }
@@ -325,7 +333,15 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         if (activeQuery.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<Entity> activeSources = activeQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = activeQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<Entity> activeSources = new(activeQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            activeSources.AddRange(entities);
+        }
+
         for (int i = 0; i < activeSources.Length; i++)
         {
             Entity source = activeSources[i];
@@ -374,17 +390,40 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         if (targetQuery.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<Entity> targets = targetQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<DebugFireTargetTag> tagType = em.GetComponentTypeHandle<DebugFireTargetTag>(true);
+        using NativeArray<ArchetypeChunk> chunks = targetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<DebugFireTargetRecord> targets = new(targetQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<DebugFireTargetTag> tags = chunk.GetNativeArray(ref tagType);
+            for (int i = 0; i < entities.Length; i++)
+                targets.Add(new DebugFireTargetRecord(entities[i], tags[i].Source));
+        }
+
         for (int i = 0; i < targets.Length; i++)
         {
-            Entity target = targets[i];
-            DebugFireTargetTag tag = em.GetComponentData<DebugFireTargetTag>(target);
-            if (!em.Exists(tag.Source) ||
-                !em.HasComponent<SelectedUnitDebugFireState>(tag.Source) ||
-                em.GetComponentData<SelectedUnitDebugFireState>(tag.Source).Target != target)
+            DebugFireTargetRecord target = targets[i];
+            if (!em.Exists(target.Source) ||
+                !em.HasComponent<SelectedUnitDebugFireState>(target.Source) ||
+                em.GetComponentData<SelectedUnitDebugFireState>(target.Source).Target != target.Target)
             {
-                em.DestroyEntity(target);
+                em.DestroyEntity(target.Target);
             }
+        }
+    }
+
+    private readonly struct DebugFireTargetRecord
+    {
+        public readonly Entity Target;
+        public readonly Entity Source;
+
+        public DebugFireTargetRecord(Entity target, Entity source)
+        {
+            Target = target;
+            Source = source;
         }
     }
 

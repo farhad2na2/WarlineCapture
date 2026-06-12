@@ -67,7 +67,14 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
         _progressSystem.InitializePending(em, _queryContext);
 
-        using var progressEntities = _queryContext.ProgressQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> progressChunks = _queryContext.ProgressQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var progressEntities = new NativeList<Entity>(_queryContext.ProgressQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < progressChunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = progressChunks[chunkIndex].GetNativeArray(entityType);
+            progressEntities.AddRange(entities);
+        }
 
         for (int configIndex = 0; configIndex < progressEntities.Length; configIndex++)
         {

@@ -494,42 +494,50 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
         state.EntityManager.CompleteDependencyBeforeRW<GroundMissileProjectileComponent>();
         state.EntityManager.CompleteDependencyBeforeRW<LocalTransform>();
 
-        ComponentLookup<GroundMissileProjectileComponent> projectileLookup = SystemAPI.GetComponentLookup<GroundMissileProjectileComponent>();
-        ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>();
-        using NativeArray<Entity> entities = _projectileQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        ComponentTypeHandle<GroundMissileProjectileComponent> projectileType = state.GetComponentTypeHandle<GroundMissileProjectileComponent>(false);
+        ComponentTypeHandle<LocalTransform> transformType = state.GetComponentTypeHandle<LocalTransform>(false);
+        using NativeArray<ArchetypeChunk> chunks = _projectileQuery.ToArchetypeChunkArray(Allocator.Temp);
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            GroundMissileProjectileComponent projectile = projectileLookup[entity];
-            LocalTransform transform = transformLookup[entity];
-
-            projectile.ElapsedSeconds += dt;
-            float duration = math.max(0.01f, projectile.DurationSeconds);
-            float t = math.saturate(projectile.ElapsedSeconds / duration);
-            float3 position = math.lerp(projectile.StartPosition, projectile.TargetPosition, t);
-            position.y += math.sin(t * math.PI) * math.max(0f, projectile.ArcHeight);
-            transform.Position = position;
-
-            projectileLookup[entity] = projectile;
-            transformLookup[entity] = transform;
-
-            if (projectile.ElapsedSeconds < duration)
-                continue;
-
-            ecb.AddComponent(entity, new GroundMissileImpactRequestComponent
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<GroundMissileProjectileComponent> projectiles = chunk.GetNativeArray(ref projectileType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                Source = projectile.Source,
-                TargetEntity = projectile.TargetEntity,
-                TargetCell = projectile.TargetCell,
-                Position = projectile.TargetPosition,
-                DamageRadius = projectile.DamageRadius,
-                Damage = projectile.Damage,
-                FactionId = projectile.FactionId
-            });
-            ecb.RemoveComponent<GroundMissileProjectileComponent>(entity);
-            ecb.RemoveComponent<MissileInterceptionTargetComponent>(entity);
+                Entity entity = entities[i];
+                GroundMissileProjectileComponent projectile = projectiles[i];
+                LocalTransform transform = transforms[i];
+
+                projectile.ElapsedSeconds += dt;
+                float duration = math.max(0.01f, projectile.DurationSeconds);
+                float t = math.saturate(projectile.ElapsedSeconds / duration);
+                float3 position = math.lerp(projectile.StartPosition, projectile.TargetPosition, t);
+                position.y += math.sin(t * math.PI) * math.max(0f, projectile.ArcHeight);
+                transform.Position = position;
+
+                projectiles[i] = projectile;
+                transforms[i] = transform;
+
+                if (projectile.ElapsedSeconds < duration)
+                    continue;
+
+                ecb.AddComponent(entity, new GroundMissileImpactRequestComponent
+                {
+                    Source = projectile.Source,
+                    TargetEntity = projectile.TargetEntity,
+                    TargetCell = projectile.TargetCell,
+                    Position = projectile.TargetPosition,
+                    DamageRadius = projectile.DamageRadius,
+                    Damage = projectile.Damage,
+                    FactionId = projectile.FactionId
+                });
+                ecb.RemoveComponent<GroundMissileProjectileComponent>(entity);
+                ecb.RemoveComponent<MissileInterceptionTargetComponent>(entity);
+            }
         }
 
         ecb.Playback(em);

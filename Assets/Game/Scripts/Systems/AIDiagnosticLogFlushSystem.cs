@@ -18,10 +18,10 @@ public partial struct AIDiagnosticLogFlushSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         bool shouldLog = ShouldFlushDiagnostics(ref state);
-        using Unity.Collections.NativeArray<Entity> queueEntities = _logQueueQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < queueEntities.Length; i++)
+        foreach (DynamicBuffer<AIDiagnosticLogComponent> logs in SystemAPI
+                     .Query<DynamicBuffer<AIDiagnosticLogComponent>>()
+                     .WithAll<AIDiagnosticLogQueueComponent>())
         {
-            DynamicBuffer<AIDiagnosticLogComponent> logs = state.EntityManager.GetBuffer<AIDiagnosticLogComponent>(queueEntities[i]);
             if (shouldLog)
             {
                 for (int logIndex = 0; logIndex < logs.Length; logIndex++)

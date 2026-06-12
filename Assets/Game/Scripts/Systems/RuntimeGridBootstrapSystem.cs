@@ -62,18 +62,24 @@ internal sealed class RuntimeGridBootstrapSystem
     private static Entity ResolveGridEntity(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        using NativeArray<Entity> gridEntities = query.ToEntityArray(Allocator.Temp);
-        if (gridEntities.Length > 0)
+        EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        Entity firstGridEntity = Entity.Null;
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
+            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
             for (int i = 0; i < gridEntities.Length; i++)
             {
                 Entity candidate = gridEntities[i];
+                if (firstGridEntity == Entity.Null)
+                    firstGridEntity = candidate;
                 if (!entityManager.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
                     return candidate;
             }
-
-            return gridEntities[0];
         }
+
+        if (firstGridEntity != Entity.Null)
+            return firstGridEntity;
 
         Entity entity = entityManager.CreateEntity(typeof(GridConfig), typeof(RuntimeGridBootstrapGridTag));
         entityManager.SetName(entity, "RuntimeGameplayGrid");

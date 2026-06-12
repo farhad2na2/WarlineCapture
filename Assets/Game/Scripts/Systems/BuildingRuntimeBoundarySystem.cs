@@ -830,22 +830,32 @@ public sealed class BuildingRuntimeBoundarySystem
     private static bool TryGetGridConfig(EntityManager em, out GridConfig grid)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        using NativeArray<Entity> gridEntities = query.ToEntityArray(Allocator.Temp);
-        if (gridEntities.Length == 0)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        Entity gridEntity = Entity.Null;
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < gridEntities.Length; i++)
+            {
+                Entity candidate = gridEntities[i];
+                if (gridEntity == Entity.Null)
+                    gridEntity = candidate;
+                if (!em.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
+                {
+                    gridEntity = candidate;
+                    break;
+                }
+            }
+
+            if (gridEntity != Entity.Null && !em.HasComponent<RuntimeGridBootstrapGridTag>(gridEntity))
+                break;
+        }
+
+        if (gridEntity == Entity.Null)
         {
             grid = default;
             return false;
-        }
-
-        Entity gridEntity = gridEntities[0];
-        for (int i = 0; i < gridEntities.Length; i++)
-        {
-            Entity candidate = gridEntities[i];
-            if (!em.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
-            {
-                gridEntity = candidate;
-                break;
-            }
         }
 
         grid = em.GetComponentData<GridConfig>(gridEntity);

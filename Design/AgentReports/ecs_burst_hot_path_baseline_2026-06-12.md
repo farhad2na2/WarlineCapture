@@ -158,7 +158,7 @@ Metrics to record:
 ## Guardrail Added
 
 Added `EcsBurstHotPathArchitectureTests` with current ratchet ceilings:
-- Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls must not exceed 56.
+- Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls must not exceed 29.
 - Direct `EntityManager` mutation calls must not exceed 40.
 - Files with `OnUpdate` and no `[BurstCompile]` must not exceed 38.
 - Files with `[BurstCompile]` must not drop below 23.
@@ -219,6 +219,8 @@ The unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` API and its `Sel
 `AIBuildPlannerSystem` and `AISquadSystem` now collect plan/unit entities from chunks before preserving their existing plan-processing and squad-creation logic.
 `InitialSpawnDuplicateCellDiagnosticSystem`, `InitialSpawnGridContextSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, `RuntimeGridBootstrapSystem`, `SceneLifecycleSystem`, `RoadBuildEcsBoundarySystem`, `VisibleUnitSelectionSystem`, `MatchHudSquadTraySelectionSystem`, `BuildingPlacementRedirectSystem`, `InitialUnitsBlockerChurnSystem`, and `InitialUnitsSpawnSystem` now use chunk traversal or chunk-collected entity lists for their one-off startup/HUD/boundary scans.
 `DynamicOccupancyRebuildSystem`, `GroundMissileLauncherSystems`, `BuildingRuntimeBoundarySystem`, `BuildingSpawnSystem`, `BuildingSpawnPrefabSystem`, and `BuildingResourceHaulerBridgeSystem` now use chunk traversal or chunk-collected entity lists for contained runtime/building scans.
+`AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`, `SelectedUnitDebugFireSystem`, `FocusableUnitLookupSystem`, and `RtsSelectionFocusCommandSystem` now use chunk traversal or chunk-collected entity lists for startup plan/reference scans, debug-fire cleanup, focusable lookup refresh, and selected move/attack/board command checks.
+`TransportBoardingCommandSystem` now uses chunk traversal or chunk-filled `NativeList` buffers for selected passenger source scans, nearby-transport searches, pending-boarding counts, and paired pathing live-unit arrays.
 
 Validation:
 - Full explicit editor validation after the Phase 2 conversions:
@@ -227,7 +229,7 @@ Validation:
 - Hot-path architecture guardrail:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
-  - Ratcheted guardrails after latest slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling `56`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
+  - Ratcheted guardrails after latest slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling `29`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
 - Selected debug-fire focused validation after the chunk-iteration slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectedUnitDebugFireSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selected-debug-fire.log`
   - Log marker: `[SelectedUnitDebugFireFocusedValidation] result=Passed tests=6`.
@@ -391,8 +393,8 @@ Validation:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=456 skipped=23`.
-  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `40`.
-  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `56`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `17`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `29`.
 - `git diff --check` passed after the latest slice.
 
 Behavior coverage added in the latest slice:

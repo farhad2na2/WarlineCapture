@@ -12,6 +12,7 @@ public partial struct AISquadSystem : ISystem
     private EntityQuery _unitQuery;
     private EntityQuery _squadQuery;
     private EntityQuery _factionGridQuery;
+    private EntityTypeHandle _entityType;
     private ComponentTypeHandle<AISquad> _squadType;
     private ComponentTypeHandle<Faction> _factionType;
     private ComponentTypeHandle<UnitGrid> _unitGridType;
@@ -29,6 +30,7 @@ public partial struct AISquadSystem : ISystem
             ComponentType.ReadOnly<AIControlledTag>());
         _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
         _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
+        _entityType = state.GetEntityTypeHandle();
         _squadType = state.GetComponentTypeHandle<AISquad>(true);
         _factionType = state.GetComponentTypeHandle<Faction>(true);
         _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
@@ -52,8 +54,22 @@ public partial struct AISquadSystem : ISystem
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
-        using NativeArray<Entity> planEntities = _planQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<Entity> unitEntities = _unitQuery.ToEntityArray(Allocator.Temp);
+        _entityType.Update(ref state);
+        using NativeArray<ArchetypeChunk> planChunks = _planQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<Entity> planEntities = new(_planQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < planChunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = planChunks[chunkIndex].GetNativeArray(_entityType);
+            planEntities.AddRange(entities);
+        }
+
+        using NativeArray<ArchetypeChunk> unitChunks = _unitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<Entity> unitEntities = new(_unitQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < unitChunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = unitChunks[chunkIndex].GetNativeArray(_entityType);
+            unitEntities.AddRange(entities);
+        }
 
         for (int i = 0; i < planEntities.Length; i++)
         {

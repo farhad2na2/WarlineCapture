@@ -124,21 +124,29 @@ public sealed class FocusableUnitLookupSystem
 
         float maxDistanceSq = maxDistancePixels * maxDistancePixels;
         float bestDistanceSq = maxDistanceSq;
-        using NativeArray<Entity> entities = _focusableUnitsQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<LocalToWorld> localToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true);
+        using NativeArray<ArchetypeChunk> chunks = _focusableUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsFocusableUnitCandidate(em, entity))
-                continue;
-
-            Vector3 worldPosition = em.GetComponentData<LocalToWorld>(entity).Position;
-            float distanceSq = math.min(
-                ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
-                ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
-            if (distanceSq < bestDistanceSq)
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref localToWorldType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                bestDistanceSq = distanceSq;
-                bestEntity = entity;
+                Entity entity = entities[i];
+                if (!IsFocusableUnitCandidate(em, entity))
+                    continue;
+
+                Vector3 worldPosition = transforms[i].Position;
+                float distanceSq = math.min(
+                    ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
+                    ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
+                if (distanceSq < bestDistanceSq)
+                {
+                    bestDistanceSq = distanceSq;
+                    bestEntity = entity;
+                }
             }
         }
 
@@ -169,7 +177,15 @@ public sealed class FocusableUnitLookupSystem
         if (_changedFocusableCoverageQuery.IsEmptyIgnoreFilter)
             return;
 
-        using var changedEntities = _changedFocusableCoverageQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _changedFocusableCoverageQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var changedEntities = new NativeList<Entity>(_changedFocusableCoverageQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            changedEntities.AddRange(entities);
+        }
+
         for (int i = 0; i < changedEntities.Length; i++)
             RefreshLookupEntry(em, grid, changedEntities[i]);
     }
@@ -179,16 +195,24 @@ public sealed class FocusableUnitLookupSystem
         _focusableUnitsByCell.Clear();
         _focusableUnitCoverage.Clear();
 
-        using var entities = _focusableUnitsQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+        using NativeArray<ArchetypeChunk> chunks = _focusableUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsFocusableUnitCandidate(em, entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!IsFocusableUnitCandidate(em, entity))
+                    continue;
 
-            int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-            int2 size = em.GetComponentData<UnitFootprint>(entity).Size;
-            AddLookupEntry(em, grid, entity, cell, size);
+                AddLookupEntry(em, grid, entity, grids[i].Cell, footprints[i].Size);
+            }
         }
 
         _lastFocusableUnitCount = focusableUnitCount;

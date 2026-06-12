@@ -330,14 +330,19 @@ public sealed class SceneLifecycleSystem
         InitialUnitsRuntimeState.ZoomOutHeld = false;
 
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
-        using NativeArray<Entity> stateEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < stateEntities.Length; i++)
+        ComponentTypeHandle<RuntimeGameplayStateComponent> stateType = em.GetComponentTypeHandle<RuntimeGameplayStateComponent>(false);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            RuntimeGameplayStateComponent state = em.GetComponentData<RuntimeGameplayStateComponent>(stateEntities[i]);
-            state.PlayRequested = 0;
-            state.SelectionModeActive = 0;
-            state.BuildModeActive = 0;
-            em.SetComponentData(stateEntities[i], state);
+            NativeArray<RuntimeGameplayStateComponent> states = chunks[chunkIndex].GetNativeArray(ref stateType);
+            for (int i = 0; i < states.Length; i++)
+            {
+                RuntimeGameplayStateComponent state = states[i];
+                state.PlayRequested = 0;
+                state.SelectionModeActive = 0;
+                state.BuildModeActive = 0;
+                states[i] = state;
+            }
         }
     }
 

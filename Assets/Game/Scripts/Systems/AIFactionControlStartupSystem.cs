@@ -35,8 +35,18 @@ public sealed class AIFactionControlStartupSystem
         Entity configEntity;
         using (EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<FactionControlConfigTag>()))
         {
-            using var entities = query.ToEntityArray(Allocator.Temp);
-            configEntity = entities.Length > 0 ? entities[0] : Entity.Null;
+            configEntity = Entity.Null;
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                if (entities.Length == 0)
+                    continue;
+
+                configEntity = entities[0];
+                break;
+            }
         }
 
         if (configEntity == Entity.Null)

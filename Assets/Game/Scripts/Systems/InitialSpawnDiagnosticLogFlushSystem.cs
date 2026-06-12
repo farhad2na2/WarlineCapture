@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -18,11 +17,10 @@ public partial struct InitialSpawnDiagnosticLogFlushSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        using NativeArray<Entity> queueEntities = _logQueueQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < queueEntities.Length; i++)
+        foreach (DynamicBuffer<InitialSpawnDiagnosticLogComponent> logs in
+                 SystemAPI.Query<DynamicBuffer<InitialSpawnDiagnosticLogComponent>>()
+                     .WithAll<InitialSpawnDiagnosticLogQueueComponent>())
         {
-            DynamicBuffer<InitialSpawnDiagnosticLogComponent> logs =
-                state.EntityManager.GetBuffer<InitialSpawnDiagnosticLogComponent>(queueEntities[i]);
             for (int logIndex = 0; logIndex < logs.Length; logIndex++)
             {
                 InitialSpawnDiagnosticLogComponent log = logs[logIndex];

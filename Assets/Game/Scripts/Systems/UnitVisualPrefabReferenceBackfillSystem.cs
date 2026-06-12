@@ -35,18 +35,26 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
             return;
 
         var unitsToPatch = new NativeList<Entity>(Allocator.Temp);
-        using NativeArray<Entity> entities = _unitsToPatchQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitSourcePrefabKey> sourceKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
+        using NativeArray<ArchetypeChunk> chunks = _unitsToPatchQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
-            if (sourceKey.Value.Length == 0)
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitSourcePrefabKey> sourceKeys = chunk.GetNativeArray(ref sourceKeyType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                AddBackfilledTag(em, entity);
-                continue;
-            }
+                Entity entity = entities[i];
+                UnitSourcePrefabKey sourceKey = sourceKeys[i];
+                if (sourceKey.Value.Length == 0)
+                {
+                    AddBackfilledTag(em, entity);
+                    continue;
+                }
 
-            unitsToPatch.Add(entity);
+                unitsToPatch.Add(entity);
+            }
         }
 
         for (int i = 0; i < unitsToPatch.Length; i++)
@@ -63,24 +71,32 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<Prefab>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>());
-        using NativeArray<Entity> prefabs = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < prefabs.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitSourcePrefabKey> sourceKeyType = em.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity prefab = prefabs[i];
-            FixedString64Bytes sourceKey = em.GetComponentData<UnitSourcePrefabKey>(prefab).Value;
-            if (sourceKey.Length == 0)
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> prefabs = chunk.GetNativeArray(entityType);
+            NativeArray<UnitSourcePrefabKey> sourceKeys = chunk.GetNativeArray(ref sourceKeyType);
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                Entity prefab = prefabs[i];
+                FixedString64Bytes sourceKey = sourceKeys[i].Value;
+                if (sourceKey.Length == 0)
+                    continue;
 
-            UnitVisualPrefabReferenceSet refs = CreateReferenceSet(em, prefab);
-            if (!refs.HasAny)
-                continue;
+                UnitVisualPrefabReferenceSet refs = CreateReferenceSet(em, prefab);
+                if (!refs.HasAny)
+                    continue;
 
-            if (defaultReferences.SelectionMarkerPrefab == Entity.Null && refs.SelectionMarkerPrefab != Entity.Null)
-                defaultReferences.SelectionMarkerPrefab = refs.SelectionMarkerPrefab;
-            if (defaultReferences.HealthBarPrefab == Entity.Null && refs.HealthBarPrefab != Entity.Null)
-                defaultReferences.HealthBarPrefab = refs.HealthBarPrefab;
+                if (defaultReferences.SelectionMarkerPrefab == Entity.Null && refs.SelectionMarkerPrefab != Entity.Null)
+                    defaultReferences.SelectionMarkerPrefab = refs.SelectionMarkerPrefab;
+                if (defaultReferences.HealthBarPrefab == Entity.Null && refs.HealthBarPrefab != Entity.Null)
+                    defaultReferences.HealthBarPrefab = refs.HealthBarPrefab;
 
-            referencesBySourceKey[sourceKey] = refs;
+                referencesBySourceKey[sourceKey] = refs;
+            }
         }
 
         return defaultReferences;
@@ -92,17 +108,22 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         if (query.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        ComponentTypeHandle<UnitSharedVisualPrefabReferences> sharedType = em.GetComponentTypeHandle<UnitSharedVisualPrefabReferences>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            UnitSharedVisualPrefabReferences shared = em.GetComponentData<UnitSharedVisualPrefabReferences>(entities[i]);
-            if (defaultReferences.SelectionMarkerPrefab == Entity.Null && shared.SelectionMarkerPrefab != Entity.Null)
-                defaultReferences.SelectionMarkerPrefab = shared.SelectionMarkerPrefab;
-            if (defaultReferences.HealthBarPrefab == Entity.Null && shared.HealthBarPrefab != Entity.Null)
-                defaultReferences.HealthBarPrefab = shared.HealthBarPrefab;
+            NativeArray<UnitSharedVisualPrefabReferences> sharedReferences = chunks[chunkIndex].GetNativeArray(ref sharedType);
+            for (int i = 0; i < sharedReferences.Length; i++)
+            {
+                UnitSharedVisualPrefabReferences shared = sharedReferences[i];
+                if (defaultReferences.SelectionMarkerPrefab == Entity.Null && shared.SelectionMarkerPrefab != Entity.Null)
+                    defaultReferences.SelectionMarkerPrefab = shared.SelectionMarkerPrefab;
+                if (defaultReferences.HealthBarPrefab == Entity.Null && shared.HealthBarPrefab != Entity.Null)
+                    defaultReferences.HealthBarPrefab = shared.HealthBarPrefab;
 
-            if (defaultReferences.SelectionMarkerPrefab != Entity.Null && defaultReferences.HealthBarPrefab != Entity.Null)
-                break;
+                if (defaultReferences.SelectionMarkerPrefab != Entity.Null && defaultReferences.HealthBarPrefab != Entity.Null)
+                    return;
+            }
         }
     }
 
@@ -112,17 +133,22 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         if (query.IsEmptyIgnoreFilter)
             return;
 
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        ComponentTypeHandle<InitialUnitsSpawnConfig> configType = em.GetComponentTypeHandle<InitialUnitsSpawnConfig>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            InitialUnitsSpawnConfig config = em.GetComponentData<InitialUnitsSpawnConfig>(entities[i]);
-            if (defaultReferences.SelectionMarkerPrefab == Entity.Null && config.UnitSelectionMarkerPrefab != Entity.Null)
-                defaultReferences.SelectionMarkerPrefab = config.UnitSelectionMarkerPrefab;
-            if (defaultReferences.HealthBarPrefab == Entity.Null && config.UnitHealthBarPrefab != Entity.Null)
-                defaultReferences.HealthBarPrefab = config.UnitHealthBarPrefab;
+            NativeArray<InitialUnitsSpawnConfig> configs = chunks[chunkIndex].GetNativeArray(ref configType);
+            for (int i = 0; i < configs.Length; i++)
+            {
+                InitialUnitsSpawnConfig config = configs[i];
+                if (defaultReferences.SelectionMarkerPrefab == Entity.Null && config.UnitSelectionMarkerPrefab != Entity.Null)
+                    defaultReferences.SelectionMarkerPrefab = config.UnitSelectionMarkerPrefab;
+                if (defaultReferences.HealthBarPrefab == Entity.Null && config.UnitHealthBarPrefab != Entity.Null)
+                    defaultReferences.HealthBarPrefab = config.UnitHealthBarPrefab;
 
-            if (defaultReferences.SelectionMarkerPrefab != Entity.Null && defaultReferences.HealthBarPrefab != Entity.Null)
-                break;
+                if (defaultReferences.SelectionMarkerPrefab != Entity.Null && defaultReferences.HealthBarPrefab != Entity.Null)
+                    return;
+            }
         }
     }
 

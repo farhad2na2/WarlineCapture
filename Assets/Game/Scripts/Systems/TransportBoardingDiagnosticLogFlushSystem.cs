@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -19,11 +18,10 @@ public partial struct TransportBoardingDiagnosticLogFlushSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         bool shouldLog = ShouldFlushDiagnostics(ref state);
-        using NativeArray<Entity> queueEntities = _logQueueQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < queueEntities.Length; i++)
+        foreach (DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs in SystemAPI
+                     .Query<DynamicBuffer<TransportBoardingDiagnosticLogComponent>>()
+                     .WithAll<TransportBoardingDiagnosticLogQueueComponent>())
         {
-            DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs =
-                state.EntityManager.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntities[i]);
             if (shouldLog)
             {
                 for (int logIndex = 0; logIndex < logs.Length; logIndex++)

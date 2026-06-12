@@ -30,28 +30,36 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
             return;
         }
 
-        using NativeArray<Entity> entities = _playerUnitTargetQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityManager em = EntityManager;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitTarget> targetType = em.GetComponentTypeHandle<UnitTarget>(true);
+        using NativeArray<ArchetypeChunk> chunks = _playerUnitTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!EntityManager.Exists(entity) ||
-                !EntityManager.HasComponent<Faction>(entity) ||
-                !FactionIdentitySystem.IsPlayerControlled(EntityManager.GetComponentData<Faction>(entity).Id))
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitTarget> targets = chunk.GetNativeArray(ref targetType);
+
+            for (int i = 0; i < entities.Length; i++)
             {
-                continue;
+                Entity entity = entities[i];
+                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                    continue;
+
+                UnitTarget target = targets[i];
+                if (_lastTargets.TryGetValue(entity, out int2 previous) && previous.Equals(target.Cell))
+                    continue;
+
+                _lastTargets[entity] = target.Cell;
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+                    $"[SelectionClick] playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
+                    $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
+                    $"pathRequest={ResolvePathRequest(entity)} pathFollow={EntityManager.HasComponent<UnitPathFollow>(entity)} " +
+                    $"manual={EntityManager.HasComponent<ManualMoveOrderTag>(entity)} engage={EntityManager.HasComponent<EngageTarget>(entity)} " +
+                    $"selected={EntityManager.HasComponent<SelectedUnitTag>(entity)} autoWander={EntityManager.HasComponent<AutoWanderMoveTag>(entity)}");
             }
-
-            UnitTarget target = EntityManager.GetComponentData<UnitTarget>(entity);
-            if (_lastTargets.TryGetValue(entity, out int2 previous) && previous.Equals(target.Cell))
-                continue;
-
-            _lastTargets[entity] = target.Cell;
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[SelectionClick] playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
-                $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
-                $"pathRequest={ResolvePathRequest(entity)} pathFollow={EntityManager.HasComponent<UnitPathFollow>(entity)} " +
-                $"manual={EntityManager.HasComponent<ManualMoveOrderTag>(entity)} engage={EntityManager.HasComponent<EngageTarget>(entity)} " +
-                $"selected={EntityManager.HasComponent<SelectedUnitTag>(entity)} autoWander={EntityManager.HasComponent<AutoWanderMoveTag>(entity)}");
         }
 
         if (UnityEngine.Time.frameCount - _lastPruneFrame < 120)

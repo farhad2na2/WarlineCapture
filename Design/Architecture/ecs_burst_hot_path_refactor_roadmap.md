@@ -23,17 +23,14 @@ Observed:
 - 23 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
 - 38 files have `OnUpdate` and no `[BurstCompile]`.
-- 40 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
-- 56 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
+- 17 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
+- 29 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
 - 40 direct `EntityManager` structural or component mutation calls.
 - Main array-copy offenders:
   - `SelectionGameplayStartupSystem`: 10 `To*Array` calls.
-  - `TransportBoardingCommandSystem`: 10.
   - `UnitTransportRopeDisembarkSystem`: 8.
   - `CustomGameStartupSystem`: 5.
-  - `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`: 4 each.
-  - `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectedUnitDebugFireSystem`, `UnitGridMovementSystem`, `UnitPathLiveUnitSnapshotSystem`: 3 each.
-  - `BuildingResourceHaulerBridgeSystem`, `BuildingSpawnPrefabSystem`: 2 each.
+  - `UnitGridMovementSystem`, `UnitPathLiveUnitSnapshotSystem`: 3 each.
 - Direct structural/component mutation is concentrated mainly in:
   - `CitizenVisibleUnitSystem`: 15.
   - `CitizenMovementCommandSystem`: 10.
@@ -561,7 +558,13 @@ Progress notes:
 - 2026-06-12: Continued contained runtime/building cleanup in `DynamicOccupancyRebuildSystem`, `GroundMissileLauncherSystems`, `BuildingRuntimeBoundarySystem`, `BuildingSpawnSystem`, `BuildingSpawnPrefabSystem`, and `BuildingResourceHaulerBridgeSystem`. These now use chunk traversal or chunk-collected entity lists while preserving existing ECB impact timing, spawn overlap behavior, prefab lookup, and resource-hauler ordering.
 - 2026-06-12: Guardrail ratchet after the contained runtime/building cleanup slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `56`.
 - 2026-06-12: Static count after the contained runtime/building cleanup slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `40`; generic-aware count confirmed at `56`.
-- 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, pathfinding diagnostic, runtime-grid, move-target diagnostic, diagnostic flush, initial-spawn diagnostic flush, startup-boundary, AI plan/squad, one-off startup/HUD/boundary, and contained runtime/building chunk traversal slices:
+- 2026-06-12: Continued startup/presentation/debug/selection cleanup in `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`, `SelectedUnitDebugFireSystem`, `FocusableUnitLookupSystem`, and `RtsSelectionFocusCommandSystem`. These now use chunk traversal or chunk-collected entity lists for plan/production/squad/target-priority startup scans, visual-prefab reference backfill, selected debug-fire cleanup, focusable lookup refresh, and selected move/attack/board command checks.
+- 2026-06-12: Guardrail ratchet after the startup/presentation/debug/selection cleanup slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `39`.
+- 2026-06-12: Static count after the startup/presentation/debug/selection cleanup slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `23`; generic-aware count confirmed at `39`.
+- 2026-06-12: Continued transport cleanup in `TransportBoardingCommandSystem`. Selected passenger source scans, nearby-transport searches, pending-boarding counts, and paired pathing live-unit arrays now use chunk traversal or chunk-filled `NativeList` buffers, preserving existing approach-cell and air-pickup helper behavior.
+- 2026-06-12: Guardrail ratchet after the transport boarding chunk traversal slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `29`.
+- 2026-06-12: Static count after the transport boarding slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `17`; generic-aware count confirmed at `29`.
+- 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, pathfinding diagnostic, runtime-grid, move-target diagnostic, diagnostic flush, initial-spawn diagnostic flush, startup-boundary, AI plan/squad, one-off startup/HUD/boundary, contained runtime/building, startup/presentation/debug/selection, and transport boarding chunk traversal slices:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
@@ -576,11 +579,11 @@ Purpose:
 Reduce the largest known source of main-thread query snapshots while keeping active Match HUD command behavior stable.
 
 Target areas:
-- `SelectionGameplayStartupSystem`
-- `RtsSelectionFocusCommandSystem`
-- `FocusableUnitLookupSystem`
-- `SelectionSummaryQuerySystem`
-- `SelectionUiReadModelSystem`
+- [ ] `SelectionGameplayStartupSystem`
+- [x] `RtsSelectionFocusCommandSystem`
+- [x] `FocusableUnitLookupSystem`
+- [x] `SelectionSummaryQuerySystem`
+- [x] `SelectionUiReadModelSystem`
 
 Implementation steps:
 - [ ] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
@@ -606,14 +609,14 @@ Purpose:
 Optimize boarding candidate search, board-all, passenger state, and rope disembark without changing UX.
 
 Target areas:
-- `TransportBoardingCommandSystem`
-- `UnitTransportRopeDisembarkSystem`
-- `SelectionTransportCommandRequestSystem`
-- transport passenger drawer read model
+- [x] `TransportBoardingCommandSystem`
+- [ ] `UnitTransportRopeDisembarkSystem`
+- [ ] `SelectionTransportCommandRequestSystem`
+- [ ] transport passenger drawer read model
 
 Implementation steps:
 - [ ] Move nearest eligible passenger search into a Burst-compatible candidate job.
-- [ ] Use native result buffers for board-all candidates up to remaining transport capacity.
+- [~] Use native result buffers for board-all candidates up to remaining transport capacity.
 - [ ] Replace repeated entity/component array snapshots in rope disembark with chunk/job processing.
 - [ ] Batch passenger add/remove/hidden visual ECS state through ECB.
 - [ ] Keep GameObject visual hiding/restoring in the managed presentation utility boundary only.

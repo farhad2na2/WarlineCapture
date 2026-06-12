@@ -28,6 +28,7 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
     {
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityTypeHandle entityType = state.GetEntityTypeHandle();
 
         foreach (var (cfg, churn, entity) in
                  SystemAPI.Query<RefRO<InitialUnitsBlockerChurnConfig>, RefRW<InitialUnitsBlockerChurnComponent>>().WithEntityAccess())
@@ -49,7 +50,14 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
             var rng = new Random(math.max(1u, churn.ValueRW.RandomState));
             churn.ValueRW.RandomState = rng.NextUInt();
 
-            using var existingBlockers = _blockersQuery.ToEntityArray(Allocator.Temp);
+            using NativeArray<ArchetypeChunk> chunks = _blockersQuery.ToArchetypeChunkArray(Allocator.Temp);
+            using var existingBlockers = new NativeList<Entity>(_blockersQuery.CalculateEntityCount(), Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                existingBlockers.AddRange(entities);
+            }
+
             int toRemove = math.min(n, existingBlockers.Length);
             if (toRemove > 0)
             {

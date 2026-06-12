@@ -55,7 +55,14 @@ public partial struct AIBuildPlannerSystem : ISystem
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
-        using NativeArray<Entity> planEntities = _planQuery.ToEntityArray(Allocator.Temp);
+        _entityType.Update(ref state);
+        using NativeArray<ArchetypeChunk> planChunks = _planQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeList<Entity> planEntities = new(_planQuery.CalculateEntityCount(), Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < planChunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = planChunks[chunkIndex].GetNativeArray(_entityType);
+            planEntities.AddRange(entities);
+        }
 
         for (int i = 0; i < planEntities.Length; i++)
         {
@@ -64,7 +71,6 @@ public partial struct AIBuildPlannerSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
-            _entityType.Update(ref state);
             _economyType.Update(ref state);
             if (!TryFindEconomyEntity(_economyQuery, _entityType, ref _economyType, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
                 continue;

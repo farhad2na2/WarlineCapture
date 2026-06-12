@@ -20,9 +20,12 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.VehicleVisualPrefabReferenceBackfillCopiesMarkerReferenceFromSourcePrefab();
             tests.VehicleVisualPrefabReferenceBackfillUsesSharedMarkerWhenSourcePrefabIsStale();
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
+            tests.UnitRuntimeHealthBarSystemCreatesAndRemovesRuntimeHealthBar();
+            tests.UnitRuntimeHealthBarSystemCreatesHealthBarForDamagedCharacterUnit();
+            tests.UnitRuntimeHealthBarSystemHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=5");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=8");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)

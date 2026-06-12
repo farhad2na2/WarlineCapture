@@ -42,12 +42,29 @@ public partial struct DynamicBlockerInitSystem : ISystem
         int gridSize = grid.Width * grid.Height;
 
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        bool addedMissingComponents = false;
         if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, default(DynamicBlockerComponent));
+        {
+            ecb.AddComponent(gridEntity, default(DynamicBlockerComponent));
+            addedMissingComponents = true;
+        }
+
         if (!state.EntityManager.HasComponent<PathPoolComponent>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+        {
+            ecb.AddComponent(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+            addedMissingComponents = true;
+        }
+
         if (!state.EntityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
-            state.EntityManager.AddComponentData(gridEntity, default(DynamicOccupancyComponent));
+        {
+            ecb.AddComponent(gridEntity, default(DynamicOccupancyComponent));
+            addedMissingComponents = true;
+        }
+
+        if (addedMissingComponents)
+            ecb.Playback(state.EntityManager);
+        ecb.Dispose();
 
         var dataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
         ref var data = ref dataRw.ValueRW;

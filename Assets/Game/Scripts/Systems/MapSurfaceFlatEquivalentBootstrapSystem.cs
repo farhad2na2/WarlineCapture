@@ -50,11 +50,9 @@ public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem
         if (!TryBuildFlatEquivalent(grid, Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
             return;
 
-        Entity entity = state.EntityManager.CreateEntity(
-            typeof(MapSurfaceComponent),
-            typeof(MapSurfacePathCostComponent),
-            typeof(MapSurfaceFlatEquivalentRuntimeBlobTag));
-        state.EntityManager.SetComponentData(entity, new MapSurfaceComponent
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        Entity entity = ecb.CreateEntity();
+        ecb.AddComponent(entity, new MapSurfaceComponent
         {
             SurfaceBlob = surfaceBlob,
             GridOrigin = grid.Origin,
@@ -65,12 +63,15 @@ public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem
             HasRoadSurfaces = 0,
             HasBridgeSurfaces = 0
         });
-        state.EntityManager.SetComponentData(entity, new MapSurfacePathCostComponent
+        ecb.AddComponent(entity, new MapSurfacePathCostComponent
         {
             EnableSlopeCost = 0,
             GentleSlopeTraversalCost = 0,
             SteepSlopeTraversalCost = 0
         });
+        ecb.AddComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(entity);
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
         state.Enabled = false;
     }
 

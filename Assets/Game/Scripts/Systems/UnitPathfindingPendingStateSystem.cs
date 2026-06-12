@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 
 public struct UnitPathfindingPendingStateComponent : IComponentData
@@ -20,7 +21,11 @@ internal struct UnitPathfindingPendingStateSystem
         if (!query.IsEmptyIgnoreFilter)
             return;
 
-        state.EntityManager.CreateEntity(typeof(UnitPathfindingPendingStateComponent));
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        Entity entity = ecb.CreateEntity();
+        ecb.AddComponent<UnitPathfindingPendingStateComponent>(entity);
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 
     public static UnitPathfindingPendingStateComponent CreateState(

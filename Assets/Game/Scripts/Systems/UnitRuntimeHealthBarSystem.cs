@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
@@ -5,42 +6,31 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitHealthBarSystem))]
 public partial struct UnitRuntimeHealthBarSystem : ISystem
 {
+    private EntityStorageInfoLookup _entityStorageInfoLookup;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitHealthBarPrefabReference>();
+        _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;
-        var create = new NativeList<Entity>(Allocator.Temp);
-        var remove = new NativeList<Entity>(Allocator.Temp);
-
-        foreach (var (health, entity) in SystemAPI
-                 .Query<RefRO<UnitHealth>>()
-                 .WithEntityAccess())
+        var create = new NativeList<Entity>(Allocator.TempJob);
+        var remove = new NativeList<Entity>(Allocator.TempJob);
+        _entityStorageInfoLookup.Update(ref state);
+        new CollectHealthBarChangesJob
         {
-            bool shouldShow = health.ValueRO.Current > 0 &&
-                              em.HasComponent<RecentDamageHealthBarVisibility>(entity) &&
-                              em.HasComponent<UnitHealthBarPrefabReference>(entity) &&
-                              !em.HasComponent<UnitTransportPassenger>(entity) &&
-                              !em.HasComponent<UnitRenderBudgetCulledUnitTag>(entity);
-            bool hasReference = em.HasComponent<UnitHealthBarInstanceReference>(entity);
-            bool hasInstance = hasReference &&
-                               em.Exists(em.GetComponentData<UnitHealthBarInstanceReference>(entity).Instance);
-            if (hasReference && !hasInstance)
-            {
-                remove.Add(entity);
-                if (shouldShow)
-                    create.Add(entity);
-                continue;
-            }
-
-            if (shouldShow && !hasInstance)
-                create.Add(entity);
-            else if (!shouldShow && hasReference)
-                remove.Add(entity);
-        }
+            RecentDamageLookup = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>(true),
+            PrefabReferenceLookup = SystemAPI.GetComponentLookup<UnitHealthBarPrefabReference>(true),
+            PassengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true),
+            CulledLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true),
+            InstanceReferenceLookup = SystemAPI.GetComponentLookup<UnitHealthBarInstanceReference>(true),
+            EntityStorageInfoLookup = _entityStorageInfoLookup,
+            Create = create,
+            Remove = remove
+        }.Run();
 
         for (int i = 0; i < remove.Length; i++)
             DestroyHealthBar(em, remove[i]);
@@ -50,6 +40,43 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
 
         create.Dispose();
         remove.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct CollectHealthBarChangesJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<RecentDamageHealthBarVisibility> RecentDamageLookup;
+        [ReadOnly] public ComponentLookup<UnitHealthBarPrefabReference> PrefabReferenceLookup;
+        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+        [ReadOnly] public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledLookup;
+        [ReadOnly] public ComponentLookup<UnitHealthBarInstanceReference> InstanceReferenceLookup;
+        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
+        public NativeList<Entity> Create;
+        public NativeList<Entity> Remove;
+
+        private void Execute(Entity entity, in UnitHealth health)
+        {
+            bool shouldShow = health.Current > 0 &&
+                              RecentDamageLookup.HasComponent(entity) &&
+                              PrefabReferenceLookup.HasComponent(entity) &&
+                              !PassengerLookup.HasComponent(entity) &&
+                              !CulledLookup.HasComponent(entity);
+            bool hasReference = InstanceReferenceLookup.HasComponent(entity);
+            bool hasInstance = hasReference &&
+                               EntityStorageInfoLookup.Exists(InstanceReferenceLookup[entity].Instance);
+            if (hasReference && !hasInstance)
+            {
+                Remove.Add(entity);
+                if (shouldShow)
+                    Create.Add(entity);
+                return;
+            }
+
+            if (shouldShow && !hasInstance)
+                Create.Add(entity);
+            else if (!shouldShow && hasReference)
+                Remove.Add(entity);
+        }
     }
 
     private static void CreateHealthBar(EntityManager em, Entity unit)

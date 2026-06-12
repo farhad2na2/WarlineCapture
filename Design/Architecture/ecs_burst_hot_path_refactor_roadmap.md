@@ -20,17 +20,15 @@ Scanned root:
 
 Observed:
 - 723 system source files.
-- 29 system files currently use `[BurstCompile]`.
+- 30 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
-- 32 files have `OnUpdate` and no `[BurstCompile]`.
+- 31 files have `OnUpdate` and no `[BurstCompile]`.
 - 0 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count after the `CustomGameStartupSystem` startup-boundary cleanup slice.
-- 8 direct `EntityManager` structural or component mutation calls.
+- 1 direct `EntityManager` structural or component mutation call.
 - Main array-copy offenders:
   - None remaining under `Assets/Game/Scripts/Systems` for the generic-aware guardrail scanner.
-- Direct structural/component mutation is concentrated mainly in:
+- Direct structural/component mutation is concentrated in:
   - `CitizenVisibleUnitSystem`: 1 intentional immediate `Instantiate` for visible-citizen spawn, because the state dictionary needs the real entity in the same frame.
-  - `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`: 3 each.
-  - `UnitPathfindingPendingStateSystem`: 1.
 
 Superseded rough audit notes:
 - The first rough scan saw about 400 system files, 14 Burst files, and 55 non-Burst `OnUpdate` matches before the final static baseline was captured. Use the 2026-06-12 numbers above as the active baseline.
@@ -704,6 +702,16 @@ Progress notes:
   - Log marker: `[CitizenMovementCommandFocusedValidation] result=Passed tests=2`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `22`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
 - 2026-06-12: Continued Phase 6 in `CitizenVisibleUnitSystem`. Visible-citizen clear/remove destruction and spawned-citizen setup component writes now use temporary `EntityCommandBuffer` playback while preserving same-frame semantics. The remaining direct call is the visible-citizen spawn `Instantiate`, intentionally left immediate because the visible-citizen state dictionary stores the real created entity in the same frame.
+- 2026-06-12: Continued Phase 6 startup-boundary cleanup in `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, and `UnitPathfindingPendingStateSystem`. Missing grid runtime components, flat-equivalent map-surface bootstrap entity creation, and the pathfinding pending-state singleton now use same-frame temporary `EntityCommandBuffer` playback instead of direct `EntityManager.AddComponentData`, `CreateEntity`, or `SetComponentData`. This leaves only the intentional `CitizenVisibleUnitSystem` same-frame spawn as direct literal EntityManager mutation debt.
+- 2026-06-12: Validation passed after the startup-boundary ECB cleanup:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-startup-ecb.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-startup-ecb.log`
+  - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json` with `updates=9`, `elapsedMs=35.85`, `allocatedBytesCurrentThread=0`, `pathPoolCells=10`, `remainingRequests=0`, `pathDiagnosticsCount=0`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `31`, Burst-compiled system files `30`.
+  - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
+- 2026-06-12: Guardrail ratchet after startup-boundary ECB cleanup: direct literal `EntityManager.*` mutation ceiling reduced to `1`.
 - 2026-06-12: Added `CitizenVisibleUnitSystemTests.RunFocusedValidation` covering visible-citizen removal and clear-all destruction after the ECB conversion.
 - 2026-06-12: Guardrail ratchet after the visible-citizen ECB slice: direct `EntityManager.*` mutation ceiling reduced to `8`.
 - 2026-06-12: Focused visible-citizen validation passed:
@@ -941,6 +949,14 @@ Progress notes:
   - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `32`, Burst-compiled system files `29`.
   - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
 - 2026-06-12: Guardrail ratchet after `MatchHudMinimapMarkerSystem`: non-Burst `OnUpdate` ceiling reduced to `32`, Burst file floor increased to `29`.
+- 2026-06-12: Continued Phase 8 in `UnitRuntimeHealthBarSystem`. Health-bar create/remove candidate collection now runs through a Burst `IJobEntity` using component lookups and `EntityStorageInfoLookup`; the actual health-bar instantiate/destroy presentation boundary remains managed.
+- 2026-06-12: Expanded `VehicleVisualAdornmentsSystemTests.RunFocusedValidation` to include the existing runtime health-bar create/remove, damaged character, and transported/culled hide cases.
+- 2026-06-12: Focused visual-adornment validation passed after the runtime health-bar collection split:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-runtime-healthbar-collect.log`
+  - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=8`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `31`, Burst-compiled system files `30`.
+  - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
+- 2026-06-12: Guardrail ratchet after `UnitRuntimeHealthBarSystem`: non-Burst `OnUpdate` ceiling reduced to `31`, Burst file floor increased to `30`.
 
 ### Phase 9: Managed Boundary Cleanup
 

@@ -567,6 +567,8 @@ Progress notes:
 - 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, pathfinding diagnostic, runtime-grid, move-target diagnostic, diagnostic flush, initial-spawn diagnostic flush, startup-boundary, AI plan/squad, one-off startup/HUD/boundary, contained runtime/building, startup/presentation/debug/selection, and transport boarding chunk traversal slices:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-validation.log`
+  - Log marker: `[UnitTransportValidation] result=Passed tests=16`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=456 skipped=23`.
   - `git diff --check` passed.

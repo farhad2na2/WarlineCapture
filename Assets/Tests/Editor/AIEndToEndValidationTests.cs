@@ -72,6 +72,11 @@ public sealed class AIEndToEndValidationTests
     [Test]
     public void EnemyAILoop_BuildsProducesFormsSquadTargetsAndOrdersAttack()
     {
+        AssertEnemyAILoop_BuildsProducesFormsSquadTargetsAndOrdersAttack(assertDiagnosticLog: true);
+    }
+
+    private void AssertEnemyAILoop_BuildsProducesFormsSquadTargetsAndOrdersAttack(bool assertDiagnosticLog)
+    {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AIEndToEndValidationTests");
         World.DefaultGameObjectInjectionWorld = _world;
@@ -109,55 +114,69 @@ public sealed class AIEndToEndValidationTests
         SystemHandle targetingSystem = _world.CreateSystem<AITargetingSystem>();
         SystemHandle combatSystem = _world.CreateSystem<AICombatOrderSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Tent_Regular"));
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=10000 result=Requested"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=10000 result=Requested"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Rifleman"));
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(50, 50\)"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(50, 50\)"));
         squadSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         Entity squadEntity = GetSingleSquad(em);
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);
         Assert.AreEqual(1, squad.SquadId);
         Assert.AreEqual(4, em.GetBuffer<AISquadUnit>(squadEntity).Length);
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=1 target=Threat score=\d+ reason=Threat targetFaction=1 targetCell=int2\(50, 50\)"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=1 target=Threat score=\d+ reason=Threat targetFaction=1 targetCell=int2\(50, 50\)"));
         targetingSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         squad = em.GetComponentData<AISquad>(squadEntity);
         Assert.AreEqual(target, squad.TargetEntity);
         Assert.AreEqual((byte)AITargetKind.Threat, squad.TargetKind);
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=2 squad=1 order=Attack target=Entity\(\d+:\d+\) units=4"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=2 squad=1 order=Attack target=Entity\(\d+:\d+\) units=4"));
         combatSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         AssertEngageOrder(em, unitA, target);
         AssertEngageOrder(em, unitB, target);

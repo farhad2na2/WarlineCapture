@@ -40,7 +40,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
         ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
         ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
-        ["Assets/Game/Scripts/Systems/AITargetingSystem.cs"] = "Phase 5 AI targeting hot-path debt; target scoring and diagnostic reason strings need separation.",
+        ["Assets/Game/Scripts/Systems/AITargetingSystem.cs"] = "Phase 5 AI targeting hot-path debt; target scoring and component-presence checks still need a data/job split.",
         ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
         ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",
@@ -58,6 +58,11 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"] = "transport gameplay/presentation split debt; uses managed visual hiding utility and needs a data-only request split.",
         ["Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs"] = "GameObject/prefab reference bridge; managed presentation boundary.",
         ["Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs"] = "presentation/prefab instantiate boundary; managed visual lifecycle only.",
+    };
+
+    private static readonly Dictionary<string, string> ClassifiedDirectEntityManagerMutationFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs"] = "managed citizen presentation bridge; same-frame EntityManager.Instantiate is required so the actual spawned entity can be assigned movement and tracked by VisibleCitizensById immediately.",
     };
 
     private static readonly Regex SystemStateMethodSignatureRegex = new(
@@ -121,13 +126,32 @@ public sealed class EcsBurstHotPathArchitectureTests
     {
         List<FileCount> counts = CountMatches(EntityManagerMutationRegex);
         int total = counts.Sum(count => count.Count);
+        List<string> unclassified = counts
+            .Select(count => count.Path)
+            .Where(path => !ClassifiedDirectEntityManagerMutationFiles.ContainsKey(path))
+            .ToList();
+        List<string> staleClassifications = ClassifiedDirectEntityManagerMutationFiles.Keys
+            .Where(path => counts.All(count => count.Path != path))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
 
         Debug.Log("Top direct EntityManager mutation sources:\n" + FormatTopCounts(counts));
+        Debug.Log("Classified direct EntityManager mutation files:\n" + FormatClassifiedEntityManagerMutationFiles(counts));
 
         Assert.LessOrEqual(
             total,
             EntityManagerMutationDebtCeiling,
             $"Direct EntityManager mutation debt increased from the roadmap baseline. Current={total}, ceiling={EntityManagerMutationDebtCeiling}. Frequent runtime mutations should move through EntityCommandBuffer unless explicitly documented.");
+
+        Assert.IsEmpty(
+            unclassified,
+            "Direct EntityManager mutation files must be classified as an approved startup/presentation exception or converted to EntityCommandBuffer before landing:\n" +
+            string.Join(Environment.NewLine, unclassified));
+
+        Assert.IsEmpty(
+            staleClassifications,
+            "Direct EntityManager mutation classifications are stale. Remove converted/deleted files from the classification list:\n" +
+            string.Join(Environment.NewLine, staleClassifications));
     }
 
     [Test]
@@ -300,6 +324,22 @@ public sealed class EcsBurstHotPathArchitectureTests
                     ? reason
                     : "<unclassified>";
                 return $"{path}: {classification}";
+            }));
+    }
+
+    private static string FormatClassifiedEntityManagerMutationFiles(IReadOnlyList<FileCount> counts)
+    {
+        if (counts.Count == 0)
+            return "<none>";
+
+        return string.Join(
+            Environment.NewLine,
+            counts.Select(count =>
+            {
+                string classification = ClassifiedDirectEntityManagerMutationFiles.TryGetValue(count.Path, out string reason)
+                    ? reason
+                    : "<unclassified>";
+                return $"{count.Path}: {count.Count} mutation(s); {classification}";
             }));
     }
 

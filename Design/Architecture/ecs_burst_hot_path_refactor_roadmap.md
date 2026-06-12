@@ -85,9 +85,9 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 49 / 157 complete (31.2%).
+- Checklist progress: 53 / 157 complete (33.8%).
 - In progress: 15 / 157.
-- Remaining open: 93 / 157.
+- Remaining open: 89 / 157.
 - Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
@@ -842,12 +842,12 @@ Implementation steps:
 - [ ] Reuse persistent native containers owned by the system where safe.
 - [ ] Batch combat/path/engage mutations through ECB.
 - [x] Keep authored AI config and policy unchanged.
-- [ ] Keep diagnostics gated and outside hot loops.
+- [x] Keep diagnostics gated and outside hot loops.
 
 Acceptance checks:
-- [ ] AI squads form.
-- [ ] AI targets valid enemies/buildings.
-- [ ] AI combat orders still issue.
+- [x] AI squads form.
+- [x] AI targets valid enemies/buildings.
+- [x] AI combat orders still issue.
 - [ ] No AI behavior regressions in existing EditMode tests.
 - [ ] AI steady-state frame/system timing improves or remains equal.
 
@@ -856,6 +856,14 @@ Progress notes:
   - `AIBuildPlannerValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-build-control-buffer.log`, marker `[AIBuildPlannerFocusedValidation] result=Passed tests=1`.
   - `AIProductionValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-production-control-buffer.log`, marker `[AIProductionFocusedValidation] result=Passed tests=1`.
   - `AISquadValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-squad-control-buffer.log`, marker `[AISquadFocusedValidation] result=Passed tests=1`.
+- 2026-06-12: Removed managed diagnostic reason strings from the `AITargetingSystem` scoring loop. Target scoring now carries a small enum and converts it to the existing log text only inside the `shouldLog` diagnostic gate; focused targeting validation preserved the visible diagnostic messages:
+  - `AITargetingValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-targeting-reason-gate.log`, marker `[AITargetingFocusedValidation] result=Passed tests=2`.
+- 2026-06-12: Extended `AITargetingValidationTests` with a production-priority enemy-building target case. Focused validation now covers threat units, economy haulers, and enemy buildings:
+  - `AITargetingValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-targeting-building.log`, marker `[AITargetingFocusedValidation] result=Passed tests=3`.
+- 2026-06-12: Re-ran focused Phase 5 acceptance validations after the AI hot-path cleanup slices:
+  - `AISquadValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-squad-acceptance.log`, marker `[AISquadFocusedValidation] result=Passed tests=1`.
+  - `AICombatOrderValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-combat-order-acceptance.log`, marker `[AICombatOrderFocusedValidation] result=Passed tests=2`.
+- 2026-06-12: Broad AI regression acceptance remains open. The direct execute-method attempt for `AIEndToEndValidationTests` was removed because the fixture depends on Unity TestRunner log scopes, and the attempted filtered TestRunner command exited without writing `/private/tmp/warline-ecs-burst-ai-end-to-end-test-results.xml`. Keep relying on focused subsystem execute-method validations until a stable TestRunner invocation is available.
 
 ### Phase 6: Structural Change Cleanup
 
@@ -881,6 +889,9 @@ Acceptance checks:
 - [x] Citizen movement commands still work.
 - [ ] Unit path/manual move components are added/removed in the expected frame.
 - [ ] No new sync-point regressions appear in diagnostics.
+
+Progress notes:
+- 2026-06-12: Tightened the architecture guardrail for the last direct `EntityManager` mutation. `EcsBurstHotPathArchitectureTests.DirectEntityManagerMutationDebtMustNotIncrease` now requires every remaining direct mutation file to be explicitly classified, not just kept under the numeric ceiling. The single remaining direct mutation is `CitizenVisibleUnitSystem` same-frame citizen presentation spawn; it stays direct because the system immediately needs the real instantiated entity to issue the citizen move command and track it in `VisibleCitizensById`.
 
 ### Phase 7: Pathfinding And Occupancy Protection Pass
 
@@ -1054,7 +1065,7 @@ Managed boundary and tracked-debt inventory:
 | `AIEconomySystem` | Phase 5 AI economy debt | Move summary/request-buffer work behind data-only result buffers. |
 | `AIProductionSystem` | Phase 5 AI production debt | Project production policy to ECS-native data before Burst work. |
 | `AISquadSystem` | Phase 5 AI squad debt | Convert membership/scoring loops to chunk/job processing. |
-| `AITargetingSystem` | Phase 5 AI targeting hot-path debt | Separate target scoring from diagnostic reason strings. |
+| `AITargetingSystem` | Phase 5 AI targeting hot-path debt | Split target scoring and component-presence checks into data/job processing. |
 | `UnitAttackSystem` | Combat hot-path debt | Split combat simulation, VFX requests, and diagnostics. |
 | `UnitDeathSystem` | Combat lifecycle debt | Separate death-state mutation from presentation requests. |
 | `UnitPathfindingSystem` | Phase 6 pathfinding orchestration debt | Preserve detached-job/native-container ownership before further Burst work. |

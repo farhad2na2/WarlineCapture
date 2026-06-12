@@ -14,7 +14,8 @@ public sealed class AITargetingValidationTests
             InitialUnitsRuntimeState.VerboseAILogs = true;
             AssertHighestScoredEnemyTargetToSquad(assertDiagnosticLog: false);
             AssertEconomyPriorityPrefersResourceHauler(assertDiagnosticLog: false);
-            UnityEngine.Debug.Log("[AITargetingFocusedValidation] result=Passed tests=2");
+            AssertProductionPriorityPrefersEnemyBuilding(assertDiagnosticLog: false);
+            UnityEngine.Debug.Log("[AITargetingFocusedValidation] result=Passed tests=3");
         }
         catch (System.Exception ex)
         {
@@ -52,6 +53,12 @@ public sealed class AITargetingValidationTests
     public void AITargetingSystem_EconomyPriorityPrefersResourceHauler()
     {
         AssertEconomyPriorityPrefersResourceHauler(assertDiagnosticLog: true);
+    }
+
+    [Test]
+    public void AITargetingSystem_ProductionPriorityPrefersEnemyBuilding()
+    {
+        AssertProductionPriorityPrefersEnemyBuilding(assertDiagnosticLog: true);
     }
 
     private static void AssertHighestScoredEnemyTargetToSquad(bool assertDiagnosticLog)
@@ -138,6 +145,48 @@ public sealed class AITargetingValidationTests
         Assert.AreEqual(hauler, squad.TargetEntity);
         Assert.AreNotEqual(threat, squad.TargetEntity);
         Assert.AreEqual((byte)AITargetKind.Unit, squad.TargetKind);
+    }
+
+    private static void AssertProductionPriorityPrefersEnemyBuilding(bool assertDiagnosticLog)
+    {
+        using var world = new World("AITargetingBuildingValidationTests");
+        EntityManager em = world.EntityManager;
+
+        Entity squadEntity = em.CreateEntity(typeof(AISquad));
+        em.SetComponentData(squadEntity, new AISquad
+        {
+            SquadId = 9,
+            FactionId = FactionIdentitySystem.EnemyFactionId,
+            Purpose = (byte)AISquadPurpose.Attack,
+            TargetKind = (byte)AITargetKind.None,
+            TargetEntity = Entity.Null,
+            RallyCell = new int2(10, 10),
+            LastLogTime = -999f
+        });
+        Entity priority = em.CreateEntity(typeof(AITargetPrioritySetting));
+        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentitySystem.EnemyFactionId, Priority = (byte)AITargetPriority.Production });
+
+        Entity threat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 500, true, false);
+        Entity building = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(12, 10), 100, false, true);
+        CreateTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(8, 10), 1000, false, true);
+
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
+
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=9 target=Building score=\d+ reason=Production targetFaction=1 targetCell=int2\(12, 10\)"));
+        system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
+
+        AISquad squad = em.GetComponentData<AISquad>(squadEntity);
+        Assert.AreEqual(building, squad.TargetEntity);
+        Assert.AreNotEqual(threat, squad.TargetEntity);
+        Assert.AreEqual((byte)AITargetKind.Building, squad.TargetKind);
+        Assert.AreEqual(new int2(12, 10), squad.TargetCell);
+        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
     }
 
     private static Entity CreateTarget(EntityManager em, byte factionId, int2 cell, int maxHealth, bool attackCapable, bool building)

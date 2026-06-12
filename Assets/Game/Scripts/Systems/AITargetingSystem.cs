@@ -20,6 +20,16 @@ public partial struct AITargetingSystem : ISystem
     private ComponentTypeHandle<AITargetPrioritySetting> _targetPriorityType;
     private float _nextTargetRefreshTime;
 
+    private enum TargetReason : byte
+    {
+        None,
+        Threat,
+        Economy,
+        Unit,
+        Units,
+        Production
+    }
+
     public void OnCreate(ref SystemState state)
     {
         _squadQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquad>());
@@ -93,7 +103,7 @@ public partial struct AITargetingSystem : ISystem
                         out byte targetFaction,
                         out AITargetKind kind,
                         out int score,
-                        out string reason))
+                        out TargetReason reason))
                 {
                     if (now - squad.LastLogTime >= LogIntervalSeconds)
                     {
@@ -123,7 +133,7 @@ public partial struct AITargetingSystem : ISystem
                     squad.LastLogTime = now;
                     squads[i] = squad;
                     if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
+                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={TargetReasonLabel(reason)} targetFaction={targetFaction} targetCell={targetCell}");
                 }
                 else
                 {
@@ -175,14 +185,14 @@ public partial struct AITargetingSystem : ISystem
         out byte bestFaction,
         out AITargetKind bestKind,
         out int bestScore,
-        out string bestReason)
+        out TargetReason bestReason)
     {
         bestTarget = Entity.Null;
         bestCell = squad.TargetCell;
         bestFaction = squad.TargetFactionId;
         bestKind = AITargetKind.None;
         bestScore = int.MinValue;
-        bestReason = "None";
+        bestReason = TargetReason.None;
 
         for (int chunkIndex = 0; chunkIndex < targetChunks.Length; chunkIndex++)
         {
@@ -205,7 +215,7 @@ public partial struct AITargetingSystem : ISystem
 
                 UnitGrid grid = grids[i];
                 AITargetKind kind = ResolveTargetKind(em, target);
-                int score = ScoreTarget(em, target, kind, priority, squad.RallyCell, grid.Cell, health, out string reason);
+                int score = ScoreTarget(em, target, kind, priority, squad.RallyCell, grid.Cell, health, out TargetReason reason);
                 if (score <= bestScore)
                     continue;
 
@@ -252,7 +262,7 @@ public partial struct AITargetingSystem : ISystem
         return AITargetPriority.Balanced;
     }
 
-    private static int ScoreTarget(EntityManager em, Entity target, AITargetKind kind, AITargetPriority priority, int2 origin, int2 targetCell, UnitHealth health, out string reason)
+    private static int ScoreTarget(EntityManager em, Entity target, AITargetKind kind, AITargetPriority priority, int2 origin, int2 targetCell, UnitHealth health, out TargetReason reason)
     {
         int distance = math.abs(targetCell.x - origin.x) + math.abs(targetCell.y - origin.y);
         int healthValue = math.clamp(health.Max / 10, 0, 30);
@@ -262,22 +272,22 @@ public partial struct AITargetingSystem : ISystem
         {
             case AITargetKind.Threat:
                 score += 45;
-                reason = "Threat";
+                reason = TargetReason.Threat;
                 break;
             case AITargetKind.Building:
                 score += 35;
-                reason = "Economy";
+                reason = TargetReason.Economy;
                 break;
             default:
                 score += 10;
-                reason = "Unit";
+                reason = TargetReason.Unit;
                 break;
         }
 
         if (em.HasComponent<UnitResourceHauler>(target))
         {
             score += 20;
-            reason = "Economy";
+            reason = TargetReason.Economy;
         }
 
         switch (priority)
@@ -286,7 +296,7 @@ public partial struct AITargetingSystem : ISystem
                 if (kind == AITargetKind.Unit || kind == AITargetKind.Threat)
                 {
                     score += 35;
-                    reason = kind == AITargetKind.Threat ? "Threat" : "Units";
+                    reason = kind == AITargetKind.Threat ? TargetReason.Threat : TargetReason.Units;
                 }
                 else if (kind == AITargetKind.Building)
                 {
@@ -297,19 +307,19 @@ public partial struct AITargetingSystem : ISystem
                 if (em.HasComponent<UnitResourceHauler>(target))
                 {
                     score += 50;
-                    reason = "Economy";
+                    reason = TargetReason.Economy;
                 }
                 else if (kind == AITargetKind.Building)
                 {
                     score += 25;
-                    reason = "Economy";
+                    reason = TargetReason.Economy;
                 }
                 break;
             case AITargetPriority.Production:
                 if (kind == AITargetKind.Building)
                 {
                     score += 45;
-                    reason = "Production";
+                    reason = TargetReason.Production;
                 }
                 else if (kind == AITargetKind.Unit)
                 {
@@ -319,5 +329,18 @@ public partial struct AITargetingSystem : ISystem
         }
 
         return score;
+    }
+
+    private static string TargetReasonLabel(TargetReason reason)
+    {
+        return reason switch
+        {
+            TargetReason.Threat => "Threat",
+            TargetReason.Economy => "Economy",
+            TargetReason.Unit => "Unit",
+            TargetReason.Units => "Units",
+            TargetReason.Production => "Production",
+            _ => "None"
+        };
     }
 }

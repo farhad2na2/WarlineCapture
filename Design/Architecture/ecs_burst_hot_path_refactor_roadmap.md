@@ -23,8 +23,8 @@ Observed:
 - 23 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
 - 38 files have `OnUpdate` and no `[BurstCompile]`.
-- 74 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
-- 91 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
+- 58 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
+- 75 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
 - 40 direct `EntityManager` structural or component mutation calls.
 - Main array-copy offenders:
   - `SelectionGameplayStartupSystem`: 10 `To*Array` calls.
@@ -33,8 +33,8 @@ Observed:
   - `CustomGameStartupSystem`: 5.
   - `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`: 4 each.
   - `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectedUnitDebugFireSystem`, `UnitGridMovementSystem`, `UnitPathLiveUnitSnapshotSystem`: 3 each.
-  - `AISquadSystem`, `BuildingResourceHaulerBridgeSystem`, `BuildingSpawnPrefabSystem`, `InitialSpawnReservationSystem`: 2 each.
-  - `AIBuildPlannerSystem`: 1.
+  - `BuildingResourceHaulerBridgeSystem`, `BuildingSpawnPrefabSystem`: 2 each.
+  - `InitialUnitsSpawnSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, `MatchHudSquadTraySelectionSystem`, `RoadBuildEcsBoundarySystem`, `RuntimeGridBootstrapSystem`, `SceneLifecycleSystem`, `VisibleUnitSelectionSystem`: 1 each.
 - Direct structural/component mutation is concentrated mainly in:
   - `CitizenVisibleUnitSystem`: 15.
   - `CitizenMovementCommandSystem`: 10.
@@ -540,11 +540,27 @@ Progress notes:
   - Report metrics: `updates=10 elapsedMs=28.33 allocatedBytes=0 pathPoolCells=10 remainingRequests=0`.
 - 2026-06-12: Guardrail ratchet after the runtime-building attack-target and pathfinding diagnostic chunk traversal slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `91`.
 - 2026-06-12: Static count after the runtime-building attack-target and pathfinding diagnostic slices: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `74`; generic-aware count confirmed at `91`.
-- 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, and pathfinding diagnostic chunk traversal slices:
+- 2026-06-12: Continued Phase 7 in `RuntimeGridDeduplicationSystem`. Duplicate runtime-grid cleanup now walks grid chunks and collects runtime-generated grid entities before disposing native grid data and destroying duplicates.
+- 2026-06-12: Added `RuntimeGridDeduplicationSystemTests.RunFocusedValidation` covering authored-grid duplicate cleanup and runtime-only preservation.
+- 2026-06-12: Focused runtime-grid validation passed after the chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod RuntimeGridDeduplicationSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-runtime-grid-dedup.log`
+  - Log marker: `[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=2`.
+- 2026-06-12: Continued diagnostic-boundary cleanup in `UnitMoveTargetDiagnosticSystem`. Player unit target-change diagnostics now walk target chunks and only resolve optional details for changed player-controlled targets.
+- 2026-06-12: Continued diagnostic-boundary cleanup in `AIDiagnosticLogFlushSystem`, `UnitPathfindingDiagnosticLogFlushSystem`, and `TransportBoardingDiagnosticLogFlushSystem`. Diagnostic log flushing now iterates dynamic buffers directly through `SystemAPI.Query` instead of copying queue entities.
+- 2026-06-12: Guardrail ratchet after the runtime-grid, move-target diagnostic, and diagnostic flush slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `86`.
+- 2026-06-12: Static count after the runtime-grid, move-target diagnostic, and diagnostic flush slices: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `69`; generic-aware count confirmed at `86`.
+- 2026-06-12: Continued diagnostic-boundary cleanup in `InitialSpawnDiagnosticLogFlushSystem`. Initial spawn diagnostic log flushing now iterates diagnostic buffers directly through `SystemAPI.Query` instead of copying queue entities.
+- 2026-06-12: Guardrail ratchet after the initial-spawn diagnostic flush slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `85`.
+- 2026-06-12: Static count after the initial-spawn diagnostic flush slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `68`; generic-aware count confirmed at `85`.
+- 2026-06-12: Continued startup-boundary cleanup in `InitialSpawnResourceSystem`, `FactionEconomyStartupSystem`, `AIFactionControlStartupSystem`, `InitialFactionSpawnCellSystem`, `InitialUnitsSpawnProgressSystem`, and `InitialSpawnReservationSystem`. Startup entity scans now use chunk traversal or chunk-collected entity lists, preserving existing create/add/set ordering.
+- 2026-06-12: Continued AI cleanup in `AIBuildPlannerSystem` and `AISquadSystem`. Plan/unit entity snapshots now use chunk-collected native lists before the existing plan processing and squad creation logic, preserving prior snapshot semantics.
+- 2026-06-12: Guardrail ratchet after the startup-boundary and AI plan/squad chunk traversal slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `75`.
+- 2026-06-12: Static count after the startup-boundary and AI plan/squad slices: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `58`; generic-aware count confirmed at `75`.
+- 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, pathfinding diagnostic, runtime-grid, move-target diagnostic, diagnostic flush, initial-spawn diagnostic flush, startup-boundary, and AI plan/squad chunk traversal slices:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
-  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=454 skipped=23`.
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=456 skipped=23`.
   - `git diff --check` passed.
 
 ### Phase 3: Replace Hot Array Copies In Selection

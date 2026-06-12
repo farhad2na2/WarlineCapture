@@ -477,12 +477,18 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 public partial struct GroundMissileProjectileFlightSystem : ISystem
 {
     private EntityQuery _projectileQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<GroundMissileProjectileComponent> _projectileType;
+    private ComponentTypeHandle<LocalTransform> _transformType;
 
     public void OnCreate(ref SystemState state)
     {
         _projectileQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<GroundMissileProjectileComponent>(),
             ComponentType.ReadWrite<LocalTransform>());
+        _entityType = state.GetEntityTypeHandle();
+        _projectileType = state.GetComponentTypeHandle<GroundMissileProjectileComponent>(false);
+        _transformType = state.GetComponentTypeHandle<LocalTransform>(false);
         state.RequireForUpdate(_projectileQuery);
     }
 
@@ -494,18 +500,18 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
         state.EntityManager.CompleteDependencyBeforeRW<GroundMissileProjectileComponent>();
         state.EntityManager.CompleteDependencyBeforeRW<LocalTransform>();
 
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
-        ComponentTypeHandle<GroundMissileProjectileComponent> projectileType = state.GetComponentTypeHandle<GroundMissileProjectileComponent>(false);
-        ComponentTypeHandle<LocalTransform> transformType = state.GetComponentTypeHandle<LocalTransform>(false);
+        _entityType.Update(ref state);
+        _projectileType.Update(ref state);
+        _transformType.Update(ref state);
         using NativeArray<ArchetypeChunk> chunks = _projectileQuery.ToArchetypeChunkArray(Allocator.Temp);
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<GroundMissileProjectileComponent> projectiles = chunk.GetNativeArray(ref projectileType);
-            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
+            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
+            NativeArray<GroundMissileProjectileComponent> projectiles = chunk.GetNativeArray(ref _projectileType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref _transformType);
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];

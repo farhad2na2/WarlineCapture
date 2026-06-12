@@ -71,11 +71,14 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        state.EntityManager.CompleteDependencyBeforeRO<RuntimeGameplayStateComponent>();
         if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
         {
             ClearPreviousThreats();
             return;
         }
+
+        CompleteMainThreadReadDependencies(ref state);
 
         float cellSize = TryGetCellSize(_gridQuery);
 
@@ -213,6 +216,25 @@ public partial struct ThreatDetectionWarningSystem : ISystem
                 bestAirEtaSeconds == float.MaxValue ? 0f : bestAirEtaSeconds,
                 currentAirThreatList.Length);
         }
+    }
+
+    private static void CompleteMainThreadReadDependencies(ref SystemState state)
+    {
+        EntityManager em = state.EntityManager;
+        em.CompleteDependencyBeforeRO<GridConfig>();
+        em.CompleteDependencyBeforeRO<ThreatDetector>();
+        em.CompleteDependencyBeforeRO<Faction>();
+        em.CompleteDependencyBeforeRO<UnitGrid>();
+        em.CompleteDependencyBeforeRO<UnitHealth>();
+        em.CompleteDependencyBeforeRO<RuntimeBuildingCombatTag>();
+        em.CompleteDependencyBeforeRO<UnitAirMovement>();
+        em.CompleteDependencyBeforeRO<UnitMovementBehavior>();
+        em.CompleteDependencyBeforeRO<UnitTarget>();
+        em.CompleteDependencyBeforeRO<UnitPathRequest>();
+        em.CompleteDependencyBeforeRO<UnitLongDistanceMove>();
+        em.CompleteDependencyBeforeRO<EngageTarget>();
+        em.CompleteDependencyBeforeRO<BaseBreachOrder>();
+        em.CompleteDependencyBeforeRO<UnitMove>();
     }
 
     private void UpdateTypeHandles(ref SystemState state)

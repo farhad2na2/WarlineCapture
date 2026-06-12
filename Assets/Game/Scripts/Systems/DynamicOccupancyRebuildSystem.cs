@@ -21,6 +21,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     private NativeArray<int> _occupancyCounts;
     private int _cachedGridSize;
     private int _lastTrackedUnitCount;
+    private EntityTypeHandle _trackedEntityType;
 
     private static void GetClampedFootprintBounds(in GridConfig grid, int2 centerCell, int2 size, out int2 clampedMin, out int2 clampedMax)
     {
@@ -158,6 +159,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         _occupancyCounts = default;
         _cachedGridSize = 0;
         _lastTrackedUnitCount = -1;
+        _trackedEntityType = state.GetEntityTypeHandle();
     }
 
     public void OnDestroy(ref SystemState state)
@@ -221,12 +223,12 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         ref DynamicOccupancyComponent occ,
         int trackedUnitCount)
     {
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        _trackedEntityType.Update(ref state);
         using NativeArray<ArchetypeChunk> chunks = _trackedUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
         using var currentEntities = new NativeList<Entity>(_trackedUnitsQuery.CalculateEntityCount(), Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(_trackedEntityType);
             currentEntities.AddRange(entities);
         }
 

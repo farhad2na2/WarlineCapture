@@ -5,6 +5,13 @@ using Unity.Entities;
 public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
 {
     private EntityQuery _unitsToPatchQuery;
+    private EntityQuery _prefabReferencesQuery;
+    private EntityQuery _sharedRegistryReferencesQuery;
+    private EntityQuery _initialSpawnReferencesQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<UnitSourcePrefabKey> _sourceKeyType;
+    private ComponentTypeHandle<UnitSharedVisualPrefabReferences> _sharedReferencesType;
+    private ComponentTypeHandle<InitialUnitsSpawnConfig> _initialSpawnConfigType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -19,6 +26,15 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
                 ComponentType.ReadOnly<UnitVisualPrefabReferencesBackfilledTag>()
             }
         });
+        _prefabReferencesQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Prefab>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        _sharedRegistryReferencesQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitSharedVisualPrefabReferences>());
+        _initialSpawnReferencesQuery = state.GetEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        _entityType = state.GetEntityTypeHandle();
+        _sourceKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
+        _sharedReferencesType = state.GetComponentTypeHandle<UnitSharedVisualPrefabReferences>(true);
+        _initialSpawnConfigType = state.GetComponentTypeHandle<InitialUnitsSpawnConfig>(true);
     }
 
     public void OnUpdate(ref SystemState state)
@@ -28,21 +44,20 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
 
         EntityManager em = state.EntityManager;
         using var referencesBySourceKey = new NativeHashMap<FixedString64Bytes, UnitVisualPrefabReferenceSet>(64, Allocator.Temp);
-        UnitVisualPrefabReferenceSet defaultReferences = BuildReferenceLookup(em, referencesBySourceKey);
-        MergeSharedRegistryReferences(em, ref defaultReferences);
-        MergeInitialSpawnReferences(em, ref defaultReferences);
+        UpdateTypeHandles(ref state);
+        UnitVisualPrefabReferenceSet defaultReferences = BuildReferenceLookup(_prefabReferencesQuery, em, referencesBySourceKey, _entityType, ref _sourceKeyType);
+        MergeSharedRegistryReferences(_sharedRegistryReferencesQuery, ref _sharedReferencesType, ref defaultReferences);
+        MergeInitialSpawnReferences(_initialSpawnReferencesQuery, ref _initialSpawnConfigType, ref defaultReferences);
         if (referencesBySourceKey.Count == 0 && !defaultReferences.HasSharedMarkerOrHealth)
             return;
 
         var unitsToPatch = new NativeList<Entity>(Allocator.Temp);
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
-        ComponentTypeHandle<UnitSourcePrefabKey> sourceKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
         using NativeArray<ArchetypeChunk> chunks = _unitsToPatchQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<UnitSourcePrefabKey> sourceKeys = chunk.GetNativeArray(ref sourceKeyType);
+            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
+            NativeArray<UnitSourcePrefabKey> sourceKeys = chunk.GetNativeArray(ref _sourceKeyType);
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
@@ -63,16 +78,22 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         unitsToPatch.Dispose();
     }
 
+    private void UpdateTypeHandles(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        _sourceKeyType.Update(ref state);
+        _sharedReferencesType.Update(ref state);
+        _initialSpawnConfigType.Update(ref state);
+    }
+
     private static UnitVisualPrefabReferenceSet BuildReferenceLookup(
+        EntityQuery query,
         EntityManager em,
-        NativeHashMap<FixedString64Bytes, UnitVisualPrefabReferenceSet> referencesBySourceKey)
+        NativeHashMap<FixedString64Bytes, UnitVisualPrefabReferenceSet> referencesBySourceKey,
+        EntityTypeHandle entityType,
+        ref ComponentTypeHandle<UnitSourcePrefabKey> sourceKeyType)
     {
         UnitVisualPrefabReferenceSet defaultReferences = default;
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Prefab>(),
-            ComponentType.ReadOnly<UnitSourcePrefabKey>());
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        ComponentTypeHandle<UnitSourcePrefabKey> sourceKeyType = em.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
@@ -102,13 +123,14 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         return defaultReferences;
     }
 
-    private static void MergeSharedRegistryReferences(EntityManager em, ref UnitVisualPrefabReferenceSet defaultReferences)
+    private static void MergeSharedRegistryReferences(
+        EntityQuery query,
+        ref ComponentTypeHandle<UnitSharedVisualPrefabReferences> sharedType,
+        ref UnitVisualPrefabReferenceSet defaultReferences)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSharedVisualPrefabReferences>());
         if (query.IsEmptyIgnoreFilter)
             return;
 
-        ComponentTypeHandle<UnitSharedVisualPrefabReferences> sharedType = em.GetComponentTypeHandle<UnitSharedVisualPrefabReferences>(true);
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
@@ -127,13 +149,14 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         }
     }
 
-    private static void MergeInitialSpawnReferences(EntityManager em, ref UnitVisualPrefabReferenceSet defaultReferences)
+    private static void MergeInitialSpawnReferences(
+        EntityQuery query,
+        ref ComponentTypeHandle<InitialUnitsSpawnConfig> configType,
+        ref UnitVisualPrefabReferenceSet defaultReferences)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
         if (query.IsEmptyIgnoreFilter)
             return;
 
-        ComponentTypeHandle<InitialUnitsSpawnConfig> configType = em.GetComponentTypeHandle<InitialUnitsSpawnConfig>(true);
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {

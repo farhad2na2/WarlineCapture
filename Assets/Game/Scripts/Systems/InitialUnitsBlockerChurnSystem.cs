@@ -7,6 +7,7 @@ using Unity.Transforms;
 public partial struct InitialUnitsBlockerChurnSystem : ISystem
 {
     private EntityQuery _blockersQuery;
+    private EntityTypeHandle _entityType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -22,13 +23,14 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
                 ComponentType.ReadOnly<UnitGrid>(),
             }
         });
+        _entityType = state.GetEntityTypeHandle();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var grid = SystemAPI.GetSingleton<GridConfig>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        _entityType.Update(ref state);
 
         foreach (var (cfg, churn, entity) in
                  SystemAPI.Query<RefRO<InitialUnitsBlockerChurnConfig>, RefRW<InitialUnitsBlockerChurnComponent>>().WithEntityAccess())
@@ -54,7 +56,7 @@ public partial struct InitialUnitsBlockerChurnSystem : ISystem
             using var existingBlockers = new NativeList<Entity>(_blockersQuery.CalculateEntityCount(), Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(_entityType);
                 existingBlockers.AddRange(entities);
             }
 

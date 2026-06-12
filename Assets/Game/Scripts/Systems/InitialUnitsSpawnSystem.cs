@@ -39,11 +39,13 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private InitialSpawnDuplicateCellDiagnosticSystem _duplicateCellDiagnosticSystem;
     private InitialSpawnFreezeDiagnosticSystem _freezeDiagnosticSystem;
     private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private EntityTypeHandle _progressEntityType;
 
     public void OnCreate(ref SystemState state)
     {
         _queryContext = new InitialUnitsSpawnQuerySystem().Create(ref state);
         _diagnosticLogSystem.EnsureQueue(state.EntityManager);
+        _progressEntityType = state.GetEntityTypeHandle();
         state.RequireForUpdate(_queryContext.BuildingRuntimeBoundaryQuery);
         state.RequireForUpdate(_queryContext.GridContextQuery);
         state.RequireForUpdate(_queryContext.ActiveConfigQuery);
@@ -67,12 +69,12 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
         _progressSystem.InitializePending(em, _queryContext);
 
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
+        _progressEntityType.Update(ref state);
         using NativeArray<ArchetypeChunk> progressChunks = _queryContext.ProgressQuery.ToArchetypeChunkArray(Allocator.Temp);
         using var progressEntities = new NativeList<Entity>(_queryContext.ProgressQuery.CalculateEntityCount(), Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < progressChunks.Length; chunkIndex++)
         {
-            NativeArray<Entity> entities = progressChunks[chunkIndex].GetNativeArray(entityType);
+            NativeArray<Entity> entities = progressChunks[chunkIndex].GetNativeArray(_progressEntityType);
             progressEntities.AddRange(entities);
         }
 

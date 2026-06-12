@@ -1,7 +1,9 @@
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,6 +25,7 @@ public sealed class ThreatWarningValidationTests
             tests.ThreatDetectionWarningSystem_GroundRadarIgnoresEnemySoldiersMovingTowardSensor();
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
             tests.ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats();
+            tests.ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead();
             Debug.Log("[ThreatWarningValidation] result=Passed");
             EditorApplication.Exit(0);
         }
@@ -203,6 +206,132 @@ public sealed class ThreatWarningValidationTests
         {
             InitialUnitsRuntimeState.PlayRequested = false;
             ThreatWarningRuntimeState.Reset();
+        }
+    }
+
+    [Test]
+    public void ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead()
+    {
+        using var world = new World("ThreatDetectionWarningSystem_PendingUnitGridWriter");
+        EntityManager em = world.EntityManager;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray occupied = default;
+        NativeList<int2> pathPool = default;
+
+        try
+        {
+            const int width = 48;
+            const int height = 48;
+            int gridSize = width * height;
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+            for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+                friendlyPassFactionIds[i] = byte.MaxValue;
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            pathPool = new NativeList<int2>(Allocator.Persistent);
+            pathPool.Add(new int2(2, 1));
+            pathPool.Add(new int2(3, 1));
+
+            var grid = new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(
+                typeof(GridConfig),
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent),
+                typeof(PathPoolComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
+
+            em.AddBuffer<GridWalkable>(gridEntity);
+            em.AddBuffer<GridRoad>(gridEntity);
+            em.AddBuffer<GridRoadSidewalk>(gridEntity);
+            em.AddBuffer<GridRoadDirt>(gridEntity);
+            DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+            DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+            DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+            DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            roads.ResizeUninitialized(gridSize);
+            sidewalks.ResizeUninitialized(gridSize);
+            dirtRoads.ResizeUninitialized(gridSize);
+            for (int i = 0; i < gridSize; i++)
+            {
+                walkable[i] = new GridWalkable { Value = 1 };
+                roads[i] = new GridRoad { Value = 0 };
+                sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+                dirtRoads[i] = new GridRoadDirt { Value = 0 };
+            }
+
+            Entity movingUnit = em.CreateEntity(
+                typeof(Faction),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitMove),
+                typeof(UnitMovementBehavior),
+                typeof(UnitVehicleMovement),
+                typeof(UnitVehicleKinematics),
+                typeof(UnitPathFollow),
+                typeof(UnitPathRange),
+                typeof(LocalTransform));
+            em.SetComponentData(movingUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(movingUnit, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(movingUnit, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(movingUnit, new UnitMove { Speed = 2f, WalkSpeed = 2f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.01f });
+            em.SetComponentData(movingUnit, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+            em.SetComponentData(movingUnit, new UnitVehicleMovement());
+            em.SetComponentData(movingUnit, new UnitVehicleKinematics());
+            em.SetComponentData(movingUnit, new UnitPathFollow { PathIndex = 0 });
+            em.SetComponentData(movingUnit, new UnitPathRange { Start = 0, Length = pathPool.Length });
+            em.SetComponentData(movingUnit, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
+
+            Entity sensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+            em.AddComponentData(sensor, new ThreatDetector
+            {
+                Kind = (byte)ThreatDetectionKind.Ground,
+                RadiusCells = 20
+            });
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
+
+            world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+            SystemHandle movementSystem = world.CreateSystem<UnitGridMovementSystem>();
+            SystemHandle threatSystem = world.CreateSystem<ThreatDetectionWarningSystem>();
+
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            ThreatWarningRuntimeState.Reset();
+
+            world.SetTime(new TimeData(0.1d, 0.1f));
+            movementSystem.Update(world.Unmanaged);
+            Assert.DoesNotThrow(() => threatSystem.Update(world.Unmanaged));
+            Assert.IsTrue(ThreatWarningRuntimeState.HasPendingWarning);
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            ThreatWarningRuntimeState.Reset();
+            if (pathPool.IsCreated)
+                pathPool.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
         }
     }
 

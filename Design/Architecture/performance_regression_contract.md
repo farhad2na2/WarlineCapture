@@ -73,6 +73,7 @@ New runtime hot-path code must avoid:
 - Runtime asset loading during gameplay frames.
 - Instantiate/destroy churn during steady-state gameplay outside approved pooling/presentation paths.
 - Static service calls for diagnostics or logging from gameplay systems.
+- Creating ECS type handles during runtime ticks. `state.GetEntityTypeHandle`, `state.GetComponentTypeHandle`, `state.GetBufferTypeHandle`, and `state.GetSharedComponentTypeHandle` belong in `OnCreate` or a one-time initialization helper; `OnUpdate` and helpers called by `OnUpdate` must refresh cached handles with `_handle.Update(ref state)`.
 
 ## ECS System Timing
 

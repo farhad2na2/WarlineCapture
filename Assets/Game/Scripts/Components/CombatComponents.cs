@@ -160,6 +160,7 @@ public struct UnitAttack : IComponentData
     public float TraceScrollSpeed;
     public float TraceDashDensity;
     public float TraceVisibleSeconds;
+    public int TracerEveryNthShot; // 0/1 = tracer on every shot
 }
 
 public sealed class UnitAttackImpactVfxReference : IComponentData
@@ -485,6 +486,7 @@ public struct UnitAttackTraceComponent : IComponentData
 {
     public float TimeRemaining;
     public float Phase;
+    public int ShotCounter;
 }
 
 public struct EngageTarget : IComponentData

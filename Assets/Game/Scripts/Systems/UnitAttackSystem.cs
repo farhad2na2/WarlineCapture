@@ -27,6 +27,7 @@ public partial struct UnitAttackSystem : ISystem
         public Entity Attacker;
         public int2 AttackerCell;
         public float3 AttackerPosition;
+        public byte ShowImpactVfx; // only shots that showed a tracer trigger impact VFX
     }
 
     private NativeParallelHashMap<Entity, int> _predictedHealth;
@@ -157,8 +158,14 @@ public partial struct UnitAttackSystem : ISystem
             }
 
             stateRw.CooldownRemaining = math.max(0.01f, attackRo.CooldownSeconds);
-            traceRw.TimeRemaining = math.max(0.01f, attackRo.TraceVisibleSeconds);
-            traceRw.Phase = math.frac(traceRw.Phase + 0.371f);
+            traceRw.ShotCounter++;
+            int tracerInterval = math.max(1, attackRo.TracerEveryNthShot);
+            bool tracerShown = traceRw.ShotCounter % tracerInterval == 0;
+            if (tracerShown)
+            {
+                traceRw.TimeRemaining = math.max(0.01f, attackRo.TraceVisibleSeconds);
+                traceRw.Phase = math.frac(traceRw.Phase + 0.371f);
+            }
             attackAnimRw.TimeRemaining = math.max(0.01f, animationSettingsRo.AttackAnimationSeconds);
             PlayMuzzleFlash(em, entity, engageRw.Target, selfTransform.ValueRO);
             if (attackRo.Damage <= 0)
@@ -172,6 +179,7 @@ public partial struct UnitAttackSystem : ISystem
                 effect.Attacker = entity;
                 effect.AttackerCell = attackerCell;
                 effect.AttackerPosition = selfTransform.ValueRO.Position;
+                effect.ShowImpactVfx |= (byte)(tracerShown ? 1 : 0);
                 _aggregatedEffects[engageRw.Target] = effect;
             }
             else
@@ -181,7 +189,8 @@ public partial struct UnitAttackSystem : ISystem
                     TotalDamage = attackRo.Damage,
                     Attacker = entity,
                     AttackerCell = attackerCell,
-                    AttackerPosition = selfTransform.ValueRO.Position
+                    AttackerPosition = selfTransform.ValueRO.Position,
+                    ShowImpactVfx = (byte)(tracerShown ? 1 : 0)
                 });
             }
         }
@@ -225,7 +234,7 @@ public partial struct UnitAttackSystem : ISystem
                 TryIssueFleeOrder(em, ecb, grid, pending.AttackerPosition, target);
             }
 
-            if (em.HasComponent<UnitAttackImpactVfxReference>(pending.Attacker) && em.HasComponent<LocalTransform>(target))
+            if (pending.ShowImpactVfx != 0 && em.HasComponent<UnitAttackImpactVfxReference>(pending.Attacker) && em.HasComponent<LocalTransform>(target))
             {
                 UnitAttackImpactVfxReference impactVfx = em.GetComponentObject<UnitAttackImpactVfxReference>(pending.Attacker);
                 if (impactVfx?.Prefab != null)

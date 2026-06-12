@@ -11,12 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_APC_Heavy_Config
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: e2af8d7a2c154cd8a3048ed8f6e7d633, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 08e007f303b34acc8a7e08e1601de43a, type: 3}
   portraitActionSprite: {fileID: 21300000, guid: 4e3acffdcd0f48e6a2ec85e75f1c1656, type: 3}
   weaponSprite: {fileID: 0}
-  weaponDisplayName:
+  weaponDisplayName: 
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -44,6 +44,9 @@ MonoBehaviour:
     squads under fire.
   midLodPrefab: {fileID: 547042622866973056, guid: 8ff7ab9f5299247db94378434dfce336, type: 3}
   lowLodPrefab: {fileID: 5321676028810666112, guid: 7e910cfa84b2f4f208c336ffda8720c1, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 0}
+  unitHealthBarPrefab: {fileID: 0}
+  tintUnitModelRenderers: 1
   vehicleDestroyedVisualPrefab: {fileID: 3096256881772969162, guid: 54f26c6f3e2894556af680f0c9622171, type: 3}
   vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
@@ -57,12 +60,15 @@ MonoBehaviour:
   allowAutoEngage: 1
   usesTurretAim: 1
   aggroRangeCells: 9
-  attackRange: 7
+  attackRange: 60
   chaseBreakDistance: 8
   attackCooldownSeconds: 0.65
   attackDamage: 18
   maxHealth: 850
   attackImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.9
+  groundMissileLauncherConfig: {fileID: 0}
   attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
   attackTraceWidth: 0.18
   attackTraceScrollSpeed: 10
@@ -74,4 +80,5 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder:
+  animationOrder: 
+  airMissileLauncherConfig: {fileID: 0}

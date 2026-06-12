@@ -77,6 +77,7 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector, Min(0.1f)] private float attackTraceScrollSpeed = 10f;
     [SerializeField, HideInInspector, Min(1f)] private float attackTraceDashDensity = 10f;
     [SerializeField, HideInInspector, Min(0.01f)] private float attackTraceVisibleSeconds = 0.08f;
+    [SerializeField, HideInInspector, Min(1)] private int attackTracerEveryNthShot = 1;
     [Header("Animation")]
     [SerializeField, HideInInspector, Min(0f)] private float idleDelayMinSeconds = 5f;
     [SerializeField, HideInInspector, Min(0f)] private float idleDelayMaxSeconds = 7f;
@@ -155,6 +156,7 @@ public class UnitGridAuthoring : MonoBehaviour
         attackTraceScrollSpeed = config.AttackTraceScrollSpeed;
         attackTraceDashDensity = config.AttackTraceDashDensity;
         attackTraceVisibleSeconds = config.AttackTraceVisibleSeconds;
+        attackTracerEveryNthShot = config.AttackTracerEveryNthShot;
         idleDelayMinSeconds = config.IdleDelayMinSeconds;
         idleDelayMaxSeconds = config.IdleDelayMaxSeconds;
         idleWanderDistanceMin = config.IdleWanderDistanceMin;
@@ -341,7 +343,10 @@ public class UnitGridAuthoring : MonoBehaviour
                 TraceWidth = math.max(0.01f, authoring.attackTraceWidth),
                 TraceScrollSpeed = math.max(0.1f, authoring.attackTraceScrollSpeed),
                 TraceDashDensity = math.max(1f, authoring.attackTraceDashDensity),
-                TraceVisibleSeconds = math.max(0.01f, authoring.attackTraceVisibleSeconds)
+                TraceVisibleSeconds = math.max(0.01f, authoring.attackTraceVisibleSeconds),
+                TracerEveryNthShot = math.max(1, authoring.config != null
+                    ? authoring.config.AttackTracerEveryNthShot
+                    : authoring.attackTracerEveryNthShot)
             });
             if (authoring.config != null)
                 DependsOn(authoring.config);

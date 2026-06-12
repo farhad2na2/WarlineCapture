@@ -7,6 +7,7 @@ using UnityEngine;
 public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
+    private const float TraceEndJitter = 0.25f;
     private static readonly int TraceColorId = Shader.PropertyToID("_TraceColor");
     private static readonly int TraceParamsId = Shader.PropertyToID("_TraceParams");
     private static readonly Vector3[] TraceVertices =
@@ -104,6 +105,22 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 
             Vector3 start = (Vector3)sourcePosition + new Vector3(0f, sourceHeightOffset, 0f);
             Vector3 end = (Vector3)targetTransform.Position + new Vector3(0f, targetHeightOffset, 0f);
+
+            // Per-shot end-point jitter so consecutive shots aren't laser-locked
+            // onto the exact same line. Deterministic from the shot's phase.
+            Vector3 aim = end - start;
+            if (aim.sqrMagnitude > 1e-4f)
+            {
+                Vector3 jitterRight = Vector3.Cross(Vector3.up, aim);
+                if (jitterRight.sqrMagnitude > 1e-6f)
+                {
+                    jitterRight.Normalize();
+                    float seedA = Mathf.Repeat(trace.Phase * 13.37f, 1f) * 2f - 1f;
+                    float seedB = Mathf.Repeat(trace.Phase * 7.91f, 1f) * 2f - 1f;
+                    end += jitterRight * (seedA * TraceEndJitter) + Vector3.up * (seedB * TraceEndJitter * 0.5f);
+                }
+            }
+
             Vector3 direction = end - start;
             float length = direction.magnitude;
             if (length <= 0.01f)

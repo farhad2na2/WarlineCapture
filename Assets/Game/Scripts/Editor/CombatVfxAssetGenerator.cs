@@ -406,7 +406,10 @@ public static class CombatVfxAssetGenerator
         ParticleSystem.VelocityOverLifetimeModule velocity = ps.velocityOverLifetime;
         velocity.enabled = true;
         velocity.space = ParticleSystemSimulationSpace.World;
+        // All three axes must use the same curve mode (TwoConstants here).
+        velocity.x = new ParticleSystem.MinMaxCurve(0f, 0f);
         velocity.y = new ParticleSystem.MinMaxCurve(upwardSpeed * 0.6f, upwardSpeed);
+        velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
     }
 
     // ---------------------------------------------------------------- config assignment

@@ -65,13 +65,16 @@ MonoBehaviour:
   attackCooldownSeconds: 0.32
   attackDamage: 10
   maxHealth: 140
-  attackImpactPrefab: {fileID: 0}
+  attackImpactPrefab: {fileID: 3879588303722832851, guid: 295b98be57fe044a2adc77e51ead1e90, type: 3}
+  muzzleFlashPrefab: {fileID: 561298679510775374, guid: aa43af243a423415580b424951a71ac0, type: 3}
+  muzzleFlashHeightOffset: 0.9
   groundMissileLauncherConfig: {fileID: 0}
   attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
   attackTraceWidth: 0.14
   attackTraceScrollSpeed: 24
   attackTraceDashDensity: 4
   attackTraceVisibleSeconds: 0.1
+  attackTracerEveryNthShot: 3
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3

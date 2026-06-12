@@ -32,26 +32,29 @@ public partial struct RuntimeGridDeduplicationSystem : ISystem
 
         state.Dependency.Complete();
         EntityManager em = state.EntityManager;
-        using NativeArray<Entity> gridEntities = _gridQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _gridQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var runtimeGridEntities = new NativeList<Entity>(_gridQuery.CalculateEntityCount(), Allocator.Temp);
         bool hasAuthoredGrid = false;
-        for (int i = 0; i < gridEntities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (!em.HasComponent<RuntimeGridBootstrapGridTag>(gridEntities[i]))
+            NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < gridEntities.Length; i++)
             {
-                hasAuthoredGrid = true;
-                break;
+                Entity entity = gridEntities[i];
+                if (em.HasComponent<RuntimeGridBootstrapGridTag>(entity))
+                    runtimeGridEntities.Add(entity);
+                else
+                    hasAuthoredGrid = true;
             }
         }
 
         if (!hasAuthoredGrid)
             return;
 
-        for (int i = 0; i < gridEntities.Length; i++)
+        for (int i = 0; i < runtimeGridEntities.Length; i++)
         {
-            Entity entity = gridEntities[i];
-            if (!em.HasComponent<RuntimeGridBootstrapGridTag>(entity))
-                continue;
-
+            Entity entity = runtimeGridEntities[i];
             DisposeNativeGridData(em, entity);
             em.DestroyEntity(entity);
         }

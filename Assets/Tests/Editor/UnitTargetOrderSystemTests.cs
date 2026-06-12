@@ -1,14 +1,52 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
 
 public sealed class UnitTargetOrderSystemTests
 {
     private World _world;
     private EntityManager _entityManager;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitTargetOrderSystemTests();
+            tests.RunWithFixture(tests.ChebyshevDistance_ReturnsLargestAxisDelta);
+            tests.RunWithFixture(tests.IsBuildingEntity_DetectsRespawnlessHealthEntityWithoutUnitMove);
+            tests.RunWithFixture(tests.IssueAttackTarget_WritesEngageTargetAndClearsMoveOrderComponents);
+            tests.RunWithFixture(tests.IssueAttackTarget_WithBreachResolverWritesBaseBreachMoveOrder);
+            tests.RunWithFixture(tests.IssueDirectAttackTarget_WritesCommandedEngageTarget);
+            tests.RunWithFixture(tests.AttackOrderCommandSystem_FallbackQueryIssuesAttackForSelectedSource);
+            Debug.Log("[UnitTargetOrderFocusedValidation] result=Passed tests=6");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[UnitTargetOrderFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private void RunWithFixture(Action test)
+    {
+        SetUp();
+        try
+        {
+            test();
+        }
+        finally
+        {
+            TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -167,6 +205,31 @@ public sealed class UnitTargetOrderSystemTests
         Assert.AreEqual(1, engageTarget.IsCommanded);
         Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(attacker));
         Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(attacker));
+    }
+
+    [Test]
+    public void AttackOrderCommandSystem_FallbackQueryIssuesAttackForSelectedSource()
+    {
+        Entity attacker = CreateAttacker();
+        _entityManager.AddComponent<SelectedUnitTag>(attacker);
+        _entityManager.AddComponentData(attacker, new UnitAttack { Range = 20f, CooldownSeconds = 1f, Damage = 10 });
+        _entityManager.AddComponentData(attacker, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
+        Entity target = CreateTarget(new int2(7, 8), new float3(7.5f, 0f, 8.5f));
+
+        var commandSystem = new AttackOrderCommandSystem();
+        AttackOrderCommandSystem.Result result = commandSystem.IssueAttackTarget(
+            _entityManager,
+            target,
+            new UnitTargetOrderSystem());
+
+        Assert.IsTrue(result.Issued);
+        Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual(target, result.TargetEntity);
+        Assert.IsTrue(_entityManager.HasComponent<EngageTarget>(attacker));
+        EngageTarget engageTarget = _entityManager.GetComponentData<EngageTarget>(attacker);
+        Assert.AreEqual(target, engageTarget.Target);
+        Assert.AreEqual(new int2(7, 8), engageTarget.Cell);
+        Assert.AreEqual(1, engageTarget.IsCommanded);
     }
 
     private Entity CreateAttacker()

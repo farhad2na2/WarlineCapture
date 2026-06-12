@@ -80,36 +80,41 @@ public sealed class SelectionSummaryQuerySystem
         bool mixedOrders = false;
         SelectionUiQuerySystem.FocusedUnitUiStatus firstOrder = SelectionUiQuerySystem.FocusedUnitUiStatus.Idle;
 
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity))
-                continue;
-
-            unitCount++;
-            UnitCategory category = ResolveCategory(em, entity);
-            soldierCount += category == UnitCategory.Soldier ? 1 : 0;
-            vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
-            aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
-            transportCount += category == UnitCategory.Transport ? 1 : 0;
-
-            if (em.HasComponent<UnitHealth>(entity))
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-                currentTotal += math.max(0, health.Current);
-                maxTotal += math.max(0, health.Max);
-            }
+                Entity entity = entities[i];
+                if (!em.Exists(entity))
+                    continue;
 
-            SelectionUiQuerySystem.FocusedUnitUiStatus order = selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity);
-            if (!hasOrder)
-            {
-                firstOrder = order;
-                hasOrder = true;
-            }
-            else if (firstOrder != order)
-            {
-                mixedOrders = true;
+                unitCount++;
+                UnitCategory category = ResolveCategory(em, entity);
+                soldierCount += category == UnitCategory.Soldier ? 1 : 0;
+                vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
+                aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
+                transportCount += category == UnitCategory.Transport ? 1 : 0;
+
+                if (em.HasComponent<UnitHealth>(entity))
+                {
+                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
+                    currentTotal += math.max(0, health.Current);
+                    maxTotal += math.max(0, health.Max);
+                }
+
+                SelectionUiQuerySystem.FocusedUnitUiStatus order = selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity);
+                if (!hasOrder)
+                {
+                    firstOrder = order;
+                    hasOrder = true;
+                }
+                else if (firstOrder != order)
+                {
+                    mixedOrders = true;
+                }
             }
         }
 

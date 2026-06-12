@@ -62,6 +62,20 @@ internal sealed class BuildingBarrierSystem
     private const float BarrierDoorOpenCloseSpeed = 2f;
     private const int BarrierDoorDetectPaddingCells = 8;
 
+    private readonly struct LiveFactionUnitDoorRecord
+    {
+        public readonly byte FactionId;
+        public readonly int2 Cell;
+        public readonly int2 FootprintSize;
+
+        public LiveFactionUnitDoorRecord(byte factionId, int2 cell, int2 footprintSize)
+        {
+            FactionId = factionId;
+            Cell = cell;
+            FootprintSize = footprintSize;
+        }
+    }
+
     public void RememberOpenBaseBreach(Context context, RuntimeBuildingEntity building)
     {
         if (building?.Definition == null ||
@@ -325,12 +339,12 @@ internal sealed class BuildingBarrierSystem
             if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
             }
             else
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
             }
             return;
         }
@@ -341,48 +355,78 @@ internal sealed class BuildingBarrierSystem
             if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
             }
             else
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, false, default, default, default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
             }
             return;
         }
 
-        using var factions = liveFactionUnitsQuery.ToComponentDataArray<Faction>(Allocator.Temp);
-        using var unitGrids = liveFactionUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-        using var footprints = liveFactionUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+        using NativeList<LiveFactionUnitDoorRecord> liveFactionUnits = CollectLiveFactionUnitDoorRecords(
+            em,
+            liveFactionUnitsQuery,
+            Allocator.Temp);
+        NativeArray<LiveFactionUnitDoorRecord> liveFactionUnitRecords = liveFactionUnits.AsArray();
 
         if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
-                UpdateRoadBarrierDoorForBuilding(context, entry.Value, true, factions, unitGrids, footprints, deltaTime);
+                UpdateRoadBarrierDoorForBuilding(context, entry.Value, liveFactionUnitRecords, deltaTime);
         }
         else
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                UpdateRoadBarrierDoorForBuilding(context, entry.Value, true, factions, unitGrids, footprints, deltaTime);
+                UpdateRoadBarrierDoorForBuilding(context, entry.Value, liveFactionUnitRecords, deltaTime);
         }
     }
 
     private void UpdateRoadBarrierDoorForBuilding(
         Context context,
         RuntimeBuildingEntity building,
-        bool hasLiveFactionUnits,
-        NativeArray<Faction> factions,
-        NativeArray<UnitGrid> unitGrids,
-        NativeArray<UnitFootprint> footprints,
+        NativeArray<LiveFactionUnitDoorRecord> liveFactionUnits,
         float deltaTime)
     {
         if (!IsActiveRoadGateBuilding(context, building))
             return;
 
-        bool shouldOpen = hasLiveFactionUnits &&
+        bool shouldOpen = liveFactionUnits.IsCreated &&
+            liveFactionUnits.Length > 0 &&
             building.HasOwnerFaction &&
-            HasNearbyFriendlyUnit(building, factions, unitGrids, footprints, building.OwnerFactionId);
+            HasNearbyFriendlyUnit(building, liveFactionUnits, building.OwnerFactionId);
         UpdateRoadBarrierDoorVisual(context, building, shouldOpen, deltaTime);
+    }
+
+    private static NativeList<LiveFactionUnitDoorRecord> CollectLiveFactionUnitDoorRecords(
+        EntityManager em,
+        EntityQuery liveFactionUnitsQuery,
+        Allocator allocator)
+    {
+        NativeList<LiveFactionUnitDoorRecord> records = new(liveFactionUnitsQuery.CalculateEntityCount(), allocator);
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+
+        using NativeArray<ArchetypeChunk> chunks = liveFactionUnitsQuery.ToArchetypeChunkArray(allocator);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+
+            for (int i = 0; i < chunk.Count; i++)
+            {
+                records.Add(new LiveFactionUnitDoorRecord(
+                    factions[i].Id,
+                    unitGrids[i].Cell,
+                    footprints[i].Size));
+            }
+        }
+
+        return records;
     }
 
     private bool HasActiveRoadGateBuilding(Context context)
@@ -761,9 +805,7 @@ internal sealed class BuildingBarrierSystem
 
     private static bool HasNearbyFriendlyUnit(
         RuntimeBuildingEntity building,
-        NativeArray<Faction> factions,
-        NativeArray<UnitGrid> unitGrids,
-        NativeArray<UnitFootprint> footprints,
+        NativeArray<LiveFactionUnitDoorRecord> liveFactionUnits,
         byte factionId)
     {
         if (building?.Definition == null)
@@ -776,14 +818,14 @@ internal sealed class BuildingBarrierSystem
         int maxX = origin.x + size.x + BarrierDoorDetectPaddingCells;
         int maxY = origin.y + size.y + BarrierDoorDetectPaddingCells;
 
-        int count = Mathf.Min(factions.Length, Mathf.Min(unitGrids.Length, footprints.Length));
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < liveFactionUnits.Length; i++)
         {
-            if (factions[i].Id != factionId)
+            LiveFactionUnitDoorRecord unit = liveFactionUnits[i];
+            if (unit.FactionId != factionId)
                 continue;
 
-            int2 unitSize = UnitFootprintUtility.ClampSize(footprints[i].Size);
-            int2 unitMin = UnitFootprintUtility.GetMinCell(unitGrids[i].Cell, unitSize);
+            int2 unitSize = UnitFootprintUtility.ClampSize(unit.FootprintSize);
+            int2 unitMin = UnitFootprintUtility.GetMinCell(unit.Cell, unitSize);
             int2 unitMax = unitMin + unitSize;
             if (unitMin.x < maxX && unitMax.x > minX &&
                 unitMin.y < maxY && unitMax.y > minY)

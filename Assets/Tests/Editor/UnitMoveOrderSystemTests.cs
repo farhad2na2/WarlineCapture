@@ -3,11 +3,51 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 public sealed class UnitMoveOrderSystemTests
 {
     private World _world;
     private EntityManager _entityManager;
+    private NativeArray<int> _blockerCounts;
+    private NativeBitArray _blocked;
+    private NativeBitArray _occupied;
+    private NativeArray<byte> _friendlyPassFactionIds;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
+            RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
+            RunCase(test => test.IssueImmediateMoveCommand_GroundUnitWritesTargetPathRequestAndManualTag());
+            RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest());
+            RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
+            RunCase(test => test.SelectedMoveOrderCommand_IssuesMoveOrderForSelectedUnit());
+            RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=7");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[UnitMoveOrderFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<UnitMoveOrderSystemTests> testCase)
+    {
+        UnitMoveOrderSystemTests tests = new();
+        try
+        {
+            tests.SetUp();
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -19,6 +59,14 @@ public sealed class UnitMoveOrderSystemTests
     [TearDown]
     public void TearDown()
     {
+        if (_friendlyPassFactionIds.IsCreated)
+            _friendlyPassFactionIds.Dispose();
+        if (_occupied.IsCreated)
+            _occupied.Dispose();
+        if (_blocked.IsCreated)
+            _blocked.Dispose();
+        if (_blockerCounts.IsCreated)
+            _blockerCounts.Dispose();
         _world?.Dispose();
     }
 
@@ -155,6 +203,129 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
+    }
+
+    [Test]
+    public void SelectedMoveOrderCommand_IssuesMoveOrderForSelectedUnit()
+    {
+        CreateGrid(width: 16, height: 16);
+        Entity unit = _entityManager.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitGrid),
+            typeof(UnitFootprint));
+        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(unit, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 5f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        _entityManager.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        _entityManager.SetComponentData(unit, new UnitFootprint { Size = new int2(1, 1) });
+
+        EntityQuery selectedMoveQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitMove>(),
+            ComponentType.ReadOnly<UnitGrid>());
+        EntityQuery gridQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<GridWalkable>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        int2 goal = new(7, 8);
+
+        SelectedMoveOrderCommandSystem.Result result = new SelectedMoveOrderCommandSystem().TryIssueMoveOrder(
+            _entityManager,
+            Vector2.zero,
+            selectedMoveQuery,
+            gridQuery,
+            new UnitMoveOrderSystem(),
+            new SelectionOrderMarkerSystem(),
+            tryGetClickedUnit: (Vector2 screenPosition, EntityManager em, out Entity clicked) =>
+            {
+                clicked = Entity.Null;
+                return false;
+            },
+            tryGetClickedCell: (Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint) =>
+            {
+                cell = goal;
+                worldPoint = new Vector3(goal.x, 0f, goal.y);
+                return true;
+            },
+            currentFrame: 12);
+
+        Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
+    }
+
+    [Test]
+    public void BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit()
+    {
+        CreateGrid(width: 16, height: 16);
+        Entity unit = _entityManager.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(UnitMove),
+            typeof(UnitGrid));
+        _entityManager.SetComponentData(unit, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 5f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        _entityManager.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+
+        bool issued = new BuildingTargetMoveOrderSystem().TryIssueMoveOrderToBuilding(
+            _entityManager,
+            new Vector2Int(6, 6),
+            new Vector2Int(2, 2));
+
+        int2 expectedApproachCell = new(5, 5);
+        Assert.IsTrue(issued);
+        Assert.AreEqual(expectedApproachCell, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(expectedApproachCell, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+    }
+
+    private void CreateGrid(int width, int height)
+    {
+        int gridSize = width * height;
+        _blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+        _blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        _occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        for (int i = 0; i < _friendlyPassFactionIds.Length; i++)
+            _friendlyPassFactionIds[i] = byte.MaxValue;
+
+        Entity gridEntity = _entityManager.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(GridWalkable));
+        _entityManager.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
+        _entityManager.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Counts = _blockerCounts,
+            Blocked = _blocked,
+            FriendlyPassFactionIds = _friendlyPassFactionIds
+        });
+        _entityManager.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = _occupied
+        });
+
+        DynamicBuffer<GridWalkable> walkable = _entityManager.GetBuffer<GridWalkable>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+            walkable[i] = new GridWalkable { Value = 1 };
     }
 }
 #endif

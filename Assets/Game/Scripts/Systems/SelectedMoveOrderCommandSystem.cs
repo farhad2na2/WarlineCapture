@@ -54,7 +54,8 @@ public sealed class SelectedMoveOrderCommandSystem
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        using var entities = selectedMoveQuery.ToEntityArray(Allocator.Temp);
+        using NativeList<Entity> selectedEntities = CollectSelectedMoveEntities(em, selectedMoveQuery);
+        NativeArray<Entity> entities = selectedEntities.AsArray();
         if (entities.Length == 0)
         {
             SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveRejected reason=NoSelection screen={screenPosition}");
@@ -234,6 +235,25 @@ public sealed class SelectedMoveOrderCommandSystem
         return entity != Entity.Null && em.Exists(entity) && em.HasComponent<UnitGrid>(entity)
             ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
             : "none";
+    }
+
+    private static NativeList<Entity> CollectSelectedMoveEntities(EntityManager em, EntityQuery selectedMoveQuery)
+    {
+        int count = selectedMoveQuery.CalculateEntityCount();
+        NativeList<Entity> entities = new(count, Allocator.Temp);
+        if (count <= 0)
+            return entities;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+                entities.Add(chunkEntities[i]);
+        }
+
+        return entities;
     }
 
     private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)

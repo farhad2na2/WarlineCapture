@@ -23,8 +23,8 @@ Observed:
 - 23 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
 - 38 files have `OnUpdate` and no `[BurstCompile]`.
-- 82 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
-- 102 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
+- 74 non-generic `ToEntityArray` / `ToComponentDataArray` calls.
+- 91 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count.
 - 40 direct `EntityManager` structural or component mutation calls.
 - Main array-copy offenders:
   - `SelectionGameplayStartupSystem`: 10 `To*Array` calls.
@@ -32,7 +32,7 @@ Observed:
   - `UnitTransportRopeDisembarkSystem`: 8.
   - `CustomGameStartupSystem`: 5.
   - `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`: 4 each.
-  - `BuildingBarrierSystem`, `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectedUnitDebugFireSystem`, `UnitGridMovementSystem`, `UnitPathLiveUnitSnapshotSystem`: 3 each.
+  - `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectedUnitDebugFireSystem`, `UnitGridMovementSystem`, `UnitPathLiveUnitSnapshotSystem`: 3 each.
   - `AISquadSystem`, `BuildingResourceHaulerBridgeSystem`, `BuildingSpawnPrefabSystem`, `InitialSpawnReservationSystem`: 2 each.
   - `AIBuildPlannerSystem`: 1.
 - Direct structural/component mutation is concentrated mainly in:
@@ -472,6 +472,79 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=445 skipped=23`.
+  - `git diff --check` passed.
+- 2026-06-12: Continued Phase 3 in `BuildingBarrierSystem`. Road-barrier door proximity checks now collect compact live-unit records from archetype chunks instead of copying `Faction`, `UnitGrid`, and `UnitFootprint` into three parallel component arrays each tick.
+- 2026-06-12: Added `BuildingBarrierSystemTests.RunFocusedValidation` for direct road-barrier open/closed door behavior.
+- 2026-06-12: Guardrail ratchet after the road-barrier chunk traversal slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `99`.
+- 2026-06-12: Focused validation passed after the road-barrier chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingBarrierSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-building-barrier.log`
+  - Log marker: `[BuildingBarrierFocusedValidation] result=Passed tests=2`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `82`; generic-aware count confirmed at `99`.
+- 2026-06-12: Validation passed after the road-barrier chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=447 skipped=23`.
+  - `git diff --check` passed.
+- 2026-06-12: Continued Phase 3 in `SelectionSummaryQuerySystem`. Selected-summary aggregation now walks selected entities by archetype chunks instead of copying the selected entity array, preserving per-entity category, health, and order read-model resolution.
+- 2026-06-12: Added `SelectionSummaryQuerySystemTests.RunFocusedValidation` for direct summary aggregation validation.
+- 2026-06-12: Continued Phase 3 in `SelectedUnitOrderSnapshotSystem`. Command-mode order preservation now walks selected entities by archetype chunks before storing existing order components.
+- 2026-06-12: Added `SelectedUnitOrderSnapshotSystemTests.RunFocusedValidation` for direct preserve/restore behavior.
+- 2026-06-12: Guardrail ratchet after the selection-summary/order-snapshot chunk traversal slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `97`.
+- 2026-06-12: Focused validation passed after the selection-summary/order-snapshot chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionSummaryQuerySystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-summary.log`
+  - Log marker: `[SelectionSummaryFocusedValidation] result=Passed tests=10`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectedUnitOrderSnapshotSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selected-order-snapshot.log`
+  - Log marker: `[SelectedUnitOrderSnapshotFocusedValidation] result=Passed tests=1`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `80`; generic-aware count confirmed at `97`.
+- 2026-06-12: Validation passed after the selection-summary/order-snapshot chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=448 skipped=23`.
+  - `git diff --check` passed.
+- 2026-06-12: Continued Phase 3 in `SelectedMoveOrderCommandSystem`. Move command selected-unit collection now walks the selected move query by archetype chunks before formation/goal assignment.
+- 2026-06-12: Added a selected move command case to `UnitMoveOrderSystemTests.RunFocusedValidation`.
+- 2026-06-12: Continued Phase 3 in `FocusedUnitCommandSystem`. Immediate hold/stop command selected-unit collection now walks selected move entities by archetype chunks before clearing or preserving order state.
+- 2026-06-12: Added `FocusedUnitCommandSystemTests.RunFocusedValidation` for direct hold/stop command behavior.
+- 2026-06-12: Guardrail ratchet after the selected move and focused command chunk traversal slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `95`.
+- 2026-06-12: Focused validation passed after the selected move and focused command chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-move-order.log`
+  - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=6`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod FocusedUnitCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-focused-unit-command.log`
+  - Log marker: `[FocusedUnitCommandFocusedValidation] result=Passed tests=2`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `78`; generic-aware count confirmed at `95`.
+- 2026-06-12: Continued Phase 3 in `BuildingTargetMoveOrderSystem`. Building-target approach move ordering now walks selected move entities by archetype chunks before issuing approach-cell move orders.
+- 2026-06-12: Added a building-target approach move case to `UnitMoveOrderSystemTests.RunFocusedValidation`.
+- 2026-06-12: Guardrail ratchet after the building-target move chunk traversal slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `94`.
+- 2026-06-12: Focused validation passed after the building-target move chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-move-order.log`
+  - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=7`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `77`; generic-aware count confirmed at `94`.
+- 2026-06-12: Continued Phase 3 in `AttackOrderCommandSystem`. Selected attack source fallback now walks the selected attack query by archetype chunks before issuing the attack target order.
+- 2026-06-12: Added a direct attack-order command fallback case to `UnitTargetOrderSystemTests.RunFocusedValidation`.
+- 2026-06-12: Guardrail ratchet after the attack-order command chunk traversal slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `93`.
+- 2026-06-12: Focused validation passed after the attack-order command chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTargetOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-target-order.log`
+  - Log marker: `[UnitTargetOrderFocusedValidation] result=Passed tests=6`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `76`; generic-aware count confirmed at `93`.
+- 2026-06-12: Continued Phase 3 in `RtsSelectionPointerTargetCommandSystem`. Runtime-building attack-target lookup now walks runtime building combat chunks instead of copying runtime building entities, preserving nearest-screen candidate selection.
+- 2026-06-12: Added `RtsSelectionInputSystemTests.AttackTargetLookup_ReturnsRuntimeBuildingFromScreenClick` with a temporary orthographic camera and runtime building footprint.
+- 2026-06-12: Focused selection command validation passed after the runtime-building attack-target chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
+- 2026-06-12: Continued Phase 7 in `UnitPathfindingApplySystem`. Manual-move diagnostic sample collection now walks the pending manual-move query by chunks instead of copying pending entities.
+- 2026-06-12: Focused pathfinding validation passed after the diagnostic sample chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-baseline.log`
+  - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed`.
+  - Report metrics: `updates=10 elapsedMs=28.33 allocatedBytes=0 pathPoolCells=10 remainingRequests=0`.
+- 2026-06-12: Guardrail ratchet after the runtime-building attack-target and pathfinding diagnostic chunk traversal slices: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `91`.
+- 2026-06-12: Static count after the runtime-building attack-target and pathfinding diagnostic slices: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `74`; generic-aware count confirmed at `91`.
+- 2026-06-12: Validation passed after the selected move, focused command, building-target move, attack-order command, runtime-building attack-target, and pathfinding diagnostic chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=454 skipped=23`.
   - `git diff --check` passed.
 
 ### Phase 3: Replace Hot Array Copies In Selection

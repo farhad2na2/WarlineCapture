@@ -99,34 +99,43 @@ public sealed class AttackOrderCommandSystem
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources = null)
     {
         EnsureEntityQueries(em);
-        NativeArray<Entity> selectedEntities = CreateSelectedAttackSourceArray(em, collectSelectedAttackSources);
-        try
-        {
-            UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
-                targetOrderSystem.IssueAttackTarget(em, selectedEntities, targetEntity, tryResolveBaseBreachTarget);
-            return issueResult.CommandResult.Accepted
-                ? Result.Accepted(issueResult)
-                : Result.Rejected(issueResult.CommandResult);
-        }
-        finally
-        {
-            if (selectedEntities.IsCreated)
-                selectedEntities.Dispose();
-        }
+        using NativeList<Entity> selectedEntities = CreateSelectedAttackSourceList(em, collectSelectedAttackSources);
+        UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
+            targetOrderSystem.IssueAttackTarget(em, selectedEntities.AsArray(), targetEntity, tryResolveBaseBreachTarget);
+        return issueResult.CommandResult.Accepted
+            ? Result.Accepted(issueResult)
+            : Result.Rejected(issueResult.CommandResult);
     }
 
-    private NativeArray<Entity> CreateSelectedAttackSourceArray(
+    private NativeList<Entity> CreateSelectedAttackSourceList(
         EntityManager em,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources)
     {
         _selectedAttackSourceScratch.Clear();
         collectSelectedAttackSources?.Invoke(em, _selectedAttackSourceScratch);
-        if (_selectedAttackSourceScratch.Count == 0)
-            return _selectedAttackQuery.ToEntityArray(Allocator.Temp);
+        if (_selectedAttackSourceScratch.Count > 0)
+        {
+            var selectedEntities = new NativeList<Entity>(_selectedAttackSourceScratch.Count, Allocator.Temp);
+            for (int i = 0; i < _selectedAttackSourceScratch.Count; i++)
+                selectedEntities.Add(_selectedAttackSourceScratch[i]);
+            return selectedEntities;
+        }
 
-        var selectedEntities = new NativeArray<Entity>(_selectedAttackSourceScratch.Count, Allocator.Temp);
-        for (int i = 0; i < _selectedAttackSourceScratch.Count; i++)
-            selectedEntities[i] = _selectedAttackSourceScratch[i];
+        return CollectSelectedAttackSourceEntities(em);
+    }
+
+    private NativeList<Entity> CollectSelectedAttackSourceEntities(EntityManager em)
+    {
+        var selectedEntities = new NativeList<Entity>(_selectedAttackQuery.CalculateEntityCount(), Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedAttackQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+                selectedEntities.Add(chunkEntities[i]);
+        }
+
         return selectedEntities;
     }
 

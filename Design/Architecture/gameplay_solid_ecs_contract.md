@@ -14,6 +14,48 @@ Source asset filenames must not start with the project/product name. Use feature
 
 Faction identity is centralized in `FactionIdentitySystem`: faction `0` is neutral/non-commandable, faction `1` is the player, and faction `2+` is hostile/AI by default. Gameplay code must not hard-code `Faction.Id == 0` as player control or `Faction.Id != 0` as enemy control; it must use `FactionIdentitySystem` helpers so neutral authored map buildings and units remain non-commandable.
 
+## Assembly, Allocation, And Burst Hot-Path Contract
+
+The assembly split, GC allocation cleanup, and ECS Burst hot-path roadmap are part of the architecture contract, not optional optimization passes. New work must preserve these boundaries so the project does not drift back into one large default assembly, managed per-frame allocation, or non-Burst hot simulation loops.
+
+### Assembly Boundaries
+
+Runtime code must be compiled through explicit bounded assemblies, not the default `Assembly-CSharp` fallback. When adding runtime source under `Assets/Game/Scripts`, place it under an existing appropriate `.asmdef` boundary or add a focused assembly definition for the new bounded area.
+
+Assembly dependencies must stay directional:
+- Core runtime/data assemblies may depend on components, configs, contracts, and Unity ECS/runtime packages.
+- Runtime gameplay must not depend on concrete UI runtime, rendering implementation, authoring, editor, or test assemblies.
+- UI, rendering, authoring, editor, and tests may depend on the runtime/contracts they consume, but runtime must not reach back into those edges.
+- Editor-only code must remain in editor assemblies or `Editor` folders.
+
+Do not solve dependency pressure by creating a broad catch-all assembly, adding circular `.asmdef` references, or hardcoding default assembly names. Assembly changes must preserve `.meta` files and pass `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`.
+
+### GC Allocation Rules
+
+Match runtime hot paths target `0 B/frame` managed allocation after warmup. Any recurring residual must be profiler-backed, justified, and documented under `Design/AgentReports`; the accepted residual ceiling is under `1 KB/frame` unless the user explicitly approves a temporary exception.
+
+Allocation fixes must be evidence-first. Before changing code for GC cleanup, capture `GC.Alloc` call stacks for the scenario being optimized, lock the exact edit list from those call stacks, then fix one confirmed site/file at a time. Do not rewrite unrelated systems while chasing allocations.
+
+Frequent `Update`, `LateUpdate`, ECS `OnUpdate`, rendering, minimap, combat, selection, diagnostics, and UI-shell presentation paths must not create recurring managed allocations through:
+- new managed arrays/lists/dictionaries in the frame loop,
+- LINQ or closure/delegate capture,
+- boxing from interface enumeration or managed ECS access,
+- string interpolation, `ToString`, or logging before diagnostics gates,
+- per-frame `ToEntityArray` / `ToComponentDataArray` snapshots,
+- allocating Unity APIs when a non-alloc path is practical.
+
+Use cached queries, reusable managed buffers, persistent or temp-job native containers with clear ownership, non-alloc Unity APIs, command buffers for structural changes, and diagnostics gates before string formatting. The active detailed plan is `Design/GC_Allocation_Elimination_Plan.md`.
+
+### Burst And Job Rules
+
+Pure, frequent gameplay simulation/data transforms must be evaluated for Burst and jobs when touched. If compatible, use `[BurstCompile]` with `ISystem`, `IJobEntity`, `IJobChunk`, or another Burst-compatible job path. If a touched hot path cannot be Burst-compatible, document the exact managed boundary reason in the relevant roadmap/report.
+
+Do not force Burst into managed edge code. UI views, GameObject/prefab presentation, config asset loading, bootstrap composition, editor tooling, and diagnostics flushing may remain managed, but they must stay outside pure simulation hot loops.
+
+Hot ECS work should prefer chunk/job iteration over main-thread entity/component snapshot copies. Avoid `ToEntityArray` and `ToComponentDataArray` in frequent paths unless the call is measured, justified, and guarded by the active roadmap. Structural changes should be batched through entity command buffers unless same-frame playback is required and documented. Do not introduce unnecessary sync points or dependency completions in order to simplify code.
+
+The active roadmap is `Design/Architecture/ecs_burst_hot_path_refactor_roadmap.md`. New or changed hot-path work must keep `EcsBurstHotPathArchitectureTests.RunFocusedValidation` from regressing, and roadmap ratchets must move toward fewer non-Burst hot systems and fewer hot snapshot-copy calls.
+
 ## Responsibilities
 
 ### Bootstrap

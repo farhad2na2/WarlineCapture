@@ -391,47 +391,53 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return false;
 
         float bestDistanceSq = float.MaxValue;
-        using NativeArray<Entity> entities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> combatInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
+        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+        using NativeArray<ArchetypeChunk> chunks = _runtimeBuildingCombatQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsAttackableRuntimeBuildingCandidate(em, entity, clickedCell))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<RuntimeBuildingCombatInfo> combatInfos = chunk.GetNativeArray(ref combatInfoType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref healthType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (!IsAttackableRuntimeBuildingCandidate(factions[i], healths[i], combatInfos[i], clickedCell))
+                    continue;
 
-            Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalTransform>(entity).Position);
-            if (screen.z <= 0f)
-                continue;
+                Vector3 screen = worldCamera.WorldToScreenPoint(transforms[i].Position);
+                if (screen.z <= 0f)
+                    continue;
 
-            float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
-            if (distanceSq >= bestDistanceSq)
-                continue;
+                float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+                if (distanceSq >= bestDistanceSq)
+                    continue;
 
-            bestDistanceSq = distanceSq;
-            bestEntity = entity;
+                bestDistanceSq = distanceSq;
+                bestEntity = entities[i];
+            }
         }
 
         return bestEntity != Entity.Null;
     }
 
-    private static bool IsAttackableRuntimeBuildingCandidate(EntityManager em, Entity entity, int2 clickedCell)
+    private static bool IsAttackableRuntimeBuildingCandidate(
+        Faction faction,
+        UnitHealth health,
+        RuntimeBuildingCombatInfo info,
+        int2 clickedCell)
     {
-        if (!em.Exists(entity) ||
-            !em.HasComponent<RuntimeBuildingCombatInfo>(entity) ||
-            !em.HasComponent<Faction>(entity) ||
-            !em.HasComponent<UnitHealth>(entity) ||
-            !em.HasComponent<LocalTransform>(entity))
-        {
-            return false;
-        }
-
-        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(entity).Id))
+        if (!FactionIdentitySystem.IsHostileToPlayer(faction.Id))
             return false;
 
-        UnitHealth health = em.GetComponentData<UnitHealth>(entity);
         if (health.Current <= 0)
             return false;
 
-        RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
         int2 origin = info.OriginCell;
         int2 size = UnitFootprintUtility.ClampSize(info.FootprintCells);
         int2 max = origin + size;

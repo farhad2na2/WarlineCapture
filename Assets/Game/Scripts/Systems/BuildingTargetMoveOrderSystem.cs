@@ -33,8 +33,9 @@ public sealed class BuildingTargetMoveOrderSystem
         Vector2Int footprintCells)
     {
         EnsureEntityQueries(em);
-        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Allocator.Temp);
-        if (selectedEntities.Length == 0)
+        using NativeList<Entity> selectedEntities = CollectSelectedMoveEntities(em);
+        NativeArray<Entity> entities = selectedEntities.AsArray();
+        if (entities.Length == 0)
             return false;
 
         if (_gridPathingQuery.IsEmptyIgnoreFilter)
@@ -46,13 +47,13 @@ public sealed class BuildingTargetMoveOrderSystem
         NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
         NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
 
-        int2 referenceCell = em.GetComponentData<UnitGrid>(selectedEntities[0]).Cell;
+        int2 referenceCell = em.GetComponentData<UnitGrid>(entities[0]).Cell;
         if (!TryFindBuildingApproachCell(grid, walkable, blocked, occupied, originCell, footprintCells, referenceCell, out int2 goal))
             return false;
 
-        for (int i = 0; i < selectedEntities.Length; i++)
+        for (int i = 0; i < entities.Length; i++)
         {
-            Entity entity = selectedEntities[i];
+            Entity entity = entities[i];
 
             if (IsAlreadyMovingToGoal(em, entity, goal))
                 continue;
@@ -88,6 +89,25 @@ public sealed class BuildingTargetMoveOrderSystem
         }
 
         return true;
+    }
+
+    private NativeList<Entity> CollectSelectedMoveEntities(EntityManager em)
+    {
+        int count = _selectedMoveQuery.CalculateEntityCount();
+        NativeList<Entity> selectedEntities = new(count, Allocator.Temp);
+        if (count <= 0)
+            return selectedEntities;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+                selectedEntities.Add(entities[i]);
+        }
+
+        return selectedEntities;
     }
 
     private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)

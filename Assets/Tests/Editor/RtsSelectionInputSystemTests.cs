@@ -957,6 +957,100 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void AttackTargetLookup_ReturnsRuntimeBuildingFromScreenClick()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity building = em.CreateEntity(
+            typeof(RuntimeBuildingCombatTag),
+            typeof(RuntimeBuildingCombatInfo),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(building, new RuntimeBuildingCombatInfo
+        {
+            RuntimeBuildingId = 7,
+            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            OriginCell = new int2(10, 10),
+            FootprintCells = new int2(3, 3)
+        });
+        em.SetComponentData(building, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(building, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(building, LocalTransform.FromPosition(new float3(11.5f, 0f, 11.5f)));
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_Camera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
+
+            var pointerSystem = new RtsSelectionPointerTargetCommandSystem();
+            var context = new RtsSelectionPointerTargetCommandSystem.Context(
+                runtimeGameplayStateSystem: null,
+                inputSystem: null,
+                selectionStateSystem: new SelectionStateSystem(),
+                focusedUnitLifecycleSystem: null,
+                unitTargetOrderSystem: null,
+                focusableUnitLookupSystem: new FocusableUnitLookupSystem(),
+                transportBoardingCommandSystem: null,
+                unitTransportCapacitySystem: default,
+                unitTransportBoardingQuerySystem: default,
+                unitTransportBoardingRuleSystem: default,
+                unitTransportApproachCellSystem: default,
+                unitTransportAirPickupSystem: default,
+                unitTransportRopeDisembarkCommandSystem: default,
+                buildingTargetMoveOrderSystem: null,
+                buildingPlacementInteractionSystem: null,
+                buildingPlacementInteractionContext: default,
+                worldCamera: camera,
+                tryGetEntityManager: null,
+                tryGetPointerPosition: null,
+                getExplicitAttackTargetModeActive: null,
+                setExplicitAttackTargetModeActive: null,
+                applyHudCommandMode: null,
+                applyHudCommandResult: null,
+                clearHudSelection: null,
+                clearHudCommandMode: null,
+                applyHudSelection: null,
+                clearCurrentSelection: null,
+                requestMoveOrderScreenMarker: null,
+                setCameraDragging: null,
+                processAttackCommandRequests: null,
+                processScanCommandRequests: null,
+                processTransportCommandRequests: null,
+                processMoveCommandRequests: null,
+                logSelectionDiagnostic: null,
+                describeEntity: null);
+
+            bool hit = pointerSystem.TryGetClickedAttackTargetEntity(
+                context,
+                new Vector2(screen.x, screen.y),
+                em,
+                out Entity selectedTarget);
+
+            Assert.IsTrue(hit);
+            Assert.AreEqual(building, selectedTarget);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
     public void BuildingInput_DefersBuildingSelectionUntilPointerRelease()
     {
         string buildingInput = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs");

@@ -125,13 +125,14 @@ public sealed class FocusedUnitCommandSystem
         UnitMoveOrderSystem moveOrderSystem)
     {
         EnsureEntityQueries(em);
-        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Allocator.Temp);
-        if (selectedEntities.Length == 0)
+        using NativeList<Entity> selectedEntities = CollectSelectedMoveEntities(em);
+        NativeArray<Entity> entities = selectedEntities.AsArray();
+        if (entities.Length == 0)
             return false;
 
-        for (int i = 0; i < selectedEntities.Length; i++)
+        for (int i = 0; i < entities.Length; i++)
         {
-            Entity entity = selectedEntities[i];
+            Entity entity = entities[i];
             if (!em.Exists(entity))
                 continue;
 
@@ -168,6 +169,25 @@ public sealed class FocusedUnitCommandSystem
         }
 
         return true;
+    }
+
+    private NativeList<Entity> CollectSelectedMoveEntities(EntityManager em)
+    {
+        int count = _selectedMoveQuery.CalculateEntityCount();
+        NativeList<Entity> selectedEntities = new(count, Allocator.Temp);
+        if (count <= 0)
+            return selectedEntities;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+                selectedEntities.Add(entities[i]);
+        }
+
+        return selectedEntities;
     }
 
     private static void ClearImmediateOrderComponents(

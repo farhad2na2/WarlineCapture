@@ -44,32 +44,37 @@ public sealed class SelectedUnitOrderSnapshotSystem
         EnsureEntityQueries(em);
         _preservedOrders.Clear();
 
-        using var entities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            var state = new PreservedOrderState
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                Entity = entity,
-                HadEngageTarget = em.HasComponent<EngageTarget>(entity),
-                HadUnitTarget = em.HasComponent<UnitTarget>(entity),
-                HadUnitPathRequest = em.HasComponent<UnitPathRequest>(entity),
-                HadUnitPathFollow = em.HasComponent<UnitPathFollow>(entity),
-                HadUnitPathRange = em.HasComponent<UnitPathRange>(entity)
-            };
+                Entity entity = entities[i];
+                var state = new PreservedOrderState
+                {
+                    Entity = entity,
+                    HadEngageTarget = em.HasComponent<EngageTarget>(entity),
+                    HadUnitTarget = em.HasComponent<UnitTarget>(entity),
+                    HadUnitPathRequest = em.HasComponent<UnitPathRequest>(entity),
+                    HadUnitPathFollow = em.HasComponent<UnitPathFollow>(entity),
+                    HadUnitPathRange = em.HasComponent<UnitPathRange>(entity)
+                };
 
-            if (state.HadEngageTarget)
-                state.EngageTarget = em.GetComponentData<EngageTarget>(entity);
-            if (state.HadUnitTarget)
-                state.UnitTarget = em.GetComponentData<UnitTarget>(entity);
-            if (state.HadUnitPathRequest)
-                state.UnitPathRequest = em.GetComponentData<UnitPathRequest>(entity);
-            if (state.HadUnitPathFollow)
-                state.UnitPathFollow = em.GetComponentData<UnitPathFollow>(entity);
-            if (state.HadUnitPathRange)
-                state.UnitPathRange = em.GetComponentData<UnitPathRange>(entity);
+                if (state.HadEngageTarget)
+                    state.EngageTarget = em.GetComponentData<EngageTarget>(entity);
+                if (state.HadUnitTarget)
+                    state.UnitTarget = em.GetComponentData<UnitTarget>(entity);
+                if (state.HadUnitPathRequest)
+                    state.UnitPathRequest = em.GetComponentData<UnitPathRequest>(entity);
+                if (state.HadUnitPathFollow)
+                    state.UnitPathFollow = em.GetComponentData<UnitPathFollow>(entity);
+                if (state.HadUnitPathRange)
+                    state.UnitPathRange = em.GetComponentData<UnitPathRange>(entity);
 
-            _preservedOrders.Add(state);
+                _preservedOrders.Add(state);
+            }
         }
     }
 

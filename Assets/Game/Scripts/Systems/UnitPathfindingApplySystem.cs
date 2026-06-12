@@ -345,8 +345,23 @@ internal struct UnitPathfindingApplySystem
         int maxSamples)
     {
         EntityManager em = state.EntityManager;
-        using NativeArray<Entity> entities = queries.PendingManualMoveQuery.ToEntityArray(Allocator.Temp);
-        return diagnostics.BuildManualMoveSamples(em, entities, maxSamples);
+        using NativeList<Entity> entities = CollectPendingManualMoveEntities(em, queries.PendingManualMoveQuery);
+        return diagnostics.BuildManualMoveSamples(em, entities.AsArray(), maxSamples);
+    }
+
+    private static NativeList<Entity> CollectPendingManualMoveEntities(EntityManager em, EntityQuery query)
+    {
+        var entities = new NativeList<Entity>(query.CalculateEntityCount(), Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+                entities.Add(chunkEntities[i]);
+        }
+
+        return entities;
     }
 
     private static void DisposeCompleted(

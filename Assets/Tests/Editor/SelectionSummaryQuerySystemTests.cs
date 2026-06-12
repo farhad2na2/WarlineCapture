@@ -14,6 +14,44 @@ public sealed class SelectionSummaryQuerySystemTests
     private World _previousWorld;
     private readonly List<GameObject> _createdObjects = new();
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.SoldierMultiSelectionUsesInfantryCopyAndAggregateHealth());
+            RunCase(test => test.MixedSoldierAndVehicleUsesMixedCopyAndAggregateHealth());
+            RunCase(test => test.MixedSoldierAndAircraftUsesAirInfantryPortraitKind());
+            RunCase(test => test.MixedSoldierVehicleAndAircraftUsesCombinedArmsPortraitKind());
+            RunCase(test => test.MixedVehicleAndAircraftUsesAirVehiclePortraitKind());
+            RunCase(test => test.MultiVehicleSelectionUsesVehiclePortraitKind());
+            RunCase(test => test.MultiTransportSelectionUsesVehiclePortraitKind());
+            RunCase(test => test.MixedGroundVehicleAndTransportUsesVehiclePortraitKind());
+            RunCase(test => test.GroundTransportAndAirTransportUsesAirVehiclePortraitKind());
+            RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=10");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[SelectionSummaryFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<SelectionSummaryQuerySystemTests> testCase)
+    {
+        var tests = new SelectionSummaryQuerySystemTests();
+        try
+        {
+            tests.SetUp();
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {

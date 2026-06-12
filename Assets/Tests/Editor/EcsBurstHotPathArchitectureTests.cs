@@ -11,7 +11,7 @@ using UnityEngine;
 public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
-    private const int ToArrayDebtCeiling = 102;
+    private const int ToArrayDebtCeiling = 91;
     private const int EntityManagerMutationDebtCeiling = 40;
     private const int NonBurstOnUpdateFileDebtCeiling = 38;
     private const int BurstCompileFileFloor = 23;

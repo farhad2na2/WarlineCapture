@@ -448,6 +448,108 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void AttackTargetMode_MixedAirDefenseAndAttackUnitEntersTargetMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity airDefense = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(AirMissileLauncherComponent));
+        Entity attackUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(airDefense, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(airDefense, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(airDefense, new AirMissileLauncherComponent
+        {
+            MinRange = 8f,
+            BaseDetectionRange = 220f,
+            MaxDetectionRange = 420f,
+            LockSeconds = 0.35f,
+            LaunchDelaySeconds = 0.12f,
+            ReloadSeconds = 1.8f,
+            MissileSpeed = 95f,
+            MissileTurnRateDegreesPerSecond = 220f,
+            MissileLifetimeSeconds = 7f,
+            ProximityFuseRadius = 4f,
+            AirTargetDamage = 120,
+            IncomingMissileDamage = 9999,
+            TrackingQuality = 0.75f
+        });
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(attackUnit, LocalTransform.FromPosition(float3.zero));
+
+        var inputSystem = new RtsSelectionInputSystem();
+        var selectionState = new SelectionStateSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        TacticalCommandMode appliedMode = TacticalCommandMode.None;
+        TacticalCommandResult commandResult = default;
+        bool explicitAttackMode = false;
+        bool worldMarkersVisible = false;
+
+        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
+        var context = new RtsSelectionFocusCommandSystem.Context(
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            inputSystem: inputSystem,
+            selectionStateSystem: selectionState,
+            focusedUnitLifecycleSystem: new FocusedUnitLifecycleSystem(),
+            unitTargetOrderSystem: new UnitTargetOrderSystem(),
+            buildingPlacementInteractionSystem: null,
+            buildingPlacementInteractionContext: default,
+            worldCamera: null,
+            tryGetEntityManager: (out EntityManager entityManager) =>
+            {
+                entityManager = em;
+                return true;
+            },
+            ensureEntityQueries: _ => { },
+            clearCurrentSelection: null,
+            queueSelectionRectangleRequest: null,
+            processSelectionRectangleRequests: null,
+            applyHudSelection: null,
+            applyHudCommandResult: result => commandResult = result,
+            applyHudCommandMode: mode => appliedMode = mode,
+            applyHudBoardCommandMode: null,
+            clearHudSelection: null,
+            clearHudCommandMode: null,
+            setHudWorldMarkersVisible: visible => worldMarkersVisible = visible,
+            setCameraDragging: _ => { },
+            setExplicitAttackTargetModeActive: value => explicitAttackMode = value,
+            logSelectionDiagnostic: null,
+            describeEntity: null,
+            validateControllableEntity: null,
+            isBoardPassengerCandidate: null,
+            isBoardTransportCandidate: null,
+            issueHoldPositionOrder: null,
+            issueStopOrder: null,
+            destroyFocusedUnit: null,
+            returnFocusedSelectionToBase: null,
+            boardFocusedTransport: null,
+            tryFocusScreenPosition: null,
+            issueFocusedMissileLauncherRadarAttack: null,
+            armFocusedAttackTargetMode: null,
+            cancelExplicitAttackTargetMode: null);
+
+        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
+
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+        Assert.AreEqual(TacticalCommandMode.Attack, appliedMode);
+        Assert.IsTrue(explicitAttackMode);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(TacticalCommandReasonCode.None, commandResult.ReasonCode);
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_BoardButtonQueuesEnterBoardTargetModeAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();

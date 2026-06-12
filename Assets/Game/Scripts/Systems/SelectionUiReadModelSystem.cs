@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -135,22 +134,6 @@ public sealed class SelectionUiReadModelSystem
                 passenger.HealthCurrent,
                 passenger.HealthMax));
         }
-    }
-
-    public void GetSelectedUnitEntities(List<Entity> entities)
-    {
-        if (entities == null)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-        {
-            entities.Clear();
-            return;
-        }
-
-        EnsureEntityQueries(em);
-        using NativeArray<Entity> selectedEntities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
-        _selectionUiQuerySystem.GetSelectedUnitEntities(em, selectedEntities, entities);
     }
 
     public bool HasVisiblePlayerUnits(Camera worldCamera)

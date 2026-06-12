@@ -158,7 +158,7 @@ Metrics to record:
 ## Guardrail Added
 
 Added `EcsBurstHotPathArchitectureTests` with current ratchet ceilings:
-- `ToEntityArray` / `ToComponentDataArray` calls must not exceed 106.
+- `ToEntityArray` / `ToComponentDataArray` calls must not exceed 104.
 - Direct `EntityManager` mutation calls must not exceed 40.
 - Files with `OnUpdate` and no `[BurstCompile]` must not exceed 38.
 - Files with `[BurstCompile]` must not drop below 23.
@@ -187,6 +187,8 @@ Note:
 `PathPoolMaintenanceSystem` was then converted to `[BurstCompile]` and now clears the native path pool through singleton `RefRW<PathPoolComponent>` instead of an EntityManager get/set round trip.
 `SelectionGameplayStartupSystem` then started Phase 3 by resolving Match HUD board-button availability through one selected-entity scan instead of separate passenger and transport scans.
 `RtsSelectionFocusCommandSystem` then continued Phase 3 by resolving selected Board-mode transport and passenger candidates through one selected-entity scan while preserving transport-first priority.
+`RtsSelectionFocusCommandSystem` then merged Attack-mode air-defense-only and normal attack-capability checks into one selected-entity scan while preserving mixed-selection Attack mode.
+The unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` API and its `SelectionUiQuerySystem` helper were removed, deleting a dead selected-entity snapshot.
 
 Validation:
 - Full explicit editor validation:
@@ -195,13 +197,13 @@ Validation:
 - Hot-path architecture guardrail:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
-  - Ratcheted guardrails after latest slice: `ToEntityArray` / `ToComponentDataArray` ceiling `106`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
+  - Ratcheted guardrails after latest slice: `ToEntityArray` / `ToComponentDataArray` ceiling `104`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
 - Selection/command focused validation:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
-  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=58`.
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=59`.
 - Full explicit editor validation after the latest Phase 3 slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
-  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=439 skipped=23`.
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
 - `git diff --check` passed after the latest slice.
 
 Behavior coverage added in the latest slice:

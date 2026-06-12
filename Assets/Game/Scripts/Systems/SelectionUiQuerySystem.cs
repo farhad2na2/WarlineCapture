@@ -370,22 +370,6 @@ public sealed class SelectionUiQuerySystem
         return true;
     }
 
-    public void GetSelectedUnitEntities(EntityManager entityManager, NativeArray<Entity> selectedEntities, List<Entity> entities)
-    {
-        if (entities == null)
-            return;
-
-        entities.Clear();
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (!entityManager.Exists(entity))
-                continue;
-
-            entities.Add(entity);
-        }
-    }
-
     public string ResolveHudSelectionStatus(EntityManager entityManager, Entity entity)
     {
         var parts = new List<string>();

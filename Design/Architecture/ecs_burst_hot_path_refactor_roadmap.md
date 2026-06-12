@@ -23,13 +23,13 @@ Observed:
 - 23 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
 - 38 files have `OnUpdate` and no `[BurstCompile]`.
-- 106 `ToEntityArray` / `ToComponentDataArray` calls.
+- 104 `ToEntityArray` / `ToComponentDataArray` calls.
 - 40 direct `EntityManager` structural or component mutation calls.
 - Main array-copy offenders:
   - `SelectionGameplayStartupSystem`: 8 `To*Array` calls.
   - `TransportBoardingCommandSystem`: 6.
   - `CustomGameStartupSystem`: 5.
-  - `RtsSelectionFocusCommandSystem`: 4.
+  - `RtsSelectionFocusCommandSystem`: 3.
   - `AISquadSystem`, `AIStartupSystem`, `FocusableUnitLookupSystem`, `SelectedUnitDebugFireSystem`, `UnitVisualPrefabReferenceBackfillSystem`: 4 each.
   - `ThreatDetectionWarningSystem`: 3.
 - Direct structural/component mutation is concentrated mainly in:
@@ -303,6 +303,19 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=439 skipped=23`.
   - `git diff --check` passed.
+- 2026-06-12: Continued Phase 3 with another narrow `RtsSelectionFocusCommandSystem` cleanup. Entering Attack mode now resolves selected air-defense and normal attack-capable units through one selected-entity scan while preserving air-defense-only auto-engage feedback.
+- 2026-06-12: Added `RtsSelectionInputSystemTests.AttackTargetMode_MixedAirDefenseAndAttackUnitEntersTargetMode`.
+- 2026-06-12: Guardrail ratchet after the third Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `105`.
+- 2026-06-12: Validation passed after the third Phase 3 slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=59`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
+  - `git diff --check` passed.
+- 2026-06-12: Removed unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` and its `SelectionUiQuerySystem` helper. This deletes a dead selected-entity snapshot API rather than hiding it behind a helper.
+- 2026-06-12: Guardrail ratchet after the fourth Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `104`.
 
 ### Phase 3: Replace Hot Array Copies In Selection
 

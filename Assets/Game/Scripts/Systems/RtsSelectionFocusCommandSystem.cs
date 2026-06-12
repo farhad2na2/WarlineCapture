@@ -130,6 +130,18 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
 
+    private struct AttackModeSelectionState
+    {
+        public bool HasSelected;
+        public bool HasAirDefenseLauncher;
+        public bool HasNonAirDefenseAttackSource;
+
+        public readonly bool HasOnlyAirDefenseLauncher =>
+            HasSelected &&
+            HasAirDefenseLauncher &&
+            !HasNonAirDefenseAttackSource;
+    }
+
     public bool ProcessExternalSelectionCommandRequests(Context context)
     {
         if (!context.InputSystem.TryGetCommandBuffers(
@@ -464,7 +476,8 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ClearQueuedMoveOrder();
         context.InputSystem.ClearPendingMoveCommandRequests();
 
-        if (TryHasSelectedAirDefenseLauncherOnly(context))
+        AttackModeSelectionState attackSelection = ResolveSelectedAttackModeState(context);
+        if (attackSelection.HasOnlyAirDefenseLauncher)
         {
             context.InputSystem.ClearActiveCommandMode();
             context.ClearHudCommandMode?.Invoke();
@@ -476,8 +489,11 @@ public sealed class RtsSelectionFocusCommandSystem
             return;
         }
 
-        if (!TryHasSelectedAttackCapableUnit(context, out TacticalCommandReasonCode rejectionReason))
+        if (!attackSelection.HasNonAirDefenseAttackSource)
         {
+            TacticalCommandReasonCode rejectionReason = attackSelection.HasSelected
+                ? TacticalCommandReasonCode.TargetNotAttackable
+                : TacticalCommandReasonCode.NoSelection;
             context.InputSystem.ClearActiveCommandMode();
             context.ClearHudCommandMode?.Invoke();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
@@ -624,26 +640,24 @@ public sealed class RtsSelectionFocusCommandSystem
         return false;
     }
 
-    private static bool TryHasSelectedAirDefenseLauncherOnly(Context context)
+    private static AttackModeSelectionState ResolveSelectedAttackModeState(Context context)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
-            return false;
+            return default;
 
         context.EnsureEntityQueries?.Invoke(em);
-        bool hasSelected = false;
-        bool hasAirDefenseLauncher = false;
-        bool hasNonAirDefenseAttackSource = false;
+        AttackModeSelectionState selection = default;
 
         Entity focused = context.SelectionStateSystem.FocusedUnit;
         if (focused != Entity.Null && em.Exists(focused))
-            IncludeSelectedAttackModeCandidate(em, focused, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+            IncludeSelectedAttackModeCandidate(em, focused, ref selection);
 
         List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
         for (int i = 0; i < cached.Count; i++)
         {
             Entity entity = cached[i];
             if (em.Exists(entity))
-                IncludeSelectedAttackModeCandidate(em, entity, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+                IncludeSelectedAttackModeCandidate(em, entity, ref selection);
         }
 
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
@@ -654,82 +668,27 @@ public sealed class RtsSelectionFocusCommandSystem
             {
                 Entity entity = selectedEntities[i];
                 if (em.Exists(entity))
-                    IncludeSelectedAttackModeCandidate(em, entity, ref hasSelected, ref hasAirDefenseLauncher, ref hasNonAirDefenseAttackSource);
+                    IncludeSelectedAttackModeCandidate(em, entity, ref selection);
             }
         }
 
-        return hasSelected && hasAirDefenseLauncher && !hasNonAirDefenseAttackSource;
+        return selection;
     }
 
     private static void IncludeSelectedAttackModeCandidate(
         EntityManager em,
         Entity entity,
-        ref bool hasSelected,
-        ref bool hasAirDefenseLauncher,
-        ref bool hasNonAirDefenseAttackSource)
+        ref AttackModeSelectionState selection)
     {
-        hasSelected = true;
+        selection.HasSelected = true;
         if (IsAirDefenseLauncher(em, entity))
         {
-            hasAirDefenseLauncher = true;
+            selection.HasAirDefenseLauncher = true;
             return;
         }
 
         if (IsSelectedAttackCapableUnit(em, entity))
-            hasNonAirDefenseAttackSource = true;
-    }
-
-    private static bool TryHasSelectedAttackCapableUnit(
-        Context context,
-        out TacticalCommandReasonCode rejectionReason)
-    {
-        rejectionReason = TacticalCommandReasonCode.NoSelection;
-        if (!context.TryGetEntityManager(out EntityManager em))
-            return false;
-
-        context.EnsureEntityQueries?.Invoke(em);
-        bool hasSelected = false;
-
-        Entity focused = context.SelectionStateSystem.FocusedUnit;
-        if (focused != Entity.Null && em.Exists(focused))
-        {
-            hasSelected = true;
-            if (IsSelectedAttackCapableUnit(em, focused))
-                return true;
-        }
-
-        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
-        for (int i = 0; i < cached.Count; i++)
-        {
-            Entity entity = cached[i];
-            if (!em.Exists(entity))
-                continue;
-
-            hasSelected = true;
-            if (IsSelectedAttackCapableUnit(em, entity))
-                return true;
-        }
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        if (!query.IsEmptyIgnoreFilter)
-        {
-            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selectedEntities.Length; i++)
-            {
-                Entity entity = selectedEntities[i];
-                if (!em.Exists(entity))
-                    continue;
-
-                hasSelected = true;
-                if (IsSelectedAttackCapableUnit(em, entity))
-                    return true;
-            }
-        }
-
-        rejectionReason = hasSelected
-            ? TacticalCommandReasonCode.TargetNotAttackable
-            : TacticalCommandReasonCode.NoSelection;
-        return false;
+            selection.HasNonAirDefenseAttackSource = true;
     }
 
     private static bool TryResolveBoardModeSource(

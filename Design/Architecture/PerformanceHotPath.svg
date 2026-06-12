@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Performance Hot Path</title>
+  <desc id="desc">Performance workflow showing warmup, profiling evidence, GC allocation cleanup, Burst and jobs, validation, and reporting.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .box { fill: #16231d; stroke: #6c9f78; stroke-width: 2; rx: 12; }
+      .boxBlue { fill: #142230; stroke: #69a9ca; stroke-width: 2; rx: 12; }
+      .boxGold { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 12; }
+      .bad { fill: #2a1514; stroke: #db6a5f; stroke-width: 2; rx: 12; }
+      .h { fill: #f0e6b6; font: 700 23px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
+      .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+    </style>
+    <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1000"/>
+  <text class="title" x="56" y="64">Performance Hot Path</text>
+  <text class="subtitle" x="58" y="96">Profiler evidence first, then one confirmed site/file at a time. Match steady state targets 0 B/frame after warmup.</text>
+
+  <rect class="boxGold" x="80" y="170" width="260" height="110"/>
+  <text class="label" x="110" y="205">Scenario</text>
+  <text class="small" x="110" y="234">Boot, warmup, interaction</text>
+  <text class="small" x="110" y="260">Battle, spike, steady state</text>
+  <rect class="boxGold" x="420" y="170" width="280" height="110"/>
+  <text class="label" x="450" y="205">Capture Evidence</text>
+  <text class="small" x="450" y="234">GC.Alloc call stacks</text>
+  <text class="small" x="450" y="260">Frame/system timings</text>
+  <rect class="boxGold" x="780" y="170" width="300" height="110"/>
+  <text class="label" x="810" y="205">Lock Edit List</text>
+  <text class="small" x="810" y="234">Top confirmed project sites</text>
+  <text class="small" x="810" y="260">No guessing broad rewrites</text>
+  <rect class="boxGold" x="1160" y="170" width="300" height="110"/>
+  <text class="label" x="1190" y="205">Fix And Reprofile</text>
+  <text class="small" x="1190" y="234">One site/file at a time</text>
+  <text class="small" x="1190" y="260">Report before/after</text>
+
+  <path class="arrow" d="M340 225 H420"/>
+  <path class="arrow" d="M700 225 H780"/>
+  <path class="arrow" d="M1080 225 H1160"/>
+
+  <text class="h" x="80" y="370">Hot Path Rules</text>
+  <rect class="boxBlue" x="80" y="410" width="315" height="140"/>
+  <text class="label" x="110" y="445">Use Burst / Jobs When Fit</text>
+  <text class="small" x="110" y="474">Pure frequent data transforms</text>
+  <text class="small" x="110" y="502">Chunk/job iteration first</text>
+  <rect class="boxBlue" x="435" y="410" width="315" height="140"/>
+  <text class="label" x="465" y="445">Reuse Buffers</text>
+  <text class="small" x="465" y="474">No recurring arrays/lists</text>
+  <text class="small" x="465" y="502">Cache queries and containers</text>
+  <rect class="boxBlue" x="790" y="410" width="315" height="140"/>
+  <text class="label" x="820" y="445">Gate Diagnostics</text>
+  <text class="small" x="820" y="474">Check enabled before format</text>
+  <text class="small" x="820" y="502">No hot-path string churn</text>
+  <rect class="boxBlue" x="1145" y="410" width="315" height="140"/>
+  <text class="label" x="1175" y="445">Avoid Sync Points</text>
+  <text class="small" x="1175" y="474">Use ECB when possible</text>
+  <text class="small" x="1175" y="502">Document same-frame playback</text>
+
+  <text class="h" x="80" y="645">Do Not Add To Frequent Runtime Paths</text>
+  <rect class="bad" x="80" y="685" width="315" height="120"/>
+  <text class="label" x="110" y="720">Managed Churn</text>
+  <text class="small" x="110" y="749">Arrays, LINQ, closures</text>
+  <text class="small" x="110" y="775">Boxing and delegate churn</text>
+  <rect class="bad" x="435" y="685" width="315" height="120"/>
+  <text class="label" x="465" y="720">Scene Searches</text>
+  <text class="small" x="465" y="749">Find*, Camera.main</text>
+  <text class="small" x="465" y="775">Hierarchy string lookup</text>
+  <rect class="bad" x="790" y="685" width="315" height="120"/>
+  <text class="label" x="820" y="720">Per-frame Logging</text>
+  <text class="small" x="820" y="749">Interpolation before gates</text>
+  <text class="small" x="820" y="775">Debug output in hot systems</text>
+  <rect class="bad" x="1145" y="685" width="315" height="120"/>
+  <text class="label" x="1175" y="720">Runtime Asset Loads</text>
+  <text class="small" x="1175" y="749">Instantiate/destroy churn</text>
+  <text class="small" x="1175" y="775">Gameplay-frame loads</text>
+
+  <path class="arrowBlue" d="M237 550 V685"/>
+  <path class="arrowBlue" d="M592 550 V685"/>
+  <path class="arrowBlue" d="M947 550 V685"/>
+  <path class="arrowBlue" d="M1302 550 V685"/>
+
+  <text class="tiny" x="80" y="925">Validation: focused tests for touched systems, architecture validation for asmdef/hot-path changes, GC/profiler capture for allocation work, Android/device validation for mobile/rendering acceptance.</text>
+</svg>

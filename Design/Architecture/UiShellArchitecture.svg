@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
+  <title id="title">UI Shell Architecture</title>
+  <desc id="desc">UI shell layout and transition architecture with persistent header, swappable regions, modal overlay, and popup animation rules.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .canvas { fill: #0d1713; stroke: #6c9f78; stroke-width: 3; rx: 20; }
+      .region { fill: #142230; stroke: #69a9ca; stroke-width: 2; rx: 12; }
+      .region2 { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 12; }
+      .overlay { fill: #251722; stroke: #a86e9b; stroke-width: 2; rx: 12; }
+      .h { fill: #f0e6b6; font: 700 23px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
+      .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+      .arrowPink { stroke: #d08abe; stroke-width: 3; fill: none; marker-end: url(#arrowPink); }
+    </style>
+    <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
+    <marker id="arrowPink" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d08abe"/></marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1040"/>
+  <text class="title" x="56" y="64">UI Shell Architecture</text>
+  <text class="subtitle" x="58" y="96">Persistent shell regions, animated route swaps, and popup/loading priority rules.</text>
+
+  <rect class="canvas" x="80" y="145" width="960" height="620"/>
+  <text class="h" x="115" y="188">Canvas Environment</text>
+  <rect class="region2" x="125" y="220" width="870" height="84"/>
+  <text class="label" x="155" y="254">Header Region</text>
+  <text class="small" x="155" y="281">Persistent in menu/shell routes; exits for match HUD</text>
+  <rect class="region" x="125" y="335" width="190" height="300"/>
+  <text class="label" x="152" y="371">Left Region</text>
+  <text class="small" x="152" y="398">Nav or context</text>
+  <rect class="region" x="350" y="335" width="330" height="300"/>
+  <text class="label" x="380" y="371">Middle Region</text>
+  <text class="small" x="380" y="398">Screen content scales</text>
+  <rect class="region" x="715" y="335" width="280" height="300"/>
+  <text class="label" x="745" y="371">Right Region</text>
+  <text class="small" x="745" y="398">Profile/context</text>
+  <rect class="region2" x="125" y="675" width="870" height="52"/>
+  <text class="label" x="155" y="708">Footer / Match HUD Region</text>
+
+  <rect class="overlay" x="275" y="455" width="520" height="150"/>
+  <text class="label" x="315" y="500">Modal Overlay</text>
+  <text class="small" x="315" y="530">Popups scale from center</text>
+  <text class="small" x="315" y="556">Loading overlay renders above all menus and popups</text>
+
+  <rect class="region2" x="1110" y="155" width="390" height="190"/>
+  <text class="h" x="1140" y="198">Entry Animation Order</text>
+  <text class="small" x="1140" y="235">1. Header slides from top</text>
+  <text class="small" x="1140" y="263">2. Left slides from left</text>
+  <text class="small" x="1140" y="291">3. Right slides from right</text>
+  <text class="small" x="1140" y="319">4. Middle scales from 0 to 1</text>
+
+  <rect class="region" x="1110" y="385" width="390" height="210"/>
+  <text class="h" x="1140" y="428">Screen Swap Rule</text>
+  <text class="small" x="1140" y="465">Header remains for menu/shell screens</text>
+  <text class="small" x="1140" y="493">Left exits left, right exits right</text>
+  <text class="small" x="1140" y="521">Middle scales down, swaps, scales up</text>
+  <text class="small" x="1140" y="549">No hierarchy string lookup for controls</text>
+
+  <rect class="overlay" x="1110" y="635" width="390" height="210"/>
+  <text class="h" x="1140" y="678">Popup Rule</text>
+  <text class="small" x="1140" y="715">All popups use center scale tween</text>
+  <text class="small" x="1140" y="743">Close only closes the current popup</text>
+  <text class="small" x="1140" y="771">Loading overlay has highest priority</text>
+  <text class="small" x="1140" y="799">UI clicks suppress world clicks</text>
+
+  <path class="arrowBlue" d="M995 262 C1060 262 1060 250 1110 250"/>
+  <path class="arrowBlue" d="M995 485 C1060 485 1060 490 1110 490"/>
+  <path class="arrowPink" d="M795 530 C1010 530 1010 740 1110 740"/>
+  <path class="arrow" d="M535 455 V335"/>
+  <path class="arrow" d="M535 605 V675"/>
+
+  <text class="tiny" x="100" y="925">Rule: UI classes ending in View bind serialized references and expose visual setters. Route/state policy belongs in shell/ECS systems, not controllers or presenters.</text>
+</svg>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ECS Data Flow</title>
+  <desc id="desc">ECS data flow from configs and authoring through components, requests, systems, read models, UI, and rendering.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .box { fill: #16231d; stroke: #6c9f78; stroke-width: 2; rx: 12; }
+      .boxBlue { fill: #142230; stroke: #69a9ca; stroke-width: 2; rx: 12; }
+      .boxGold { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 12; }
+      .boxPink { fill: #251722; stroke: #a86e9b; stroke-width: 2; rx: 12; }
+      .zone { fill: #0d1713; stroke: #30483d; stroke-width: 2; rx: 18; }
+      .h { fill: #f0e6b6; font: 700 23px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
+      .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+      .arrowGreen { stroke: #7fbb7a; stroke-width: 3; fill: none; marker-end: url(#arrowGreen); }
+    </style>
+    <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#7fbb7a"/></marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1000"/>
+  <text class="title" x="56" y="64">ECS Data Flow</text>
+  <text class="subtitle" x="58" y="96">Configs and Unity references become ECS data. Systems mutate data. UI and rendering consume read models.</text>
+
+  <rect class="zone" x="60" y="140" width="1480" height="210"/>
+  <text class="h" x="90" y="181">Authoring And Config Input</text>
+  <rect class="boxGold" x="170" y="215" width="260" height="82"/>
+  <text class="label" x="195" y="248">Configs</text>
+  <text class="small" x="195" y="274">SO data, no behavior</text>
+  <rect class="boxGold" x="520" y="215" width="260" height="82"/>
+  <text class="label" x="545" y="248">Authorings</text>
+  <text class="small" x="545" y="274">Scene/subscene adapters</text>
+  <rect class="boxGold" x="870" y="215" width="260" height="82"/>
+  <text class="label" x="895" y="248">Bakers</text>
+  <text class="small" x="895" y="274">Convert to ECS data</text>
+  <rect class="boxGold" x="1220" y="215" width="240" height="82"/>
+  <text class="label" x="1245" y="248">Scene Views</text>
+  <text class="small" x="1245" y="274">Raw refs only</text>
+
+  <rect class="zone" x="60" y="395" width="1480" height="250"/>
+  <text class="h" x="90" y="436">Runtime ECS Core</text>
+  <rect class="boxBlue" x="150" y="485" width="260" height="90"/>
+  <text class="label" x="175" y="519">Components</text>
+  <text class="small" x="175" y="545">Pure data</text>
+  <rect class="boxBlue" x="485" y="485" width="260" height="90"/>
+  <text class="label" x="510" y="519">Buffers</text>
+  <text class="small" x="510" y="545">Requests and queues</text>
+  <rect class="boxBlue" x="820" y="485" width="260" height="90"/>
+  <text class="label" x="845" y="519">Systems</text>
+  <text class="small" x="845" y="545">Policy and mutation</text>
+  <rect class="boxBlue" x="1155" y="485" width="260" height="90"/>
+  <text class="label" x="1180" y="519">Read Models</text>
+  <text class="small" x="1180" y="545">Projection output</text>
+
+  <rect class="zone" x="60" y="690" width="1480" height="210"/>
+  <text class="h" x="90" y="731">Presentation Edges</text>
+  <rect class="boxPink" x="170" y="765" width="260" height="82"/>
+  <text class="label" x="195" y="798">Input Views</text>
+  <text class="small" x="195" y="824">Emit ECS requests</text>
+  <rect class="boxPink" x="520" y="765" width="260" height="82"/>
+  <text class="label" x="545" y="798">UI Views</text>
+  <text class="small" x="545" y="824">Display read models</text>
+  <rect class="boxPink" x="870" y="765" width="260" height="82"/>
+  <text class="label" x="895" y="798">Rendering</text>
+  <text class="small" x="895" y="824">Draw ECS state</text>
+  <rect class="boxPink" x="1220" y="765" width="240" height="82"/>
+  <text class="label" x="1245" y="798">Diagnostics</text>
+  <text class="small" x="1245" y="824">Gated reports</text>
+
+  <path class="arrow" d="M430 256 H520"/>
+  <path class="arrow" d="M780 256 H870"/>
+  <path class="arrowGreen" d="M1000 297 C1000 380 280 380 280 485"/>
+  <path class="arrowGreen" d="M1000 297 C1000 380 615 380 615 485"/>
+  <path class="arrowGreen" d="M1340 297 C1340 380 1285 380 1285 485"/>
+  <path class="arrowBlue" d="M410 530 H485"/>
+  <path class="arrowBlue" d="M745 530 H820"/>
+  <path class="arrowBlue" d="M1080 530 H1155"/>
+  <path class="arrowGreen" d="M300 765 C300 660 615 660 615 575"/>
+  <path class="arrowGreen" d="M1285 575 C1285 670 650 670 650 765"/>
+  <path class="arrowGreen" d="M1285 575 C1285 670 1000 670 1000 765"/>
+  <path class="arrowGreen" d="M1285 575 V765"/>
+
+  <text class="tiny" x="90" y="945">Rule: views do not own gameplay policy. They bind references, display read models, and write intent/request data for systems to consume.</text>
+</svg>

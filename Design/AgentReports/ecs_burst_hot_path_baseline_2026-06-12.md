@@ -158,7 +158,7 @@ Metrics to record:
 ## Guardrail Added
 
 Added `EcsBurstHotPathArchitectureTests` with current ratchet ceilings:
-- Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls must not exceed 75.
+- Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls must not exceed 56.
 - Direct `EntityManager` mutation calls must not exceed 40.
 - Files with `OnUpdate` and no `[BurstCompile]` must not exceed 38.
 - Files with `[BurstCompile]` must not drop below 23.
@@ -217,6 +217,8 @@ The unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` API and its `Sel
 `InitialSpawnDiagnosticLogFlushSystem` now iterates initial-spawn diagnostic buffers directly through `SystemAPI.Query`.
 `InitialSpawnResourceSystem`, `FactionEconomyStartupSystem`, `AIFactionControlStartupSystem`, `InitialFactionSpawnCellSystem`, `InitialUnitsSpawnProgressSystem`, and `InitialSpawnReservationSystem` now use chunk traversal or chunk-collected entity lists for startup entity scans.
 `AIBuildPlannerSystem` and `AISquadSystem` now collect plan/unit entities from chunks before preserving their existing plan-processing and squad-creation logic.
+`InitialSpawnDuplicateCellDiagnosticSystem`, `InitialSpawnGridContextSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, `RuntimeGridBootstrapSystem`, `SceneLifecycleSystem`, `RoadBuildEcsBoundarySystem`, `VisibleUnitSelectionSystem`, `MatchHudSquadTraySelectionSystem`, `BuildingPlacementRedirectSystem`, `InitialUnitsBlockerChurnSystem`, and `InitialUnitsSpawnSystem` now use chunk traversal or chunk-collected entity lists for their one-off startup/HUD/boundary scans.
+`DynamicOccupancyRebuildSystem`, `GroundMissileLauncherSystems`, `BuildingRuntimeBoundarySystem`, `BuildingSpawnSystem`, `BuildingSpawnPrefabSystem`, and `BuildingResourceHaulerBridgeSystem` now use chunk traversal or chunk-collected entity lists for contained runtime/building scans.
 
 Validation:
 - Full explicit editor validation after the Phase 2 conversions:
@@ -225,7 +227,7 @@ Validation:
 - Hot-path architecture guardrail:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
-  - Ratcheted guardrails after latest slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling `75`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
+  - Ratcheted guardrails after latest slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling `56`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
 - Selected debug-fire focused validation after the chunk-iteration slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectedUnitDebugFireSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selected-debug-fire.log`
   - Log marker: `[SelectedUnitDebugFireFocusedValidation] result=Passed tests=6`.
@@ -382,15 +384,15 @@ Validation:
   - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=63`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
-- Main-project validation after the runtime-grid, move-target diagnostic, diagnostic-flush, initial-spawn diagnostic-flush, startup-boundary, and AI plan/squad chunk traversal slices:
+- Main-project validation after the runtime-grid, move-target diagnostic, diagnostic-flush, initial-spawn diagnostic-flush, startup-boundary, AI plan/squad, one-off startup/HUD/boundary, and contained runtime/building chunk traversal slices:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod RuntimeGridDeduplicationSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-runtime-grid-dedup.log`
   - Log marker: `[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=2`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=456 skipped=23`.
-  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `58`.
-  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `75`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `40`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `56`.
 - `git diff --check` passed after the latest slice.
 
 Behavior coverage added in the latest slice:

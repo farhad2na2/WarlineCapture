@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">WarlineCapture Architecture Overview</title>
+  <desc id="desc">High-level architecture overview showing Unity scene edges, composition systems, ECS runtime, presentation edges, and validation guardrails.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .lane { fill: #0d1713; stroke: #314f43; stroke-width: 2; }
+      .laneAlt { fill: #101923; stroke: #335d78; stroke-width: 2; }
+      .laneHot { fill: #1c1710; stroke: #8a6b2d; stroke-width: 2; }
+      .box { fill: #16231d; stroke: #5d8f72; stroke-width: 2; rx: 14; }
+      .boxBlue { fill: #142230; stroke: #5e99bd; stroke-width: 2; rx: 14; }
+      .boxGold { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 14; }
+      .boxPink { fill: #251722; stroke: #a86e9b; stroke-width: 2; rx: 14; }
+      .h { fill: #f0e6b6; font: 700 24px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
+      .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+      .arrowGreen { stroke: #7fbb7a; stroke-width: 3; fill: none; marker-end: url(#arrowGreen); }
+      .rule { stroke: #3b5248; stroke-width: 2; }
+    </style>
+    <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#7fbb7a"/></marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="980"/>
+  <text class="title" x="56" y="64">Architecture Overview</text>
+  <text class="subtitle" x="58" y="96">ECS-first gameplay, Unity object code at the edges, narrow composition systems, and evidence-backed performance work.</text>
+
+  <rect class="laneHot" x="50" y="135" width="1500" height="150" rx="18"/>
+  <text class="h" x="80" y="176">Unity Edge</text>
+  <rect class="boxGold" x="250" y="165" width="240" height="86"/>
+  <text class="label" x="275" y="199">Menu.unity</text>
+  <text class="small" x="275" y="226">MenuBootstrapView</text>
+  <rect class="boxGold" x="545" y="165" width="260" height="86"/>
+  <text class="label" x="570" y="199">Match.unity</text>
+  <text class="small" x="570" y="226">MatchSceneView</text>
+  <rect class="boxGold" x="860" y="165" width="300" height="86"/>
+  <text class="label" x="885" y="199">MatchSubScene</text>
+  <text class="small" x="885" y="226">Authorings and bakers</text>
+  <rect class="boxGold" x="1215" y="165" width="260" height="86"/>
+  <text class="label" x="1240" y="199">Configs</text>
+  <text class="small" x="1240" y="226">ScriptableObject data</text>
+
+  <rect class="lane" x="50" y="325" width="1500" height="170" rx="18"/>
+  <text class="h" x="80" y="366">Composition Layer</text>
+  <rect class="box" x="250" y="360" width="265" height="94"/>
+  <text class="label" x="275" y="394">MenuBootstrapSystem</text>
+  <text class="small" x="275" y="421">App lifetime and shell setup</text>
+  <rect class="box" x="560" y="360" width="265" height="94"/>
+  <text class="label" x="585" y="394">MatchBootstrapSystem</text>
+  <text class="small" x="585" y="421">Match scene wiring</text>
+  <rect class="box" x="870" y="360" width="310" height="94"/>
+  <text class="label" x="895" y="394">Startup Systems</text>
+  <text class="small" x="895" y="421">Narrow domain startup slices</text>
+  <rect class="box" x="1225" y="360" width="250" height="94"/>
+  <text class="label" x="1250" y="394">Runtime Update</text>
+  <text class="small" x="1250" y="421">Delegates, no policy blob</text>
+
+  <rect class="laneAlt" x="50" y="535" width="1500" height="180" rx="18"/>
+  <text class="h" x="80" y="576">ECS Runtime Core</text>
+  <rect class="boxBlue" x="250" y="575" width="250" height="96"/>
+  <text class="label" x="275" y="609">Components</text>
+  <text class="small" x="275" y="636">Data, buffers, tags</text>
+  <rect class="boxBlue" x="550" y="575" width="250" height="96"/>
+  <text class="label" x="575" y="609">Request Data</text>
+  <text class="small" x="575" y="636">Input and route intents</text>
+  <rect class="boxBlue" x="850" y="575" width="250" height="96"/>
+  <text class="label" x="875" y="609">Systems</text>
+  <text class="small" x="875" y="636">Simulation policy</text>
+  <rect class="boxBlue" x="1150" y="575" width="280" height="96"/>
+  <text class="label" x="1175" y="609">Read Models</text>
+  <text class="small" x="1175" y="636">UI and rendering output</text>
+
+  <rect class="lane" x="50" y="755" width="1500" height="150" rx="18"/>
+  <text class="h" x="80" y="796">Presentation And Validation</text>
+  <rect class="boxPink" x="250" y="790" width="250" height="82"/>
+  <text class="label" x="275" y="823">UI Shell</text>
+  <text class="small" x="275" y="849">Views display state</text>
+  <rect class="boxPink" x="550" y="790" width="250" height="82"/>
+  <text class="label" x="575" y="823">Rendering</text>
+  <text class="small" x="575" y="849">Visual systems and quality</text>
+  <rect class="boxPink" x="850" y="790" width="250" height="82"/>
+  <text class="label" x="875" y="823">Diagnostics</text>
+  <text class="small" x="875" y="849">Opt-in, gated formatting</text>
+  <rect class="boxPink" x="1150" y="790" width="280" height="82"/>
+  <text class="label" x="1175" y="823">Tests And Reports</text>
+  <text class="small" x="1175" y="849">Architecture, GC, Burst</text>
+
+  <path class="arrow" d="M370 251 V360"/>
+  <path class="arrow" d="M675 251 V360"/>
+  <path class="arrowGreen" d="M1010 251 V575"/>
+  <path class="arrowGreen" d="M1345 251 C1345 305 1010 310 1010 360"/>
+  <path class="arrowBlue" d="M825 407 H870"/>
+  <path class="arrowBlue" d="M1025 454 V575"/>
+  <path class="arrowBlue" d="M500 623 H550"/>
+  <path class="arrowBlue" d="M800 623 H850"/>
+  <path class="arrowBlue" d="M1100 623 H1150"/>
+  <path class="arrowGreen" d="M1290 671 C1290 735 375 735 375 790"/>
+  <path class="arrowGreen" d="M1290 671 C1290 735 675 735 675 790"/>
+  <path class="arrowGreen" d="M1290 671 C1290 735 975 735 975 790"/>
+
+  <line class="rule" x1="80" y1="930" x2="1520" y2="930"/>
+  <text class="tiny" x="80" y="955">Guardrail: views bind references, systems own behavior, configs hold data, hot paths are profiler-evidence driven, and runtime code must not fall back into Assembly-CSharp.</text>
+</svg>

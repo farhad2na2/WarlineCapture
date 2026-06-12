@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Assembly Boundaries</title>
+  <desc id="desc">Assembly definition dependency map showing allowed directional dependencies and prohibited runtime dependencies.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .band { fill: #0d1713; stroke: #30483d; stroke-width: 2; rx: 16; }
+      .band2 { fill: #101923; stroke: #335d78; stroke-width: 2; rx: 16; }
+      .asm { fill: #16231d; stroke: #6c9f78; stroke-width: 2; rx: 12; }
+      .asmBlue { fill: #142230; stroke: #69a9ca; stroke-width: 2; rx: 12; }
+      .asmGold { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 12; }
+      .asmPink { fill: #251722; stroke: #a86e9b; stroke-width: 2; rx: 12; }
+      .h { fill: #f0e6b6; font: 700 23px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
+      .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+      .bad { stroke: #db6a5f; stroke-width: 3; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrowBad); }
+      .x { fill: #db6a5f; font: 700 28px Arial, sans-serif; }
+    </style>
+    <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
+    <marker id="arrowBad" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#db6a5f"/></marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1040"/>
+  <text class="title" x="56" y="64">Assembly Boundaries</text>
+  <text class="subtitle" x="58" y="96">Dependencies point inward to data/contracts. Runtime implementation must stay out of default Assembly-CSharp.</text>
+
+  <rect class="band2" x="60" y="135" width="1480" height="165"/>
+  <text class="h" x="90" y="176">Outer Unity Edges</text>
+  <rect class="asmGold" x="250" y="170" width="230" height="82"/>
+  <text class="label" x="275" y="203">Game.Authoring</text>
+  <text class="small" x="275" y="229">Authorings and bakers</text>
+  <rect class="asmGold" x="540" y="170" width="230" height="82"/>
+  <text class="label" x="565" y="203">Game.Editor</text>
+  <text class="small" x="565" y="229">Tools and validation</text>
+  <rect class="asmGold" x="830" y="170" width="260" height="82"/>
+  <text class="label" x="855" y="203">Game.Tests.Editor</text>
+  <text class="small" x="855" y="229">Architecture and focused tests</text>
+  <rect class="asmGold" x="1150" y="170" width="260" height="82"/>
+  <text class="label" x="1175" y="203">Game.Tests.PlayMode</text>
+  <text class="small" x="1175" y="229">Scene and runtime smoke</text>
+
+  <rect class="band" x="60" y="340" width="1480" height="205"/>
+  <text class="h" x="90" y="381">Concrete Runtime Implementations</text>
+  <rect class="asmBlue" x="210" y="410" width="260" height="86"/>
+  <text class="label" x="235" y="443">Game.Composition</text>
+  <text class="small" x="235" y="469">Menu/match lifetime wiring</text>
+  <rect class="asmBlue" x="530" y="410" width="260" height="86"/>
+  <text class="label" x="555" y="443">Game.Runtime</text>
+  <text class="small" x="555" y="469">ECS gameplay systems</text>
+  <rect class="asmBlue" x="850" y="410" width="260" height="86"/>
+  <text class="label" x="875" y="443">Game.UI.Runtime</text>
+  <text class="small" x="875" y="469">Canvas views and shell</text>
+  <rect class="asmBlue" x="1170" y="410" width="260" height="86"/>
+  <text class="label" x="1195" y="443">Game.Rendering</text>
+  <text class="small" x="1195" y="469">Visual quality and render systems</text>
+
+  <rect class="band2" x="60" y="585" width="1480" height="175"/>
+  <text class="h" x="90" y="626">Contracts And Configs</text>
+  <rect class="asm" x="210" y="655" width="260" height="76"/>
+  <text class="label" x="235" y="687">Game.UI.Contracts</text>
+  <text class="small" x="235" y="712">UI-facing interfaces/data</text>
+  <rect class="asm" x="530" y="655" width="260" height="76"/>
+  <text class="label" x="555" y="687">Game.Rendering.Contracts</text>
+  <text class="small" x="555" y="712">Rendering-facing contracts</text>
+  <rect class="asm" x="850" y="655" width="260" height="76"/>
+  <text class="label" x="875" y="687">Game.Configs</text>
+  <text class="small" x="875" y="712">ScriptableObject data</text>
+  <rect class="asm" x="1170" y="655" width="260" height="76"/>
+  <text class="label" x="1195" y="687">Game.Components</text>
+  <text class="small" x="1195" y="712">ECS data contracts</text>
+
+  <rect class="band" x="60" y="800" width="1480" height="150"/>
+  <text class="h" x="90" y="841">ECS Shell Boundary</text>
+  <rect class="asmPink" x="210" y="870" width="315" height="54"/>
+  <text class="label" x="235" y="904">Game.UI.Shell.Ecs</text>
+  <rect class="asmPink" x="585" y="870" width="315" height="54"/>
+  <text class="label" x="610" y="904">Requests / Route Data</text>
+  <rect class="asmPink" x="960" y="870" width="350" height="54"/>
+  <text class="label" x="985" y="904">No concrete UI in gameplay runtime</text>
+
+  <path class="arrow" d="M340 410 V300"/>
+  <path class="arrow" d="M655 410 V300"/>
+  <path class="arrow" d="M980 410 V300"/>
+  <path class="arrow" d="M1300 410 V300"/>
+  <path class="arrowBlue" d="M660 496 C660 585 1295 585 1295 655"/>
+  <path class="arrowBlue" d="M660 496 C660 585 980 585 980 655"/>
+  <path class="arrowBlue" d="M980 496 V655"/>
+  <path class="arrowBlue" d="M1300 496 C1300 585 660 585 660 655"/>
+  <path class="arrowBlue" d="M340 496 C340 585 980 585 980 655"/>
+  <path class="arrowBlue" d="M370 870 C370 800 340 800 340 731"/>
+  <path class="arrowBlue" d="M745 870 C745 800 1295 800 1295 731"/>
+  <path class="bad" d="M980 410 C980 345 655 345 655 410"/>
+  <text class="x" x="805" y="375">X</text>
+  <text class="tiny" x="735" y="350">UI runtime must not be a gameplay dependency</text>
+
+  <text class="tiny" x="80" y="990">Rule: add source under the correct asmdef; do not let runtime code land in default Assembly-CSharp; keep dependencies directional and contract-based.</text>
+</svg>

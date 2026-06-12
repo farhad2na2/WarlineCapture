@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Guardrails</title>
+  <desc id="desc">Allowed and prohibited architecture patterns for gameplay, UI, configs, authoring, and runtime naming.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .title { fill: #f0e6b6; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #b9c8b0; font: 18px Arial, sans-serif; }
+      .okPanel { fill: #0d1713; stroke: #6c9f78; stroke-width: 3; rx: 18; }
+      .badPanel { fill: #1d1111; stroke: #db6a5f; stroke-width: 3; rx: 18; }
+      .neutral { fill: #101923; stroke: #335d78; stroke-width: 2; rx: 16; }
+      .ok { fill: #16231d; stroke: #7fbb7a; stroke-width: 2; rx: 12; }
+      .bad { fill: #2a1514; stroke: #db6a5f; stroke-width: 2; rx: 12; }
+      .h { fill: #f0e6b6; font: 700 25px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
+      .check { fill: #7fbb7a; font: 700 28px Arial, sans-serif; }
+      .x { fill: #db6a5f; font: 700 28px Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="960"/>
+  <text class="title" x="56" y="64">Architecture Guardrails</text>
+  <text class="subtitle" x="58" y="96">Keep new work aligned while existing migration debt is retired slice by slice.</text>
+
+  <rect class="okPanel" x="70" y="150" width="700" height="560"/>
+  <text class="h" x="105" y="195">Allowed For New Work</text>
+  <rect class="ok" x="110" y="235" width="280" height="82"/><text class="check" x="130" y="272">OK</text><text class="label" x="175" y="270">*System</text><text class="small" x="175" y="296">Gameplay/runtime behavior</text>
+  <rect class="ok" x="430" y="235" width="280" height="82"/><text class="check" x="450" y="272">OK</text><text class="label" x="495" y="270">*View</text><text class="small" x="495" y="296">Serialized UI/reference holder</text>
+  <rect class="ok" x="110" y="350" width="280" height="82"/><text class="check" x="130" y="387">OK</text><text class="label" x="175" y="385">*Config</text><text class="small" x="175" y="411">ScriptableObject data</text>
+  <rect class="ok" x="430" y="350" width="280" height="82"/><text class="check" x="450" y="387">OK</text><text class="label" x="495" y="385">*Authoring / *Baker</text><text class="small" x="495" y="411">Unity conversion edge</text>
+  <rect class="ok" x="110" y="465" width="280" height="82"/><text class="check" x="130" y="502">OK</text><text class="label" x="175" y="500">Components/Buffers</text><text class="small" x="175" y="526">Pure ECS data</text>
+  <rect class="ok" x="430" y="465" width="280" height="82"/><text class="check" x="450" y="502">OK</text><text class="label" x="495" y="500">Contracts</text><text class="small" x="495" y="526">Cross-assembly boundaries</text>
+  <rect class="ok" x="110" y="580" width="600" height="82"/><text class="check" x="130" y="617">OK</text><text class="label" x="175" y="615">ECS requests and read models</text><text class="small" x="175" y="641">UI/input writes intent; systems own state changes</text>
+
+  <rect class="badPanel" x="830" y="150" width="700" height="560"/>
+  <text class="h" x="865" y="195">Do Not Add For New Policy Code</text>
+  <rect class="bad" x="870" y="235" width="280" height="82"/><text class="x" x="890" y="272">X</text><text class="label" x="935" y="270">Controller</text><text class="small" x="935" y="296">Broad UI/gameplay owner</text>
+  <rect class="bad" x="1190" y="235" width="280" height="82"/><text class="x" x="1210" y="272">X</text><text class="label" x="1255" y="270">Presenter</text><text class="small" x="1255" y="296">Hidden policy layer</text>
+  <rect class="bad" x="870" y="350" width="280" height="82"/><text class="x" x="890" y="387">X</text><text class="label" x="935" y="385">Manager</text><text class="small" x="935" y="411">Broad mutable owner</text>
+  <rect class="bad" x="1190" y="350" width="280" height="82"/><text class="x" x="1210" y="387">X</text><text class="label" x="1255" y="385">Bridge</text><text class="small" x="1255" y="411">Facade-style workaround</text>
+  <rect class="bad" x="870" y="465" width="280" height="82"/><text class="x" x="890" y="502">X</text><text class="label" x="935" y="500">Button class names</text><text class="small" x="935" y="526">Use View/System instead</text>
+  <rect class="bad" x="1190" y="465" width="280" height="82"/><text class="x" x="1210" y="502">X</text><text class="label" x="1255" y="500">static Instance</text><text class="small" x="1255" y="526">No gameplay singletons</text>
+  <rect class="bad" x="870" y="580" width="600" height="82"/><text class="x" x="890" y="617">X</text><text class="label" x="935" y="615">Find*, service locators, broad facades</text><text class="small" x="935" y="641">Use serialized refs, ECS data, or injected boundaries</text>
+
+  <rect class="neutral" x="70" y="760" width="1460" height="105"/>
+  <text class="h" x="105" y="804">Migration Rule</text>
+  <text class="small" x="105" y="835">Existing legacy names are debt, not a precedent. Do not expand them. Retire them by domain slice when touching related behavior.</text>
+  <text class="small" x="105" y="862">Do not add stricter new CI gates for in-progress refactor areas until PM approves stable baselines.</text>
+</svg>

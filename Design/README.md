@@ -21,6 +21,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
+- Architecture visuals: `Architecture/ArchitectureOverview.svg` is the high-level code architecture map. The detailed split diagrams cover assembly boundaries, runtime lifecycle, ECS data flow, UI shell, performance hot paths, and guardrails.
 - Performance regression: `Architecture/performance_regression_contract.md` defines the structured-metrics, budget, FreezeDetect, and hot-path rules for preventing new performance regressions.
 - Designer workflow: `Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
 - Gameplay layer: `GameLaunchPayload`, scenario setup, objectives, results, rewards, progression, persistence, Campaign, Operations, Skirmish, AI profiles, and encounter templates are planned in the gameplay feature specs.
@@ -100,6 +101,13 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.
 - `Designer_Role_And_Documentation_Workflow.md` - Designer lane workflow for README/design-index optimization, source-of-truth hierarchy, terminology alignment, documentation pruning, and product/design coherence reviews.
 - `Architecture/gameplay_solid_ecs_contract.md` - gameplay SOLID/ECS architecture contract, including bootstrap composition boundaries, ECS-first runtime rules, service/logging guidance, and no-new-drift migration rules.
+- `Architecture/ArchitectureOverview.svg` - high-level architecture overview for README/onboarding.
+- `Architecture/AssemblyBoundaries.svg` - assembly definition and dependency direction map.
+- `Architecture/RuntimeLifecycle.svg` - menu, shell, loading, match, result, and return lifecycle map.
+- `Architecture/EcsDataFlow.svg` - config, authoring, ECS data, systems, read models, UI, and rendering flow.
+- `Architecture/UiShellArchitecture.svg` - UI shell regions, route swaps, modal overlay, and animation rules.
+- `Architecture/PerformanceHotPath.svg` - GC/Burst/hot-path performance workflow and anti-patterns.
+- `Architecture/ArchitectureGuardrails.svg` - allowed and prohibited naming/ownership patterns.
 - `Architecture/performance_regression_contract.md` - performance regression contract for structured frame/system/GC metrics, scenario budgets, FreezeDetect usage, hot-path rules, and ratcheted performance gates.
 - `SagaChapters/README.md` - Saga chapter design folder index and update rules.
 - `SagaChapters/Saga_Chapter01_First_Response.md` - Chapter 1 / First Response mission matrix and detailed specs for all five Chapter 1 missions.

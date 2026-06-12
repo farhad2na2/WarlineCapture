@@ -310,7 +310,18 @@ Current refactor note: assembly split, GC allocation cleanup, and Burst hot-path
 
 Code and systems architecture overview:
 
-![WarlineCapture Code And Systems Architecture](Design/Architecture/CodeSystemsArchitecture.svg)
+![WarlineCapture Architecture Overview](Design/Architecture/ArchitectureOverview.svg)
+
+Detailed architecture diagrams:
+
+- [Assembly Boundaries](Design/Architecture/AssemblyBoundaries.svg)
+- [Runtime Lifecycle](Design/Architecture/RuntimeLifecycle.svg)
+- [ECS Data Flow](Design/Architecture/EcsDataFlow.svg)
+- [UI Shell Architecture](Design/Architecture/UiShellArchitecture.svg)
+- [Performance Hot Path](Design/Architecture/PerformanceHotPath.svg)
+- [Architecture Guardrails](Design/Architecture/ArchitectureGuardrails.svg)
+
+The old monolithic [Code Systems Architecture](Design/Architecture/CodeSystemsArchitecture.svg) remains as historical reference. Prefer the split diagrams above for current onboarding and reviews.
 
 Current runtime assembly boundaries:
 

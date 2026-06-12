@@ -12,6 +12,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
         Func<BuildingGameplayCompositionSourceSystem, BuildingProductionRuntimeTickSystem.Context> createProductionRuntimeTickContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishSystem.Context> createRuntimeBoundaryPublishContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
+        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
         float destroyedBuildingLifetimeSeconds)
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
@@ -39,6 +40,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
             () => source.BuildingPlacementRedirectSystem.FlushPendingMarkerRefresh(
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
+            createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
             CreateRuntimeTickDiagnosticsContext(source));
     }

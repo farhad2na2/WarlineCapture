@@ -14,6 +14,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
     private static readonly ProfilerMarker UpdateRoadBarrierDoorsMarker = new("BuildingPlacementRuntimeTick.UpdateRoadBarrierDoors");
     private static readonly ProfilerMarker FlushPendingMarkerRefreshMarker = new("BuildingPlacementRuntimeTick.FlushPendingMarkerRefresh");
     private static readonly ProfilerMarker EnqueueMapBuildingPlacementsMarker = new("BuildingPlacementRuntimeTick.EnqueueMapBuildingPlacements");
+    private static readonly ProfilerMarker EnqueueMapVehiclePlacementsMarker = new("BuildingPlacementRuntimeTick.EnqueueMapVehiclePlacements");
     private static readonly ProfilerMarker UpdateBuildingRuntimeBoundaryMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingRuntimeBoundary");
     private static readonly ProfilerMarker UpdateInputMarker = new("BuildingPlacementRuntimeTick.UpdateInput");
 
@@ -29,6 +30,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action UpdateRoadBarrierDoors;
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action EnqueueMapBuildingPlacements;
+        public readonly Action EnqueueMapVehiclePlacements;
         public readonly Action UpdateBuildingRuntimeBoundary;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystem DiagnosticsSystem;
@@ -45,6 +47,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action updateRoadBarrierDoors,
             Action flushPendingMarkerRefresh,
             Action enqueueMapBuildingPlacements,
+            Action enqueueMapVehiclePlacements,
             Action updateBuildingRuntimeBoundary,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystem diagnosticsSystem,
@@ -60,6 +63,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             UpdateRoadBarrierDoors = updateRoadBarrierDoors;
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             EnqueueMapBuildingPlacements = enqueueMapBuildingPlacements;
+            EnqueueMapVehiclePlacements = enqueueMapVehiclePlacements;
             UpdateBuildingRuntimeBoundary = updateBuildingRuntimeBoundary;
             UpdateInput = updateInput;
             DiagnosticsSystem = diagnosticsSystem;
@@ -132,6 +136,10 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             using (EnqueueMapBuildingPlacementsMarker.Auto())
             {
                 context.EnqueueMapBuildingPlacements?.Invoke();
+            }
+            using (EnqueueMapVehiclePlacementsMarker.Auto())
+            {
+                context.EnqueueMapVehiclePlacements?.Invoke();
             }
             using (UpdateBuildingRuntimeBoundaryMarker.Auto())
             {

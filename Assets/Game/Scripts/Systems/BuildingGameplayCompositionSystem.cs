@@ -31,7 +31,9 @@ internal sealed class BuildingGameplayCompositionSystem
         DayNightSystem dayNight,
         RTSSelectionSystemConfig rtsSelectionConfig = null,
         MapBuildingPlacementConfig mapBuildingPlacementConfig = null,
+        MapVehiclePlacementConfig mapVehiclePlacementConfig = null,
         Transform mapBuildingAuthoringRoot = null,
+        Transform mapVehicleAuthoringRoot = null,
         Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab = null,
         BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
@@ -487,6 +489,30 @@ internal sealed class BuildingGameplayCompositionSystem
                                 TryGetMapGridData,
                                 Debug.LogWarning);
                         return () => source.MapBuildingPlacementSpawnSystem.Update(mapSpawnPlacementContext);
+                    },
+                    (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                    {
+                        RuntimeUnitPrefabSystem.Context mapVehiclePrefabContext =
+                            source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(runtimeResourcePrefabSource);
+
+                        bool TryGetMapGridData(
+                            out Entity gridEntity,
+                            out GridConfig grid,
+                            out DynamicBuffer<GridRoad> roads,
+                            out DynamicBlockerComponent blockerData)
+                        {
+                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                        }
+
+                        MapVehiclePlacementSpawnSystem.Context mapVehiclePlacementContext =
+                            new(
+                                mapVehiclePlacementConfig,
+                                mapVehicleAuthoringRoot,
+                                source.RuntimeUnitPrefabSystem,
+                                mapVehiclePrefabContext,
+                                TryGetMapGridData,
+                                Debug.LogWarning);
+                        return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
                     },
                     DestroyedBuildingLifetimeSeconds);
                 runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);

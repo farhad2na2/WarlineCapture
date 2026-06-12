@@ -26,7 +26,7 @@ internal static class MapBuildingPlacementBakeEditor
         public List<string> errors = new();
     }
 
-    [MenuItem("Warline/Map/Bake Match Building Placements")]
+    [MenuItem("Game/Map/Bake Match Building Placements")]
     public static void BakeMatchBuildingPlacements()
     {
         BakeReport report = new();

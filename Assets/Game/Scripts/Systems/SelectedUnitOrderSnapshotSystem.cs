@@ -80,35 +80,44 @@ public sealed class SelectedUnitOrderSnapshotSystem
 
     public void RestorePreservedUnitOrders(EntityManager em)
     {
-        for (int i = 0; i < _preservedOrders.Count; i++)
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        try
         {
-            PreservedOrderState state = _preservedOrders[i];
-            if (!em.Exists(state.Entity))
-                continue;
+            for (int i = 0; i < _preservedOrders.Count; i++)
+            {
+                PreservedOrderState state = _preservedOrders[i];
+                if (!em.Exists(state.Entity))
+                    continue;
 
-            RestoreComponent(em, state.Entity, state.HadEngageTarget, state.EngageTarget);
-            RestoreComponent(em, state.Entity, state.HadUnitTarget, state.UnitTarget);
-            RestoreComponent(em, state.Entity, state.HadUnitPathRequest, state.UnitPathRequest);
-            RestoreComponent(em, state.Entity, state.HadUnitPathFollow, state.UnitPathFollow);
-            RestoreComponent(em, state.Entity, state.HadUnitPathRange, state.UnitPathRange);
+                RestoreComponent(ecb, em, state.Entity, state.HadEngageTarget, state.EngageTarget);
+                RestoreComponent(ecb, em, state.Entity, state.HadUnitTarget, state.UnitTarget);
+                RestoreComponent(ecb, em, state.Entity, state.HadUnitPathRequest, state.UnitPathRequest);
+                RestoreComponent(ecb, em, state.Entity, state.HadUnitPathFollow, state.UnitPathFollow);
+                RestoreComponent(ecb, em, state.Entity, state.HadUnitPathRange, state.UnitPathRange);
+            }
+
+            ecb.Playback(em);
         }
-
-        _preservedOrders.Clear();
+        finally
+        {
+            ecb.Dispose();
+            _preservedOrders.Clear();
+        }
     }
 
-    private static void RestoreComponent<T>(EntityManager em, Entity entity, bool shouldExist, T value)
+    private static void RestoreComponent<T>(EntityCommandBuffer ecb, EntityManager em, Entity entity, bool shouldExist, T value)
         where T : unmanaged, IComponentData
     {
         if (shouldExist)
         {
             if (em.HasComponent<T>(entity))
-                em.SetComponentData(entity, value);
+                ecb.SetComponent(entity, value);
             else
-                em.AddComponentData(entity, value);
+                ecb.AddComponent(entity, value);
         }
         else if (em.HasComponent<T>(entity))
         {
-            em.RemoveComponent<T>(entity);
+            ecb.RemoveComponent<T>(entity);
         }
     }
 }

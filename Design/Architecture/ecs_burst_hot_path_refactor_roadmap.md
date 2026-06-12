@@ -932,6 +932,48 @@ Progress notes:
 - 2026-06-12: Validated same-frame unit move component behavior and Match HUD Move command routing:
   - `UnitMoveOrderSystemTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-unit-move-order-focused.log`, marker `[UnitMoveOrderFocusedValidation] result=Passed tests=7`.
   - `EcsBurstSelectionCommandValidationRunner.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-selection-command-move-acceptance.log`, marker `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
+- 2026-06-12: Continued Phase 6 command-event cleanup in `SelectedUnitOrderSnapshotSystem`. Preserved-order restore still plays back in the same frame, but repeated restore add/set/remove operations now queue through an immediate `EntityCommandBuffer` instead of mutating each selected entity directly.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod SelectedUnitOrderSnapshotSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selected-order-snapshot-ecb-shadow.log`
+  - Log marker: `[SelectedUnitOrderSnapshotFocusedValidation] result=Passed tests=1`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-selected-order-snapshot-ecb-shadow.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=71`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-selected-order-snapshot-ecb-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-12: Continued Phase 6 Hold/Stop command-event cleanup in `FocusedUnitCommandSystem`. `IssueImmediateSelectedUnitOrder` still completes in the same frame, but selected-unit order cleanup, hold/manual tags, combat auto-engage updates, and runtime motion stop writes now queue through one immediate `EntityCommandBuffer` playback instead of direct per-component mutations in the selected-unit loop.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod FocusedUnitCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-focused-unit-command-ecb-shadow.log`
+  - Log marker: `[FocusedUnitCommandFocusedValidation] result=Passed tests=2`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-focused-unit-command-ecb-shadow.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=71`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-focused-unit-command-ecb-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-12: Continued Phase 6 move-command cleanup in `UnitMoveOrderSystem`. Immediate move and target-only move commands still play back in the same frame, but their order cleanup, target/path writes, and manual move tag writes now queue through a temporary `EntityCommandBuffer` instead of direct per-component mutations.
+  - Added `UnitMoveOrderSystemTests.IssueTargetOnlyMoveCommand_WritesTargetAndClearsConflictingOrders`; focused move-order coverage is now 8 tests.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-move-order-ecb-shadow-final2.log`
+  - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=8`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-unit-move-order-ecb-shadow.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=72`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-move-order-ecb-shadow-final.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-12: Continued Phase 6 grouped move-order cleanup in `UnitMoveOrderSystem`. `IssueGroupedManualMoveOrder` now preserves same-frame command visibility through one temporary `EntityCommandBuffer` playback while keeping structural add/remove result counters explicit for diagnostics.
+  - Added `UnitMoveOrderSystemTests.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown`; focused move-order coverage is now 9 tests.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-move-order-grouped-ecb-shadow-final.log`
+  - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=9`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-unit-move-order-grouped-ecb-shadow-final.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=73`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-move-order-grouped-ecb-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
 
 ### Phase 7: Pathfinding And Occupancy Protection Pass
 
@@ -1228,6 +1270,14 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-mass-render-settings-shadow.log`
   - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=26`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-mass-render-settings-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-12: Continued Phase 8 diagnostic-boundary cleanup in `UnitRenderBudgetDiagnosticLogFlushSystem`. The flush remains managed because it emits Unity log strings, but it no longer allocates a `ToEntityArray` snapshot to find queue entities; it now iterates the diagnostic buffer query directly and clears each buffer in place.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-diagnostic-flush-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=27`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-budget-diagnostic-flush-shadow.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.

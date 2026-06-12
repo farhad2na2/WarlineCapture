@@ -21,11 +21,13 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
             RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
             RunCase(test => test.IssueImmediateMoveCommand_GroundUnitWritesTargetPathRequestAndManualTag());
+            RunCase(test => test.IssueTargetOnlyMoveCommand_WritesTargetAndClearsConflictingOrders());
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest());
+            RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown());
             RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
             RunCase(test => test.SelectedMoveOrderCommand_IssuesMoveOrderForSelectedUnit());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=7");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=9");
         }
         catch (System.Exception ex)
         {
@@ -141,6 +143,33 @@ public sealed class UnitMoveOrderSystemTests
     }
 
     [Test]
+    public void IssueTargetOnlyMoveCommand_WritesTargetAndClearsConflictingOrders()
+    {
+        var moveOrderSystem = new UnitMoveOrderSystem();
+        Entity unit = _entityManager.CreateEntity(
+            typeof(UnitPathRequest),
+            typeof(HoldPositionOrderTag),
+            typeof(BaseBreachOrder),
+            typeof(UnitTransportBoardingTarget),
+            typeof(UnitTransportRopeDisembarkRequest),
+            typeof(UnitResourceHaulOrder));
+        int2 goal = new(9, 10);
+        int2 existingPathGoal = new(2, 3);
+        _entityManager.SetComponentData(unit, new UnitPathRequest { Goal = existingPathGoal });
+
+        moveOrderSystem.IssueTargetOnlyMoveCommand(_entityManager, unit, goal);
+
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(existingPathGoal, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
+    }
+
+    [Test]
     public void IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest()
     {
         var moveOrderSystem = new UnitMoveOrderSystem();
@@ -163,6 +192,33 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
         Assert.AreEqual(1, result.StaggeredPathRequests);
         Assert.AreEqual(12, result.MaxStaggerDelayFrames);
+    }
+
+    [Test]
+    public void IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown()
+    {
+        var moveOrderSystem = new UnitMoveOrderSystem();
+        Entity unit = _entityManager.CreateEntity(typeof(UnitPathRetryCooldown));
+        _entityManager.SetComponentData(unit, new UnitPathRetryCooldown { ResumeFrame = 1 });
+        int2 goal = new(11, 12);
+
+        UnitMoveOrderSystem.MoveOrderCommandResult result = moveOrderSystem.IssueGroupedManualMoveOrder(
+            _entityManager,
+            unit,
+            goal,
+            issueGroundPathNow: false,
+            useGroundPathRetryCooldown: true,
+            resumeFrame: 30,
+            currentFrame: 20);
+
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(30, _entityManager.GetComponentData<UnitPathRetryCooldown>(unit).ResumeFrame);
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.AreEqual(1, result.StructuralRemoves);
+        Assert.AreEqual(4, result.StructuralAdds);
+        Assert.AreEqual(1, result.StaggeredPathRequests);
+        Assert.AreEqual(10, result.MaxStaggerDelayFrames);
     }
 
     [Test]

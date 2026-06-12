@@ -37,53 +37,62 @@ public sealed class UnitMoveOrderSystem
             $"[SelectionClick] unitMoveOrderGrouped caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} " +
             $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
 
-        result.StructuralRemoves += RemoveComponentIfPresent<EngageTarget>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRange>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity) ? 1 : 0;
-        result.StructuralRemoves += RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity) ? 1 : 0;
-
-        if (!entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
         {
-            entityManager.AddComponent<ManualMoveGroupMemberTag>(entity);
-            result.StructuralAdds++;
-        }
+            result.StructuralRemoves += RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitPathFollow>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRange>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity) ? 1 : 0;
 
-        SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal }, ref result);
-
-        if (!entityManager.HasComponent<UnitAirMovement>(entity))
-        {
-            if (issueGroundPathNow)
+            if (!entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
             {
-                result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity) ? 1 : 0;
-                SetOrAdd(entityManager, entity, new UnitPathRequest { Goal = goal }, ref result);
-                result.PathRequests++;
+                ecb.AddComponent<ManualMoveGroupMemberTag>(entity);
+                result.StructuralAdds++;
             }
-            else if (useGroundPathRetryCooldown)
-            {
-                result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRequest>(entityManager, entity) ? 1 : 0;
-                SetOrAdd(entityManager, entity, new UnitPathRetryCooldown { ResumeFrame = resumeFrame }, ref result);
-                result.StaggeredPathRequests++;
-                result.MaxStaggerDelayFrames = math.max(0, resumeFrame - currentFrame);
-            }
-        }
-        else
-        {
-            result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRequest>(entityManager, entity) ? 1 : 0;
-            result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity) ? 1 : 0;
-            result.AirUnits++;
-        }
 
-        if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
+            SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal }, ref result);
+
+            if (!entityManager.HasComponent<UnitAirMovement>(entity))
+            {
+                if (issueGroundPathNow)
+                {
+                    SetOrAdd(entityManager, ecb, entity, new UnitPathRequest { Goal = goal }, ref result);
+                    result.PathRequests++;
+                }
+                else if (useGroundPathRetryCooldown)
+                {
+                    result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRequest>(entityManager, ecb, entity) ? 1 : 0;
+                    ecb.AddComponent(entity, new UnitPathRetryCooldown { ResumeFrame = resumeFrame });
+                    result.StructuralAdds++;
+                    result.StaggeredPathRequests++;
+                    result.MaxStaggerDelayFrames = math.max(0, resumeFrame - currentFrame);
+                }
+            }
+            else
+            {
+                result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRequest>(entityManager, ecb, entity) ? 1 : 0;
+                result.AirUnits++;
+            }
+
+            if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
+            {
+                ecb.AddComponent<ManualMoveOrderTag>(entity);
+                result.StructuralAdds++;
+            }
+
+            ecb.Playback(entityManager);
+        }
+        finally
         {
-            entityManager.AddComponent<ManualMoveOrderTag>(entity);
-            result.StructuralAdds++;
+            ecb.Dispose();
         }
 
         return result;
@@ -92,40 +101,60 @@ public sealed class UnitMoveOrderSystem
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderImmediate caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
-        RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity);
-        RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity);
-        RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
-        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
-        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
-        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitPathFollow>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitPathRange>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
 
-        SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
+            SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal });
 
-        if (!entityManager.HasComponent<UnitAirMovement>(entity))
-            SetOrAdd(entityManager, entity, new UnitPathRequest { Goal = goal });
-        else
-            RemoveComponentIfPresent<UnitPathRequest>(entityManager, entity);
+            if (!entityManager.HasComponent<UnitAirMovement>(entity))
+                SetOrAdd(entityManager, ecb, entity, new UnitPathRequest { Goal = goal });
+            else
+                RemoveComponentIfPresent<UnitPathRequest>(entityManager, ecb, entity);
 
-        if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
-            entityManager.AddComponent<ManualMoveOrderTag>(entity);
+            if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
+                ecb.AddComponent<ManualMoveOrderTag>(entity);
+
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
-        SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
-        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
-        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
-        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
-        if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
-            entityManager.AddComponent<ManualMoveOrderTag>(entity);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal });
+            RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
+            if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
+                ecb.AddComponent<ManualMoveOrderTag>(entity);
+
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 
     public void ClearMovementOrderComponents(EntityManager entityManager, Entity entity)
@@ -410,23 +439,23 @@ public sealed class UnitMoveOrderSystem
         return new int2(-radius, (-radius + 1) + step);
     }
 
-    private static void SetOrAdd<T>(EntityManager entityManager, Entity entity, T value)
+    private static void SetOrAdd<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity, T value)
         where T : unmanaged, IComponentData
     {
         if (entityManager.HasComponent<T>(entity))
-            entityManager.SetComponentData(entity, value);
+            ecb.SetComponent(entity, value);
         else
-            entityManager.AddComponentData(entity, value);
+            ecb.AddComponent(entity, value);
     }
 
-    private static void SetOrAdd<T>(EntityManager entityManager, Entity entity, T value, ref MoveOrderCommandResult result)
+    private static void SetOrAdd<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity, T value, ref MoveOrderCommandResult result)
         where T : unmanaged, IComponentData
     {
         if (entityManager.HasComponent<T>(entity))
-            entityManager.SetComponentData(entity, value);
+            ecb.SetComponent(entity, value);
         else
         {
-            entityManager.AddComponentData(entity, value);
+            ecb.AddComponent(entity, value);
             result.StructuralAdds++;
         }
     }

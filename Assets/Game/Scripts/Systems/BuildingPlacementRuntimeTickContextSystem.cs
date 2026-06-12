@@ -12,6 +12,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
         public readonly Action UpdateRoadBarrierDoors;
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action EnqueueMapBuildingPlacements;
+        public readonly Action EnqueueMapVehiclePlacements;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystem.Context DiagnosticsContext;
 
@@ -24,6 +25,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             Action updateRoadBarrierDoors,
             Action flushPendingMarkerRefresh,
             Action enqueueMapBuildingPlacements,
+            Action enqueueMapVehiclePlacements,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
         {
@@ -35,6 +37,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             UpdateRoadBarrierDoors = updateRoadBarrierDoors;
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             EnqueueMapBuildingPlacements = enqueueMapBuildingPlacements;
+            EnqueueMapVehiclePlacements = enqueueMapVehiclePlacements;
             UpdateInput = updateInput;
             DiagnosticsContext = diagnosticsContext;
         }
@@ -57,6 +60,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             source.UpdateRoadBarrierDoors,
             source.FlushPendingMarkerRefresh,
             source.EnqueueMapBuildingPlacements,
+            source.EnqueueMapVehiclePlacements,
             () => _runtimeBoundaryPublishSystem.Update(source.BoundaryContext),
             source.UpdateInput,
             _diagnosticsSystem,

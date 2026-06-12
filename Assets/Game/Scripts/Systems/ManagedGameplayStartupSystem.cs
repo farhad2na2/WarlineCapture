@@ -133,6 +133,7 @@ internal sealed class ManagedGameplayStartupSystem
         RoadBuildSystemConfig roadBuildConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         MapBuildingPlacementConfig mapBuildingPlacementConfig,
+        MapVehiclePlacementConfig mapVehiclePlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         GameStringsConfig gameStringsConfig,
@@ -149,7 +150,8 @@ internal sealed class ManagedGameplayStartupSystem
         BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey,
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
-        Transform mapBuildingAuthoringRoot)
+        Transform mapBuildingAuthoringRoot,
+        Transform mapVehicleAuthoringRoot)
     {
         var dayNight = new DayNightSystem();
         dayNight.Init(dayNightConfig, directionalLight, globalVolume);
@@ -174,7 +176,9 @@ internal sealed class ManagedGameplayStartupSystem
             dayNight,
             rtsSelectionConfig,
             mapBuildingPlacementConfig,
+            mapVehiclePlacementConfig,
             mapBuildingAuthoringRoot,
+            mapVehicleAuthoringRoot,
             resolveSelectionPortraitSpriteFromPrefab,
             tryGetUnitProductionMetadata,
             prepareTransportDropVisual,

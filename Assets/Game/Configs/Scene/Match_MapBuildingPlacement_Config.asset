@@ -2636,6 +2636,26 @@ MonoBehaviour:
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 180.00008
     rotateVertical: 0
+  - sourcePath: Map/Buildings/Building_WaterTank/SM_Bld_WaterTank_01 (3)
+    category: Building_WaterTank
+    buildingPrefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
+    factionId: 0
+    worldCenter: {x: 998.17706, y: 9.582434, z: 682.51605}
+    worldPosition: {x: 998.16016, y: 6.110224, z: 682.18005}
+    worldEulerAngles: {x: -0, y: 180, z: -0}
+    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
+    yawDegrees: 180
+    rotateVertical: 0
+  - sourcePath: Map/Buildings/Building_WaterTank/SM_Bld_WaterTank_01 (4)
+    category: Building_WaterTank
+    buildingPrefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
+    factionId: 0
+    worldCenter: {x: 1002.6466, y: 10.173436, z: 649.6122}
+    worldPosition: {x: 1002.6581, y: 7.819, z: 649.84}
+    worldEulerAngles: {x: -0, y: 0.000013660377, z: 0}
+    worldScale: {x: 0.6780802, y: 0.67808, z: 0.6780801}
+    yawDegrees: 0.000013660377
+    rotateVertical: 0
   - sourcePath: Map/Buildings/Tent_Contractor/SM_Bld_Tent_01 (8)
     category: Tent_Contractor
     buildingPrefab: {fileID: 7909703279963890070, guid: e09079772b6a5445e9527a5751f3cc35, type: 3}
@@ -3012,6 +3032,26 @@ MonoBehaviour:
     factionId: 2
     worldCenter: {x: 1756.8308, y: 5.1375046, z: 315.27982}
     worldPosition: {x: 1756.8308, y: 3.689001, z: 315.27985}
+    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
+    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
+    yawDegrees: 0.00016392453
+    rotateVertical: 0
+  - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_Closed_01
+    category: Tent_Refugee
+    buildingPrefab: {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
+    factionId: 1
+    worldCenter: {x: 849.68005, y: 2.5593588, z: 400.30997}
+    worldPosition: {x: 849.68005, y: 1.12, z: 400.30997}
+    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
+    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
+    yawDegrees: 0.00016392453
+    rotateVertical: 0
+  - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_Closed_01
+    category: Tent_Refugee
+    buildingPrefab: {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
+    factionId: 2
+    worldCenter: {x: 1764.0806, y: 5.15936, z: 315.30984}
+    worldPosition: {x: 1764.0806, y: 3.7200012, z: 315.30988}
     worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.00016392453

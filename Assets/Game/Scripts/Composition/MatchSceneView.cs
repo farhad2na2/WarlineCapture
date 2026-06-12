@@ -16,6 +16,7 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
     [SerializeField] private Transform decorationRoot;
     [SerializeField] private Transform mapBuildingAuthoringRoot;
+    [SerializeField] private Transform mapVehicleAuthoringRoot;
     [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
 
     [Header("Configs")]
@@ -23,6 +24,7 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private RoadBuildSystemConfig roadBuildConfig;
     [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
     [SerializeField] private MapBuildingPlacementConfig mapBuildingPlacementConfig;
+    [SerializeField] private MapVehiclePlacementConfig mapVehiclePlacementConfig;
     [SerializeField] private UnitAttackTraceSystemConfig unitAttackTraceConfig;
     [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
     [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
@@ -42,11 +44,13 @@ public sealed class MatchSceneView : MonoBehaviour
     public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
     public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
     public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;
+    public Transform MapVehicleAuthoringRoot => mapVehicleAuthoringRoot;
     public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
     public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
     public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
     public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
     public MapBuildingPlacementConfig MapBuildingPlacementConfig => mapBuildingPlacementConfig;
+    public MapVehiclePlacementConfig MapVehiclePlacementConfig => mapVehiclePlacementConfig;
     public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
     public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
     public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;

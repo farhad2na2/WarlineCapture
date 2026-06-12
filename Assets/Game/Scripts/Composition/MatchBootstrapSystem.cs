@@ -57,7 +57,9 @@ internal sealed class MatchBootstrapSystem
     public RoadBuildSystemConfig RoadBuildConfig => MatchScene != null ? MatchScene.RoadBuildConfig : null;
     public BuildingPlacementSystemConfig BuildingPlacementConfig => MatchScene != null ? MatchScene.BuildingPlacementConfig : null;
     public MapBuildingPlacementConfig MapBuildingPlacementConfig => MatchScene != null ? MatchScene.MapBuildingPlacementConfig : null;
+    public MapVehiclePlacementConfig MapVehiclePlacementConfig => MatchScene != null ? MatchScene.MapVehiclePlacementConfig : null;
     public Transform MapBuildingAuthoringRoot => MatchScene != null ? MatchScene.MapBuildingAuthoringRoot : null;
+    public Transform MapVehicleAuthoringRoot => MatchScene != null ? MatchScene.MapVehicleAuthoringRoot : null;
     public UnitAttackTraceSystemConfig UnitAttackTraceConfig => MatchScene != null ? MatchScene.UnitAttackTraceConfig : null;
     public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => MatchScene != null ? MatchScene.RuntimeCitySpawnerConfig : null;
     public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => MatchScene != null ? MatchScene.RuntimeDecorationSpawnerConfig : null;
@@ -373,6 +375,7 @@ internal sealed class MatchBootstrapSystem
         RoadBuildSystemConfig roadBuildConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         MapBuildingPlacementConfig mapBuildingPlacementConfig,
+        MapVehiclePlacementConfig mapVehiclePlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         GameStringsConfig gameStringsConfig,
@@ -382,7 +385,8 @@ internal sealed class MatchBootstrapSystem
         Transform runtimeTransportsRoot,
         Transform runtimeUiRoot,
         Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
-        Transform mapBuildingAuthoringRoot)
+        Transform mapBuildingAuthoringRoot,
+        Transform mapVehicleAuthoringRoot)
     {
         return managedGameplayStartupSystem.Initialize(
             dayNightConfig,
@@ -390,6 +394,7 @@ internal sealed class MatchBootstrapSystem
             roadBuildConfig,
             buildingPlacementConfig,
             mapBuildingPlacementConfig,
+            mapVehiclePlacementConfig,
             rtsSelectionConfig,
             runtimeCitySpawnerConfig,
             gameStringsConfig,
@@ -406,7 +411,8 @@ internal sealed class MatchBootstrapSystem
             BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata,
-            mapBuildingAuthoringRoot);
+            mapBuildingAuthoringRoot,
+            mapVehicleAuthoringRoot);
     }
 
     public void ProjectFactionVisualConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
@@ -884,6 +890,7 @@ internal sealed class MatchBootstrapSystem
             RoadBuildConfig,
             BuildingPlacementConfig,
             MapBuildingPlacementConfig,
+            MapVehiclePlacementConfig,
             RtsSelectionConfig,
             RuntimeCitySpawnerConfig,
             GameStringsConfig,
@@ -893,7 +900,8 @@ internal sealed class MatchBootstrapSystem
             _runtimeTransportsRoot,
             _runtimeUiRoot,
             EnsureSelectionRectangleView,
-            MapBuildingAuthoringRoot);
+            MapBuildingAuthoringRoot,
+            MapVehicleAuthoringRoot);
 
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;

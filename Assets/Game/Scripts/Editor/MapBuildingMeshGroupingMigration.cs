@@ -14,7 +14,7 @@ public static class MapBuildingMeshGroupingMigration
     private const string BuildingPrefabRoot = "Assets/Game/Prefabs/Buildings";
     private const string ReportPath = "/private/tmp/warline-map-building-grouping-report.json";
 
-    [MenuItem("Warline/Map/Group Match Buildings By Prefab Mesh")]
+    [MenuItem("Game/Map/Group Match Buildings By Prefab Mesh")]
     public static void GroupMatchSceneBuildingsByPrefabMesh()
     {
         try

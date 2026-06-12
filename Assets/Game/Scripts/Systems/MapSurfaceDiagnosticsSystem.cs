@@ -1,11 +1,18 @@
+using Unity.Collections;
 using Unity.Entities;
 
 public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
     private const double DiagnosticsIntervalSeconds = 1d;
+    private ComponentLookup<MapSurfaceDiagnosticsComponent> _diagnosticsLookup;
     private double _nextDiagnosticsTime;
     private SurfaceDiagnosticsSignature _lastSignature;
     private bool _hasLastSignature;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _diagnosticsLookup = state.GetComponentLookup<MapSurfaceDiagnosticsComponent>();
+    }
 
     public void OnUpdate(ref SystemState state)
     {
@@ -17,16 +24,22 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
         if (!SystemAPI.TryGetSingletonEntity<MapSurfaceComponent>(out Entity surfaceEntity))
             return;
 
-        MapSurfaceComponent surface = state.EntityManager.GetComponentData<MapSurfaceComponent>(surfaceEntity);
+        MapSurfaceComponent surface = SystemAPI.GetComponent<MapSurfaceComponent>(surfaceEntity);
         SurfaceDiagnosticsSignature signature = BuildSignature(surface);
         if (_hasLastSignature && signature.Equals(_lastSignature))
             return;
 
         MapSurfaceDiagnosticsComponent diagnostics = BuildDiagnostics(surface);
-        if (state.EntityManager.HasComponent<MapSurfaceDiagnosticsComponent>(surfaceEntity))
-            state.EntityManager.SetComponentData(surfaceEntity, diagnostics);
+        _diagnosticsLookup.Update(ref state);
+        if (_diagnosticsLookup.HasComponent(surfaceEntity))
+            _diagnosticsLookup[surfaceEntity] = diagnostics;
         else
-            state.EntityManager.AddComponentData(surfaceEntity, diagnostics);
+        {
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+            ecb.AddComponent(surfaceEntity, diagnostics);
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
 
         _lastSignature = signature;
         _hasLastSignature = true;

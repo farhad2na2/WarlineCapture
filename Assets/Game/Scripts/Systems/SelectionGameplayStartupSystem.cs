@@ -20,6 +20,18 @@ internal sealed class SelectionGameplayStartupSystem
         }
     }
 
+    private readonly struct TransportBoardingCandidate
+    {
+        public readonly Entity Entity;
+        public readonly int Distance;
+
+        public TransportBoardingCandidate(Entity entity, int distance)
+        {
+            Entity = entity;
+            Distance = distance;
+        }
+    }
+
     public readonly struct Result
     {
         public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
@@ -134,6 +146,8 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
         var selectedAttackSourceScratch = new List<Entity>();
+        var selectedBoardTransportScratch = new List<Entity>();
+        var transportBoardingCandidateScratch = new List<TransportBoardingCandidate>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         IMatchRuntimeUi mainMenuPlayUi = null;
         IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
@@ -705,33 +719,36 @@ internal sealed class SelectionGameplayStartupSystem
         MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(EntityManager em, Entity transport)
         {
             transportPassengerPanelItems.Clear();
-            if (!em.Exists(transport) ||
-                !selectionUiQuerySystem.IsOwnedByPlayer(em, transport) ||
-                !unitTransportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
-                !em.HasComponent<UnitTransportCapacity>(transport) ||
-                !em.HasBuffer<UnitTransportPassengerElement>(transport))
+            if (!focusedUnitUiReadModelSystem.TryRead(
+                    em,
+                    out FocusedUnitUiReadModelComponent focusedModel,
+                    out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers) ||
+                focusedModel.HasFocusedUnit == 0 ||
+                focusedModel.FocusedUnit != transport ||
+                focusedModel.OwnedByPlayer == 0 ||
+                focusedModel.TransportPassengerCapacity <= 0)
             {
                 return MatchHudTransportPassengersModel.Hidden;
             }
 
-            int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+            int capacity = math.max(0, focusedModel.TransportPassengerCapacity);
             if (capacity <= 0)
                 return MatchHudTransportPassengersModel.Hidden;
 
-            DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
             for (int i = 0; i < passengers.Length; i++)
             {
-                Entity passenger = passengers[i].Passenger;
+                FocusedUnitPassengerUiReadModelElement passengerModel = passengers[i];
+                Entity passenger = passengerModel.Passenger;
                 if (!em.Exists(passenger))
                     continue;
 
-                TryGetHealthModel(em, passenger, out string healthLabel, out float health01);
+                BuildHealthModelFromValues(passengerModel.HealthCurrent, passengerModel.HealthMax, out string healthLabel, out float health01);
                 Sprite portrait = resolveSelectionCardPortraitSprite?.Invoke(em, passenger);
                 portrait ??= resolveSelectionPortraitSprite?.Invoke(em, passenger);
                 portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
                 transportPassengerPanelItems.Add(new MatchHudSelectionPanelPassengerItemModel(
                     passenger,
-                    selectionUiQuerySystem.ResolveFocusedUnitName(em, passenger),
+                    passengerModel.DisplayName.ToString(),
                     ResolvePassengerRoleText(em, passenger),
                     healthLabel,
                     health01,
@@ -917,6 +934,18 @@ internal sealed class SelectionGameplayStartupSystem
                 return;
             }
 
+            BuildHealthModelFromValues(current, max, out healthLabel, out health01);
+        }
+
+        static void BuildHealthModelFromValues(int current, int max, out string healthLabel, out float health01)
+        {
+            if (max <= 0)
+            {
+                healthLabel = "Health: -";
+                health01 = 0f;
+                return;
+            }
+
             healthLabel = $"Health: {math.max(0, current)}/{max}";
             health01 = math.saturate((float)current / max);
         }
@@ -961,20 +990,25 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return false;
 
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (!em.Exists(entity))
-                    continue;
-
-                if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
-                    return true;
-
-                if (unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity) &&
-                    IsBoardCommandAvailable(em, entity))
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
                 {
-                    return true;
+                    Entity entity = entities[i];
+                    if (!em.Exists(entity))
+                        continue;
+
+                    if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
+                        return true;
+
+                    if (unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity) &&
+                        IsBoardCommandAvailable(em, entity))
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -1221,9 +1255,14 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectedTagQuery.IsEmptyIgnoreFilter)
                 return;
 
-            using NativeArray<Entity> selectedEntities = selectedTagQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selectedEntities.Length; i++)
-                TryAddAttackSource(em, selectedEntities[i], sources);
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < selectedEntities.Length; i++)
+                    TryAddAttackSource(em, selectedEntities[i], sources);
+            }
         }
 
         bool TryAddAttackSource(EntityManager em, Entity entity, List<Entity> sources)
@@ -1353,10 +1392,11 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return 0;
 
-            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selectedEntities.Length; i++)
+            selectedBoardTransportScratch.Clear();
+            CollectEntities(em, query, selectedBoardTransportScratch);
+            for (int i = 0; i < selectedBoardTransportScratch.Count; i++)
             {
-                Entity selectedEntity = selectedEntities[i];
+                Entity selectedEntity = selectedBoardTransportScratch[i];
                 if (!em.Exists(selectedEntity) || !selectionUiQuerySystem.IsOwnedByPlayer(em, selectedEntity))
                     continue;
 
@@ -1388,10 +1428,11 @@ internal sealed class SelectionGameplayStartupSystem
                 using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
                 if (!query.IsEmptyIgnoreFilter)
                 {
-                    using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-                    for (int i = 0; i < selectedEntities.Length; i++)
+                    selectedBoardTransportScratch.Clear();
+                    CollectEntities(em, query, selectedBoardTransportScratch);
+                    for (int i = 0; i < selectedBoardTransportScratch.Count; i++)
                     {
-                        Entity entity = selectedEntities[i];
+                        Entity entity = selectedBoardTransportScratch[i];
                         if (!em.Exists(entity) || !selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
                             continue;
 
@@ -1456,10 +1497,11 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return false;
 
-            using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selectedEntities.Length; i++)
+            selectedBoardTransportScratch.Clear();
+            CollectEntities(em, query, selectedBoardTransportScratch);
+            for (int i = 0; i < selectedBoardTransportScratch.Count; i++)
             {
-                Entity selected = selectedEntities[i];
+                Entity selected = selectedBoardTransportScratch[i];
                 if (!em.Exists(selected) || !IsBoardCommandAvailable(em, selected))
                     continue;
 
@@ -1515,11 +1557,16 @@ internal sealed class SelectionGameplayStartupSystem
                     ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
                 }
             });
-            using NativeArray<Entity> liveUnitEntities = liveQuery.ToEntityArray(Allocator.Temp);
-            using NativeArray<UnitGrid> liveUnitGrids = liveQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-            using NativeArray<UnitFootprint> liveUnitFootprints = liveQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+            int liveUnitCount = math.max(1, liveQuery.CalculateEntityCount());
+            using NativeList<Entity> liveUnitEntities = new(liveUnitCount, Allocator.Temp);
+            using NativeList<UnitGrid> liveUnitGrids = new(liveUnitCount, Allocator.Temp);
+            using NativeList<UnitFootprint> liveUnitFootprints = new(liveUnitCount, Allocator.Temp);
+            CollectLiveUnitPathingData(em, liveQuery, liveUnitEntities, liveUnitGrids, liveUnitFootprints);
+            NativeArray<Entity> liveUnitEntityArray = liveUnitEntities.AsArray();
+            NativeArray<UnitGrid> liveUnitGridArray = liveUnitGrids.AsArray();
+            NativeArray<UnitFootprint> liveUnitFootprintArray = liveUnitFootprints.AsArray();
 
-            List<Entity> candidates = CollectNearestBoardingCandidates(em, transport);
+            List<TransportBoardingCandidate> candidates = CollectNearestBoardingCandidates(em, transport, transportBoardingCandidateScratch);
             if (candidates.Count == 0)
                 return false;
 
@@ -1532,7 +1579,7 @@ internal sealed class SelectionGameplayStartupSystem
 
             for (int i = 0; i < candidates.Count && plannedOrders.Count < availableSeats; i++)
             {
-                Entity passenger = candidates[i];
+                Entity passenger = candidates[i].Entity;
                 if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
@@ -1550,9 +1597,9 @@ internal sealed class SelectionGameplayStartupSystem
                         referenceCell,
                         passengerFootprint,
                         passenger,
-                        liveUnitEntities,
-                        liveUnitGrids,
-                        liveUnitFootprints,
+                        liveUnitEntityArray,
+                        liveUnitGridArray,
+                        liveUnitFootprintArray,
                         transport,
                         transportCell,
                         transportSize,
@@ -1589,9 +1636,12 @@ internal sealed class SelectionGameplayStartupSystem
             return orderedCount > 0;
         }
 
-        List<Entity> CollectNearestBoardingCandidates(EntityManager em, Entity transport)
+        List<TransportBoardingCandidate> CollectNearestBoardingCandidates(
+            EntityManager em,
+            Entity transport,
+            List<TransportBoardingCandidate> candidates)
         {
-            var candidates = new List<Entity>();
+            candidates.Clear();
             int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
             using EntityQuery query = em.CreateEntityQuery(
                 ComponentType.ReadOnly<Faction>(),
@@ -1602,29 +1652,79 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return candidates;
 
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            ComponentTypeHandle<UnitGrid> gridType = em.GetComponentTypeHandle<UnitGrid>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (entity == transport ||
-                    !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity) ||
-                    em.HasComponent<UnitTransportBoardingTarget>(entity))
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+                for (int i = 0; i < entities.Length; i++)
                 {
-                    continue;
-                }
+                    Entity entity = entities[i];
+                    if (entity == transport ||
+                        !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity) ||
+                        em.HasComponent<UnitTransportBoardingTarget>(entity))
+                    {
+                        continue;
+                    }
 
-                candidates.Add(entity);
+                    int2 cell = grids[i].Cell;
+                    int distance = math.abs(cell.x - transportCell.x) + math.abs(cell.y - transportCell.y);
+                    candidates.Add(new TransportBoardingCandidate(entity, distance));
+                }
             }
 
             candidates.Sort((left, right) =>
             {
-                int2 leftCell = em.GetComponentData<UnitGrid>(left).Cell;
-                int2 rightCell = em.GetComponentData<UnitGrid>(right).Cell;
-                int leftScore = math.abs(leftCell.x - transportCell.x) + math.abs(leftCell.y - transportCell.y);
-                int rightScore = math.abs(rightCell.x - transportCell.x) + math.abs(rightCell.y - transportCell.y);
-                return leftScore.CompareTo(rightScore);
+                int distanceCompare = left.Distance.CompareTo(right.Distance);
+                return distanceCompare != 0 ? distanceCompare : left.Entity.Index.CompareTo(right.Entity.Index);
             });
             return candidates;
+        }
+
+        void CollectLiveUnitPathingData(
+            EntityManager em,
+            EntityQuery query,
+            NativeList<Entity> entities,
+            NativeList<UnitGrid> grids,
+            NativeList<UnitFootprint> footprints)
+        {
+            entities.Clear();
+            grids.Clear();
+            footprints.Clear();
+
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            ComponentTypeHandle<UnitGrid> gridType = em.GetComponentTypeHandle<UnitGrid>(true);
+            ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> chunkEntities = chunk.GetNativeArray(entityType);
+                NativeArray<UnitGrid> chunkGrids = chunk.GetNativeArray(ref gridType);
+                NativeArray<UnitFootprint> chunkFootprints = chunk.GetNativeArray(ref footprintType);
+                for (int i = 0; i < chunkEntities.Length; i++)
+                {
+                    entities.Add(chunkEntities[i]);
+                    grids.Add(chunkGrids[i]);
+                    footprints.Add(chunkFootprints[i]);
+                }
+            }
+        }
+
+        void CollectEntities(EntityManager em, EntityQuery query, List<Entity> entities)
+        {
+            entities.Clear();
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < chunkEntities.Length; i++)
+                    entities.Add(chunkEntities[i]);
+            }
         }
 
         int CountPendingBoardingOrders(EntityManager em, Entity transport)
@@ -1634,16 +1734,14 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return 0;
 
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            ComponentTypeHandle<UnitTransportBoardingTarget> targetType = em.GetComponentTypeHandle<UnitTransportBoardingTarget>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (em.Exists(entity) &&
-                    em.HasComponent<UnitTransportBoardingTarget>(entity) &&
-                    em.GetComponentData<UnitTransportBoardingTarget>(entity).Transport == transport)
-                {
-                    count++;
-                }
+                NativeArray<UnitTransportBoardingTarget> targets = chunks[chunkIndex].GetNativeArray(ref targetType);
+                for (int i = 0; i < targets.Length; i++)
+                    if (targets[i].Transport == transport)
+                        count++;
             }
 
             return count;

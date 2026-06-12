@@ -7,6 +7,12 @@ using UnityEngine;
 internal struct UnitPathfindingApplySystem
 {
     private MapSurfacePathfindingReadSystem _surfaceReadSystem;
+    private ComponentLookup<PathPoolComponent> _pathPoolLookup;
+
+    public void Initialize(ref SystemState state)
+    {
+        _pathPoolLookup = state.GetComponentLookup<PathPoolComponent>();
+    }
 
     public void Apply(
         ref SystemState state,
@@ -55,7 +61,8 @@ internal struct UnitPathfindingApplySystem
             pendingRequestBudget);
 
         Entity gridEntity = queries.GridQuery.GetSingletonEntity();
-        PathPoolComponent pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
+        _pathPoolLookup.Update(ref state);
+        PathPoolComponent pool = _pathPoolLookup[gridEntity];
         MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(state.EntityManager, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
             ? resolvedSurfaceContext
             : _surfaceReadSystem.CreateFlatFallbackContext();
@@ -88,7 +95,8 @@ internal struct UnitPathfindingApplySystem
             out int retriedSegmentCount,
             out int manualRetriedCount,
             out int abandonedCount);
-        state.EntityManager.SetComponentData(gridEntity, pool);
+        _pathPoolLookup.Update(ref state);
+        _pathPoolLookup[gridEntity] = pool;
 
         int queuedCount = queries.RequestQuery.CalculateEntityCount();
         int followingCount = queries.PathFollowQuery.CalculateEntityCount();

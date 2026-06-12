@@ -147,6 +147,25 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
     }
 
+    public void ClearMovementOrderComponents(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity)
+    {
+        RemoveComponentIfPresent<UnitTarget>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitPathRequest>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitPathFollow>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitPathRange>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<ManualMoveOrderTag>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<ManualMoveGroupMemberTag>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
+    }
+
     public bool RemoveComponentIfPresent<T>(EntityManager entityManager, Entity entity)
         where T : unmanaged, IComponentData
     {
@@ -154,6 +173,16 @@ public sealed class UnitMoveOrderSystem
             return false;
 
         entityManager.RemoveComponent<T>(entity);
+        return true;
+    }
+
+    public bool RemoveComponentIfPresent<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity)
+        where T : unmanaged, IComponentData
+    {
+        if (!entityManager.Exists(entity) || !entityManager.HasComponent<T>(entity))
+            return false;
+
+        ecb.RemoveComponent<T>(entity);
         return true;
     }
 

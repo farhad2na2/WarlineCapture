@@ -225,6 +225,18 @@ public sealed class SelectionUiQuerySystem
         return entityManager.GetBuffer<UnitTransportPassengerElement>(transport).Length;
     }
 
+    public int GetTransportPassengerCapacity(EntityManager entityManager, Entity transport, UnitTransportCapacitySystem capacitySystem)
+    {
+        if (!entityManager.Exists(transport) ||
+            !capacitySystem.TryEnsureTransportCapacity(entityManager, transport) ||
+            !entityManager.HasComponent<UnitTransportCapacity>(transport))
+        {
+            return 0;
+        }
+
+        return math.max(0, entityManager.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+    }
+
     public void GetTransportPassengers(
         EntityManager entityManager,
         Entity transport,

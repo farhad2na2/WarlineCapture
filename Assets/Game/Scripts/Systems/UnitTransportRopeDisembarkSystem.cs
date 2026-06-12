@@ -10,17 +10,29 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
     private const int RopeDropClearanceCells = 2;
     private const float RopeDropDurationSeconds = 1.2f;
     private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private EntityQuery _landingClearanceQuery;
+    private EntityTypeHandle _landingEntityType;
+    private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
+    private ComponentTypeHandle<UnitGrid> _landingGridType;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<UnitTransportRopeDisembarkRequest>();
+        _landingClearanceQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
+            ComponentType.ReadOnly<UnitGrid>());
+        _landingEntityType = state.GetEntityTypeHandle();
+        _landingClearanceType = state.GetComponentTypeHandle<UnitTransportRopeLandingClearance>(true);
+        _landingGridType = state.GetComponentTypeHandle<UnitGrid>(true);
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        UpdateLandingTypeHandles(ref state);
         EntityManager em = state.EntityManager;
-        CleanupClearedLandingCells(em);
+        CompleteLandingClearanceReadDependencies(em);
+        CleanupClearedLandingCells(em, _landingClearanceQuery, _landingEntityType, ref _landingClearanceType, ref _landingGridType);
 
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
@@ -38,12 +50,12 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         {
             if (passengers.Length <= 0)
             {
-                if (IsRopeLandingClear(em, transport))
+                if (IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
                     ecb.RemoveComponent<UnitTransportRopeDisembarkRequest>(transport);
                 continue;
             }
 
-            if (!IsRopeLandingClear(em, transport))
+            if (!IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
                 continue;
 
             if (request.ValueRO.NextDropAt > 0f && now < request.ValueRO.NextDropAt)
@@ -154,40 +166,67 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         return -1;
     }
 
-    private static void CleanupClearedLandingCells(EntityManager em)
+    private void UpdateLandingTypeHandles(ref SystemState state)
     {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
-            ComponentType.ReadOnly<UnitGrid>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        using NativeArray<UnitTransportRopeLandingClearance> clearances = query.ToComponentDataArray<UnitTransportRopeLandingClearance>(Allocator.Temp);
-        using NativeArray<UnitGrid> grids = query.ToComponentDataArray<UnitGrid>(Allocator.Temp);
+        _landingEntityType.Update(ref state);
+        _landingClearanceType.Update(ref state);
+        _landingGridType.Update(ref state);
+    }
+
+    private static void CompleteLandingClearanceReadDependencies(EntityManager em)
+    {
+        em.CompleteDependencyBeforeRO<UnitTransportRopeLandingClearance>();
+        em.CompleteDependencyBeforeRO<UnitGrid>();
+    }
+
+    private static void CleanupClearedLandingCells(
+        EntityManager em,
+        EntityQuery landingClearanceQuery,
+        EntityTypeHandle entityType,
+        ref ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
+        ref ComponentTypeHandle<UnitGrid> gridType)
+    {
+        using NativeArray<ArchetypeChunk> chunks = landingClearanceQuery.ToArchetypeChunkArray(Allocator.Temp);
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (!em.Exists(clearances[i].Transport) || !grids[i].Cell.Equals(clearances[i].LandingCell))
-                ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entities[i]);
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref clearanceType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+
+            for (int i = 0; i < chunk.Count; i++)
+            {
+                if (!em.Exists(clearances[i].Transport) || !grids[i].Cell.Equals(clearances[i].LandingCell))
+                    ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entities[i]);
+            }
         }
 
         ecb.Playback(em);
         ecb.Dispose();
     }
 
-    private static bool IsRopeLandingClear(EntityManager em, Entity transport)
+    private static bool IsRopeLandingClear(
+        EntityQuery landingClearanceQuery,
+        Entity transport,
+        ref ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
+        ref ComponentTypeHandle<UnitGrid> gridType)
     {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
-            ComponentType.ReadOnly<UnitGrid>());
-        using NativeArray<UnitTransportRopeLandingClearance> clearances = query.ToComponentDataArray<UnitTransportRopeLandingClearance>(Allocator.Temp);
-        using NativeArray<UnitGrid> grids = query.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-
-        for (int i = 0; i < clearances.Length; i++)
+        using NativeArray<ArchetypeChunk> chunks = landingClearanceQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (clearances[i].Transport == transport &&
-                grids[i].Cell.Equals(clearances[i].LandingCell))
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref clearanceType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+
+            for (int i = 0; i < chunk.Count; i++)
             {
-                return false;
+                if (clearances[i].Transport == transport &&
+                    grids[i].Cell.Equals(clearances[i].LandingCell))
+                {
+                    return false;
+                }
             }
         }
 
@@ -415,15 +454,40 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 public partial struct UnitTransportRopeDropSystem : ISystem
 {
     private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private EntityQuery _liveUnitQuery;
+    private EntityTypeHandle _liveEntityType;
+    private ComponentTypeHandle<UnitGrid> _liveGridType;
+    private ComponentTypeHandle<UnitFootprint> _liveFootprintType;
+
+    private readonly struct LiveUnitRecord
+    {
+        public readonly Entity Entity;
+        public readonly int2 Cell;
+        public readonly int2 FootprintSize;
+
+        public LiveUnitRecord(Entity entity, int2 cell, int2 footprintSize)
+        {
+            Entity = entity;
+            Cell = cell;
+            FootprintSize = footprintSize;
+        }
+    }
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<UnitTransportRopeDropComponent>();
+        _liveUnitQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitFootprint>());
+        _liveEntityType = state.GetEntityTypeHandle();
+        _liveGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _liveFootprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        UpdateTypeHandles(ref state);
         float now = (float)SystemAPI.Time.ElapsedTime;
         EntityManager em = state.EntityManager;
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
@@ -431,12 +495,8 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
         DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
         DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
-        using EntityQuery liveUnitQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitFootprint>());
-        using NativeArray<Entity> liveEntities = liveUnitQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<UnitGrid> liveGrids = liveUnitQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-        using NativeArray<UnitFootprint> liveFootprints = liveUnitQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+        NativeList<LiveUnitRecord> liveUnits = default;
+        bool liveUnitsCollected = false;
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
         foreach (var (transform, drop, entity) in
@@ -449,6 +509,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
             if (t >= 1f)
             {
                 transform.ValueRW.Position = drop.ValueRO.EndPosition;
+                EnsureLiveUnitRecords(em, _liveUnitQuery, _liveEntityType, ref _liveGridType, ref _liveFootprintType, ref liveUnits, ref liveUnitsCollected);
                 IssueDisperseMoveOrder(
                     _spawnGroundingSystem,
                     em,
@@ -460,15 +521,52 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                     walkable.AsNativeArray(),
                     blockerData.Blocked,
                     occupancyData.Occupied,
-                    liveEntities,
-                    liveGrids,
-                    liveFootprints);
+                    liveUnits.AsArray());
                 ecb.RemoveComponent<UnitTransportRopeDropComponent>(entity);
             }
         }
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+        if (liveUnits.IsCreated)
+            liveUnits.Dispose();
+    }
+
+    private void UpdateTypeHandles(ref SystemState state)
+    {
+        _liveEntityType.Update(ref state);
+        _liveGridType.Update(ref state);
+        _liveFootprintType.Update(ref state);
+    }
+
+    private static void EnsureLiveUnitRecords(
+        EntityManager em,
+        EntityQuery liveUnitQuery,
+        EntityTypeHandle entityType,
+        ref ComponentTypeHandle<UnitGrid> gridType,
+        ref ComponentTypeHandle<UnitFootprint> footprintType,
+        ref NativeList<LiveUnitRecord> liveUnits,
+        ref bool liveUnitsCollected)
+    {
+        if (liveUnitsCollected)
+            return;
+
+        em.CompleteDependencyBeforeRO<UnitGrid>();
+        em.CompleteDependencyBeforeRO<UnitFootprint>();
+        liveUnits = new NativeList<LiveUnitRecord>(liveUnitQuery.CalculateEntityCount(), Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = liveUnitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+
+            for (int i = 0; i < chunk.Count; i++)
+                liveUnits.Add(new LiveUnitRecord(entities[i], grids[i].Cell, footprints[i].Size));
+        }
+
+        liveUnitsCollected = true;
     }
 
     private static void IssueDisperseMoveOrder(
@@ -482,9 +580,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied,
-        in NativeArray<Entity> liveEntities,
-        in NativeArray<UnitGrid> liveGrids,
-        in NativeArray<UnitFootprint> liveFootprints)
+        in NativeArray<LiveUnitRecord> liveUnits)
     {
         if (!em.HasComponent<UnitGrid>(entity) ||
             !em.HasComponent<UnitFootprint>(entity))
@@ -504,9 +600,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                 landingCell,
                 footprint,
                 entity,
-                liveEntities,
-                liveGrids,
-                liveFootprints,
+                liveUnits,
                 out int2 disperseCell))
         {
             if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
@@ -552,9 +646,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         int2 landingCell,
         int2 footprint,
         Entity movingEntity,
-        in NativeArray<Entity> liveEntities,
-        in NativeArray<UnitGrid> liveGrids,
-        in NativeArray<UnitFootprint> liveFootprints,
+        in NativeArray<LiveUnitRecord> liveUnits,
         out int2 disperseCell)
     {
         disperseCell = default;
@@ -569,9 +661,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                 landingCell,
                 footprint,
                 movingEntity,
-                liveEntities,
-                liveGrids,
-                liveFootprints,
+                liveUnits,
                 radius);
             if (validCount <= 0)
                 continue;
@@ -585,9 +675,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                     landingCell,
                     footprint,
                     movingEntity,
-                    liveEntities,
-                    liveGrids,
-                    liveFootprints,
+                    liveUnits,
                     radius,
                     desiredOrdinal,
                     out disperseCell))
@@ -605,9 +693,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         int2 landingCell,
         int2 footprint,
         Entity movingEntity,
-        in NativeArray<Entity> liveEntities,
-        in NativeArray<UnitGrid> liveGrids,
-        in NativeArray<UnitFootprint> liveFootprints,
+        in NativeArray<LiveUnitRecord> liveUnits,
         int radius)
     {
         int count = 0;
@@ -622,7 +708,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                 if (x != minX && x != maxX && y != minY && y != maxY)
                     continue;
 
-                if (IsValidDisperseCell(grid, walkable, blocked, occupied, new int2(x, y), footprint, movingEntity, liveEntities, liveGrids, liveFootprints))
+                if (IsValidDisperseCell(grid, walkable, blocked, occupied, new int2(x, y), footprint, movingEntity, liveUnits))
                     count++;
             }
         }
@@ -638,9 +724,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         int2 landingCell,
         int2 footprint,
         Entity movingEntity,
-        in NativeArray<Entity> liveEntities,
-        in NativeArray<UnitGrid> liveGrids,
-        in NativeArray<UnitFootprint> liveFootprints,
+        in NativeArray<LiveUnitRecord> liveUnits,
         int radius,
         int desiredOrdinal,
         out int2 disperseCell)
@@ -659,7 +743,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                     continue;
 
                 int2 candidate = new int2(x, y);
-                if (!IsValidDisperseCell(grid, walkable, blocked, occupied, candidate, footprint, movingEntity, liveEntities, liveGrids, liveFootprints))
+                if (!IsValidDisperseCell(grid, walkable, blocked, occupied, candidate, footprint, movingEntity, liveUnits))
                     continue;
 
                 if (ordinal == desiredOrdinal)
@@ -683,9 +767,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         int2 cell,
         int2 footprint,
         Entity movingEntity,
-        in NativeArray<Entity> liveEntities,
-        in NativeArray<UnitGrid> liveGrids,
-        in NativeArray<UnitFootprint> liveFootprints)
+        in NativeArray<LiveUnitRecord> liveUnits)
     {
         int2 size = UnitFootprintUtility.ClampSize(footprint);
         int2 min = UnitFootprintUtility.GetMinCell(cell, size);
@@ -708,11 +790,12 @@ public partial struct UnitTransportRopeDropSystem : ISystem
             }
         }
 
-        for (int i = 0; i < liveEntities.Length; i++)
+        for (int i = 0; i < liveUnits.Length; i++)
         {
-            if (liveEntities[i] == movingEntity)
+            LiveUnitRecord liveUnit = liveUnits[i];
+            if (liveUnit.Entity == movingEntity)
                 continue;
-            if (UnitFootprintUtility.Overlaps(cell, size, liveGrids[i].Cell, liveFootprints[i].Size))
+            if (UnitFootprintUtility.Overlaps(cell, size, liveUnit.Cell, liveUnit.FootprintSize))
                 return false;
         }
 

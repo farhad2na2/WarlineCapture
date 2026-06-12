@@ -36,7 +36,8 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells());
             RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=16");
+            RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
+            Debug.Log("[UnitTransportValidation] result=Passed tests=17");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -722,6 +723,45 @@ public sealed class UnitTransportValidationTests
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    [Test]
+    public void FocusedTransportReadModel_PublishesPassengerCapacityAndRows()
+    {
+        using var world = new World("FocusedTransportReadModel_PublishesPassengerCapacityAndRows");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 16, 16);
+
+        Entity transport = CreateTransport(em, new int2(8, 8), air: false, airborne: false);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 4 });
+        em.AddComponentData(passenger, new UnitHealth { Current = 7, Max = 10 });
+        em.AddComponentData(passenger, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes("Rifle Passenger"),
+            Description = new FixedString128Bytes("Passenger")
+        });
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(transport);
+        var readModelSystem = new FocusedUnitUiReadModelSystem();
+        readModelSystem.Publish(
+            em,
+            selectionState,
+            new SelectionUiQuerySystem(),
+            new UnitTransportCapacitySystem(),
+            1f);
+
+        Assert.IsTrue(readModelSystem.TryRead(em, out FocusedUnitUiReadModelComponent model, out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers));
+        Assert.AreEqual(transport, model.FocusedUnit);
+        Assert.AreEqual(1, model.PassengerCount);
+        Assert.AreEqual(4, model.TransportPassengerCapacity);
+        Assert.AreEqual(1, passengers.Length);
+        Assert.AreEqual(passenger, passengers[0].Passenger);
+        Assert.AreEqual("Rifle Passenger", passengers[0].DisplayName.ToString());
+        Assert.AreEqual(7, passengers[0].HealthCurrent);
+        Assert.AreEqual(10, passengers[0].HealthMax);
     }
 
     private static bool TryGetNoClickedUnit(Vector2 screenPosition, EntityManager em, out Entity entity)

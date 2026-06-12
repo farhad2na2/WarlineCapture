@@ -23,25 +23,19 @@ internal struct UnitPathfindingPendingStateSystem
         state.EntityManager.CreateEntity(typeof(UnitPathfindingPendingStateComponent));
     }
 
-    public void Publish(
-        ref SystemState state,
-        EntityQuery query,
+    public static UnitPathfindingPendingStateComponent CreateState(
         bool hasPendingPathJob,
         int requestCount,
         int requestBudget,
         int scheduledFrame)
     {
-        EnsureSingleton(ref state, query);
-        Entity entity = query.GetSingletonEntity();
-        state.EntityManager.SetComponentData(
-            entity,
-            new UnitPathfindingPendingStateComponent
-            {
-                HasPendingPathJob = hasPendingPathJob ? (byte)1 : (byte)0,
-                RequestCount = requestCount,
-                RequestBudget = requestBudget,
-                ScheduledFrame = scheduledFrame
-            });
+        return new UnitPathfindingPendingStateComponent
+        {
+            HasPendingPathJob = hasPendingPathJob ? (byte)1 : (byte)0,
+            RequestCount = requestCount,
+            RequestBudget = requestBudget,
+            ScheduledFrame = scheduledFrame
+        };
     }
 }
 

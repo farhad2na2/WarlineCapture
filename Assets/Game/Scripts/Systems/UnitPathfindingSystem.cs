@@ -51,6 +51,8 @@ public partial struct UnitPathfindingSystem : ISystem
         _pendingStateQuery = _pendingState.CreateQuery(ref state);
         _pendingState.EnsureSingleton(ref state, _pendingStateQuery);
         _queries.Initialize(ref state);
+        _apply.Initialize(ref state);
+        _liveUnitSnapshot.Initialize(ref state);
 
         _requestBuffers.Initialize();
         _requestCollection.Initialize(ref state);
@@ -172,9 +174,10 @@ public partial struct UnitPathfindingSystem : ISystem
 
     private void PublishPendingState(ref SystemState state)
     {
-        _pendingState.Publish(
-            ref state,
-            _pendingStateQuery,
+        _pendingState.EnsureSingleton(ref state, _pendingStateQuery);
+        RefRW<UnitPathfindingPendingStateComponent> pendingState =
+            SystemAPI.GetSingletonRW<UnitPathfindingPendingStateComponent>();
+        pendingState.ValueRW = UnitPathfindingPendingStateSystem.CreateState(
             _hasPendingPathJob,
             _pendingRequestCount,
             _pendingRequestBudget,

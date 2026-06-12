@@ -375,6 +375,7 @@ public sealed class SelectionTransportCommandRequestSystem
             _disembarkCells.Add(cell);
         }
 
+        EntityCommandBuffer ecb = new(Allocator.Temp);
         for (int i = 0; i < _disembarkingPassengers.Count; i++)
         {
             Entity passenger = _disembarkingPassengers[i];
@@ -382,23 +383,27 @@ public sealed class SelectionTransportCommandRequestSystem
             if (!em.Exists(passenger))
                 continue;
 
-            if (em.HasComponent<Disabled>(passenger))
-                em.RemoveComponent<Disabled>(passenger);
-            if (em.HasComponent<UnitTransportPassenger>(passenger))
-                em.RemoveComponent<UnitTransportPassenger>(passenger);
-            if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-                em.RemoveComponent<UnitTransportBoardingTarget>(passenger);
-            moveOrderSystem.ClearMovementOrderComponents(em, passenger);
+            moveOrderSystem.RemoveComponentIfPresent<Disabled>(em, ecb, passenger);
+            moveOrderSystem.RemoveComponentIfPresent<UnitTransportPassenger>(em, ecb, passenger);
+            moveOrderSystem.ClearMovementOrderComponents(em, ecb, passenger);
 
             if (em.HasComponent<UnitGrid>(passenger))
-                em.SetComponentData(passenger, new UnitGrid { Cell = cell });
+                ecb.SetComponent(passenger, new UnitGrid { Cell = cell });
             if (em.HasComponent<LocalTransform>(passenger))
             {
                 LocalTransform transform = em.GetComponentData<LocalTransform>(passenger);
                 transform.Position = GridUtils.CellToWorldCenter(grid, cell);
-                em.SetComponentData(passenger, transform);
+                ecb.SetComponent(passenger, transform);
             }
-            UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
+        }
+        ecb.Playback(em);
+        ecb.Dispose();
+
+        for (int i = 0; i < _disembarkingPassengers.Count; i++)
+        {
+            Entity passenger = _disembarkingPassengers[i];
+            if (em.Exists(passenger))
+                UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
         }
 
         if (_remainingPassengers.Count > 0 && em.Exists(transport) && em.HasBuffer<UnitTransportPassengerElement>(transport))
@@ -493,23 +498,22 @@ public sealed class SelectionTransportCommandRequestSystem
         }
 
         passengers.RemoveAt(passengerIndex);
-        if (em.HasComponent<Disabled>(passenger))
-            em.RemoveComponent<Disabled>(passenger);
-        if (em.HasComponent<UnitTransportPassenger>(passenger))
-            em.RemoveComponent<UnitTransportPassenger>(passenger);
-        if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-            em.RemoveComponent<UnitTransportBoardingTarget>(passenger);
-        moveOrderSystem.ClearMovementOrderComponents(em, passenger);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        moveOrderSystem.RemoveComponentIfPresent<Disabled>(em, ecb, passenger);
+        moveOrderSystem.RemoveComponentIfPresent<UnitTransportPassenger>(em, ecb, passenger);
+        moveOrderSystem.ClearMovementOrderComponents(em, ecb, passenger);
 
         if (em.HasComponent<UnitGrid>(passenger))
-            em.SetComponentData(passenger, new UnitGrid { Cell = cell });
+            ecb.SetComponent(passenger, new UnitGrid { Cell = cell });
         if (em.HasComponent<LocalTransform>(passenger))
         {
             LocalTransform transform = em.GetComponentData<LocalTransform>(passenger);
             transform.Position = GridUtils.CellToWorldCenter(pathingGrid, cell);
-            em.SetComponentData(passenger, transform);
+            ecb.SetComponent(passenger, transform);
         }
 
+        ecb.Playback(em);
+        ecb.Dispose();
         UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
         return true;
     }

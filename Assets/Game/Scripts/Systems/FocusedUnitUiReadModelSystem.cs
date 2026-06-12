@@ -64,6 +64,7 @@ public sealed class FocusedUnitUiReadModelSystem
         }
 
         model.PassengerCount = selectionUiQuerySystem.GetTransportPassengerCount(em, focusedUnit, transportCapacitySystem);
+        model.TransportPassengerCapacity = selectionUiQuerySystem.GetTransportPassengerCapacity(em, focusedUnit, transportCapacitySystem);
         _passengerScratch.Clear();
         selectionUiQuerySystem.GetTransportPassengers(em, focusedUnit, transportCapacitySystem, _passengerScratch);
         for (int i = 0; i < _passengerScratch.Count; i++)

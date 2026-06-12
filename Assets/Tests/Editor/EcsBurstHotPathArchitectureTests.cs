@@ -11,8 +11,8 @@ using UnityEngine;
 public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
-    private const int ToArrayDebtCeiling = 29;
-    private const int EntityManagerMutationDebtCeiling = 40;
+    private const int ToArrayDebtCeiling = 0;
+    private const int EntityManagerMutationDebtCeiling = 32;
     private const int NonBurstOnUpdateFileDebtCeiling = 38;
     private const int BurstCompileFileFloor = 23;
 
@@ -21,7 +21,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         RegexOptions.CultureInvariant);
 
     private static readonly Regex EntityManagerMutationRegex = new(
-        @"\bEntityManager\.(AddComponent|RemoveComponent|DestroyEntity|Instantiate|CreateEntity|SetComponent)",
+        @"\bEntityManager\.(AddComponent(?:Data)?|RemoveComponent|DestroyEntity|Instantiate|CreateEntity|SetComponent(?:Data)?)\s*(?:<[^>]+>)?\s*\(",
         RegexOptions.CultureInvariant);
 
     private static readonly Regex OnUpdateRegex = new(

@@ -17,6 +17,7 @@ public struct FocusedUnitUiReadModelComponent : IComponentData
     public int CapacityMax;
     public float CapacityProgress01;
     public int PassengerCount;
+    public int TransportPassengerCapacity;
     public int Status;
     public FixedString64Bytes Label;
     public FixedString128Bytes Description;

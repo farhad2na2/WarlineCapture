@@ -610,6 +610,7 @@ public partial struct UnitGridMoveJob : IJobEntity
         Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = bestGoal });
         Ecb.AddComponent<ManualMoveOrderTag>(sortKey, entity);
     }
+
 }
 
 [BurstCompile]
@@ -652,6 +653,7 @@ public partial struct UnitPathFollowCleanupJob : IJobEntity
             Ecb.RemoveComponent<UnitTarget>(sortKey, entity);
         }
     }
+
 }
 
 [BurstCompile] 
@@ -660,6 +662,9 @@ public partial struct UnitGridMovementSystem : ISystem
     private const double FreezeLogThresholdSeconds = 0.05d;
     private static readonly bool EnableGridMovementFreezeLogs = false;
     private EntityQuery _liveUnitsQuery;
+    private EntityTypeHandle _liveEntityType;
+    private ComponentTypeHandle<UnitGrid> _liveGridType;
+    private ComponentTypeHandle<UnitFootprint> _liveFootprintType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -686,6 +691,9 @@ public partial struct UnitGridMovementSystem : ISystem
                 ComponentType.ReadOnly<RuntimeBuildingCombatTag>()
             }
         });
+        _liveEntityType = state.GetEntityTypeHandle();
+        _liveGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _liveFootprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
     }
 
     public void OnUpdate(ref SystemState state)
@@ -704,9 +712,16 @@ public partial struct UnitGridMovementSystem : ISystem
             var roads = SystemAPI.GetBuffer<GridRoad>(gridEntity).AsNativeArray();
             var sidewalks = SystemAPI.GetBuffer<GridRoadSidewalk>(gridEntity).AsNativeArray();
             var dirtRoads = SystemAPI.GetBuffer<GridRoadDirt>(gridEntity).AsNativeArray();
-            var liveUnitEntities = _liveUnitsQuery.ToEntityArray(Allocator.TempJob);
-            var liveUnitGrids = _liveUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.TempJob);
-            var liveUnitFootprints = _liveUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.TempJob);
+            int liveUnitCount = math.max(1, _liveUnitsQuery.CalculateEntityCount());
+            var liveUnitEntities = new NativeList<Entity>(liveUnitCount, Allocator.TempJob);
+            var liveUnitGrids = new NativeList<UnitGrid>(liveUnitCount, Allocator.TempJob);
+            var liveUnitFootprints = new NativeList<UnitFootprint>(liveUnitCount, Allocator.TempJob);
+            state.EntityManager.CompleteDependencyBeforeRO<UnitGrid>();
+            state.EntityManager.CompleteDependencyBeforeRO<UnitFootprint>();
+            _liveEntityType.Update(ref state);
+            _liveGridType.Update(ref state);
+            _liveFootprintType.Update(ref state);
+            CollectLiveUnits(ref liveUnitEntities, ref liveUnitGrids, ref liveUnitFootprints);
             var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
@@ -723,9 +738,9 @@ public partial struct UnitGridMovementSystem : ISystem
                 Roads = roads,
                 Sidewalks = sidewalks,
                 DirtRoads = dirtRoads,
-                LiveUnitEntities = liveUnitEntities,
-                LiveUnitGrids = liveUnitGrids,
-                LiveUnitFootprints = liveUnitFootprints,
+                LiveUnitEntities = liveUnitEntities.AsArray(),
+                LiveUnitGrids = liveUnitGrids.AsArray(),
+                LiveUnitFootprints = liveUnitFootprints.AsArray(),
                 AutoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true),
                 UnitTargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
                 LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),
@@ -752,6 +767,31 @@ public partial struct UnitGridMovementSystem : ISystem
             double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
             if (EnableGridMovementFreezeLogs && elapsed >= FreezeLogThresholdSeconds)
                 Debug.Log($"[FreezeDetect:ECS] UnitGridMovementSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms");
+        }
+    }
+
+    private void CollectLiveUnits(
+        ref NativeList<Entity> entities,
+        ref NativeList<UnitGrid> grids,
+        ref NativeList<UnitFootprint> footprints)
+    {
+        entities.Clear();
+        grids.Clear();
+        footprints.Clear();
+
+        using NativeArray<ArchetypeChunk> chunks = _liveUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> chunkEntities = chunk.GetNativeArray(_liveEntityType);
+            NativeArray<UnitGrid> chunkGrids = chunk.GetNativeArray(ref _liveGridType);
+            NativeArray<UnitFootprint> chunkFootprints = chunk.GetNativeArray(ref _liveFootprintType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+            {
+                entities.Add(chunkEntities[i]);
+                grids.Add(chunkGrids[i]);
+                footprints.Add(chunkFootprints[i]);
+            }
         }
     }
 }

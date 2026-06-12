@@ -191,18 +191,15 @@ public sealed class CustomGameStartupSystem
         using (EntityQuery customInitialQuery = em.CreateEntityQuery(
                    ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
                    ComponentType.ReadOnly<InitialUnitsSpawnConfig>()))
-        using (NativeArray<Entity> customInitialEntities = customInitialQuery.ToEntityArray(Allocator.Temp))
         {
-            if (customInitialEntities.Length > 0)
-                return customInitialEntities[0];
+            if (TryGetFirstEntity(customInitialQuery, em, out Entity customInitialEntity))
+                return customInitialEntity;
         }
 
         using (EntityQuery initialQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>()))
-        using (NativeArray<Entity> initialEntities = initialQuery.ToEntityArray(Allocator.Temp))
         {
-            if (initialEntities.Length > 0)
+            if (TryGetFirstEntity(initialQuery, em, out Entity entity))
             {
-                Entity entity = initialEntities[0];
                 EnsureComponent<CustomGameStartupStateComponent>(em, entity);
                 return entity;
             }
@@ -216,8 +213,9 @@ public sealed class CustomGameStartupSystem
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        List<Entity> entities = new();
+        CollectEntities(query, em, entities);
+        for (int i = 0; i < entities.Count; i++)
         {
             Entity entity = entities[i];
             if (entity == startupEntity)
@@ -649,8 +647,9 @@ public sealed class CustomGameStartupSystem
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
             ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-        using NativeArray<Entity> registryEntities = query.ToEntityArray(Allocator.Temp);
-        for (int registryIndex = 0; registryIndex < registryEntities.Length; registryIndex++)
+        List<Entity> registryEntities = new();
+        CollectEntities(query, em, registryEntities);
+        for (int registryIndex = 0; registryIndex < registryEntities.Count; registryIndex++)
         {
             Entity registryEntity = registryEntities[registryIndex];
             if (registryEntity == startupEntity || !em.HasBuffer<UnitPrefabRegistryEntry>(registryEntity))
@@ -819,18 +818,54 @@ public sealed class CustomGameStartupSystem
             return false;
 
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = entities[i];
-            if (NamesMatch(em.GetName(candidate).ToString(), targetName))
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
             {
-                prefabEntity = candidate;
-                return true;
+                Entity candidate = entities[i];
+                if (NamesMatch(em.GetName(candidate).ToString(), targetName))
+                {
+                    prefabEntity = candidate;
+                    return true;
+                }
             }
         }
 
         return false;
+    }
+
+    private static bool TryGetFirstEntity(EntityQuery query, EntityManager em, out Entity entity)
+    {
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            if (entities.Length > 0)
+            {
+                entity = entities[0];
+                return true;
+            }
+        }
+
+        entity = Entity.Null;
+        return false;
+    }
+
+    private static void CollectEntities(EntityQuery query, EntityManager em, List<Entity> results)
+    {
+        results.Clear();
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+                results.Add(entities[i]);
+        }
     }
 
     private static bool NamesMatch(string candidateName, string targetName)

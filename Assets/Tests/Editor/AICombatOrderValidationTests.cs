@@ -8,6 +8,28 @@ using UnityEngine.TestTools;
 
 public sealed class AICombatOrderValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            InitialUnitsRuntimeState.VerboseAILogs = true;
+            AssertIssuesCommandedEngageOrdersToSquadMembers(assertDiagnosticLog: false);
+            AssertDoesNotIssueOrdersForManualPlayerFaction(assertUnexpectedLogs: false);
+            UnityEngine.Debug.Log("[AICombatOrderFocusedValidation] result=Passed tests=2");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[AICombatOrderFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.VerboseAILogs = false;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -23,6 +45,17 @@ public sealed class AICombatOrderValidationTests
 
     [Test]
     public void AICombatOrderSystem_IssuesCommandedEngageOrdersToSquadMembers()
+    {
+        AssertIssuesCommandedEngageOrdersToSquadMembers(assertDiagnosticLog: true);
+    }
+
+    [Test]
+    public void AICombatOrderSystem_DoesNotIssueOrdersForManualPlayerFaction()
+    {
+        AssertDoesNotIssueOrdersForManualPlayerFaction(assertUnexpectedLogs: true);
+    }
+
+    private static void AssertIssuesCommandedEngageOrdersToSquadMembers(bool assertDiagnosticLog)
     {
         using var world = new World("AICombatOrderValidationTests");
         EntityManager em = world.EntityManager;
@@ -59,10 +92,12 @@ public sealed class AICombatOrderValidationTests
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=2 squad=2 order=Attack target=Entity\(\d+:\d+\) units=2"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=2 squad=2 order=Attack target=Entity\(\d+:\d+\) units=2"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         AssertEngageOrder(em, memberA, target, new int2(20, 20), new float3(20f, 0f, 20f));
         AssertEngageOrder(em, memberB, target, new int2(20, 20), new float3(20f, 0f, 20f));
@@ -76,8 +111,7 @@ public sealed class AICombatOrderValidationTests
         Assert.Greater(squad.LastOrderTime, -1f);
     }
 
-    [Test]
-    public void AICombatOrderSystem_DoesNotIssueOrdersForManualPlayerFaction()
+    private static void AssertDoesNotIssueOrdersForManualPlayerFaction(bool assertUnexpectedLogs)
     {
         using var world = new World("AICombatOrderManualModeValidationTests");
         EntityManager em = world.EntityManager;
@@ -113,7 +147,8 @@ public sealed class AICombatOrderValidationTests
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
 
         system.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertUnexpectedLogs)
+            LogAssert.NoUnexpectedReceived();
 
         Assert.IsFalse(em.HasComponent<EngageTarget>(playerMember));
         Assert.IsFalse(em.HasComponent<AICombatOrderTag>(playerMember));

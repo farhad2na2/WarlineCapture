@@ -12,6 +12,9 @@ public partial struct AISquadSystem : ISystem
     private EntityQuery _unitQuery;
     private EntityQuery _squadQuery;
     private EntityQuery _factionGridQuery;
+    private ComponentTypeHandle<AISquad> _squadType;
+    private ComponentTypeHandle<Faction> _factionType;
+    private ComponentTypeHandle<UnitGrid> _unitGridType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -26,6 +29,9 @@ public partial struct AISquadSystem : ISystem
             ComponentType.ReadOnly<AIControlledTag>());
         _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
         _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
+        _squadType = state.GetComponentTypeHandle<AISquad>(true);
+        _factionType = state.GetComponentTypeHandle<Faction>(true);
+        _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
         state.RequireForUpdate<AISquadPlan>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitGrid>();
@@ -56,7 +62,11 @@ public partial struct AISquadSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
-            int activeSquads = CountActiveSquads(em, _squadQuery, plan.FactionId);
+            _squadType.Update(ref state);
+            _factionType.Update(ref state);
+            _unitGridType.Update(ref state);
+
+            int activeSquads = CountActiveSquads(_squadQuery, ref _squadType, plan.FactionId);
             int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
             if (activeSquads >= maxActiveSquads)
             {
@@ -106,12 +116,12 @@ public partial struct AISquadSystem : ISystem
                 continue;
             }
 
-            Entity squadEntity = em.CreateEntity(typeof(AISquad));
-            DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
             int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
             byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
             int2 rallyCell = cellSum / members.Length;
-            int2 targetCell = ResolveInitialTargetCell(em, _factionGridQuery, targetFactionId, rallyCell);
+            int2 targetCell = ResolveInitialTargetCell(_factionGridQuery, ref _factionType, ref _unitGridType, targetFactionId, rallyCell);
+            Entity squadEntity = em.CreateEntity(typeof(AISquad));
+            DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
             em.SetComponentData(squadEntity, new AISquad
             {
                 SquadId = squadId,
@@ -156,42 +166,57 @@ public partial struct AISquadSystem : ISystem
             controls.Dispose();
     }
 
-    private static int CountActiveSquads(EntityManager em, EntityQuery squadQuery, byte factionId)
+    private static int CountActiveSquads(EntityQuery squadQuery, ref ComponentTypeHandle<AISquad> squadType, byte factionId)
     {
-        using NativeArray<Entity> entities = squadQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = squadQuery.ToArchetypeChunkArray(Allocator.Temp);
 
         int count = 0;
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            AISquad squad = em.GetComponentData<AISquad>(entities[i]);
-            if (squad.FactionId == factionId)
-                count++;
+            NativeArray<AISquad> squads = chunks[chunkIndex].GetNativeArray(ref squadType);
+            for (int i = 0; i < squads.Length; i++)
+            {
+                AISquad squad = squads[i];
+                if (squad.FactionId == factionId)
+                    count++;
+            }
         }
 
         return count;
     }
 
-    private static int2 ResolveInitialTargetCell(EntityManager em, EntityQuery factionGridQuery, byte targetFactionId, int2 fallbackCell)
+    private static int2 ResolveInitialTargetCell(
+        EntityQuery factionGridQuery,
+        ref ComponentTypeHandle<Faction> factionType,
+        ref ComponentTypeHandle<UnitGrid> unitGridType,
+        byte targetFactionId,
+        int2 fallbackCell)
     {
-        using NativeArray<Entity> entities = factionGridQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = factionGridQuery.ToArchetypeChunkArray(Allocator.Temp);
 
         int bestDistance = int.MaxValue;
         int2 bestCell = fallbackCell;
         bool found = false;
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (em.GetComponentData<Faction>(entity).Id != targetFactionId)
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
 
-            int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-            int distance = math.abs(cell.x - fallbackCell.x) + math.abs(cell.y - fallbackCell.y);
-            if (found && distance >= bestDistance)
-                continue;
+            for (int i = 0; i < factions.Length; i++)
+            {
+                if (factions[i].Id != targetFactionId)
+                    continue;
 
-            found = true;
-            bestDistance = distance;
-            bestCell = cell;
+                int2 cell = grids[i].Cell;
+                int distance = math.abs(cell.x - fallbackCell.x) + math.abs(cell.y - fallbackCell.y);
+                if (found && distance >= bestDistance)
+                    continue;
+
+                found = true;
+                bestDistance = distance;
+                bestCell = cell;
+            }
         }
 
         return bestCell;

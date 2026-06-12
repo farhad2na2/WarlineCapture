@@ -37,23 +37,14 @@ public sealed class VisibleUnitSelectionSystem
         Rect screenRect,
         Filter filter)
     {
-        if (worldCamera == null || selectionUiQuerySystem == null)
-            return false;
-
-        EnsureEntityQueries(em);
-        using var entities = _visiblePlayerUnitQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!IsVisiblePlayerUnit(em, entity, selectionUiQuerySystem, filter))
-                continue;
-
-            Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalToWorld>(entity).Position);
-            if (screen.z > 0f && screenRect.Contains(new Vector2(screen.x, screen.y)))
-                return true;
-        }
-
-        return false;
+        return CollectVisiblePlayerUnits(
+            em,
+            worldCamera,
+            selectionUiQuerySystem,
+            screenRect,
+            filter,
+            null,
+            stopAtFirst: true) > 0;
     }
 
     public int CollectVisiblePlayerUnits(
@@ -64,11 +55,31 @@ public sealed class VisibleUnitSelectionSystem
         Filter filter,
         List<Entity> selected)
     {
-        selected.Clear();
+        return CollectVisiblePlayerUnits(
+            em,
+            worldCamera,
+            selectionUiQuerySystem,
+            screenRect,
+            filter,
+            selected,
+            stopAtFirst: false);
+    }
+
+    private int CollectVisiblePlayerUnits(
+        EntityManager em,
+        Camera worldCamera,
+        SelectionUiQuerySystem selectionUiQuerySystem,
+        Rect screenRect,
+        Filter filter,
+        List<Entity> selected,
+        bool stopAtFirst)
+    {
+        selected?.Clear();
         if (worldCamera == null || selectionUiQuerySystem == null)
             return 0;
 
         EnsureEntityQueries(em);
+        int count = 0;
         using var entities = _visiblePlayerUnitQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
         {
@@ -82,10 +93,16 @@ public sealed class VisibleUnitSelectionSystem
                 continue;
 
             if (screenRect.Contains(new Vector2(screen.x, screen.y)))
-                selected.Add(entity);
+            {
+                if (stopAtFirst)
+                    return 1;
+
+                selected?.Add(entity);
+                count++;
+            }
         }
 
-        return selected.Count;
+        return count;
     }
 
     public void ApplySelectedUnitTags(EntityManager em, IReadOnlyList<Entity> selected)

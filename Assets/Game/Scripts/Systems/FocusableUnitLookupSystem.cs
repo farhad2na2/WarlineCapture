@@ -19,8 +19,7 @@ public sealed class FocusableUnitLookupSystem
     private World _queryWorld;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _focusableUnitsQuery;
-    private EntityQuery _changedFocusableGridQuery;
-    private EntityQuery _changedFocusableFootprintQuery;
+    private EntityQuery _changedFocusableCoverageQuery;
     private readonly Dictionary<int, List<Entity>> _focusableUnitsByCell = new();
     private readonly Dictionary<Entity, FocusableUnitCoverage> _focusableUnitCoverage = new();
     private int _lastFocusableUnitCount = -1;
@@ -40,20 +39,17 @@ public sealed class FocusableUnitLookupSystem
             ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableGridQuery = em.CreateEntityQuery(
+        _changedFocusableCoverageQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableGridQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>());
-        _changedFocusableFootprintQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
+        _changedFocusableCoverageQuery.SetChangedVersionFilter(new[]
+        {
             ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableFootprintQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitFootprint>());
+            ComponentType.ReadOnly<UnitFootprint>()
+        });
     }
 
     public bool TryGetClickedUnitEntity(
@@ -170,28 +166,12 @@ public sealed class FocusableUnitLookupSystem
             return;
         }
 
-        bool gridChanged = !_changedFocusableGridQuery.IsEmptyIgnoreFilter;
-        bool footprintChanged = !_changedFocusableFootprintQuery.IsEmptyIgnoreFilter;
-        if (!gridChanged && !footprintChanged)
+        if (_changedFocusableCoverageQuery.IsEmptyIgnoreFilter)
             return;
 
-        var changedEntities = new HashSet<Entity>();
-        if (gridChanged)
-        {
-            using var changedGridEntities = _changedFocusableGridQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < changedGridEntities.Length; i++)
-                changedEntities.Add(changedGridEntities[i]);
-        }
-
-        if (footprintChanged)
-        {
-            using var changedFootprintEntities = _changedFocusableFootprintQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < changedFootprintEntities.Length; i++)
-                changedEntities.Add(changedFootprintEntities[i]);
-        }
-
-        foreach (Entity entity in changedEntities)
-            RefreshLookupEntry(em, grid, entity);
+        using var changedEntities = _changedFocusableCoverageQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < changedEntities.Length; i++)
+            RefreshLookupEntry(em, grid, changedEntities[i]);
     }
 
     private void RebuildLookup(EntityManager em, GridConfig grid, int focusableUnitCount)

@@ -8,6 +8,27 @@ using UnityEngine.TestTools;
 
 public sealed class AISquadValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            InitialUnitsRuntimeState.VerboseAILogs = true;
+            AssertGroupsIdleAIControlledUnitsIntoSquad(assertDiagnosticLog: false);
+            UnityEngine.Debug.Log("[AISquadFocusedValidation] result=Passed tests=1");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[AISquadFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.VerboseAILogs = false;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -23,6 +44,11 @@ public sealed class AISquadValidationTests
 
     [Test]
     public void AISquadSystem_GroupsIdleAIControlledUnitsIntoSquad()
+    {
+        AssertGroupsIdleAIControlledUnitsIntoSquad(assertDiagnosticLog: true);
+    }
+
+    private static void AssertGroupsIdleAIControlledUnitsIntoSquad(bool assertDiagnosticLog)
     {
         using var world = new World("AISquadValidationTests");
         EntityManager em = world.EntityManager;
@@ -53,10 +79,12 @@ public sealed class AISquadValidationTests
         SystemHandle system = world.CreateSystem<AISquadSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(20, 20\)"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(20, 20\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadOnly<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         using NativeArray<Entity> squads = squadQuery.ToEntityArray(Allocator.Temp);

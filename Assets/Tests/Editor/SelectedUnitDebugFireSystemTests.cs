@@ -9,6 +9,40 @@ public sealed class SelectedUnitDebugFireSystemTests
 {
     private World _world;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunTest(test => test.HoldingDebugFireCreatesInvisibleTargetAndEngageTarget());
+            RunTest(test => test.ReleaseDebugFireRestoresPreviousEngageTargetAndDestroysDebugTarget());
+            RunTest(test => test.DeselectingUnitCleansUpDebugFireState());
+            RunTest(test => test.HoldingDebugFireForGroundMissileLauncherTargetsEnemyBaseBeyondNormalRange());
+            RunTest(test => test.HoldingDebugFireForGroundMissileLauncherArmsMissileAttackDirectly());
+            RunTest(test => test.HoldingDebugFireForGroundMissileLauncherCreatesMissileProjectileThroughCooldown());
+            UnityEngine.Debug.Log("[SelectedUnitDebugFireFocusedValidation] result=Passed tests=6");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[SelectedUnitDebugFireFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunTest(System.Action<SelectedUnitDebugFireSystemTests> test)
+    {
+        var fixture = new SelectedUnitDebugFireSystemTests();
+        fixture.SetUp();
+        try
+        {
+            test(fixture);
+        }
+        finally
+        {
+            fixture.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {

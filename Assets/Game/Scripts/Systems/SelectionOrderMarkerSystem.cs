@@ -486,28 +486,13 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         bool hasGroundY = TryGetMarkerGroundY(em, out float groundY);
-        int markerIndex = 0;
-        using NativeArray<Entity> targets = _attackTargetPreviewQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < targets.Length && markerIndex < MaxAttackTargetPreviewMarkers; i++)
-        {
-            Entity target = targets[i];
-            if (!IsValidAttackPreviewTarget(em, target))
-                continue;
-
-            GameObject marker = EnsureAttackTargetPreviewMarker(markerIndex);
-            if (marker == null)
-                continue;
-
-            float3 position = em.GetComponentData<LocalTransform>(target).Position;
-            marker.transform.position = new Vector3(
-                position.x,
-                hasGroundY ? groundY : position.y + 0.05f,
-                position.z);
-            marker.transform.rotation = Quaternion.identity;
-            ClearTargetPreviewColor(markerIndex);
-            SetMarkerActive(marker, true);
-            markerIndex++;
-        }
+        int markerIndex = UpdateTargetPreviewMarkersFromChunks(
+            em,
+            hasGroundY,
+            groundY,
+            boardPreview: false,
+            Entity.Null,
+            null);
 
         HideAttackTargetPreviewMarkersIfNeeded(markerIndex);
         _attackTargetPreviewVisibleCount = markerIndex;
@@ -542,31 +527,77 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         bool hasGroundY = TryGetMarkerGroundY(em, out float groundY);
-        int markerIndex = 0;
-        using NativeArray<Entity> targets = _attackTargetPreviewQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < targets.Length && markerIndex < MaxAttackTargetPreviewMarkers; i++)
-        {
-            Entity target = targets[i];
-            if (!IsValidBoardPreviewTarget(em, source, target, isValidTarget))
-                continue;
-
-            GameObject marker = EnsureAttackTargetPreviewMarker(markerIndex);
-            if (marker == null)
-                continue;
-
-            float3 position = em.GetComponentData<LocalTransform>(target).Position;
-            marker.transform.position = new Vector3(
-                position.x,
-                hasGroundY ? groundY : position.y + 0.05f,
-                position.z);
-            marker.transform.rotation = Quaternion.identity;
-            ApplyBoardTargetPreviewColor(markerIndex);
-            SetMarkerActive(marker, true);
-            markerIndex++;
-        }
+        int markerIndex = UpdateTargetPreviewMarkersFromChunks(
+            em,
+            hasGroundY,
+            groundY,
+            boardPreview: true,
+            source,
+            isValidTarget);
 
         HideAttackTargetPreviewMarkersIfNeeded(markerIndex);
         _attackTargetPreviewVisibleCount = markerIndex;
+    }
+
+    private int UpdateTargetPreviewMarkersFromChunks(
+        EntityManager em,
+        bool hasGroundY,
+        float groundY,
+        bool boardPreview,
+        Entity source,
+        IsPreviewTargetValidWithSourceDelegate isValidTarget)
+    {
+        int markerIndex = 0;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
+        using NativeArray<ArchetypeChunk> chunks = _attackTargetPreviewQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length && markerIndex < MaxAttackTargetPreviewMarkers; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
+            bool hasHealth = chunk.Has(ref healthType);
+            NativeArray<UnitHealth> healths = hasHealth
+                ? chunk.GetNativeArray(ref healthType)
+                : default;
+
+            for (int i = 0; i < chunk.Count && markerIndex < MaxAttackTargetPreviewMarkers; i++)
+            {
+                Entity target = entities[i];
+                UnitHealth health = hasHealth ? healths[i] : default;
+                if (boardPreview)
+                {
+                    if (!IsValidBoardPreviewTarget(em, source, target, factions[i], hasHealth, health, isValidTarget))
+                        continue;
+                }
+                else if (!IsValidAttackPreviewTarget(factions[i], hasHealth, health))
+                {
+                    continue;
+                }
+
+                GameObject marker = EnsureAttackTargetPreviewMarker(markerIndex);
+                if (marker == null)
+                    continue;
+
+                float3 position = transforms[i].Position;
+                marker.transform.position = new Vector3(
+                    position.x,
+                    hasGroundY ? groundY : position.y + 0.05f,
+                    position.z);
+                marker.transform.rotation = Quaternion.identity;
+                if (boardPreview)
+                    ApplyBoardTargetPreviewColor(markerIndex);
+                else
+                    ClearTargetPreviewColor(markerIndex);
+                SetMarkerActive(marker, true);
+                markerIndex++;
+            }
+        }
+
+        return markerIndex;
     }
 
     private void CacheMoveOrderMarker()
@@ -1002,45 +1033,28 @@ public sealed class SelectionOrderMarkerSystem
         return true;
     }
 
-    private static bool IsValidAttackPreviewTarget(EntityManager em, Entity target)
+    private static bool IsValidAttackPreviewTarget(Faction faction, bool hasHealth, UnitHealth health)
     {
-        if (target == Entity.Null ||
-            !em.Exists(target) ||
-            !em.HasComponent<Faction>(target) ||
-            !em.HasComponent<LocalTransform>(target))
-        {
-            return false;
-        }
-
-        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(target).Id))
+        if (!FactionIdentitySystem.IsHostileToPlayer(faction.Id))
             return false;
 
-        return !em.HasComponent<UnitHealth>(target) ||
-               em.GetComponentData<UnitHealth>(target).Current > 0;
+        return !hasHealth || health.Current > 0;
     }
 
     private static bool IsValidBoardPreviewTarget(
         EntityManager em,
         Entity source,
         Entity target,
+        Faction faction,
+        bool hasHealth,
+        UnitHealth health,
         IsPreviewTargetValidWithSourceDelegate isValidTarget)
     {
-        if (target == Entity.Null ||
-            !em.Exists(target) ||
-            !em.HasComponent<Faction>(target) ||
-            !em.HasComponent<LocalTransform>(target))
-        {
-            return false;
-        }
-
-        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(target).Id))
+        if (!FactionIdentitySystem.IsPlayerControlled(faction.Id))
             return false;
 
-        if (em.HasComponent<UnitHealth>(target) &&
-            em.GetComponentData<UnitHealth>(target).Current <= 0)
-        {
+        if (hasHealth && health.Current <= 0)
             return false;
-        }
 
         return isValidTarget(em, source, target);
     }

@@ -10,6 +10,26 @@ public sealed class MissileLauncherRadarAttackValidationTests
     private const string AirLauncherConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset";
     private const string GroundLauncherConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Ground_Config.asset";
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new MissileLauncherRadarAttackValidationTests();
+            tests.MissileLauncherConfigs_HaveRadarScaleAttackRange();
+            tests.AirMissileLauncherAttackButton_DoesNotIssueManualRadarAttack();
+            tests.GroundMissileLauncherAttackButton_TargetsGroundUnitInsideFriendlyGroundRadar();
+            tests.MissileLauncherAttackButton_DoesNothingWithoutMatchingRadarCoverage();
+            tests.AttackButtonFallback_ArmsExplicitTargetModeForNormalAttackUnits();
+            UnityEngine.Debug.Log("[MissileLauncherRadarAttackValidation] result=Passed tests=5");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[MissileLauncherRadarAttackValidation] result=Failed");
+            throw;
+        }
+    }
+
     [Test]
     public void MissileLauncherConfigs_HaveRadarScaleAttackRange()
     {

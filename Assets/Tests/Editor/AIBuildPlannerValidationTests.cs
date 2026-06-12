@@ -22,6 +22,27 @@ public sealed class AIBuildPlannerValidationTests
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
 
+    public static void RunFocusedValidation()
+    {
+        var tests = new AIBuildPlannerValidationTests();
+        try
+        {
+            tests.SetUp();
+            tests.AssertPlacesConfiguredBuildingAndSpendsFactionMoney(assertDiagnosticLog: false);
+            UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=1");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[AIBuildPlannerFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -63,6 +84,11 @@ public sealed class AIBuildPlannerValidationTests
 
     [Test]
     public void AIBuildPlannerSystem_PlacesConfiguredBuildingAndSpendsFactionMoney()
+    {
+        AssertPlacesConfiguredBuildingAndSpendsFactionMoney(assertDiagnosticLog: true);
+    }
+
+    private void AssertPlacesConfiguredBuildingAndSpendsFactionMoney(bool assertDiagnosticLog)
     {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AIBuildPlannerValidationTests");
@@ -116,16 +142,20 @@ public sealed class AIBuildPlannerValidationTests
         SystemHandle system = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(10000, economy.Money);

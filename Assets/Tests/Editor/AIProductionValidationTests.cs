@@ -25,6 +25,27 @@ public sealed class AIProductionValidationTests
     private BuildingPlacementSystemConfig _buildingConfig;
     private UnitPrefabRegistryAuthoringConfig _unitRegistryConfig;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            InitialUnitsRuntimeState.VerboseAILogs = true;
+            AssertQueuesAndProcessesAcceptedRequestFromBoundary();
+            UnityEngine.Debug.Log("[AIProductionFocusedValidation] result=Passed tests=1");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[AIProductionFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.VerboseAILogs = false;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -70,6 +91,11 @@ public sealed class AIProductionValidationTests
 
     [Test]
     public void AIProductionSystem_QueuesUnitFromOwnedProducerAndSpendsFactionMoney()
+    {
+        AssertQueuesUnitFromOwnedProducerAndSpendsFactionMoney(assertDiagnosticLog: true);
+    }
+
+    private void AssertQueuesUnitFromOwnedProducerAndSpendsFactionMoney(bool assertDiagnosticLog)
     {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AIProductionValidationTests");
@@ -144,21 +170,97 @@ public sealed class AIProductionValidationTests
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 unit=Rifleman cost=10000 result=Requested"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 unit=Rifleman cost=10000 result=Requested"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(40000, economy.Money);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
+
+        AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
+        Assert.AreEqual(1, plan.NextUnitIndex);
+    }
+
+    private static void AssertQueuesAndProcessesAcceptedRequestFromBoundary()
+    {
+        using var world = new World("AIProductionFocusedValidation");
+        EntityManager em = world.EntityManager;
+
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.AddBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity);
+        units.Add(new BuildingConfiguredUnitReadModel
+        {
+            UnitId = new FixedString128Bytes("Rifleman"),
+            DisplayName = new FixedString128Bytes("Rifleman"),
+            Price = 10000,
+            CanRequest = 1
+        });
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries = em.AddBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity);
+        summaries.Add(new BuildingRuntimeUnitProductionSummary
+        {
+            FactionId = 1,
+            UnitId = new FixedString128Bytes("Rifleman"),
+            ProducedCount = 0,
+            QueuedCount = 0
+        });
+        em.AddBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+
+        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
+        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 50000, LastLogTime = -999f });
+
+        Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+        DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
+        controls.Add(new FactionControlEntry { FactionId = 1, AIControlled = 1 });
+
+        Entity planEntity = em.CreateEntity(typeof(AIProductionPlan));
+        em.SetComponentData(planEntity, new AIProductionPlan
+        {
+            FactionId = 1,
+            Enabled = 1,
+            TargetProducedUnits = 3,
+            MaxQueuedUnits = 3,
+            UnitProductionIntervalSeconds = 1f,
+            LastProductionTime = -999f,
+            LastLogTime = -999f
+        });
+        DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
+
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        SystemHandle system = world.CreateSystem<AIProductionSystem>();
+
+        system.Update(world.Unmanaged);
+        DynamicBuffer<BuildingFactionUnitProductionRequest> requests = em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(BuildingFactionUnitProductionRequest.Pending, requests[0].Status);
+        Assert.AreEqual((byte)1, requests[0].FactionId);
+        Assert.IsTrue(requests[0].UnitId.Equals(new FixedString128Bytes("Rifleman")));
+
+        BuildingFactionUnitProductionRequest accepted = requests[0];
+        accepted.Status = BuildingFactionUnitProductionRequest.Succeeded;
+        accepted.ProducerDisplayName = new FixedString128Bytes("Tent_Regular");
+        accepted.UnitDisplayName = new FixedString128Bytes("Rifleman");
+        accepted.Cost = 10000;
+        accepted.QueueCount = 1;
+        requests[0] = accepted;
+
+        system.Update(world.Unmanaged);
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
+        Assert.AreEqual(40000, economy.Money);
+        Assert.AreEqual(0, requests.Length);
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
         Assert.AreEqual(1, plan.NextUnitIndex);

@@ -50,22 +50,29 @@ public sealed class FocusedUnitLifecycleSystem
         System.Action clearHudSelection)
     {
         EnsureEntityQueries(em);
-        using NativeArray<Entity> entities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
+        NativeList<Entity> entities = CollectSelectedEntities(em);
         int cacheBefore = selectionStateSystem.CachedSelectedMoveEntities.Count;
         Entity focusedBefore = selectionStateSystem.FocusedUnit;
-        if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={Time.frameCount} " +
-                $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
-        if (entities.Length > 0 || cacheBefore > 0)
-            logSelectionDiagnostic?.Invoke($"result=Clear reason={reason} selected={entities.Length} cache={cacheBefore}");
-
-        selectionStateSystem.ClearSelectedMoveCache();
-        for (int i = 0; i < entities.Length; i++)
+        try
         {
-            Entity entity = entities[i];
-            if (em.HasComponent<SelectedUnitTag>(entity))
-                em.RemoveComponent<SelectedUnitTag>(entity);
+            if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+                    $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={Time.frameCount} " +
+                    $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
+            if (entities.Length > 0 || cacheBefore > 0)
+                logSelectionDiagnostic?.Invoke($"result=Clear reason={reason} selected={entities.Length} cache={cacheBefore}");
+
+            selectionStateSystem.ClearSelectedMoveCache();
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (em.HasComponent<SelectedUnitTag>(entity))
+                    em.RemoveComponent<SelectedUnitTag>(entity);
+            }
+        }
+        finally
+        {
+            entities.Dispose();
         }
 
         clearHudSelection?.Invoke();
@@ -103,11 +110,10 @@ public sealed class FocusedUnitLifecycleSystem
             return true;
         }
 
-        using NativeArray<Entity> selectedEntities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
-        if (selectedEntities.Length != 1)
+        if (_selectedTagQuery.CalculateEntityCount() != 1)
             return false;
 
-        Entity selectedEntity = selectedEntities[0];
+        Entity selectedEntity = _selectedTagQuery.GetSingletonEntity();
         if (!em.Exists(selectedEntity) || !em.HasComponent<Faction>(selectedEntity))
             return false;
 
@@ -222,6 +228,26 @@ public sealed class FocusedUnitLifecycleSystem
 
         focusedEntity = bestEntity;
         return true;
+    }
+
+    private NativeList<Entity> CollectSelectedEntities(EntityManager em)
+    {
+        int count = _selectedTagQuery.CalculateEntityCount();
+        NativeList<Entity> selectedEntities = new(count, Allocator.Temp);
+        if (count <= 0)
+            return selectedEntities;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+                selectedEntities.Add(entities[i]);
+        }
+
+        return selectedEntities;
     }
 
     private static string DescribeSelectionEntity(EntityManager em, Entity entity)

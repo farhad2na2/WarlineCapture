@@ -12,6 +12,8 @@ public partial struct AIBuildPlannerSystem : ISystem
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityQuery _planQuery;
     private EntityQuery _economyQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<FactionEconomy> _economyType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -26,6 +28,8 @@ public partial struct AIBuildPlannerSystem : ISystem
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
         _economyQuery = state.GetEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
+        _entityType = state.GetEntityTypeHandle();
+        _economyType = state.GetComponentTypeHandle<FactionEconomy>(true);
         state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<AIBuildPlan>();
         state.RequireForUpdate<FactionEconomy>();
@@ -60,7 +64,9 @@ public partial struct AIBuildPlannerSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
-            if (!TryFindEconomyEntity(em, _economyQuery, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
+            _entityType.Update(ref state);
+            _economyType.Update(ref state);
+            if (!TryFindEconomyEntity(_economyQuery, _entityType, ref _economyType, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
                 continue;
 
             ProcessCompletedSpawnRequests(ref state, boundaryEntity, planEntity, ref plan, ref economy, shouldLog);
@@ -148,19 +154,32 @@ public partial struct AIBuildPlannerSystem : ISystem
             controls.Dispose();
     }
 
-    private static bool TryFindEconomyEntity(EntityManager em, EntityQuery economyQuery, byte factionId, out Entity entity, out FactionEconomy economy)
+    private static bool TryFindEconomyEntity(
+        EntityQuery economyQuery,
+        EntityTypeHandle entityType,
+        ref ComponentTypeHandle<FactionEconomy> economyType,
+        byte factionId,
+        out Entity entity,
+        out FactionEconomy economy)
     {
-        using NativeArray<Entity> entities = economyQuery.ToEntityArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = economyQuery.ToArchetypeChunkArray(Allocator.Temp);
 
-        for (int i = 0; i < entities.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            FactionEconomy candidate = em.GetComponentData<FactionEconomy>(entities[i]);
-            if (candidate.FactionId != factionId)
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
 
-            entity = entities[i];
-            economy = candidate;
-            return true;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                FactionEconomy candidate = economies[i];
+                if (candidate.FactionId != factionId)
+                    continue;
+
+                entity = entities[i];
+                economy = candidate;
+                return true;
+            }
         }
 
         entity = Entity.Null;

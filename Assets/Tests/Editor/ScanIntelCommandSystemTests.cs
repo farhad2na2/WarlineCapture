@@ -10,6 +10,31 @@ public sealed class ScanIntelCommandSystemTests
     private World _world;
     private EntityManager _entityManager;
 
+    public static void RunFocusedValidation()
+    {
+        var tests = new ScanIntelCommandSystemTests();
+        try
+        {
+            tests.SetUp();
+            tests.TryIssueScan_RevealsHostileTargetsAndWritesIntelFeed();
+            tests.TearDown();
+
+            tests.SetUp();
+            tests.TryIssueScan_RejectsWhenClickedCellCannotResolve();
+            UnityEngine.Debug.Log("[ScanIntelCommandFocusedValidation] result=Passed tests=2");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[ScanIntelCommandFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {

@@ -618,7 +618,7 @@ public sealed class BaseBreachValidationTests
             blockerSystem.Update(world.Unmanaged);
             SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
             world.SetTime(new TimeData(0.1d, 0.1f));
-            for (int i = 0; i < 48 && !em.HasComponent<UnitPathRange>(unit); i++)
+            for (int i = 0; i < 128 && !em.HasComponent<UnitPathRange>(unit); i++)
             {
                 world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
                 pathSystem.Update(world.Unmanaged);

@@ -12,28 +12,44 @@ public partial struct AICombatOrderSystem : ISystem
     private const float OrderRefreshSeconds = 2f;
     private EntityQuery _runtimeBuildingCombatQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<RuntimeBuildingCombatInfo> _runtimeBuildingCombatInfoType;
+    private ComponentTypeHandle<UnitHealth> _unitHealthType;
+    private ComponentTypeHandle<LocalTransform> _localTransformType;
     private float _nextEvaluationTime;
+
+    private readonly struct RuntimeBuildingCombatRecord
+    {
+        public readonly Entity Entity;
+        public readonly RuntimeBuildingCombatInfo Info;
+        public readonly UnitHealth Health;
+        public readonly LocalTransform Transform;
+
+        public RuntimeBuildingCombatRecord(
+            Entity entity,
+            RuntimeBuildingCombatInfo info,
+            UnitHealth health,
+            LocalTransform transform)
+        {
+            Entity = entity;
+            Info = info;
+            Health = health;
+            Transform = transform;
+        }
+    }
 
     private readonly struct RuntimeBuildingCombatData
     {
-        public readonly NativeArray<Entity> Entities;
-        public readonly NativeArray<RuntimeBuildingCombatInfo> Infos;
-        public readonly NativeArray<UnitHealth> Healths;
-        public readonly NativeArray<LocalTransform> Transforms;
+        public readonly NativeList<RuntimeBuildingCombatRecord> Records;
 
-        public RuntimeBuildingCombatData(
-            NativeArray<Entity> entities,
-            NativeArray<RuntimeBuildingCombatInfo> infos,
-            NativeArray<UnitHealth> healths,
-            NativeArray<LocalTransform> transforms)
+        public RuntimeBuildingCombatData(NativeList<RuntimeBuildingCombatRecord> records)
         {
-            Entities = entities;
-            Infos = infos;
-            Healths = healths;
-            Transforms = transforms;
+            Records = records;
         }
 
-        public int Length => Entities.IsCreated ? Entities.Length : 0;
+        public int Length => Records.IsCreated ? Records.Length : 0;
+
+        public RuntimeBuildingCombatRecord this[int index] => Records[index];
     }
 
     private readonly struct GridBreachContext
@@ -71,6 +87,10 @@ public partial struct AICombatOrderSystem : ISystem
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        _entityType = state.GetEntityTypeHandle();
+        _runtimeBuildingCombatInfoType = state.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        _unitHealthType = state.GetComponentTypeHandle<UnitHealth>(true);
+        _localTransformType = state.GetComponentTypeHandle<LocalTransform>(true);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -95,10 +115,7 @@ public partial struct AICombatOrderSystem : ISystem
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
-        NativeArray<Entity> runtimeBuildingEntities = default;
-        NativeArray<RuntimeBuildingCombatInfo> runtimeBuildingInfos = default;
-        NativeArray<UnitHealth> runtimeBuildingHealths = default;
-        NativeArray<LocalTransform> runtimeBuildingTransforms = default;
+        NativeList<RuntimeBuildingCombatRecord> runtimeBuildingRecords = default;
         RuntimeBuildingCombatData runtimeBuildings = default;
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
@@ -127,10 +144,7 @@ public partial struct AICombatOrderSystem : ISystem
 
                 EnsureBreachContext(
                     ref state,
-                    ref runtimeBuildingEntities,
-                    ref runtimeBuildingInfos,
-                    ref runtimeBuildingHealths,
-                    ref runtimeBuildingTransforms,
+                    ref runtimeBuildingRecords,
                     ref runtimeBuildings,
                     ref gridBreachContext,
                     ref breachContextCreated);
@@ -166,14 +180,8 @@ public partial struct AICombatOrderSystem : ISystem
         }
         finally
         {
-            if (runtimeBuildingEntities.IsCreated)
-                runtimeBuildingEntities.Dispose();
-            if (runtimeBuildingInfos.IsCreated)
-                runtimeBuildingInfos.Dispose();
-            if (runtimeBuildingHealths.IsCreated)
-                runtimeBuildingHealths.Dispose();
-            if (runtimeBuildingTransforms.IsCreated)
-                runtimeBuildingTransforms.Dispose();
+            if (runtimeBuildingRecords.IsCreated)
+                runtimeBuildingRecords.Dispose();
         }
 
         if (hasEcb)
@@ -185,10 +193,7 @@ public partial struct AICombatOrderSystem : ISystem
 
     private void EnsureBreachContext(
         ref SystemState state,
-        ref NativeArray<Entity> runtimeBuildingEntities,
-        ref NativeArray<RuntimeBuildingCombatInfo> runtimeBuildingInfos,
-        ref NativeArray<UnitHealth> runtimeBuildingHealths,
-        ref NativeArray<LocalTransform> runtimeBuildingTransforms,
+        ref NativeList<RuntimeBuildingCombatRecord> runtimeBuildingRecords,
         ref RuntimeBuildingCombatData runtimeBuildings,
         ref GridBreachContext gridBreachContext,
         ref bool breachContextCreated)
@@ -196,15 +201,33 @@ public partial struct AICombatOrderSystem : ISystem
         if (breachContextCreated)
             return;
 
-        runtimeBuildingEntities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
-        runtimeBuildingInfos = _runtimeBuildingCombatQuery.ToComponentDataArray<RuntimeBuildingCombatInfo>(Allocator.Temp);
-        runtimeBuildingHealths = _runtimeBuildingCombatQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
-        runtimeBuildingTransforms = _runtimeBuildingCombatQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-        runtimeBuildings = new RuntimeBuildingCombatData(
-            runtimeBuildingEntities,
-            runtimeBuildingInfos,
-            runtimeBuildingHealths,
-            runtimeBuildingTransforms);
+        _entityType.Update(ref state);
+        _runtimeBuildingCombatInfoType.Update(ref state);
+        _unitHealthType.Update(ref state);
+        _localTransformType.Update(ref state);
+
+        int buildingCount = _runtimeBuildingCombatQuery.CalculateEntityCount();
+        runtimeBuildingRecords = new NativeList<RuntimeBuildingCombatRecord>(buildingCount, Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = _runtimeBuildingCombatQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
+            NativeArray<RuntimeBuildingCombatInfo> infos = chunk.GetNativeArray(ref _runtimeBuildingCombatInfoType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref _unitHealthType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref _localTransformType);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                runtimeBuildingRecords.Add(new RuntimeBuildingCombatRecord(
+                    entities[i],
+                    infos[i],
+                    healths[i],
+                    transforms[i]));
+            }
+        }
+
+        runtimeBuildings = new RuntimeBuildingCombatData(runtimeBuildingRecords);
         gridBreachContext = TryGetGridBreachContext(ref state, out GridBreachContext foundGridContext)
             ? foundGridContext
             : default;
@@ -416,10 +439,11 @@ public partial struct AICombatOrderSystem : ISystem
             return false;
         }
 
-        RuntimeBuildingCombatInfo breachInfo = runtimeBuildings.Infos[breachIndex];
-        breachTarget = runtimeBuildings.Entities[breachIndex];
+        RuntimeBuildingCombatRecord breachRecord = runtimeBuildings[breachIndex];
+        RuntimeBuildingCombatInfo breachInfo = breachRecord.Info;
+        breachTarget = breachRecord.Entity;
         breachCell = GetCenterCell(breachInfo);
-        breachPosition = runtimeBuildings.Transforms[breachIndex].Position;
+        breachPosition = breachRecord.Transform.Position;
 
         if (gridBreachContext.IsValid &&
             BuildingBarrierSystem.TryFindBreachApproachCell(
@@ -457,7 +481,7 @@ public partial struct AICombatOrderSystem : ISystem
         FixedList128Bytes<byte> processedFactions = default;
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
+            RuntimeBuildingCombatInfo info = runtimeBuildings[i].Info;
             if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId == attackerFactionId)
                 continue;
             if (ContainsFaction(processedFactions, info.OwnerFactionId))
@@ -499,7 +523,7 @@ public partial struct AICombatOrderSystem : ISystem
         RectInt result = default;
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
+            RuntimeBuildingCombatInfo info = runtimeBuildings[i].Info;
             if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId != factionId)
                 continue;
 
@@ -515,10 +539,11 @@ public partial struct AICombatOrderSystem : ISystem
     {
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
+            RuntimeBuildingCombatRecord record = runtimeBuildings[i];
+            RuntimeBuildingCombatInfo info = record.Info;
             if (info.OwnerFactionId != ownerFactionId ||
                 (info.IsWall == 0 && info.IsGate == 0) ||
-                runtimeBuildings.Healths[i].Current > 0)
+                record.Health.Current > 0)
             {
                 continue;
             }
@@ -539,7 +564,7 @@ public partial struct AICombatOrderSystem : ISystem
     {
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
+            RuntimeBuildingCombatInfo info = runtimeBuildings[i].Info;
             if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId != ownerFactionId)
                 continue;
 
@@ -564,7 +589,7 @@ public partial struct AICombatOrderSystem : ISystem
 
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
+            RuntimeBuildingCombatInfo info = runtimeBuildings[i].Info;
             if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId != breachedFactionId)
                 continue;
 
@@ -596,13 +621,14 @@ public partial struct AICombatOrderSystem : ISystem
     {
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
-            if (runtimeBuildings.Entities[i] != entity)
+            RuntimeBuildingCombatRecord record = runtimeBuildings[i];
+            if (record.Entity != entity)
                 continue;
 
             index = i;
-            info = runtimeBuildings.Infos[i];
-            health = runtimeBuildings.Healths[i];
-            transform = runtimeBuildings.Transforms[i];
+            info = record.Info;
+            health = record.Health;
+            transform = record.Transform;
             return true;
         }
 
@@ -615,8 +641,9 @@ public partial struct AICombatOrderSystem : ISystem
 
     private static bool IsActiveWallOrGate(RuntimeBuildingCombatData runtimeBuildings, int index)
     {
-        RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[index];
-        return (info.IsWall != 0 || info.IsGate != 0) && runtimeBuildings.Healths[index].Current > 0;
+        RuntimeBuildingCombatRecord record = runtimeBuildings[index];
+        RuntimeBuildingCombatInfo info = record.Info;
+        return (info.IsWall != 0 || info.IsGate != 0) && record.Health.Current > 0;
     }
 
     private static int2 GetCenterCell(RuntimeBuildingCombatInfo info)

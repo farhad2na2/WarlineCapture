@@ -58,48 +58,64 @@ public sealed class UnitTargetOrderSystem
             ComponentType.ReadOnly<UnitHealth>(),
             ComponentType.ReadOnly<LocalTransform>());
 
-        using var detectors = detectorQuery.ToEntityArray(Allocator.Temp);
-        using var targets = targetQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
+        ComponentTypeHandle<ThreatDetector> detectorType = entityManager.GetComponentTypeHandle<ThreatDetector>(true);
+        ComponentTypeHandle<Faction> factionType = entityManager.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitGrid> gridType = entityManager.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitHealth> healthType = entityManager.GetComponentTypeHandle<UnitHealth>(true);
+        ComponentTypeHandle<LocalTransform> transformType = entityManager.GetComponentTypeHandle<LocalTransform>(true);
+        using var detectorChunks = detectorQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var targetChunks = targetQuery.ToArchetypeChunkArray(Allocator.Temp);
 
         int2 launcherCell = entityManager.HasComponent<UnitGrid>(launcher)
             ? entityManager.GetComponentData<UnitGrid>(launcher).Cell
             : default;
         int bestLauncherDistance = int.MaxValue;
 
-        for (int i = 0; i < targets.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < targetChunks.Length; chunkIndex++)
         {
-            Entity target = targets[i];
-            if (!entityManager.Exists(target) || target == launcher)
-                continue;
-            if (entityManager.HasComponent<RuntimeBuildingCombatTag>(target))
-                continue;
+            ArchetypeChunk targetChunk = targetChunks[chunkIndex];
+            NativeArray<Entity> targetEntities = targetChunk.GetNativeArray(entityType);
+            NativeArray<Faction> targetFactions = targetChunk.GetNativeArray(ref factionType);
+            NativeArray<UnitGrid> targetGrids = targetChunk.GetNativeArray(ref gridType);
+            NativeArray<UnitHealth> targetHealths = targetChunk.GetNativeArray(ref healthType);
+            NativeArray<LocalTransform> targetTransforms = targetChunk.GetNativeArray(ref transformType);
 
-            Faction targetFaction = entityManager.GetComponentData<Faction>(target);
-            if (targetFaction.Id == factionId)
-                continue;
+            for (int i = 0; i < targetEntities.Length; i++)
+            {
+                Entity target = targetEntities[i];
+                if (target == launcher)
+                    continue;
+                if (entityManager.HasComponent<RuntimeBuildingCombatTag>(target))
+                    continue;
 
-            UnitHealth targetHealth = entityManager.GetComponentData<UnitHealth>(target);
-            if (targetHealth.Current <= 0)
-                continue;
+                Faction targetFaction = targetFactions[i];
+                if (targetFaction.Id == factionId)
+                    continue;
 
-            bool isAirTarget = entityManager.HasComponent<UnitAirMovement>(target);
-            if ((requireAirTarget && !isAirTarget) || (!requireAirTarget && isAirTarget))
-                continue;
-            if (!requireAirTarget && !entityManager.HasComponent<UnitMove>(target))
-                continue;
+                UnitHealth targetHealth = targetHealths[i];
+                if (targetHealth.Current <= 0)
+                    continue;
 
-            int2 targetCell = entityManager.GetComponentData<UnitGrid>(target).Cell;
-            if (!IsInFriendlyDetectorRadius(entityManager, detectors, factionId, detectorKind, targetCell))
-                continue;
+                bool isAirTarget = entityManager.HasComponent<UnitAirMovement>(target);
+                if ((requireAirTarget && !isAirTarget) || (!requireAirTarget && isAirTarget))
+                    continue;
+                if (!requireAirTarget && !entityManager.HasComponent<UnitMove>(target))
+                    continue;
 
-            int launcherDistance = ChebyshevDistance(launcherCell, targetCell);
-            if (launcherDistance >= bestLauncherDistance)
-                continue;
+                int2 targetCell = targetGrids[i].Cell;
+                if (!IsInFriendlyDetectorRadius(detectorChunks, factionType, healthType, detectorType, gridType, factionId, detectorKind, targetCell))
+                    continue;
 
-            bestTarget = target;
-            bestTargetCell = targetCell;
-            bestTargetPosition = entityManager.GetComponentData<LocalTransform>(target).Position;
-            bestLauncherDistance = launcherDistance;
+                int launcherDistance = ChebyshevDistanceValue(launcherCell, targetCell);
+                if (launcherDistance >= bestLauncherDistance)
+                    continue;
+
+                bestTarget = target;
+                bestTargetCell = targetCell;
+                bestTargetPosition = targetTransforms[i].Position;
+                bestLauncherDistance = launcherDistance;
+            }
         }
 
         return bestTarget != Entity.Null;
@@ -339,14 +355,60 @@ public sealed class UnitTargetOrderSystem
                 continue;
 
             int2 detectorCell = entityManager.GetComponentData<UnitGrid>(detector).Cell;
-            if (ChebyshevDistance(detectorCell, targetCell) <= threatDetector.RadiusCells)
+            if (ChebyshevDistanceValue(detectorCell, targetCell) <= threatDetector.RadiusCells)
                 return true;
         }
 
         return false;
     }
 
+    private static bool IsInFriendlyDetectorRadius(
+        NativeArray<ArchetypeChunk> detectorChunks,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<ThreatDetector> detectorType,
+        ComponentTypeHandle<UnitGrid> gridType,
+        byte factionId,
+        int detectorKind,
+        int2 targetCell)
+    {
+        for (int chunkIndex = 0; chunkIndex < detectorChunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = detectorChunks[chunkIndex];
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref healthType);
+            NativeArray<ThreatDetector> detectors = chunk.GetNativeArray(ref detectorType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+
+            for (int i = 0; i < factions.Length; i++)
+            {
+                Faction detectorFaction = factions[i];
+                if (detectorFaction.Id != factionId)
+                    continue;
+
+                UnitHealth detectorHealth = healths[i];
+                if (detectorHealth.Current <= 0)
+                    continue;
+
+                ThreatDetector threatDetector = detectors[i];
+                if (threatDetector.Kind != detectorKind || threatDetector.RadiusCells <= 0)
+                    continue;
+
+                int2 detectorCell = grids[i].Cell;
+                if (ChebyshevDistanceValue(detectorCell, targetCell) <= threatDetector.RadiusCells)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     public int ChebyshevDistance(int2 a, int2 b)
+    {
+        return ChebyshevDistanceValue(a, b);
+    }
+
+    private static int ChebyshevDistanceValue(int2 a, int2 b)
     {
         int2 delta = math.abs(a - b);
         return math.max(delta.x, delta.y);

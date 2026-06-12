@@ -1,10 +1,35 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class SelectionOrderMarkerSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForBuildingTargets());
+            RunCase(test => test.ShowAttackOrderMarker_UsesRuntimeBuildingBoundsWhenAvailable());
+            RunCase(test => test.ShowAttackOrderMarker_FallsBackToPrefabForUntargetedWorldPoint());
+            RunCase(test => test.UpdateAttackTargetPreviewMarkers_ShowsOnlyLivingHostileTargets());
+            RunCase(test => test.UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets());
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=5");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[SelectionOrderMarkerFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<SelectionOrderMarkerSystemTests> testCase)
+    {
+        testCase(new SelectionOrderMarkerSystemTests());
+    }
+
     [Test]
     public void ShowAttackOrderMarker_UsesSelectionPrefabForBuildingTargets()
     {
@@ -173,6 +198,80 @@ public sealed class SelectionOrderMarkerSystemTests
         }
     }
 
+    [Test]
+    public void UpdateAttackTargetPreviewMarkers_ShowsOnlyLivingHostileTargets()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_AttackPreview");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+        Entity hostile = CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(2f, 0f, 3f), 100);
+        CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(4f, 0f, 5f), 100);
+        CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(6f, 0f, 7f), 0);
+
+        GameObject movePrefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        GameObject attackPrefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
+            markers.UpdateAttackTargetPreviewMarkers(em, visible: true);
+
+            Assert.AreEqual(1, CountActiveChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime"));
+            Transform preview = FindChildByNameForTest(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime");
+            Assert.IsNotNull(preview);
+            Assert.AreEqual(2f, preview.position.x, 0.001f);
+            Assert.AreEqual(0.05f, preview.position.y, 0.001f);
+            Assert.AreEqual(3f, preview.position.z, 0.001f);
+            Assert.IsTrue(em.Exists(hostile));
+        }
+        finally
+        {
+            Object.DestroyImmediate(movePrefab);
+            Object.DestroyImmediate(attackPrefab);
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_BoardPreview");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+        Entity source = em.CreateEntity();
+        Entity passenger = CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(8f, 0f, 9f), 100);
+        CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(10f, 0f, 11f), 100);
+        CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(12f, 0f, 13f), 100);
+
+        GameObject movePrefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        GameObject attackPrefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
+            markers.UpdateBoardTargetPreviewMarkers(
+                em,
+                visible: true,
+                source,
+                (_, _, target) => target == passenger);
+
+            Assert.AreEqual(1, CountActiveChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime"));
+            Transform preview = FindChildByNameForTest(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime");
+            Assert.IsNotNull(preview);
+            Assert.AreEqual(8f, preview.position.x, 0.001f);
+            Assert.AreEqual(0.05f, preview.position.y, 0.001f);
+            Assert.AreEqual(9f, preview.position.z, 0.001f);
+        }
+        finally
+        {
+            Object.DestroyImmediate(movePrefab);
+            Object.DestroyImmediate(attackPrefab);
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
     private static Transform FindChildByNameForTest(Transform root, string childName)
     {
         for (int i = 0; i < root.childCount; i++)
@@ -183,5 +282,44 @@ public sealed class SelectionOrderMarkerSystemTests
         }
 
         return null;
+    }
+
+    private static int CountActiveChildren(Transform root, string childName)
+    {
+        int count = 0;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (child.name == childName && child.gameObject.activeSelf)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static Entity CreateMarkerGrid(EntityManager em)
+    {
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 32,
+            Height = 32,
+            CellSize = 1f,
+            Origin = new float3(0f, 0f, 0f)
+        });
+        em.AddBuffer<GridWalkable>(gridEntity);
+        return gridEntity;
+    }
+
+    private static Entity CreatePreviewTarget(EntityManager em, byte factionId, float3 position, int health)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(LocalTransform),
+            typeof(UnitHealth));
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        em.SetComponentData(entity, new UnitHealth { Current = health, Max = 100 });
+        return entity;
     }
 }

@@ -12,6 +12,12 @@ public partial struct AITargetingSystem : ISystem
     private EntityQuery _targetQuery;
     private EntityQuery _targetPriorityQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<AISquad> _squadType;
+    private ComponentTypeHandle<Faction> _factionType;
+    private ComponentTypeHandle<UnitGrid> _unitGridType;
+    private ComponentTypeHandle<UnitHealth> _unitHealthType;
+    private ComponentTypeHandle<AITargetPrioritySetting> _targetPriorityType;
     private float _nextTargetRefreshTime;
 
     public void OnCreate(ref SystemState state)
@@ -25,6 +31,12 @@ public partial struct AITargetingSystem : ISystem
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        _entityType = state.GetEntityTypeHandle();
+        _squadType = state.GetComponentTypeHandle<AISquad>(false);
+        _factionType = state.GetComponentTypeHandle<Faction>(true);
+        _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _unitHealthType = state.GetComponentTypeHandle<UnitHealth>(true);
+        _targetPriorityType = state.GetComponentTypeHandle<AITargetPrioritySetting>(true);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
@@ -44,52 +56,80 @@ public partial struct AITargetingSystem : ISystem
         EntityManager em = state.EntityManager;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
-        using NativeArray<Entity> squads = _squadQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<AITargetPrioritySetting> targetPriorities =
-            _targetPriorityQuery.ToComponentDataArray<AITargetPrioritySetting>(Allocator.Temp);
+        _entityType.Update(ref state);
+        _squadType.Update(ref state);
+        _factionType.Update(ref state);
+        _unitGridType.Update(ref state);
+        _unitHealthType.Update(ref state);
+        _targetPriorityType.Update(ref state);
 
-        for (int i = 0; i < squads.Length; i++)
+        using NativeArray<ArchetypeChunk> squadChunks = _squadQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.Temp);
+
+        for (int chunkIndex = 0; chunkIndex < squadChunks.Length; chunkIndex++)
         {
-            Entity squadEntity = squads[i];
-            AISquad squad = em.GetComponentData<AISquad>(squadEntity);
-            if (squad.Purpose != (byte)AISquadPurpose.Attack)
-                continue;
+            ArchetypeChunk squadChunk = squadChunks[chunkIndex];
+            NativeArray<AISquad> squads = squadChunk.GetNativeArray(ref _squadType);
 
-            AITargetPriority priority = ResolveTargetPriority(targetPriorities, squad.FactionId);
-            if (!TrySelectTarget(em, targets, squad, priority, out Entity target, out int2 targetCell, out byte targetFaction, out AITargetKind kind, out int score, out string reason))
+            for (int i = 0; i < squads.Length; i++)
             {
-                if (now - squad.LastLogTime >= LogIntervalSeconds)
+                AISquad squad = squads[i];
+                if (squad.Purpose != (byte)AISquadPurpose.Attack)
+                    continue;
+
+                AITargetPriority priority = ResolveTargetPriority(targetPriorityChunks, ref _targetPriorityType, squad.FactionId);
+                if (!TrySelectTarget(
+                        em,
+                        targetChunks,
+                        _entityType,
+                        ref _factionType,
+                        ref _unitGridType,
+                        ref _unitHealthType,
+                        squad,
+                        priority,
+                        out Entity target,
+                        out int2 targetCell,
+                        out byte targetFaction,
+                        out AITargetKind kind,
+                        out int score,
+                        out string reason))
+                {
+                    if (now - squad.LastLogTime >= LogIntervalSeconds)
+                    {
+                        squad.LastLogTime = now;
+                        squads[i] = squad;
+                        if (shouldLog)
+                            EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
+                    }
+                    continue;
+                }
+
+                bool changed =
+                    squad.TargetEntity != target ||
+                    squad.TargetCell.x != targetCell.x ||
+                    squad.TargetCell.y != targetCell.y ||
+                    squad.TargetScore != score ||
+                    squad.TargetKind != (byte)kind;
+
+                squad.TargetEntity = target;
+                squad.TargetFactionId = targetFaction;
+                squad.TargetKind = (byte)kind;
+                squad.TargetCell = targetCell;
+                squad.TargetScore = score;
+
+                if (changed || now - squad.LastLogTime >= LogIntervalSeconds)
                 {
                     squad.LastLogTime = now;
+                    squads[i] = squad;
                     if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
-                    em.SetComponentData(squadEntity, squad);
+                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
                 }
-                continue;
+                else
+                {
+                    squads[i] = squad;
+                }
             }
-
-            bool changed =
-                squad.TargetEntity != target ||
-                squad.TargetCell.x != targetCell.x ||
-                squad.TargetCell.y != targetCell.y ||
-                squad.TargetScore != score ||
-                squad.TargetKind != (byte)kind;
-
-            squad.TargetEntity = target;
-            squad.TargetFactionId = targetFaction;
-            squad.TargetKind = (byte)kind;
-            squad.TargetCell = targetCell;
-            squad.TargetScore = score;
-
-            if (changed || now - squad.LastLogTime >= LogIntervalSeconds)
-            {
-                squad.LastLogTime = now;
-                if (shouldLog)
-                    EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
-            }
-
-            em.SetComponentData(squadEntity, squad);
         }
     }
 
@@ -123,7 +163,11 @@ public partial struct AITargetingSystem : ISystem
 
     private static bool TrySelectTarget(
         EntityManager em,
-        NativeArray<Entity> targets,
+        NativeArray<ArchetypeChunk> targetChunks,
+        EntityTypeHandle entityType,
+        ref ComponentTypeHandle<Faction> factionType,
+        ref ComponentTypeHandle<UnitGrid> unitGridType,
+        ref ComponentTypeHandle<UnitHealth> unitHealthType,
         AISquad squad,
         AITargetPriority priority,
         out Entity bestTarget,
@@ -140,32 +184,38 @@ public partial struct AITargetingSystem : ISystem
         bestScore = int.MinValue;
         bestReason = "None";
 
-        for (int i = 0; i < targets.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < targetChunks.Length; chunkIndex++)
         {
-            Entity target = targets[i];
-            if (!em.Exists(target))
-                continue;
+            ArchetypeChunk chunk = targetChunks[chunkIndex];
+            NativeArray<Entity> targets = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref unitHealthType);
 
-            Faction faction = em.GetComponentData<Faction>(target);
-            if (faction.Id == squad.FactionId)
-                continue;
+            for (int i = 0; i < targets.Length; i++)
+            {
+                Entity target = targets[i];
+                Faction faction = factions[i];
+                if (faction.Id == squad.FactionId)
+                    continue;
 
-            UnitHealth health = em.GetComponentData<UnitHealth>(target);
-            if (health.Current <= 0)
-                continue;
+                UnitHealth health = healths[i];
+                if (health.Current <= 0)
+                    continue;
 
-            UnitGrid grid = em.GetComponentData<UnitGrid>(target);
-            AITargetKind kind = ResolveTargetKind(em, target);
-            int score = ScoreTarget(em, target, kind, priority, squad.RallyCell, grid.Cell, health, out string reason);
-            if (score <= bestScore)
-                continue;
+                UnitGrid grid = grids[i];
+                AITargetKind kind = ResolveTargetKind(em, target);
+                int score = ScoreTarget(em, target, kind, priority, squad.RallyCell, grid.Cell, health, out string reason);
+                if (score <= bestScore)
+                    continue;
 
-            bestTarget = target;
-            bestCell = grid.Cell;
-            bestFaction = faction.Id;
-            bestKind = kind;
-            bestScore = score;
-            bestReason = reason;
+                bestTarget = target;
+                bestCell = grid.Cell;
+                bestFaction = faction.Id;
+                bestKind = kind;
+                bestScore = score;
+                bestReason = reason;
+            }
         }
 
         return bestTarget != Entity.Null;
@@ -180,16 +230,23 @@ public partial struct AITargetingSystem : ISystem
         return AITargetKind.Unit;
     }
 
-    private static AITargetPriority ResolveTargetPriority(NativeArray<AITargetPrioritySetting> settings, byte factionId)
+    private static AITargetPriority ResolveTargetPriority(
+        NativeArray<ArchetypeChunk> chunks,
+        ref ComponentTypeHandle<AITargetPrioritySetting> targetPriorityType,
+        byte factionId)
     {
-        if (!settings.IsCreated)
+        if (!chunks.IsCreated)
             return AITargetPriority.Balanced;
 
-        for (int i = 0; i < settings.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            AITargetPrioritySetting setting = settings[i];
-            if (setting.FactionId == factionId)
-                return (AITargetPriority)setting.Priority;
+            NativeArray<AITargetPrioritySetting> settings = chunks[chunkIndex].GetNativeArray(ref targetPriorityType);
+            for (int i = 0; i < settings.Length; i++)
+            {
+                AITargetPrioritySetting setting = settings[i];
+                if (setting.FactionId == factionId)
+                    return (AITargetPriority)setting.Priority;
+            }
         }
 
         return AITargetPriority.Balanced;

@@ -107,28 +107,54 @@ public sealed class ScanIntelCommandSystem
         if (_unitScanTargetQuery.IsEmptyIgnoreFilter)
             return 0;
 
-        int revealed = 0;
-        using NativeArray<Entity> entities = _unitScanTargetQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        using NativeList<ScanRevealCandidate> candidates = new(math.max(1, _unitScanTargetQuery.CalculateEntityCount()), Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
+        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        using NativeArray<ArchetypeChunk> chunks = _unitScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsRevealableScanTarget(em, entity))
-                continue;
-            if (em.HasComponent<RuntimeBuildingCombatInfo>(entity))
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            if (chunk.Has(ref buildingInfoType))
                 continue;
 
-            int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-            if (ChebyshevDistance(centerCell, cell) > radiusCells)
-                continue;
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            bool hasHealth = chunk.Has(ref healthType);
+            bool hasTransform = chunk.Has(ref transformType);
+            NativeArray<UnitHealth> healths = hasHealth
+                ? chunk.GetNativeArray(ref healthType)
+                : default;
+            NativeArray<LocalTransform> transforms = hasTransform
+                ? chunk.GetNativeArray(ref transformType)
+                : default;
+            for (int i = 0; i < chunk.Count; i++)
+            {
+                if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
+                    continue;
 
-            float3 position = em.HasComponent<LocalTransform>(entity)
-                ? em.GetComponentData<LocalTransform>(entity).Position
-                : GridUtils.CellToWorldCenter(grid, cell);
-            RevealEntity(em, entity, cell, position, frame);
-            revealed++;
+                int2 cell = unitGrids[i].Cell;
+                if (ChebyshevDistance(centerCell, cell) > radiusCells)
+                    continue;
+
+                float3 position = hasTransform
+                    ? transforms[i].Position
+                    : GridUtils.CellToWorldCenter(grid, cell);
+                candidates.Add(new ScanRevealCandidate(entities[i], cell, position));
+            }
         }
 
-        return revealed;
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            ScanRevealCandidate candidate = candidates[i];
+            RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, frame);
+        }
+
+        return candidates.Length;
     }
 
     private int RevealBuildings(
@@ -141,38 +167,59 @@ public sealed class ScanIntelCommandSystem
         if (_buildingScanTargetQuery.IsEmptyIgnoreFilter)
             return 0;
 
-        int revealed = 0;
-        using NativeArray<Entity> entities = _buildingScanTargetQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        using NativeList<ScanRevealCandidate> candidates = new(math.max(1, _buildingScanTargetQuery.CalculateEntityCount()), Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
+        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+        using NativeArray<ArchetypeChunk> chunks = _buildingScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = entities[i];
-            if (!IsRevealableScanTarget(em, entity))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<RuntimeBuildingCombatInfo> buildings = chunk.GetNativeArray(ref buildingInfoType);
+            bool hasHealth = chunk.Has(ref healthType);
+            bool hasTransform = chunk.Has(ref transformType);
+            NativeArray<UnitHealth> healths = hasHealth
+                ? chunk.GetNativeArray(ref healthType)
+                : default;
+            NativeArray<LocalTransform> transforms = hasTransform
+                ? chunk.GetNativeArray(ref transformType)
+                : default;
+            for (int i = 0; i < chunk.Count; i++)
+            {
+                if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
+                    continue;
 
-            RuntimeBuildingCombatInfo building = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
-            if (DistanceToFootprint(centerCell, building.OriginCell, building.FootprintCells) > radiusCells)
-                continue;
+                RuntimeBuildingCombatInfo building = buildings[i];
+                if (DistanceToFootprint(centerCell, building.OriginCell, building.FootprintCells) > radiusCells)
+                    continue;
 
-            int2 center = building.OriginCell + math.max(new int2(1, 1), building.FootprintCells) / 2;
-            float3 position = em.HasComponent<LocalTransform>(entity)
-                ? em.GetComponentData<LocalTransform>(entity).Position
-                : GridUtils.CellToWorldCenter(grid, center);
-            RevealEntity(em, entity, center, position, frame);
-            revealed++;
+                int2 center = building.OriginCell + math.max(new int2(1, 1), building.FootprintCells) / 2;
+                float3 position = hasTransform
+                    ? transforms[i].Position
+                    : GridUtils.CellToWorldCenter(grid, center);
+                candidates.Add(new ScanRevealCandidate(entities[i], center, position));
+            }
         }
 
-        return revealed;
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            ScanRevealCandidate candidate = candidates[i];
+            RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, frame);
+        }
+
+        return candidates.Length;
     }
 
-    private static bool IsRevealableScanTarget(EntityManager em, Entity entity)
+    private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health)
     {
-        if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<Faction>(entity))
-            return false;
-        if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
+        if (hasHealth && health.Current <= 0)
             return false;
 
-        byte factionId = em.GetComponentData<Faction>(entity).Id;
-        return FactionIdentitySystem.IsHostileToPlayer(factionId);
+        return FactionIdentitySystem.IsHostileToPlayer(faction.Id);
     }
 
     private static void RevealEntity(EntityManager em, Entity entity, int2 cell, float3 position, int frame)
@@ -243,5 +290,19 @@ public sealed class ScanIntelCommandSystem
         int dx = cell.x < minX ? minX - cell.x : (cell.x > maxX ? cell.x - maxX : 0);
         int dy = cell.y < minY ? minY - cell.y : (cell.y > maxY ? cell.y - maxY : 0);
         return math.max(dx, dy);
+    }
+
+    private readonly struct ScanRevealCandidate
+    {
+        public ScanRevealCandidate(Entity entity, int2 cell, float3 position)
+        {
+            Entity = entity;
+            Cell = cell;
+            Position = position;
+        }
+
+        public readonly Entity Entity;
+        public readonly int2 Cell;
+        public readonly float3 Position;
     }
 }

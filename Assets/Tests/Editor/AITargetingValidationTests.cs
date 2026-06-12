@@ -7,6 +7,28 @@ using UnityEngine.TestTools;
 
 public sealed class AITargetingValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            InitialUnitsRuntimeState.VerboseAILogs = true;
+            AssertHighestScoredEnemyTargetToSquad(assertDiagnosticLog: false);
+            AssertEconomyPriorityPrefersResourceHauler(assertDiagnosticLog: false);
+            UnityEngine.Debug.Log("[AITargetingFocusedValidation] result=Passed tests=2");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[AITargetingFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.VerboseAILogs = false;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -22,6 +44,17 @@ public sealed class AITargetingValidationTests
 
     [Test]
     public void AITargetingSystem_AssignsHighestScoredEnemyTargetToSquad()
+    {
+        AssertHighestScoredEnemyTargetToSquad(assertDiagnosticLog: true);
+    }
+
+    [Test]
+    public void AITargetingSystem_EconomyPriorityPrefersResourceHauler()
+    {
+        AssertEconomyPriorityPrefersResourceHauler(assertDiagnosticLog: true);
+    }
+
+    private static void AssertHighestScoredEnemyTargetToSquad(bool assertDiagnosticLog)
     {
         using var world = new World("AITargetingValidationTests");
         EntityManager em = world.EntityManager;
@@ -51,10 +84,12 @@ public sealed class AITargetingValidationTests
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=7 target=Threat score=\d+ reason=Threat targetFaction=1 targetCell=int2\(18, 10\)"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=7 target=Threat score=\d+ reason=Threat targetFaction=1 targetCell=int2\(18, 10\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);
         Assert.AreEqual(highValueThreat, squad.TargetEntity);
@@ -65,8 +100,7 @@ public sealed class AITargetingValidationTests
         Assert.AreNotEqual(lowValueUnit, squad.TargetEntity);
     }
 
-    [Test]
-    public void AITargetingSystem_EconomyPriorityPrefersResourceHauler()
+    private static void AssertEconomyPriorityPrefersResourceHauler(bool assertDiagnosticLog)
     {
         using var world = new World("AITargetingPriorityValidationTests");
         EntityManager em = world.EntityManager;
@@ -93,10 +127,12 @@ public sealed class AITargetingValidationTests
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=8 target=Unit score=\d+ reason=Economy targetFaction=1 targetCell=int2\(12, 10\)"));
+        if (assertDiagnosticLog)
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=8 target=Unit score=\d+ reason=Economy targetFaction=1 targetCell=int2\(12, 10\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);
         Assert.AreEqual(hauler, squad.TargetEntity);

@@ -158,7 +158,7 @@ Metrics to record:
 ## Guardrail Added
 
 Added `EcsBurstHotPathArchitectureTests` with current ratchet ceilings:
-- `ToEntityArray` / `ToComponentDataArray` calls must not exceed 104.
+- Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls must not exceed 110.
 - Direct `EntityManager` mutation calls must not exceed 40.
 - Files with `OnUpdate` and no `[BurstCompile]` must not exceed 38.
 - Files with `[BurstCompile]` must not drop below 23.
@@ -189,21 +189,138 @@ Note:
 `RtsSelectionFocusCommandSystem` then continued Phase 3 by resolving selected Board-mode transport and passenger candidates through one selected-entity scan while preserving transport-first priority.
 `RtsSelectionFocusCommandSystem` then merged Attack-mode air-defense-only and normal attack-capability checks into one selected-entity scan while preserving mixed-selection Attack mode.
 The unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` API and its `SelectionUiQuerySystem` helper were removed, deleting a dead selected-entity snapshot.
+`VisibleUnitSelectionSystem.HasVisiblePlayerUnits` now reuses the same filtered screen-rect scan as `CollectVisiblePlayerUnits` with early exit, deleting a duplicate visible-selection snapshot.
+`FocusableUnitLookupSystem` now uses one combined UnitGrid/UnitFootprint changed-version query for coverage refresh instead of separate changed-grid and changed-footprint snapshots.
+`SelectedUnitDebugFireSystem` now resolves ground-missile debug enemy-base targets through read-only archetype chunk iteration instead of copying all enemy building entities into a flat `ToEntityArray`.
+`ThreatDetectionWarningSystem` now reads the singleton `GridConfig` directly and walks cached type-handle archetype chunks for sensor/target scanning instead of copying grid, sensor, or target entities.
+`UnitTargetOrderSystem.TryFindRadarTargetForMissileLauncher` now walks detector and target archetype chunks instead of copying detector and target entity arrays for missile/radar target selection.
+`AITargetingSystem` now walks squad, target, and target-priority chunks instead of copying those refresh inputs into flat arrays.
+`AISquadSystem` now walks chunks for active-squad counting and initial target-cell resolution instead of taking helper-level entity snapshots.
+`AIBuildPlannerSystem` now walks faction-economy chunks instead of taking an economy entity snapshot.
+`AICombatOrderSystem` now builds one temporary runtime-building combat record list from archetype chunks instead of four parallel runtime-building entity/component arrays.
+`AIProductionSystem` now walks production plans and faction economies through cached type handles and archetype chunks instead of copying plan/economy entity arrays each update.
+`ScanIntelCommandSystem` now walks scan targets by archetype chunk into reveal candidates, then applies reveal component mutations after collection.
+`FocusedUnitLifecycleSystem` now clears selected tags from a chunk-collected entity list and uses singleton selected-entity lookup for single focus refresh.
+`SelectionOrderMarkerSystem` now walks attack/board preview targets by archetype chunk before applying marker presentation.
 
 Validation:
-- Full explicit editor validation:
+- Full explicit editor validation after the Phase 2 conversions:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=438 skipped=23`.
 - Hot-path architecture guardrail:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
-  - Ratcheted guardrails after latest slice: `ToEntityArray` / `ToComponentDataArray` ceiling `104`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
-- Selection/command focused validation:
+  - Ratcheted guardrails after latest slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling `102`, direct `EntityManager` mutation ceiling `40`, non-Burst `OnUpdate` ceiling `38`, Burst file floor `23`.
+- Selected debug-fire focused validation after the chunk-iteration slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectedUnitDebugFireSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selected-debug-fire.log`
+  - Log marker: `[SelectedUnitDebugFireFocusedValidation] result=Passed tests=6`.
+- Threat-warning focused validation after the singleton grid read and chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ThreatWarningValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-threat-warning.log`
+  - Log marker: `[ThreatWarningValidation] result=Passed`.
+  - Confirmed the ECS type-handle creation warning no longer appears after caching handles and lookups.
+- Missile/radar attack focused validation after the chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MissileLauncherRadarAttackValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-missile-radar.log`
+  - Log marker: `[MissileLauncherRadarAttackValidation] result=Passed tests=5`.
+- Full explicit editor validation after the missile/radar chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+  - Static `ToEntityArray` / `ToComponentDataArray` count confirmed at `96`.
+  - `git diff --check` passed.
+- AI targeting focused validation after the chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AITargetingValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-targeting.log`
+  - Log marker: `[AITargetingFocusedValidation] result=Passed tests=2`.
+- Full explicit editor validation after the AI targeting chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+  - Static `ToEntityArray` / `ToComponentDataArray` count confirmed at `94`.
+  - `git diff --check` passed.
+- AISquad focused validation after the helper chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AISquadValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-squad.log`
+  - Log marker: `[AISquadFocusedValidation] result=Passed tests=1`.
+- AIBuildPlanner focused validation after the economy chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AIBuildPlannerValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-build-planner.log`
+  - Log marker: `[AIBuildPlannerFocusedValidation] result=Passed tests=1`.
+- AIProduction focused validation after the chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AIProductionValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-production.log`
+  - Log marker: `[AIProductionFocusedValidation] result=Passed tests=1`.
+- Full explicit editor validation after the AISquad/AIBuildPlanner chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+  - Static `ToEntityArray` / `ToComponentDataArray` count confirmed at `91`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `114`.
+  - `git diff --check` passed.
+- AI combat focused validation after the runtime-building record-list slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AICombatOrderValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-combat.log`
+  - Log marker: `[AICombatOrderFocusedValidation] result=Passed tests=2`.
+- Full explicit editor validation after the AICombat/generic-aware guardrail slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `90`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `110`.
+  - `git diff --check` passed.
+- Static count after the AIProduction chunk traversal slice:
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `88`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `108`.
+- Scan intel focused validation after the reveal-candidate chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ScanIntelCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-scan-intel.log`
+  - Log marker: `[ScanIntelCommandFocusedValidation] result=Passed tests=2`.
+- Static count after the scan chunk traversal slice:
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `86`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `106`.
+- Final validation after the AIProduction and scan chunk traversal slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+  - `git diff --check` passed.
+- Selection state focused validation after the focused-lifecycle slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-state.log`
+  - Log marker: `[SelectionStateFocusedValidation] result=Passed tests=5`.
+- Static count after the focused-lifecycle slice:
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `84`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `104`.
+- Selection order marker focused validation after the preview chunk traversal slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionOrderMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-order-marker.log`
+  - Log marker: `[SelectionOrderMarkerFocusedValidation] result=Passed tests=5`.
+- Static count after the selection-marker preview slice:
+  - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `82`.
+  - Generic-aware `ToEntityArray` / `ToComponentDataArray<T>` count confirmed at `102`.
+- Final validation after the focused-lifecycle and selection-marker preview slices:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=445 skipped=23`.
+  - `git diff --check` passed.
+- Full explicit editor validation after the latest array-copy ratchet:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
+- Selection/command focused validation after the third Phase 3 slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
   - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=59`.
-- Full explicit editor validation after the latest Phase 3 slice:
+- Full explicit editor validation after the third Phase 3 slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
+- Shadow validation after the fourth Phase 3 slice:
+  - Main project was open in Unity, so the current script and editor-test trees were mirrored into `/Users/farhad/Projects/WarlineCapture-CodexUnity1` before validation.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-shadow-ecs-burst-hot-path-architecture.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-shadow-ecs-burst-selection-command.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=59`.
+- Main-project validation after the fifth Phase 3 slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=62`.
+  - `BaseBreachValidationTests.UnitPathfinding_RoutesOwnerFactionThroughFriendlyRoadBarrierGate` now uses the same 128-update detached-pathfinding wait budget as the focused pathfinding validation harness.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
+- Main-project validation after the sixth Phase 3 slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-execute.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=63`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
 - `git diff --check` passed after the latest slice.
 
 Behavior coverage added in the latest slice:

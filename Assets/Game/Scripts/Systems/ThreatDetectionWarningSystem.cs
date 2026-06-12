@@ -14,6 +14,20 @@ public partial struct ThreatDetectionWarningSystem : ISystem
     private EntityQuery _sensorQuery;
     private EntityQuery _targetQuery;
     private EntityQuery _gridQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<ThreatDetector> _detectorType;
+    private ComponentTypeHandle<Faction> _factionType;
+    private ComponentTypeHandle<UnitGrid> _gridType;
+    private ComponentTypeHandle<UnitHealth> _healthType;
+    private ComponentLookup<RuntimeBuildingCombatTag> _buildingLookup;
+    private ComponentLookup<UnitAirMovement> _airLookup;
+    private ComponentLookup<UnitMovementBehavior> _movementBehaviorLookup;
+    private ComponentLookup<UnitTarget> _targetLookup;
+    private ComponentLookup<UnitPathRequest> _pathRequestLookup;
+    private ComponentLookup<UnitLongDistanceMove> _longDistanceMoveLookup;
+    private ComponentLookup<EngageTarget> _engageTargetLookup;
+    private ComponentLookup<BaseBreachOrder> _baseBreachOrderLookup;
+    private ComponentLookup<UnitMove> _unitMoveLookup;
 
     public void OnCreate(ref SystemState state)
     {
@@ -31,6 +45,20 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitHealth>());
         _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _entityType = state.GetEntityTypeHandle();
+        _detectorType = state.GetComponentTypeHandle<ThreatDetector>(true);
+        _factionType = state.GetComponentTypeHandle<Faction>(true);
+        _gridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _healthType = state.GetComponentTypeHandle<UnitHealth>(true);
+        _buildingLookup = state.GetComponentLookup<RuntimeBuildingCombatTag>(true);
+        _airLookup = state.GetComponentLookup<UnitAirMovement>(true);
+        _movementBehaviorLookup = state.GetComponentLookup<UnitMovementBehavior>(true);
+        _targetLookup = state.GetComponentLookup<UnitTarget>(true);
+        _pathRequestLookup = state.GetComponentLookup<UnitPathRequest>(true);
+        _longDistanceMoveLookup = state.GetComponentLookup<UnitLongDistanceMove>(true);
+        _engageTargetLookup = state.GetComponentLookup<EngageTarget>(true);
+        _baseBreachOrderLookup = state.GetComponentLookup<BaseBreachOrder>(true);
+        _unitMoveLookup = state.GetComponentLookup<UnitMove>(true);
     }
 
     public void OnDestroy(ref SystemState state)
@@ -49,13 +77,11 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             return;
         }
 
-        EntityManager em = state.EntityManager;
-        float cellSize = TryGetCellSize(em, _gridQuery);
+        float cellSize = TryGetCellSize(_gridQuery);
 
-        using NativeArray<Entity> sensors = _sensorQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
-        using NativeParallelHashSet<Entity> currentGroundThreats = new(math.max(16, targets.Length * 2), Allocator.Temp);
-        using NativeParallelHashSet<Entity> currentAirThreats = new(math.max(16, targets.Length * 2), Allocator.Temp);
+        int targetCapacity = math.max(16, _targetQuery.CalculateEntityCount() * 2);
+        using NativeParallelHashSet<Entity> currentGroundThreats = new(targetCapacity, Allocator.Temp);
+        using NativeParallelHashSet<Entity> currentAirThreats = new(targetCapacity, Allocator.Temp);
         using NativeList<Entity> currentGroundThreatList = new(Allocator.Temp);
         using NativeList<Entity> currentAirThreatList = new(Allocator.Temp);
 
@@ -64,75 +90,107 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         float bestGroundEtaSeconds = float.MaxValue;
         float bestAirEtaSeconds = float.MaxValue;
 
-        for (int i = 0; i < sensors.Length; i++)
+        UpdateTypeHandles(ref state);
+        ThreatTargetLookups targetLookups = new()
         {
-            Entity sensor = sensors[i];
-            if (!em.Exists(sensor))
-                continue;
+            BuildingLookup = _buildingLookup,
+            AirLookup = _airLookup,
+            MovementBehaviorLookup = _movementBehaviorLookup,
+            TargetLookup = _targetLookup,
+            PathRequestLookup = _pathRequestLookup,
+            LongDistanceMoveLookup = _longDistanceMoveLookup,
+            EngageTargetLookup = _engageTargetLookup,
+            BaseBreachOrderLookup = _baseBreachOrderLookup,
+            UnitMoveLookup = _unitMoveLookup
+        };
 
-            Faction sensorFaction = em.GetComponentData<Faction>(sensor);
-            if (sensorFaction.Id != PlayerFactionId)
-                continue;
+        using NativeArray<ArchetypeChunk> sensorChunks = _sensorQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int sensorChunkIndex = 0; sensorChunkIndex < sensorChunks.Length; sensorChunkIndex++)
+        {
+            ArchetypeChunk sensorChunk = sensorChunks[sensorChunkIndex];
+            NativeArray<Entity> sensorEntities = sensorChunk.GetNativeArray(_entityType);
+            NativeArray<ThreatDetector> sensorDetectors = sensorChunk.GetNativeArray(ref _detectorType);
+            NativeArray<Faction> sensorFactions = sensorChunk.GetNativeArray(ref _factionType);
+            NativeArray<UnitGrid> sensorGrids = sensorChunk.GetNativeArray(ref _gridType);
+            NativeArray<UnitHealth> sensorHealths = sensorChunk.GetNativeArray(ref _healthType);
 
-            UnitHealth sensorHealth = em.GetComponentData<UnitHealth>(sensor);
-            if (sensorHealth.Current <= 0)
-                continue;
-
-            ThreatDetector detector = em.GetComponentData<ThreatDetector>(sensor);
-            if (detector.RadiusCells <= 0 || detector.Kind == (byte)ThreatDetectionKind.None)
-                continue;
-
-            int2 sensorCell = em.GetComponentData<UnitGrid>(sensor).Cell;
-            bool detectsAir = detector.Kind == (byte)ThreatDetectionKind.Air;
-            bool detectsGround = detector.Kind == (byte)ThreatDetectionKind.Ground;
-
-            for (int targetIndex = 0; targetIndex < targets.Length; targetIndex++)
+            for (int i = 0; i < sensorEntities.Length; i++)
             {
-                Entity target = targets[targetIndex];
-                if (!em.Exists(target) || target == sensor || em.HasComponent<RuntimeBuildingCombatTag>(target))
+                Entity sensor = sensorEntities[i];
+                Faction sensorFaction = sensorFactions[i];
+                if (sensorFaction.Id != PlayerFactionId)
                     continue;
 
-                Faction targetFaction = em.GetComponentData<Faction>(target);
-                if (targetFaction.Id == sensorFaction.Id)
+                UnitHealth sensorHealth = sensorHealths[i];
+                if (sensorHealth.Current <= 0)
                     continue;
 
-                UnitHealth targetHealth = em.GetComponentData<UnitHealth>(target);
-                if (targetHealth.Current <= 0)
+                ThreatDetector detector = sensorDetectors[i];
+                if (detector.RadiusCells <= 0 || detector.Kind == (byte)ThreatDetectionKind.None)
                     continue;
 
-                bool isAirTarget = em.HasComponent<UnitAirMovement>(target);
-                if ((detectsAir && !isAirTarget) || (detectsGround && isAirTarget))
-                    continue;
-                if (detectsGround && !IsGroundVehicle(em, target))
-                    continue;
+                int2 sensorCell = sensorGrids[i].Cell;
+                bool detectsAir = detector.Kind == (byte)ThreatDetectionKind.Air;
+                bool detectsGround = detector.Kind == (byte)ThreatDetectionKind.Ground;
 
-                int2 targetCell = em.GetComponentData<UnitGrid>(target).Cell;
-                if (!IsMovingTowardCell(em, target, targetCell, sensorCell))
-                    continue;
-
-                int cellDistance = ChebyshevDistance(sensorCell, targetCell);
-                if (cellDistance > detector.RadiusCells)
-                    continue;
-
-                float etaSeconds = EstimateEtaSeconds(em, target, sensorCell, targetCell, cellSize);
-                if (isAirTarget)
+                for (int targetChunkIndex = 0; targetChunkIndex < targetChunks.Length; targetChunkIndex++)
                 {
-                    if (currentAirThreats.Add(target))
-                        currentAirThreatList.Add(target);
-                    if (!_previousAirThreats.Contains(target))
+                    ArchetypeChunk targetChunk = targetChunks[targetChunkIndex];
+                    NativeArray<Entity> targetEntities = targetChunk.GetNativeArray(_entityType);
+                    NativeArray<Faction> targetFactions = targetChunk.GetNativeArray(ref _factionType);
+                    NativeArray<UnitGrid> targetGrids = targetChunk.GetNativeArray(ref _gridType);
+                    NativeArray<UnitHealth> targetHealths = targetChunk.GetNativeArray(ref _healthType);
+
+                    for (int targetIndex = 0; targetIndex < targetEntities.Length; targetIndex++)
                     {
-                        hasNewAirThreat = true;
-                        bestAirEtaSeconds = math.min(bestAirEtaSeconds, etaSeconds);
-                    }
-                }
-                else
-                {
-                    if (currentGroundThreats.Add(target))
-                        currentGroundThreatList.Add(target);
-                    if (!_previousGroundThreats.Contains(target))
-                    {
-                        hasNewGroundThreat = true;
-                        bestGroundEtaSeconds = math.min(bestGroundEtaSeconds, etaSeconds);
+                        Entity target = targetEntities[targetIndex];
+                        if (target == sensor || targetLookups.BuildingLookup.HasComponent(target))
+                            continue;
+
+                        Faction targetFaction = targetFactions[targetIndex];
+                        if (targetFaction.Id == sensorFaction.Id)
+                            continue;
+
+                        UnitHealth targetHealth = targetHealths[targetIndex];
+                        if (targetHealth.Current <= 0)
+                            continue;
+
+                        bool isAirTarget = targetLookups.AirLookup.HasComponent(target);
+                        if ((detectsAir && !isAirTarget) || (detectsGround && isAirTarget))
+                            continue;
+                        if (detectsGround && !IsGroundVehicle(targetLookups, target))
+                            continue;
+
+                        int2 targetCell = targetGrids[targetIndex].Cell;
+                        if (!IsMovingTowardCell(targetLookups, target, targetCell, sensorCell))
+                            continue;
+
+                        int cellDistance = ChebyshevDistance(sensorCell, targetCell);
+                        if (cellDistance > detector.RadiusCells)
+                            continue;
+
+                        float etaSeconds = EstimateEtaSeconds(targetLookups, target, sensorCell, targetCell, cellSize);
+                        if (isAirTarget)
+                        {
+                            if (currentAirThreats.Add(target))
+                                currentAirThreatList.Add(target);
+                            if (!_previousAirThreats.Contains(target))
+                            {
+                                hasNewAirThreat = true;
+                                bestAirEtaSeconds = math.min(bestAirEtaSeconds, etaSeconds);
+                            }
+                        }
+                        else
+                        {
+                            if (currentGroundThreats.Add(target))
+                                currentGroundThreatList.Add(target);
+                            if (!_previousGroundThreats.Contains(target))
+                            {
+                                hasNewGroundThreat = true;
+                                bestGroundEtaSeconds = math.min(bestGroundEtaSeconds, etaSeconds);
+                            }
+                        }
                     }
                 }
             }
@@ -157,6 +215,24 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         }
     }
 
+    private void UpdateTypeHandles(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        _detectorType.Update(ref state);
+        _factionType.Update(ref state);
+        _gridType.Update(ref state);
+        _healthType.Update(ref state);
+        _buildingLookup.Update(ref state);
+        _airLookup.Update(ref state);
+        _movementBehaviorLookup.Update(ref state);
+        _targetLookup.Update(ref state);
+        _pathRequestLookup.Update(ref state);
+        _longDistanceMoveLookup.Update(ref state);
+        _engageTargetLookup.Update(ref state);
+        _baseBreachOrderLookup.Update(ref state);
+        _unitMoveLookup.Update(ref state);
+    }
+
     private void ClearPreviousThreats()
     {
         if (_previousGroundThreats.IsCreated)
@@ -172,13 +248,12 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             previousThreats.Add(currentThreats[i]);
     }
 
-    private static float TryGetCellSize(EntityManager em, EntityQuery gridQuery)
+    private static float TryGetCellSize(EntityQuery gridQuery)
     {
-        using NativeArray<Entity> grids = gridQuery.ToEntityArray(Allocator.Temp);
-        if (grids.Length == 0 || !em.Exists(grids[0]))
+        if (gridQuery.IsEmptyIgnoreFilter)
             return 1f;
 
-        GridConfig grid = em.GetComponentData<GridConfig>(grids[0]);
+        GridConfig grid = gridQuery.GetSingleton<GridConfig>();
         return math.max(0.01f, grid.CellSize);
     }
 
@@ -188,55 +263,68 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         return math.max(delta.x, delta.y);
     }
 
-    private static bool IsGroundVehicle(EntityManager em, Entity target)
+    private struct ThreatTargetLookups
     {
-        if (!em.HasComponent<UnitMovementBehavior>(target))
-            return false;
-
-        return em.GetComponentData<UnitMovementBehavior>(target).UsesVehicleMotion != 0;
+        [ReadOnly] public ComponentLookup<RuntimeBuildingCombatTag> BuildingLookup;
+        [ReadOnly] public ComponentLookup<UnitAirMovement> AirLookup;
+        [ReadOnly] public ComponentLookup<UnitMovementBehavior> MovementBehaviorLookup;
+        [ReadOnly] public ComponentLookup<UnitTarget> TargetLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        [ReadOnly] public ComponentLookup<BaseBreachOrder> BaseBreachOrderLookup;
+        [ReadOnly] public ComponentLookup<UnitMove> UnitMoveLookup;
     }
 
-    private static bool IsMovingTowardCell(EntityManager em, Entity target, int2 currentCell, int2 sensorCell)
+    private static bool IsGroundVehicle(ThreatTargetLookups lookups, Entity target)
+    {
+        if (!lookups.MovementBehaviorLookup.HasComponent(target))
+            return false;
+
+        return lookups.MovementBehaviorLookup[target].UsesVehicleMotion != 0;
+    }
+
+    private static bool IsMovingTowardCell(ThreatTargetLookups lookups, Entity target, int2 currentCell, int2 sensorCell)
     {
         int currentDistance = ChebyshevDistance(currentCell, sensorCell);
         bool hasGoal = false;
         int bestGoalDistance = int.MaxValue;
 
-        if (em.HasComponent<UnitTarget>(target))
+        if (lookups.TargetLookup.HasComponent(target))
         {
             hasGoal = true;
-            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(em.GetComponentData<UnitTarget>(target).Cell, sensorCell));
+            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(lookups.TargetLookup[target].Cell, sensorCell));
         }
-        if (em.HasComponent<UnitPathRequest>(target))
+        if (lookups.PathRequestLookup.HasComponent(target))
         {
             hasGoal = true;
-            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(em.GetComponentData<UnitPathRequest>(target).Goal, sensorCell));
+            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(lookups.PathRequestLookup[target].Goal, sensorCell));
         }
-        if (em.HasComponent<UnitLongDistanceMove>(target))
+        if (lookups.LongDistanceMoveLookup.HasComponent(target))
         {
             hasGoal = true;
-            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(em.GetComponentData<UnitLongDistanceMove>(target).FinalGoal, sensorCell));
+            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(lookups.LongDistanceMoveLookup[target].FinalGoal, sensorCell));
         }
-        if (em.HasComponent<EngageTarget>(target))
+        if (lookups.EngageTargetLookup.HasComponent(target))
         {
             hasGoal = true;
-            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(em.GetComponentData<EngageTarget>(target).Cell, sensorCell));
+            bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(lookups.EngageTargetLookup[target].Cell, sensorCell));
         }
-        if (em.HasComponent<BaseBreachOrder>(target))
+        if (lookups.BaseBreachOrderLookup.HasComponent(target))
         {
             hasGoal = true;
-            BaseBreachOrder order = em.GetComponentData<BaseBreachOrder>(target);
+            BaseBreachOrder order = lookups.BaseBreachOrderLookup[target];
             bestGoalDistance = math.min(bestGoalDistance, ChebyshevDistance(order.FinalCell, sensorCell));
         }
 
         return hasGoal && bestGoalDistance < currentDistance;
     }
 
-    private static float EstimateEtaSeconds(EntityManager em, Entity target, int2 sensorCell, int2 targetCell, float cellSize)
+    private static float EstimateEtaSeconds(ThreatTargetLookups lookups, Entity target, int2 sensorCell, int2 targetCell, float cellSize)
     {
         float distanceCells = math.distance(new float2(sensorCell.x, sensorCell.y), new float2(targetCell.x, targetCell.y));
-        float speed = em.HasComponent<UnitMove>(target)
-            ? math.max(0.1f, em.GetComponentData<UnitMove>(target).Speed)
+        float speed = lookups.UnitMoveLookup.HasComponent(target)
+            ? math.max(0.1f, lookups.UnitMoveLookup[target].Speed)
             : FallbackThreatSpeed;
         return distanceCells * cellSize / speed;
     }

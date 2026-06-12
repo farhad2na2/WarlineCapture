@@ -464,28 +464,43 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitHealth>(),
             ComponentType.ReadOnly<LocalTransform>());
-        using NativeArray<Entity> buildings = buildingQuery.ToEntityArray(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> infoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
+        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+        using NativeArray<ArchetypeChunk> chunks = buildingQuery.ToArchetypeChunkArray(Allocator.Temp);
 
-        for (int i = 0; i < buildings.Length; i++)
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = buildings[i];
-            Faction faction = em.GetComponentData<Faction>(candidate);
-            if (faction.Id == sourceFaction || FactionIdentitySystem.IsNeutral(faction.Id))
-                continue;
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<RuntimeBuildingCombatInfo> infos = chunk.GetNativeArray(ref infoType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref healthType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
 
-            UnitHealth health = em.GetComponentData<UnitHealth>(candidate);
-            if (health.Current <= 0)
-                continue;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                Faction faction = factions[i];
+                if (faction.Id == sourceFaction || FactionIdentitySystem.IsNeutral(faction.Id))
+                    continue;
 
-            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(candidate);
-            LocalTransform transform = em.GetComponentData<LocalTransform>(candidate);
-            float score = ScoreEnemyBuildingDebugTarget(em, candidate, info, sourcePosition, transform.Position);
-            if (score <= bestScore)
-                continue;
+                UnitHealth health = healths[i];
+                if (health.Current <= 0)
+                    continue;
 
-            bestEntity = candidate;
-            bestScore = score;
-            targetPosition = transform.Position;
+                RuntimeBuildingCombatInfo info = infos[i];
+                LocalTransform transform = transforms[i];
+                float score = ScoreEnemyBuildingDebugTarget(em, candidate, info, sourcePosition, transform.Position);
+                if (score <= bestScore)
+                    continue;
+
+                bestEntity = candidate;
+                bestScore = score;
+                targetPosition = transform.Position;
+            }
         }
 
         if (bestEntity != Entity.Null)

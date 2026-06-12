@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Game_UnitAttackTrace_Config
   m_EditorClassIdentifier: 
   worldCamera: {fileID: 0}
-  sourceHeightOffset: 0.9
+  sourceHeightOffset: 0.95
   targetHeightOffset: 0.9
+  sourceForwardOffset: 0.5
   traceShader: {fileID: 4800000, guid: 7e6df50431884650bcdd06e6c6262c1f, type: 3}

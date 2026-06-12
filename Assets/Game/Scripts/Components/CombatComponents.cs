@@ -172,6 +172,7 @@ public sealed class UnitMuzzleFlashVfxReference : IComponentData
 {
     public GameObject Prefab;
     public float HeightOffset;
+    public float ForwardOffset;
 }
 
 public enum GroundMissileLauncherPhase : byte

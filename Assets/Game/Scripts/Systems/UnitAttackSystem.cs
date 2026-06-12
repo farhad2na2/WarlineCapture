@@ -157,6 +157,16 @@ public partial struct UnitAttackSystem : ISystem
                 continue;
             }
 
+            // Wind-up: if the unit was idle (gun down), raise the weapon first and fire
+            // the first bullet a moment later so shots line up with the shoot animation.
+            // Gated on the animation-order buffer so logic-only tests are unaffected.
+            if (attackAnimRw.TimeRemaining <= 0f && em.HasBuffer<UnitAnimationOrderEntry>(entity))
+            {
+                attackAnimRw.TimeRemaining = math.max(0.01f, animationSettingsRo.AttackAnimationSeconds);
+                stateRw.CooldownRemaining = math.clamp(attackRo.CooldownSeconds * 0.5f, 0.05f, 0.18f);
+                continue;
+            }
+
             stateRw.CooldownRemaining = math.max(0.01f, attackRo.CooldownSeconds);
             traceRw.ShotCounter++;
             int tracerInterval = math.max(1, attackRo.TracerEveryNthShot);
@@ -166,8 +176,15 @@ public partial struct UnitAttackSystem : ISystem
                 traceRw.TimeRemaining = math.max(0.01f, attackRo.TraceVisibleSeconds);
                 traceRw.Phase = math.frac(traceRw.Phase + 0.371f);
             }
-            attackAnimRw.TimeRemaining = math.max(0.01f, animationSettingsRo.AttackAnimationSeconds);
-            PlayMuzzleFlash(em, entity, engageRw.Target, selfTransform.ValueRO);
+            // Keep the shoot animation alive through the next shot while continuously
+            // firing, so the unit doesn't flicker back to idle/aim between shots.
+            attackAnimRw.TimeRemaining = math.max(
+                math.max(0.01f, animationSettingsRo.AttackAnimationSeconds),
+                attackRo.CooldownSeconds + 0.15f);
+            // Muzzle flash only on shots that show a tracer, so flash, tracer,
+            // and impact always appear together as one visible shot.
+            if (tracerShown)
+                PlayMuzzleFlash(em, entity, engageRw.Target, selfTransform.ValueRO);
             if (attackRo.Damage <= 0)
                 continue;
 
@@ -296,6 +313,9 @@ public partial struct UnitAttackSystem : ISystem
             if (math.lengthsq(toTarget) > 1e-4f)
                 rotation = Quaternion.LookRotation(toTarget);
         }
+
+        // Push the flash forward from the body center to the gun muzzle.
+        muzzlePosition += (float3)(Vector3)(rotation * Vector3.forward) * math.max(0f, muzzleVfx.ForwardOffset);
 
         UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, muzzlePosition, rotation);
     }

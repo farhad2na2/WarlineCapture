@@ -30,6 +30,7 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
     private Camera worldCamera;
     private float sourceHeightOffset = 0.9f;
     private float targetHeightOffset = 0.9f;
+    private float sourceForwardOffset = 0.45f;
     private Shader traceShader;
     private int _renderLayer;
 
@@ -60,6 +61,7 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
             worldCamera = config.WorldCamera;
         sourceHeightOffset = config.SourceHeightOffset;
         targetHeightOffset = config.TargetHeightOffset;
+        sourceForwardOffset = config.SourceForwardOffset;
         traceShader = config.TraceShader;
     }
 
@@ -127,6 +129,15 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
                 continue;
 
             direction /= length;
+
+            // Start the tracer at the gun muzzle instead of the body center.
+            float forwardOffset = Mathf.Min(sourceForwardOffset, length * 0.4f);
+            if (forwardOffset > 0f)
+            {
+                start += direction * forwardOffset;
+                length -= forwardOffset;
+            }
+
             Vector3 cameraForward = worldCamera.transform.forward;
             Vector3 right = Vector3.Cross(cameraForward, direction);
             if (right.sqrMagnitude <= 0.0001f)

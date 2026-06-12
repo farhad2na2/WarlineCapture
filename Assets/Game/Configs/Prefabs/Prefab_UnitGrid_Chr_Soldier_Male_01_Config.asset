@@ -75,6 +75,8 @@ MonoBehaviour:
   attackTraceDashDensity: 4
   attackTraceVisibleSeconds: 0.1
   attackTracerEveryNthShot: 3
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.5
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3

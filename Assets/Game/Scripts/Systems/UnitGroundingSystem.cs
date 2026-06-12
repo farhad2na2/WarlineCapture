@@ -1,17 +1,21 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[BurstCompile]
 [UpdateAfter(typeof(UnitSurfaceTrackingSystem))]
 [UpdateBefore(typeof(UnitMoveVisualStateSystem))]
 public partial struct UnitGroundingSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitSurfaceComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var job = new GroundUnitsJob
@@ -21,6 +25,7 @@ public partial struct UnitGroundingSystem : ISystem
         state.Dependency = job.ScheduleParallel(state.Dependency);
     }
 
+    [BurstCompile]
     [WithNone(typeof(UnitAirMovement))]
     private partial struct GroundUnitsJob : IJobEntity
     {

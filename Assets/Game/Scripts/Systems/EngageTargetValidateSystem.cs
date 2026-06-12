@@ -1,22 +1,24 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
 // Clears invalid EngageTarget BEFORE UnitEngagementSystem so units can re-acquire immediately,
 // and restores UnitPathRequest so they don't get stuck idling after a kill.
+[BurstCompile]
 [UpdateAfter(typeof(UnitHealthBarSystem))]
 [UpdateBefore(typeof(UnitEngagementSystem))]
 public partial struct EngageTargetValidateSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EngageTarget>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        state.Dependency.Complete();
-
         var targetTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
         var targetHealthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
@@ -25,35 +27,57 @@ public partial struct EngageTargetValidateSystem : ISystem
 
         // Apply immediately this frame (no ECB system) so UnitEngagementSystem can re-acquire right away.
         // Use an ECB to avoid structural changes while iterating.
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (engage, entity) in SystemAPI.Query<RefRO<EngageTarget>>().WithEntityAccess())
+        state.Dependency = new ValidateEngageTargetJob
         {
-            var t = engage.ValueRO.Target;
-            bool invalid = false;
-            if (t == Entity.Null)
-                invalid = true;
-            else if (!targetTransformLookup.HasComponent(t))
-                invalid = true;
-            else if (targetHealthLookup.HasComponent(t) && targetHealthLookup[t].Current <= 0)
-                invalid = true;
-
-            if (!invalid)
-                continue;
-
-            ecb.RemoveComponent<EngageTarget>(entity);
-
-            if (airStateLookup.HasComponent(entity))
-            {
-                UnitAirComponent airState = airStateLookup[entity];
-                airState.ReturningHome = 1;
-                airStateLookup[entity] = airState;
-            }
-            else if (!pathRequestLookup.HasComponent(entity) && targetLookup.HasComponent(entity))
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = targetLookup[entity].Cell });
-        }
+            TargetTransformLookup = targetTransformLookup,
+            TargetHealthLookup = targetHealthLookup,
+            PathRequestLookup = pathRequestLookup,
+            TargetLookup = targetLookup,
+            AirStateLookup = airStateLookup,
+            Ecb = ecb
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct ValidateEngageTargetJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<LocalTransform> TargetTransformLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> TargetHealthLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        [ReadOnly] public ComponentLookup<UnitTarget> TargetLookup;
+        public ComponentLookup<UnitAirComponent> AirStateLookup;
+        public EntityCommandBuffer Ecb;
+
+        private void Execute(Entity entity, in EngageTarget engage)
+        {
+            Entity target = engage.Target;
+            bool invalid = false;
+            if (target == Entity.Null)
+                invalid = true;
+            else if (!TargetTransformLookup.HasComponent(target))
+                invalid = true;
+            else if (TargetHealthLookup.HasComponent(target) && TargetHealthLookup[target].Current <= 0)
+                invalid = true;
+
+            if (!invalid)
+                return;
+
+            Ecb.RemoveComponent<EngageTarget>(entity);
+
+            if (AirStateLookup.HasComponent(entity))
+            {
+                UnitAirComponent airState = AirStateLookup[entity];
+                airState.ReturningHome = 1;
+                AirStateLookup[entity] = airState;
+            }
+            else if (!PathRequestLookup.HasComponent(entity) && TargetLookup.HasComponent(entity))
+                Ecb.AddComponent(entity, new UnitPathRequest { Goal = TargetLookup[entity].Cell });
+        }
     }
 }

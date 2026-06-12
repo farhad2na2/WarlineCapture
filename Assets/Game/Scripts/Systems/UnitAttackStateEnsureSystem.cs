@@ -1,16 +1,19 @@
-using Unity.Collections;
+using Unity.Burst;
 using Unity.Entities;
 
 // Ensures all units that can attack have a UnitAttackCooldownComponent, even if the prefab was baked before the component existed.
+[BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct UnitAttackStateEnsureSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -22,4 +25,3 @@ public partial struct UnitAttackStateEnsureSystem : ISystem
         }
     }
 }
-

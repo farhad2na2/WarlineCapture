@@ -1,10 +1,13 @@
+using Unity.Burst;
 using Unity.Entities;
 
+[BurstCompile]
 [UpdateAfter(typeof(UnitGridMovementSystem))]
 public partial struct PathPoolMaintenanceSystem : ISystem
 {
     private EntityQuery _activePaths;
 
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
@@ -12,18 +15,16 @@ public partial struct PathPoolMaintenanceSystem : ISystem
         _activePaths = state.GetEntityQuery(ComponentType.ReadOnly<UnitPathRange>());
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         if (_activePaths.CalculateEntityCount() != 0)
             return;
 
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
-        if (!pool.Cells.IsCreated || pool.Cells.Length == 0)
+        RefRW<PathPoolComponent> pool = SystemAPI.GetSingletonRW<PathPoolComponent>();
+        if (!pool.ValueRO.Cells.IsCreated || pool.ValueRO.Cells.Length == 0)
             return;
 
-        pool.Cells.Clear();
-        state.EntityManager.SetComponentData(gridEntity, pool);
+        pool.ValueRW.Cells.Clear();
     }
 }
-

@@ -1,12 +1,16 @@
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
+[BurstCompile]
 [UpdateAfter(typeof(UnitMoveVisualStateSystem))]
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct UnitIdleWanderSystem : ISystem
 {
     private const int MaxCandidateAttempts = 18;
 
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
@@ -16,94 +20,119 @@ public partial struct UnitIdleWanderSystem : ISystem
         state.RequireForUpdate<UnitIdleWanderComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var em = state.EntityManager;
-        var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
-        var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var blocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;
-        var friendlyPassFactionIds = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).FriendlyPassFactionIds;
-        var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
-        var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
-        float dt = SystemAPI.Time.DeltaTime;
-
-        foreach (var (unitGrid, footprint, movementBehavior, moveVisual, animationSettings, idleWanderState, health, entity) in SystemAPI
-                 .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRO<UnitMovementBehavior>, RefRO<UnitMoveVisualComponent>, RefRO<UnitAnimationSettings>, RefRW<UnitIdleWanderComponent>, RefRO<UnitHealth>>()
-                 .WithNone<StaticGridBlocker>()
-                 .WithNone<EngageTarget>()
-                 .WithNone<UnitPathFollow>()
-                 .WithNone<UnitPathRequest>()
-                 .WithNone<ManualMoveOrderTag>()
-                 .WithNone<UnitAirMovement>()
-                 .WithNone<UnitDeathAnimationComponent>()
-                 .WithNone<SelectedUnitTag>()
-                 .WithEntityAccess())
+        DynamicBlockerComponent blocker = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity);
+        DynamicOccupancyComponent occupancy = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var job = new IdleWanderJob
         {
-            ref var wanderState = ref idleWanderState.ValueRW;
-            wanderState.RetrySeconds = math.max(0f, wanderState.RetrySeconds - dt);
-            EnsureIdleDelay(ref wanderState, animationSettings.ValueRO);
+            Grid = grid,
+            Walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray(),
+            Blocked = blocker.Blocked,
+            FriendlyPassFactionIds = blocker.FriendlyPassFactionIds,
+            Occupied = occupancy.Occupied,
+            TargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
+            AutoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true),
+            DeltaTime = SystemAPI.Time.DeltaTime,
+            Ecb = ecb.AsParallelWriter()
+        };
 
-            if (health.ValueRO.Current <= 0)
-                continue;
-            // RTS-controlled units should idle in place. Automatic walking creates
-            // background path requests for large armies even when the player is idle.
-            if (factionLookup.HasComponent(entity))
-                continue;
-            if (movementBehavior.ValueRO.AllowIdleWander == 0)
-                continue;
-            if (moveVisual.ValueRO.IsMoving != 0)
-                continue;
-            if (moveVisual.ValueRO.StillSeconds < wanderState.CurrentIdleDelaySeconds)
-                continue;
-            if (wanderState.RetrySeconds > 0f)
-                continue;
+        state.Dependency = job.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    [WithNone(
+        typeof(StaticGridBlocker),
+        typeof(EngageTarget),
+        typeof(UnitPathFollow),
+        typeof(UnitPathRequest),
+        typeof(ManualMoveOrderTag),
+        typeof(UnitAirMovement),
+        typeof(UnitDeathAnimationComponent),
+        typeof(SelectedUnitTag),
+        typeof(Faction))]
+    private partial struct IdleWanderJob : IJobEntity
+    {
+        [ReadOnly] public GridConfig Grid;
+        [ReadOnly] public NativeArray<GridWalkable> Walkable;
+        [ReadOnly] public NativeBitArray Blocked;
+        [ReadOnly] public NativeArray<byte> FriendlyPassFactionIds;
+        [ReadOnly] public NativeBitArray Occupied;
+        [ReadOnly] public ComponentLookup<UnitTarget> TargetLookup;
+        [ReadOnly] public ComponentLookup<AutoWanderMoveTag> AutoWanderLookup;
+        public float DeltaTime;
+        public EntityCommandBuffer.ParallelWriter Ecb;
+
+        private void Execute(
+            [EntityIndexInQuery] int sortKey,
+            Entity entity,
+            in UnitGrid unitGrid,
+            in UnitFootprint footprint,
+            in UnitMovementBehavior movementBehavior,
+            in UnitMoveVisualComponent moveVisual,
+            in UnitAnimationSettings animationSettings,
+            ref UnitIdleWanderComponent idleWanderState,
+            in UnitHealth health)
+        {
+            idleWanderState.RetrySeconds = math.max(0f, idleWanderState.RetrySeconds - DeltaTime);
+            EnsureIdleDelay(ref idleWanderState, animationSettings);
+
+            if (health.Current <= 0)
+                return;
+            if (movementBehavior.AllowIdleWander == 0)
+                return;
+            if (moveVisual.IsMoving != 0)
+                return;
+            if (moveVisual.StillSeconds < idleWanderState.CurrentIdleDelaySeconds)
+                return;
+            if (idleWanderState.RetrySeconds > 0f)
+                return;
 
             if (!TryFindIdleWanderGoal(
-                    grid,
-                    walkable,
-                    blocked,
-                    friendlyPassFactionIds,
-                    occupied,
-                    unitGrid.ValueRO.Cell,
-                    footprint.ValueRO.Size,
-                    factionLookup.HasComponent(entity) ? factionLookup[entity].Id : (byte)0,
-                    animationSettings.ValueRO,
-                    ref wanderState.RandomState,
+                    Grid,
+                    Walkable,
+                    Blocked,
+                    FriendlyPassFactionIds,
+                    Occupied,
+                    unitGrid.Cell,
+                    footprint.Size,
+                    0,
+                    animationSettings,
+                    ref idleWanderState.RandomState,
                     out int2 goal))
             {
-                wanderState.RetrySeconds = 1f;
-                continue;
+                idleWanderState.RetrySeconds = 1f;
+                return;
             }
 
-            if (em.HasComponent<UnitTarget>(entity))
-                ecb.SetComponent(entity, new UnitTarget { Cell = goal });
+            if (TargetLookup.HasComponent(entity))
+                Ecb.SetComponent(sortKey, entity, new UnitTarget { Cell = goal });
             else
-                ecb.AddComponent(entity, new UnitTarget { Cell = goal });
+                Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = goal });
 
-            if (em.HasComponent<UnitPathRequest>(entity))
-                ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
-            else
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
+            Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = goal });
 
-            if (!em.HasComponent<AutoWanderMoveTag>(entity))
-                ecb.AddComponent<AutoWanderMoveTag>(entity);
+            if (!AutoWanderLookup.HasComponent(entity))
+                Ecb.AddComponent<AutoWanderMoveTag>(sortKey, entity);
 
-            wanderState.RetrySeconds = 0.75f;
-            wanderState.CurrentIdleDelaySeconds = NextIdleDelaySeconds(ref wanderState.RandomState, animationSettings.ValueRO);
+            idleWanderState.RetrySeconds = 0.75f;
+            idleWanderState.CurrentIdleDelaySeconds = NextIdleDelaySeconds(ref idleWanderState.RandomState, animationSettings);
         }
-
-        ecb.Playback(em);
-        ecb.Dispose();
     }
 
     private static bool TryFindIdleWanderGoal(
         GridConfig grid,
-        Unity.Collections.NativeArray<GridWalkable> walkable,
-        Unity.Collections.NativeBitArray blocked,
-        Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        Unity.Collections.NativeBitArray occupied,
+        NativeArray<GridWalkable> walkable,
+        NativeBitArray blocked,
+        NativeArray<byte> friendlyPassFactionIds,
+        NativeBitArray occupied,
         int2 originCell,
         int2 footprintSize,
         byte factionId,
@@ -144,10 +173,10 @@ public partial struct UnitIdleWanderSystem : ISystem
 
     private static bool IsValidIdleWanderCell(
         GridConfig grid,
-        Unity.Collections.NativeArray<GridWalkable> walkable,
-        Unity.Collections.NativeBitArray blocked,
-        Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        Unity.Collections.NativeBitArray occupied,
+        NativeArray<GridWalkable> walkable,
+        NativeBitArray blocked,
+        NativeArray<byte> friendlyPassFactionIds,
+        NativeBitArray occupied,
         int2 originCell,
         int2 footprintSize,
         int2 candidate,

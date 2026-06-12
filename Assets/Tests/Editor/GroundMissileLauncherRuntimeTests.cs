@@ -721,7 +721,7 @@ public sealed class GroundMissileLauncherRuntimeTests
         {
             Range = 600f,
             CooldownSeconds = 3f,
-            Damage = 90,
+            Damage = 100,
             TraceVisibleSeconds = 0.08f
         });
         em.SetComponentData(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
@@ -737,7 +737,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             RocketSpeed = 100f,
             ArcHeight = 10f,
             DamageRadius = 5f,
-            Damage = 90
+            Damage = 100
         });
         em.SetComponentData(entity, new GroundMissileLauncherStateComponent
         {

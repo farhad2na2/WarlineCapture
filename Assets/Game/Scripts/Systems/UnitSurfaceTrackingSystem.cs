@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -186,6 +187,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
         return math.lengthsq(lhs - rhs) <= 0.000001f;
     }
 
+    [BurstCompile]
     [WithNone(typeof(UnitAirMovement))]
     private partial struct TrackUnitSurfacesJob : IJobEntity
     {

@@ -1,14 +1,18 @@
+using Unity.Burst;
 using Unity.Entities;
 
+[BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct UnitAttackTraceStateEnsureSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();

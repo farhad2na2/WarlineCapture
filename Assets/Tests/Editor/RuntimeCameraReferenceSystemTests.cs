@@ -15,13 +15,11 @@ public sealed class RuntimeCameraReferenceSystemTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("RuntimeCameraReferenceSystemTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        InitialUnitsRuntimeState.WorldCamera = null;
     }
 
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.WorldCamera = null;
         if (_cameraObject != null)
             Object.DestroyImmediate(_cameraObject);
         if (World.DefaultGameObjectInjectionWorld == _world)
@@ -30,14 +28,13 @@ public sealed class RuntimeCameraReferenceSystemTests
     }
 
     [Test]
-    public void SetWorldCamera_WritesLegacyAndManagedEcsReference()
+    public void SetWorldCamera_WritesManagedEcsReference()
     {
         Camera camera = CreateCamera();
         var runtimeCameraReferenceSystem = new RuntimeCameraReferenceSystem();
 
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
 
-        Assert.AreSame(camera, InitialUnitsRuntimeState.WorldCamera);
         using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
         Assert.AreEqual(1, query.CalculateEntityCount());
         Entity entity = query.GetSingletonEntity();
@@ -60,7 +57,7 @@ public sealed class RuntimeCameraReferenceSystemTests
     }
 
     [Test]
-    public void ClearWorldCamera_ClearsLegacyAndManagedEcsReference()
+    public void ClearWorldCamera_ClearsManagedEcsReference()
     {
         Camera camera = CreateCamera();
         var runtimeCameraReferenceSystem = new RuntimeCameraReferenceSystem();
@@ -68,7 +65,6 @@ public sealed class RuntimeCameraReferenceSystemTests
 
         runtimeCameraReferenceSystem.ClearWorldCamera();
 
-        Assert.IsNull(InitialUnitsRuntimeState.WorldCamera);
         using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
         Entity entity = query.GetSingletonEntity();
         RuntimeCameraReferenceComponent component = _world.EntityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity);

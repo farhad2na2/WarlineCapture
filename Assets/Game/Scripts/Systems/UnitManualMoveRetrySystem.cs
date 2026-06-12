@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -5,9 +6,6 @@ using UnityEngine;
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct UnitManualMoveRetrySystem : ISystem
 {
-    private const double FreezeLogThresholdSeconds = 0.05d;
-    private static readonly bool EnableManualMoveRetryFreezeLogs = false;
-
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
@@ -15,73 +13,105 @@ public partial struct UnitManualMoveRetrySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        double startTime = Time.realtimeSinceStartupAsDouble;
-        try
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+
+        state.Dependency = new ClearRetryCooldownJob
         {
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
-            int currentFrame = Time.frameCount;
+            CurrentFrame = Time.frameCount,
+            Ecb = ecb
+        }.Schedule(state.Dependency);
 
-            foreach (var (cooldown, entity) in SystemAPI
-                         .Query<RefRO<UnitPathRetryCooldown>>()
-                         .WithEntityAccess())
-            {
-                if (cooldown.ValueRO.ResumeFrame <= currentFrame)
-                    ecb.RemoveComponent<UnitPathRetryCooldown>(entity);
-            }
+        state.Dependency = new RemoveStaleGroupMemberJob
+        {
+            Ecb = ecb
+        }.Schedule(state.Dependency);
 
-            using var staleGroupMembers = SystemAPI
-                .QueryBuilder()
-                .WithAll<ManualMoveGroupMemberTag>()
-                .WithNone<ManualMoveOrderTag>()
-                .Build()
-                .ToEntityArray(Allocator.Temp);
+        state.Dependency = new RestoreManualPathRequestJob
+        {
+            Ecb = ecb
+        }.Schedule(state.Dependency);
 
-            foreach (var entity in staleGroupMembers)
-            {
-                ecb.RemoveComponent<ManualMoveGroupMemberTag>(entity);
-            }
+        state.Dependency = new RestoreLongDistancePathRequestJob
+        {
+            TargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
+            ManualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+            Ecb = ecb
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
 
-            foreach (var (target, entity) in SystemAPI
-                         .Query<RefRO<UnitTarget>>()
-                         .WithAll<ManualMoveOrderTag>()
-                         .WithNone<UnitPathRetryCooldown>()
-                         .WithNone<UnitPathRequest>()
-                         .WithNone<UnitPathFollow>()
-                         .WithNone<EngageTarget>()
-                         .WithNone<UnitAirMovement>()
-                         .WithEntityAccess())
-            {
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = target.ValueRO.Cell });
-            }
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
 
-            foreach (var (longMove, entity) in SystemAPI
-                         .Query<RefRO<UnitLongDistanceMove>>()
-                         .WithNone<UnitPathRetryCooldown>()
-                         .WithNone<UnitPathRequest>()
-                         .WithNone<UnitPathFollow>()
-                         .WithNone<EngageTarget>()
-                         .WithNone<UnitAirMovement>()
-                         .WithEntityAccess())
-            {
-                if (state.EntityManager.HasComponent<UnitTarget>(entity))
-                    ecb.SetComponent(entity, new UnitTarget { Cell = longMove.ValueRO.FinalGoal });
-                else
-                    ecb.AddComponent(entity, new UnitTarget { Cell = longMove.ValueRO.FinalGoal });
+    [BurstCompile]
+    private partial struct ClearRetryCooldownJob : IJobEntity
+    {
+        public int CurrentFrame;
+        public EntityCommandBuffer Ecb;
 
-                if (!state.EntityManager.HasComponent<ManualMoveOrderTag>(entity))
-                    ecb.AddComponent<ManualMoveOrderTag>(entity);
-
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = longMove.ValueRO.FinalGoal });
-            }
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
+        private void Execute(Entity entity, in UnitPathRetryCooldown cooldown)
+        {
+            if (cooldown.ResumeFrame <= CurrentFrame)
+                Ecb.RemoveComponent<UnitPathRetryCooldown>(entity);
         }
-        finally
+    }
+
+    [BurstCompile]
+    [WithAll(typeof(ManualMoveGroupMemberTag))]
+    [WithNone(typeof(ManualMoveOrderTag))]
+    private partial struct RemoveStaleGroupMemberJob : IJobEntity
+    {
+        public EntityCommandBuffer Ecb;
+
+        private void Execute(Entity entity)
         {
-            double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
-            if (EnableManualMoveRetryFreezeLogs && elapsed >= FreezeLogThresholdSeconds)
-                Debug.Log($"[FreezeDetect:ECS] UnitManualMoveRetrySystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms");
+            Ecb.RemoveComponent<ManualMoveGroupMemberTag>(entity);
+        }
+    }
+
+    [BurstCompile]
+    [WithAll(typeof(ManualMoveOrderTag))]
+    [WithNone(
+        typeof(UnitLongDistanceMove),
+        typeof(UnitPathRetryCooldown),
+        typeof(UnitPathRequest),
+        typeof(UnitPathFollow),
+        typeof(EngageTarget),
+        typeof(UnitAirMovement))]
+    private partial struct RestoreManualPathRequestJob : IJobEntity
+    {
+        public EntityCommandBuffer Ecb;
+
+        private void Execute(Entity entity, in UnitTarget target)
+        {
+            Ecb.AddComponent(entity, new UnitPathRequest { Goal = target.Cell });
+        }
+    }
+
+    [BurstCompile]
+    [WithNone(
+        typeof(UnitPathRetryCooldown),
+        typeof(UnitPathRequest),
+        typeof(UnitPathFollow),
+        typeof(EngageTarget),
+        typeof(UnitAirMovement))]
+    private partial struct RestoreLongDistancePathRequestJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<UnitTarget> TargetLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
+        public EntityCommandBuffer Ecb;
+
+        private void Execute(Entity entity, in UnitLongDistanceMove longMove)
+        {
+            if (TargetLookup.HasComponent(entity))
+                Ecb.SetComponent(entity, new UnitTarget { Cell = longMove.FinalGoal });
+            else
+                Ecb.AddComponent(entity, new UnitTarget { Cell = longMove.FinalGoal });
+
+            if (!ManualMoveLookup.HasComponent(entity))
+                Ecb.AddComponent<ManualMoveOrderTag>(entity);
+
+            Ecb.AddComponent(entity, new UnitPathRequest { Goal = longMove.FinalGoal });
         }
     }
 }

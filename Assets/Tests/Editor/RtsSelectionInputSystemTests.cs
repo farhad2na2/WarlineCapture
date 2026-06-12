@@ -466,6 +466,79 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void BoardTargetMode_SelectedTransportAndPassengerUsesTransportFirstMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity passenger = em.CreateEntity(typeof(SelectedUnitTag));
+        Entity transport = em.CreateEntity(typeof(SelectedUnitTag));
+        var inputSystem = new RtsSelectionInputSystem();
+        var selectionState = new SelectionStateSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
+
+        BoardCommandModeDirection appliedDirection = BoardCommandModeDirection.None;
+        bool boardAllInteractable = false;
+        bool worldMarkersVisible = false;
+        TacticalCommandResult commandResult = default;
+
+        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
+        var context = new RtsSelectionFocusCommandSystem.Context(
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            inputSystem: inputSystem,
+            selectionStateSystem: selectionState,
+            focusedUnitLifecycleSystem: new FocusedUnitLifecycleSystem(),
+            unitTargetOrderSystem: new UnitTargetOrderSystem(),
+            buildingPlacementInteractionSystem: null,
+            buildingPlacementInteractionContext: default,
+            worldCamera: null,
+            tryGetEntityManager: (out EntityManager entityManager) =>
+            {
+                entityManager = em;
+                return true;
+            },
+            ensureEntityQueries: _ => { },
+            clearCurrentSelection: null,
+            queueSelectionRectangleRequest: null,
+            processSelectionRectangleRequests: null,
+            applyHudSelection: null,
+            applyHudCommandResult: result => commandResult = result,
+            applyHudCommandMode: null,
+            applyHudBoardCommandMode: (direction, interactable) =>
+            {
+                appliedDirection = direction;
+                boardAllInteractable = interactable;
+            },
+            clearHudSelection: null,
+            clearHudCommandMode: null,
+            setHudWorldMarkersVisible: visible => worldMarkersVisible = visible,
+            setCameraDragging: _ => { },
+            setExplicitAttackTargetModeActive: null,
+            logSelectionDiagnostic: null,
+            describeEntity: null,
+            validateControllableEntity: null,
+            isBoardPassengerCandidate: (_, entity) => entity == passenger,
+            isBoardTransportCandidate: (_, entity) => entity == transport,
+            issueHoldPositionOrder: null,
+            issueStopOrder: null,
+            destroyFocusedUnit: null,
+            returnFocusedSelectionToBase: null,
+            boardFocusedTransport: null,
+            tryFocusScreenPosition: null,
+            issueFocusedMissileLauncherRadarAttack: null,
+            armFocusedAttackTargetMode: null,
+            cancelExplicitAttackTargetMode: null);
+
+        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
+
+        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection activeDirection, out Entity lockedTransport));
+        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, activeDirection);
+        Assert.AreEqual(transport, lockedTransport);
+        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, appliedDirection);
+        Assert.IsTrue(boardAllInteractable);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(TacticalCommandReasonCode.None, commandResult.ReasonCode);
+    }
+
+    [Test]
     public void SelectionUiCommandSystem_BoardAllQueuesBoardAllSelectedTransportAndSuppressesRelease()
     {
         var commandSystem = new SelectionUiCommandSystem();

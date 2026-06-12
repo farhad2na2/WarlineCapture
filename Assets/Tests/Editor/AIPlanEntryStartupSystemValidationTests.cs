@@ -60,8 +60,8 @@ public sealed class AIPlanEntryStartupSystemValidationTests
             LoadPlanEntryConfig());
 
         Assert.AreEqual(2, entries.Length);
-        Assert.AreEqual("Custom_Rifleman", entries[0].UnitId.ToString());
-        Assert.AreEqual("Custom_APC", entries[1].UnitId.ToString());
+        Assert.AreEqual("custom_rifleman", entries[0].UnitId.ToString());
+        Assert.AreEqual("custom_apc", entries[1].UnitId.ToString());
     }
 
     [Test]
@@ -76,7 +76,7 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         system.WriteProductionPlanEntries(entries, null, null, LoadPlanEntryConfig());
 
         Assert.AreEqual(1, entries.Length);
-        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", entries[0].UnitId.ToString());
+        Assert.AreEqual("unit_chr_soldier_male_02_alt_04", entries[0].UnitId.ToString());
     }
 
     private static AIPlanEntryStartupConfig LoadPlanEntryConfig()

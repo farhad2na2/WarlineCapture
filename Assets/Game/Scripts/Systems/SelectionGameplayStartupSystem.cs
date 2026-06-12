@@ -787,7 +787,7 @@ internal sealed class SelectionGameplayStartupSystem
                 null,
                 selectedCount > 0,
                 selectedCount > 0,
-                HasSelectedBoardPassenger(em) || TryGetSelectedBoardTransport(em, out _));
+                HasSelectedBoardAction(em));
         }
 
         Sprite ResolveActiveSquadTrayPortraitSprite()
@@ -947,32 +947,13 @@ internal sealed class SelectionGameplayStartupSystem
             return capacity > passengers + CountPendingBoardingOrders(em, entity);
         }
 
-        bool HasSelectedBoardPassenger(EntityManager em)
+        bool HasSelectedBoardAction(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (em.Exists(entity) && unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
-                    return true;
-            }
-
-            return false;
-        }
-
-        bool TryGetSelectedBoardTransport(EntityManager em, out Entity transport)
-        {
-            transport = Entity.Null;
             if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
                 em.Exists(focusedUnit) &&
                 unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, focusedUnit) &&
                 IsBoardCommandAvailable(em, focusedUnit))
             {
-                transport = focusedUnit;
                 return true;
             }
 
@@ -984,15 +965,17 @@ internal sealed class SelectionGameplayStartupSystem
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
-                if (!em.Exists(entity) ||
-                    !unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity) ||
-                    !IsBoardCommandAvailable(em, entity))
-                {
+                if (!em.Exists(entity))
                     continue;
-                }
 
-                transport = entity;
-                return true;
+                if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
+                    return true;
+
+                if (unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity) &&
+                    IsBoardCommandAvailable(em, entity))
+                {
+                    return true;
+                }
             }
 
             return false;

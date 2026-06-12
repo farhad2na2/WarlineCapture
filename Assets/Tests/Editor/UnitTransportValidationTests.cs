@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Collections;
@@ -5,6 +6,7 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class UnitTransportValidationTests
@@ -13,6 +15,50 @@ public sealed class UnitTransportValidationTests
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
+
+    public static void RunBatchValidation()
+    {
+        try
+        {
+            RunTest(test => test.GroundPersonnelTransport_BoardsSoldierLikeApc());
+            RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
+            RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
+            RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
+            RunTest(test => test.AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal());
+            RunTest(test => test.AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint());
+            RunTest(test => test.AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding());
+            RunTest(test => test.AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays());
+            RunTest(test => test.AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying());
+            RunTest(test => test.AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals());
+            RunTest(test => test.Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal());
+            RunTest(test => test.HelicopterRopeDisembark_ReleasesPassengersOneAtATime());
+            RunTest(test => test.HelicopterRopeDisembark_DropsStraightDownFromVisualModelCenter());
+            RunTest(test => test.HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells());
+            RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
+            RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
+            Debug.Log("[UnitTransportValidation] result=Passed tests=16");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UnitTransportValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunTest(Action<UnitTransportValidationTests> test)
+    {
+        var fixture = new UnitTransportValidationTests();
+        try
+        {
+            test(fixture);
+        }
+        finally
+        {
+            fixture.TearDown();
+        }
+    }
 
     [TearDown]
     public void TearDown()

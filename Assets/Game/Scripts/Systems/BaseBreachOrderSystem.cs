@@ -1,194 +1,213 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[BurstCompile]
 [UpdateBefore(typeof(EngageTargetValidateSystem))]
 public partial struct BaseBreachOrderSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<BaseBreachOrder>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
-        var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
-        var gridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-        EntityManager em = state.EntityManager;
-
-        foreach (var (breachOrder, entity) in SystemAPI
-                     .Query<RefRW<BaseBreachOrder>>()
-                     .WithEntityAccess())
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        state.Dependency = new ProcessBaseBreachOrderJob
         {
-            BaseBreachOrder order = breachOrder.ValueRO;
-
-            if (!IsAliveTarget(order.FinalTarget, transformLookup, healthLookup))
-            {
-                ecb.RemoveComponent<BaseBreachOrder>(entity);
-                continue;
-            }
-
-            if (order.Stage == BaseBreachOrder.StageMovingToEnemyBreach)
-            {
-                if (!IsAliveTarget(order.BreachTarget, transformLookup, healthLookup))
-                {
-                    order.Stage = BaseBreachOrder.StageMovingToFinalTarget;
-                    breachOrder.ValueRW = order;
-                    EnsurePathRequest(em, ecb, entity, order.FinalCell);
-                    RemoveIfPresent<EngageTarget>(em, ecb, entity);
-                    continue;
-                }
-
-                if (!IsNearCell(entity, order.BreachCell, gridLookup))
-                {
-                    EnsurePathRequest(em, ecb, entity, order.BreachCell);
-                    RemoveIfPresent<EngageTarget>(em, ecb, entity);
-                    continue;
-                }
-
-                order.Stage = BaseBreachOrder.StageAttackingBreach;
-                breachOrder.ValueRW = order;
-                SetEngageTarget(em, ecb, entity, order.BreachTarget, order.BreachCell, order.BreachPosition, order.IsCommanded);
-                RemovePathingState(em, ecb, entity);
-                continue;
-            }
-
-            if (order.Stage == BaseBreachOrder.StageMovingToFinalTarget)
-            {
-                if (HasActivePathingState(em, entity))
-                {
-                    EnsurePathRequest(em, ecb, entity, order.FinalCell);
-                    RemoveIfPresent<EngageTarget>(em, ecb, entity);
-                    continue;
-                }
-
-                RemovePathingState(em, ecb, entity);
-                SetEngageTarget(em, ecb, entity, order.FinalTarget, order.FinalCell, order.FinalPosition, order.IsCommanded);
-                ecb.RemoveComponent<BaseBreachOrder>(entity);
-                continue;
-            }
-
-            if (em.HasComponent<EngageTarget>(entity))
-            {
-                EngageTarget engage = em.GetComponentData<EngageTarget>(entity);
-                if (engage.Target == order.FinalTarget)
-                {
-                    ecb.RemoveComponent<BaseBreachOrder>(entity);
-                    continue;
-                }
-
-                if (IsAliveTarget(engage.Target, transformLookup, healthLookup))
-                    continue;
-            }
-
-            if (IsAliveTarget(order.BreachTarget, transformLookup, healthLookup))
-            {
-                SetEngageTarget(em, ecb, entity, order.BreachTarget, order.BreachCell, order.BreachPosition, order.IsCommanded);
-                continue;
-            }
-
-            order.Stage = BaseBreachOrder.StageMovingToFinalTarget;
-            breachOrder.ValueRW = order;
-            EnsurePathRequest(em, ecb, entity, order.FinalCell);
-            RemoveIfPresent<EngageTarget>(em, ecb, entity);
-        }
+            TransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
+            HealthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true),
+            GridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true),
+            UnitTargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
+            UnitPathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true),
+            UnitPathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true),
+            UnitPathRangeLookup = SystemAPI.GetComponentLookup<UnitPathRange>(true),
+            UnitPathRetryCooldownLookup = SystemAPI.GetComponentLookup<UnitPathRetryCooldown>(true),
+            ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+            ManualMoveGroupLookup = SystemAPI.GetComponentLookup<ManualMoveGroupMemberTag>(true),
+            EngageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true),
+            Ecb = ecb
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
 
-    private static bool IsAliveTarget(
-        Entity target,
-        ComponentLookup<LocalTransform> transformLookup,
-        ComponentLookup<UnitHealth> healthLookup)
+    [BurstCompile]
+    private partial struct ProcessBaseBreachOrderJob : IJobEntity
     {
-        if (target == Entity.Null || !transformLookup.HasComponent(target))
-            return false;
+        [ReadOnly] public ComponentLookup<LocalTransform> TransformLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
+        [ReadOnly] public ComponentLookup<UnitGrid> GridLookup;
+        [ReadOnly] public ComponentLookup<UnitTarget> UnitTargetLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> UnitPathRequestLookup;
+        [ReadOnly] public ComponentLookup<UnitPathFollow> UnitPathFollowLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRange> UnitPathRangeLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRetryCooldown> UnitPathRetryCooldownLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveOrderLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveGroupMemberTag> ManualMoveGroupLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        public EntityCommandBuffer Ecb;
 
-        return !healthLookup.HasComponent(target) || healthLookup[target].Current > 0;
-    }
-
-    private static bool IsNearCell(
-        Entity entity,
-        int2 targetCell,
-        ComponentLookup<UnitGrid> gridLookup)
-    {
-        if (!gridLookup.HasComponent(entity))
-            return false;
-
-        int2 delta = gridLookup[entity].Cell - targetCell;
-        return math.abs(delta.x) <= 1 && math.abs(delta.y) <= 1;
-    }
-
-    private static void EnsurePathRequest(
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        Entity entity,
-        int2 goal)
-    {
-        if (em.HasComponent<UnitTarget>(entity))
-            em.SetComponentData(entity, new UnitTarget { Cell = goal });
-        else
-            ecb.AddComponent(entity, new UnitTarget { Cell = goal });
-
-        if (!em.HasComponent<UnitPathRequest>(entity) &&
-            !em.HasComponent<UnitPathFollow>(entity) &&
-            !em.HasComponent<UnitPathRetryCooldown>(entity))
+        private void Execute(Entity entity, ref BaseBreachOrder breachOrder)
         {
-            ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
+            BaseBreachOrder order = breachOrder;
+
+            if (!IsAliveTarget(order.FinalTarget))
+            {
+                Ecb.RemoveComponent<BaseBreachOrder>(entity);
+                return;
+            }
+
+            if (order.Stage == BaseBreachOrder.StageMovingToEnemyBreach)
+            {
+                if (!IsAliveTarget(order.BreachTarget))
+                {
+                    order.Stage = BaseBreachOrder.StageMovingToFinalTarget;
+                    breachOrder = order;
+                    EnsurePathRequest(entity, order.FinalCell);
+                    RemoveEngageTargetIfPresent(entity);
+                    return;
+                }
+
+                if (!IsNearCell(entity, order.BreachCell))
+                {
+                    EnsurePathRequest(entity, order.BreachCell);
+                    RemoveEngageTargetIfPresent(entity);
+                    return;
+                }
+
+                order.Stage = BaseBreachOrder.StageAttackingBreach;
+                breachOrder = order;
+                SetEngageTarget(entity, order.BreachTarget, order.BreachCell, order.BreachPosition, order.IsCommanded);
+                RemovePathingState(entity);
+                return;
+            }
+
+            if (order.Stage == BaseBreachOrder.StageMovingToFinalTarget)
+            {
+                if (HasActivePathingState(entity))
+                {
+                    EnsurePathRequest(entity, order.FinalCell);
+                    RemoveEngageTargetIfPresent(entity);
+                    return;
+                }
+
+                RemovePathingState(entity);
+                SetEngageTarget(entity, order.FinalTarget, order.FinalCell, order.FinalPosition, order.IsCommanded);
+                Ecb.RemoveComponent<BaseBreachOrder>(entity);
+                return;
+            }
+
+            if (EngageTargetLookup.HasComponent(entity))
+            {
+                EngageTarget engage = EngageTargetLookup[entity];
+                if (engage.Target == order.FinalTarget)
+                {
+                    Ecb.RemoveComponent<BaseBreachOrder>(entity);
+                    return;
+                }
+
+                if (IsAliveTarget(engage.Target))
+                    return;
+            }
+
+            if (IsAliveTarget(order.BreachTarget))
+            {
+                SetEngageTarget(entity, order.BreachTarget, order.BreachCell, order.BreachPosition, order.IsCommanded);
+                return;
+            }
+
+            order.Stage = BaseBreachOrder.StageMovingToFinalTarget;
+            breachOrder = order;
+            EnsurePathRequest(entity, order.FinalCell);
+            RemoveEngageTargetIfPresent(entity);
         }
 
-        if (!em.HasComponent<ManualMoveOrderTag>(entity))
-            ecb.AddComponent<ManualMoveOrderTag>(entity);
-    }
-
-    private static void SetEngageTarget(
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        Entity entity,
-        Entity target,
-        int2 cell,
-        float3 position,
-        byte isCommanded)
-    {
-        EngageTarget engage = new()
+        private bool IsAliveTarget(Entity target)
         {
-            Target = target,
-            Cell = cell,
-            Position = position,
-            IsCommanded = isCommanded
-        };
+            if (target == Entity.Null || !TransformLookup.HasComponent(target))
+                return false;
 
-        if (em.HasComponent<EngageTarget>(entity))
-            em.SetComponentData(entity, engage);
-        else
-            ecb.AddComponent(entity, engage);
-    }
+            return !HealthLookup.HasComponent(target) || HealthLookup[target].Current > 0;
+        }
 
-    private static void RemovePathingState(EntityManager em, EntityCommandBuffer ecb, Entity entity)
-    {
-        RemoveIfPresent<UnitPathRequest>(em, ecb, entity);
-        RemoveIfPresent<UnitPathFollow>(em, ecb, entity);
-        RemoveIfPresent<UnitPathRange>(em, ecb, entity);
-        RemoveIfPresent<UnitTarget>(em, ecb, entity);
-        RemoveIfPresent<ManualMoveOrderTag>(em, ecb, entity);
-        RemoveIfPresent<ManualMoveGroupMemberTag>(em, ecb, entity);
-    }
+        private bool IsNearCell(Entity entity, int2 targetCell)
+        {
+            if (!GridLookup.HasComponent(entity))
+                return false;
 
-    private static void RemoveIfPresent<T>(EntityManager em, EntityCommandBuffer ecb, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (em.HasComponent<T>(entity))
-            ecb.RemoveComponent<T>(entity);
-    }
+            int2 delta = GridLookup[entity].Cell - targetCell;
+            return math.abs(delta.x) <= 1 && math.abs(delta.y) <= 1;
+        }
 
-    private static bool HasActivePathingState(EntityManager em, Entity entity)
-    {
-        return em.HasComponent<UnitPathRequest>(entity) ||
-               em.HasComponent<UnitPathFollow>(entity) ||
-               em.HasComponent<UnitPathRetryCooldown>(entity);
+        private void EnsurePathRequest(Entity entity, int2 goal)
+        {
+            if (UnitTargetLookup.HasComponent(entity))
+                Ecb.SetComponent(entity, new UnitTarget { Cell = goal });
+            else
+                Ecb.AddComponent(entity, new UnitTarget { Cell = goal });
+
+            if (!UnitPathRequestLookup.HasComponent(entity) &&
+                !UnitPathFollowLookup.HasComponent(entity) &&
+                !UnitPathRetryCooldownLookup.HasComponent(entity))
+            {
+                Ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
+            }
+
+            if (!ManualMoveOrderLookup.HasComponent(entity))
+                Ecb.AddComponent<ManualMoveOrderTag>(entity);
+        }
+
+        private void SetEngageTarget(Entity entity, Entity target, int2 cell, float3 position, byte isCommanded)
+        {
+            EngageTarget engage = new()
+            {
+                Target = target,
+                Cell = cell,
+                Position = position,
+                IsCommanded = isCommanded
+            };
+
+            if (EngageTargetLookup.HasComponent(entity))
+                Ecb.SetComponent(entity, engage);
+            else
+                Ecb.AddComponent(entity, engage);
+        }
+
+        private void RemovePathingState(Entity entity)
+        {
+            if (UnitPathRequestLookup.HasComponent(entity))
+                Ecb.RemoveComponent<UnitPathRequest>(entity);
+            if (UnitPathFollowLookup.HasComponent(entity))
+                Ecb.RemoveComponent<UnitPathFollow>(entity);
+            if (UnitPathRangeLookup.HasComponent(entity))
+                Ecb.RemoveComponent<UnitPathRange>(entity);
+            if (UnitTargetLookup.HasComponent(entity))
+                Ecb.RemoveComponent<UnitTarget>(entity);
+            if (ManualMoveOrderLookup.HasComponent(entity))
+                Ecb.RemoveComponent<ManualMoveOrderTag>(entity);
+            if (ManualMoveGroupLookup.HasComponent(entity))
+                Ecb.RemoveComponent<ManualMoveGroupMemberTag>(entity);
+        }
+
+        private void RemoveEngageTargetIfPresent(Entity entity)
+        {
+            if (EngageTargetLookup.HasComponent(entity))
+                Ecb.RemoveComponent<EngageTarget>(entity);
+        }
+
+        private bool HasActivePathingState(Entity entity)
+        {
+            return UnitPathRequestLookup.HasComponent(entity) ||
+                   UnitPathFollowLookup.HasComponent(entity) ||
+                   UnitPathRetryCooldownLookup.HasComponent(entity);
+        }
     }
 }

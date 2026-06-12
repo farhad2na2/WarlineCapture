@@ -748,13 +748,25 @@ public sealed class RtsSelectionFocusCommandSystem
             return false;
 
         context.EnsureEntityQueries?.Invoke(em);
-        if (TryFindSelectedBoardTransport(context, em, out transport))
+        if (TryFindFocusedBoardTransport(context, em, out transport))
         {
             direction = BoardCommandModeDirection.TransportToPassenger;
             return true;
         }
 
-        if (TryHasSelectedBoardPassenger(context, em, out bool hasSelected))
+        ResolveSelectedBoardModeSource(
+            context,
+            em,
+            out transport,
+            out bool hasSelectedBoardPassenger,
+            out bool hasSelected);
+        if (transport != Entity.Null)
+        {
+            direction = BoardCommandModeDirection.TransportToPassenger;
+            return true;
+        }
+
+        if (hasSelectedBoardPassenger)
         {
             direction = BoardCommandModeDirection.PassengerToTransport;
             return true;
@@ -767,7 +779,7 @@ public sealed class RtsSelectionFocusCommandSystem
         return false;
     }
 
-    private static bool TryFindSelectedBoardTransport(Context context, EntityManager em, out Entity transport)
+    private static bool TryFindFocusedBoardTransport(Context context, EntityManager em, out Entity transport)
     {
         transport = Entity.Null;
         if (context.SelectionStateSystem.FocusedUnit != Entity.Null &&
@@ -778,31 +790,22 @@ public sealed class RtsSelectionFocusCommandSystem
             return true;
         }
 
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (em.Exists(entity) &&
-                context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
-            {
-                transport = entity;
-                return true;
-            }
-        }
-
         return false;
     }
 
-    private static bool TryHasSelectedBoardPassenger(Context context, EntityManager em, out bool hasSelected)
+    private static void ResolveSelectedBoardModeSource(
+        Context context,
+        EntityManager em,
+        out Entity transport,
+        out bool hasSelectedBoardPassenger,
+        out bool hasSelected)
     {
+        transport = Entity.Null;
+        hasSelectedBoardPassenger = false;
         hasSelected = false;
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
         if (query.IsEmptyIgnoreFilter)
-            return false;
+            return;
 
         using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < selectedEntities.Length; i++)
@@ -813,10 +816,14 @@ public sealed class RtsSelectionFocusCommandSystem
 
             hasSelected = true;
             if (context.IsBoardPassengerCandidate?.Invoke(em, entity) == true)
-                return true;
-        }
+                hasSelectedBoardPassenger = true;
 
-        return false;
+            if (context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
+            {
+                transport = entity;
+                return;
+            }
+        }
     }
 
     private static bool IsSelectedAttackCapableUnit(EntityManager em, Entity entity)

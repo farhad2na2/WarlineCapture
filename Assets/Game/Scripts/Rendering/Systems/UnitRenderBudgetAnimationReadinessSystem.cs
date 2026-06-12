@@ -6,6 +6,19 @@ using Unity.Transforms;
 
 public readonly struct UnitRenderBudgetAnimationReadinessSystem
 {
+    public struct Lookups
+    {
+        public ComponentLookup<MeshLODComponent> MeshLodLookup;
+        public ComponentLookup<MaterialAlphaCompleteTag> MaterialAlphaCompleteLookup;
+        public byte HasGpuAnimationMaterialLookups;
+
+        public void Update(ref SystemState state)
+        {
+            MeshLodLookup.Update(ref state);
+            MaterialAlphaCompleteLookup.Update(ref state);
+        }
+    }
+
     public bool HasAnimationIndexRecursive(
         Entity entity,
         ComponentLookup<MaterialAnimationIndex> animationIndexLookup,
@@ -28,6 +41,22 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
         }
 
         return false;
+    }
+
+    public bool IsAnimatedRenderReady(
+        Entity root,
+        BufferLookup<Child> childLookup,
+        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups,
+        Lookups lookups)
+    {
+        if (root == Entity.Null || !renderableQueryLookups.EntityStorageInfoLookup.Exists(root))
+            return false;
+
+        bool hasRenderable = false;
+        bool waitingForGpuAnimationMaterial = false;
+        CheckVisualReadinessRecursive(root, childLookup, renderableQuerySystem, renderableQueryLookups, lookups, ref hasRenderable, ref waitingForGpuAnimationMaterial);
+        return hasRenderable && !waitingForGpuAnimationMaterial;
     }
 
     public bool IsAnimatedRenderReady(
@@ -64,6 +93,45 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
         }
 
         return false;
+    }
+
+    private static void CheckVisualReadinessRecursive(
+        Entity entity,
+        BufferLookup<Child> childLookup,
+        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups,
+        Lookups lookups,
+        ref bool hasRenderable,
+        ref bool waitingForGpuAnimationMaterial)
+    {
+        if (entity == Entity.Null || !renderableQueryLookups.EntityStorageInfoLookup.Exists(entity))
+            return;
+
+        if (renderableQuerySystem.IsRenderableEntity(entity, renderableQueryLookups))
+            hasRenderable = true;
+
+        if (lookups.HasGpuAnimationMaterialLookups != 0 &&
+            lookups.MeshLodLookup.HasComponent(entity) &&
+            !lookups.MaterialAlphaCompleteLookup.HasComponent(entity))
+        {
+            waitingForGpuAnimationMaterial = true;
+        }
+
+        if (!childLookup.HasBuffer(entity))
+            return;
+
+        DynamicBuffer<Child> children = childLookup[entity];
+        for (int i = 0; i < children.Length; i++)
+        {
+            CheckVisualReadinessRecursive(
+                children[i].Value,
+                childLookup,
+                renderableQuerySystem,
+                renderableQueryLookups,
+                lookups,
+                ref hasRenderable,
+                ref waitingForGpuAnimationMaterial);
+        }
     }
 
     private static void CheckVisualReadinessRecursive(

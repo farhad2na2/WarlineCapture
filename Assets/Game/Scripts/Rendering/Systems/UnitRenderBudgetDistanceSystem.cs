@@ -28,6 +28,13 @@ public readonly struct UnitRenderBudgetDistanceSystem
         float viewportPadding,
         float edgeSafetyMargin)
     {
+        if (camera == null || !units.IsCreated || !transforms.IsCreated || !distances.IsCreated)
+        {
+            if (distances.IsCreated)
+                distances.Clear();
+            return;
+        }
+
         float4x4 worldToCamera = ToFloat4x4(camera.worldToCameraMatrix);
         new CollectDistanceJob
         {

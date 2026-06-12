@@ -91,7 +91,11 @@ public readonly struct UnitRenderBudgetVisualPlanSystem
         UnitRenderBudgetCharacterPolicySystem characterPolicySystem,
         UnitRenderBudgetReadinessSystem readinessSystem,
         UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem)
+        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetReadinessSystem.Lookups readinessLookups = default,
+        UnitRenderBudgetAnimationReadinessSystem.Lookups animationReadinessLookups = default,
+        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups = default,
+        bool useLookupReadiness = false)
     {
         bool shouldShowDetail = request.DetailedBand;
         bool shouldShowMid =
@@ -217,10 +221,14 @@ public readonly struct UnitRenderBudgetVisualPlanSystem
         bool keepDetailVisibleDuringHandoff =
             (!shouldShowDetail &&
              shouldShowMid &&
-             !readinessSystem.IsVisualReadyForExclusiveDisplay(em, ecb, readyTaggedThisFrame, request.MidRoot, childLookup, animationReadinessSystem, renderableQuerySystem)) ||
+             !(useLookupReadiness
+                 ? readinessSystem.IsVisualReadyForExclusiveDisplay(ecb, readyTaggedThisFrame, request.MidRoot, childLookup, animationReadinessSystem, renderableQuerySystem, readinessLookups, animationReadinessLookups, renderableQueryLookups)
+                 : readinessSystem.IsVisualReadyForExclusiveDisplay(em, ecb, readyTaggedThisFrame, request.MidRoot, childLookup, animationReadinessSystem, renderableQuerySystem))) ||
             (!shouldShowDetail &&
              shouldShowLow &&
-             !readinessSystem.IsVisualReadyForExclusiveDisplay(em, ecb, readyTaggedThisFrame, request.LowRoot, childLookup, animationReadinessSystem, renderableQuerySystem));
+             !(useLookupReadiness
+                 ? readinessSystem.IsVisualReadyForExclusiveDisplay(ecb, readyTaggedThisFrame, request.LowRoot, childLookup, animationReadinessSystem, renderableQuerySystem, readinessLookups, animationReadinessLookups, renderableQueryLookups)
+                 : readinessSystem.IsVisualReadyForExclusiveDisplay(em, ecb, readyTaggedThisFrame, request.LowRoot, childLookup, animationReadinessSystem, renderableQuerySystem)));
         if (keepDetailVisibleDuringHandoff)
         {
             shouldShowDetail = true;

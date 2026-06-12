@@ -47,10 +47,12 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public UnitRenderBudgetLodReferenceSystem LodReferenceSystem;
         public UnitRenderBudgetLodReferenceSystem.Lookups LodReferenceLookups;
         public UnitRenderBudgetAnimationReadinessSystem AnimationReadinessSystem;
+        public UnitRenderBudgetAnimationReadinessSystem.Lookups AnimationReadinessLookups;
         public UnitRenderBudgetRenderableQuerySystem RenderableQuerySystem;
         public UnitRenderBudgetRenderableQuerySystem.Lookups RenderableQueryLookups;
         public UnitRenderBudgetVisualStateSystem VisualStateSystem;
         public UnitRenderBudgetReadinessSystem ReadinessSystem;
+        public UnitRenderBudgetReadinessSystem.Lookups ReadinessLookups;
         public UnitRenderBudgetRenderSafetySystem RenderSafetySystem;
         public UnitRenderBudgetVisualPlanSystem VisualPlanSystem;
         public UnitRenderBudgetVisibilityChangeSystem VisibilityChangeSystem;
@@ -175,7 +177,11 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 context.CharacterPolicySystem,
                 context.ReadinessSystem,
                 context.AnimationReadinessSystem,
-                context.RenderableQuerySystem);
+                context.RenderableQuerySystem,
+                context.ReadinessLookups,
+                context.AnimationReadinessLookups,
+                context.RenderableQueryLookups,
+                useLookupReadiness: true);
             UnitRenderBudgetVisualPlanSystem.Counters planCounters = visualPlan.Counters;
             result.VisibleCharacterSafeGate += planCounters.VisibleCharacterSafeGate;
             result.VisibleCharacterMidInstances += planCounters.VisibleCharacterMidInstances;

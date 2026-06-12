@@ -1187,6 +1187,27 @@ Progress notes:
   - Architecture guardrail validation also passed:
     `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-renderable-query-lookup.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-12: Continued Phase 8 readiness cleanup in `UnitRenderBudgetReadinessSystem` and `UnitRenderBudgetAnimationReadinessSystem`. The live render-budget handoff path now uses cached entity-storage/component lookups from `UnitRenderBudgetSystem` for visual-ready, renderable-query, mesh-LOD, and material-alpha readiness checks; managed `EntityManager` overloads remain for mismatch diagnostics and presentation-boundary callers.
+  - Main Unity validation was blocked because `/Users/farhad/Projects/WarlineCapture` was open in the editor, so the relevant script and editor-test trees were synced into `WarlineCapture-CodexUnity1` before validation.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-readiness-lookup-shadow-synced-rerun.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=22`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-readiness-lookup-shadow-synced-final.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+- 2026-06-12: Continued Phase 8 visibility-apply cleanup in `UnitRenderBudgetVisibilityApplySystem`. The live apply path now uses cached entity-storage and render-tag component lookups from `UnitRenderBudgetSystem` for existence/tag checks before batching show/hide/cull changes through the existing render-state ECB; the managed `EntityManager` overload remains for callers that do not provide cached lookups.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visibility-apply-lookup-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=23`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visibility-apply-lookup-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+- 2026-06-12: Fixed a runtime null-reference in `UnitRenderBudgetDistanceSystem.Collect` when a test/editor-created distance helper system reached the collector without a camera. The collector now fail-closes for null camera or uncreated native inputs, and the editor-only helper systems in `UnitRenderBudgetSystemTests` are marked `[DisableAutoCreation]` so they do not auto-run in editor worlds.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-render-budget-distance-null-guard.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=24`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-render-budget-distance-null-guard-architecture.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
 
 ### Phase 9: Managed Boundary Cleanup
 

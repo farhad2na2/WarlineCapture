@@ -17,6 +17,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.BudgetBandsRespectDetailedMidAndLowCaps();
             tests.DistanceSortOrdersByPriorityThenDistance();
             tests.DistanceCollectScoresVisibleUnitsAndSkipsPassengers();
+            tests.DistanceCollectWithNullCameraClearsOutputWithoutThrowing();
             tests.CharacterClassificationUsesCachedLookups();
             tests.LodReferenceResolutionUsesCachedLookups();
             tests.RenderableQueryUsesCachedLookups();
@@ -30,12 +31,14 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.VisualStateTransitionKeepsCurrentVisualUntilStableOrForced();
             tests.VisibilityChangeCollectionUsesCachedLookups();
             tests.VisibilityApplyAddsAndRemovesRenderTags();
+            tests.VisibilityApplyUsesCachedLookups();
             tests.ReadinessSystemAddsReadyTagForRenderableVisual();
+            tests.ReadinessSystemUsesCachedLookups();
             tests.RenderSafetyPatchesBoundsAndAddsSafetyTag();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.CharacterSourceKeyPrefixCheckDoesNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=21");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=24");
         }
         catch (System.Exception ex)
         {
@@ -162,6 +165,30 @@ public sealed partial class UnitRenderBudgetSystemTests
         {
             Object.DestroyImmediate(cameraObject);
         }
+    }
+
+    [Test]
+    public void DistanceCollectWithNullCameraClearsOutputWithoutThrowing()
+    {
+        using var world = new World(nameof(DistanceCollectWithNullCameraClearsOutputWithoutThrowing));
+        UnitRenderBudgetTestLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetTestLookupSystem>();
+        using var units = new NativeArray<Entity>(0, Allocator.TempJob);
+        using var transforms = new NativeArray<LocalTransform>(0, Allocator.TempJob);
+        using var distances = new NativeList<UnitRenderBudgetDistanceSystem.UnitDistance>(1, Allocator.TempJob);
+        distances.Add(new UnitRenderBudgetDistanceSystem.UnitDistance { Unit = TestEntity(10), DistanceSq = 25f });
+
+        Assert.DoesNotThrow(() => new UnitRenderBudgetDistanceSystem().Collect(
+            null,
+            units,
+            transforms,
+            distances,
+            lookupSystem.GetPassengerLookup(),
+            lookupSystem.GetEntityStorageInfoLookupForTests(),
+            alwaysDetailedDistanceSq: 18f * 18f,
+            viewportPadding: 0.35f,
+            edgeSafetyMargin: 0.18f));
+
+        Assert.AreEqual(0, distances.Length);
     }
 
     [Test]
@@ -607,6 +634,49 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
+    public void VisibilityApplyUsesCachedLookups()
+    {
+        using var world = new World(nameof(VisibilityApplyUsesCachedLookups));
+        EntityManager em = world.EntityManager;
+        Entity detailedUnit = em.CreateEntity(typeof(UnitRenderBudgetCulledUnitTag));
+        Entity farUnit = em.CreateEntity();
+        Entity entityToShow = em.CreateEntity(
+            typeof(Disabled),
+            typeof(DisableRendering),
+            typeof(UnitRenderBudgetCulledTag));
+        Entity entityToHide = em.CreateEntity();
+        UnitRenderBudgetTestLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetTestLookupSystem>();
+
+        using var unitsToShowDetailed = new NativeList<Entity>(Allocator.Temp);
+        using var unitsToShowFarImpostor = new NativeList<Entity>(Allocator.Temp);
+        using var entitiesToShow = new NativeList<Entity>(Allocator.Temp);
+        using var entitiesToHide = new NativeList<Entity>(Allocator.Temp);
+        unitsToShowDetailed.Add(detailedUnit);
+        unitsToShowFarImpostor.Add(farUnit);
+        entitiesToShow.Add(entityToShow);
+        entitiesToHide.Add(entityToHide);
+
+        UnitRenderBudgetVisibilityApplySystem.Result result = new UnitRenderBudgetVisibilityApplySystem().Apply(
+            em,
+            new EntityCommandBuffer(Allocator.Temp),
+            unitsToShowDetailed,
+            unitsToShowFarImpostor,
+            entitiesToShow,
+            entitiesToHide,
+            lookupSystem.GetVisibilityApplyLookups());
+
+        Assert.AreEqual(1, result.Shown);
+        Assert.AreEqual(1, result.Hidden);
+        Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledUnitTag>(detailedUnit));
+        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledUnitTag>(farUnit));
+        Assert.IsFalse(em.HasComponent<Disabled>(entityToShow));
+        Assert.IsFalse(em.HasComponent<DisableRendering>(entityToShow));
+        Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledTag>(entityToShow));
+        Assert.IsTrue(em.HasComponent<DisableRendering>(entityToHide));
+        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(entityToHide));
+    }
+
+    [Test]
     public void ReadinessSystemAddsReadyTagForRenderableVisual()
     {
         using var world = new World(nameof(ReadinessSystemAddsReadyTagForRenderableVisual));
@@ -626,6 +696,41 @@ public sealed partial class UnitRenderBudgetSystemTests
                 childLookup,
                 new UnitRenderBudgetAnimationReadinessSystem(),
                 new UnitRenderBudgetRenderableQuerySystem());
+
+            Assert.IsTrue(ready);
+            Assert.IsTrue(readyTaggedThisFrame.Contains(root));
+            Assert.IsFalse(em.HasComponent<UnitRenderVisualReadyTag>(root));
+            ecb.Playback(em);
+            Assert.IsTrue(em.HasComponent<UnitRenderVisualReadyTag>(root));
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+    }
+
+    [Test]
+    public void ReadinessSystemUsesCachedLookups()
+    {
+        using var world = new World(nameof(ReadinessSystemUsesCachedLookups));
+        EntityManager em = world.EntityManager;
+        Entity root = CreateRenderableEntity(em, new float3(1f));
+        UnitRenderBudgetTestLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetTestLookupSystem>();
+        BufferLookup<Child> childLookup = lookupSystem.GetChildLookup();
+        using var readyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        try
+        {
+            bool ready = new UnitRenderBudgetReadinessSystem().IsVisualReadyForExclusiveDisplay(
+                ecb,
+                readyTaggedThisFrame,
+                root,
+                childLookup,
+                new UnitRenderBudgetAnimationReadinessSystem(),
+                new UnitRenderBudgetRenderableQuerySystem(),
+                lookupSystem.GetReadinessLookups(),
+                default,
+                lookupSystem.GetRenderableQueryLookups());
 
             Assert.IsTrue(ready);
             Assert.IsTrue(readyTaggedThisFrame.Contains(root));
@@ -760,6 +865,7 @@ public sealed partial class UnitRenderBudgetSystemTests
         return entity;
     }
 
+    [DisableAutoCreation]
     private sealed partial class UnitRenderBudgetTestLookupSystem : SystemBase
     {
         public BufferLookup<Child> GetChildLookup()
@@ -780,6 +886,11 @@ public sealed partial class UnitRenderBudgetSystemTests
         public ComponentLookup<UnitRenderBudgetCulledUnitTag> GetCulledUnitLookup()
         {
             return GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
+        }
+
+        public ComponentLookup<UnitTransportPassenger> GetPassengerLookup()
+        {
+            return GetComponentLookup<UnitTransportPassenger>(true);
         }
 
         public ComponentLookup<UnitRenderVisualComponent> GetVisualStateLookup()
@@ -821,6 +932,27 @@ public sealed partial class UnitRenderBudgetSystemTests
             };
         }
 
+        public UnitRenderBudgetReadinessSystem.Lookups GetReadinessLookups()
+        {
+            return new UnitRenderBudgetReadinessSystem.Lookups
+            {
+                EntityStorageInfoLookup = GetEntityStorageInfoLookup(),
+                VisualReadyLookup = GetComponentLookup<UnitRenderVisualReadyTag>(true)
+            };
+        }
+
+        public UnitRenderBudgetVisibilityApplySystem.Lookups GetVisibilityApplyLookups()
+        {
+            return new UnitRenderBudgetVisibilityApplySystem.Lookups
+            {
+                EntityStorageInfoLookup = GetEntityStorageInfoLookup(),
+                CulledUnitLookup = GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true),
+                DisabledLookup = GetComponentLookup<Disabled>(true),
+                DisableRenderingLookup = GetComponentLookup<DisableRendering>(true),
+                CulledTagLookup = GetComponentLookup<UnitRenderBudgetCulledTag>(true)
+            };
+        }
+
         public EntityStorageInfoLookup GetEntityStorageInfoLookupForTests()
         {
             return GetEntityStorageInfoLookup();
@@ -846,6 +978,7 @@ public sealed partial class UnitRenderBudgetSystemTests
         }
     }
 
+    [DisableAutoCreation]
     private sealed partial class UnitRenderBudgetDistanceTestSystem : SystemBase
     {
         public Camera Camera;

@@ -56,6 +56,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
     private EntityStorageInfoLookup _entityStorageInfoLookup;
     private UnitRenderBudgetLodReferenceSystem.Lookups _lodReferenceLookups;
     private UnitRenderBudgetRenderableQuerySystem.Lookups _renderableQueryLookups;
+    private UnitRenderBudgetAnimationReadinessSystem.Lookups _animationReadinessLookups;
+    private UnitRenderBudgetReadinessSystem.Lookups _readinessLookups;
+    private UnitRenderBudgetVisibilityApplySystem.Lookups _visibilityApplyLookups;
     private ComponentLookup<UnitRenderVisualComponent> _visualStateLookup;
     private EntityTypeHandle _unitEntityTypeHandle;
     private ComponentTypeHandle<LocalTransform> _unitLocalTransformTypeHandle;
@@ -88,6 +91,25 @@ public partial struct UnitRenderBudgetSystem : ISystem
             DisableRenderingLookup = state.GetComponentLookup<DisableRendering>(true),
             CulledTagLookup = state.GetComponentLookup<UnitRenderBudgetCulledTag>(true),
             SafeVisibleCharacterLodLookup = state.GetComponentLookup<UnitSafeVisibleCharacterLodTag>(true)
+        };
+        _animationReadinessLookups = new UnitRenderBudgetAnimationReadinessSystem.Lookups
+        {
+            MeshLodLookup = state.GetComponentLookup<MeshLODComponent>(true),
+            MaterialAlphaCompleteLookup = state.GetComponentLookup<MaterialAlphaCompleteTag>(true),
+            HasGpuAnimationMaterialLookups = 1
+        };
+        _readinessLookups = new UnitRenderBudgetReadinessSystem.Lookups
+        {
+            EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
+            VisualReadyLookup = state.GetComponentLookup<UnitRenderVisualReadyTag>(true)
+        };
+        _visibilityApplyLookups = new UnitRenderBudgetVisibilityApplySystem.Lookups
+        {
+            EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
+            CulledUnitLookup = state.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true),
+            DisabledLookup = state.GetComponentLookup<Disabled>(true),
+            DisableRenderingLookup = state.GetComponentLookup<DisableRendering>(true),
+            CulledTagLookup = state.GetComponentLookup<UnitRenderBudgetCulledTag>(true)
         };
         _visualStateLookup = state.GetComponentLookup<UnitRenderVisualComponent>(true);
         _unitEntityTypeHandle = state.GetEntityTypeHandle();
@@ -132,6 +154,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
         _entityStorageInfoLookup.Update(ref state);
         _lodReferenceLookups.Update(ref state);
         _renderableQueryLookups.Update(ref state);
+        _animationReadinessLookups.Update(ref state);
+        _readinessLookups.Update(ref state);
+        _visibilityApplyLookups.Update(ref state);
         _visualStateLookup.Update(ref state);
         _unitEntityTypeHandle.Update(ref state);
         _unitLocalTransformTypeHandle.Update(ref state);
@@ -230,10 +255,12 @@ public partial struct UnitRenderBudgetSystem : ISystem
             LodReferenceSystem = _lodReferenceSystem,
             LodReferenceLookups = _lodReferenceLookups,
             AnimationReadinessSystem = _animationReadinessSystem,
+            AnimationReadinessLookups = _animationReadinessLookups,
             RenderableQuerySystem = _renderableQuerySystem,
             RenderableQueryLookups = _renderableQueryLookups,
             VisualStateSystem = _visualStateSystem,
             ReadinessSystem = _readinessSystem,
+            ReadinessLookups = _readinessLookups,
             RenderSafetySystem = _renderSafetySystem,
             VisualPlanSystem = _visualPlanSystem,
             VisibilityChangeSystem = _visibilityChangeSystem,
@@ -248,7 +275,8 @@ public partial struct UnitRenderBudgetSystem : ISystem
             unitsToShowDetailed,
             unitsToShowFarImpostor,
             entitiesToShow,
-            entitiesToHide);
+            entitiesToHide,
+            _visibilityApplyLookups);
         UnitRenderBudgetDiagnosticStateSystem.FrameCounters counters = _diagnosticStateSystem.CreateFrameCounters(decisionResult, applyResult);
 
         double elapsed = Time.realtimeSinceStartupAsDouble - startTime;

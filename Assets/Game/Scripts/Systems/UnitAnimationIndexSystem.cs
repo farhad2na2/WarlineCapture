@@ -1,4 +1,6 @@
 using SnivelerCode.GpuAnimation.Scripts.Components;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Transforms;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -24,58 +26,41 @@ public partial struct UnitAnimationIndexSystem : ISystem
         state.Dependency.Complete();
         double afterCompleteTime = Time.realtimeSinceStartupAsDouble;
         float dt = SystemAPI.Time.DeltaTime;
-        var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var animationOrderLookup = SystemAPI.GetBufferLookup<UnitAnimationOrderEntry>(true);
-        var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();
         var deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
         var autoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true);
         var engageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
+        using NativeArray<int> counters = new(1, Allocator.TempJob);
+
+        new ResolveAnimationIndexJob
+        {
+            DeltaTime = dt,
+            AnimationOrderLookup = animationOrderLookup,
+            DeathAnimationLookup = deathAnimationLookup,
+            AutoWanderLookup = autoWanderLookup,
+            EngageTargetLookup = engageTargetLookup,
+            Counters = counters
+        }.Run();
+
+        var childLookup = SystemAPI.GetBufferLookup<Child>(true);
+        var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();
         var modelInstanceLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
         var midLodInstanceLookup = SystemAPI.GetComponentLookup<UnitMidLodInstanceReference>(true);
         var lowLodInstanceLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
-        int checkedUnits = 0;
+        int checkedUnits = counters[0];
         int appliedUnits = 0;
 
-        foreach (var (moveVisual, health, attackAnimation, resolvedAnimation, entity) in SystemAPI
-                 .Query<RefRO<UnitMoveVisualComponent>, RefRO<UnitHealth>, RefRW<UnitAttackAnimationComponent>, RefRW<UnitResolvedAnimationIndex>>()
+        foreach (var (resolvedAnimation, entity) in SystemAPI
+                 .Query<RefRW<UnitResolvedAnimationIndex>>()
+                 .WithAll<UnitMoveVisualComponent, UnitHealth, UnitAttackAnimationComponent>()
                  .WithNone<StaticGridBlocker>()
                  .WithEntityAccess())
         {
-            checkedUnits++;
-            attackAnimation.ValueRW.TimeRemaining = math.max(0f, attackAnimation.ValueRW.TimeRemaining - dt);
-            byte targetAnimationIndex;
+            if (resolvedAnimation.ValueRO.Updated == 0)
+                continue;
 
-            if (animationOrderLookup.HasBuffer(entity))
-            {
-                DynamicBuffer<UnitAnimationOrderEntry> animationOrder = animationOrderLookup[entity];
-                if (animationOrder.Length == 0)
-                    continue;
-
-                targetAnimationIndex = ResolveConfiguredAnimationIndex(
-                    animationOrder,
-                    moveVisual.ValueRO.IsMoving != 0,
-                    attackAnimation.ValueRO.TimeRemaining > 0f,
-                    engageTargetLookup.HasComponent(entity),
-                    health.ValueRO.Current <= 0 || deathAnimationLookup.HasComponent(entity),
-                    autoWanderLookup.HasComponent(entity));
-            }
-            else
-            {
-                targetAnimationIndex = 1;
-                if (health.ValueRO.Current <= 0 || deathAnimationLookup.HasComponent(entity))
-                    targetAnimationIndex = 5;
-                else if (attackAnimation.ValueRO.TimeRemaining > 0f)
-                    targetAnimationIndex = 4;
-                else if (engageTargetLookup.HasComponent(entity))
-                    targetAnimationIndex = 4;
-                else if (moveVisual.ValueRO.IsMoving != 0)
-                    targetAnimationIndex = autoWanderLookup.HasComponent(entity) ? (byte)2 : (byte)3;
-            }
-
-            bool resolvedChanged = resolvedAnimation.ValueRO.Value != targetAnimationIndex;
-            if (resolvedChanged)
-                resolvedAnimation.ValueRW.Value = targetAnimationIndex;
-
+            byte targetAnimationIndex = resolvedAnimation.ValueRO.Value;
+            bool resolvedChanged = resolvedAnimation.ValueRO.Changed != 0;
             bool appliedToVisuals = resolvedChanged
                 ? ApplyAnimationIndexRecursive(entity, targetAnimationIndex, ref animationIndexLookup, ref childLookup)
                 : ApplyAnimationIndexToVisualRoots(
@@ -89,6 +74,9 @@ public partial struct UnitAnimationIndexSystem : ISystem
 
             if (resolvedChanged || appliedToVisuals)
                 appliedUnits++;
+
+            if (resolvedAnimation.ValueRO.Changed != 0)
+                resolvedAnimation.ValueRW.Changed = 0;
         }
 
         double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
@@ -97,6 +85,68 @@ public partial struct UnitAnimationIndexSystem : ISystem
             Debug.Log(
                 $"[FreezeDetect:ECS] UnitAnimationIndexSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms " +
                 $"complete={(afterCompleteTime - startTime) * 1000d:F1}ms units={checkedUnits} applied={appliedUnits}");
+        }
+    }
+
+    [BurstCompile]
+    [WithNone(typeof(StaticGridBlocker))]
+    private partial struct ResolveAnimationIndexJob : IJobEntity
+    {
+        public float DeltaTime;
+        [ReadOnly] public BufferLookup<UnitAnimationOrderEntry> AnimationOrderLookup;
+        [ReadOnly] public ComponentLookup<UnitDeathAnimationComponent> DeathAnimationLookup;
+        [ReadOnly] public ComponentLookup<AutoWanderMoveTag> AutoWanderLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        public NativeArray<int> Counters;
+
+        private void Execute(
+            Entity entity,
+            in UnitMoveVisualComponent moveVisual,
+            in UnitHealth health,
+            ref UnitAttackAnimationComponent attackAnimation,
+            ref UnitResolvedAnimationIndex resolvedAnimation)
+        {
+            Counters[0] = Counters[0] + 1;
+            attackAnimation.TimeRemaining = math.max(0f, attackAnimation.TimeRemaining - DeltaTime);
+            byte targetAnimationIndex;
+
+            if (AnimationOrderLookup.HasBuffer(entity))
+            {
+                DynamicBuffer<UnitAnimationOrderEntry> animationOrder = AnimationOrderLookup[entity];
+                if (animationOrder.Length == 0)
+                {
+                    resolvedAnimation.Changed = 0;
+                    resolvedAnimation.Updated = 0;
+                    return;
+                }
+
+                targetAnimationIndex = ResolveConfiguredAnimationIndex(
+                    animationOrder,
+                    moveVisual.IsMoving != 0,
+                    attackAnimation.TimeRemaining > 0f,
+                    EngageTargetLookup.HasComponent(entity),
+                    health.Current <= 0 || DeathAnimationLookup.HasComponent(entity),
+                    AutoWanderLookup.HasComponent(entity));
+            }
+            else
+            {
+                targetAnimationIndex = 1;
+                if (health.Current <= 0 || DeathAnimationLookup.HasComponent(entity))
+                    targetAnimationIndex = 5;
+                else if (attackAnimation.TimeRemaining > 0f)
+                    targetAnimationIndex = 4;
+                else if (EngageTargetLookup.HasComponent(entity))
+                    targetAnimationIndex = 4;
+                else if (moveVisual.IsMoving != 0)
+                    targetAnimationIndex = AutoWanderLookup.HasComponent(entity) ? (byte)2 : (byte)3;
+            }
+
+            bool resolvedChanged = resolvedAnimation.Value != targetAnimationIndex;
+            if (resolvedChanged)
+                resolvedAnimation.Value = targetAnimationIndex;
+
+            resolvedAnimation.Changed = (byte)(resolvedChanged ? 1 : 0);
+            resolvedAnimation.Updated = 1;
         }
     }
 

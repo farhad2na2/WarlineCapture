@@ -19,7 +19,8 @@ public sealed class SelectedUnitDebugFireSystemTests
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherTargetsEnemyBaseBeyondNormalRange());
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherArmsMissileAttackDirectly());
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherCreatesMissileProjectileThroughCooldown());
-            UnityEngine.Debug.Log("[SelectedUnitDebugFireFocusedValidation] result=Passed tests=6");
+            RunTest(test => test.HoldingDebugFireForReloadingAirMissileLauncherCreatesDebugState());
+            UnityEngine.Debug.Log("[SelectedUnitDebugFireFocusedValidation] result=Passed tests=7");
         }
         catch (System.Exception ex)
         {
@@ -190,6 +191,30 @@ public sealed class SelectedUnitDebugFireSystemTests
         Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
     }
 
+    [Test]
+    public void HoldingDebugFireForReloadingAirMissileLauncherCreatesDebugState()
+    {
+        EntityManager em = _world.EntityManager;
+        GridConfig grid = CreateGrid(em, width: 256, height: 256);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 8f, 3f), attackRange: 24f);
+        AddAirMissileLauncher(em, launcher);
+        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcher);
+        launcherState.Phase = (byte)AirMissileLauncherPhase.Reloading;
+        launcherState.Timer = 0.5f;
+        em.SetComponentData(launcher, launcherState);
+
+        SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
+
+        Assert.IsTrue(em.HasComponent<SelectedUnitDebugFireState>(launcher), "Reloading air missile launchers still need debug-fire state so air movement remains suppressed while F is held.");
+        SelectedUnitDebugFireState debugState = em.GetComponentData<SelectedUnitDebugFireState>(launcher);
+        Assert.IsTrue(em.Exists(debugState.Target));
+        Assert.IsTrue(em.HasComponent<DebugFireTargetTag>(debugState.Target));
+        Assert.AreEqual(launcher, em.GetComponentData<DebugFireTargetTag>(debugState.Target).Source);
+        Assert.IsTrue(em.HasComponent<UnitAirMovement>(debugState.Target));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
+        Assert.IsFalse(em.HasComponent<AirMissileLauncherTargetComponent>(launcher), "Reloading launchers should not create a new missile target until reload finishes.");
+    }
+
     private static GridConfig CreateGrid(EntityManager em, int width = 16, int height = 16)
     {
         Entity entity = em.CreateEntity(typeof(GridConfig));
@@ -255,6 +280,42 @@ public sealed class SelectedUnitDebugFireSystemTests
             TargetWorldPosition = default,
             Timer = 0f,
             SelectedRocketSlot = -1
+        });
+    }
+
+    private static void AddAirMissileLauncher(EntityManager em, Entity entity)
+    {
+        em.AddComponentData(entity, new AirMissileLauncherComponent
+        {
+            MinRange = 2f,
+            BaseDetectionRange = 80f,
+            MaxDetectionRange = 120f,
+            MaxSupportRangeBonus = 40f,
+            AirTargetPriority = 100f,
+            IncomingMissilePriority = 50f,
+            LockSeconds = 0.25f,
+            LaunchDelaySeconds = 0.1f,
+            ReloadSeconds = 1f,
+            AimToleranceDegrees = 180f,
+            MissileSpeed = 35f,
+            MissileAcceleration = 0f,
+            MissileTurnRateDegreesPerSecond = 120f,
+            MissileLifetimeSeconds = 4f,
+            ProximityFuseRadius = 1f,
+            AirTargetDamage = 25,
+            IncomingMissileDamage = 10,
+            TrackingQuality = 1f
+        });
+        em.AddComponentData(entity, new AirMissileLauncherStateComponent
+        {
+            Phase = (byte)AirMissileLauncherPhase.Idle,
+            TargetEntity = Entity.Null,
+            TargetKind = (byte)AirMissileTargetKind.None,
+            EffectiveRange = 80f,
+            EffectiveLockSeconds = 0.25f,
+            EffectiveTrackingQuality = 1f,
+            EffectiveTurnRateDegreesPerSecond = 120f,
+            SelectedMissileSlot = -1
         });
     }
 

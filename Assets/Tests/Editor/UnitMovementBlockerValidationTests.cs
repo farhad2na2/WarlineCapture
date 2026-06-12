@@ -16,6 +16,9 @@ public sealed class UnitMovementBlockerValidationTests
             var tests = new UnitMovementBlockerValidationTests();
             tests.UnitMovementTargetRejectsBuildingBlockerCells();
             tests.EngagedCombatMovementStopsBeforeBuildingBlocker();
+            tests.EngagedCombatMovementDoesNotMoveTowardDebugFireTarget();
+            tests.AirMovementDoesNotMoveTowardDebugFireTarget();
+            tests.AirMovementDoesNotMoveDuringDebugFireStateWithoutEngageTarget();
             tests.InfantryMovementDoesNotStallOnOwnPreviousOccupancySnapshot();
             tests.InfantryOpenPathMovementAdvancesEveryFrame();
             Debug.Log("[UnitMovementBlockerValidation] result=Passed");
@@ -248,6 +251,162 @@ public sealed class UnitMovementBlockerValidationTests
             Assert.AreEqual(1.5f, position.x, 0.001f);
             Assert.AreEqual(1.5f, position.z, 0.001f);
             Assert.AreEqual(0f, em.GetComponentData<UnitVehicleKinematics>(attacker).CurrentSpeed, 0.001f);
+        }
+        finally
+        {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void AirMovementDoesNotMoveTowardDebugFireTarget()
+    {
+        using var world = new World("AirMovementDebugFireValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+
+        try
+        {
+            CreateGrid(em, 16, 8, out blockerCounts, out blocked, out friendlyPassFactionIds);
+
+            Entity helicopter = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAttack),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(EngageTarget),
+                typeof(LocalTransform));
+            Entity debugTarget = em.CreateEntity(
+                typeof(DebugFireTargetTag),
+                typeof(UnitHealth),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(1.5f, 6f, 3.5f);
+            float3 targetPosition = new(11.5f, 6f, 3.5f);
+            em.SetComponentData(helicopter, new UnitGrid { Cell = new int2(1, 3) });
+            em.SetComponentData(helicopter, new UnitMove { Speed = 12f, WalkSpeed = 12f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(helicopter, new UnitAttack { Range = 12f, CooldownSeconds = 1f, Damage = 1 });
+            em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+            em.SetComponentData(helicopter, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1,
+                AttackRunActive = 1,
+                ReturningHome = 1
+            });
+            em.SetComponentData(helicopter, LocalTransform.FromPosition(startPosition));
+
+            em.SetComponentData(debugTarget, new DebugFireTargetTag { Source = helicopter });
+            em.SetComponentData(debugTarget, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(debugTarget, LocalTransform.FromPosition(targetPosition));
+            em.SetComponentData(helicopter, new EngageTarget
+            {
+                Target = debugTarget,
+                Cell = new int2(11, 3),
+                Position = targetPosition,
+                IsCommanded = 1
+            });
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.4d, 0.4f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            float3 position = em.GetComponentData<LocalTransform>(helicopter).Position;
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(helicopter);
+            Assert.AreEqual(startPosition.x, position.x, 0.001f, "Debug fire must not turn a helicopter's weapon target into a move target.");
+            Assert.AreEqual(startPosition.y, position.y, 0.001f);
+            Assert.AreEqual(startPosition.z, position.z, 0.001f);
+            Assert.AreEqual(0, airState.AttackRunActive, "Debug fire should cancel air attack-run movement while preserving weapon fire.");
+            Assert.AreEqual(0, airState.ReturningHome);
+            Assert.AreEqual(1, airState.Airborne);
+            Assert.IsTrue(em.HasComponent<EngageTarget>(helicopter), "Debug fire still needs EngageTarget so UnitAttackSystem can fire.");
+        }
+        finally
+        {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void AirMovementDoesNotMoveDuringDebugFireStateWithoutEngageTarget()
+    {
+        using var world = new World("AirMovementDebugFireStateValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+
+        try
+        {
+            CreateGrid(em, 16, 8, out blockerCounts, out blocked, out friendlyPassFactionIds);
+
+            Entity helicopter = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAttack),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(UnitTarget),
+                typeof(ManualMoveOrderTag),
+                typeof(SelectedUnitDebugFireState),
+                typeof(LocalTransform));
+            Entity debugTarget = em.CreateEntity(
+                typeof(DebugFireTargetTag),
+                typeof(UnitHealth),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(1.5f, 6f, 3.5f);
+            em.SetComponentData(helicopter, new UnitGrid { Cell = new int2(1, 3) });
+            em.SetComponentData(helicopter, new UnitMove { Speed = 12f, WalkSpeed = 12f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(helicopter, new UnitAttack { Range = 12f, CooldownSeconds = 1f, Damage = 1 });
+            em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+            em.SetComponentData(helicopter, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1,
+                AttackRunActive = 1,
+                ReturningHome = 1
+            });
+            em.SetComponentData(helicopter, new UnitTarget { Cell = new int2(11, 3) });
+            em.SetComponentData(helicopter, new SelectedUnitDebugFireState { Target = debugTarget });
+            em.SetComponentData(helicopter, LocalTransform.FromPosition(startPosition));
+
+            em.SetComponentData(debugTarget, new DebugFireTargetTag { Source = helicopter });
+            em.SetComponentData(debugTarget, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(debugTarget, LocalTransform.FromPosition(new float3(11.5f, 6f, 3.5f)));
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.4d, 0.4f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            float3 position = em.GetComponentData<LocalTransform>(helicopter).Position;
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(helicopter);
+            Assert.AreEqual(startPosition.x, position.x, 0.001f, "Air missile debug fire uses SelectedUnitDebugFireState without EngageTarget and still must suppress movement.");
+            Assert.AreEqual(startPosition.y, position.y, 0.001f);
+            Assert.AreEqual(startPosition.z, position.z, 0.001f);
+            Assert.AreEqual(0, airState.AttackRunActive);
+            Assert.AreEqual(0, airState.ReturningHome);
+            Assert.AreEqual(1, airState.Airborne);
+            Assert.IsTrue(em.HasComponent<UnitTarget>(helicopter), "Debug fire should pause existing air movement orders instead of consuming them.");
         }
         finally
         {

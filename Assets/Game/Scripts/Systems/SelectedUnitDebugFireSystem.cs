@@ -143,10 +143,6 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             return false;
         }
 
-        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcherEntity);
-        if (launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading)
-            return true;
-
         AirMissileLauncherComponent launcher = em.GetComponentData<AirMissileLauncherComponent>(launcherEntity);
         LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(launcherEntity);
         Entity target = EnsureDebugTarget(em, launcherEntity);
@@ -155,6 +151,10 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         float3 targetPosition = ResolveAirMissileDebugTargetPosition(grid, sourceTransform, launcher);
         em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
         em.SetComponentData(target, new UnitHealth { Current = DebugTargetHealth, Max = DebugTargetHealth });
+
+        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcherEntity);
+        if (launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading)
+            return true;
 
         AirMissileLauncherTargetComponent debugTarget = new()
         {

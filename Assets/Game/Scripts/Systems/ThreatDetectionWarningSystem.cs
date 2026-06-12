@@ -1,5 +1,7 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 [UpdateAfter(typeof(UnitGridMovementSystem))]
@@ -83,137 +85,63 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         float cellSize = TryGetCellSize(_gridQuery);
 
         int targetCapacity = math.max(16, _targetQuery.CalculateEntityCount() * 2);
-        using NativeParallelHashSet<Entity> currentGroundThreats = new(targetCapacity, Allocator.Temp);
-        using NativeParallelHashSet<Entity> currentAirThreats = new(targetCapacity, Allocator.Temp);
-        using NativeList<Entity> currentGroundThreatList = new(Allocator.Temp);
-        using NativeList<Entity> currentAirThreatList = new(Allocator.Temp);
-
-        bool hasNewGroundThreat = false;
-        bool hasNewAirThreat = false;
-        float bestGroundEtaSeconds = float.MaxValue;
-        float bestAirEtaSeconds = float.MaxValue;
+        using NativeParallelHashSet<Entity> currentGroundThreats = new(targetCapacity, Allocator.TempJob);
+        using NativeParallelHashSet<Entity> currentAirThreats = new(targetCapacity, Allocator.TempJob);
+        using NativeList<Entity> currentGroundThreatList = new(Allocator.TempJob);
+        using NativeList<Entity> currentAirThreatList = new(Allocator.TempJob);
+        using NativeArray<ThreatScanResult> result = new(1, Allocator.TempJob);
 
         UpdateTypeHandles(ref state);
-        ThreatTargetLookups targetLookups = new()
-        {
-            BuildingLookup = _buildingLookup,
-            AirLookup = _airLookup,
-            MovementBehaviorLookup = _movementBehaviorLookup,
-            TargetLookup = _targetLookup,
-            PathRequestLookup = _pathRequestLookup,
-            LongDistanceMoveLookup = _longDistanceMoveLookup,
-            EngageTargetLookup = _engageTargetLookup,
-            BaseBreachOrderLookup = _baseBreachOrderLookup,
-            UnitMoveLookup = _unitMoveLookup
-        };
+        using NativeArray<ArchetypeChunk> sensorChunks = _sensorQuery.ToArchetypeChunkArray(Allocator.TempJob);
+        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.TempJob);
 
-        using NativeArray<ArchetypeChunk> sensorChunks = _sensorQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.Temp);
-        for (int sensorChunkIndex = 0; sensorChunkIndex < sensorChunks.Length; sensorChunkIndex++)
+        new ThreatScanJob
         {
-            ArchetypeChunk sensorChunk = sensorChunks[sensorChunkIndex];
-            NativeArray<Entity> sensorEntities = sensorChunk.GetNativeArray(_entityType);
-            NativeArray<ThreatDetector> sensorDetectors = sensorChunk.GetNativeArray(ref _detectorType);
-            NativeArray<Faction> sensorFactions = sensorChunk.GetNativeArray(ref _factionType);
-            NativeArray<UnitGrid> sensorGrids = sensorChunk.GetNativeArray(ref _gridType);
-            NativeArray<UnitHealth> sensorHealths = sensorChunk.GetNativeArray(ref _healthType);
-
-            for (int i = 0; i < sensorEntities.Length; i++)
+            SensorChunks = sensorChunks,
+            TargetChunks = targetChunks,
+            EntityType = _entityType,
+            DetectorType = _detectorType,
+            FactionType = _factionType,
+            GridType = _gridType,
+            HealthType = _healthType,
+            TargetLookups = new ThreatTargetLookups
             {
-                Entity sensor = sensorEntities[i];
-                Faction sensorFaction = sensorFactions[i];
-                if (sensorFaction.Id != PlayerFactionId)
-                    continue;
-
-                UnitHealth sensorHealth = sensorHealths[i];
-                if (sensorHealth.Current <= 0)
-                    continue;
-
-                ThreatDetector detector = sensorDetectors[i];
-                if (detector.RadiusCells <= 0 || detector.Kind == (byte)ThreatDetectionKind.None)
-                    continue;
-
-                int2 sensorCell = sensorGrids[i].Cell;
-                bool detectsAir = detector.Kind == (byte)ThreatDetectionKind.Air;
-                bool detectsGround = detector.Kind == (byte)ThreatDetectionKind.Ground;
-
-                for (int targetChunkIndex = 0; targetChunkIndex < targetChunks.Length; targetChunkIndex++)
-                {
-                    ArchetypeChunk targetChunk = targetChunks[targetChunkIndex];
-                    NativeArray<Entity> targetEntities = targetChunk.GetNativeArray(_entityType);
-                    NativeArray<Faction> targetFactions = targetChunk.GetNativeArray(ref _factionType);
-                    NativeArray<UnitGrid> targetGrids = targetChunk.GetNativeArray(ref _gridType);
-                    NativeArray<UnitHealth> targetHealths = targetChunk.GetNativeArray(ref _healthType);
-
-                    for (int targetIndex = 0; targetIndex < targetEntities.Length; targetIndex++)
-                    {
-                        Entity target = targetEntities[targetIndex];
-                        if (target == sensor || targetLookups.BuildingLookup.HasComponent(target))
-                            continue;
-
-                        Faction targetFaction = targetFactions[targetIndex];
-                        if (targetFaction.Id == sensorFaction.Id)
-                            continue;
-
-                        UnitHealth targetHealth = targetHealths[targetIndex];
-                        if (targetHealth.Current <= 0)
-                            continue;
-
-                        bool isAirTarget = targetLookups.AirLookup.HasComponent(target);
-                        if ((detectsAir && !isAirTarget) || (detectsGround && isAirTarget))
-                            continue;
-                        if (detectsGround && !IsGroundVehicle(targetLookups, target))
-                            continue;
-
-                        int2 targetCell = targetGrids[targetIndex].Cell;
-                        if (!IsMovingTowardCell(targetLookups, target, targetCell, sensorCell))
-                            continue;
-
-                        int cellDistance = ChebyshevDistance(sensorCell, targetCell);
-                        if (cellDistance > detector.RadiusCells)
-                            continue;
-
-                        float etaSeconds = EstimateEtaSeconds(targetLookups, target, sensorCell, targetCell, cellSize);
-                        if (isAirTarget)
-                        {
-                            if (currentAirThreats.Add(target))
-                                currentAirThreatList.Add(target);
-                            if (!_previousAirThreats.Contains(target))
-                            {
-                                hasNewAirThreat = true;
-                                bestAirEtaSeconds = math.min(bestAirEtaSeconds, etaSeconds);
-                            }
-                        }
-                        else
-                        {
-                            if (currentGroundThreats.Add(target))
-                                currentGroundThreatList.Add(target);
-                            if (!_previousGroundThreats.Contains(target))
-                            {
-                                hasNewGroundThreat = true;
-                                bestGroundEtaSeconds = math.min(bestGroundEtaSeconds, etaSeconds);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                BuildingLookup = _buildingLookup,
+                AirLookup = _airLookup,
+                MovementBehaviorLookup = _movementBehaviorLookup,
+                TargetLookup = _targetLookup,
+                PathRequestLookup = _pathRequestLookup,
+                LongDistanceMoveLookup = _longDistanceMoveLookup,
+                EngageTargetLookup = _engageTargetLookup,
+                BaseBreachOrderLookup = _baseBreachOrderLookup,
+                UnitMoveLookup = _unitMoveLookup
+            },
+            PreviousGroundThreats = _previousGroundThreats,
+            PreviousAirThreats = _previousAirThreats,
+            CurrentGroundThreats = currentGroundThreats,
+            CurrentAirThreats = currentAirThreats,
+            CurrentGroundThreatList = currentGroundThreatList,
+            CurrentAirThreatList = currentAirThreatList,
+            CellSize = cellSize,
+            Result = result
+        }.Run();
 
         ReplacePreviousThreats(_previousGroundThreats, currentGroundThreatList);
         ReplacePreviousThreats(_previousAirThreats, currentAirThreatList);
 
-        if (hasNewGroundThreat && (!hasNewAirThreat || bestGroundEtaSeconds <= bestAirEtaSeconds))
+        ThreatScanResult scan = result[0];
+        if (scan.HasNewGroundThreat != 0 && (scan.HasNewAirThreat == 0 || scan.BestGroundEtaSeconds <= scan.BestAirEtaSeconds))
         {
             ThreatWarningRuntimeState.RequestWarning(
                 ThreatWarningType.Ground,
-                bestGroundEtaSeconds == float.MaxValue ? 0f : bestGroundEtaSeconds,
+                scan.BestGroundEtaSeconds == float.MaxValue ? 0f : scan.BestGroundEtaSeconds,
                 currentGroundThreatList.Length);
         }
-        else if (hasNewAirThreat)
+        else if (scan.HasNewAirThreat != 0)
         {
             ThreatWarningRuntimeState.RequestWarning(
                 ThreatWarningType.Air,
-                bestAirEtaSeconds == float.MaxValue ? 0f : bestAirEtaSeconds,
+                scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds,
                 currentAirThreatList.Length);
         }
     }
@@ -296,6 +224,170 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
         [ReadOnly] public ComponentLookup<BaseBreachOrder> BaseBreachOrderLookup;
         [ReadOnly] public ComponentLookup<UnitMove> UnitMoveLookup;
+    }
+
+    private struct ThreatScanResult
+    {
+        public byte HasNewGroundThreat;
+        public byte HasNewAirThreat;
+        public float BestGroundEtaSeconds;
+        public float BestAirEtaSeconds;
+    }
+
+    [BurstCompile]
+    private struct ThreatScanJob : IJob
+    {
+        [ReadOnly] public NativeArray<ArchetypeChunk> SensorChunks;
+        [ReadOnly] public NativeArray<ArchetypeChunk> TargetChunks;
+        [ReadOnly] public EntityTypeHandle EntityType;
+        [ReadOnly] public ComponentTypeHandle<ThreatDetector> DetectorType;
+        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> GridType;
+        [ReadOnly] public ComponentTypeHandle<UnitHealth> HealthType;
+        [ReadOnly] public ThreatTargetLookups TargetLookups;
+        [ReadOnly] public NativeParallelHashSet<Entity> PreviousGroundThreats;
+        [ReadOnly] public NativeParallelHashSet<Entity> PreviousAirThreats;
+        public NativeParallelHashSet<Entity> CurrentGroundThreats;
+        public NativeParallelHashSet<Entity> CurrentAirThreats;
+        public NativeList<Entity> CurrentGroundThreatList;
+        public NativeList<Entity> CurrentAirThreatList;
+        public float CellSize;
+        public NativeArray<ThreatScanResult> Result;
+
+        public void Execute()
+        {
+            ThreatScanResult scan = new()
+            {
+                BestGroundEtaSeconds = float.MaxValue,
+                BestAirEtaSeconds = float.MaxValue
+            };
+
+            ComponentTypeHandle<ThreatDetector> detectorType = DetectorType;
+            ComponentTypeHandle<Faction> factionType = FactionType;
+            ComponentTypeHandle<UnitGrid> gridType = GridType;
+            ComponentTypeHandle<UnitHealth> healthType = HealthType;
+
+            for (int sensorChunkIndex = 0; sensorChunkIndex < SensorChunks.Length; sensorChunkIndex++)
+            {
+                ArchetypeChunk sensorChunk = SensorChunks[sensorChunkIndex];
+                NativeArray<Entity> sensorEntities = sensorChunk.GetNativeArray(EntityType);
+                NativeArray<ThreatDetector> sensorDetectors = sensorChunk.GetNativeArray(ref detectorType);
+                NativeArray<Faction> sensorFactions = sensorChunk.GetNativeArray(ref factionType);
+                NativeArray<UnitGrid> sensorGrids = sensorChunk.GetNativeArray(ref gridType);
+                NativeArray<UnitHealth> sensorHealths = sensorChunk.GetNativeArray(ref healthType);
+
+                for (int i = 0; i < sensorEntities.Length; i++)
+                {
+                    Entity sensor = sensorEntities[i];
+                    Faction sensorFaction = sensorFactions[i];
+                    if (sensorFaction.Id != PlayerFactionId)
+                        continue;
+
+                    UnitHealth sensorHealth = sensorHealths[i];
+                    if (sensorHealth.Current <= 0)
+                        continue;
+
+                    ThreatDetector detector = sensorDetectors[i];
+                    if (detector.RadiusCells <= 0 || detector.Kind == (byte)ThreatDetectionKind.None)
+                        continue;
+
+                    int2 sensorCell = sensorGrids[i].Cell;
+                    bool detectsAir = detector.Kind == (byte)ThreatDetectionKind.Air;
+                    bool detectsGround = detector.Kind == (byte)ThreatDetectionKind.Ground;
+
+                    ScanTargetsForSensor(
+                        sensor,
+                        sensorFaction,
+                        sensorCell,
+                        detector.RadiusCells,
+                        detectsAir,
+                        detectsGround,
+                        ref factionType,
+                        ref gridType,
+                        ref healthType,
+                        ref scan);
+                }
+            }
+
+            Result[0] = scan;
+        }
+
+        private void ScanTargetsForSensor(
+            Entity sensor,
+            Faction sensorFaction,
+            int2 sensorCell,
+            int detectorRadiusCells,
+            bool detectsAir,
+            bool detectsGround,
+            ref ComponentTypeHandle<Faction> factionType,
+            ref ComponentTypeHandle<UnitGrid> gridType,
+            ref ComponentTypeHandle<UnitHealth> healthType,
+            ref ThreatScanResult scan)
+        {
+            for (int targetChunkIndex = 0; targetChunkIndex < TargetChunks.Length; targetChunkIndex++)
+            {
+                ArchetypeChunk targetChunk = TargetChunks[targetChunkIndex];
+                NativeArray<Entity> targetEntities = targetChunk.GetNativeArray(EntityType);
+                NativeArray<Faction> targetFactions = targetChunk.GetNativeArray(ref factionType);
+                NativeArray<UnitGrid> targetGrids = targetChunk.GetNativeArray(ref gridType);
+                NativeArray<UnitHealth> targetHealths = targetChunk.GetNativeArray(ref healthType);
+
+                for (int targetIndex = 0; targetIndex < targetEntities.Length; targetIndex++)
+                {
+                    Entity target = targetEntities[targetIndex];
+                    if (target == sensor || TargetLookups.BuildingLookup.HasComponent(target))
+                        continue;
+
+                    Faction targetFaction = targetFactions[targetIndex];
+                    if (targetFaction.Id == sensorFaction.Id)
+                        continue;
+
+                    UnitHealth targetHealth = targetHealths[targetIndex];
+                    if (targetHealth.Current <= 0)
+                        continue;
+
+                    bool isAirTarget = TargetLookups.AirLookup.HasComponent(target);
+                    if ((detectsAir && !isAirTarget) || (detectsGround && isAirTarget))
+                        continue;
+                    if (detectsGround && !IsGroundVehicle(TargetLookups, target))
+                        continue;
+
+                    int2 targetCell = targetGrids[targetIndex].Cell;
+                    if (!IsMovingTowardCell(TargetLookups, target, targetCell, sensorCell))
+                        continue;
+
+                    int cellDistance = ChebyshevDistance(sensorCell, targetCell);
+                    if (cellDistance > detectorRadiusCells)
+                        continue;
+
+                    float etaSeconds = EstimateEtaSeconds(TargetLookups, target, sensorCell, targetCell, CellSize);
+                    RegisterThreat(target, isAirTarget, etaSeconds, ref scan);
+                }
+            }
+        }
+
+        private void RegisterThreat(Entity target, bool isAirTarget, float etaSeconds, ref ThreatScanResult scan)
+        {
+            if (isAirTarget)
+            {
+                if (CurrentAirThreats.Add(target))
+                    CurrentAirThreatList.Add(target);
+                if (PreviousAirThreats.Contains(target))
+                    return;
+
+                scan.HasNewAirThreat = 1;
+                scan.BestAirEtaSeconds = math.min(scan.BestAirEtaSeconds, etaSeconds);
+                return;
+            }
+
+            if (CurrentGroundThreats.Add(target))
+                CurrentGroundThreatList.Add(target);
+            if (PreviousGroundThreats.Contains(target))
+                return;
+
+            scan.HasNewGroundThreat = 1;
+            scan.BestGroundEtaSeconds = math.min(scan.BestGroundEtaSeconds, etaSeconds);
+        }
     }
 
     private static bool IsGroundVehicle(ThreatTargetLookups lookups, Entity target)

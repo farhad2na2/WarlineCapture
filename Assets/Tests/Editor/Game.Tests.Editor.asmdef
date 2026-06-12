@@ -13,6 +13,7 @@
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",
+        "sniveler-code.gpu-animation",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",

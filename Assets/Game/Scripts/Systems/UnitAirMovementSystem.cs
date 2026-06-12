@@ -23,6 +23,8 @@ public partial struct UnitAirMovementSystem : ISystem
         var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
         var engageLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
+        var debugFireStateLookup = SystemAPI.GetComponentLookup<SelectedUnitDebugFireState>(true);
+        var debugFireTargetLookup = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true);
         var transitLookup = SystemAPI.GetComponentLookup<UnitSpawnTransitTag>(true);
         var ropeDisembarkLookup = SystemAPI.GetComponentLookup<UnitTransportRopeDisembarkRequest>(true);
 
@@ -91,7 +93,9 @@ public partial struct UnitAirMovementSystem : ISystem
             }
 
             bool hasValidEngage = false;
+            Entity engageTarget = Entity.Null;
             float3 engageTargetPosition = default;
+            bool hasActiveDebugFire = IsActiveDebugFireSource(debugFireStateLookup, debugFireTargetLookup, entity);
             if (engageLookup.HasComponent(entity))
             {
                 EngageTarget engage = engageLookup[entity];
@@ -100,13 +104,32 @@ public partial struct UnitAirMovementSystem : ISystem
                     healthLookup[engage.Target].Current > 0)
                 {
                     hasValidEngage = true;
+                    engageTarget = engage.Target;
                     engageTargetPosition = engage.Position;
                 }
+            }
+
+            if (!hasValidEngage && hasActiveDebugFire)
+            {
+                SuppressDebugFireMovement(ref stateRw);
+                continue;
             }
 
             if (hasValidEngage)
             {
                 stateRw.ReturningHome = 0;
+                if (IsDebugFireTargetForSource(debugFireTargetLookup, engageTarget, entity))
+                {
+                    SuppressDebugFireMovement(ref stateRw);
+                    FaceTarget(ref transform.ValueRW, engageTargetPosition);
+                    continue;
+                }
+
+                if (hasActiveDebugFire)
+                {
+                    SuppressDebugFireMovement(ref stateRw);
+                    continue;
+                }
 
                 if (stateRw.UsesRunway != 0 && stateRw.Airborne == 0)
                 {
@@ -559,6 +582,45 @@ public partial struct UnitAirMovementSystem : ISystem
         if (GridUtils.InBounds(movedCell, grid.Width, grid.Height))
             unitGrid.Cell = movedCell;
         return false;
+    }
+
+    private static bool IsDebugFireTargetForSource(
+        ComponentLookup<DebugFireTargetTag> debugFireTargetLookup,
+        Entity target,
+        Entity source)
+    {
+        return target != Entity.Null &&
+               debugFireTargetLookup.HasComponent(target) &&
+               debugFireTargetLookup[target].Source == source;
+    }
+
+    private static bool IsActiveDebugFireSource(
+        ComponentLookup<SelectedUnitDebugFireState> debugFireStateLookup,
+        ComponentLookup<DebugFireTargetTag> debugFireTargetLookup,
+        Entity source)
+    {
+        if (!debugFireStateLookup.HasComponent(source))
+            return false;
+
+        Entity target = debugFireStateLookup[source].Target;
+        return IsDebugFireTargetForSource(debugFireTargetLookup, target, source);
+    }
+
+    private static void SuppressDebugFireMovement(ref UnitAirComponent state)
+    {
+        state.ReturningHome = 0;
+        state.TakeoffRolling = 0;
+        state.LandingRolling = 0;
+        state.AttackRunActive = 0;
+        state.ReturnApproachInitialized = 0;
+    }
+
+    private static void FaceTarget(ref LocalTransform transform, float3 targetPosition)
+    {
+        float3 toTarget = targetPosition - transform.Position;
+        toTarget.y = 0f;
+        if (math.lengthsq(toTarget) > 1e-8f)
+            transform.Rotation = quaternion.LookRotationSafe(math.normalizesafe(toTarget, new float3(0f, 0f, 1f)), math.up());
     }
 
     private static bool SteerTowards(

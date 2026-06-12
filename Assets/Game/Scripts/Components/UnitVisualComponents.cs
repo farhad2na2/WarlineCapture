@@ -48,6 +48,8 @@ public struct UnitAttackAnimationComponent : IComponentData
 public struct UnitResolvedAnimationIndex : IComponentData
 {
     public byte Value;
+    public byte Changed;
+    public byte Updated;
 }
 
 public struct UnitDeathAnimationComponent : IComponentData

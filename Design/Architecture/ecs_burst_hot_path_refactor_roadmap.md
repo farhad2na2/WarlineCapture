@@ -20,9 +20,9 @@ Scanned root:
 
 Observed:
 - 723 system source files.
-- 30 system files currently use `[BurstCompile]`.
+- 32 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
-- 31 files have `OnUpdate` and no `[BurstCompile]`.
+- 29 files have `OnUpdate` and no `[BurstCompile]`.
 - 0 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count after the `CustomGameStartupSystem` startup-boundary cleanup slice.
 - 1 direct `EntityManager` structural or component mutation call.
 - Main array-copy offenders:
@@ -300,6 +300,21 @@ Progress notes:
   - Log marker: `[InitialUnitsBlockerChurnFocusedValidation] result=Passed tests=1`.
   - Log scan confirmed no `Burst error` / `BC####` entries after the rerun.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `36`, Burst-compiled system files `25`.
+- 2026-06-12: Continued Phase 2 in `ThreatDetectionWarningSystem`. The nested sensor/target threat scan now runs in a Burst `IJob` over cached archetype chunks and component lookups, while `ThreatWarningRuntimeState.RequestWarning` remains in the managed boundary after the scan. This preserves the previous explicit dependency completion before reading `UnitGrid` written by movement jobs.
+- 2026-06-12: Focused threat-warning validation passed after the Burst scan split:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ThreatWarningValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-threat-warning-burst-scan.log`
+  - Log marker: `[ThreatWarningValidation] result=Passed`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `30`, Burst-compiled system files `31`.
+  - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
+- 2026-06-12: Guardrail ratchet after `ThreatDetectionWarningSystem`: non-Burst `OnUpdate` ceiling reduced to `30`, Burst file floor increased to `31`.
+- 2026-06-12: Continued Phase 2/8 in `UnitAnimationIndexSystem`. Attack-animation timer decrement and resolved animation-index selection now run in a Burst `IJobEntity`; recursive `MaterialAnimationIndex` application stays in the managed visual boundary. `UnitResolvedAnimationIndex` now carries transient `Changed` / `Updated` flags so managed visual application can preserve the previous changed-vs-root-only behavior without structural tags.
+- 2026-06-12: Added `UnitAnimationIndexSystemTests.RunFocusedValidation` covering configured run-shoot resolution, empty configured-order skip behavior, and fallback auto-wander movement resolution. The editor test asmdef now explicitly references `sniveler-code.gpu-animation`, matching the runtime assembly dependency required by `UnitAnimationIndexSystem`.
+- 2026-06-12: Focused animation-index validation passed:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitAnimationIndexSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-animation-index-after-asmdef.log`
+  - Log marker: `[UnitAnimationIndexFocusedValidation] result=Passed tests=3`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `29`, Burst-compiled system files `32`.
+  - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
+- 2026-06-12: Guardrail ratchet after `UnitAnimationIndexSystem`: non-Burst `OnUpdate` ceiling reduced to `29`, Burst file floor increased to `32`.
 - 2026-06-12: Started Phase 3 with a narrow `SelectionGameplayStartupSystem` cleanup. The Match HUD squad panel now resolves board-button availability through one selected-entity scan instead of separate passenger and transport scans.
 - 2026-06-12: Guardrail ratchet after the first Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `107`.
 - 2026-06-12: Validation passed after the first Phase 3 slice:

@@ -103,6 +103,19 @@ internal static class RuntimeGameplayStateTestHelper
         return 0;
     }
 
+    public static string DescribeUnitProductionBoundary(EntityManager entityManager)
+    {
+        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        StringBuilder builder = new();
+        AppendBuffer(builder, "configuredUnits", entityManager.GetBuffer<BuildingConfiguredUnitReadModel>(entity, true), item =>
+            $"{item.UnitId.ToString()}:{item.DisplayName.ToString()}:can={item.CanRequest}:price={item.Price}");
+        AppendBuffer(builder, "summaries", entityManager.GetBuffer<BuildingRuntimeUnitProductionSummary>(entity, true), item =>
+            $"faction={item.FactionId}:unit={item.UnitId.ToString()}:produced={item.ProducedCount}:queued={item.QueuedCount}");
+        AppendBuffer(builder, "requests", entityManager.GetBuffer<BuildingFactionUnitProductionRequest>(entity, true), item =>
+            $"faction={item.FactionId}:unit={item.UnitId.ToString()}:status={item.Status}:result={item.ResultCode}:queue={item.QueueCount}");
+        return builder.Length == 0 ? "<empty production boundary>" : builder.ToString();
+    }
+
     private static Entity GetOrCreateBuildingRuntimeBoundaryEntity(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
@@ -134,6 +147,27 @@ internal static class RuntimeGameplayStateTestHelper
     {
         if (!entityManager.HasBuffer<T>(entity))
             entityManager.AddBuffer<T>(entity);
+    }
+
+    private static void AppendBuffer<T>(StringBuilder builder, string label, DynamicBuffer<T> buffer, Func<T, string> describe)
+        where T : unmanaged, IBufferElementData
+    {
+        if (builder.Length > 0)
+            builder.Append(" | ");
+        builder.Append(label);
+        builder.Append('=');
+        if (buffer.Length == 0)
+        {
+            builder.Append("<empty>");
+            return;
+        }
+
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            if (i > 0)
+                builder.Append(',');
+            builder.Append(describe(buffer[i]));
+        }
     }
 
     private static string NormalizeKey(string value)

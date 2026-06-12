@@ -142,6 +142,7 @@ internal sealed class MatchBootstrapSystem
     private string _gameplayStartStatus = "Waiting for match scene";
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
+    private Transform _runtimeTransportsRoot;
     private Transform _runtimeUiRoot;
 
     public bool GameplayStartRequested => _gameplayStartRequested;
@@ -159,7 +160,7 @@ internal sealed class MatchBootstrapSystem
         _matchSceneReferenceSystem.Register(view);
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
 
-        _runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
+        _runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeTransportsRoot, ref _runtimeUiRoot);
         _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
     }
 
@@ -378,6 +379,7 @@ internal sealed class MatchBootstrapSystem
         Camera worldCamera,
         Light directionalLight,
         Volume globalVolume,
+        Transform runtimeTransportsRoot,
         Transform runtimeUiRoot,
         Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         Transform mapBuildingAuthoringRoot)
@@ -394,6 +396,7 @@ internal sealed class MatchBootstrapSystem
             worldCamera,
             directionalLight,
             globalVolume,
+            runtimeTransportsRoot,
             runtimeUiRoot,
             createSelectionRectangleView,
             SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite,
@@ -887,6 +890,7 @@ internal sealed class MatchBootstrapSystem
             WorldCamera,
             DirectionalLight,
             GlobalVolume,
+            _runtimeTransportsRoot,
             _runtimeUiRoot,
             EnsureSelectionRectangleView,
             MapBuildingAuthoringRoot);

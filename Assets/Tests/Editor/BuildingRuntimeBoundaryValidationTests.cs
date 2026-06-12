@@ -85,13 +85,14 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         _runtimeRoot = new GameObject("BuildingRuntimeBoundary_RuntimeRoot");
         _buildingComposition = new BuildingGameplayCompositionSystem();
         _buildingGameplay = _buildingComposition.Initialize(
-            _buildingConfig,
-            null,
-            _runtimeRoot.transform,
-            null,
-            default,
-            null,
-            null,
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
             resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);

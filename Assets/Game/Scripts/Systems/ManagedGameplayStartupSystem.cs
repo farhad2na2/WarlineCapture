@@ -139,6 +139,7 @@ internal sealed class ManagedGameplayStartupSystem
         Camera worldCamera,
         Light directionalLight,
         Volume globalVolume,
+        Transform runtimeTransportsRoot,
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
@@ -165,6 +166,7 @@ internal sealed class ManagedGameplayStartupSystem
         BuildingGameplayCompositionResultSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
             buildingPlacementConfig,
             worldCamera,
+            runtimeTransportsRoot,
             runtimeUiRoot,
             road.RoadFootprintQuery,
             road.RoadFootprintQueryContext,

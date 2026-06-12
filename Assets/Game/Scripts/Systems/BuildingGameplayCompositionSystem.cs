@@ -23,6 +23,7 @@ internal sealed class BuildingGameplayCompositionSystem
     public BuildingGameplayCompositionResultSystem.Result Initialize(
         BuildingPlacementSystemConfig buildingPlacementConfig,
         Camera worldCamera,
+        Transform runtimeTransportsRoot,
         Transform runtimeUiRoot,
         RoadFootprintQuerySystem roadFootprintQuerySystem,
         RoadFootprintQuerySystem.Context roadFootprintQueryContext,
@@ -44,6 +45,7 @@ internal sealed class BuildingGameplayCompositionSystem
             tryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata);
         childSystems.BuildingProductionSystem.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
+        childSystems.BuildingProductionTransportSystem.SetRuntimeRoot(runtimeTransportsRoot);
         childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
         childSystems.ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
         _startupCompositionSystem.Initialize(

@@ -730,6 +730,17 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats()
+    {
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string boarding = ExtractBlockAfter(startup, "bool TryIssueFocusedTransportBoarding");
+
+        StringAssert.Contains("int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);", boarding);
+        StringAssert.Contains("int availableSeats = capacity - occupiedSeats;", boarding);
+        StringAssert.Contains("plannedOrders.Count < availableSeats", boarding);
+    }
+
+    [Test]
     public void BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess()
     {
         string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");

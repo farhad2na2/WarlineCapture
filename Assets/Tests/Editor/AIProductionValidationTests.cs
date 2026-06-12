@@ -116,13 +116,14 @@ public sealed class AIProductionValidationTests
         _runtimeRoot = new GameObject("AIProduction_RuntimeRoot");
         _buildingComposition = new BuildingGameplayCompositionSystem();
         _buildingGameplay = _buildingComposition.Initialize(
-            _buildingConfig,
-            null,
-            _runtimeRoot.transform,
-            null,
-            default,
-            null,
-            null,
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
             resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
@@ -163,7 +164,7 @@ public sealed class AIProductionValidationTests
             LastLogTime = -999f
         });
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
-        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Rifleman")) });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);

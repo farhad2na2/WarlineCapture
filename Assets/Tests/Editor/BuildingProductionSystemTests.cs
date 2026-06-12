@@ -7,6 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class BuildingProductionSystemTests
 {
@@ -438,6 +439,55 @@ public sealed class BuildingProductionSystemTests
     }
 
     [Test]
+    public void PrewarmConfiguredProductionTransportPools_ParentsSelfArrivingAirUnitsUnderRuntimeRoot()
+    {
+        GameObject runtimeRoot = new("RuntimeTransports_Test");
+        GameObject airPrefab = new("Unit_Veh_Jet_02");
+        try
+        {
+            UnitGridAuthoring airAuthoring = airPrefab.AddComponent<UnitGridAuthoring>();
+            SetAuthoringField(airAuthoring, "isAirUnit", true);
+            SetAuthoringField(airAuthoring, "productionTransportArrivalSeconds", 2f);
+            SetAuthoringField(airAuthoring, "productionTransportHoldForNextReadySeconds", 1f);
+            SetAuthoringField(airAuthoring, "productionTransportMaxConcurrent", 1);
+            SetAuthoringField(airAuthoring, "productionTransportRequiresAirportRunway", true);
+
+            BuildingProductionSystem productionSystem = CreateProductionSystem();
+            BuildingProductionTransportSystem transportSystem = new();
+            transportSystem.SetRuntimeRoot(runtimeRoot.transform);
+
+            transportSystem.PrewarmConfiguredProductionTransportPools(
+                productionSystem,
+                new[] { airPrefab },
+                new Dictionary<string, GameObject> { ["unit_veh_jet_02"] = airPrefab },
+                null,
+                new BuildingVisualSystem());
+
+            Assert.AreEqual(2, runtimeRoot.transform.childCount, "Self-arriving air transport prewarm should still keep the default warm pool size.");
+            for (int i = 0; i < runtimeRoot.transform.childCount; i++)
+            {
+                Transform child = runtimeRoot.transform.GetChild(i);
+                Assert.AreSame(runtimeRoot.transform, child.parent);
+                Assert.IsFalse(child.gameObject.activeSelf);
+                StringAssert.StartsWith("Unit_Veh_Jet_02", child.name);
+            }
+
+            foreach (GameObject root in SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                Assert.AreNotEqual(
+                    "Unit_Veh_Jet_02(Clone)",
+                    root.name,
+                    "Prewarmed transport pool instances must be owned by RuntimeTransports, not leaked as scene-root unit clones.");
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(runtimeRoot);
+            UnityEngine.Object.DestroyImmediate(airPrefab);
+        }
+    }
+
+    [Test]
     public void GetProgress_ComputesRemainingAndCanCapTransportProgress()
     {
         var transportPrefab = new GameObject("Transport");
@@ -650,6 +700,7 @@ public sealed class BuildingProductionSystemTests
             result = composition.Initialize(
                 placementConfig,
                 worldCamera: null,
+                runtimeTransportsRoot: null,
                 runtimeUiRoot: null,
                 roadFootprintQuerySystem: null,
                 roadFootprintQueryContext: default,
@@ -687,6 +738,7 @@ public sealed class BuildingProductionSystemTests
             result = composition.Initialize(
                 placementConfig,
                 worldCamera: null,
+                runtimeTransportsRoot: null,
                 runtimeUiRoot: null,
                 roadFootprintQuerySystem: null,
                 roadFootprintQueryContext: default,

@@ -7,6 +7,29 @@ using UnityEngine.TestTools;
 
 public sealed class AIEconomyValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new AIEconomyValidationTests();
+        try
+        {
+            tests.SetUp();
+            tests.SceneAIConfigAssets_MatchValidatedEconomyBudgets();
+            AssertEmitsValidationLogForEnabledFactionEconomy(assertDiagnosticLog: false);
+            Debug.Log("[AIEconomyFocusedValidation] result=Passed tests=2");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[AIEconomyFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -43,6 +66,11 @@ public sealed class AIEconomyValidationTests
     [Test]
     public void AIEconomySystem_EmitsValidationLogForEnabledFactionEconomy()
     {
+        AssertEmitsValidationLogForEnabledFactionEconomy(assertDiagnosticLog: true);
+    }
+
+    private static void AssertEmitsValidationLogForEnabledFactionEconomy(bool assertDiagnosticLog)
+    {
         using var world = new World("AIEconomyValidationTests");
         EntityManager em = world.EntityManager;
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
@@ -70,13 +98,17 @@ public sealed class AIEconomyValidationTests
         SystemHandle system = world.CreateSystem<AIEconomySystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(
-            LogType.Log,
-            new Regex(@"\[AIEconomy\] faction=1 money=75000 oil=0 fuel=0 oilIncome=0\.0 fuelIncome=0\.0 soldOil=0 soldFuel=0 revenue=0"));
+        if (assertDiagnosticLog)
+        {
+            LogAssert.Expect(
+                LogType.Log,
+                new Regex(@"\[AIEconomy\] faction=1 money=75000 oil=0 fuel=0 oilIncome=0\.0 fuelIncome=0\.0 soldOil=0 soldFuel=0 revenue=0"));
+        }
 
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (assertDiagnosticLog)
+            LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(1, economy.FactionId);

@@ -26,6 +26,7 @@ internal sealed class BuildingProductionTransportSystem
     private readonly List<Transform> _transformSearchBuffer = new(64);
     private IReadOnlyList<GameObject> _configuredPoolSourcePrefabs;
     private IReadOnlyDictionary<string, GameObject> _configuredPoolSourcePrefabsByKey;
+    private Transform _runtimeRoot;
     private bool[] _laneUsage = new bool[4];
     private int _createdTransportStateCount;
 
@@ -59,6 +60,11 @@ internal sealed class BuildingProductionTransportSystem
             TransportBridgeContext = transportBridgeContext;
             PrepareTransportDropVisual = prepareTransportDropVisual;
         }
+    }
+
+    public void SetRuntimeRoot(Transform runtimeRoot)
+    {
+        _runtimeRoot = runtimeRoot;
     }
 
     public bool TryEnsureActiveProductionTransport(
@@ -952,20 +958,33 @@ internal sealed class BuildingProductionTransportSystem
             return;
 
         Transform instanceTransform = instance.transform;
-        instanceTransform.SetParent(null, false);
-        instanceTransform.position = Vector3.zero;
-        instanceTransform.rotation = Quaternion.identity;
+        instanceTransform.SetParent(EnsureRuntimeRoot(), false);
+        instanceTransform.localPosition = Vector3.zero;
+        instanceTransform.localRotation = Quaternion.identity;
         instance.SetActive(false);
         GetProductionTransportPool(prefab).Push(instance);
     }
 
     private GameObject CreateProductionTransportInstance(GameObject prefab, BuildingVisualSystem visualSystem)
     {
-        GameObject instance = Instantiate(prefab);
+        Transform runtimeRoot = EnsureRuntimeRoot();
+        GameObject instance = runtimeRoot != null
+            ? Instantiate(prefab, runtimeRoot, false)
+            : Instantiate(prefab);
         HideTransportRuntimeMarkers(instance.transform);
         CacheProductionTransportInstanceMetadata(instance, visualSystem);
         instance.SetActive(false);
         return instance;
+    }
+
+    private Transform EnsureRuntimeRoot()
+    {
+        if (_runtimeRoot != null)
+            return _runtimeRoot;
+
+        var root = new GameObject("RuntimeTransports");
+        _runtimeRoot = root.transform;
+        return _runtimeRoot;
     }
 
     private Stack<GameObject> GetProductionTransportPool(GameObject prefab)

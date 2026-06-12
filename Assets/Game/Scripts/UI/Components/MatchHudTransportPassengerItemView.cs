@@ -30,6 +30,8 @@ public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
 
     public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<Entity> exitRequested)
     {
+        BindUnityEvents();
+
         _passenger = model.Passenger;
         _exitRequested = exitRequested;
 

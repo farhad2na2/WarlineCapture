@@ -616,13 +616,14 @@ public sealed class InitialFactionBaseValidationTests
     {
         var composition = new BuildingGameplayCompositionSystem();
         return composition.Initialize(
-            placementConfig,
-            null,
-            runtimeRoot,
-            null,
-            default,
-            null,
-            null,
+            buildingPlacementConfig: placementConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: runtimeRoot,
+            runtimeUiRoot: runtimeRoot,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
             resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);

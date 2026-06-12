@@ -21,6 +21,7 @@ public sealed class UnitTransportValidationTests
         try
         {
             RunTest(test => test.GroundPersonnelTransport_BoardsSoldierLikeApc());
+            RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
             RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
@@ -37,7 +38,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=17");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=18");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -93,6 +94,44 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(passenger, passengers[0].Passenger);
         Assert.IsTrue(em.HasComponent<UnitTransportPassenger>(passenger));
         Assert.IsTrue(em.HasComponent<Disabled>(passenger));
+    }
+
+    [Test]
+    public void GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats()
+    {
+        using var world = new World("GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        Entity transport = CreateTransport(em, new int2(10, 10), air: false, airborne: false);
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 2 });
+        Entity loadedPassenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = loadedPassenger });
+
+        Entity passengerA = CreateSelectablePassenger(em, new int2(6, 10));
+        Entity passengerB = CreateSelectablePassenger(em, new int2(6, 12));
+        Entity passengerC = CreateSelectablePassenger(em, new int2(6, 14));
+
+        var boardingSystem = new TransportBoardingCommandSystem();
+        TransportBoardingCommandSystem.Result result = boardingSystem.TryIssueBoardTransportOrderToClickedUnit(
+            em,
+            Vector2.zero,
+            new UnitTransportBoardingQuerySystem(),
+            new UnitTransportBoardingRuleSystem(),
+            new UnitTransportApproachCellSystem(),
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem(),
+            (Vector2 _screenPosition, EntityManager _em, out Entity entity) =>
+            {
+                entity = transport;
+                return true;
+            },
+            TryGetNoClickedCell);
+
+        Assert.IsTrue(result.Accepted);
+        Assert.AreEqual(1, CountBoardingTargets(em, passengerA, passengerB, passengerC), "Only one free seat remains, so only one selected passenger may receive a boarding order.");
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length, "Existing passengers stay loaded while new passengers are ordered.");
     }
 
     [Test]
@@ -892,6 +931,37 @@ public sealed class UnitTransportValidationTests
         em.SetComponentData(entity, LocalTransform.FromPosition(float3.zero));
         em.AddBuffer<UnitTransportHiddenVisualScale>(entity);
         return entity;
+    }
+
+    private static Entity CreateSelectablePassenger(EntityManager em, int2 cell)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitMove),
+            typeof(UnitMovementBehavior),
+            typeof(SelectedUnitTag),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return entity;
+    }
+
+    private static int CountBoardingTargets(EntityManager em, params Entity[] passengers)
+    {
+        int count = 0;
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            if (em.HasComponent<UnitTransportBoardingTarget>(passengers[i]))
+                count++;
+        }
+
+        return count;
     }
 
     private static bool TransportPassengerBufferContains(DynamicBuffer<UnitTransportPassengerElement> passengers, Entity passenger)

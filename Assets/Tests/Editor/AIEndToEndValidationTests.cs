@@ -26,6 +26,27 @@ public sealed class AIEndToEndValidationTests
     private BuildingPlacementSystemConfig _buildingConfig;
     private UnitPrefabRegistryAuthoringConfig _unitRegistryConfig;
 
+    public static void RunFocusedValidation()
+    {
+        var tests = new AIEndToEndValidationTests();
+        try
+        {
+            tests.SetUp();
+            tests.AssertEnemyAILoop_BuildsProducesFormsSquadTargetsAndOrdersAttack(assertDiagnosticLog: false);
+            Debug.Log("[AIEndToEndFocusedValidation] result=Passed tests=1");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[AIEndToEndFocusedValidation] result=Failed");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -146,7 +167,11 @@ public sealed class AIEndToEndValidationTests
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
-        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Rifleman"));
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        Assert.AreEqual(
+            1,
+            RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Rifleman"),
+            RuntimeGameplayStateTestHelper.DescribeUnitProductionBoundary(em));
 
         if (assertDiagnosticLog)
             LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=2 squad=1 purpose=Attack units=4 targetFaction=1 targetCell=int2\(50, 50\)"));
@@ -202,13 +227,14 @@ public sealed class AIEndToEndValidationTests
         _runtimeRoot = new GameObject("AIEndToEnd_RuntimeRoot");
         _buildingComposition = new BuildingGameplayCompositionSystem();
         _buildingGameplay = _buildingComposition.Initialize(
-            _buildingConfig,
-            null,
-            _runtimeRoot.transform,
-            null,
-            default,
-            null,
-            null,
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
             resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
@@ -251,7 +277,7 @@ public sealed class AIEndToEndValidationTests
             LastLogTime = -999f
         });
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
-        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Rifleman")) });
     }
 
     private static void CreateSquadPlan(EntityManager em)

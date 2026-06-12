@@ -20,12 +20,16 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.VehicleVisualPrefabReferenceBackfillCopiesMarkerReferenceFromSourcePrefab();
             tests.VehicleVisualPrefabReferenceBackfillUsesSharedMarkerWhenSourcePrefabIsStale();
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
+            tests.UnitSelectionMarkerSystemCreatesMovesAndRemovesMarkersPerSelectedVehicle();
+            tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
+            tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
+            tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
             tests.UnitRuntimeHealthBarSystemCreatesAndRemovesRuntimeHealthBar();
             tests.UnitRuntimeHealthBarSystemCreatesHealthBarForDamagedCharacterUnit();
             tests.UnitRuntimeHealthBarSystemHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=8");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -206,6 +210,39 @@ public sealed class VehicleVisualAdornmentsSystemTests
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
+    }
+
+    [Test]
+    public void SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState()
+    {
+        using var world = new World(nameof(SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateVehicle(em, health: 100);
+        em.AddComponent<SelectedUnitTag>(unit);
+
+        Entity visualChild = CreateVisualInstance(em);
+        Entity marker = CreateVisualInstance(em);
+        em.AddComponentData(marker, new Parent { Value = unit });
+        em.AddComponent<SelectionMarkerTag>(marker);
+        em.AddComponentData(marker, new SelectionMarkerVisualChild
+        {
+            Value = visualChild,
+            VisibleScale = 4.05f
+        });
+
+        SystemHandle system = world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
+        Assert.AreEqual(4.05f, em.GetComponentData<LocalTransform>(visualChild).Scale, 0.001f);
+
+        em.RemoveComponent<SelectedUnitTag>(unit);
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(visualChild).Scale, 0.001f);
     }
 
     [Test]

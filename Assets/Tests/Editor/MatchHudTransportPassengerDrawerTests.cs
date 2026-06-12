@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using TMPro;
@@ -6,11 +7,30 @@ using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public sealed class MatchHudTransportPassengerDrawerTests
 {
     private const string MatchHudPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private GameObject _instance;
+
+    public static void RunBatchValidation()
+    {
+        try
+        {
+            RunTest(test => test.MatchHudPrefabSerializesTransportPassengerDrawerReferences());
+            RunTest(test => test.TransportPassengerModelShowsChipAndDrawerRows());
+            RunTest(test => test.DisembarkPassengerRequestStoresTransportAndPassenger());
+            Debug.Log("[MatchHudTransportPassengerDrawerValidation] result=Passed tests=3");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudTransportPassengerDrawerValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
 
     [TearDown]
     public void TearDown()
@@ -52,6 +72,12 @@ public sealed class MatchHudTransportPassengerDrawerTests
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
         RectTransform contentRoot = GetReference<RectTransform>(new SerializedObject(drawer), "contentRoot");
         Sprite riflemanCardSprite = CreateTestSprite();
+        Entity exitedPassenger = Entity.Null;
+        view.BindTransportPassengerActions(
+            () => { },
+            () => { },
+            () => { },
+            passenger => exitedPassenger = passenger);
 
         var passengers = new List<MatchHudSelectionPanelPassengerItemModel>
         {
@@ -85,6 +111,18 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsTrue(drawerRoot.activeSelf);
         Assert.GreaterOrEqual(CountActivePassengerRows(contentRoot), 2);
         Assert.AreSame(riflemanCardSprite, ResolveFirstActivePassengerPortrait(contentRoot));
+
+        MatchHudTransportPassengerItemView firstItem = ResolveFirstActivePassengerItem(contentRoot);
+        Assert.NotNull(firstItem);
+        SerializedObject itemSerialized = new(firstItem);
+        Assert.AreEqual("Rifleman", GetReference<TMP_Text>(itemSerialized, "nameText").text);
+        Assert.AreEqual("SOLDIER", GetReference<TMP_Text>(itemSerialized, "roleText").text);
+        Assert.AreEqual("Health: 80/100", GetReference<TMP_Text>(itemSerialized, "healthText").text);
+        Assert.AreEqual(0.8f, GetReference<Image>(itemSerialized, "healthFillImage").fillAmount, 0.001f);
+        Button exitButton = GetReference<Button>(itemSerialized, "exitButton");
+        Assert.IsTrue(exitButton.interactable);
+        exitButton.onClick.Invoke();
+        Assert.AreEqual(passengers[0].Passenger, exitedPassenger);
     }
 
     [Test]
@@ -143,14 +181,21 @@ public sealed class MatchHudTransportPassengerDrawerTests
 
     private static Sprite ResolveFirstActivePassengerPortrait(RectTransform contentRoot)
     {
+        MatchHudTransportPassengerItemView item = ResolveFirstActivePassengerItem(contentRoot);
+        if (item == null)
+            return null;
+
+        Image portraitImage = GetReference<Image>(new SerializedObject(item), "portraitImage");
+        return portraitImage != null ? portraitImage.sprite : null;
+    }
+
+    private static MatchHudTransportPassengerItemView ResolveFirstActivePassengerItem(RectTransform contentRoot)
+    {
         for (int i = 0; i < contentRoot.childCount; i++)
         {
             MatchHudTransportPassengerItemView item = contentRoot.GetChild(i).GetComponent<MatchHudTransportPassengerItemView>();
-            if (item == null || !item.gameObject.activeSelf)
-                continue;
-
-            Image portraitImage = GetReference<Image>(new SerializedObject(item), "portraitImage");
-            return portraitImage != null ? portraitImage.sprite : null;
+            if (item != null && item.gameObject.activeSelf)
+                return item;
         }
 
         return null;
@@ -162,6 +207,19 @@ public sealed class MatchHudTransportPassengerDrawerTests
         texture.SetPixel(0, 0, Color.white);
         texture.Apply();
         return Sprite.Create(texture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 100f);
+    }
+
+    private static void RunTest(Action<MatchHudTransportPassengerDrawerTests> test)
+    {
+        var fixture = new MatchHudTransportPassengerDrawerTests();
+        try
+        {
+            test(fixture);
+        }
+        finally
+        {
+            fixture.TearDown();
+        }
     }
 
     private static T GetReference<T>(SerializedObject serialized, string propertyName) where T : Object

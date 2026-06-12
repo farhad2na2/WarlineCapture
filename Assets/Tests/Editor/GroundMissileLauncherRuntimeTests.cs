@@ -44,6 +44,27 @@ public sealed class GroundMissileLauncherRuntimeTests
         }
     }
 
+    public static void RunAttackFocusedValidation()
+    {
+        try
+        {
+            var tests = new GroundMissileLauncherRuntimeTests();
+            tests.AttackOrder_GroundMissileLauncherAcceptsHostileRuntimeBuildingAtLongRange();
+            tests.SelectionAttackRequest_UsesFocusedAttackSourceWhenSelectedTagMissing();
+            tests.AttackSystem_ArmsGroundMissileLauncherWithoutImmediateDamage();
+            tests.MissileFire_WaitsForBatteryOpenAndHoldDelayBeforeLaunch();
+            tests.MissileProjectile_ImpactsAndDamagesEnemyArea();
+            Debug.Log("[GroundMissileAttackFocusedValidation] result=Passed tests=5");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[GroundMissileAttackFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void AttackSystem_ArmsGroundMissileLauncherWithoutImmediateDamage()
     {

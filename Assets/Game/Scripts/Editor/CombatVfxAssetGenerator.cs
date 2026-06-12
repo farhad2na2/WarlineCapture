@@ -84,9 +84,9 @@ public static class CombatVfxAssetGenerator
         },
         ["Rocket"] = new WeaponVfxProfile
         {
-            PrefabId = "Rocket", FlashScale = 1.6f, FlashSparks = 8, SmokeCount = 6,
-            ImpactScale = 2f, ImpactSparks = 14, ImpactDust = 8, ExplosiveImpact = true,
-            TraceColor = new Color(1f, 0.55f, 0.2f, 1f), TraceWidth = 0.3f,
+            PrefabId = "Rocket", FlashScale = 3f, FlashSparks = 14, SmokeCount = 12,
+            ImpactScale = 4f, ImpactSparks = 24, ImpactDust = 14, ExplosiveImpact = true,
+            TraceColor = new Color(1f, 0.55f, 0.2f, 1f), TraceWidth = 0.45f,
             TraceScrollSpeed = 6f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.4f,
             TracerEveryNthShot = 1, MuzzleHeight = 1f, MuzzleForward = 0.5f
         },
@@ -100,11 +100,11 @@ public static class CombatVfxAssetGenerator
         },
         ["TankCannon"] = new WeaponVfxProfile
         {
-            PrefabId = "TankCannon", FlashScale = 2.2f, FlashSparks = 10, SmokeCount = 8,
-            ImpactScale = 2.4f, ImpactSparks = 16, ImpactDust = 10, ExplosiveImpact = true,
-            TraceColor = new Color(1f, 0.7f, 0.4f, 1f), TraceWidth = 0.35f,
-            TraceScrollSpeed = 8f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.22f,
-            TracerEveryNthShot = 1, MuzzleHeight = 1.5f, MuzzleForward = 2.8f
+            PrefabId = "TankCannon", FlashScale = 4.5f, FlashSparks = 20, SmokeCount = 16,
+            ImpactScale = 5f, ImpactSparks = 30, ImpactDust = 18, ExplosiveImpact = true,
+            TraceColor = new Color(1f, 0.7f, 0.4f, 1f), TraceWidth = 0.6f,
+            TraceScrollSpeed = 8f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.3f,
+            TracerEveryNthShot = 1, MuzzleHeight = 1.5f, MuzzleForward = 3.2f
         },
         ["Minigun"] = new WeaponVfxProfile
         {
@@ -496,6 +496,27 @@ public static class CombatVfxAssetGenerator
         GrowOverLifetime(smoke, 2.6f);
         AddUpwardDrift(smoke, 0.5f);
 
+        if (profile.ExplosiveImpact)
+        {
+            // Cannon/rocket launch blast: a fireball bursting out of the barrel...
+            ParticleSystem blast = AddParticleSystem(root, "BlastFire", _sparkMat, ParticleSystemRenderMode.Billboard);
+            ConfigureMain(blast, duration: 0.1f, lifeMin: 0.12f, lifeMax: 0.28f, speedMin: 4f, speedMax: 9f, sizeMin: 0.35f * s, sizeMax: 0.6f * s, maxParticles: 16);
+            RandomizeRotation(blast);
+            SetBurst(blast, 8);
+            SetCone(blast, angle: 16f, radius: 0.06f * s);
+            FadeOut(blast, new Color(1f, 0.55f, 0.2f, 1f));
+            GrowOverLifetime(blast, 1.8f);
+
+            // ...plus one big near-instant glow ball swallowing the muzzle.
+            ParticleSystem glow = AddParticleSystem(root, "BlastGlow", _impactFlashMat, ParticleSystemRenderMode.Billboard);
+            ConfigureMain(glow, duration: 0.1f, lifeMin: 0.1f, lifeMax: 0.16f, speedMin: 0f, speedMax: 0f, sizeMin: 0.8f * s, sizeMax: 1.1f * s, maxParticles: 4);
+            RandomizeRotation(glow);
+            SetBurst(glow, 2);
+            DisableShape(glow);
+            FadeOut(glow, new Color(1f, 0.8f, 0.5f, 1f));
+            GrowOverLifetime(glow, 1.6f);
+        }
+
         return SavePrefab(root);
     }
 
@@ -532,24 +553,41 @@ public static class CombatVfxAssetGenerator
 
         if (profile.ExplosiveImpact)
         {
-            // Fireball: short-lived ball of additive orange glow expanding outward.
-            ParticleSystem fireball = AddParticleSystem(root, "Fireball", _sparkMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.4f, 0f));
-            ConfigureMain(fireball, duration: 0.1f, lifeMin: 0.18f, lifeMax: 0.32f, speedMin: 0.6f, speedMax: 2f, sizeMin: 0.45f * s, sizeMax: 0.8f * s, maxParticles: 10);
-            RandomizeRotation(fireball);
-            SetBurst(fireball, 5);
-            SetSphere(fireball, 0.15f * s);
-            FadeOut(fireball, new Color(1f, 0.6f, 0.25f, 1f));
-            GrowOverLifetime(fireball, 1.8f);
+            // Shockwave: one huge flat flash that balloons out and dies instantly.
+            ParticleSystem shockwave = AddParticleSystem(root, "Shockwave", _impactFlashMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.5f, 0f));
+            ConfigureMain(shockwave, duration: 0.1f, lifeMin: 0.16f, lifeMax: 0.24f, speedMin: 0f, speedMax: 0f, sizeMin: 0.9f * s, sizeMax: 1.2f * s, maxParticles: 4);
+            RandomizeRotation(shockwave);
+            SetBurst(shockwave, 2);
+            DisableShape(shockwave);
+            FadeOut(shockwave, new Color(1f, 0.85f, 0.6f, 1f));
+            GrowOverLifetime(shockwave, 3.2f);
 
-            // Smoke column rising from the blast for a second or two.
+            // Fireball: a roiling ball of additive orange glow expanding outward.
+            ParticleSystem fireball = AddParticleSystem(root, "Fireball", _sparkMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.4f, 0f));
+            ConfigureMain(fireball, duration: 0.1f, lifeMin: 0.25f, lifeMax: 0.5f, speedMin: 1.5f, speedMax: 4f, sizeMin: 0.55f * s, sizeMax: 0.95f * s, maxParticles: 20);
+            RandomizeRotation(fireball);
+            SetBurst(fireball, 10);
+            SetSphere(fireball, 0.18f * s);
+            FadeOut(fireball, new Color(1f, 0.6f, 0.25f, 1f));
+            GrowOverLifetime(fireball, 2.2f);
+
+            // Burning embers thrown high and pulled down by gravity.
+            ParticleSystem embers = AddParticleSystem(root, "Embers", _sparkMat, ParticleSystemRenderMode.Stretch, stretchLengthScale: 4f, localPosition: new Vector3(0f, 0.4f, 0f));
+            ConfigureMain(embers, duration: 0.1f, lifeMin: 0.5f, lifeMax: 1.1f, speedMin: 5f, speedMax: 11f, sizeMin: 0.05f * s, sizeMax: 0.1f * s, maxParticles: 30);
+            SetGravity(embers, 1.6f);
+            SetBurst(embers, 14);
+            SetCone(embers, angle: 50f, radius: 0.1f * s, rotateUp: true);
+            FadeOut(embers, new Color(1f, 0.65f, 0.3f, 1f));
+
+            // Thick smoke column rising from the blast for a couple of seconds.
             ParticleSystem column = AddParticleSystem(root, "SmokeColumn", _smokeMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.4f, 0f));
-            ConfigureMain(column, duration: 0.1f, lifeMin: 1f, lifeMax: 1.8f, speedMin: 1f, speedMax: 2.2f, sizeMin: 0.45f * s, sizeMax: 0.7f * s, maxParticles: 10);
+            ConfigureMain(column, duration: 0.1f, lifeMin: 1.4f, lifeMax: 2.4f, speedMin: 1.5f, speedMax: 3f, sizeMin: 0.6f * s, sizeMax: 0.9f * s, maxParticles: 16);
             RandomizeRotation(column);
-            SetBurst(column, 5);
-            SetCone(column, angle: 14f, radius: 0.1f * s, rotateUp: true);
-            FadeOut(column, new Color(0.85f, 0.82f, 0.78f, 0.5f));
-            GrowOverLifetime(column, 3f);
-            AddUpwardDrift(column, 0.8f);
+            SetBurst(column, 8);
+            SetCone(column, angle: 14f, radius: 0.12f * s, rotateUp: true);
+            FadeOut(column, new Color(0.85f, 0.82f, 0.78f, 0.55f));
+            GrowOverLifetime(column, 3.5f);
+            AddUpwardDrift(column, 1f);
         }
 
         return SavePrefab(root);

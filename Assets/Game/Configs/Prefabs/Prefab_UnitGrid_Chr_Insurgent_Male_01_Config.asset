@@ -71,7 +71,7 @@ MonoBehaviour:
   muzzleFlashForwardOffset: 0.5
   groundMissileLauncherConfig: {fileID: 0}
   attackTraceColor: {r: 1, g: 0.55, b: 0.2, a: 1}
-  attackTraceWidth: 0.3
+  attackTraceWidth: 0.45
   attackTraceScrollSpeed: 6
   attackTraceDashDensity: 1
   attackTraceVisibleSeconds: 0.4

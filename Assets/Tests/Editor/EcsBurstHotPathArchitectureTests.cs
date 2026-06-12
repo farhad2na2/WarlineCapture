@@ -13,8 +13,8 @@ public sealed class EcsBurstHotPathArchitectureTests
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
     private const int ToArrayDebtCeiling = 0;
     private const int EntityManagerMutationDebtCeiling = 1;
-    private const int NonBurstOnUpdateFileDebtCeiling = 29;
-    private const int BurstCompileFileFloor = 32;
+    private const int NonBurstOnUpdateFileDebtCeiling = 24;
+    private const int BurstCompileFileFloor = 37;
 
     private static readonly Regex ToArrayRegex = new(
         @"\b(ToEntityArray|ToComponentDataArray)\s*(?:<[^>]+>)?\s*\(",
@@ -31,6 +31,34 @@ public sealed class EcsBurstHotPathArchitectureTests
     private static readonly Regex BurstCompileRegex = new(
         @"\[BurstCompile\]",
         RegexOptions.CultureInvariant);
+
+    private static readonly Dictionary<string, string> ClassifiedNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs"] = "Phase 5 AI planning hot-path debt; contains authored policy, diagnostics, and command-event work that must be split before Burst.",
+        ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "Phase 5 AI combat-order hot-path debt; command issuance and diagnostics need a data/job split.",
+        ["Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
+        ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
+        ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
+        ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
+        ["Assets/Game/Scripts/Systems/AITargetingSystem.cs"] = "Phase 5 AI targeting hot-path debt; target scoring and diagnostic reason strings need separation.",
+        ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
+        ["Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
+        ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",
+        ["Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs"] = "bootstrap/blob-builder boundary; not a recurring simulation hot path.",
+        ["Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs"] = "pre-game diagnostics boundary; managed reporting only.",
+        ["Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs"] = "startup/runtime-grid ownership boundary; native-container disposal and one-time cleanup stay managed.",
+        ["Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs"] = "developer debug input boundary; intentionally managed and not production gameplay policy.",
+        ["Assets/Game/Scripts/Systems/TransportBoardingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
+        ["Assets/Game/Scripts/Systems/UnitAttackSystem.cs"] = "combat hot-path debt; mixed combat simulation, VFX requests, and diagnostics need a split before Burst.",
+        ["Assets/Game/Scripts/Systems/UnitDeathSystem.cs"] = "combat lifecycle debt; death state, presentation requests, and cleanup need clearer data/job boundaries.",
+        ["Assets/Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs"] = "diagnostic boundary; managed reporting only.",
+        ["Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
+        ["Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"] = "Phase 6 pathfinding orchestration debt; detached-job/native-container ownership should remain explicit before further Burst changes.",
+        ["Assets/Game/Scripts/Systems/UnitRespawnSystem.cs"] = "spawn/presentation boundary; prefab instantiation, grounding warnings, and setup stay managed.",
+        ["Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"] = "transport gameplay/presentation split debt; uses managed visual hiding utility and needs a data-only request split.",
+        ["Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs"] = "GameObject/prefab reference bridge; managed presentation boundary.",
+        ["Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs"] = "presentation/prefab instantiate boundary; managed visual lifecycle only.",
+    };
 
     private static readonly Regex SystemStateMethodSignatureRegex = new(
         @"(?:public|private|internal|protected)?\s*(?:static\s+)?(?:[\w<>\[\], ]+\s+)?(?<method>\w+)\s*\([^)]*\bref\s+SystemState\s+(?<state>\w+)[^)]*\)",
@@ -114,12 +142,30 @@ public sealed class EcsBurstHotPathArchitectureTests
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-        Debug.Log("Non-Burst OnUpdate files:\n" + string.Join(Environment.NewLine, files.Take(30)));
+        List<string> unclassified = files
+            .Where(path => !ClassifiedNonBurstOnUpdateFiles.ContainsKey(path))
+            .ToList();
+        List<string> staleClassifications = ClassifiedNonBurstOnUpdateFiles.Keys
+            .Where(path => !files.Contains(path))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        Debug.Log("Classified non-Burst OnUpdate files:\n" + FormatClassifiedNonBurstFiles(files));
 
         Assert.LessOrEqual(
             files.Count,
             NonBurstOnUpdateFileDebtCeiling,
             $"Non-Burst OnUpdate debt increased from the roadmap baseline. Current={files.Count}, ceiling={NonBurstOnUpdateFileDebtCeiling}. New frequent ECS work should be Burst-compatible unless it is an approved managed boundary.");
+
+        Assert.IsEmpty(
+            unclassified,
+            "Non-Burst OnUpdate files must be classified as an approved managed boundary or tracked hot-path debt before landing:\n" +
+            string.Join(Environment.NewLine, unclassified));
+
+        Assert.IsEmpty(
+            staleClassifications,
+            "Non-Burst OnUpdate classifications are stale. Remove converted/deleted files from the classification list:\n" +
+            string.Join(Environment.NewLine, staleClassifications));
     }
 
     [Test]
@@ -239,6 +285,22 @@ public sealed class EcsBurstHotPathArchitectureTests
         return string.Join(
             Environment.NewLine,
             counts.Take(20).Select(count => $"{count.Path}: {count.Count}"));
+    }
+
+    private static string FormatClassifiedNonBurstFiles(IReadOnlyList<string> files)
+    {
+        if (files.Count == 0)
+            return "<none>";
+
+        return string.Join(
+            Environment.NewLine,
+            files.Select(path =>
+            {
+                string classification = ClassifiedNonBurstOnUpdateFiles.TryGetValue(path, out string reason)
+                    ? reason
+                    : "<unclassified>";
+                return $"{path}: {classification}";
+            }));
     }
 
     private static string NormalizePath(string path)

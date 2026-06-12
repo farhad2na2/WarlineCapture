@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
@@ -14,6 +16,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
     private EntityTypeHandle _landingEntityType;
     private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
     private ComponentTypeHandle<UnitGrid> _landingGridType;
+    private EntityStorageInfoLookup _entityStorageInfoLookup;
 
     public void OnCreate(ref SystemState state)
     {
@@ -25,14 +28,20 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         _landingEntityType = state.GetEntityTypeHandle();
         _landingClearanceType = state.GetComponentTypeHandle<UnitTransportRopeLandingClearance>(true);
         _landingGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         UpdateLandingTypeHandles(ref state);
         EntityManager em = state.EntityManager;
-        CompleteLandingClearanceReadDependencies(em);
-        CleanupClearedLandingCells(em, _landingClearanceQuery, _landingEntityType, ref _landingClearanceType, ref _landingGridType);
+        CleanupClearedLandingCells(
+            ref state,
+            _landingClearanceQuery,
+            _landingEntityType,
+            _landingClearanceType,
+            _landingGridType,
+            _entityStorageInfoLookup);
 
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
@@ -171,40 +180,58 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         _landingEntityType.Update(ref state);
         _landingClearanceType.Update(ref state);
         _landingGridType.Update(ref state);
-    }
-
-    private static void CompleteLandingClearanceReadDependencies(EntityManager em)
-    {
-        em.CompleteDependencyBeforeRO<UnitTransportRopeLandingClearance>();
-        em.CompleteDependencyBeforeRO<UnitGrid>();
+        _entityStorageInfoLookup.Update(ref state);
     }
 
     private static void CleanupClearedLandingCells(
-        EntityManager em,
+        ref SystemState state,
         EntityQuery landingClearanceQuery,
         EntityTypeHandle entityType,
-        ref ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
-        ref ComponentTypeHandle<UnitGrid> gridType)
+        ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
+        ComponentTypeHandle<UnitGrid> gridType,
+        EntityStorageInfoLookup entityStorageInfoLookup)
     {
-        using NativeArray<ArchetypeChunk> chunks = landingClearanceQuery.ToArchetypeChunkArray(Allocator.Temp);
-
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
+        state.Dependency = new CleanupClearedLandingCellsJob
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref clearanceType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+            EntityType = entityType,
+            ClearanceType = clearanceType,
+            GridType = gridType,
+            EntityStorageInfoLookup = entityStorageInfoLookup,
+            Ecb = ecb.AsParallelWriter()
+        }.ScheduleParallel(landingClearanceQuery, state.Dependency);
+        state.Dependency.Complete();
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    private struct CleanupClearedLandingCellsJob : IJobChunk
+    {
+        [ReadOnly] public EntityTypeHandle EntityType;
+        [ReadOnly] public ComponentTypeHandle<UnitTransportRopeLandingClearance> ClearanceType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> GridType;
+        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
+        public EntityCommandBuffer.ParallelWriter Ecb;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref ClearanceType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref GridType);
 
             for (int i = 0; i < chunk.Count; i++)
             {
-                if (!em.Exists(clearances[i].Transport) || !grids[i].Cell.Equals(clearances[i].LandingCell))
-                    ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entities[i]);
+                UnitTransportRopeLandingClearance clearance = clearances[i];
+                if (!EntityStorageInfoLookup.Exists(clearance.Transport) || !CellsEqual(grids[i].Cell, clearance.LandingCell))
+                    Ecb.RemoveComponent<UnitTransportRopeLandingClearance>(unfilteredChunkIndex, entities[i]);
             }
         }
-
-        ecb.Playback(em);
-        ecb.Dispose();
     }
 
     private static bool IsRopeLandingClear(

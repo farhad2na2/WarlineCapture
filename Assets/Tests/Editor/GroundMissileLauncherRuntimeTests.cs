@@ -27,6 +27,23 @@ public sealed class GroundMissileLauncherRuntimeTests
         }
     }
 
+    public static void RunMissileVisualValidation()
+    {
+        try
+        {
+            var tests = new GroundMissileLauncherRuntimeTests();
+            tests.MissileFire_DetachesAndRestoresSelectedRocketVisual();
+            Debug.Log("[GroundMissileVisualValidation] result=Passed tests=1");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[GroundMissileVisualValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void AttackSystem_ArmsGroundMissileLauncherWithoutImmediateDamage()
     {

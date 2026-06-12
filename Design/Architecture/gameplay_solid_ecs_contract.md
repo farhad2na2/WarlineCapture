@@ -52,6 +52,8 @@ Pure, frequent gameplay simulation/data transforms must be evaluated for Burst a
 
 Do not force Burst into managed edge code. UI views, GameObject/prefab presentation, config asset loading, bootstrap composition, editor tooling, and diagnostics flushing may remain managed, but they must stay outside pure simulation hot loops.
 
+Every runtime system with `OnUpdate` and no `[BurstCompile]` must be classified in `EcsBurstHotPathArchitectureTests` as either an intentional managed boundary or tracked hot-path debt. A managed-boundary classification is not permission to own gameplay policy: presentation/prefab bridges may display or mirror ECS data, diagnostics flush systems may format already-gated events, and startup/bootstrap systems may project authored data, but recurring simulation decisions still belong in ECS data/jobs. Tracked hot-path debt must point to the roadmap phase that will split data-only work from managed edges before the debt ceiling can be considered healthy.
+
 Hot ECS work should prefer chunk/job iteration over main-thread entity/component snapshot copies. Avoid `ToEntityArray` and `ToComponentDataArray` in frequent paths unless the call is measured, justified, and guarded by the active roadmap. Structural changes should be batched through entity command buffers unless same-frame playback is required and documented. Do not introduce unnecessary sync points or dependency completions in order to simplify code.
 
 The active roadmap is `Design/Architecture/ecs_burst_hot_path_refactor_roadmap.md`. New or changed hot-path work must keep `EcsBurstHotPathArchitectureTests.RunFocusedValidation` from regressing, and roadmap ratchets must move toward fewer non-Burst hot systems and fewer hot snapshot-copy calls.

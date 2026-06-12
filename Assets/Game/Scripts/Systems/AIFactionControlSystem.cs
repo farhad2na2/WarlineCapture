@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -39,39 +40,36 @@ public partial struct AIFactionControlSystem : ISystem
         bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
         Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        using NativeArray<FactionControlEntry> controlSnapshot = controls.ToNativeArray(Allocator.TempJob);
+        using NativeArray<int> controlledUnitCounts = new NativeArray<int>(controlSnapshot.Length, Allocator.TempJob);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+
+        state.Dependency = new ApplyFactionControlJob
+        {
+            Controls = controlSnapshot,
+            ControlledUnitCounts = controlledUnitCounts,
+            UnitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true),
+            StaticGridBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
+            AIControlledLookup = SystemAPI.GetComponentLookup<AIControlledTag>(true),
+            ManualControlledLookup = SystemAPI.GetComponentLookup<ManualControlledTag>(true),
+            ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+            ManualMoveGroupLookup = SystemAPI.GetComponentLookup<ManualMoveGroupMemberTag>(true),
+            UnitPathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true),
+            UnitPathRetryCooldownLookup = SystemAPI.GetComponentLookup<UnitPathRetryCooldown>(true),
+            EngageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true),
+            AICombatOrderLookup = SystemAPI.GetComponentLookup<AICombatOrderTag>(true),
+            UnitPathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true),
+            UnitPathRangeLookup = SystemAPI.GetComponentLookup<UnitPathRange>(true),
+            AutoWanderMoveLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true),
+            Ecb = ecb
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
 
         for (int controlIndex = 0; controlIndex < controls.Length; controlIndex++)
         {
             FactionControlEntry control = controls[controlIndex];
             bool aiControlled = control.AIControlled != 0;
-            int controlledUnits = 0;
-
-            foreach (var (faction, entity) in SystemAPI.Query<RefRO<Faction>>().WithEntityAccess())
-            {
-                if (faction.ValueRO.Id != control.FactionId)
-                    continue;
-
-                if (SystemAPI.HasComponent<UnitGrid>(entity) && !SystemAPI.HasComponent<StaticGridBlocker>(entity))
-                    controlledUnits++;
-
-                if (aiControlled)
-                {
-                    AddIfMissing<AIControlledTag>(ref ecb, ref state, entity);
-                    RemoveIfPresent<ManualControlledTag>(ref ecb, ref state, entity);
-                    RemoveIfPresent<ManualMoveOrderTag>(ref ecb, ref state, entity);
-                    RemoveIfPresent<ManualMoveGroupMemberTag>(ref ecb, ref state, entity);
-                    RemoveIfPresent<UnitPathRequest>(ref ecb, ref state, entity);
-                    RemoveIfPresent<UnitPathRetryCooldown>(ref ecb, ref state, entity);
-                    RemoveCommandedEngageTargetIfPresent(ref ecb, ref state, entity);
-                }
-                else
-                {
-                    AddIfMissing<ManualControlledTag>(ref ecb, ref state, entity);
-                    RemoveIfPresent<AIControlledTag>(ref ecb, ref state, entity);
-                    RemoveAICombatOrderIfPresent(ref ecb, ref state, entity);
-                }
-            }
+            int controlledUnits = controlledUnitCounts[controlIndex];
 
             bool shouldLog = shouldLogDiagnostics && now - control.LastLogTime >= LogIntervalSeconds;
             if (shouldLog)
@@ -88,13 +86,6 @@ public partial struct AIFactionControlSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-    }
-
-    private static void AddIfMissing<T>(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (!state.EntityManager.HasComponent<T>(entity))
-            ecb.AddComponent<T>(entity);
     }
 
     private bool TryGetFactionBuildingCount(ref SystemState state, byte factionId, out int buildingCount)
@@ -120,13 +111,6 @@ public partial struct AIFactionControlSystem : ISystem
         }
 
         return false;
-    }
-
-    private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (state.EntityManager.HasComponent<T>(entity))
-            ecb.RemoveComponent<T>(entity);
     }
 
     private bool ShouldQueueDiagnostics(ref SystemState state)
@@ -159,26 +143,92 @@ public partial struct AIFactionControlSystem : ISystem
         logs.Add(new AIDiagnosticLogComponent { Message = message });
     }
 
-    private static void RemoveCommandedEngageTargetIfPresent(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)
+    [BurstCompile]
+    [WithAll(typeof(Faction))]
+    private partial struct ApplyFactionControlJob : IJobEntity
     {
-        if (!state.EntityManager.HasComponent<EngageTarget>(entity))
-            return;
+        [ReadOnly] public NativeArray<FactionControlEntry> Controls;
+        public NativeArray<int> ControlledUnitCounts;
+        [ReadOnly] public ComponentLookup<UnitGrid> UnitGridLookup;
+        [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticGridBlockerLookup;
+        [ReadOnly] public ComponentLookup<AIControlledTag> AIControlledLookup;
+        [ReadOnly] public ComponentLookup<ManualControlledTag> ManualControlledLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveOrderLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveGroupMemberTag> ManualMoveGroupLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> UnitPathRequestLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRetryCooldown> UnitPathRetryCooldownLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        [ReadOnly] public ComponentLookup<AICombatOrderTag> AICombatOrderLookup;
+        [ReadOnly] public ComponentLookup<UnitPathFollow> UnitPathFollowLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRange> UnitPathRangeLookup;
+        [ReadOnly] public ComponentLookup<AutoWanderMoveTag> AutoWanderMoveLookup;
+        public EntityCommandBuffer Ecb;
 
-        EngageTarget target = state.EntityManager.GetComponentData<EngageTarget>(entity);
-        if (target.IsCommanded != 0)
-            ecb.RemoveComponent<EngageTarget>(entity);
-    }
+        private void Execute(Entity entity, in Faction faction)
+        {
+            for (int controlIndex = 0; controlIndex < Controls.Length; controlIndex++)
+            {
+                FactionControlEntry control = Controls[controlIndex];
+                if (faction.Id != control.FactionId)
+                    continue;
 
-    private static void RemoveAICombatOrderIfPresent(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)
-    {
-        if (!state.EntityManager.HasComponent<AICombatOrderTag>(entity))
-            return;
+                if (UnitGridLookup.HasComponent(entity) && !StaticGridBlockerLookup.HasComponent(entity))
+                    ControlledUnitCounts[controlIndex]++;
 
-        RemoveIfPresent<AICombatOrderTag>(ref ecb, ref state, entity);
-        RemoveIfPresent<EngageTarget>(ref ecb, ref state, entity);
-        RemoveIfPresent<UnitPathRequest>(ref ecb, ref state, entity);
-        RemoveIfPresent<UnitPathFollow>(ref ecb, ref state, entity);
-        RemoveIfPresent<UnitPathRange>(ref ecb, ref state, entity);
-        RemoveIfPresent<AutoWanderMoveTag>(ref ecb, ref state, entity);
+                if (control.AIControlled != 0)
+                    ApplyAIControl(entity);
+                else
+                    ApplyManualControl(entity);
+
+                return;
+            }
+        }
+
+        private void ApplyAIControl(Entity entity)
+        {
+            AddIfMissing<AIControlledTag>(entity, AIControlledLookup);
+            RemoveIfPresent<ManualControlledTag>(entity, ManualControlledLookup);
+            RemoveIfPresent<ManualMoveOrderTag>(entity, ManualMoveOrderLookup);
+            RemoveIfPresent<ManualMoveGroupMemberTag>(entity, ManualMoveGroupLookup);
+            RemoveIfPresent<UnitPathRequest>(entity, UnitPathRequestLookup);
+            RemoveIfPresent<UnitPathRetryCooldown>(entity, UnitPathRetryCooldownLookup);
+
+            if (!EngageTargetLookup.HasComponent(entity))
+                return;
+
+            EngageTarget target = EngageTargetLookup[entity];
+            if (target.IsCommanded != 0)
+                Ecb.RemoveComponent<EngageTarget>(entity);
+        }
+
+        private void ApplyManualControl(Entity entity)
+        {
+            AddIfMissing<ManualControlledTag>(entity, ManualControlledLookup);
+            RemoveIfPresent<AIControlledTag>(entity, AIControlledLookup);
+
+            if (!AICombatOrderLookup.HasComponent(entity))
+                return;
+
+            RemoveIfPresent<AICombatOrderTag>(entity, AICombatOrderLookup);
+            RemoveIfPresent<EngageTarget>(entity, EngageTargetLookup);
+            RemoveIfPresent<UnitPathRequest>(entity, UnitPathRequestLookup);
+            RemoveIfPresent<UnitPathFollow>(entity, UnitPathFollowLookup);
+            RemoveIfPresent<UnitPathRange>(entity, UnitPathRangeLookup);
+            RemoveIfPresent<AutoWanderMoveTag>(entity, AutoWanderMoveLookup);
+        }
+
+        private void AddIfMissing<T>(Entity entity, ComponentLookup<T> lookup)
+            where T : unmanaged, IComponentData
+        {
+            if (!lookup.HasComponent(entity))
+                Ecb.AddComponent<T>(entity);
+        }
+
+        private void RemoveIfPresent<T>(Entity entity, ComponentLookup<T> lookup)
+            where T : unmanaged, IComponentData
+        {
+            if (lookup.HasComponent(entity))
+                Ecb.RemoveComponent<T>(entity);
+        }
     }
 }

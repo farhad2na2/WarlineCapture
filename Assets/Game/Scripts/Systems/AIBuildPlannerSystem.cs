@@ -49,8 +49,8 @@ public partial struct AIBuildPlannerSystem : ISystem
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
         bool hasControls = SystemAPI.HasSingleton<FactionControlConfigTag>();
-        NativeArray<FactionControlEntry> controls = hasControls
-            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
+        DynamicBuffer<FactionControlEntry> controls = hasControls
+            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
@@ -156,8 +156,6 @@ public partial struct AIBuildPlannerSystem : ISystem
             em.SetComponentData(planEntity, plan);
         }
 
-        if (controls.IsCreated)
-            controls.Dispose();
     }
 
     private static bool TryFindEconomyEntity(
@@ -369,7 +367,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         }
     }
 
-    private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
+    private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
     {
         if (!hasControls)
             return FactionIdentitySystem.IsAiControlledByDefault(factionId);

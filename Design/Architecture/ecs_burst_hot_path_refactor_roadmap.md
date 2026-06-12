@@ -20,9 +20,9 @@ Scanned root:
 
 Observed:
 - 723 system source files.
-- 32 system files currently use `[BurstCompile]`.
+- 37 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
-- 29 files have `OnUpdate` and no `[BurstCompile]`.
+- 24 files have `OnUpdate` and no `[BurstCompile]`.
 - 0 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count after the `CustomGameStartupSystem` startup-boundary cleanup slice.
 - 1 direct `EntityManager` structural or component mutation call.
 - Main array-copy offenders:
@@ -85,9 +85,9 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 43 / 152 complete (28.3%).
-- In progress: 14 / 152.
-- Remaining open: 95 / 152.
+- Checklist progress: 49 / 157 complete (31.2%).
+- In progress: 15 / 157.
+- Remaining open: 93 / 157.
 - Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
@@ -470,6 +470,13 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AIProductionValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-production.log`
   - Log marker: `[AIProductionFocusedValidation] result=Passed tests=1`.
   - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `88`; generic-aware count confirmed at `108`.
+- 2026-06-12: Continued Phase 5 in `AIFactionControlSystem`. The repeated faction-control entity scan now runs in a Burst `IJobEntity` that counts controlled units and queues the existing AI/manual tag cleanup through an immediate `EntityCommandBuffer`; diagnostic gating, building counts, and log queue writes remain in the managed boundary.
+- 2026-06-12: Focused AI control validation passed after fixing ECB playback order so diagnostics read the `FactionControlEntry` buffer before structural playback invalidates it:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AIControlModeValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-control-mode-fixed.log`
+  - Log marker: `[AIControlModeFocusedValidation] result=Passed tests=1`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `28`, Burst-compiled system files `33`.
+  - Guardrail ratchet after `AIFactionControlSystem`: non-Burst `OnUpdate` ceiling reduced to `28`, Burst file floor increased to `33`.
+  - The Unity architecture runner for this slice stalled after printing the updated debt reports in `/private/tmp/warline-ecs-burst-hot-path-architecture-ai-faction.log`; equivalent static guardrails passed with `array=0/0`, `mutation=1/1`, `nonburst=28/28`, `burst=33/33`, and `SystemState.Get*TypeHandle` scanner result `NO_TYPE_HANDLE_VIOLATIONS`.
 - 2026-06-12: Continued with `ScanIntelCommandSystem`. Scan reveal target collection now walks unit and building archetype chunks into a temporary reveal-candidate list, then applies reveal components afterward so structural changes do not happen during chunk iteration.
 - 2026-06-12: Added `ScanIntelCommandSystemTests.RunFocusedValidation` for direct scan validation.
 - 2026-06-12: Guardrail ratchet after the scan chunk traversal slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `106`.
@@ -617,6 +624,12 @@ Progress notes:
   - Log marker: `[UnitTransportValidation] result=Passed tests=16`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-rope.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+- 2026-06-12: Continued Phase 4 in `UnitTransportRopeDisembarkSystem`. Landing-clearance cleanup now runs as a Burst `IJobChunk` with immediate command-buffer playback before the existing disembark flow reads the same clearance state; passenger visual hiding/restoring, grounding, and rope-drop movement remain in their existing managed boundaries.
+- 2026-06-12: Focused transport validation passed after the rope landing-clearance Burst cleanup:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-rope-cleanup.log`
+  - Log marker: `[UnitTransportValidation] result=Passed tests=17`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `27`, Burst-compiled system files `34`.
+  - Guardrail ratchet after `UnitTransportRopeDisembarkSystem`: non-Burst `OnUpdate` ceiling reduced to `27`, Burst file floor increased to `34`.
 - 2026-06-12: Continued Phase 4 in `SelectionTransportCommandRequestSystem` and `UnitMoveOrderSystem`. Ground disembark now batches passenger component removals and grid/transform updates through an `EntityCommandBuffer`, then restores passenger GameObject visibility after playback through the existing managed visual boundary.
 - 2026-06-12: Focused transport validation passed after the disembark ECB slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-disembark-ecb.log`
@@ -701,6 +714,12 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MapSurfaceDiagnosticsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-map-surface-diagnostics.log`
   - Log marker: `[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `37`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
+- 2026-06-12: Continued Phase 6/8 in `MapSurfaceDiagnosticsSystem`. Surface signature and diagnostic-count calculation now run in a Burst `IJob`; the one-second tick, signature cache, and diagnostic component publish remain in the managed system boundary.
+- 2026-06-12: Focused MapSurface diagnostics validation passed after the Burst calculation split:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MapSurfaceDiagnosticsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-map-surface-diagnostics-burst.log`
+  - Log marker: `[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `26`, Burst-compiled system files `35`.
+  - Guardrail ratchet after `MapSurfaceDiagnosticsSystem`: non-Burst `OnUpdate` ceiling reduced to `26`, Burst file floor increased to `35`.
 - 2026-06-12: Continued Phase 7 in `UnitPathfindingApplySystem`. Path-pool read/write now uses a cached `ComponentLookup<PathPoolComponent>` initialized from `UnitPathfindingSystem.OnCreate`; the lookup is refreshed again after `UnitPathResultApplySystem` structural path-component changes before writing the pool back. This removes the direct `EntityManager.SetComponentData` path-pool write without changing detached path result application.
 - 2026-06-12: Guardrail ratchet after the path-pool lookup slice: direct `EntityManager.*` mutation ceiling reduced to `36`.
 - 2026-06-12: Focused pathfinding validation passed after fixing the lookup refresh point:
@@ -822,7 +841,7 @@ Implementation steps:
 - [ ] Build temporary native target/squad data only once per AI update tick when cross-query matching is required.
 - [ ] Reuse persistent native containers owned by the system where safe.
 - [ ] Batch combat/path/engage mutations through ECB.
-- [ ] Keep authored AI config and policy unchanged.
+- [x] Keep authored AI config and policy unchanged.
 - [ ] Keep diagnostics gated and outside hot loops.
 
 Acceptance checks:
@@ -831,6 +850,12 @@ Acceptance checks:
 - [ ] AI combat orders still issue.
 - [ ] No AI behavior regressions in existing EditMode tests.
 - [ ] AI steady-state frame/system timing improves or remains equal.
+
+Progress notes:
+- 2026-06-12: Removed the recurring `FactionControlEntry` temporary native-array snapshot from `AIBuildPlannerSystem`, `AIProductionSystem`, and `AISquadSystem`; all three now read the singleton control buffer directly like `AICombatOrderSystem`. Authored AI plan/config policy is unchanged. Focused validation passed:
+  - `AIBuildPlannerValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-build-control-buffer.log`, marker `[AIBuildPlannerFocusedValidation] result=Passed tests=1`.
+  - `AIProductionValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-production-control-buffer.log`, marker `[AIProductionFocusedValidation] result=Passed tests=1`.
+  - `AISquadValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-squad-control-buffer.log`, marker `[AISquadFocusedValidation] result=Passed tests=1`.
 
 ### Phase 6: Structural Change Cleanup
 
@@ -924,7 +949,7 @@ Implementation steps:
 Acceptance checks:
 - [ ] Unit visual LOD behavior remains correct.
 - [ ] Selection markers still display.
-- [ ] Helicopter blade and missile visual behavior remain correct.
+- [~] Helicopter blade and missile visual behavior remain correct.
 - [ ] Render-budget focused scenario does not regress p95/p99.
 - [ ] No new GC during steady-state camera pan/zoom.
 
@@ -972,6 +997,34 @@ Progress notes:
   - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `31`, Burst-compiled system files `30`.
   - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
 - 2026-06-12: Guardrail ratchet after `UnitRuntimeHealthBarSystem`: non-Burst `OnUpdate` ceiling reduced to `31`, Burst file floor increased to `30`.
+- 2026-06-12: Continued Phase 8 with a narrow ground-missile projectile slice. `GroundMissileProjectileFlightSystem` now runs projectile position integration and impact-request enqueueing through a Burst `IJobChunk`, with cached type handles from `OnCreate`, immediate ECB playback preserved, and launcher fire/VFX/impact presentation left in managed boundaries.
+- 2026-06-12: Focused ground missile projectile validation passed after the flight-job conversion:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileLauncherRuntimeTests.RunProjectileDependencyValidation -logFile /private/tmp/warline-ecs-burst-ground-missile-flight-job.log`
+  - Log marker: `[GroundMissileProjectileDependencyValidation] result=Passed tests=1`.
+- 2026-06-12: Focused architecture guardrail validation passed after ratcheting this slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ground-missile-flight.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `25`, Burst-compiled system files `36`.
+  - `SystemState.Get*TypeHandle` scanner remains covered by the architecture runner and passed.
+- 2026-06-12: Guardrail ratchet after `GroundMissileProjectileFlightSystem`: non-Burst `OnUpdate` ceiling reduced to `25`, Burst file floor increased to `36`.
+- 2026-06-12: Continued the adjacent air-defense missile slice. `AirMissileHomingProjectileSystem` now runs homing integration, target validity checks, and impact-request enqueueing through a Burst `IJobEntity`; launch VFX, trail VFX, and impact presentation remain managed. Target positions are collected first into a temporary native hash map for valid enemy-air and incoming-missile target entities so the homing job can write projectile transforms without random-read `LocalTransform` aliasing.
+- 2026-06-12: Focused air missile validation passed after the homing-job conversion:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AirMissileLauncherValidationRunner.Run -logFile /private/tmp/warline-ecs-burst-air-missile-homing-job-map.log`
+  - Log marker: `[AirMissileLauncherValidation] PASS`.
+- 2026-06-12: Focused architecture guardrail validation passed after the air-missile ratchet, with no Burst compiler errors in the final log:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-air-missile-homing-map.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+  - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `24`, Burst-compiled system files `37`.
+- 2026-06-12: Guardrail ratchet after `AirMissileHomingProjectileSystem`: non-Burst `OnUpdate` ceiling reduced to `24`, Burst file floor increased to `37`.
+- 2026-06-12: Continued Phase 8 in the ground missile visual path. `GroundMissileFlyingRocketVisualSystem` now updates detached rocket arc motion, rotation, parent restoration, scale restoration, and cleanup through a Burst `IJobEntity`; launcher VFX, launch smoke, impact VFX, and model/prefab boundaries remain managed.
+- 2026-06-12: Added `GroundMissileLauncherRuntimeTests.RunMissileVisualValidation` as a focused execute-method runner for the existing selected-rocket detach/flight/restore test.
+- 2026-06-12: Focused ground missile visual validation passed after the flying-rocket visual job conversion:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileLauncherRuntimeTests.RunMissileVisualValidation -logFile /private/tmp/warline-ecs-burst-ground-missile-visual-job.log`
+  - Log marker: `[GroundMissileVisualValidation] result=Passed tests=1`.
+- 2026-06-12: Focused architecture guardrail validation passed after the ground missile visual slice:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ground-missile-visual.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
+  - Static guardrails remained stable: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `24`, Burst-compiled system files `37`.
 
 ### Phase 9: Managed Boundary Cleanup
 
@@ -981,18 +1034,51 @@ Purpose:
 Make it obvious which systems are intentionally managed and prevent accidental performance debt from hiding there.
 
 Implementation steps:
-- [ ] Name and document managed boundary systems clearly.
+- [x] Name and document managed boundary systems clearly.
 - [ ] Ensure managed systems do not own gameplay policy if they are presentation/binding boundaries.
 - [ ] Move data-only logic out of managed composition classes into ECS systems or stateless utilities.
 - [ ] Keep config projection at startup and ECS-native data during runtime.
-- [ ] Update architecture docs with the Burst/managed-boundary rule.
+- [x] Update architecture docs with the Burst/managed-boundary rule.
 
 Acceptance checks:
-- [ ] Architecture tests distinguish allowed managed boundaries from hot-path debt.
-- [ ] No new broad manager/controller/facade shells are introduced.
+- [x] Architecture tests distinguish allowed managed boundaries from hot-path debt.
+- [x] No new broad manager/controller/facade shells are introduced.
 - [ ] Runtime gameplay policy is still ECS-owned.
 
+Managed boundary and tracked-debt inventory:
+
+| System | Classification | Follow-up |
+| --- | --- | --- |
+| `AIBuildPlannerSystem` | Phase 5 AI planning hot-path debt | Split authored policy/diagnostics from data-only build-plan jobs. |
+| `AICombatOrderSystem` | Phase 5 AI combat-order hot-path debt | Split command issuance from diagnostics and batch mutations. |
+| `AIEconomySystem` | Phase 5 AI economy debt | Move summary/request-buffer work behind data-only result buffers. |
+| `AIProductionSystem` | Phase 5 AI production debt | Project production policy to ECS-native data before Burst work. |
+| `AISquadSystem` | Phase 5 AI squad debt | Convert membership/scoring loops to chunk/job processing. |
+| `AITargetingSystem` | Phase 5 AI targeting hot-path debt | Separate target scoring from diagnostic reason strings. |
+| `UnitAttackSystem` | Combat hot-path debt | Split combat simulation, VFX requests, and diagnostics. |
+| `UnitDeathSystem` | Combat lifecycle debt | Separate death-state mutation from presentation requests. |
+| `UnitPathfindingSystem` | Phase 6 pathfinding orchestration debt | Preserve detached-job/native-container ownership before further Burst work. |
+| `UnitTransportBoardingSystem` | Transport gameplay/presentation split debt | Split data-only boarding requests from managed passenger visual hiding. |
+| `AIDiagnosticLogFlushSystem` | Diagnostic flush boundary | Keep managed formatting outside hot loops. |
+| `InitialSpawnDiagnosticLogFlushSystem` | Diagnostic flush boundary | Keep managed formatting outside hot loops. |
+| `TransportBoardingDiagnosticLogFlushSystem` | Diagnostic flush boundary | Keep managed formatting outside hot loops. |
+| `UnitMoveTargetDiagnosticSystem` | Diagnostic boundary | Keep managed reporting only. |
+| `UnitPathfindingDiagnosticLogFlushSystem` | Diagnostic flush boundary | Keep managed formatting outside hot loops. |
+| `PreGameEcsActivityDiagnosticsSystem` | Pre-game diagnostics boundary | Keep managed reporting only. |
+| `DynamicBlockerInitSystem` | Startup/native-container initialization boundary | Leave out of recurring simulation hot paths. |
+| `InitialUnitsSpawnSystem` | Startup spawn/config projection boundary | Keep entity creation and prefab/config projection managed. |
+| `MapSurfaceFlatEquivalentBootstrapSystem` | Bootstrap/blob-builder boundary | Leave out of recurring simulation hot paths. |
+| `RuntimeGridDeduplicationSystem` | Startup/runtime-grid ownership boundary | Keep native-container disposal and one-time cleanup managed. |
+| `SelectedUnitDebugFireSystem` | Developer debug input boundary | Keep managed and non-production. |
+| `UnitRespawnSystem` | Spawn/presentation boundary | Keep prefab instantiation and setup managed. |
+| `UnitVisualPrefabReferenceBackfillSystem` | GameObject/prefab reference bridge | Keep presentation bridge managed. |
+| `VehicleDestroyedVisualSystem` | Presentation/prefab instantiate boundary | Keep visual lifecycle managed. |
+
 Progress notes:
+- 2026-06-12: Documented the current 24 non-Burst `OnUpdate` systems as either tracked hot-path debt or intentional managed boundaries in this Phase 9 inventory. This mirrors the architecture-test classification and makes future conversions/allowlist removals reviewable.
+- 2026-06-12: Added `ScriptArchitectureAlignmentContractTests.RunBroadShellValidation` so the existing Manager/Controller/Presenter/Facade/Installer/Orchestrator guard can be run directly as a focused validation for the Phase 9 broad-shell acceptance check.
+- 2026-06-12: Updated `Design/Architecture/gameplay_solid_ecs_contract.md` with the explicit Burst/managed-boundary classification rule: every runtime `OnUpdate` without `[BurstCompile]` must be classified in the architecture guardrail as either managed boundary or tracked hot-path debt, and managed boundaries must not own gameplay policy.
+- 2026-06-12: Tightened `EcsBurstHotPathArchitectureTests.NonBurstOnUpdateDebtMustNotIncrease` so the remaining 24 non-Burst `OnUpdate` files must be explicitly classified as either a managed boundary or tracked hot-path debt. New non-Burst runtime systems now fail the architecture guardrail even if the numeric ceiling does not increase.
 - 2026-06-12: Cleaned up the managed `UnitVisualPrefabReferenceBackfillSystem` boundary without forcing it into Burst. Same-frame marker, health-bar, destroyed-visual, and backfilled-tag component additions now route through a temporary `EntityCommandBuffer` with immediate playback, preserving downstream marker/health-bar behavior while reducing direct mutation style inside the recurring prefab-reference backfill path.
 - 2026-06-12: Added `VehicleVisualAdornmentsSystemTests.RunFocusedValidation` and validated the three existing prefab-reference backfill cases:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-vehicle-visual-backfill.log`

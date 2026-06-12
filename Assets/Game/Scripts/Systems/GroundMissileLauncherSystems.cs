@@ -1,3 +1,5 @@
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -388,65 +390,95 @@ public partial struct GroundMissileLauncherVisualSystem : ISystem
 }
 
 [UpdateAfter(typeof(GroundMissileLauncherVisualSystem))]
+[BurstCompile]
 public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 {
+    private ComponentLookup<GroundMissileLauncherStateComponent> _launcherStateLookup;
+    private ComponentLookup<Parent> _parentLookup;
+
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        _launcherStateLookup = state.GetComponentLookup<GroundMissileLauncherStateComponent>(true);
+        _parentLookup = state.GetComponentLookup<Parent>(true);
         state.RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
-        foreach (var (flying, transform, entity) in SystemAPI
-                     .Query<RefRW<GroundMissileFlyingRocketVisualComponent>, RefRW<LocalTransform>>()
-                     .WithEntityAccess())
+        _launcherStateLookup.Update(ref state);
+        _parentLookup.Update(ref state);
+
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        state.Dependency = new FlyingRocketVisualJob
         {
-            ref GroundMissileFlyingRocketVisualComponent flyingRw = ref flying.ValueRW;
-            flyingRw.ElapsedSeconds += dt;
-            float duration = math.max(0.01f, flyingRw.DurationSeconds);
-            float t = math.saturate(flyingRw.ElapsedSeconds / duration);
-            float3 position = EvaluateRocketArc(flyingRw, t);
+            DeltaTime = dt,
+            LauncherStateLookup = _launcherStateLookup,
+            ParentLookup = _parentLookup,
+            Ecb = ecb.AsParallelWriter()
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
-            float nextT = math.saturate((flyingRw.ElapsedSeconds + math.min(0.05f, dt)) / duration);
-            float3 nextPosition = EvaluateRocketArc(flyingRw, nextT);
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct FlyingRocketVisualJob : IJobEntity
+    {
+        public float DeltaTime;
+        [ReadOnly] public ComponentLookup<GroundMissileLauncherStateComponent> LauncherStateLookup;
+        [ReadOnly] public ComponentLookup<Parent> ParentLookup;
+        public EntityCommandBuffer.ParallelWriter Ecb;
+
+        private void Execute(
+            [EntityIndexInQuery] int entityIndexInQuery,
+            Entity entity,
+            ref GroundMissileFlyingRocketVisualComponent flying,
+            ref LocalTransform transform)
+        {
+            flying.ElapsedSeconds += DeltaTime;
+            float duration = math.max(0.01f, flying.DurationSeconds);
+            float t = math.saturate(flying.ElapsedSeconds / duration);
+            float3 position = EvaluateRocketArc(flying, t);
+
+            float nextT = math.saturate((flying.ElapsedSeconds + math.min(0.05f, DeltaTime)) / duration);
+            float3 nextPosition = EvaluateRocketArc(flying, nextT);
             float3 direction = math.normalizesafe(nextPosition - position, new float3(0f, 0f, 1f));
 
-            transform.ValueRW.Position = position;
-            transform.ValueRW.Rotation = quaternion.LookRotationSafe(direction, math.up());
-            transform.ValueRW.Scale = math.max(0.0001f, flyingRw.InitialLocalScale);
+            transform.Position = position;
+            transform.Rotation = quaternion.LookRotationSafe(direction, math.up());
+            transform.Scale = math.max(0.0001f, flying.InitialLocalScale);
 
-            if (flyingRw.ElapsedSeconds < duration)
-                continue;
+            if (flying.ElapsedSeconds < duration)
+                return;
 
-            float restoreScale = math.max(0.0001f, flyingRw.InitialLocalScale);
-            if (em.HasComponent<GroundMissileLauncherStateComponent>(flyingRw.Launcher))
+            float restoreScale = math.max(0.0001f, flying.InitialLocalScale);
+            if (LauncherStateLookup.HasComponent(flying.Launcher))
             {
-                GroundMissileLauncherStateComponent launcherState = em.GetComponentData<GroundMissileLauncherStateComponent>(flyingRw.Launcher);
+                GroundMissileLauncherStateComponent launcherState = LauncherStateLookup[flying.Launcher];
                 if ((launcherState.Phase == (byte)GroundMissileLauncherPhase.Launching ||
                      launcherState.Phase == (byte)GroundMissileLauncherPhase.Reloading) &&
-                    launcherState.SelectedRocketSlot == flyingRw.SlotIndex)
+                    launcherState.SelectedRocketSlot == flying.SlotIndex)
                 {
                     restoreScale = 0f;
                 }
             }
 
-            if (flyingRw.OriginalParent != Entity.Null && !em.HasComponent<Parent>(entity))
-                ecb.AddComponent(entity, new Parent { Value = flyingRw.OriginalParent });
-            ecb.SetComponent(
+            if (flying.OriginalParent != Entity.Null && !ParentLookup.HasComponent(entity))
+                Ecb.AddComponent(entityIndexInQuery, entity, new Parent { Value = flying.OriginalParent });
+            Ecb.SetComponent(
+                entityIndexInQuery,
                 entity,
                 LocalTransform.FromPositionRotationScale(
-                    flyingRw.InitialLocalPosition,
-                    flyingRw.InitialLocalRotation,
+                    flying.InitialLocalPosition,
+                    flying.InitialLocalRotation,
                     restoreScale));
-            ecb.RemoveComponent<GroundMissileFlyingRocketVisualComponent>(entity);
+            Ecb.RemoveComponent<GroundMissileFlyingRocketVisualComponent>(entityIndexInQuery, entity);
         }
-
-        ecb.Playback(em);
-        ecb.Dispose();
     }
 
     private static float3 EvaluateRocketArc(GroundMissileFlyingRocketVisualComponent flying, float t)
@@ -474,6 +506,7 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 }
 
 [UpdateAfter(typeof(GroundMissileFlyingRocketVisualSystem))]
+[BurstCompile]
 public partial struct GroundMissileProjectileFlightSystem : ISystem
 {
     private EntityQuery _projectileQuery;
@@ -492,33 +525,55 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
         state.RequireForUpdate(_projectileQuery);
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
-
-        state.EntityManager.CompleteDependencyBeforeRW<GroundMissileProjectileComponent>();
-        state.EntityManager.CompleteDependencyBeforeRW<LocalTransform>();
 
         _entityType.Update(ref state);
         _projectileType.Update(ref state);
         _transformType.Update(ref state);
-        using NativeArray<ArchetypeChunk> chunks = _projectileQuery.ToArchetypeChunkArray(Allocator.Temp);
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        state.Dependency = new ProjectileFlightJob
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
-            NativeArray<GroundMissileProjectileComponent> projectiles = chunk.GetNativeArray(ref _projectileType);
-            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref _transformType);
+            DeltaTime = dt,
+            EntityType = _entityType,
+            ProjectileType = _projectileType,
+            TransformType = _transformType,
+            Ecb = ecb.AsParallelWriter()
+        }.ScheduleParallel(_projectileQuery, state.Dependency);
+        state.Dependency.Complete();
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    private struct ProjectileFlightJob : IJobChunk
+    {
+        public float DeltaTime;
+        [ReadOnly] public EntityTypeHandle EntityType;
+        public ComponentTypeHandle<GroundMissileProjectileComponent> ProjectileType;
+        public ComponentTypeHandle<LocalTransform> TransformType;
+        public EntityCommandBuffer.ParallelWriter Ecb;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+            NativeArray<GroundMissileProjectileComponent> projectiles = chunk.GetNativeArray(ref ProjectileType);
+            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref TransformType);
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
                 GroundMissileProjectileComponent projectile = projectiles[i];
                 LocalTransform transform = transforms[i];
 
-                projectile.ElapsedSeconds += dt;
+                projectile.ElapsedSeconds += DeltaTime;
                 float duration = math.max(0.01f, projectile.DurationSeconds);
                 float t = math.saturate(projectile.ElapsedSeconds / duration);
                 float3 position = math.lerp(projectile.StartPosition, projectile.TargetPosition, t);
@@ -531,7 +586,7 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
                 if (projectile.ElapsedSeconds < duration)
                     continue;
 
-                ecb.AddComponent(entity, new GroundMissileImpactRequestComponent
+                Ecb.AddComponent(unfilteredChunkIndex, entity, new GroundMissileImpactRequestComponent
                 {
                     Source = projectile.Source,
                     TargetEntity = projectile.TargetEntity,
@@ -541,13 +596,10 @@ public partial struct GroundMissileProjectileFlightSystem : ISystem
                     Damage = projectile.Damage,
                     FactionId = projectile.FactionId
                 });
-                ecb.RemoveComponent<GroundMissileProjectileComponent>(entity);
-                ecb.RemoveComponent<MissileInterceptionTargetComponent>(entity);
+                Ecb.RemoveComponent<GroundMissileProjectileComponent>(unfilteredChunkIndex, entity);
+                Ecb.RemoveComponent<MissileInterceptionTargetComponent>(unfilteredChunkIndex, entity);
             }
         }
-
-        ecb.Playback(em);
-        ecb.Dispose();
     }
 }
 

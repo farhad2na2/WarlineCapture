@@ -1,5 +1,7 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 
 public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
@@ -25,11 +27,26 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             return;
 
         MapSurfaceComponent surface = SystemAPI.GetComponent<MapSurfaceComponent>(surfaceEntity);
-        SurfaceDiagnosticsSignature signature = BuildSignature(surface);
-        if (_hasLastSignature && signature.Equals(_lastSignature))
+        using NativeReference<SurfaceDiagnosticsSignature> signatureReference = new(Allocator.TempJob);
+        using NativeReference<MapSurfaceDiagnosticsComponent> diagnosticsReference = new(Allocator.TempJob);
+        using NativeReference<byte> changedReference = new(Allocator.TempJob);
+
+        state.Dependency = new BuildDiagnosticsJob
+        {
+            Surface = surface,
+            HasLastSignature = (byte)(_hasLastSignature ? 1 : 0),
+            LastSignature = _lastSignature,
+            Signature = signatureReference,
+            Diagnostics = diagnosticsReference,
+            Changed = changedReference
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
+
+        if (changedReference.Value == 0)
             return;
 
-        MapSurfaceDiagnosticsComponent diagnostics = BuildDiagnostics(surface);
+        SurfaceDiagnosticsSignature signature = signatureReference.Value;
+        MapSurfaceDiagnosticsComponent diagnostics = diagnosticsReference.Value;
         _diagnosticsLookup.Update(ref state);
         if (_diagnosticsLookup.HasComponent(surfaceEntity))
             _diagnosticsLookup[surfaceEntity] = diagnostics;
@@ -43,6 +60,33 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
 
         _lastSignature = signature;
         _hasLastSignature = true;
+    }
+
+    [BurstCompile]
+    private struct BuildDiagnosticsJob : IJob
+    {
+        public MapSurfaceComponent Surface;
+        public byte HasLastSignature;
+        public SurfaceDiagnosticsSignature LastSignature;
+        public NativeReference<SurfaceDiagnosticsSignature> Signature;
+        public NativeReference<MapSurfaceDiagnosticsComponent> Diagnostics;
+        public NativeReference<byte> Changed;
+
+        public void Execute()
+        {
+            SurfaceDiagnosticsSignature signature = BuildSignature(Surface);
+            Signature.Value = signature;
+
+            if (HasLastSignature != 0 && signature.Equals(LastSignature))
+            {
+                Changed.Value = 0;
+                Diagnostics.Value = default;
+                return;
+            }
+
+            Changed.Value = 1;
+            Diagnostics.Value = BuildDiagnostics(Surface);
+        }
     }
 
     private static SurfaceDiagnosticsSignature BuildSignature(MapSurfaceComponent surface)

@@ -1,5 +1,7 @@
+using System;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using UnityEditor;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,6 +9,32 @@ using UnityEngine.TestTools;
 
 public sealed class AIControlModeValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new AIControlModeValidationTests();
+            tests.SetUp();
+            try
+            {
+                RunTagsControlledFactionsAndClearsManualOrders(expectLogs: false);
+            }
+            finally
+            {
+                tests.TearDown();
+            }
+
+            Debug.Log("[AIControlModeFocusedValidation] result=Passed tests=1");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[AIControlModeFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -23,6 +51,11 @@ public sealed class AIControlModeValidationTests
 
     [Test]
     public void AIFactionControlSystem_TagsControlledFactionsAndClearsManualOrders()
+    {
+        RunTagsControlledFactionsAndClearsManualOrders(expectLogs: true);
+    }
+
+    private static void RunTagsControlledFactionsAndClearsManualOrders(bool expectLogs)
     {
         using var world = new World("AIControlModeValidationTests");
         EntityManager em = world.EntityManager;
@@ -49,15 +82,21 @@ public sealed class AIControlModeValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIFactionControlSystem>();
-        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
+        SystemHandle logFlushSystem = expectLogs ? world.CreateSystem<AIDiagnosticLogFlushSystem>() : default;
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=1 mode=Auto controlledUnits=1 controlledBuildings=0"));
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=2 mode=Auto controlledUnits=1 controlledBuildings=0"));
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=3 mode=Manual controlledUnits=1 controlledBuildings=0"));
+        if (expectLogs)
+        {
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=1 mode=Auto controlledUnits=1 controlledBuildings=0"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=2 mode=Auto controlledUnits=1 controlledBuildings=0"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=3 mode=Manual controlledUnits=1 controlledBuildings=0"));
+        }
 
         system.Update(world.Unmanaged);
-        logFlushSystem.Update(world.Unmanaged);
-        LogAssert.NoUnexpectedReceived();
+        if (expectLogs)
+        {
+            logFlushSystem.Update(world.Unmanaged);
+            LogAssert.NoUnexpectedReceived();
+        }
 
         Assert.IsTrue(em.HasComponent<AIControlledTag>(playerAutoUnit));
         Assert.IsFalse(em.HasComponent<ManualControlledTag>(playerAutoUnit));

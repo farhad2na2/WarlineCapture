@@ -106,6 +106,23 @@ public sealed class ScriptArchitectureAlignmentContractTests
         }
     }
 
+    public static void RunBroadShellValidation()
+    {
+        try
+        {
+            var tests = new ScriptArchitectureAlignmentContractTests();
+            tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
+            Debug.Log("[ScriptBroadShellValidation] result=Passed tests=1");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ScriptBroadShellValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void SourceFilenamesMustNotStartWithProjectName()
     {

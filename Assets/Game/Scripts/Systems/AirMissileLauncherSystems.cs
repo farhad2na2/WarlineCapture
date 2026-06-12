@@ -1,3 +1,5 @@
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -617,85 +619,147 @@ public partial struct AirMissileProjectileTrailSystem : ISystem
 }
 
 [UpdateAfter(typeof(AirMissileLauncherFireControlSystem))]
+[BurstCompile]
 public partial struct AirMissileHomingProjectileSystem : ISystem
 {
+    private EntityQuery _airTargetQuery;
+    private EntityQuery _incomingMissileTargetQuery;
+
     public void OnCreate(ref SystemState state)
     {
+        _airTargetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitAirMovement>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        _incomingMissileTargetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<MissileInterceptionTargetComponent>(),
+            ComponentType.ReadOnly<LocalTransform>());
         state.RequireForUpdate<AirMissileProjectileComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+        int targetCapacity = math.max(1, _airTargetQuery.CalculateEntityCount() + _incomingMissileTargetQuery.CalculateEntityCount());
+        var targetPositions = new NativeParallelHashMap<Entity, float3>(targetCapacity, Allocator.TempJob);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (projectile, transform, entity) in SystemAPI
-                     .Query<RefRW<AirMissileProjectileComponent>, RefRW<LocalTransform>>()
-                     .WithEntityAccess())
+        var targetCollectDependency = new CollectAirTargetPositionJob
         {
-            ref AirMissileProjectileComponent projectileRw = ref projectile.ValueRW;
-            projectileRw.ElapsedSeconds += dt;
+            TargetPositions = targetPositions.AsParallelWriter()
+        }.ScheduleParallel(_airTargetQuery, state.Dependency);
+        targetCollectDependency = new CollectIncomingMissileTargetPositionJob
+        {
+            TargetPositions = targetPositions.AsParallelWriter()
+        }.ScheduleParallel(_incomingMissileTargetQuery, targetCollectDependency);
 
-            if (!em.Exists(projectileRw.Target) || !em.HasComponent<LocalTransform>(projectileRw.Target))
+        state.Dependency = new HomingProjectileJob
+        {
+            DeltaTime = dt,
+            TargetPositions = targetPositions,
+            Ecb = ecb.AsParallelWriter()
+        }.ScheduleParallel(targetCollectDependency);
+        state.Dependency.Complete();
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+        targetPositions.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct CollectAirTargetPositionJob : IJobEntity
+    {
+        public NativeParallelHashMap<Entity, float3>.ParallelWriter TargetPositions;
+
+        private void Execute(Entity entity, in UnitAirMovement airMovement, in LocalTransform transform)
+        {
+            TargetPositions.TryAdd(entity, transform.Position);
+        }
+    }
+
+    [BurstCompile]
+    private partial struct CollectIncomingMissileTargetPositionJob : IJobEntity
+    {
+        public NativeParallelHashMap<Entity, float3>.ParallelWriter TargetPositions;
+
+        private void Execute(Entity entity, in MissileInterceptionTargetComponent interceptionTarget, in LocalTransform transform)
+        {
+            TargetPositions.TryAdd(entity, transform.Position);
+        }
+    }
+
+    [BurstCompile]
+    private partial struct HomingProjectileJob : IJobEntity
+    {
+        public float DeltaTime;
+        [ReadOnly] public NativeParallelHashMap<Entity, float3> TargetPositions;
+        public EntityCommandBuffer.ParallelWriter Ecb;
+
+        private void Execute(
+            [EntityIndexInQuery] int entityIndexInQuery,
+            Entity entity,
+            ref AirMissileProjectileComponent projectile,
+            ref LocalTransform transform)
+        {
+            projectile.ElapsedSeconds += DeltaTime;
+
+            if (projectile.Target == entity ||
+                !TargetPositions.TryGetValue(projectile.Target, out float3 targetPosition))
             {
-                QueueImpact(ecb, projectileRw, transform.ValueRO.Position, entity);
-                continue;
+                QueueImpact(Ecb, entityIndexInQuery, projectile, transform.Position, entity);
+                return;
             }
 
-            float3 targetPosition = em.GetComponentData<LocalTransform>(projectileRw.Target).Position;
-            float3 desiredDirection = math.normalizesafe(targetPosition - transform.ValueRO.Position, math.normalizesafe(projectileRw.Velocity, new float3(0f, 0f, 1f)));
-            float currentSpeed = math.length(projectileRw.Velocity);
-            currentSpeed = math.max(0.01f, currentSpeed + projectileRw.Acceleration * dt);
-            currentSpeed = math.min(currentSpeed, math.max(projectileRw.Speed, currentSpeed));
-            float maxRadians = math.radians(math.max(1f, projectileRw.TurnRateDegreesPerSecond)) * dt;
-            float3 currentDirection = math.normalizesafe(projectileRw.Velocity, desiredDirection);
+            float3 desiredDirection = math.normalizesafe(targetPosition - transform.Position, math.normalizesafe(projectile.Velocity, new float3(0f, 0f, 1f)));
+            float currentSpeed = math.length(projectile.Velocity);
+            currentSpeed = math.max(0.01f, currentSpeed + projectile.Acceleration * DeltaTime);
+            currentSpeed = math.min(currentSpeed, math.max(projectile.Speed, currentSpeed));
+            float maxRadians = math.radians(math.max(1f, projectile.TurnRateDegreesPerSecond)) * DeltaTime;
+            float3 currentDirection = math.normalizesafe(projectile.Velocity, desiredDirection);
             float3 newDirection = RotateTowards(currentDirection, desiredDirection, maxRadians);
-            projectileRw.Velocity = newDirection * currentSpeed;
+            projectile.Velocity = newDirection * currentSpeed;
 
-            float3 newPosition = transform.ValueRO.Position + projectileRw.Velocity * dt;
-            transform.ValueRW.Position = newPosition;
-            transform.ValueRW.Rotation = quaternion.LookRotationSafe(newDirection, math.up());
+            float3 newPosition = transform.Position + projectile.Velocity * DeltaTime;
+            transform.Position = newPosition;
+            transform.Rotation = quaternion.LookRotationSafe(newDirection, math.up());
 
             float distance = math.distance(newPosition, targetPosition);
-            if (distance <= math.max(0.1f, projectileRw.ProximityFuseRadius) ||
-                projectileRw.ElapsedSeconds >= projectileRw.LifetimeSeconds)
+            if (distance <= math.max(0.1f, projectile.ProximityFuseRadius) ||
+                projectile.ElapsedSeconds >= projectile.LifetimeSeconds)
             {
-                QueueImpact(ecb, projectileRw, newPosition, entity);
+                QueueImpact(Ecb, entityIndexInQuery, projectile, newPosition, entity);
             }
         }
 
-        ecb.Playback(em);
-        ecb.Dispose();
-    }
-
-    private static float3 RotateTowards(float3 current, float3 target, float maxRadians)
-    {
-        float dot = math.clamp(math.dot(current, target), -1f, 1f);
-        float angle = math.acos(dot);
-        if (angle <= maxRadians || angle < 1e-5f)
-            return target;
-
-        float t = maxRadians / angle;
-        return math.normalizesafe(math.lerp(current, target, t), target);
-    }
-
-    private static void QueueImpact(
-        EntityCommandBuffer ecb,
-        AirMissileProjectileComponent projectile,
-        float3 position,
-        Entity projectileEntity)
-    {
-        ecb.AddComponent(projectileEntity, new AirMissileImpactRequestComponent
+        private static float3 RotateTowards(float3 current, float3 target, float maxRadians)
         {
-            Source = projectile.Source,
-            Target = projectile.Target,
-            TargetKind = projectile.TargetKind,
-            FactionId = projectile.FactionId,
-            Position = position,
-            Damage = projectile.Damage
-        });
-        ecb.RemoveComponent<AirMissileProjectileComponent>(projectileEntity);
+            float dot = math.clamp(math.dot(current, target), -1f, 1f);
+            float angle = math.acos(dot);
+            if (angle <= maxRadians || angle < 1e-5f)
+                return target;
+
+            float t = maxRadians / angle;
+            return math.normalizesafe(math.lerp(current, target, t), target);
+        }
+
+        private static void QueueImpact(
+            EntityCommandBuffer.ParallelWriter ecb,
+            int sortKey,
+            AirMissileProjectileComponent projectile,
+            float3 position,
+            Entity projectileEntity)
+        {
+            ecb.AddComponent(sortKey, projectileEntity, new AirMissileImpactRequestComponent
+            {
+                Source = projectile.Source,
+                Target = projectile.Target,
+                TargetKind = projectile.TargetKind,
+                FactionId = projectile.FactionId,
+                Position = position,
+                Damage = projectile.Damage
+            });
+            ecb.RemoveComponent<AirMissileProjectileComponent>(sortKey, projectileEntity);
+        }
     }
 }
 

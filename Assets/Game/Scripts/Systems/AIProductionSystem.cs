@@ -50,8 +50,8 @@ public partial struct AIProductionSystem : ISystem
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         bool hasControls = SystemAPI.HasSingleton<FactionControlConfigTag>();
-        NativeArray<FactionControlEntry> controls = hasControls
-            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
+        DynamicBuffer<FactionControlEntry> controls = hasControls
+            ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
 
@@ -102,8 +102,6 @@ public partial struct AIProductionSystem : ISystem
             economyRecords.Dispose();
         }
 
-        if (controls.IsCreated)
-            controls.Dispose();
     }
 
     private NativeList<FactionEconomyRecord> BuildFactionEconomyRecords()
@@ -363,7 +361,7 @@ public partial struct AIProductionSystem : ISystem
         };
     }
 
-    private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
+    private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
     {
         if (!hasControls)
             return FactionIdentitySystem.IsAiControlledByDefault(factionId);

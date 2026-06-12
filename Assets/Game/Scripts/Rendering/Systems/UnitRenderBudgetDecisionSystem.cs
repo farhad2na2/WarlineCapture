@@ -9,7 +9,6 @@ public readonly struct UnitRenderBudgetDecisionSystem
 {
     public struct Context
     {
-        public EntityManager Em;
         public EntityCommandBuffer RenderStateEcb;
         public NativeHashSet<Entity> SafetyTaggedThisFrame;
         public NativeHashSet<Entity> ReadyTaggedThisFrame;
@@ -54,6 +53,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public UnitRenderBudgetReadinessSystem ReadinessSystem;
         public UnitRenderBudgetReadinessSystem.Lookups ReadinessLookups;
         public UnitRenderBudgetRenderSafetySystem RenderSafetySystem;
+        public UnitRenderBudgetRenderSafetySystem.Lookups RenderSafetyLookups;
         public UnitRenderBudgetVisualPlanSystem VisualPlanSystem;
         public UnitRenderBudgetVisibilityChangeSystem VisibilityChangeSystem;
         public UnitRenderBudgetImpostorTagSystem ImpostorTagSystem;
@@ -90,7 +90,6 @@ public readonly struct UnitRenderBudgetDecisionSystem
     public Result Process(ref Context context)
     {
         Result result = default;
-        EntityManager em = context.Em;
 
         for (int i = 0; i < context.Distances.Length; i++)
         {
@@ -137,7 +136,6 @@ public readonly struct UnitRenderBudgetDecisionSystem
             bool midRootAnimatable = hasMidLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(midRoot, context.AnimationIndexLookup, context.ChildLookup);
             bool lowRootAnimatable = hasLowLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(lowRoot, context.AnimationIndexLookup, context.ChildLookup);
             UnitRenderBudgetVisualPlanSystem.Result visualPlan = context.VisualPlanSystem.CreateDesiredVisualPlan(
-                em,
                 context.RenderStateEcb,
                 context.ReadyTaggedThisFrame,
                 context.ChildLookup,
@@ -180,8 +178,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 context.RenderableQuerySystem,
                 context.ReadinessLookups,
                 context.AnimationReadinessLookups,
-                context.RenderableQueryLookups,
-                useLookupReadiness: true);
+                context.RenderableQueryLookups);
             UnitRenderBudgetVisualPlanSystem.Counters planCounters = visualPlan.Counters;
             result.VisibleCharacterSafeGate += planCounters.VisibleCharacterSafeGate;
             result.VisibleCharacterMidInstances += planCounters.VisibleCharacterMidInstances;
@@ -238,33 +235,33 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 if (detailRoot != Entity.Null)
                 {
                     if (shouldShowDetail)
-                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, detailRoot, context.ChildLookup, context.LodReferenceSystem);
+                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(context.RenderStateEcb, context.SafetyTaggedThisFrame, detailRoot, context.ChildLookup, context.RenderSafetyLookups);
                     context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(detailRoot, shouldShowDetail, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
                 else
                 {
                     if (shouldShowDetail)
-                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, unit, context.ChildLookup, context.LodReferenceSystem);
+                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(context.RenderStateEcb, context.SafetyTaggedThisFrame, unit, context.ChildLookup, context.RenderSafetyLookups);
                     context.VisibilityChangeSystem.CollectRenderVisibilityChanges(unit, shouldShowDetail, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
 
                 if (hasMidLodInstance)
                 {
                     if (shouldShowMid)
-                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, midRoot, context.ChildLookup, context.LodReferenceSystem);
+                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(context.RenderStateEcb, context.SafetyTaggedThisFrame, midRoot, context.ChildLookup, context.RenderSafetyLookups);
                     context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(midRoot, shouldShowMid, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
 
                 if (hasLowLodInstance)
                 {
                     if (shouldShowLow)
-                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, lowRoot, context.ChildLookup, context.LodReferenceSystem);
+                        result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(context.RenderStateEcb, context.SafetyTaggedThisFrame, lowRoot, context.ChildLookup, context.RenderSafetyLookups);
                     context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(lowRoot, shouldShowLow, context.ChildLookup, context.EntityStorageInfoLookup, context.DisabledLookup, context.DisableRenderingLookup, context.CulledTagLookup, context.EntitiesToShow, context.EntitiesToHide, ref result.Changed);
                 }
             }
             else if (isProtectedVisibleCharacter && shouldShowMid && hasMidLodInstance)
             {
-                result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(em, context.RenderStateEcb, context.SafetyTaggedThisFrame, midRoot, context.ChildLookup, context.LodReferenceSystem);
+                result.VisibleMidSafetyPatched += context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(context.RenderStateEcb, context.SafetyTaggedThisFrame, midRoot, context.ChildLookup, context.RenderSafetyLookups);
             }
 
             if (shouldShowMid)

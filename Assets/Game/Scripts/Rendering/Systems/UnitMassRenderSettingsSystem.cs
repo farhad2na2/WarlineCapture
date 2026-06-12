@@ -21,6 +21,12 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
     private static readonly float3 UnitRenderBoundsMinExtents = new float3(64f, 64f, 64f);
 
     private EntityQuery _renderQuery;
+    private ComponentLookup<Parent> _parentLookup;
+    private ComponentLookup<UnitGrid> _unitGridLookup;
+    private ComponentLookup<Faction> _factionLookup;
+    private ComponentLookup<Unity.Rendering.RenderBounds> _renderBoundsLookup;
+    private ComponentLookup<MeshLODComponent> _meshLodLookup;
+    private ComponentLookup<MeshLODGroupComponent> _meshLodGroupLookup;
     private int _nextDiagnosticFrame;
 
     public void OnCreate(ref SystemState state)
@@ -38,6 +44,12 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
             },
             Options = EntityQueryOptions.IncludeDisabledEntities
         });
+        _parentLookup = state.GetComponentLookup<Parent>(true);
+        _unitGridLookup = state.GetComponentLookup<UnitGrid>(true);
+        _factionLookup = state.GetComponentLookup<Faction>(true);
+        _renderBoundsLookup = state.GetComponentLookup<Unity.Rendering.RenderBounds>();
+        _meshLodLookup = state.GetComponentLookup<MeshLODComponent>();
+        _meshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -47,42 +59,50 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
 
         double startTime = Time.realtimeSinceStartupAsDouble;
         EntityManager em = state.EntityManager;
-        var parentLookup = SystemAPI.GetComponentLookup<Parent>(true);
-        var unitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
-        var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
-
-        using NativeArray<Entity> entities = _renderQuery.ToEntityArray(Allocator.Temp);
-        using NativeList<Entity> unitRenderEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
-        using NativeList<Entity> processedEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
+        _parentLookup.Update(ref state);
+        _unitGridLookup.Update(ref state);
+        _factionLookup.Update(ref state);
+        _renderBoundsLookup.Update(ref state);
+        _meshLodLookup.Update(ref state);
+        _meshLodGroupLookup.Update(ref state);
+        int totalCandidates = _renderQuery.CalculateEntityCount();
         int processed = 0;
         int applied = 0;
         int lodComponentsPatched = 0;
         int lodGroupsPatched = 0;
         int deepestUnitAncestor = 0;
-        for (int i = 0; i < entities.Length && processed < MaxRenderEntitiesPerFrame; i++)
+        using NativeList<Entity> unitRenderEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
+        using NativeList<Entity> processedEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        foreach (var (_, entity) in SystemAPI
+                     .Query<RefRO<Parent>>()
+                     .WithAll<Unity.Rendering.RenderBounds>()
+                     .WithNone<UnitMassRenderSettingsApplied>()
+                     .WithOptions(EntityQueryOptions.IncludeDisabledEntities)
+                     .WithEntityAccess())
         {
-            Entity entity = entities[i];
-            if (!em.Exists(entity))
-                continue;
+            if (processed >= MaxRenderEntitiesPerFrame)
+                break;
 
             processed++;
             processedEntities.Add(entity);
-            if (TryFindUnitAncestor(entity, parentLookup, unitGridLookup, factionLookup, out int depth))
-            {
-                deepestUnitAncestor = math.max(deepestUnitAncestor, depth);
-                unitRenderEntities.Add(entity);
-            }
+
+            if (!TryFindUnitAncestor(entity, _parentLookup, _unitGridLookup, _factionLookup, out int depth))
+                continue;
+
+            deepestUnitAncestor = math.max(deepestUnitAncestor, depth);
+            unitRenderEntities.Add(entity);
         }
 
         for (int i = 0; i < unitRenderEntities.Length; i++)
         {
             Entity entity = unitRenderEntities[i];
-            if (!em.Exists(entity))
+            if (!_renderBoundsLookup.HasComponent(entity))
                 continue;
 
-            Unity.Rendering.RenderBounds bounds = em.GetComponentData<Unity.Rendering.RenderBounds>(entity);
+            Unity.Rendering.RenderBounds bounds = _renderBoundsLookup[entity];
             bounds.Value.Extents = math.max(bounds.Value.Extents, UnitRenderBoundsMinExtents);
-            em.SetComponentData(entity, bounds);
+            _renderBoundsLookup[entity] = bounds;
 
             if (em.HasComponent<RenderFilterSettings>(entity))
             {
@@ -96,51 +116,48 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
                 }
             }
 
-            if (em.HasComponent<MeshLODComponent>(entity))
+            if (_meshLodLookup.HasComponent(entity))
             {
-                MeshLODComponent meshLod = em.GetComponentData<MeshLODComponent>(entity);
+                MeshLODComponent meshLod = _meshLodLookup[entity];
                 if (meshLod.LODMask != AlwaysVisibleLodMask)
                 {
                     meshLod.LODMask = AlwaysVisibleLodMask;
-                    em.SetComponentData(entity, meshLod);
+                    _meshLodLookup[entity] = meshLod;
                     lodComponentsPatched++;
                 }
 
-                lodGroupsPatched += PatchLodGroup(em, meshLod.Group);
-                lodGroupsPatched += PatchLodGroup(em, meshLod.ParentGroup);
+                lodGroupsPatched += PatchLodGroup(meshLod.Group, _meshLodGroupLookup);
+                lodGroupsPatched += PatchLodGroup(meshLod.ParentGroup, _meshLodGroupLookup);
             }
 
             applied++;
         }
 
         for (int i = 0; i < processedEntities.Length; i++)
-        {
-            Entity entity = processedEntities[i];
-            if (!em.Exists(entity) || em.HasComponent<UnitMassRenderSettingsApplied>(entity))
-                continue;
+            ecb.AddComponent<UnitMassRenderSettingsApplied>(processedEntities[i]);
 
-            em.AddComponent<UnitMassRenderSettingsApplied>(entity);
-        }
+        ecb.Playback(em);
+        ecb.Dispose();
 
         double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
         if (EnableMassRenderDiagnostics &&
-            (lodComponentsPatched > 0 || lodGroupsPatched > 0 || entities.Length > processed) &&
+            (lodComponentsPatched > 0 || lodGroupsPatched > 0 || totalCandidates > processed) &&
             Time.frameCount >= _nextDiagnosticFrame)
         {
             _nextDiagnosticFrame = Time.frameCount + DiagnosticIntervalFrames;
-            Debug.Log($"[UnitMassRenderDiag] frame={Time.frameCount} processed={processed} applied={applied} remaining={math.max(0, entities.Length - processed)} lodComponentsPatched={lodComponentsPatched} lodGroupsPatched={lodGroupsPatched} deepestUnitAncestor={deepestUnitAncestor} bounds={UnitRenderBoundsMinExtents.x:F0}");
+            Debug.Log($"[UnitMassRenderDiag] frame={Time.frameCount} processed={processed} applied={applied} remaining={math.max(0, totalCandidates - processed)} lodComponentsPatched={lodComponentsPatched} lodGroupsPatched={lodGroupsPatched} deepestUnitAncestor={deepestUnitAncestor} bounds={UnitRenderBoundsMinExtents.x:F0}");
         }
 
         if (EnableMassRenderFreezeLogs && elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect:ECS] UnitMassRenderSettingsSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms processed={processed} applied={applied} remaining={math.max(0, entities.Length - processed)} lodComponentsPatched={lodComponentsPatched} lodGroupsPatched={lodGroupsPatched}");
+            Debug.Log($"[FreezeDetect:ECS] UnitMassRenderSettingsSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms processed={processed} applied={applied} remaining={math.max(0, totalCandidates - processed)} lodComponentsPatched={lodComponentsPatched} lodGroupsPatched={lodGroupsPatched}");
     }
 
-    private static int PatchLodGroup(EntityManager em, Entity group)
+    private static int PatchLodGroup(Entity group, ComponentLookup<MeshLODGroupComponent> meshLodGroupLookup)
     {
-        if (group == Entity.Null || !em.Exists(group) || !em.HasComponent<MeshLODGroupComponent>(group))
+        if (group == Entity.Null || !meshLodGroupLookup.HasComponent(group))
             return 0;
 
-        MeshLODGroupComponent lodGroup = em.GetComponentData<MeshLODGroupComponent>(group);
+        MeshLODGroupComponent lodGroup = meshLodGroupLookup[group];
         bool changed =
             lodGroup.ParentMask != AlwaysVisibleLodMask ||
             !math.all(lodGroup.LODDistances0 == new float4(AlwaysVisibleLodDistance)) ||
@@ -152,7 +169,7 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         lodGroup.ParentMask = AlwaysVisibleLodMask;
         lodGroup.LODDistances0 = new float4(AlwaysVisibleLodDistance);
         lodGroup.LODDistances1 = new float4(AlwaysVisibleLodDistance);
-        em.SetComponentData(group, lodGroup);
+        meshLodGroupLookup[group] = lodGroup;
         return 1;
     }
 

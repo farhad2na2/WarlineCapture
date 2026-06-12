@@ -58,6 +58,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
     private UnitRenderBudgetRenderableQuerySystem.Lookups _renderableQueryLookups;
     private UnitRenderBudgetAnimationReadinessSystem.Lookups _animationReadinessLookups;
     private UnitRenderBudgetReadinessSystem.Lookups _readinessLookups;
+    private UnitRenderBudgetRenderSafetySystem.Lookups _renderSafetyLookups;
     private UnitRenderBudgetVisibilityApplySystem.Lookups _visibilityApplyLookups;
     private ComponentLookup<UnitRenderVisualComponent> _visualStateLookup;
     private EntityTypeHandle _unitEntityTypeHandle;
@@ -102,6 +103,14 @@ public partial struct UnitRenderBudgetSystem : ISystem
         {
             EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
             VisualReadyLookup = state.GetComponentLookup<UnitRenderVisualReadyTag>(true)
+        };
+        _renderSafetyLookups = new UnitRenderBudgetRenderSafetySystem.Lookups
+        {
+            EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
+            SafetyPatchedLookup = state.GetComponentLookup<UnitRenderSafetyPatchedTag>(true),
+            RenderBoundsLookup = state.GetComponentLookup<RenderBounds>(true),
+            MeshLodLookup = state.GetComponentLookup<MeshLODComponent>(true),
+            MeshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>(true)
         };
         _visibilityApplyLookups = new UnitRenderBudgetVisibilityApplySystem.Lookups
         {
@@ -156,6 +165,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         _renderableQueryLookups.Update(ref state);
         _animationReadinessLookups.Update(ref state);
         _readinessLookups.Update(ref state);
+        _renderSafetyLookups.Update(ref state);
         _visibilityApplyLookups.Update(ref state);
         _visualStateLookup.Update(ref state);
         _unitEntityTypeHandle.Update(ref state);
@@ -217,7 +227,6 @@ public partial struct UnitRenderBudgetSystem : ISystem
 
         var decisionContext = new UnitRenderBudgetDecisionSystem.Context
         {
-            Em = em,
             RenderStateEcb = renderStateEcb,
             SafetyTaggedThisFrame = safetyTaggedThisFrame,
             ReadyTaggedThisFrame = readyTaggedThisFrame,
@@ -262,6 +271,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             ReadinessSystem = _readinessSystem,
             ReadinessLookups = _readinessLookups,
             RenderSafetySystem = _renderSafetySystem,
+            RenderSafetyLookups = _renderSafetyLookups,
             VisualPlanSystem = _visualPlanSystem,
             VisibilityChangeSystem = _visibilityChangeSystem,
             ImpostorTagSystem = _impostorTagSystem,

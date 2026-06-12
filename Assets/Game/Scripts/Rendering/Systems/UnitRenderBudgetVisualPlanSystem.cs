@@ -83,6 +83,35 @@ public readonly struct UnitRenderBudgetVisualPlanSystem
     }
 
     public Result CreateDesiredVisualPlan(
+        EntityCommandBuffer ecb,
+        NativeHashSet<Entity> readyTaggedThisFrame,
+        BufferLookup<Child> childLookup,
+        Request request,
+        UnitRenderBudgetCharacterPolicySystem characterPolicySystem,
+        UnitRenderBudgetReadinessSystem readinessSystem,
+        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
+        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetReadinessSystem.Lookups readinessLookups,
+        UnitRenderBudgetAnimationReadinessSystem.Lookups animationReadinessLookups,
+        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups)
+    {
+        return CreateDesiredVisualPlan(
+            default,
+            ecb,
+            readyTaggedThisFrame,
+            childLookup,
+            request,
+            characterPolicySystem,
+            readinessSystem,
+            animationReadinessSystem,
+            renderableQuerySystem,
+            readinessLookups,
+            animationReadinessLookups,
+            renderableQueryLookups,
+            useLookupReadiness: true);
+    }
+
+    public Result CreateDesiredVisualPlan(
         EntityManager em,
         EntityCommandBuffer ecb,
         NativeHashSet<Entity> readyTaggedThisFrame,

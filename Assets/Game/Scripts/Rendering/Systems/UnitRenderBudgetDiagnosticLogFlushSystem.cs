@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -18,11 +17,10 @@ public partial struct UnitRenderBudgetDiagnosticLogFlushSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        using NativeArray<Entity> queueEntities = _logQueueQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < queueEntities.Length; i++)
+        foreach (DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs in SystemAPI
+                     .Query<DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent>>()
+                     .WithAll<UnitRenderBudgetDiagnosticLogQueueComponent>())
         {
-            DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs =
-                state.EntityManager.GetBuffer<UnitRenderBudgetDiagnosticLogComponent>(queueEntities[i]);
             for (int logIndex = 0; logIndex < logs.Length; logIndex++)
             {
                 UnitRenderBudgetDiagnosticLogComponent log = logs[logIndex];

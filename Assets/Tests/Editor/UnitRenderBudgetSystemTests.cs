@@ -35,10 +35,13 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.ReadinessSystemAddsReadyTagForRenderableVisual();
             tests.ReadinessSystemUsesCachedLookups();
             tests.RenderSafetyPatchesBoundsAndAddsSafetyTag();
+            tests.RenderSafetyUsesCachedLookups();
+            tests.MassRenderSettingsPatchesUnitRenderChildren();
+            tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.CharacterSourceKeyPrefixCheckDoesNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=24");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=27");
         }
         catch (System.Exception ex)
         {
@@ -189,6 +192,67 @@ public sealed partial class UnitRenderBudgetSystemTests
             edgeSafetyMargin: 0.18f));
 
         Assert.AreEqual(0, distances.Length);
+    }
+
+    [Test]
+    public void MassRenderSettingsPatchesUnitRenderChildren()
+    {
+        using var world = new World(nameof(MassRenderSettingsPatchesUnitRenderChildren));
+        EntityManager em = world.EntityManager;
+        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
+        em.SetComponentData(unit, new Faction { Id = 1 });
+        Entity lodGroup = em.CreateEntity(typeof(MeshLODGroupComponent));
+        em.SetComponentData(lodGroup, new MeshLODGroupComponent
+        {
+            ParentMask = 1,
+            LODDistances0 = new float4(1f),
+            LODDistances1 = new float4(2f)
+        });
+        Entity renderChild = em.CreateEntity(typeof(Parent), typeof(RenderBounds), typeof(MeshLODComponent));
+        em.SetComponentData(renderChild, new Parent { Value = unit });
+        em.SetComponentData(renderChild, new RenderBounds
+        {
+            Value = new AABB { Center = float3.zero, Extents = new float3(1f, 2f, 3f) }
+        });
+        em.SetComponentData(renderChild, new MeshLODComponent
+        {
+            Group = lodGroup,
+            ParentGroup = Entity.Null,
+            LODMask = 1
+        });
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitMassRenderSettingsApplied>(renderChild));
+        RenderBounds bounds = em.GetComponentData<RenderBounds>(renderChild);
+        Assert.AreEqual(new float3(64f, 64f, 64f), bounds.Value.Extents);
+        MeshLODComponent meshLod = em.GetComponentData<MeshLODComponent>(renderChild);
+        Assert.AreEqual(0xFF, meshLod.LODMask);
+        MeshLODGroupComponent patchedGroup = em.GetComponentData<MeshLODGroupComponent>(lodGroup);
+        Assert.AreEqual(0xFF, patchedGroup.ParentMask);
+        Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances0);
+        Assert.AreEqual(new float4(1048576f), patchedGroup.LODDistances1);
+    }
+
+    [Test]
+    public void DiagnosticLogFlushClearsQueuedMessages()
+    {
+        using var world = new World(nameof(DiagnosticLogFlushClearsQueuedMessages));
+        EntityManager em = world.EntityManager;
+        Entity queue = em.CreateEntity(typeof(UnitRenderBudgetDiagnosticLogQueueComponent));
+        DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs = em.AddBuffer<UnitRenderBudgetDiagnosticLogComponent>(queue);
+        logs.Add(new UnitRenderBudgetDiagnosticLogComponent
+        {
+            Message = new FixedString4096Bytes("Unit render budget diagnostic test message."),
+            Severity = UnitRenderBudgetDiagnosticLogComponent.LogSeverity
+        });
+        SystemHandle system = world.CreateSystem<UnitRenderBudgetDiagnosticLogFlushSystem>();
+
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, em.GetBuffer<UnitRenderBudgetDiagnosticLogComponent>(queue).Length);
     }
 
     [Test]
@@ -798,6 +862,38 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
+    public void RenderSafetyUsesCachedLookups()
+    {
+        using var world = new World(nameof(RenderSafetyUsesCachedLookups));
+        EntityManager em = world.EntityManager;
+        Entity root = CreateRenderableEntity(em, new float3(1f, 2f, 3f));
+        UnitRenderBudgetTestLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetTestLookupSystem>();
+        BufferLookup<Child> childLookup = lookupSystem.GetChildLookup();
+        using var safetyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        try
+        {
+            int patched = new UnitRenderBudgetRenderSafetySystem().EnsureRenderSafetyRecursiveOnce(
+                ecb,
+                safetyTaggedThisFrame,
+                root,
+                childLookup,
+                lookupSystem.GetRenderSafetyLookups());
+
+            Assert.AreEqual(1, patched);
+            Assert.IsTrue(safetyTaggedThisFrame.Contains(root));
+            ecb.Playback(em);
+            RenderBounds bounds = em.GetComponentData<RenderBounds>(root);
+            Assert.AreEqual(new float3(64f, 64f, 64f), bounds.Value.Extents);
+            Assert.IsTrue(em.HasComponent<UnitRenderSafetyPatchedTag>(root));
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+    }
+
+    [Test]
     public void CharacterImpostorsScaleUpAtHighTacticalCameraHeight()
     {
         Assert.AreEqual(1f, UnitImpostorVisualUtility.ResolveCharacterTacticalScale(80f), 0.001f);
@@ -950,6 +1046,18 @@ public sealed partial class UnitRenderBudgetSystemTests
                 DisabledLookup = GetComponentLookup<Disabled>(true),
                 DisableRenderingLookup = GetComponentLookup<DisableRendering>(true),
                 CulledTagLookup = GetComponentLookup<UnitRenderBudgetCulledTag>(true)
+            };
+        }
+
+        public UnitRenderBudgetRenderSafetySystem.Lookups GetRenderSafetyLookups()
+        {
+            return new UnitRenderBudgetRenderSafetySystem.Lookups
+            {
+                EntityStorageInfoLookup = GetEntityStorageInfoLookup(),
+                SafetyPatchedLookup = GetComponentLookup<UnitRenderSafetyPatchedTag>(true),
+                RenderBoundsLookup = GetComponentLookup<RenderBounds>(true),
+                MeshLodLookup = GetComponentLookup<MeshLODComponent>(true),
+                MeshLodGroupLookup = GetComponentLookup<MeshLODGroupComponent>(true)
             };
         }
 

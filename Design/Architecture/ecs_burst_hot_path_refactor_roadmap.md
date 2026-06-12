@@ -86,8 +86,8 @@ Hot managed systems that are not exempt:
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
 - Checklist progress: 73 / 157 complete (46.5%).
-- In progress: 13 / 157.
-- Remaining open: 71 / 157.
+- In progress: 12 / 157.
+- Remaining open: 72 / 157.
 - Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
@@ -1208,6 +1208,29 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-render-budget-distance-null-guard-architecture.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
+- 2026-06-12: Continued Phase 8 render-safety cleanup in `UnitRenderBudgetRenderSafetySystem`. The live render-budget decision loop now patches render bounds, mesh LOD masks, and mesh LOD groups through cached entity-storage/component lookups from `UnitRenderBudgetSystem`; the managed `EntityManager` overload remains for diagnostic/test callers that do not provide cached lookups.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-render-safety-lookup-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=25`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-render-safety-lookup-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+- 2026-06-12: Continued Phase 8 visual-plan live-loop cleanup in `UnitRenderBudgetVisualPlanSystem` and `UnitRenderBudgetDecisionSystem`. The live render-budget decision loop now uses a lookup-only visual-plan overload for handoff readiness, so `UnitRenderBudgetDecisionSystem.Context` no longer carries `EntityManager` solely for the managed readiness fallback; the managed overload remains for tests and diagnostic/presentation-boundary callers.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-visual-plan-lookup-overload-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=25`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visual-plan-lookup-overload-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-12: Continued Phase 8 managed render-settings cleanup in `UnitMassRenderSettingsSystem`. The pass remains a managed Entities Graphics presentation boundary because it can patch shared `RenderFilterSettings`, but it no longer builds a per-update `ToEntityArray` snapshot. It now caches component lookups in `OnCreate`, collects candidates through query iteration, patches render bounds and mesh LOD data through lookups, and batches `UnitMassRenderSettingsApplied` through an immediate ECB after enumeration.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-mass-render-settings-shadow.log`
+  - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=26`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-mass-render-settings-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
 
 ### Phase 9: Managed Boundary Cleanup
 

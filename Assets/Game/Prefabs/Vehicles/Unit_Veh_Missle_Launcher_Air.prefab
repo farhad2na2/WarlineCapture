@@ -2102,7 +2102,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
-      value:
+      value: 
       objectReference: {fileID: 11400000, guid: 8b5d1d3f1c504543907a45c4d4c1a101, type: 2}
     - target: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2154,7 +2154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: config
-      value:
+      value: 
       objectReference: {fileID: 11400000, guid: 7e52f0bebbacc477d90d1aa3eb9cf6a1, type: 2}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: canAttack
@@ -2191,7 +2191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitSprite
-      value:
+      value: 
       objectReference: {fileID: 21300000, guid: 412dc153dbd54e65a5c43935e970f4c5, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: aggroRangeCells
@@ -2210,76 +2210,32 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashPrefab
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: usesVehicleMotion
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: weaponDisplayName
-      value:
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackImpactPrefab
-      value:
+      value: 
       objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherTurret
-      value:
-      objectReference: {fileID: 8065130487741909267}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.size
-      value: 12
+      propertyPath: attackTraceColor.b
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[0]
-      value:
-      objectReference: {fileID: 8066934679526283505}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[1]
-      value:
-      objectReference: {fileID: 8065303696306819415}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[2]
-      value:
-      objectReference: {fileID: 8064928604699322573}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[3]
-      value:
-      objectReference: {fileID: 8066916644347966857}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[4]
-      value:
-      objectReference: {fileID: 8066882266480148677}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[5]
-      value:
-      objectReference: {fileID: 8065315489334928109}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[6]
-      value:
-      objectReference: {fileID: 8064947056489226747}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[7]
-      value:
-      objectReference: {fileID: 8066771468328940155}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[8]
-      value:
-      objectReference: {fileID: 8066533271781648151}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[9]
-      value:
-      objectReference: {fileID: 8066723114973170341}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[10]
-      value:
-      objectReference: {fileID: 8065101453420946011}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: airMissileLauncherMissiles.Array.data[11]
-      value:
-      objectReference: {fileID: 8066804035851279173}
+      propertyPath: attackTraceColor.g
+      value: 0.85
+      objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitCardSprite
-      value:
+      value: 
       objectReference: {fileID: 21300000, guid: d04e7ef9199849849bbd2c1d2bf7c1b0, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: roadSpeedMultiplier
@@ -2287,11 +2243,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitActionSprite
-      value:
+      value: 
       objectReference: {fileID: 21300000, guid: 375b563047be40f6a0dfe5203f8f8706, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackCooldownSeconds
       value: 2.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceDashDensity
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceScrollSpeed
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: autoCalculateFootprint
@@ -2299,20 +2263,92 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleHealthBarPrefab
-      value:
+      value: 
       objectReference: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashHeightOffset
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: airMissileLauncherConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: e88ab1c7a4ed4765abff1d57be116a05, type: 2}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: airMissileLauncherTurret
+      value: 
+      objectReference: {fileID: 8065130487741909267}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTracerEveryNthShot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashForwardOffset
+      value: 0.45
+      objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: animationOrder.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleDestroyedVisualPrefab
-      value:
+      value: 
       objectReference: {fileID: 367409465382437084, guid: 843f6b04fe0dc4a25b32fa6a84571de7, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleSelectionMarkerPrefab
-      value:
+      value: 
       objectReference: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: airMissileLauncherMissiles.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8066934679526283505}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8065303696306819415}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8064928604699322573}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8066916644347966857}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8066882266480148677}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[5]'
+      value: 
+      objectReference: {fileID: 8065315489334928109}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[6]'
+      value: 
+      objectReference: {fileID: 8064947056489226747}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[7]'
+      value: 
+      objectReference: {fileID: 8066771468328940155}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[8]'
+      value: 
+      objectReference: {fileID: 8066533271781648151}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[9]'
+      value: 
+      objectReference: {fileID: 8066723114973170341}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[10]'
+      value: 
+      objectReference: {fileID: 8065101453420946011}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'airMissileLauncherMissiles.Array.data[11]'
+      value: 
+      objectReference: {fileID: 8066804035851279173}
     - target: {fileID: 1972179586304415830, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_Name
       value: Unit_Veh_Missle_Launcher_Air

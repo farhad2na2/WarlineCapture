@@ -90,7 +90,10 @@ Shader "Game/AttackTraceInstanced"
 
                 // Bullet-shaped streak: long faint tail rising steeply to a hot head,
                 // with a quick rounded falloff at the very tip so it doesn't hard-clip.
-                float tail = pow(dashPhase, _TailExponent);
+                // Low dash densities (single shells) get a sharper tail so the shot
+                // reads as a compact flying projectile instead of a long beam.
+                float tailExponent = _TailExponent * max(1.0, 4.0 / dashDensity);
+                float tail = pow(dashPhase, tailExponent);
                 float tip = 1.0 - smoothstep(0.97, 1.0, dashPhase);
                 float streak = tail * tip;
 

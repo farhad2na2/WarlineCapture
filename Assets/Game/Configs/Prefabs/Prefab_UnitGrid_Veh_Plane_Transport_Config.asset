@@ -11,12 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Plane_Transport_Config
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: b7a333e5f22443cf9ab26cdc64da334f, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 6455878afb7941fe834c74282e480c6d, type: 3}
   portraitActionSprite: {fileID: 21300000, guid: f89ffcbb4bb946c7bd5af5d89736ad0a, type: 3}
   weaponSprite: {fileID: 0}
-  weaponDisplayName:
+  weaponDisplayName: 
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
@@ -44,6 +44,9 @@ MonoBehaviour:
     airfield.
   midLodPrefab: {fileID: 8023284474783625476, guid: d55ce8286c4da4408b32ac8ab58709c4, type: 3}
   lowLodPrefab: {fileID: 3654145369901539689, guid: 3687956505d6e4ab1aeb9d8f88296207, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 0}
+  unitHealthBarPrefab: {fileID: 0}
+  tintUnitModelRenderers: 1
   vehicleDestroyedVisualPrefab: {fileID: 7169500921745386597, guid: 89cc40667e9714f5cadc8e7be7b7ea49, type: 3}
   vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
@@ -62,16 +65,22 @@ MonoBehaviour:
   attackCooldownSeconds: 1.2
   attackDamage: 8
   maxHealth: 900
-  attackImpactPrefab: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  attackTraceWidth: 0.18
-  attackTraceScrollSpeed: 10
-  attackTraceDashDensity: 10
+  attackImpactPrefab: {fileID: 5992453128428957894, guid: 05b024c09cec146d6b00969b4c66446f, type: 3}
+  muzzleFlashPrefab: {fileID: 6667276492148642321, guid: 926a746687ea548af8ad8d990360b466, type: 3}
+  muzzleFlashHeightOffset: 1.2
+  muzzleFlashForwardOffset: 1.6
+  groundMissileLauncherConfig: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.8, b: 0.4, a: 1}
+  attackTraceWidth: 0.1
+  attackTraceScrollSpeed: 26
+  attackTraceDashDensity: 3
   attackTraceVisibleSeconds: 0.08
+  attackTracerEveryNthShot: 2
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder:
+  animationOrder: 
+  airMissileLauncherConfig: {fileID: 0}

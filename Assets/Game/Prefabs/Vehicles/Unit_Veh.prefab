@@ -78,12 +78,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: vehicleHealthBarPrefab
-      value:
-      objectReference: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: vehicleSelectionMarkerPrefab
-      value:
-      objectReference: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 263416550601964566, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_LocalScale.x
       value: 8
@@ -106,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1397017599473400878, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Mesh
-      value:
+      value: 
       objectReference: {fileID: 4300000, guid: 0b9e3f2c580904da98c1fc29eb87b996, type: 2}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
@@ -114,7 +114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3987427220907536480, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: bf41be9e74875804c91333542b6a1da4, type: 2}
     - target: {fileID: 7415084229013771881, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_LocalScale.x

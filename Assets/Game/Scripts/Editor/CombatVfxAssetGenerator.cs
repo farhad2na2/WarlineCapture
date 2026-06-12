@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -5,7 +6,8 @@ using UnityEngine.Rendering;
 
 /// <summary>
 /// Generates muzzle flash and bullet impact VFX assets (textures, materials, prefabs)
-/// and assigns them to the soldier config.
+/// per weapon archetype, then assigns them - together with matching tracer settings -
+/// to every unit config based on its weapon / display name.
 /// Run via: Tools > Game > Generate Combat VFX (Muzzle Flash + Impact).
 /// Safe to re-run; existing assets are overwritten in place.
 /// </summary>
@@ -15,9 +17,134 @@ public static class CombatVfxAssetGenerator
     private const string TexturesFolder = RootFolder + "/Textures";
     private const string MaterialsFolder = RootFolder + "/Materials";
     private const string PrefabsFolder = RootFolder + "/Prefabs";
+    private const string ConfigsFolder = "Assets/Game/Configs/Prefabs";
     private const string ParticlesUnlitShaderName = "Universal Render Pipeline/Particles/Unlit";
 
-    private const string SoldierConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_01_Config.asset";
+    private sealed class WeaponVfxProfile
+    {
+        public string PrefabId;              // muzzle/impact prefab key (profiles may share)
+        public float FlashScale = 1f;        // muzzle flash size multiplier
+        public int FlashSparks = 5;
+        public int SmokeCount = 2;
+        public float ImpactScale = 1f;
+        public int ImpactSparks = 8;
+        public int ImpactDust = 4;
+        public bool ExplosiveImpact; // fireball + smoke column instead of plain sparks
+        public Color TraceColor = new(1f, 0.62f, 0.25f, 1f);
+        public float TraceWidth = 0.14f;
+        public float TraceScrollSpeed = 24f;
+        public float TraceDashDensity = 4f;
+        public float TraceVisibleSeconds = 0.1f;
+        public int TracerEveryNthShot = 3;
+        public float MuzzleHeight = 0.95f;
+        public float MuzzleForward = 0.5f;
+    }
+
+    private static readonly Dictionary<string, WeaponVfxProfile> Profiles = new()
+    {
+        ["Pistol"] = new WeaponVfxProfile
+        {
+            PrefabId = "Pistol", FlashScale = 0.6f, FlashSparks = 3, SmokeCount = 1,
+            ImpactScale = 0.7f, ImpactSparks = 5, ImpactDust = 2,
+            TraceColor = new Color(1f, 0.9f, 0.6f, 1f), TraceWidth = 0.07f,
+            TraceScrollSpeed = 18f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.07f,
+            TracerEveryNthShot = 1, MuzzleHeight = 0.95f, MuzzleForward = 0.35f
+        },
+        ["Smg"] = new WeaponVfxProfile
+        {
+            PrefabId = "Smg", FlashScale = 0.7f, FlashSparks = 4, SmokeCount = 1,
+            ImpactScale = 0.8f, ImpactSparks = 6, ImpactDust = 2,
+            TraceColor = new Color(1f, 0.82f, 0.45f, 1f), TraceWidth = 0.08f,
+            TraceScrollSpeed = 26f, TraceDashDensity = 3f, TraceVisibleSeconds = 0.07f,
+            TracerEveryNthShot = 2, MuzzleHeight = 0.95f, MuzzleForward = 0.4f
+        },
+        ["Rifle"] = new WeaponVfxProfile
+        {
+            PrefabId = "Rifle", FlashScale = 0.85f, FlashSparks = 4, SmokeCount = 2,
+            ImpactScale = 0.9f, ImpactSparks = 7, ImpactDust = 3,
+            TraceColor = new Color(1f, 0.75f, 0.35f, 1f), TraceWidth = 0.1f,
+            TraceScrollSpeed = 24f, TraceDashDensity = 2f, TraceVisibleSeconds = 0.08f,
+            TracerEveryNthShot = 2, MuzzleHeight = 0.95f, MuzzleForward = 0.5f
+        },
+        ["MachineGun"] = new WeaponVfxProfile
+        {
+            PrefabId = "MachineGun", FlashScale = 1f, FlashSparks = 5, SmokeCount = 2,
+            ImpactScale = 1f, ImpactSparks = 8, ImpactDust = 4,
+            TraceColor = new Color(1f, 0.62f, 0.25f, 1f), TraceWidth = 0.14f,
+            TraceScrollSpeed = 24f, TraceDashDensity = 4f, TraceVisibleSeconds = 0.1f,
+            TracerEveryNthShot = 3, MuzzleHeight = 0.95f, MuzzleForward = 0.5f
+        },
+        ["Sniper"] = new WeaponVfxProfile
+        {
+            PrefabId = "Sniper", FlashScale = 1.1f, FlashSparks = 5, SmokeCount = 3,
+            ImpactScale = 1f, ImpactSparks = 8, ImpactDust = 3,
+            TraceColor = new Color(0.75f, 0.85f, 1f, 1f), TraceWidth = 0.12f,
+            TraceScrollSpeed = 12f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.16f,
+            TracerEveryNthShot = 1, MuzzleHeight = 1f, MuzzleForward = 0.6f
+        },
+        ["Rocket"] = new WeaponVfxProfile
+        {
+            PrefabId = "Rocket", FlashScale = 1.6f, FlashSparks = 8, SmokeCount = 6,
+            ImpactScale = 2f, ImpactSparks = 14, ImpactDust = 8, ExplosiveImpact = true,
+            TraceColor = new Color(1f, 0.55f, 0.2f, 1f), TraceWidth = 0.3f,
+            TraceScrollSpeed = 6f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.4f,
+            TracerEveryNthShot = 1, MuzzleHeight = 1f, MuzzleForward = 0.5f
+        },
+        ["HeavyMg"] = new WeaponVfxProfile
+        {
+            PrefabId = "HeavyMg", FlashScale = 1.3f, FlashSparks = 6, SmokeCount = 3,
+            ImpactScale = 1.2f, ImpactSparks = 10, ImpactDust = 5,
+            TraceColor = new Color(1f, 0.5f, 0.2f, 1f), TraceWidth = 0.18f,
+            TraceScrollSpeed = 28f, TraceDashDensity = 4f, TraceVisibleSeconds = 0.1f,
+            TracerEveryNthShot = 2, MuzzleHeight = 1.6f, MuzzleForward = 1f
+        },
+        ["TankCannon"] = new WeaponVfxProfile
+        {
+            PrefabId = "TankCannon", FlashScale = 2.2f, FlashSparks = 10, SmokeCount = 8,
+            ImpactScale = 2.4f, ImpactSparks = 16, ImpactDust = 10, ExplosiveImpact = true,
+            TraceColor = new Color(1f, 0.7f, 0.4f, 1f), TraceWidth = 0.35f,
+            TraceScrollSpeed = 8f, TraceDashDensity = 1f, TraceVisibleSeconds = 0.22f,
+            TracerEveryNthShot = 1, MuzzleHeight = 1.5f, MuzzleForward = 2.8f
+        },
+        ["Minigun"] = new WeaponVfxProfile
+        {
+            PrefabId = "Minigun", FlashScale = 1f, FlashSparks = 5, SmokeCount = 2,
+            ImpactScale = 1f, ImpactSparks = 8, ImpactDust = 4,
+            TraceColor = new Color(1f, 0.55f, 0.25f, 1f), TraceWidth = 0.16f,
+            TraceScrollSpeed = 30f, TraceDashDensity = 5f, TraceVisibleSeconds = 0.12f,
+            TracerEveryNthShot = 3, MuzzleHeight = 0.2f, MuzzleForward = 1.3f
+        },
+        ["JetCannon"] = new WeaponVfxProfile
+        {
+            PrefabId = "JetCannon", FlashScale = 1.2f, FlashSparks = 6, SmokeCount = 2,
+            ImpactScale = 1.5f, ImpactSparks = 10, ImpactDust = 5,
+            TraceColor = new Color(1f, 0.7f, 0.35f, 1f), TraceWidth = 0.2f,
+            TraceScrollSpeed = 30f, TraceDashDensity = 2f, TraceVisibleSeconds = 0.12f,
+            TracerEveryNthShot = 1, MuzzleHeight = 0f, MuzzleForward = 2f
+        },
+        ["DroneGun"] = new WeaponVfxProfile
+        {
+            PrefabId = "LightGun", FlashScale = 0.8f, FlashSparks = 4, SmokeCount = 1,
+            ImpactScale = 0.8f, ImpactSparks = 6, ImpactDust = 3,
+            TraceColor = new Color(1f, 0.8f, 0.4f, 1f), TraceWidth = 0.1f,
+            TraceScrollSpeed = 26f, TraceDashDensity = 3f, TraceVisibleSeconds = 0.08f,
+            TracerEveryNthShot = 2, MuzzleHeight = 0.2f, MuzzleForward = 0.6f
+        },
+        ["PlaneGun"] = new WeaponVfxProfile
+        {
+            PrefabId = "LightGun", FlashScale = 0.8f, FlashSparks = 4, SmokeCount = 1,
+            ImpactScale = 0.8f, ImpactSparks = 6, ImpactDust = 3,
+            TraceColor = new Color(1f, 0.8f, 0.4f, 1f), TraceWidth = 0.1f,
+            TraceScrollSpeed = 26f, TraceDashDensity = 3f, TraceVisibleSeconds = 0.08f,
+            TracerEveryNthShot = 2, MuzzleHeight = 1.2f, MuzzleForward = 1.6f
+        }
+    };
+
+    private static Material _flashMat;
+    private static Material _sparkMat;
+    private static Material _impactFlashMat;
+    private static Material _smokeMat;
+    private static Material _dustMat;
 
     [MenuItem("Tools/Game/Generate Combat VFX (Muzzle Flash + Impact)")]
     public static void Generate()
@@ -28,20 +155,156 @@ public static class CombatVfxAssetGenerator
         Texture2D flashTex = SaveTexture("Tex_Vfx_MuzzleFlashStar", BuildMuzzleFlashStarTexture(256));
         Texture2D smokeTex = SaveTexture("Tex_Vfx_SmokeSoft", BuildSmokeTexture(128));
 
-        Material flashMat = SaveMaterial("Mat_Vfx_MuzzleFlash_Additive", flashTex, new Color(3.2f, 2.1f, 1.0f, 1f), additive: true);
-        Material sparkMat = SaveMaterial("Mat_Vfx_Spark_Additive", glowTex, new Color(3.5f, 1.7f, 0.55f, 1f), additive: true);
-        Material impactFlashMat = SaveMaterial("Mat_Vfx_ImpactFlash_Additive", glowTex, new Color(3.0f, 2.2f, 1.2f, 1f), additive: true);
-        Material smokeMat = SaveMaterial("Mat_Vfx_Smoke_Alpha", smokeTex, new Color(0.45f, 0.44f, 0.42f, 1f), additive: false);
-        Material dustMat = SaveMaterial("Mat_Vfx_Dust_Alpha", smokeTex, new Color(0.55f, 0.48f, 0.38f, 1f), additive: false);
+        _flashMat = SaveMaterial("Mat_Vfx_MuzzleFlash_Additive", flashTex, new Color(3.2f, 2.1f, 1.0f, 1f), additive: true);
+        _sparkMat = SaveMaterial("Mat_Vfx_Spark_Additive", glowTex, new Color(3.5f, 1.7f, 0.55f, 1f), additive: true);
+        _impactFlashMat = SaveMaterial("Mat_Vfx_ImpactFlash_Additive", glowTex, new Color(3.0f, 2.2f, 1.2f, 1f), additive: true);
+        _smokeMat = SaveMaterial("Mat_Vfx_Smoke_Alpha", smokeTex, new Color(0.45f, 0.44f, 0.42f, 1f), additive: false);
+        _dustMat = SaveMaterial("Mat_Vfx_Dust_Alpha", smokeTex, new Color(0.55f, 0.48f, 0.38f, 1f), additive: false);
 
-        GameObject muzzleFlashPrefab = BuildMuzzleFlashPrefab(flashMat, sparkMat, smokeMat);
-        GameObject impactPrefab = BuildBulletImpactPrefab(impactFlashMat, sparkMat, dustMat);
+        // Build one muzzle + impact prefab per distinct PrefabId.
+        var muzzlePrefabs = new Dictionary<string, GameObject>();
+        var impactPrefabs = new Dictionary<string, GameObject>();
+        foreach (WeaponVfxProfile profile in Profiles.Values)
+        {
+            if (muzzlePrefabs.ContainsKey(profile.PrefabId))
+                continue;
+            muzzlePrefabs[profile.PrefabId] = BuildMuzzleFlashPrefab(profile);
+            impactPrefabs[profile.PrefabId] = BuildBulletImpactPrefab(profile);
+        }
 
-        AssignToSoldierConfig(muzzleFlashPrefab, impactPrefab);
+        int applied = ApplyToAllUnitConfigs(muzzlePrefabs, impactPrefabs);
+        int resynced = ResyncUnitPrefabs();
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[CombatVfxAssetGenerator] Generated combat VFX assets in " + RootFolder + " and assigned them to " + SoldierConfigPath);
+        Debug.Log($"[CombatVfxAssetGenerator] Generated {muzzlePrefabs.Count} muzzle + {impactPrefabs.Count} impact prefabs, applied weapon VFX profiles to {applied} unit configs, resynced {resynced} unit prefabs.");
+    }
+
+    // ---------------------------------------------------------------- classification
+
+    private static WeaponVfxProfile Classify(string assetName, UnitGridAuthoringConfig config)
+    {
+        string weapon = (config.WeaponDisplayName ?? string.Empty).ToLowerInvariant();
+        string lowerName = assetName.ToLowerInvariant();
+
+        // Units with their own projectile systems handle VFX themselves.
+        if (lowerName.Contains("missle_launcher") || lowerName.Contains("missile_launcher"))
+            return null;
+
+        // Unarmed / melee-ish units get no gun VFX.
+        if (lowerName.Contains("civilian") || lowerName.Contains("bombsuit"))
+            return null;
+
+        if (weapon.Contains("sniper"))
+            return Profiles["Sniper"];
+        if (weapon.Contains("machine gun"))
+            return Profiles["MachineGun"];
+        if (weapon.Contains("smg"))
+            return Profiles["Smg"];
+        if (weapon.Contains("pistol"))
+            return Profiles["Pistol"];
+        if (weapon.Contains("rpg") || weapon.Contains("rocket"))
+            return Profiles["Rocket"];
+        if (weapon.Contains("rifle"))
+            return Profiles["Rifle"];
+
+        // Vehicles classified by asset name.
+        if (lowerName.Contains("tank_usa"))
+            return Profiles["TankCannon"];
+        if (lowerName.Contains("helicopter_attack"))
+            return Profiles["Minigun"];
+        if (lowerName.Contains("jet_"))
+            return Profiles["JetCannon"];
+        if (lowerName.Contains("apc_heavy"))
+            return Profiles["HeavyMg"];
+        if (lowerName.Contains("light_armored"))
+            return Profiles["HeavyMg"];
+        if (lowerName.Contains("drone"))
+            return Profiles["DroneGun"];
+        if (lowerName.Contains("plane_transport"))
+            return Profiles["PlaneGun"];
+
+        return null;
+    }
+
+    private static int ApplyToAllUnitConfigs(
+        Dictionary<string, GameObject> muzzlePrefabs,
+        Dictionary<string, GameObject> impactPrefabs)
+    {
+        int applied = 0;
+        string[] guids = AssetDatabase.FindAssets("t:UnitGridAuthoringConfig", new[] { ConfigsFolder });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            string assetName = Path.GetFileNameWithoutExtension(path);
+            if (!assetName.Contains("UnitGrid"))
+                continue;
+
+            var config = AssetDatabase.LoadAssetAtPath<UnitGridAuthoringConfig>(path);
+            if (config == null || !config.CanAttack)
+                continue;
+
+            WeaponVfxProfile profile = Classify(assetName, config);
+            if (profile == null)
+            {
+                Debug.Log($"[CombatVfxAssetGenerator] Skipped (no weapon profile): {assetName}");
+                continue;
+            }
+
+            var serialized = new SerializedObject(config);
+            serialized.FindProperty("muzzleFlashPrefab").objectReferenceValue = muzzlePrefabs[profile.PrefabId];
+            serialized.FindProperty("attackImpactPrefab").objectReferenceValue = impactPrefabs[profile.PrefabId];
+            serialized.FindProperty("muzzleFlashHeightOffset").floatValue = profile.MuzzleHeight;
+            serialized.FindProperty("muzzleFlashForwardOffset").floatValue = profile.MuzzleForward;
+            serialized.FindProperty("attackTraceColor").colorValue = profile.TraceColor;
+            serialized.FindProperty("attackTraceWidth").floatValue = profile.TraceWidth;
+            serialized.FindProperty("attackTraceScrollSpeed").floatValue = profile.TraceScrollSpeed;
+            serialized.FindProperty("attackTraceDashDensity").floatValue = profile.TraceDashDensity;
+            serialized.FindProperty("attackTraceVisibleSeconds").floatValue = profile.TraceVisibleSeconds;
+            serialized.FindProperty("attackTracerEveryNthShot").intValue = profile.TracerEveryNthShot;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(config);
+            applied++;
+        }
+
+        return applied;
+    }
+
+    /// <summary>
+    /// Re-runs the config -> serialized-field sync on every unit prefab so baked
+    /// entity data can never use stale values, then saves the prefabs.
+    /// </summary>
+    private static int ResyncUnitPrefabs()
+    {
+        int count = 0;
+        var applyMethod = typeof(UnitGridAuthoring).GetMethod(
+            "ApplyConfigIfAvailable",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (applyMethod == null)
+        {
+            Debug.LogWarning("[CombatVfxAssetGenerator] Could not reflect UnitGridAuthoring.ApplyConfigIfAvailable; skipping prefab resync.");
+            return 0;
+        }
+
+        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs" });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+                continue;
+
+            var authoring = prefab.GetComponent<UnitGridAuthoring>();
+            if (authoring == null)
+                continue;
+
+            applyMethod.Invoke(authoring, null);
+            EditorUtility.SetDirty(prefab);
+            PrefabUtility.SavePrefabAsset(prefab);
+            count++;
+        }
+
+        return count;
     }
 
     // ---------------------------------------------------------------- folders
@@ -202,32 +465,33 @@ public static class CombatVfxAssetGenerator
 
     // ---------------------------------------------------------------- prefabs
 
-    private static GameObject BuildMuzzleFlashPrefab(Material flashMat, Material sparkMat, Material smokeMat)
+    private static GameObject BuildMuzzleFlashPrefab(WeaponVfxProfile profile)
     {
+        float s = profile.FlashScale;
         // Root +Z points from the muzzle toward the target (set by the runtime).
-        var root = new GameObject("Vfx_MuzzleFlash_Rifle");
+        var root = new GameObject("Vfx_MuzzleFlash_" + profile.PrefabId);
 
         // Bright star-shaped flash, 1-2 frames.
-        ParticleSystem flash = AddParticleSystem(root, "Flash", flashMat, ParticleSystemRenderMode.Billboard);
-        ConfigureMain(flash, duration: 0.1f, lifeMin: 0.045f, lifeMax: 0.075f, speedMin: 0f, speedMax: 0f, sizeMin: 0.45f, sizeMax: 0.75f, maxParticles: 4);
+        ParticleSystem flash = AddParticleSystem(root, "Flash", _flashMat, ParticleSystemRenderMode.Billboard);
+        ConfigureMain(flash, duration: 0.1f, lifeMin: 0.045f, lifeMax: 0.075f, speedMin: 0f, speedMax: 0f, sizeMin: 0.45f * s, sizeMax: 0.75f * s, maxParticles: 4);
         RandomizeRotation(flash);
         SetBurst(flash, 2);
         DisableShape(flash);
         FadeOut(flash, new Color(1f, 0.95f, 0.8f, 1f));
 
         // Short hot sparks flying forward out of the barrel.
-        ParticleSystem sparks = AddParticleSystem(root, "Sparks", sparkMat, ParticleSystemRenderMode.Stretch, stretchLengthScale: 6f);
-        ConfigureMain(sparks, duration: 0.1f, lifeMin: 0.06f, lifeMax: 0.14f, speedMin: 7f, speedMax: 12f, sizeMin: 0.03f, sizeMax: 0.06f, maxParticles: 12);
-        SetBurst(sparks, 5);
+        ParticleSystem sparks = AddParticleSystem(root, "Sparks", _sparkMat, ParticleSystemRenderMode.Stretch, stretchLengthScale: 6f);
+        ConfigureMain(sparks, duration: 0.1f, lifeMin: 0.06f, lifeMax: 0.14f, speedMin: 7f, speedMax: 12f, sizeMin: 0.03f * s, sizeMax: 0.06f * s, maxParticles: profile.FlashSparks * 2);
+        SetBurst(sparks, profile.FlashSparks);
         SetCone(sparks, angle: 9f, radius: 0.02f);
         FadeOut(sparks, new Color(1f, 0.8f, 0.45f, 1f));
 
-        // Lingering smoke puff drifting forward/up.
-        ParticleSystem smoke = AddParticleSystem(root, "Smoke", smokeMat, ParticleSystemRenderMode.Billboard);
-        ConfigureMain(smoke, duration: 0.1f, lifeMin: 0.45f, lifeMax: 0.8f, speedMin: 0.5f, speedMax: 1.1f, sizeMin: 0.16f, sizeMax: 0.28f, maxParticles: 6);
+        // Lingering smoke puff drifting forward/up. Bigger weapons = more smoke.
+        ParticleSystem smoke = AddParticleSystem(root, "Smoke", _smokeMat, ParticleSystemRenderMode.Billboard);
+        ConfigureMain(smoke, duration: 0.1f, lifeMin: 0.45f, lifeMax: 0.8f, speedMin: 0.5f, speedMax: 1.1f, sizeMin: 0.16f * s, sizeMax: 0.28f * s, maxParticles: profile.SmokeCount * 2);
         RandomizeRotation(smoke);
-        SetBurst(smoke, 2);
-        SetCone(smoke, angle: 22f, radius: 0.03f);
+        SetBurst(smoke, profile.SmokeCount);
+        SetCone(smoke, angle: 22f, radius: 0.03f * s);
         FadeOut(smoke, new Color(1f, 1f, 1f, 0.30f));
         GrowOverLifetime(smoke, 2.6f);
         AddUpwardDrift(smoke, 0.5f);
@@ -235,37 +499,68 @@ public static class CombatVfxAssetGenerator
         return SavePrefab(root);
     }
 
-    private static GameObject BuildBulletImpactPrefab(Material flashMat, Material sparkMat, Material dustMat)
+    private static GameObject BuildBulletImpactPrefab(WeaponVfxProfile profile)
     {
+        float s = profile.ImpactScale;
         // Root +Z points from the impact back toward the shooter (set by the runtime).
-        var root = new GameObject("Vfx_BulletImpact");
+        var root = new GameObject("Vfx_BulletImpact_" + profile.PrefabId);
 
-        // Tiny hit flash at torso height.
-        ParticleSystem flash = AddParticleSystem(root, "Flash", flashMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.75f, 0f));
-        ConfigureMain(flash, duration: 0.1f, lifeMin: 0.04f, lifeMax: 0.07f, speedMin: 0f, speedMax: 0f, sizeMin: 0.22f, sizeMax: 0.38f, maxParticles: 4);
+        // Hit flash at torso height.
+        ParticleSystem flash = AddParticleSystem(root, "Flash", _impactFlashMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.75f, 0f));
+        ConfigureMain(flash, duration: 0.1f, lifeMin: 0.04f, lifeMax: 0.07f, speedMin: 0f, speedMax: 0f, sizeMin: 0.22f * s, sizeMax: 0.38f * s, maxParticles: 4);
         RandomizeRotation(flash);
         SetBurst(flash, 1);
         DisableShape(flash);
         FadeOut(flash, new Color(1f, 0.92f, 0.75f, 1f));
 
         // Ricochet sparks bouncing back toward the shooter, pulled down by gravity.
-        ParticleSystem sparks = AddParticleSystem(root, "Sparks", sparkMat, ParticleSystemRenderMode.Stretch, stretchLengthScale: 5f, localPosition: new Vector3(0f, 0.75f, 0f));
-        ConfigureMain(sparks, duration: 0.1f, lifeMin: 0.15f, lifeMax: 0.35f, speedMin: 3f, speedMax: 7f, sizeMin: 0.025f, sizeMax: 0.05f, maxParticles: 16);
+        ParticleSystem sparks = AddParticleSystem(root, "Sparks", _sparkMat, ParticleSystemRenderMode.Stretch, stretchLengthScale: 5f, localPosition: new Vector3(0f, 0.75f, 0f));
+        ConfigureMain(sparks, duration: 0.1f, lifeMin: 0.15f, lifeMax: 0.35f, speedMin: 3f, speedMax: 7f, sizeMin: 0.025f * s, sizeMax: 0.05f * s, maxParticles: profile.ImpactSparks * 2);
         SetGravity(sparks, 1.2f);
-        SetBurst(sparks, 8);
+        SetBurst(sparks, profile.ImpactSparks);
         SetCone(sparks, angle: 35f, radius: 0.03f);
         FadeOut(sparks, new Color(1f, 0.75f, 0.4f, 1f));
 
         // Dust kicked up near the ground.
-        ParticleSystem dust = AddParticleSystem(root, "Dust", dustMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.15f, 0f));
-        ConfigureMain(dust, duration: 0.1f, lifeMin: 0.4f, lifeMax: 0.8f, speedMin: 0.8f, speedMax: 1.6f, sizeMin: 0.22f, sizeMax: 0.42f, maxParticles: 8);
+        ParticleSystem dust = AddParticleSystem(root, "Dust", _dustMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.15f, 0f));
+        ConfigureMain(dust, duration: 0.1f, lifeMin: 0.4f, lifeMax: 0.8f, speedMin: 0.8f, speedMax: 1.6f, sizeMin: 0.22f * s, sizeMax: 0.42f * s, maxParticles: profile.ImpactDust * 2);
         RandomizeRotation(dust);
-        SetBurst(dust, 4);
-        SetCone(dust, angle: 55f, radius: 0.06f, rotateUp: true);
+        SetBurst(dust, profile.ImpactDust);
+        SetCone(dust, angle: 55f, radius: 0.06f * s, rotateUp: true);
         FadeOut(dust, new Color(1f, 1f, 1f, 0.38f));
         GrowOverLifetime(dust, 2.2f);
 
+        if (profile.ExplosiveImpact)
+        {
+            // Fireball: short-lived ball of additive orange glow expanding outward.
+            ParticleSystem fireball = AddParticleSystem(root, "Fireball", _sparkMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.4f, 0f));
+            ConfigureMain(fireball, duration: 0.1f, lifeMin: 0.18f, lifeMax: 0.32f, speedMin: 0.6f, speedMax: 2f, sizeMin: 0.45f * s, sizeMax: 0.8f * s, maxParticles: 10);
+            RandomizeRotation(fireball);
+            SetBurst(fireball, 5);
+            SetSphere(fireball, 0.15f * s);
+            FadeOut(fireball, new Color(1f, 0.6f, 0.25f, 1f));
+            GrowOverLifetime(fireball, 1.8f);
+
+            // Smoke column rising from the blast for a second or two.
+            ParticleSystem column = AddParticleSystem(root, "SmokeColumn", _smokeMat, ParticleSystemRenderMode.Billboard, localPosition: new Vector3(0f, 0.4f, 0f));
+            ConfigureMain(column, duration: 0.1f, lifeMin: 1f, lifeMax: 1.8f, speedMin: 1f, speedMax: 2.2f, sizeMin: 0.45f * s, sizeMax: 0.7f * s, maxParticles: 10);
+            RandomizeRotation(column);
+            SetBurst(column, 5);
+            SetCone(column, angle: 14f, radius: 0.1f * s, rotateUp: true);
+            FadeOut(column, new Color(0.85f, 0.82f, 0.78f, 0.5f));
+            GrowOverLifetime(column, 3f);
+            AddUpwardDrift(column, 0.8f);
+        }
+
         return SavePrefab(root);
+    }
+
+    private static void SetSphere(ParticleSystem ps, float radius)
+    {
+        ParticleSystem.ShapeModule shape = ps.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = radius;
     }
 
     private static GameObject SavePrefab(GameObject root)
@@ -325,7 +620,7 @@ public static class CombatVfxAssetGenerator
         main.startLifetime = new ParticleSystem.MinMaxCurve(lifeMin, lifeMax);
         main.startSpeed = new ParticleSystem.MinMaxCurve(speedMin, speedMax);
         main.startSize = new ParticleSystem.MinMaxCurve(sizeMin, sizeMax);
-        main.maxParticles = maxParticles;
+        main.maxParticles = Mathf.Max(4, maxParticles);
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.scalingMode = ParticleSystemScalingMode.Hierarchy;
         main.stopAction = ParticleSystemStopAction.None;
@@ -410,23 +705,5 @@ public static class CombatVfxAssetGenerator
         velocity.x = new ParticleSystem.MinMaxCurve(0f, 0f);
         velocity.y = new ParticleSystem.MinMaxCurve(upwardSpeed * 0.6f, upwardSpeed);
         velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
-    }
-
-    // ---------------------------------------------------------------- config assignment
-
-    private static void AssignToSoldierConfig(GameObject muzzleFlashPrefab, GameObject impactPrefab)
-    {
-        var config = AssetDatabase.LoadAssetAtPath<UnitGridAuthoringConfig>(SoldierConfigPath);
-        if (config == null)
-        {
-            Debug.LogWarning("[CombatVfxAssetGenerator] Soldier config not found at " + SoldierConfigPath + "; assign the prefabs manually.");
-            return;
-        }
-
-        var serialized = new SerializedObject(config);
-        serialized.FindProperty("muzzleFlashPrefab").objectReferenceValue = muzzleFlashPrefab;
-        serialized.FindProperty("attackImpactPrefab").objectReferenceValue = impactPrefab;
-        serialized.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(config);
     }
 }

@@ -20,6 +20,7 @@ MonoBehaviour:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
+  usesVehicleMotion: 0
   isAirUnit: 0
   canRequest: 1
   price: 12500
@@ -31,19 +32,30 @@ MonoBehaviour:
   productionTransportMaxConcurrent: 1
   productionTransportRequiresAirportRunway: 0
   productionTransportUsesRunwayLanding: 0
+  soldierTransportCapacity: 0
   runwayTaxiSpeed: 5
   speed: 4.8
   walkSpeed: 1.7
   roadSpeedMultiplier: 1.15
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Advanced Rifleman Male II
-  description: Regular soldier armed with an advanced rifle. Reliable frontline infantry for patrols, defense, and direct engagements.
+  description: Regular soldier armed with an advanced rifle. Reliable frontline infantry
+    for patrols, defense, and direct engagements.
+  midLodPrefab: {fileID: 0}
+  lowLodPrefab: {fileID: 0}
   unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   tintUnitModelRenderers: 1
+  vehicleDestroyedVisualPrefab: {fileID: 0}
+  vehicleSelectionMarkerPrefab: {fileID: 0}
+  vehicleHealthBarPrefab: {fileID: 0}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -53,12 +65,17 @@ MonoBehaviour:
   attackCooldownSeconds: 0.75
   attackDamage: 17
   maxHealth: 130
-  attackImpactPrefab: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  attackTraceWidth: 0.05
-  attackTraceScrollSpeed: 10
-  attackTraceDashDensity: 10
+  attackImpactPrefab: {fileID: 4410851787156008696, guid: fcfd19e2536104115bcd9bae4929bd90, type: 3}
+  muzzleFlashPrefab: {fileID: 561298679510775374, guid: aa43af243a423415580b424951a71ac0, type: 3}
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.5
+  groundMissileLauncherConfig: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.75, b: 0.35, a: 1}
+  attackTraceWidth: 0.1
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 2
   attackTraceVisibleSeconds: 0.08
+  attackTracerEveryNthShot: 2
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3
@@ -66,3 +83,4 @@ MonoBehaviour:
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
   animationOrder: 000102030405060708090a0b0c0d
+  airMissileLauncherConfig: {fileID: 0}

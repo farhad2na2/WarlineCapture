@@ -28,13 +28,13 @@ MonoBehaviour:
     - prefab: {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}
       count: 1
       spawnOffset: {x: -64, y: 54}
-    - prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+    - prefab: {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
       count: 1
       spawnOffset: {x: 78, y: -58}
     - prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
       count: 1
       spawnOffset: {x: 96, y: -58}
-    - prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+    - prefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
       count: 1
       spawnOffset: {x: 114, y: -58}
     - prefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}

@@ -1562,8 +1562,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackTraceWidth
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashPrefab
+      value: 
+      objectReference: {fileID: 6667276492148642321, guid: 926a746687ea548af8ad8d990360b466, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: usesVehicleMotion
       value: 1
@@ -1575,7 +1579,15 @@ PrefabInstance:
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackImpactPrefab
       value: 
-      objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+      objectReference: {fileID: 5992453128428957894, guid: 05b024c09cec146d6b00969b4c66446f, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceColor.b
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceColor.g
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitCardSprite
       value: 
@@ -1594,23 +1606,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackTraceDashDensity
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackTraceScrollSpeed
-      value: 1
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleHealthBarPrefab
       value: 
       objectReference: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashHeightOffset
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashForwardOffset
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: animationOrder.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackTraceVisibleSeconds
-      value: 1
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleDestroyedVisualPrefab

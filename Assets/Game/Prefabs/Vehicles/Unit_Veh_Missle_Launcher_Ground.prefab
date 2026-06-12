@@ -2170,7 +2170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: attackRange
-      value: 600
+      value: 50000
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: description
@@ -2210,6 +2210,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashPrefab
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: usesVehicleMotion
       value: 1
       objectReference: {fileID: 0}
@@ -2222,65 +2226,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherBattery
-      value:
-      objectReference: {fileID: 6366099986864145873}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherSmokeSpawn
-      value:
-      objectReference: {fileID: 6366099986864145873}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.size
-      value: 12
+      propertyPath: attackTraceColor.b
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[0]
-      value:
-      objectReference: {fileID: 6366114128934241767}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[1]
-      value:
-      objectReference: {fileID: 6360818995780002033}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[2]
-      value:
-      objectReference: {fileID: 6361328730509446879}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[3]
-      value:
-      objectReference: {fileID: 6366296744994794959}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[4]
-      value:
-      objectReference: {fileID: 6360909575208506671}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[5]
-      value:
-      objectReference: {fileID: 6361293760527477513}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[6]
-      value:
-      objectReference: {fileID: 6361006340629187053}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[7]
-      value:
-      objectReference: {fileID: 6366072142059655961}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[8]
-      value:
-      objectReference: {fileID: 6361171755134375377}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[9]
-      value:
-      objectReference: {fileID: 6361207935340526203}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[10]
-      value:
-      objectReference: {fileID: 6366320509314214793}
-    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      propertyPath: groundMissileLauncherRockets.Array.data[11]
-      value:
-      objectReference: {fileID: 6360807328529677465}
+      propertyPath: attackTraceColor.g
+      value: 0.85
+      objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: portraitCardSprite
       value: 
@@ -2298,6 +2250,14 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceDashDensity
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceScrollSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: autoCalculateFootprint
       value: 1
       objectReference: {fileID: 0}
@@ -2306,9 +2266,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashHeightOffset
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTracerEveryNthShot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: muzzleFlashForwardOffset
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: animationOrder.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: cfbfa20332ed4b30b0788d56f735c4ad, type: 2}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherBattery
+      value: 
+      objectReference: {fileID: 6366099986864145873}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: vehicleDestroyedVisualPrefab
       value: 
@@ -2317,6 +2297,62 @@ PrefabInstance:
       propertyPath: vehicleSelectionMarkerPrefab
       value: 
       objectReference: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherSmokeSpawn
+      value: 
+      objectReference: {fileID: 6366099986864145873}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: groundMissileLauncherRockets.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[0]'
+      value: 
+      objectReference: {fileID: 6366114128934241767}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[1]'
+      value: 
+      objectReference: {fileID: 6360818995780002033}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[2]'
+      value: 
+      objectReference: {fileID: 6361328730509446879}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[3]'
+      value: 
+      objectReference: {fileID: 6366296744994794959}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[4]'
+      value: 
+      objectReference: {fileID: 6360909575208506671}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[5]'
+      value: 
+      objectReference: {fileID: 6361293760527477513}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[6]'
+      value: 
+      objectReference: {fileID: 6361006340629187053}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[7]'
+      value: 
+      objectReference: {fileID: 6366072142059655961}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[8]'
+      value: 
+      objectReference: {fileID: 6361171755134375377}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[9]'
+      value: 
+      objectReference: {fileID: 6361207935340526203}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[10]'
+      value: 
+      objectReference: {fileID: 6366320509314214793}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: 'groundMissileLauncherRockets.Array.data[11]'
+      value: 
+      objectReference: {fileID: 6360807328529677465}
     - target: {fileID: 882044389692386935, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalPosition.y
       value: 4.06

@@ -337,16 +337,24 @@ public class UnitGridAuthoring : MonoBehaviour
                 AddAirDefenseSupportProvider(entity, authoring.threatDetectionKind, authoring.threatDetectionRadiusCells);
             }
 
+            // Trace visuals resolve from the config asset when present, so config
+            // edits (e.g. by the VFX generator) take effect without re-saving
+            // every unit prefab.
+            Color traceColor = authoring.config != null ? authoring.config.AttackTraceColor : authoring.attackTraceColor;
+            float traceWidth = authoring.config != null ? authoring.config.AttackTraceWidth : authoring.attackTraceWidth;
+            float traceScrollSpeed = authoring.config != null ? authoring.config.AttackTraceScrollSpeed : authoring.attackTraceScrollSpeed;
+            float traceDashDensity = authoring.config != null ? authoring.config.AttackTraceDashDensity : authoring.attackTraceDashDensity;
+            float traceVisibleSeconds = authoring.config != null ? authoring.config.AttackTraceVisibleSeconds : authoring.attackTraceVisibleSeconds;
             AddComponent(entity, new UnitAttack
             {
                 Range = math.max(0f, authoring.attackRange),
                 CooldownSeconds = math.max(0.01f, authoring.attackCooldownSeconds),
                 Damage = math.max(0, authoring.attackDamage),
-                TraceColor = new float4(authoring.attackTraceColor.r, authoring.attackTraceColor.g, authoring.attackTraceColor.b, authoring.attackTraceColor.a),
-                TraceWidth = math.max(0.01f, authoring.attackTraceWidth),
-                TraceScrollSpeed = math.max(0.1f, authoring.attackTraceScrollSpeed),
-                TraceDashDensity = math.max(1f, authoring.attackTraceDashDensity),
-                TraceVisibleSeconds = math.max(0.01f, authoring.attackTraceVisibleSeconds),
+                TraceColor = new float4(traceColor.r, traceColor.g, traceColor.b, traceColor.a),
+                TraceWidth = math.max(0.01f, traceWidth),
+                TraceScrollSpeed = math.max(0.1f, traceScrollSpeed),
+                TraceDashDensity = math.max(1f, traceDashDensity),
+                TraceVisibleSeconds = math.max(0.01f, traceVisibleSeconds),
                 TracerEveryNthShot = math.max(1, authoring.config != null
                     ? authoring.config.AttackTracerEveryNthShot
                     : authoring.attackTracerEveryNthShot)

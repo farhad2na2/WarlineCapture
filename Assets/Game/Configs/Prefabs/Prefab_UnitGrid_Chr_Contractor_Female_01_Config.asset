@@ -20,6 +20,7 @@ MonoBehaviour:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
+  usesVehicleMotion: 0
   isAirUnit: 0
   canRequest: 1
   price: 9000
@@ -31,19 +32,30 @@ MonoBehaviour:
   productionTransportMaxConcurrent: 1
   productionTransportRequiresAirportRunway: 0
   productionTransportUsesRunwayLanding: 0
+  soldierTransportCapacity: 0
   runwayTaxiSpeed: 5
   speed: 4.2
   walkSpeed: 1.55
   roadSpeedMultiplier: 1.15
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Security Contractor Female I
-  description: Private close-protection specialist armed with a SMG. Flexible support unit for base security and patrol work.
+  description: Private close-protection specialist armed with a SMG. Flexible support
+    unit for base security and patrol work.
+  midLodPrefab: {fileID: 0}
+  lowLodPrefab: {fileID: 0}
   unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   tintUnitModelRenderers: 1
+  vehicleDestroyedVisualPrefab: {fileID: 0}
+  vehicleSelectionMarkerPrefab: {fileID: 0}
+  vehicleHealthBarPrefab: {fileID: 0}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -53,12 +65,17 @@ MonoBehaviour:
   attackCooldownSeconds: 0.45
   attackDamage: 7
   maxHealth: 110
-  attackImpactPrefab: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  attackTraceWidth: 0.05
-  attackTraceScrollSpeed: 10
-  attackTraceDashDensity: 10
-  attackTraceVisibleSeconds: 0.08
+  attackImpactPrefab: {fileID: 8320978597771185194, guid: fbc74162db268475c89dd346a6d2286f, type: 3}
+  muzzleFlashPrefab: {fileID: 1512642444446926496, guid: 06d222c487c244f44a7d6ef8cae5c5c7, type: 3}
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.4
+  groundMissileLauncherConfig: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.82, b: 0.45, a: 1}
+  attackTraceWidth: 0.08
+  attackTraceScrollSpeed: 26
+  attackTraceDashDensity: 3
+  attackTraceVisibleSeconds: 0.07
+  attackTracerEveryNthShot: 2
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3
@@ -66,3 +83,4 @@ MonoBehaviour:
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
   animationOrder: 000102030405060708090a0b0c0d
+  airMissileLauncherConfig: {fileID: 0}

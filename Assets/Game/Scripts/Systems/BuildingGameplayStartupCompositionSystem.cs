@@ -12,7 +12,8 @@ internal sealed class BuildingGameplayStartupCompositionSystem
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight)
     {
-        childSystems.RuntimeResourceSystem.SetInitialDollars(ResolveInitialDollars(buildingPlacementConfig));
+        childSystems.RuntimeResourceSystem.SetInitialDollars(
+            BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
         childSystems.BuildingGameplayDependencySystem.SetStartupDependencies(
             null,
             factionVisuals,
@@ -28,12 +29,5 @@ internal sealed class BuildingGameplayStartupCompositionSystem
             childSystems.BuildingRunwaySystem,
             childSystems.BuildingPlacementPreviewSystem,
             childSystems.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
-    }
-
-    internal static int ResolveInitialDollars(BuildingPlacementSystemConfig buildingPlacementConfig)
-    {
-        return buildingPlacementConfig != null && buildingPlacementConfig.InitialUnitsConfig != null
-            ? buildingPlacementConfig.InitialUnitsConfig.InitialDollars
-            : 0;
     }
 }

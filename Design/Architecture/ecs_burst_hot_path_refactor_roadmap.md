@@ -85,10 +85,10 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 121 / 157 complete (77.1%).
+- Checklist progress: 125 / 157 complete (79.6%).
 - In progress: 1 / 157.
-- Remaining open: 35 / 157.
-- Phase progress: 8 / 11 phases complete; 2 in progress; 1 not started.
+- Remaining open: 31 / 157.
+- Phase progress: 9 / 11 phases complete; 1 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
 ### Phase 0: Baseline And Safety Rails
@@ -844,7 +844,7 @@ Progress notes:
 
 ### Phase 3: Replace Hot Array Copies In Selection
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Reduce the largest known source of main-thread query snapshots while keeping active Match HUD command behavior stable.
@@ -857,7 +857,7 @@ Target areas:
 - [x] `SelectionUiReadModelSystem`
 
 Implementation steps:
-- [~] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
+- [x] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
 - [x] Replace visible-unit and closest-unit candidate collection with Burst-compatible jobs.
 - [x] Replace selected-entity snapshots with query iteration or a reused native result buffer.
 - [x] Keep UI feedback and marker presentation outside Burst.
@@ -921,6 +921,14 @@ Progress notes:
     - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
     - `git diff --check` passed.
   - Progress snapshot is now `95 / 157 complete (60.5%)`, `12 / 157 in progress`, `50 / 157 open`.
+- 2026-06-13: Closed the remaining Phase 3 mixed-boundary split item after static and focused validation. Static selection-file scans found no `ToEntityArray`, `ToComponentDataArray`, `Camera.main`, `Object.Find*`, `GameObject.Find`, or runtime `Transform.Find` usage in the active selection command/read-model/marker files. The data side is now represented by Burst-compatible candidate jobs such as `VisibleUnitSelectionSystem.CollectVisibleUnitCandidatesJob`, `FocusableUnitLookupSystem.CollectFocusableScreenDistanceCandidatesJob`, and `SelectionGameplayStartupSystem.CollectNearestBoardingCandidatesJob`; HUD feedback, screen markers, camera projection, and GameObject/UI presentation remain in managed boundaries, with camera movement still routed through `RtsCameraRequestSystem`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-phase3-close-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase3-close-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Phase 3 is complete.
+  - Progress snapshot is now `122 / 157 complete (77.7%)`, `0 / 157 in progress`, `35 / 157 open`; phase progress is now `9 / 11 phases complete`, `1 in progress`, `1 not started`.
 
 ### Phase 4: Replace Hot Array Copies In Transport And Boarding
 
@@ -1608,15 +1616,15 @@ Make it obvious which systems are intentionally managed and prevent accidental p
 
 Implementation steps:
 - [x] Name and document managed boundary systems clearly.
-- [ ] Ensure managed systems do not own gameplay policy if they are presentation/binding boundaries.
-- [ ] Move data-only logic out of managed composition classes into ECS systems or stateless utilities.
-- [ ] Keep config projection at startup and ECS-native data during runtime.
+- [x] Ensure managed systems do not own gameplay policy if they are presentation/binding boundaries.
+- [~] Move data-only logic out of managed composition classes into ECS systems or stateless utilities.
+- [x] Keep config projection at startup and ECS-native data during runtime.
 - [x] Update architecture docs with the Burst/managed-boundary rule.
 
 Acceptance checks:
 - [x] Architecture tests distinguish allowed managed boundaries from hot-path debt.
 - [x] No new broad manager/controller/facade shells are introduced.
-- [ ] Runtime gameplay policy is still ECS-owned.
+- [x] Runtime gameplay policy is still ECS-owned.
 
 Managed boundary and tracked-debt inventory:
 
@@ -1648,7 +1656,7 @@ Managed boundary and tracked-debt inventory:
 | `VehicleDestroyedVisualSystem` | Presentation/prefab instantiate boundary | Keep visual lifecycle managed. |
 
 Progress notes:
-- 2026-06-12: Documented the current 24 non-Burst `OnUpdate` systems as either tracked hot-path debt or intentional managed boundaries in this Phase 9 inventory. This mirrors the architecture-test classification and makes future conversions/allowlist removals reviewable.
+- 2026-06-12: Documented the then-current 24 non-Burst `OnUpdate` systems as either tracked hot-path debt or intentional managed boundaries in this Phase 9 inventory. This mirrors the architecture-test classification and makes future conversions/allowlist removals reviewable.
 - 2026-06-12: Added `ScriptArchitectureAlignmentContractTests.RunBroadShellValidation` so the existing Manager/Controller/Presenter/Facade/Installer/Orchestrator guard can be run directly as a focused validation for the Phase 9 broad-shell acceptance check.
 - 2026-06-12: Updated `Design/Architecture/gameplay_solid_ecs_contract.md` with the explicit Burst/managed-boundary classification rule: every runtime `OnUpdate` without `[BurstCompile]` must be classified in the architecture guardrail as either managed boundary or tracked hot-path debt, and managed boundaries must not own gameplay policy.
 - 2026-06-12: Tightened `EcsBurstHotPathArchitectureTests.NonBurstOnUpdateDebtMustNotIncrease` so the remaining 24 non-Burst `OnUpdate` files must be explicitly classified as either a managed boundary or tracked hot-path debt. New non-Burst runtime systems now fail the architecture guardrail even if the numeric ceiling does not increase.
@@ -1666,6 +1674,54 @@ Progress notes:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMovementBlockerValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-movement-blocker-after-mapvehicle-path-main.log`
     - Log marker: `[UnitMovementBlockerValidation] result=Passed`.
     - `git diff --check` passed.
+- 2026-06-13: Split the non-Burst architecture guard classification into explicit managed-boundary and tracked-hot-path-debt buckets. `EcsBurstHotPathArchitectureTests` now keeps presentation/bootstrap/diagnostic/debug boundaries separate from AI/combat/path/transport gameplay debt, and adds `ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt` so a system cannot be both an allowed managed boundary and hidden gameplay-policy debt. Current guard output shows 23 classified non-Burst `OnUpdate` files: 14 managed boundaries and 9 tracked hot-path debt files.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-boundary-split-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=7`.
+  - `git diff --check` passed.
+  - Completed the Phase 9 managed-boundary gameplay-policy checklist item and the runtime-policy acceptance item.
+  - Progress snapshot is now `124 / 157 complete (79.0%)`, `0 / 157 in progress`, `33 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Added a runtime config-projection architecture guard to `EcsBurstHotPathArchitectureTests`. `RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets` derives ScriptableObject-backed config asset type names from source declarations, follows simple inheritance chains such as scene config assets, and rejects those authored asset types inside runtime `OnUpdate` bodies under gameplay and rendering systems. Startup/composition/projection systems can still read authored assets before runtime; recurring ECS updates must consume ECS-native projected data.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-config-projection-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - Completed the Phase 9 config-projection checklist item.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `0 / 157 in progress`, `32 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Started the remaining Phase 9 data-only composition cleanup with a narrow startup projection extraction. `BuildingGameplayStartupCompositionSystem` no longer owns the pure initial-dollar config read; `BuildingStartupConfigProjectionSystem.ResolveInitialDollars` now contains that stateless projection, while the composition class only wires the result into `RuntimeResourceSystem`. This preserves startup behavior and keeps authored config reading at the startup boundary.
+  - Added `Assets/Game/Scripts/Systems/BuildingStartupConfigProjectionSystem.cs` and its `.meta`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-composition-extract-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by removing duplicate default-world `EntityManager` helper bodies from `BuildingRuntimeResourcePrefabCompositionSystem`, `BuildingRuntimeBoundaryCompositionSystem`, `BuildingPlacementQueryCompositionSystem`, and `BuildingUiCompositionSystem`. These composition classes now pass the existing `BuildingEntityManagerAccessSystem.TryGetEntityManager` boundary delegate instead of owning the same world-access logic themselves. Runtime behavior is unchanged; the composition classes only wire the boundary.
+  - Verified no `private static bool TryGetEntityManager` helper remains in `Assets/Game/Scripts/Systems/*CompositionSystem.cs`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-entitymanager-helper-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the production focus-position fallback out of `BuildingProductionCompositionSystem` into the stateless `BuildingRuntimeFocusPositionSystem`. Production composition now wires `BuildingRuntimeFocusPositionSystem.Resolve` as a delegate; focus-position resolution still first uses the ECS runtime query delegate and only falls back to the managed building instance transform when needed.
+  - Added `Assets/Game/Scripts/Systems/BuildingRuntimeFocusPositionSystem.cs` and its `.meta`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-focus-position-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the building selection portrait fallback out of `BuildingSelectionCompositionSystem` into the stateless `BuildingSelectionPortraitSystem`. Selection composition now wires the HUD selection callback only; the extracted resolver preserves the existing definition-prefab portrait lookup with live-instance fallback.
+  - Added `Assets/Game/Scripts/Systems/BuildingSelectionPortraitSystem.cs` and its `.meta`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-selection-portrait-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-phase9-selection-portrait-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
 
 ### Phase 10: Performance Ratchet And Completion
 

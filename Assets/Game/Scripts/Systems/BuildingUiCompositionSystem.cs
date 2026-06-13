@@ -29,7 +29,7 @@ internal sealed class BuildingUiCompositionSystem
                     markerPropertyBlock)),
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             () => Time.frameCount,
-            TryGetEntityManager,
+            source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             () => Time.time,
             source.RuntimeBuildingSystem.HasSelectedBuilding,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
@@ -121,16 +121,5 @@ internal sealed class BuildingUiCompositionSystem
                 createBuildingPlacementQueryContext,
                 createBuildingSelectionContext,
                 createBuildingRuntimeEntityContext));
-    }
-
-    private static bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
     }
 }

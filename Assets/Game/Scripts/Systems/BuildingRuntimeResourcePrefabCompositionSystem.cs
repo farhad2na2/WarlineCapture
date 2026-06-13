@@ -1,5 +1,3 @@
-using Unity.Entities;
-
 internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
 {
     public BuildingRuntimeResourcePrefabContextSystem.Source Create(
@@ -11,23 +9,12 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
             source.BuildingDefinitionSystem,
             source.RuntimeBuildingSystem,
             source.BuildingSpawnPrefabSystem,
-            TryGetEntityManager,
+            source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
             source.BuildingGameplayEcsQuerySystem.UnitPrefabRegistryQuery,
             source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
             source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
             resolveSpawnableLookupKey: source.ResolveSpawnableLookupKey,
             createCurrentSource: () => Create(source));
-    }
-
-    private static bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
     }
 }

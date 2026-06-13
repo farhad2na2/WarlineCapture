@@ -45,7 +45,7 @@ internal sealed class BuildingProductionCompositionSystem
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
             source.BuildingGameplayDependencySystem.IsBuildDrawerOpen,
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
-            building => ResolveBuildingFocusWorldPosition(runtimeSource, building),
+            building => BuildingRuntimeFocusPositionSystem.Resolve(runtimeSource, building),
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
             (factionId, unitId) => source.BuildingRuntimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),
@@ -81,18 +81,5 @@ internal sealed class BuildingProductionCompositionSystem
             spawnUnitPrefab,
             em,
             Time.time);
-    }
-
-    private static Vector3 ResolveBuildingFocusWorldPosition(
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource,
-        RuntimeBuildingEntity building)
-    {
-        if (runtimeSource.TryResolveBuildingFocusWorldPosition != null &&
-            runtimeSource.TryResolveBuildingFocusWorldPosition(building, out Vector3 worldPosition))
-            return worldPosition;
-
-        return building != null && building.Instance != null
-            ? building.Instance.transform.position
-            : Vector3.zero;
     }
 }

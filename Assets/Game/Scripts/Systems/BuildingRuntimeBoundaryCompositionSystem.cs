@@ -1,5 +1,4 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
 internal sealed class BuildingRuntimeBoundaryCompositionSystem
@@ -13,7 +12,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystem
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
         return new BuildingRuntimeBoundaryPublishSystem.Context(
-            TryGetEntityManager,
+            source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
             source.BuildingRuntimeBoundarySystem,
             source.BuildingDefinitionSystem,
@@ -26,16 +25,5 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystem
             source.FactionResourceSystem,
             () => source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery,
             source.RuntimeBuildingSystem.Buildings);
-    }
-
-    private static bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
     }
 }

@@ -12,6 +12,7 @@ public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
     private const string RenderingSystemsRoot = "Assets/Game/Scripts/Rendering/Systems";
+    private const string GameScriptsRoot = "Assets/Game/Scripts";
     private const int ToArrayDebtCeiling = 0;
     private const int EntityManagerMutationDebtCeiling = 1;
     private const int NonBurstOnUpdateFileDebtCeiling = 23;
@@ -29,22 +30,25 @@ public sealed class EcsBurstHotPathArchitectureTests
         @"\bvoid\s+OnUpdate\s*\(",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex OnUpdateMethodSignatureRegex = new(
+        @"(?:public|private|internal|protected)?\s*(?:override\s+)?void\s+OnUpdate\s*\([^)]*\)",
+        RegexOptions.CultureInvariant);
+
     private static readonly Regex BurstCompileRegex = new(
         @"\[BurstCompile\]",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex ClassBaseRegex = new(
+        @"\bclass\s+(?<name>\w+)\s*:\s*(?<bases>[^{\n]+)",
         RegexOptions.CultureInvariant);
 
     private static readonly Regex UnityObjectApiRegex = new(
         @"\b(GameObject|UnityEngine\.Object|Object\.Instantiate|Object\.Destroy|Resources\.Load|AssetDatabase|GameObject\.Find|Camera\.main|GetComponent(?:InChildren|sInChildren)?\s*\()",
         RegexOptions.CultureInvariant);
 
-    private static readonly Dictionary<string, string> ClassifiedNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    private static readonly Dictionary<string, string> ManagedBoundaryNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs"] = "Phase 5 AI planning hot-path debt; contains authored policy, diagnostics, and command-event work that must be split before Burst.",
-        ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "Phase 5 AI combat-order hot-path debt; command issuance and diagnostics need a data/job split.",
         ["Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
-        ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
-        ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
-        ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
         ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
         ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",
@@ -53,16 +57,27 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs"] = "startup/runtime-grid ownership boundary; native-container disposal and one-time cleanup stay managed.",
         ["Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs"] = "developer debug input boundary; intentionally managed and not production gameplay policy.",
         ["Assets/Game/Scripts/Systems/TransportBoardingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
-        ["Assets/Game/Scripts/Systems/UnitAttackSystem.cs"] = "combat hot-path debt; mixed combat simulation, VFX requests, and diagnostics need a split before Burst.",
-        ["Assets/Game/Scripts/Systems/UnitDeathSystem.cs"] = "combat lifecycle debt; death state, presentation requests, and cleanup need clearer data/job boundaries.",
         ["Assets/Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs"] = "diagnostic boundary; managed reporting only.",
         ["Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
-        ["Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"] = "Phase 6 pathfinding orchestration debt; detached-job/native-container ownership should remain explicit before further Burst changes.",
         ["Assets/Game/Scripts/Systems/UnitRespawnSystem.cs"] = "spawn/presentation boundary; prefab instantiation, grounding warnings, and setup stay managed.",
-        ["Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"] = "transport gameplay/presentation split debt; uses managed visual hiding utility and needs a data-only request split.",
         ["Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs"] = "GameObject/prefab reference bridge; managed presentation boundary.",
         ["Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs"] = "presentation/prefab instantiate boundary; managed visual lifecycle only.",
     };
+
+    private static readonly Dictionary<string, string> TrackedHotPathDebtNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs"] = "Phase 5 AI planning hot-path debt; contains authored policy, diagnostics, and command-event work that must be split before Burst.",
+        ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "Phase 5 AI combat-order hot-path debt; command issuance and diagnostics need a data/job split.",
+        ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
+        ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
+        ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
+        ["Assets/Game/Scripts/Systems/UnitAttackSystem.cs"] = "combat hot-path debt; mixed combat simulation, VFX requests, and diagnostics need a split before Burst.",
+        ["Assets/Game/Scripts/Systems/UnitDeathSystem.cs"] = "combat lifecycle debt; death state, presentation requests, and cleanup need clearer data/job boundaries.",
+        ["Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"] = "Phase 6 pathfinding orchestration debt; detached-job/native-container ownership should remain explicit before further Burst changes.",
+        ["Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"] = "transport gameplay/presentation split debt; uses managed visual hiding utility and needs a data-only request split.",
+    };
+
+    private static readonly IReadOnlyDictionary<string, string> ClassifiedNonBurstOnUpdateFiles = BuildClassifiedNonBurstFiles();
 
     private static readonly Dictionary<string, string> ClassifiedDirectEntityManagerMutationFiles = new(StringComparer.Ordinal)
     {
@@ -81,10 +96,12 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.HotPathArraySnapshotDebtMustNotIncrease();
             tests.DirectEntityManagerMutationDebtMustNotIncrease();
             tests.NonBurstOnUpdateDebtMustNotIncrease();
+            tests.ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt();
+            tests.RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets();
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=6");
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=8");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -198,6 +215,89 @@ public sealed class EcsBurstHotPathArchitectureTests
     }
 
     [Test]
+    public void ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt()
+    {
+        List<string> overlaps = ManagedBoundaryNonBurstOnUpdateFiles.Keys
+            .Intersect(TrackedHotPathDebtNonBurstOnUpdateFiles.Keys, StringComparer.Ordinal)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        List<string> files = EnumerateSystemFiles()
+            .Where(path =>
+            {
+                string text = File.ReadAllText(path);
+                return OnUpdateRegex.IsMatch(text) && !BurstCompileRegex.IsMatch(text);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        List<string> currentManagedBoundaries = files
+            .Where(path => ManagedBoundaryNonBurstOnUpdateFiles.ContainsKey(path))
+            .ToList();
+        List<string> currentTrackedDebt = files
+            .Where(path => TrackedHotPathDebtNonBurstOnUpdateFiles.ContainsKey(path))
+            .ToList();
+
+        Assert.IsEmpty(
+            overlaps,
+            "A non-Burst OnUpdate file cannot be classified as both managed boundary and tracked hot-path debt:\n" +
+            string.Join(Environment.NewLine, overlaps));
+
+        Assert.AreEqual(
+            files.Count,
+            currentManagedBoundaries.Count + currentTrackedDebt.Count,
+            "Every current non-Burst OnUpdate file must be classified exactly once as managed boundary or tracked hot-path debt.");
+
+        Assert.Greater(
+            currentManagedBoundaries.Count,
+            0,
+            "Managed boundary classification unexpectedly became empty; update the guardrail intentionally if all boundaries are converted.");
+
+        Assert.Greater(
+            currentTrackedDebt.Count,
+            0,
+            "Tracked hot-path debt classification unexpectedly became empty; update the roadmap before removing the final debt class.");
+    }
+
+    [Test]
+    public void RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets()
+    {
+        HashSet<string> scriptableConfigTypes = CollectScriptableObjectTypeNames();
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeSystemFiles())
+        {
+            string text = File.ReadAllText(path);
+            foreach (Match methodMatch in OnUpdateMethodSignatureRegex.Matches(text))
+            {
+                int bodyStart = text.IndexOf('{', methodMatch.Index + methodMatch.Length);
+                if (bodyStart < 0)
+                    continue;
+
+                int bodyEnd = FindMatchingBrace(text, bodyStart);
+                if (bodyEnd <= bodyStart)
+                    continue;
+
+                string body = text.Substring(bodyStart, bodyEnd - bodyStart + 1);
+                foreach (string typeName in scriptableConfigTypes.OrderBy(name => name, StringComparer.Ordinal))
+                {
+                    Match typeMatch = Regex.Match(body, $@"\b{Regex.Escape(typeName)}\b", RegexOptions.CultureInvariant);
+                    if (!typeMatch.Success)
+                        continue;
+
+                    int line = CountLines(text, bodyStart + typeMatch.Index);
+                    violations.Add($"{path}:{line} OnUpdate references ScriptableObject config asset type `{typeName}`.");
+                }
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "Runtime OnUpdate methods must consume ECS-native projected data, not authored ScriptableObject config assets:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
     public void BurstCompileCoverageMustNotDecrease()
     {
         int filesWithBurstCompile = EnumerateSystemFiles()
@@ -277,12 +377,88 @@ public sealed class EcsBurstHotPathArchitectureTests
             .OrderBy(path => path, StringComparer.Ordinal);
     }
 
+    private static IEnumerable<string> EnumerateRuntimeSystemFiles()
+    {
+        return Directory
+            .GetFiles(SystemsRoot, "*.cs", SearchOption.AllDirectories)
+            .Concat(Directory.GetFiles(RenderingSystemsRoot, "*.cs", SearchOption.AllDirectories))
+            .Select(NormalizePath)
+            .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static Dictionary<string, string> BuildClassifiedNonBurstFiles()
+    {
+        Dictionary<string, string> result = new(StringComparer.Ordinal);
+        foreach (KeyValuePair<string, string> entry in ManagedBoundaryNonBurstOnUpdateFiles)
+            result.Add(entry.Key, entry.Value);
+        foreach (KeyValuePair<string, string> entry in TrackedHotPathDebtNonBurstOnUpdateFiles)
+            result.Add(entry.Key, entry.Value);
+        return result;
+    }
+
     private static IEnumerable<string> EnumerateUnitRenderBudgetSystemFiles()
     {
         return Directory
             .GetFiles(RenderingSystemsRoot, "UnitRenderBudget*.cs", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
             .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static HashSet<string> CollectScriptableObjectTypeNames()
+    {
+        Dictionary<string, string[]> classBases = new(StringComparer.Ordinal);
+        foreach (string path in Directory.GetFiles(GameScriptsRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            string text = File.ReadAllText(path);
+            foreach (Match match in ClassBaseRegex.Matches(text))
+            {
+                string typeName = match.Groups["name"].Value;
+                string[] bases = match.Groups["bases"].Value
+                    .Split(',')
+                    .Select(NormalizeBaseTypeName)
+                    .Where(baseName => !string.IsNullOrEmpty(baseName))
+                    .ToArray();
+
+                classBases[typeName] = bases;
+            }
+        }
+
+        HashSet<string> scriptableTypes = new(StringComparer.Ordinal);
+        bool changed;
+        do
+        {
+            changed = false;
+            foreach (KeyValuePair<string, string[]> entry in classBases)
+            {
+                if (scriptableTypes.Contains(entry.Key))
+                    continue;
+
+                if (entry.Value.Any(baseName =>
+                        baseName is "ScriptableObject" or "UnityEngine.ScriptableObject" ||
+                        scriptableTypes.Contains(baseName)))
+                {
+                    scriptableTypes.Add(entry.Key);
+                    changed = true;
+                }
+            }
+        }
+        while (changed);
+
+        return scriptableTypes;
+    }
+
+    private static string NormalizeBaseTypeName(string baseType)
+    {
+        string normalized = baseType.Trim();
+        int genericIndex = normalized.IndexOf('<');
+        if (genericIndex >= 0)
+            normalized = normalized[..genericIndex];
+
+        int namespaceIndex = normalized.LastIndexOf('.');
+        if (namespaceIndex >= 0 && namespaceIndex + 1 < normalized.Length)
+            normalized = normalized[(namespaceIndex + 1)..];
+
+        return normalized.Trim();
     }
 
     private static List<FileCount> CountMatches(Regex regex)

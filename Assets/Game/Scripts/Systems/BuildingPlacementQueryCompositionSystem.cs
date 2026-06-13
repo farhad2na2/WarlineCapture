@@ -1,5 +1,3 @@
-using Unity.Entities;
-
 internal sealed class BuildingPlacementQueryCompositionSystem
 {
     public BuildingPlacementQuerySystem.Context Create(BuildingGameplayCompositionSourceSystem source)
@@ -9,17 +7,6 @@ internal sealed class BuildingPlacementQueryCompositionSystem
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             BuildingDefinitionSystem.GetProductionCount,
             BuildingDefinitionSystem.GetProductionPrefab,
-            TryGetEntityManager));
-    }
-
-    private static bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
+            source.BuildingEntityManagerAccessSystem.TryGetEntityManager));
     }
 }

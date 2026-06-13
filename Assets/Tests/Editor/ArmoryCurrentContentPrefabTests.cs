@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using TMPro;
@@ -11,11 +12,53 @@ public sealed class ArmoryCurrentContentPrefabTests
 
     private GameObject instance;
 
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(ArmoryContentSectionsExposeCurrentRuntimeViews),
+                test => test.ArmoryContentSectionsExposeCurrentRuntimeViews(),
+                ref passed);
+            RunValidationStep(
+                nameof(ArmoryContentListBindsCurrentInspectionPanel),
+                test => test.ArmoryContentListBindsCurrentInspectionPanel(),
+                ref passed);
+
+            Debug.Log($"[ArmoryCurrentContentValidation] result=Passed tests={passed}");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ArmoryCurrentContentValidation] result=Failed passed={passed}\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<ArmoryCurrentContentPrefabTests> action,
+        ref int passed)
+    {
+        var tests = new ArmoryCurrentContentPrefabTests();
+        try
+        {
+            action(tests);
+            passed++;
+            Debug.Log($"[ArmoryCurrentContentValidation] step={name} result=Passed");
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {
         if (instance != null)
-            Object.DestroyImmediate(instance);
+            UnityEngine.Object.DestroyImmediate(instance);
     }
 
     [Test]
@@ -88,7 +131,7 @@ public sealed class ArmoryCurrentContentPrefabTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ArmoryContentPrefabPath);
         Assert.NotNull(prefab, $"Missing Armory content prefab at {ArmoryContentPrefabPath}.");
 
-        instance = Object.Instantiate(prefab);
+        instance = UnityEngine.Object.Instantiate(prefab);
         instance.name = prefab.name;
 
         UIShellContentSectionsView sections = instance.GetComponent<UIShellContentSectionsView>();
@@ -152,7 +195,7 @@ public sealed class ArmoryCurrentContentPrefabTests
         Assert.Greater(visuals.arraySize, 0);
     }
 
-    private static void AssertSerializedReference(Object target, string propertyName)
+    private static void AssertSerializedReference(UnityEngine.Object target, string propertyName)
     {
         SerializedProperty property = new SerializedObject(target).FindProperty(propertyName);
         Assert.NotNull(property, $"{target.name} is missing serialized property {propertyName}.");

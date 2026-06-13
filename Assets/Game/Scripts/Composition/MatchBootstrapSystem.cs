@@ -884,7 +884,8 @@ internal sealed class MatchBootstrapSystem
         if (view == null)
             view = runtimeUiRoot.gameObject.AddComponent<SelectionRectangleView>();
 
-        view.ApplyConfig(rtsSelectionConfig);
+        if (rtsSelectionConfig != null)
+            view.ApplyStyle(rtsSelectionConfig.SelectionFill, rtsSelectionConfig.SelectionBorder);
         return view;
     }
 

@@ -95,8 +95,8 @@ public sealed class ArmoryCatalogQuerySystem
     }
 
     public void Collect(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
+        IUiCatalogPrefabSource buildingPrefabSource,
         ArmoryCatalogCategory category,
         List<ArmoryCatalogItem> results)
     {
@@ -107,20 +107,20 @@ public sealed class ArmoryCatalogQuerySystem
 
         if (category == ArmoryCatalogCategory.Buildings)
         {
-            CollectBuildingItems(buildingPlacementConfig, results);
+            CollectBuildingItems(buildingPrefabSource, results);
             return;
         }
 
-        CollectUnitItems(unitPrefabRegistryConfig, category, results);
+        CollectUnitItems(unitPrefabSource, category, results);
     }
 
     private void CollectUnitItems(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
         ArmoryCatalogCategory category,
         List<ArmoryCatalogItem> results)
     {
-        IReadOnlyList<GameObject> prefabs = unitPrefabRegistryConfig != null
-            ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        IReadOnlyList<GameObject> prefabs = unitPrefabSource != null
+            ? unitPrefabSource.UnitSpawnPrefabs
             : null;
         if (prefabs == null)
             return;
@@ -162,11 +162,11 @@ public sealed class ArmoryCatalogQuerySystem
     }
 
     private void CollectBuildingItems(
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource buildingPrefabSource,
         List<ArmoryCatalogItem> results)
     {
-        IReadOnlyList<GameObject> spawnables = buildingPlacementConfig != null
-            ? buildingPlacementConfig.Spawnables
+        IReadOnlyList<GameObject> spawnables = buildingPrefabSource != null
+            ? buildingPrefabSource.BuildingSpawnPrefabs
             : null;
         if (spawnables == null)
             return;

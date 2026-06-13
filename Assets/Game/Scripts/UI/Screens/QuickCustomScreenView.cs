@@ -40,7 +40,7 @@ public sealed class QuickCustomScreenView : UIScreenView
     private static readonly string[] AggressionLabels = { "DEFENSIVE", "BALANCED", "AGGRESSIVE" };
     private static readonly string[] ExpansionLabels = { "OFF", "SLOW", "NORMAL", "FAST" };
 
-    private QuickGameConfig _config;
+    private UiQuickCustomGameConfig _config;
     private IQuickCustomGameConfigStore _configStore;
     private IMatchLaunchCommand _launchCommand;
 
@@ -59,7 +59,7 @@ public sealed class QuickCustomScreenView : UIScreenView
             resetButton.onClick.RemoveListener(ResetToDefaults);
     }
 
-    public void Bind(QuickGameConfig config)
+    public void Bind(UiQuickCustomGameConfig config)
     {
         _config = config;
         SetDropdownValue(presetDropdown, 0);
@@ -100,33 +100,33 @@ public sealed class QuickCustomScreenView : UIScreenView
         flowSystem.Initialize(this, _configStore);
     }
 
-    public QuickGameConfig ReadConfigFromControls()
+    public UiQuickCustomGameConfig ReadConfigFromControls()
     {
-        _config.EnemyType = (QuickGameEnemyType)GetDropdownValue(enemyTypeDropdown, (int)_config.EnemyType);
+        _config.EnemyType = (UiQuickGameEnemyType)GetDropdownValue(enemyTypeDropdown, (int)_config.EnemyType);
         _config.EnemyCount = ReadEnemyCountStepper(_config.EnemyCount);
-        _config.Difficulty = (AIDifficultySetting)GetSelectedSegment(difficultySegmented, (int)_config.Difficulty);
+        _config.Difficulty = (UiAiDifficultySetting)GetSelectedSegment(difficultySegmented, (int)_config.Difficulty);
         _config.StartingMoney = startingMoneySlider != null
             ? ReadStartingMoneySlider(startingMoneySlider)
-            : (AIStartingMoneySetting)GetSelectedSegment(startingMoneySegmented, (int)_config.StartingMoney);
+            : (UiAiStartingMoneySetting)GetSelectedSegment(startingMoneySegmented, (int)_config.StartingMoney);
         _config.IncomeMultiplier = GetSliderValue(incomeMultiplierSlider, _config.IncomeMultiplier);
         _config.BuildSpeed = buildSpeedSlider != null
             ? ReadSpeedSlider(buildSpeedSlider)
-            : (AISpeedSetting)GetSelectedSegment(buildSpeedSegmented, (int)_config.BuildSpeed);
+            : (UiAiSpeedSetting)GetSelectedSegment(buildSpeedSegmented, (int)_config.BuildSpeed);
         _config.UnitProductionSpeed = unitProductionSpeedSegmented != null
-            ? (AISpeedSetting)GetSelectedSegment(unitProductionSpeedSegmented, (int)_config.UnitProductionSpeed)
+            ? (UiAiSpeedSetting)GetSelectedSegment(unitProductionSpeedSegmented, (int)_config.UnitProductionSpeed)
             : _config.UnitProductionSpeed;
-        _config.AttackGroupSize = (AIAttackGroupSizeSetting)GetSelectedSegment(attackGroupSizeSegmented, (int)_config.AttackGroupSize);
-        _config.AttackFrequency = (AIAttackFrequencySetting)GetSelectedSegment(attackFrequencySegmented, (int)_config.AttackFrequency);
+        _config.AttackGroupSize = (UiAiAttackGroupSizeSetting)GetSelectedSegment(attackGroupSizeSegmented, (int)_config.AttackGroupSize);
+        _config.AttackFrequency = (UiAiAttackFrequencySetting)GetSelectedSegment(attackFrequencySegmented, (int)_config.AttackFrequency);
         _config.Aggression = aggressionSlider != null
             ? ReadAggressionSlider(aggressionSlider)
-            : (AIAggressionSetting)GetSelectedSegment(aggressionSegmented, (int)_config.Aggression);
-        _config.Expansion = (AIExpansionSetting)GetSelectedSegment(expansionSegmented, (int)_config.Expansion);
-        _config.TargetPriority = (AITargetPriority)GetDropdownValue(targetPriorityDropdown, (int)_config.TargetPriority);
+            : (UiAiAggressionSetting)GetSelectedSegment(aggressionSegmented, (int)_config.Aggression);
+        _config.Expansion = (UiAiExpansionSetting)GetSelectedSegment(expansionSegmented, (int)_config.Expansion);
+        _config.TargetPriority = (UiAiTargetPriority)GetDropdownValue(targetPriorityDropdown, (int)_config.TargetPriority);
         _config.PlayerAutoAIEnabled = GetToggleValue(playerAutoToggle, _config.PlayerAutoAIEnabled);
-        _config.WinCondition = (QuickGameWinCondition)GetDropdownValue(winConditionDropdown, (int)_config.WinCondition);
+        _config.WinCondition = (UiQuickGameWinCondition)GetDropdownValue(winConditionDropdown, (int)_config.WinCondition);
         _config.FogOfWar = GetToggleValue(fogOfWarToggle, _config.FogOfWar);
         _config.IntelReveal = GetToggleValue(intelRevealToggle, _config.IntelReveal);
-        _config.StartingResources = (QuickGameStartingResources)GetDropdownValue(startingResourcesDropdown, (int)_config.StartingResources);
+        _config.StartingResources = (UiQuickGameStartingResources)GetDropdownValue(startingResourcesDropdown, (int)_config.StartingResources);
         _config.MapSeed = ReadSeed(_config.MapSeed);
         return _config;
     }
@@ -252,15 +252,15 @@ public sealed class QuickCustomScreenView : UIScreenView
         return row != null && row.Slider != null ? row.Slider.value : fallback;
     }
 
-    private void BindStartingMoneySlider(AIStartingMoneySetting setting)
+    private void BindStartingMoneySlider(UiAiStartingMoneySetting setting)
     {
         if (startingMoneySlider == null)
             return;
 
         float value = setting switch
         {
-            AIStartingMoneySetting.Low => 0f,
-            AIStartingMoneySetting.High => 100f,
+            UiAiStartingMoneySetting.Low => 0f,
+            UiAiStartingMoneySetting.High => 100f,
             _ => 50f
         };
 
@@ -269,31 +269,31 @@ public sealed class QuickCustomScreenView : UIScreenView
         {
             startingMoneySlider.ValueText.text = setting switch
             {
-                AIStartingMoneySetting.Low => "5,000",
-                AIStartingMoneySetting.High => "20,000",
+                UiAiStartingMoneySetting.Low => "5,000",
+                UiAiStartingMoneySetting.High => "20,000",
                 _ => "10,000"
             };
         }
     }
 
-    private static AIStartingMoneySetting ReadStartingMoneySlider(UISliderRowView row)
+    private static UiAiStartingMoneySetting ReadStartingMoneySlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 33f)
-            return AIStartingMoneySetting.Low;
+            return UiAiStartingMoneySetting.Low;
 
-        return value > 67f ? AIStartingMoneySetting.High : AIStartingMoneySetting.Normal;
+        return value > 67f ? UiAiStartingMoneySetting.High : UiAiStartingMoneySetting.Normal;
     }
 
-    private static void BindSpeedSlider(UISliderRowView row, string label, AISpeedSetting setting)
+    private static void BindSpeedSlider(UISliderRowView row, string label, UiAiSpeedSetting setting)
     {
         if (row == null)
             return;
 
         float value = setting switch
         {
-            AISpeedSetting.Slow => 0f,
-            AISpeedSetting.Fast => 100f,
+            UiAiSpeedSetting.Slow => 0f,
+            UiAiSpeedSetting.Fast => 100f,
             _ => 50f
         };
 
@@ -302,31 +302,31 @@ public sealed class QuickCustomScreenView : UIScreenView
         {
             row.ValueText.text = setting switch
             {
-                AISpeedSetting.Slow => "0.75x",
-                AISpeedSetting.Fast => "1.25x",
+                UiAiSpeedSetting.Slow => "0.75x",
+                UiAiSpeedSetting.Fast => "1.25x",
                 _ => "1.00x"
             };
         }
     }
 
-    private static AISpeedSetting ReadSpeedSlider(UISliderRowView row)
+    private static UiAiSpeedSetting ReadSpeedSlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 33f)
-            return AISpeedSetting.Slow;
+            return UiAiSpeedSetting.Slow;
 
-        return value > 67f ? AISpeedSetting.Fast : AISpeedSetting.Normal;
+        return value > 67f ? UiAiSpeedSetting.Fast : UiAiSpeedSetting.Normal;
     }
 
-    private void BindAggressionSlider(AIAggressionSetting setting)
+    private void BindAggressionSlider(UiAiAggressionSetting setting)
     {
         if (aggressionSlider == null)
             return;
 
         float value = setting switch
         {
-            AIAggressionSetting.Defensive => 25f,
-            AIAggressionSetting.Aggressive => 75f,
+            UiAiAggressionSetting.Defensive => 25f,
+            UiAiAggressionSetting.Aggressive => 75f,
             _ => 50f
         };
 
@@ -335,13 +335,13 @@ public sealed class QuickCustomScreenView : UIScreenView
             aggressionSlider.ValueText.text = $"{Mathf.RoundToInt(value)}%";
     }
 
-    private static AIAggressionSetting ReadAggressionSlider(UISliderRowView row)
+    private static UiAiAggressionSetting ReadAggressionSlider(UISliderRowView row)
     {
         float value = GetSliderValue(row, 50f);
         if (value < 38f)
-            return AIAggressionSetting.Defensive;
+            return UiAiAggressionSetting.Defensive;
 
-        return value > 62f ? AIAggressionSetting.Aggressive : AIAggressionSetting.Balanced;
+        return value > 62f ? UiAiAggressionSetting.Aggressive : UiAiAggressionSetting.Balanced;
     }
 
     private static bool GetToggleValue(UIToggleRowView row, bool fallback)
@@ -368,14 +368,14 @@ public sealed class QuickCustomScreenView : UIScreenView
         return int.TryParse(seedInput.text, out int seed) ? Mathf.Max(1, seed) : fallback;
     }
 
-    private static string ResolveMapName(QuickGameConfig config)
+    private static string ResolveMapName(UiQuickCustomGameConfig config)
     {
         return config.EnemyType switch
         {
-            QuickGameEnemyType.Defensive => "DISTRICT FORTRESS",
-            QuickGameEnemyType.Air => "AIRFIELD EDGE",
-            QuickGameEnemyType.Swarm => "DENSE CITY GRID",
-            QuickGameEnemyType.Random => "RANDOMIZED CITY",
+            UiQuickGameEnemyType.Defensive => "DISTRICT FORTRESS",
+            UiQuickGameEnemyType.Air => "AIRFIELD EDGE",
+            UiQuickGameEnemyType.Swarm => "DENSE CITY GRID",
+            UiQuickGameEnemyType.Random => "RANDOMIZED CITY",
             _ => "PROJECT CITY OUTSKIRTS"
         };
     }

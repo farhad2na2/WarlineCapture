@@ -6,8 +6,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class ArmoryContentListView : MonoBehaviour
 {
-    [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig;
-    [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
+    [SerializeField] private ScriptableObject unitPrefabRegistryConfig;
+    [SerializeField] private ScriptableObject buildingPlacementConfig;
     [SerializeField] private RectTransform contentRoot;
     [SerializeField] private ArmoryCatalogItemView itemTemplate;
 
@@ -23,6 +23,8 @@ public sealed class ArmoryContentListView : MonoBehaviour
     private bool hasActiveInspectionItem;
     private bool hasBoundaryQuery;
     private ArmoryCatalogItemView activeItemView;
+    private IUiCatalogPrefabSource unitPrefabSourceOverride;
+    private IUiCatalogPrefabSource buildingPrefabSourceOverride;
 
     private void OnEnable()
     {
@@ -46,14 +48,14 @@ public sealed class ArmoryContentListView : MonoBehaviour
     }
 
     public void ConfigureForTests(
-        UnitPrefabRegistryAuthoringConfig unitRegistry,
-        BuildingPlacementSystemConfig buildingPlacement,
+        IUiCatalogPrefabSource unitRegistry,
+        IUiCatalogPrefabSource buildingPlacement,
         RectTransform content,
         ArmoryCatalogItemView template,
         ArmoryInspectionPanelView inspection = null)
     {
-        unitPrefabRegistryConfig = unitRegistry;
-        buildingPlacementConfig = buildingPlacement;
+        unitPrefabSourceOverride = unitRegistry;
+        buildingPrefabSourceOverride = buildingPlacement;
         contentRoot = content;
         itemTemplate = template;
         inspectionPanel = inspection;
@@ -85,9 +87,15 @@ public sealed class ArmoryContentListView : MonoBehaviour
         if (contentRoot == null || itemTemplate == null)
             return;
 
-        catalogQuerySystem.Collect(unitPrefabRegistryConfig, buildingPlacementConfig, category, itemScratch);
+        catalogQuerySystem.Collect(UnitPrefabSource, BuildingPrefabSource, category, itemScratch);
         Populate(itemScratch);
     }
+
+    private IUiCatalogPrefabSource UnitPrefabSource =>
+        unitPrefabSourceOverride ?? unitPrefabRegistryConfig as IUiCatalogPrefabSource;
+
+    private IUiCatalogPrefabSource BuildingPrefabSource =>
+        buildingPrefabSourceOverride ?? buildingPlacementConfig as IUiCatalogPrefabSource;
 
     private void Populate(IReadOnlyList<ArmoryCatalogItem> items)
     {

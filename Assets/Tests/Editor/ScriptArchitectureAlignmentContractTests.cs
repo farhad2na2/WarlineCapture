@@ -111,10 +111,12 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RenderingAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
+            tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
+            tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=18");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=20");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -225,6 +227,29 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
             "`Game.UI.Runtime` must not reference `Game.Authoring`. Composition can inject UI catalog metadata derived from authoring components.");
+    }
+
+    [Test]
+    public void UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs()
+    {
+        string uiContractsAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Contracts/Game.UI.Contracts.asmdef");
+        string asmdef = File.ReadAllText(uiContractsAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Components\"", StringComparison.Ordinal) ||
+            asmdef.Contains("\"Game.Configs\"", StringComparison.Ordinal),
+            "`Game.UI.Contracts` must define UI-facing contracts and DTOs without depending on gameplay components or gameplay config assemblies. Composition owns mapping.");
+    }
+
+    [Test]
+    public void UiRuntimeAssemblyMustNotReferenceConfigsAssembly()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Configs\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Game.Configs`. Use UI contracts and config-owned adapters/source interfaces instead.");
     }
 
     [Test]

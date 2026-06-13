@@ -177,7 +177,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
             view,
-            BoardCommandModeDirection.TransportToPassenger,
+            UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
 
         Assert.IsTrue(panel.activeSelf);
@@ -192,7 +192,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
             view,
-            BoardCommandModeDirection.PassengerToTransport,
+            UiBoardCommandModeDirection.PassengerToTransport,
             boardAllInteractable: false);
 
         Assert.IsTrue(actions.activeSelf);
@@ -262,7 +262,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
             view,
-            BoardCommandModeDirection.TransportToPassenger,
+            UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
         Assert.IsTrue(actions.activeSelf);
 
@@ -292,7 +292,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
             view,
-            BoardCommandModeDirection.TransportToPassenger,
+            UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
         BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
@@ -343,7 +343,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
             feedbackView,
-            BoardCommandModeDirection.TransportToPassenger,
+            UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
         Assert.IsTrue(actions.activeSelf, "Test setup must start with Board feedback actions visible.");
 

@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [
         "Game.Components",
-        "Game.Configs",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Unity.Collections",

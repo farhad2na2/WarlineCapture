@@ -2,8 +2,6 @@
     "name": "Game.UI.Contracts",
     "rootNamespace": "",
     "references": [
-        "Game.Components",
-        "Game.Configs",
         "Unity.Collections",
         "Unity.Entities"
     ],

@@ -37,7 +37,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
 
     public static void ApplyBoardCommandMode(
         IBattleHudRuntimeFeedbackView view,
-        BoardCommandModeDirection direction,
+        UiBoardCommandModeDirection direction,
         bool boardAllInteractable)
     {
         if (view == null)
@@ -46,10 +46,10 @@ public sealed class BattleHudRuntimeFeedbackSystem
         view.CurrentCommandMode = TacticalCommandMode.Board;
         view.ApplyCommandModeTabs(TacticalCommandMode.Board);
 
-        MatchHudCommandFeedbackModel commandFeedback = direction == BoardCommandModeDirection.TransportToPassenger
+        MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackModel.Show("Tap soldiers or board all.", CommandFeedbackSeverity.Ready)
             : MatchHudCommandFeedbackModel.Show("Tap a transport.", CommandFeedbackSeverity.Ready);
-        MatchHudCommandFeedbackActionsModel actions = direction == BoardCommandModeDirection.TransportToPassenger
+        MatchHudCommandFeedbackActionsModel actions = direction == UiBoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
             : MatchHudCommandFeedbackActionsModel.CancelOnly;
         view.ApplyPersistentCommandFeedback(commandFeedback, actions);

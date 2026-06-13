@@ -15,13 +15,10 @@ public sealed class SelectionRectangleView : MonoBehaviour, ISelectionRectangleV
         _state = state;
     }
 
-    public void ApplyConfig(RTSSelectionSystemConfig config)
+    public void ApplyStyle(Color configuredSelectionFill, Color configuredSelectionBorder)
     {
-        if (config == null)
-            return;
-
-        selectionFill = config.SelectionFill;
-        selectionBorder = config.SelectionBorder;
+        selectionFill = configuredSelectionFill;
+        selectionBorder = configuredSelectionBorder;
     }
 
     public void Draw()

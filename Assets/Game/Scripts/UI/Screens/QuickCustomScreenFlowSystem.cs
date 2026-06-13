@@ -2,12 +2,12 @@ internal sealed class QuickCustomScreenFlowSystem
 {
     public void Initialize(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
     {
-        view?.Bind(configStore != null ? configStore.Current : QuickGameConfig.Defaults);
+        view?.Bind(configStore != null ? configStore.Current : UiQuickCustomGameConfig.Defaults);
     }
 
     public void ResetToDefaults(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
     {
-        view?.Bind(configStore != null ? configStore.Defaults : QuickGameConfig.Defaults);
+        view?.Bind(configStore != null ? configStore.Defaults : UiQuickCustomGameConfig.Defaults);
     }
 
     public void ApplyCurrentConfig(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)

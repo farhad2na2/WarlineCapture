@@ -85,8 +85,8 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     public void Collect(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
+        IUiCatalogPrefabSource buildingPrefabSource,
         BuildDrawerCategory category,
         List<BuildDrawerCatalogItem> results)
     {
@@ -95,30 +95,30 @@ public sealed class BuildDrawerCatalogQuerySystem
 
         results.Clear();
         if (category == BuildDrawerCategory.Buildings)
-            CollectBuildings(buildingPlacementConfig, results);
+            CollectBuildings(buildingPrefabSource, results);
         else
-            CollectUnits(unitPrefabRegistryConfig, category, results);
+            CollectUnits(unitPrefabSource, category, results);
 
         results.Sort(CompareItems);
     }
 
     public void CollectAll(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
+        IUiCatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
         if (results == null)
             return;
 
         results.Clear();
-        AppendBuildings(buildingPlacementConfig, results);
-        AppendUnits(unitPrefabRegistryConfig, results);
+        AppendBuildings(buildingPrefabSource, results);
+        AppendUnits(unitPrefabSource, results);
         results.Sort(CompareItems);
     }
 
     public bool TryResolvePrefab(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
+        IUiCatalogPrefabSource buildingPrefabSource,
         GameObject prefab,
         out BuildDrawerCatalogItem item)
     {
@@ -142,22 +142,22 @@ public sealed class BuildDrawerCatalogQuerySystem
             return true;
         }
 
-        return TryResolveFromConfiguredLists(unitPrefabRegistryConfig, buildingPlacementConfig, prefab, out item);
+        return TryResolveFromConfiguredLists(unitPrefabSource, buildingPrefabSource, prefab, out item);
     }
 
     private void CollectBuildings(
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
-        AppendBuildings(buildingPlacementConfig, results);
+        AppendBuildings(buildingPrefabSource, results);
     }
 
     private void AppendBuildings(
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
-        IReadOnlyList<GameObject> spawnables = buildingPlacementConfig != null
-            ? buildingPlacementConfig.Spawnables
+        IReadOnlyList<GameObject> spawnables = buildingPrefabSource != null
+            ? buildingPrefabSource.BuildingSpawnPrefabs
             : null;
         if (spawnables == null)
             return;
@@ -195,12 +195,12 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private void CollectUnits(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
         BuildDrawerCategory category,
         List<BuildDrawerCatalogItem> results)
     {
-        IReadOnlyList<GameObject> prefabs = unitPrefabRegistryConfig != null
-            ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        IReadOnlyList<GameObject> prefabs = unitPrefabSource != null
+            ? unitPrefabSource.UnitSpawnPrefabs
             : null;
         if (prefabs == null)
             return;
@@ -228,11 +228,11 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private void AppendUnits(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
-        IReadOnlyList<GameObject> prefabs = unitPrefabRegistryConfig != null
-            ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        IReadOnlyList<GameObject> prefabs = unitPrefabSource != null
+            ? unitPrefabSource.UnitSpawnPrefabs
             : null;
         if (prefabs == null)
             return;
@@ -397,13 +397,13 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private bool TryResolveFromConfiguredLists(
-        UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
+        IUiCatalogPrefabSource unitPrefabSource,
+        IUiCatalogPrefabSource buildingPrefabSource,
         GameObject prefab,
         out BuildDrawerCatalogItem item)
     {
-        IReadOnlyList<GameObject> spawnables = buildingPlacementConfig != null
-            ? buildingPlacementConfig.Spawnables
+        IReadOnlyList<GameObject> spawnables = buildingPrefabSource != null
+            ? buildingPrefabSource.BuildingSpawnPrefabs
             : null;
         if (spawnables != null)
         {
@@ -422,8 +422,8 @@ public sealed class BuildDrawerCatalogQuerySystem
             }
         }
 
-        IReadOnlyList<GameObject> unitPrefabs = unitPrefabRegistryConfig != null
-            ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        IReadOnlyList<GameObject> unitPrefabs = unitPrefabSource != null
+            ? unitPrefabSource.UnitSpawnPrefabs
             : null;
         if (unitPrefabs != null)
         {

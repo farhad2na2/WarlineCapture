@@ -117,7 +117,7 @@ public class AIControllerConfig : ScriptableObject
 }
 
 [CreateAssetMenu(menuName = "Game/Config/Building Placement System")]
-public class BuildingPlacementSystemConfig : ScriptableObject
+public class BuildingPlacementSystemConfig : ScriptableObject, IUiCatalogPrefabSource
 { [SerializeField] private Camera worldCamera; [SerializeField] private GameObject roadPreviewPrefab; [SerializeField] private GameObject buildingSelectionMarkerPrefab; [Min(0.1f), SerializeField] private float buildButtonPreviewDistanceMultiplier = 1f; [Min(0.1f), SerializeField] private float unitCommandButtonPreviewDistanceMultiplier = 1f; [SerializeField] private List<GameObject> spawnables = new(); [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig; [SerializeField] private InitialUnitsSpawnerAuthoringConfig initialUnitsConfig; [SerializeField] private float buildPlaneY; [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
     public Camera WorldCamera => worldCamera;
@@ -132,6 +132,11 @@ public class BuildingPlacementSystemConfig : ScriptableObject
     public float PlacementOutlineHeight => placementOutlineHeight;
     public Color PlacementValidColor => placementValidColor;
     public Color PlacementInvalidColor => placementInvalidColor;
+
+    IReadOnlyList<GameObject> IUiCatalogPrefabSource.UnitSpawnPrefabs => unitPrefabRegistryConfig != null
+        ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        : null;
+    IReadOnlyList<GameObject> IUiCatalogPrefabSource.BuildingSpawnPrefabs => spawnables;
 }
 
 [CreateAssetMenu(menuName = "Game/Config/Road Build System")]

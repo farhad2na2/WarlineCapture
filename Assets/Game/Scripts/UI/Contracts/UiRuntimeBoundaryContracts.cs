@@ -113,11 +113,151 @@ public interface IMatchHudCameraControl
     void MoveCameraGroundCenterTo(Vector3 worldPosition);
 }
 
+public interface IUiCatalogPrefabSource
+{
+    IReadOnlyList<GameObject> UnitSpawnPrefabs { get; }
+    IReadOnlyList<GameObject> BuildingSpawnPrefabs { get; }
+}
+
+public enum UiBoardCommandModeDirection : byte
+{
+    None = 0,
+    PassengerToTransport = 1,
+    TransportToPassenger = 2
+}
+
+public enum UiQuickGameEnemyType : byte
+{
+    Balanced = 0,
+    Military = 1,
+    Defensive = 2,
+    Air = 3,
+    Swarm = 4,
+    Random = 5
+}
+
+public enum UiQuickGameWinCondition : byte
+{
+    DestroyAllEnemies = 0,
+    SurviveDuration = 1,
+    Sandbox = 2
+}
+
+public enum UiQuickGameStartingResources : byte
+{
+    Standard = 0,
+    Low = 1,
+    High = 2
+}
+
+public enum UiAiDifficultySetting : byte
+{
+    Easy = 0,
+    Normal = 1,
+    Hard = 2,
+    Brutal = 3
+}
+
+public enum UiAiStartingMoneySetting : byte
+{
+    Low = 0,
+    Normal = 1,
+    High = 2
+}
+
+public enum UiAiSpeedSetting : byte
+{
+    Slow = 0,
+    Normal = 1,
+    Fast = 2
+}
+
+public enum UiAiAttackGroupSizeSetting : byte
+{
+    Small = 0,
+    Normal = 1,
+    Large = 2
+}
+
+public enum UiAiAttackFrequencySetting : byte
+{
+    Rare = 0,
+    Normal = 1,
+    Frequent = 2
+}
+
+public enum UiAiAggressionSetting : byte
+{
+    Defensive = 0,
+    Balanced = 1,
+    Aggressive = 2
+}
+
+public enum UiAiExpansionSetting : byte
+{
+    Off = 0,
+    Slow = 1,
+    Normal = 2,
+    Fast = 3
+}
+
+public enum UiAiTargetPriority : byte
+{
+    Balanced = 0,
+    Units = 1,
+    Economy = 2,
+    Production = 3
+}
+
+public struct UiQuickCustomGameConfig
+{
+    public UiQuickGameEnemyType EnemyType;
+    public int EnemyCount;
+    public UiAiDifficultySetting Difficulty;
+    public UiAiStartingMoneySetting StartingMoney;
+    public float IncomeMultiplier;
+    public UiAiSpeedSetting BuildSpeed;
+    public UiAiSpeedSetting UnitProductionSpeed;
+    public UiAiAttackGroupSizeSetting AttackGroupSize;
+    public UiAiAttackFrequencySetting AttackFrequency;
+    public UiAiAggressionSetting Aggression;
+    public UiAiExpansionSetting Expansion;
+    public UiAiTargetPriority TargetPriority;
+    public bool PlayerAutoAIEnabled;
+    public UiQuickGameWinCondition WinCondition;
+    public bool FogOfWar;
+    public bool IntelReveal;
+    public UiQuickGameStartingResources StartingResources;
+    public int MapSeed;
+
+    public static UiQuickCustomGameConfig Defaults => new()
+    {
+        EnemyType = UiQuickGameEnemyType.Balanced,
+        EnemyCount = 1,
+        Difficulty = UiAiDifficultySetting.Normal,
+        StartingMoney = UiAiStartingMoneySetting.Normal,
+        IncomeMultiplier = 1f,
+        BuildSpeed = UiAiSpeedSetting.Normal,
+        UnitProductionSpeed = UiAiSpeedSetting.Normal,
+        AttackGroupSize = UiAiAttackGroupSizeSetting.Normal,
+        AttackFrequency = UiAiAttackFrequencySetting.Normal,
+        Aggression = UiAiAggressionSetting.Balanced,
+        Expansion = UiAiExpansionSetting.Normal,
+        TargetPriority = UiAiTargetPriority.Balanced,
+        PlayerAutoAIEnabled = false,
+        WinCondition = UiQuickGameWinCondition.DestroyAllEnemies,
+        FogOfWar = false,
+        IntelReveal = true,
+        StartingResources = UiQuickGameStartingResources.Standard,
+        MapSeed = 104729
+    };
+}
+
 public interface IQuickCustomGameConfigStore
 {
-    QuickGameConfig Current { get; }
-    QuickGameConfig Defaults { get; }
-    void Apply(QuickGameConfig config);
+    UiQuickCustomGameConfig Current { get; }
+    UiQuickCustomGameConfig Defaults { get; }
+    void Apply(UiQuickCustomGameConfig config);
 }
 
 public interface IMatchLaunchCommand

@@ -10,8 +10,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private const float QueueRefreshIntervalSeconds = 0.2f;
 
     [SerializeField] private BuildDrawerView view;
-    [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig;
-    [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
+    [SerializeField] private ScriptableObject unitPrefabRegistryConfig;
+    [SerializeField] private ScriptableObject buildingPlacementConfig;
 
     private readonly BuildDrawerCatalogQuerySystem _query = new();
     private readonly List<BuildDrawerCatalogItem> _items = new();
@@ -37,6 +37,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private Button _clearButton;
     private UnityAction _clearButtonListener;
     private float _nextQueueRefreshTime;
+    private IUiCatalogPrefabSource _unitPrefabSourceOverride;
+    private IUiCatalogPrefabSource _buildingPrefabSourceOverride;
 
     private void Awake()
     {
@@ -77,12 +79,12 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
 
     public void ConfigureForTests(
         BuildDrawerView drawerView,
-        UnitPrefabRegistryAuthoringConfig unitRegistry,
-        BuildingPlacementSystemConfig buildingPlacement)
+        IUiCatalogPrefabSource unitRegistry,
+        IUiCatalogPrefabSource buildingPlacement)
     {
         view = drawerView;
-        unitPrefabRegistryConfig = unitRegistry;
-        buildingPlacementConfig = buildingPlacement;
+        _unitPrefabSourceOverride = unitRegistry;
+        _buildingPrefabSourceOverride = buildingPlacement;
     }
 
     public void ConfigureCatalogMetadataResolvers(
@@ -223,7 +225,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         bool[] enabledStates = BuildEnabledStates(counts);
         view.ApplyTabVisuals(_activeCategory, counts, enabledStates);
 
-        _query.Collect(unitPrefabRegistryConfig, buildingPlacementConfig, _activeCategory, _items);
+        _query.Collect(UnitPrefabSource, BuildingPrefabSource, _activeCategory, _items);
         PopulateItems(_items);
         RefreshQueue();
     }
@@ -234,13 +236,19 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         for (int i = 0; i < counts.Length; i++)
         {
             BuildDrawerCategory category = (BuildDrawerCategory)i;
-            _query.Collect(unitPrefabRegistryConfig, buildingPlacementConfig, category, _countScratch);
+            _query.Collect(UnitPrefabSource, BuildingPrefabSource, category, _countScratch);
             counts[i] = _countScratch.Count;
         }
 
         _countScratch.Clear();
         return counts;
     }
+
+    private IUiCatalogPrefabSource UnitPrefabSource =>
+        _unitPrefabSourceOverride ?? unitPrefabRegistryConfig as IUiCatalogPrefabSource;
+
+    private IUiCatalogPrefabSource BuildingPrefabSource =>
+        _buildingPrefabSourceOverride ?? buildingPlacementConfig as IUiCatalogPrefabSource;
 
     private static bool[] BuildEnabledStates(int[] counts)
     {
@@ -782,14 +790,14 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
 
     private string ResolveQueueDisplayName(BuildingPendingProductionUiEntry entry)
     {
-        return _query.TryResolvePrefab(unitPrefabRegistryConfig, buildingPlacementConfig, entry.Prefab, out BuildDrawerCatalogItem item)
+        return _query.TryResolvePrefab(UnitPrefabSource, BuildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
             ? item.DisplayName
             : entry.Prefab != null ? entry.Prefab.name : "Production";
     }
 
     private Sprite ResolveQueueThumbnail(BuildingPendingProductionUiEntry entry)
     {
-        return _query.TryResolvePrefab(unitPrefabRegistryConfig, buildingPlacementConfig, entry.Prefab, out BuildDrawerCatalogItem item)
+        return _query.TryResolvePrefab(UnitPrefabSource, BuildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
             ? item.CardPortrait
             : null;
     }

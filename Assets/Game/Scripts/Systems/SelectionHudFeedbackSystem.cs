@@ -242,8 +242,21 @@ public sealed class SelectionHudFeedbackSystem
 
         QueueCommandMode(em, TacticalCommandMode.Board);
         ProcessPendingFeedback(em);
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(ResolveBattleHudView(), direction, boardAllInteractable);
+        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+            ResolveBattleHudView(),
+            MapBoardCommandModeDirection(direction),
+            boardAllInteractable);
         _matchHudSelectionPanelView?.SetBoardActionSelected(true);
+    }
+
+    private static UiBoardCommandModeDirection MapBoardCommandModeDirection(BoardCommandModeDirection direction)
+    {
+        return direction switch
+        {
+            BoardCommandModeDirection.PassengerToTransport => UiBoardCommandModeDirection.PassengerToTransport,
+            BoardCommandModeDirection.TransportToPassenger => UiBoardCommandModeDirection.TransportToPassenger,
+            _ => UiBoardCommandModeDirection.None
+        };
     }
 
     public void ClearCommandMode(EntityManager em)

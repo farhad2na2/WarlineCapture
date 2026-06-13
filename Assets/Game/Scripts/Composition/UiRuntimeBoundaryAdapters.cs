@@ -236,12 +236,62 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
 
 internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
 {
-    public QuickGameConfig Current => QuickGameConfig.FromAISettingsSnapshot(AISettingsRuntimeState.CurrentSnapshot);
-    public QuickGameConfig Defaults => QuickGameConfig.Defaults;
+    public UiQuickCustomGameConfig Current => ToUiConfig(QuickGameConfig.FromAISettingsSnapshot(AISettingsRuntimeState.CurrentSnapshot));
+    public UiQuickCustomGameConfig Defaults => ToUiConfig(QuickGameConfig.Defaults);
 
-    public void Apply(QuickGameConfig config)
+    public void Apply(UiQuickCustomGameConfig config)
     {
-        AISettingsRuntimeState.ApplySnapshot(config.ToAISettingsSnapshot());
+        AISettingsRuntimeState.ApplySnapshot(ToRuntimeConfig(config).ToAISettingsSnapshot());
+    }
+
+    private static UiQuickCustomGameConfig ToUiConfig(QuickGameConfig config)
+    {
+        return new UiQuickCustomGameConfig
+        {
+            EnemyType = (UiQuickGameEnemyType)config.EnemyType,
+            EnemyCount = config.EnemyCount,
+            Difficulty = (UiAiDifficultySetting)config.Difficulty,
+            StartingMoney = (UiAiStartingMoneySetting)config.StartingMoney,
+            IncomeMultiplier = config.IncomeMultiplier,
+            BuildSpeed = (UiAiSpeedSetting)config.BuildSpeed,
+            UnitProductionSpeed = (UiAiSpeedSetting)config.UnitProductionSpeed,
+            AttackGroupSize = (UiAiAttackGroupSizeSetting)config.AttackGroupSize,
+            AttackFrequency = (UiAiAttackFrequencySetting)config.AttackFrequency,
+            Aggression = (UiAiAggressionSetting)config.Aggression,
+            Expansion = (UiAiExpansionSetting)config.Expansion,
+            TargetPriority = (UiAiTargetPriority)config.TargetPriority,
+            PlayerAutoAIEnabled = config.PlayerAutoAIEnabled,
+            WinCondition = (UiQuickGameWinCondition)config.WinCondition,
+            FogOfWar = config.FogOfWar,
+            IntelReveal = config.IntelReveal,
+            StartingResources = (UiQuickGameStartingResources)config.StartingResources,
+            MapSeed = config.MapSeed
+        };
+    }
+
+    private static QuickGameConfig ToRuntimeConfig(UiQuickCustomGameConfig config)
+    {
+        return new QuickGameConfig
+        {
+            EnemyType = (QuickGameEnemyType)config.EnemyType,
+            EnemyCount = config.EnemyCount,
+            Difficulty = (AIDifficultySetting)config.Difficulty,
+            StartingMoney = (AIStartingMoneySetting)config.StartingMoney,
+            IncomeMultiplier = config.IncomeMultiplier,
+            BuildSpeed = (AISpeedSetting)config.BuildSpeed,
+            UnitProductionSpeed = (AISpeedSetting)config.UnitProductionSpeed,
+            AttackGroupSize = (AIAttackGroupSizeSetting)config.AttackGroupSize,
+            AttackFrequency = (AIAttackFrequencySetting)config.AttackFrequency,
+            Aggression = (AIAggressionSetting)config.Aggression,
+            Expansion = (AIExpansionSetting)config.Expansion,
+            TargetPriority = (AITargetPriority)config.TargetPriority,
+            PlayerAutoAIEnabled = config.PlayerAutoAIEnabled,
+            WinCondition = (QuickGameWinCondition)config.WinCondition,
+            FogOfWar = config.FogOfWar,
+            IntelReveal = config.IntelReveal,
+            StartingResources = (QuickGameStartingResources)config.StartingResources,
+            MapSeed = config.MapSeed
+        };
     }
 }
 

@@ -26,7 +26,7 @@ public sealed class UnitImpostorAtlasEntry
 }
 
 [CreateAssetMenu(menuName = "Game/Config/Unit Prefab Registry")]
-public class UnitPrefabRegistryAuthoringConfig : ScriptableObject
+public class UnitPrefabRegistryAuthoringConfig : ScriptableObject, IUiCatalogPrefabSource
 {
     [SerializeField] private List<GameObject> unitSpawnPrefabs = new();
     [SerializeField] private List<UnitImpostorAtlasEntry> impostorAtlases = new();
@@ -37,4 +37,7 @@ public class UnitPrefabRegistryAuthoringConfig : ScriptableObject
     public List<UnitImpostorAtlasEntry> ImpostorAtlases => impostorAtlases;
     public GameObject UnitSelectionMarkerPrefab => unitSelectionMarkerPrefab;
     public GameObject UnitHealthBarPrefab => unitHealthBarPrefab;
+
+    IReadOnlyList<GameObject> IUiCatalogPrefabSource.UnitSpawnPrefabs => unitSpawnPrefabs;
+    IReadOnlyList<GameObject> IUiCatalogPrefabSource.BuildingSpawnPrefabs => null;
 }

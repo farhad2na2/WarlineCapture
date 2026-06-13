@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Game.Components",
+        "Game.UI.Contracts",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Mathematics",

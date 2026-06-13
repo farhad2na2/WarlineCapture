@@ -1,4 +1,3 @@
-using Unity.Entities;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -33,7 +32,11 @@ public sealed class MatchHudMinimapInputSystem
     private MatchHudMinimapView _view;
     private IMatchRuntimeState _runtimeGameplayStateSystem;
     private IMatchHudCameraControl _selectionUiCameraSystem;
+    private IMatchHudMinimapDataSource _minimapDataSource;
     private readonly System.Collections.Generic.List<Image> _markerPool = new();
+    private readonly System.Collections.Generic.List<MatchHudMinimapMarkerModel> _markerScratch = new();
+    private readonly System.Collections.Generic.List<MatchHudMinimapRoadCellModel> _roadScratch = new();
+    private readonly System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel> _surfaceScratch = new();
     private Camera _captureCamera;
     private RenderTexture _renderTexture;
     private Texture2D _readbackTexture;
@@ -42,13 +45,6 @@ public sealed class MatchHudMinimapInputSystem
     private Color32[] _rasterPixels;
     private readonly Vector3[] _mapWorldCorners = new Vector3[4];
     private readonly MatchHudMinimapProjectionGrid[] _rasterProjectionCandidates = new MatchHudMinimapProjectionGrid[4];
-    private World _markerBoundaryWorld;
-    private EntityQuery _markerBoundaryQuery;
-    private Entity _markerBoundaryEntity;
-    private bool _hasMarkerBoundaryQuery;
-    private World _gridQueryWorld;
-    private EntityQuery _gridQuery;
-    private bool _hasGridQuery;
     private bool _staticMapDirty = true;
     private float _nextStaticMapRetryTime;
     private int _warmupStaticMapRefreshesRemaining;
@@ -61,7 +57,8 @@ public sealed class MatchHudMinimapInputSystem
     public void Bind(
         MatchHudMinimapView view,
         IMatchRuntimeState runtimeGameplayStateSystem,
-        IMatchHudCameraControl selectionUiCameraSystem)
+        IMatchHudCameraControl selectionUiCameraSystem,
+        IMatchHudMinimapDataSource minimapDataSource)
     {
         if (_view == view)
             return;
@@ -70,6 +67,7 @@ public sealed class MatchHudMinimapInputSystem
         _view = view;
         _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
         _selectionUiCameraSystem = selectionUiCameraSystem;
+        _minimapDataSource = minimapDataSource;
 
         if (_view == null)
             return;
@@ -104,13 +102,12 @@ public sealed class MatchHudMinimapInputSystem
         _view = null;
         _runtimeGameplayStateSystem = null;
         _selectionUiCameraSystem = null;
+        _minimapDataSource = null;
     }
 
     public void Dispose()
     {
         Unbind();
-        ReleaseMarkerBoundaryQuery();
-        ReleaseGridQuery();
         ReleaseCaptureResources();
     }
 
@@ -121,7 +118,7 @@ public sealed class MatchHudMinimapInputSystem
 
     public void Update()
     {
-        if (_view == null || !TryGetGrid(out GridConfig grid))
+        if (_view == null || !TryGetGrid(out MatchHudMinimapGridModel grid))
             return;
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
@@ -206,7 +203,7 @@ public sealed class MatchHudMinimapInputSystem
     {
         if (_runtimeGameplayStateSystem == null ||
             _selectionUiCameraSystem == null ||
-            !TryGetGrid(out GridConfig grid))
+            !TryGetGrid(out MatchHudMinimapGridModel grid))
         {
             return;
         }
@@ -372,20 +369,18 @@ public sealed class MatchHudMinimapInputSystem
 
         Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
         int markerIndex = 0;
-        if (TryGetMarkerBuffer(out DynamicBuffer<MatchHudMinimapMarkerElement> markers))
+        _markerScratch.Clear();
+        _minimapDataSource?.GetMarkers(_markerScratch);
+        for (int i = 0; i < _markerScratch.Count && markerIndex < MaxMarkers; i++)
         {
-            for (int i = 0; i < markers.Length && markerIndex < MaxMarkers; i++)
-            {
-                MatchHudMinimapMarkerElement marker = markers[i];
-                Vector3 worldPosition = new(marker.Position.x, marker.Position.y, marker.Position.z);
-                if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, worldPosition, out Vector2 normalized))
-                    continue;
-                if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
-                    continue;
+            MatchHudMinimapMarkerModel marker = _markerScratch[i];
+            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, marker.Position, out Vector2 normalized))
+                continue;
+            if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
+                continue;
 
-                SetMarker(markerIndex, normalized, ResolveMarkerColor(marker.FactionId), mapRect, parentTopLeft);
-                markerIndex++;
-            }
+            SetMarker(markerIndex, normalized, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
+            markerIndex++;
         }
 
         for (int i = markerIndex; i < _markerPool.Count; i++)
@@ -443,107 +438,10 @@ public sealed class MatchHudMinimapInputSystem
         return _markerPool[index];
     }
 
-    private bool TryGetGrid(out GridConfig grid)
+    private bool TryGetGrid(out MatchHudMinimapGridModel grid)
     {
         grid = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (!_hasGridQuery || _gridQueryWorld != world)
-        {
-            ReleaseGridQuery();
-            _gridQueryWorld = world;
-            _gridQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            _hasGridQuery = true;
-        }
-
-        if (_gridQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        grid = _gridQuery.GetSingleton<GridConfig>();
-        return true;
-    }
-
-    private void ReleaseGridQuery()
-    {
-        if (!_hasGridQuery)
-            return;
-
-        try
-        {
-            if (_gridQueryWorld != null && _gridQueryWorld.IsCreated)
-                _gridQuery.Dispose();
-        }
-        catch (System.NullReferenceException)
-        {
-        }
-        catch (System.ObjectDisposedException)
-        {
-        }
-
-        _gridQueryWorld = null;
-        _gridQuery = default;
-        _hasGridQuery = false;
-    }
-
-    private bool TryGetMarkerBuffer(out DynamicBuffer<MatchHudMinimapMarkerElement> markers)
-    {
-        markers = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
-        if (_markerBoundaryEntity != Entity.Null &&
-            _markerBoundaryWorld == world &&
-            em.Exists(_markerBoundaryEntity) &&
-            em.HasComponent<MatchHudMinimapMarkerBoundary>(_markerBoundaryEntity) &&
-            em.HasBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity))
-        {
-            markers = em.GetBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity, true);
-            return true;
-        }
-
-        if (!_hasMarkerBoundaryQuery || _markerBoundaryWorld != world)
-        {
-            ReleaseMarkerBoundaryQuery();
-            _markerBoundaryWorld = world;
-            _markerBoundaryQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
-                ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
-            _hasMarkerBoundaryQuery = true;
-        }
-
-        if (_markerBoundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        _markerBoundaryEntity = _markerBoundaryQuery.GetSingletonEntity();
-        markers = em.GetBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity, true);
-        return true;
-    }
-
-    private void ReleaseMarkerBoundaryQuery()
-    {
-        if (!_hasMarkerBoundaryQuery)
-            return;
-
-        try
-        {
-            if (_markerBoundaryWorld != null && _markerBoundaryWorld.IsCreated)
-                _markerBoundaryQuery.Dispose();
-        }
-        catch (System.NullReferenceException)
-        {
-        }
-        catch (System.ObjectDisposedException)
-        {
-        }
-
-        _markerBoundaryWorld = null;
-        _markerBoundaryQuery = default;
-        _markerBoundaryEntity = Entity.Null;
-        _hasMarkerBoundaryQuery = false;
+        return _minimapDataSource != null && _minimapDataSource.TryGetGrid(out grid) && grid.IsValid;
     }
 
     private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)
@@ -566,13 +464,14 @@ public sealed class MatchHudMinimapInputSystem
         return rect.width > 0f && rect.height > 0f;
     }
 
-    private static Color ResolveMarkerColor(byte factionId)
+    private static Color ResolveMarkerColor(MatchHudMinimapMarkerAllegiance allegiance)
     {
-        if (FactionIdentitySystem.IsPlayerControlled(factionId))
-            return PlayerMarkerColor;
-        if (FactionIdentitySystem.IsHostileToPlayer(factionId))
-            return EnemyMarkerColor;
-        return NeutralMarkerColor;
+        return allegiance switch
+        {
+            MatchHudMinimapMarkerAllegiance.Player => PlayerMarkerColor,
+            MatchHudMinimapMarkerAllegiance.Enemy => EnemyMarkerColor,
+            _ => NeutralMarkerColor
+        };
     }
 
     private void CaptureMap(MatchHudMinimapProjectionGrid grid, int cullingMask)
@@ -688,8 +587,8 @@ public sealed class MatchHudMinimapInputSystem
             return 1;
         }
 
-        MatchHudMinimapProjectionGrid fullGrid = TryGetGrid(out GridConfig grid)
-            ? MatchHudMinimapProjectionGrid.FromGridConfig(grid)
+        MatchHudMinimapProjectionGrid fullGrid = TryGetGrid(out MatchHudMinimapGridModel grid)
+            ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
             : requestedGrid;
         Vector3 center = requestedGrid.Origin + new Vector3(requestedGrid.Width * 0.5f, 0f, requestedGrid.Height * 0.5f);
         float aspect = requestedGrid.Width / Mathf.Max(0.001f, requestedGrid.Height);
@@ -750,229 +649,127 @@ public sealed class MatchHudMinimapInputSystem
                 BlendRasterPixel(pixels, x, y, RasterGrid, 0.28f);
     }
 
-    private static int DrawRasterRoads(MatchHudMinimapProjectionGrid projectionGrid, Color32[] pixels)
+    private int DrawRasterRoads(MatchHudMinimapProjectionGrid projectionGrid, Color32[] pixels)
     {
-        if (!TryGetGridRoadBuffers(out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBuffer<GridRoadSidewalk> sidewalks, out DynamicBuffer<GridRoadDirt> dirtRoads))
+        _roadScratch.Clear();
+        _minimapDataSource?.GetRoadCells(ToAreaModel(projectionGrid), _roadScratch);
+        if (_roadScratch.Count == 0)
             return 0;
 
-        int width = grid.Width;
-        int height = grid.Height;
-        if (width <= 0 || height <= 0 || grid.CellSize <= 0f)
-            return 0;
-
-        int minX = Mathf.Clamp(Mathf.FloorToInt((projectionGrid.Origin.x - grid.Origin.x) / grid.CellSize) - 2, 0, width - 1);
-        int maxX = Mathf.Clamp(Mathf.CeilToInt((projectionGrid.Origin.x + projectionGrid.Width - grid.Origin.x) / grid.CellSize) + 2, 0, width - 1);
-        int minY = Mathf.Clamp(Mathf.FloorToInt((projectionGrid.Origin.z - grid.Origin.z) / grid.CellSize) - 2, 0, height - 1);
-        int maxY = Mathf.Clamp(Mathf.CeilToInt((projectionGrid.Origin.z + projectionGrid.Height - grid.Origin.z) / grid.CellSize) + 2, 0, height - 1);
-        int roadRadius = Mathf.Clamp(Mathf.RoundToInt((CaptureResolution / Mathf.Max(1f, projectionGrid.Height)) * grid.CellSize * 1.3f), 1, 4);
         int featureCount = 0;
-
-        for (int y = minY; y <= maxY; y++)
+        for (int i = 0; i < _roadScratch.Count; i++)
         {
-            int rowOffset = y * width;
-            for (int x = minX; x <= maxX; x++)
+            MatchHudMinimapRoadCellModel road = _roadScratch[i];
+            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, road.WorldPosition, out Vector2 normalized) ||
+                normalized.x < 0f ||
+                normalized.x > 1f ||
+                normalized.y < 0f ||
+                normalized.y > 1f)
             {
-                int index = rowOffset + x;
-                if ((uint)index >= (uint)roads.Length || roads[index].Value == 0)
-                    continue;
-
-                Color32 roadColor = RasterRoad;
-                if (dirtRoads.IsCreated && index < dirtRoads.Length && dirtRoads[index].Value != 0)
-                    roadColor = RasterDirtRoad;
-                else if (sidewalks.IsCreated && index < sidewalks.Length && sidewalks[index].Value != 0)
-                    roadColor = RasterSidewalk;
-
-                Vector3 worldPosition = new(
-                    grid.Origin.x + (x + 0.5f) * grid.CellSize,
-                    grid.Origin.y,
-                    grid.Origin.z + (y + 0.5f) * grid.CellSize);
-                if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, worldPosition, out Vector2 normalized) ||
-                    normalized.x < 0f ||
-                    normalized.x > 1f ||
-                    normalized.y < 0f ||
-                    normalized.y > 1f)
-                {
-                    continue;
-                }
-
-                int pixelX = Mathf.Clamp(Mathf.RoundToInt(normalized.x * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-                int pixelY = Mathf.Clamp(Mathf.RoundToInt(normalized.y * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-                DrawRasterDot(pixels, pixelX, pixelY, roadColor, roadRadius);
-                featureCount++;
-            }
-        }
-
-        return featureCount;
-    }
-
-    private static int DrawRasterSurfaceFeatures(MatchHudMinimapProjectionGrid projectionGrid, Color32[] pixels)
-    {
-        if (!TryGetMapSurface(out MapSurfaceComponent surface, out DynamicBuffer<MapSurfaceSceneOverlay> sceneOverlays, out bool hasSceneOverlays))
-            return 0;
-
-        int featureCount = DrawRasterSurfaceBlobFeatures(projectionGrid, surface, pixels);
-        if (hasSceneOverlays)
-            featureCount += DrawRasterSceneOverlayFeatures(projectionGrid, sceneOverlays, pixels);
-        return featureCount;
-    }
-
-    private static int DrawRasterSurfaceBlobFeatures(
-        MatchHudMinimapProjectionGrid projectionGrid,
-        MapSurfaceComponent surface,
-        Color32[] pixels)
-    {
-        if (surface.HasSurfaceData == 0 ||
-            !surface.SurfaceBlob.IsCreated ||
-            surface.CellSize <= 0f ||
-            surface.Dimensions.x <= 0 ||
-            surface.Dimensions.y <= 0)
-        {
-            return 0;
-        }
-
-        ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int minX = Mathf.Clamp(Mathf.FloorToInt((projectionGrid.Origin.x - surface.GridOrigin.x) / surface.CellSize) - 2, 0, surface.Dimensions.x - 1);
-        int maxX = Mathf.Clamp(Mathf.CeilToInt((projectionGrid.Origin.x + projectionGrid.Width - surface.GridOrigin.x) / surface.CellSize) + 2, 0, surface.Dimensions.x - 1);
-        int minY = Mathf.Clamp(Mathf.FloorToInt((projectionGrid.Origin.z - surface.GridOrigin.z) / surface.CellSize) - 2, 0, surface.Dimensions.y - 1);
-        int maxY = Mathf.Clamp(Mathf.CeilToInt((projectionGrid.Origin.z + projectionGrid.Height - surface.GridOrigin.z) / surface.CellSize) + 2, 0, surface.Dimensions.y - 1);
-        int radius = Mathf.Clamp(Mathf.RoundToInt((CaptureResolution / Mathf.Max(1f, projectionGrid.Height)) * surface.CellSize * 1.2f), 1, 3);
-        int featureCount = 0;
-
-        for (int y = minY; y <= maxY; y++)
-        {
-            int rowOffset = y * surface.Dimensions.x;
-            for (int x = minX; x <= maxX; x++)
-            {
-                int index = rowOffset + x;
-                if ((uint)index >= (uint)blob.Cells.Length)
-                    continue;
-
-                MapSurfaceCell cell = blob.Cells[index];
-                if (cell.SurfaceCount == 0)
-                    continue;
-
-                if (!TryResolveRasterSurfaceSample(ref blob, cell, out MapSurfaceSample sample))
-                    continue;
-
-                Vector3 worldPosition = new(
-                    surface.GridOrigin.x + (x + 0.5f) * surface.CellSize,
-                    surface.GridOrigin.y,
-                    surface.GridOrigin.z + (y + 0.5f) * surface.CellSize);
-                if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, worldPosition, out Vector2 normalized) ||
-                    normalized.x < 0f ||
-                    normalized.x > 1f ||
-                    normalized.y < 0f ||
-                    normalized.y > 1f)
-                {
-                    continue;
-                }
-
-                int pixelX = Mathf.Clamp(Mathf.RoundToInt(normalized.x * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-                int pixelY = Mathf.Clamp(Mathf.RoundToInt(normalized.y * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-                DrawRasterDot(pixels, pixelX, pixelY, ResolveSurfaceRasterColor(sample.SurfaceType, sample.Flags), radius);
-                featureCount++;
-            }
-        }
-
-        return featureCount;
-    }
-
-    private static bool TryResolveRasterSurfaceSample(ref MapSurfaceBlob blob, MapSurfaceCell cell, out MapSurfaceSample sample)
-    {
-        sample = default;
-        for (int i = 0; i < cell.SurfaceCount; i++)
-        {
-            int sampleIndex = cell.FirstSurfaceIndex + i;
-            if ((uint)sampleIndex >= (uint)blob.Samples.Length)
                 continue;
-
-            MapSurfaceSample candidate = blob.Samples[sampleIndex];
-            if (!IsRasterSurfaceFeature(candidate.SurfaceType, candidate.Flags))
-                continue;
-
-            sample = candidate;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static int DrawRasterSceneOverlayFeatures(
-        MatchHudMinimapProjectionGrid projectionGrid,
-        DynamicBuffer<MapSurfaceSceneOverlay> overlays,
-        Color32[] pixels)
-    {
-        if (!overlays.IsCreated || overlays.Length == 0)
-            return 0;
-
-        Rect projectionRect = new(
-            projectionGrid.Origin.x,
-            projectionGrid.Origin.z,
-            projectionGrid.Width,
-            projectionGrid.Height);
-        int featureCount = 0;
-
-        for (int i = 0; i < overlays.Length; i++)
-        {
-            MapSurfaceSceneOverlay overlay = overlays[i];
-            if (!IsRasterSurfaceFeature(overlay.SurfaceType, overlay.Flags))
-                continue;
-
-            float minX = overlay.Center.x - overlay.HalfExtents.x;
-            float maxX = overlay.Center.x + overlay.HalfExtents.x;
-            float minZ = overlay.Center.z - overlay.HalfExtents.y;
-            float maxZ = overlay.Center.z + overlay.HalfExtents.y;
-            Rect overlayRect = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
-            if (!projectionRect.Overlaps(overlayRect))
-                continue;
-
-            int pixelMinX = Mathf.Clamp(Mathf.FloorToInt(((minX - projectionGrid.Origin.x) / projectionGrid.Width) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-            int pixelMaxX = Mathf.Clamp(Mathf.CeilToInt(((maxX - projectionGrid.Origin.x) / projectionGrid.Width) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-            int pixelMinY = Mathf.Clamp(Mathf.FloorToInt(((minZ - projectionGrid.Origin.z) / projectionGrid.Height) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-            int pixelMaxY = Mathf.Clamp(Mathf.CeilToInt(((maxZ - projectionGrid.Origin.z) / projectionGrid.Height) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
-            Color32 color = ResolveSurfaceRasterColor(overlay.SurfaceType, overlay.Flags);
-            for (int y = pixelMinY; y <= pixelMaxY; y++)
-            {
-                for (int x = pixelMinX; x <= pixelMaxX; x++)
-                    BlendRasterPixel(pixels, x, y, color, 0.58f);
             }
 
+            int pixelX = Mathf.Clamp(Mathf.RoundToInt(normalized.x * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+            int pixelY = Mathf.Clamp(Mathf.RoundToInt(normalized.y * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+            int roadRadius = Mathf.Clamp(Mathf.RoundToInt((CaptureResolution / Mathf.Max(1f, projectionGrid.Height)) * road.CellSize * 1.3f), 1, 4);
+            DrawRasterDot(pixels, pixelX, pixelY, ResolveRoadRasterColor(road.Kind), roadRadius);
             featureCount++;
         }
 
         return featureCount;
     }
 
-    private static bool IsRasterSurfaceFeature(MapSurfaceType surfaceType, MapSurfaceFlags flags)
+    private int DrawRasterSurfaceFeatures(MatchHudMinimapProjectionGrid projectionGrid, Color32[] pixels)
     {
-        return surfaceType == MapSurfaceType.Road ||
-               surfaceType == MapSurfaceType.DirtRoad ||
-               surfaceType == MapSurfaceType.Highway ||
-               surfaceType == MapSurfaceType.BridgeDeck ||
-               surfaceType == MapSurfaceType.Ramp ||
-               surfaceType == MapSurfaceType.Plaza ||
-               surfaceType == MapSurfaceType.Blocked ||
-               (flags & MapSurfaceFlags.Road) != 0 ||
-               (flags & MapSurfaceFlags.Bridge) != 0 ||
-               (flags & MapSurfaceFlags.Ramp) != 0 ||
-               (flags & MapSurfaceFlags.Highway) != 0;
+        _surfaceScratch.Clear();
+        _minimapDataSource?.GetSurfaceFeatures(ToAreaModel(projectionGrid), _surfaceScratch);
+        if (_surfaceScratch.Count == 0)
+            return 0;
+
+        int featureCount = 0;
+        for (int i = 0; i < _surfaceScratch.Count; i++)
+        {
+            MatchHudMinimapSurfaceFeatureModel feature = _surfaceScratch[i];
+            Color32 color = ResolveSurfaceRasterColor(feature.Kind);
+            if (feature.FillArea)
+            {
+                DrawRasterAreaFeature(projectionGrid, feature, color, pixels);
+                featureCount++;
+                continue;
+            }
+
+            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, feature.Center, out Vector2 normalized) ||
+                normalized.x < 0f ||
+                normalized.x > 1f ||
+                normalized.y < 0f ||
+                normalized.y > 1f)
+            {
+                continue;
+            }
+
+            int pixelX = Mathf.Clamp(Mathf.RoundToInt(normalized.x * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+            int pixelY = Mathf.Clamp(Mathf.RoundToInt(normalized.y * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+            int radius = Mathf.Clamp(Mathf.RoundToInt((CaptureResolution / Mathf.Max(1f, projectionGrid.Height)) * feature.CellSize * 1.2f), 1, 3);
+            DrawRasterDot(pixels, pixelX, pixelY, color, radius);
+            featureCount++;
+        }
+
+        return featureCount;
     }
 
-    private static Color32 ResolveSurfaceRasterColor(MapSurfaceType surfaceType, MapSurfaceFlags flags)
+    private static MatchHudMinimapAreaModel ToAreaModel(MatchHudMinimapProjectionGrid projectionGrid)
     {
-        if (surfaceType == MapSurfaceType.Blocked)
-            return RasterBlocked;
-        if ((flags & MapSurfaceFlags.Bridge) != 0 || surfaceType == MapSurfaceType.BridgeDeck)
-            return RasterBridge;
-        if ((flags & MapSurfaceFlags.Ramp) != 0 || surfaceType == MapSurfaceType.Ramp)
-            return RasterRamp;
-        if ((flags & MapSurfaceFlags.Highway) != 0 || surfaceType == MapSurfaceType.Highway)
-            return RasterSidewalk;
-        if (surfaceType == MapSurfaceType.DirtRoad)
-            return RasterDirtRoad;
-        if (surfaceType == MapSurfaceType.Plaza)
-            return RasterPlaza;
-        return RasterRoad;
+        return new MatchHudMinimapAreaModel(projectionGrid.Origin, projectionGrid.Width, projectionGrid.Height);
+    }
+
+    private static void DrawRasterAreaFeature(
+        MatchHudMinimapProjectionGrid projectionGrid,
+        MatchHudMinimapSurfaceFeatureModel feature,
+        Color32 color,
+        Color32[] pixels)
+    {
+        float minX = feature.Center.x - feature.HalfExtents.x;
+        float maxX = feature.Center.x + feature.HalfExtents.x;
+        float minZ = feature.Center.z - feature.HalfExtents.y;
+        float maxZ = feature.Center.z + feature.HalfExtents.y;
+        Rect projectionRect = new(projectionGrid.Origin.x, projectionGrid.Origin.z, projectionGrid.Width, projectionGrid.Height);
+        Rect featureRect = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
+        if (!projectionRect.Overlaps(featureRect))
+            return;
+
+        int pixelMinX = Mathf.Clamp(Mathf.FloorToInt(((minX - projectionGrid.Origin.x) / projectionGrid.Width) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+        int pixelMaxX = Mathf.Clamp(Mathf.CeilToInt(((maxX - projectionGrid.Origin.x) / projectionGrid.Width) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+        int pixelMinY = Mathf.Clamp(Mathf.FloorToInt(((minZ - projectionGrid.Origin.z) / projectionGrid.Height) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+        int pixelMaxY = Mathf.Clamp(Mathf.CeilToInt(((maxZ - projectionGrid.Origin.z) / projectionGrid.Height) * (CaptureResolution - 1)), 0, CaptureResolution - 1);
+        for (int y = pixelMinY; y <= pixelMaxY; y++)
+        {
+            for (int x = pixelMinX; x <= pixelMaxX; x++)
+                BlendRasterPixel(pixels, x, y, color, 0.58f);
+        }
+    }
+
+    private static Color32 ResolveRoadRasterColor(MatchHudMinimapRoadKind kind)
+    {
+        return kind switch
+        {
+            MatchHudMinimapRoadKind.DirtRoad => RasterDirtRoad,
+            MatchHudMinimapRoadKind.Sidewalk => RasterSidewalk,
+            _ => RasterRoad
+        };
+    }
+
+    private static Color32 ResolveSurfaceRasterColor(MatchHudMinimapSurfaceFeatureKind kind)
+    {
+        return kind switch
+        {
+            MatchHudMinimapSurfaceFeatureKind.Blocked => RasterBlocked,
+            MatchHudMinimapSurfaceFeatureKind.Bridge => RasterBridge,
+            MatchHudMinimapSurfaceFeatureKind.Ramp => RasterRamp,
+            MatchHudMinimapSurfaceFeatureKind.Highway => RasterSidewalk,
+            MatchHudMinimapSurfaceFeatureKind.DirtRoad => RasterDirtRoad,
+            MatchHudMinimapSurfaceFeatureKind.Plaza => RasterPlaza,
+            _ => RasterRoad
+        };
     }
 
     private static void DrawRasterDot(Color32[] pixels, int centerX, int centerY, Color32 color, int radius)
@@ -1082,59 +879,6 @@ public sealed class MatchHudMinimapInputSystem
             Object.DestroyImmediate(value);
     }
 
-    private static bool TryGetGridRoadBuffers(
-        out GridConfig grid,
-        out DynamicBuffer<GridRoad> roads,
-        out DynamicBuffer<GridRoadSidewalk> sidewalks,
-        out DynamicBuffer<GridRoadDirt> dirtRoads)
-    {
-        grid = default;
-        roads = default;
-        sidewalks = default;
-        dirtRoads = default;
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return false;
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity gridEntity = query.GetSingletonEntity();
-        grid = em.GetComponentData<GridConfig>(gridEntity);
-        roads = em.GetBuffer<GridRoad>(gridEntity);
-        if (em.HasBuffer<GridRoadSidewalk>(gridEntity))
-            sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
-        if (em.HasBuffer<GridRoadDirt>(gridEntity))
-            dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
-        return true;
-    }
-
-    private static bool TryGetMapSurface(
-        out MapSurfaceComponent surface,
-        out DynamicBuffer<MapSurfaceSceneOverlay> sceneOverlays,
-        out bool hasSceneOverlays)
-    {
-        surface = default;
-        sceneOverlays = default;
-        hasSceneOverlays = false;
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return false;
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        surface = em.GetComponentData<MapSurfaceComponent>(entity);
-        if (em.HasBuffer<MapSurfaceSceneOverlay>(entity))
-        {
-            sceneOverlays = em.GetBuffer<MapSurfaceSceneOverlay>(entity);
-            hasSceneOverlays = sceneOverlays.IsCreated && sceneOverlays.Length > 0;
-        }
-
-        return true;
-    }
-
     private static int ResolveCaptureMask()
     {
         return RemoveUiLayer(~0);
@@ -1149,14 +893,4 @@ public sealed class MatchHudMinimapInputSystem
         return mask;
     }
 
-    private static bool TryGetDefaultEntityManager(out EntityManager em)
-    {
-        em = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        em = world.EntityManager;
-        return true;
-    }
 }

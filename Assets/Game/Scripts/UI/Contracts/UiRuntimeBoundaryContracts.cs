@@ -113,6 +113,122 @@ public interface IMatchHudCameraControl
     void MoveCameraGroundCenterTo(Vector3 worldPosition);
 }
 
+public readonly struct MatchHudMinimapGridModel
+{
+    public readonly Vector3 Origin;
+    public readonly int Width;
+    public readonly int Height;
+    public readonly float CellSize;
+
+    public MatchHudMinimapGridModel(Vector3 origin, int width, int height, float cellSize)
+    {
+        Origin = origin;
+        Width = width;
+        Height = height;
+        CellSize = cellSize;
+    }
+
+    public float WorldWidth => Mathf.Max(0.001f, Width * CellSize);
+    public float WorldHeight => Mathf.Max(0.001f, Height * CellSize);
+    public bool IsValid => Width > 0 && Height > 0 && CellSize > 0f;
+}
+
+public readonly struct MatchHudMinimapAreaModel
+{
+    public readonly Vector3 Origin;
+    public readonly float Width;
+    public readonly float Height;
+
+    public MatchHudMinimapAreaModel(Vector3 origin, float width, float height)
+    {
+        Origin = origin;
+        Width = Mathf.Max(0.001f, width);
+        Height = Mathf.Max(0.001f, height);
+    }
+}
+
+public enum MatchHudMinimapMarkerAllegiance : byte
+{
+    Neutral = 0,
+    Player = 1,
+    Enemy = 2
+}
+
+public readonly struct MatchHudMinimapMarkerModel
+{
+    public readonly Vector3 Position;
+    public readonly MatchHudMinimapMarkerAllegiance Allegiance;
+
+    public MatchHudMinimapMarkerModel(Vector3 position, MatchHudMinimapMarkerAllegiance allegiance)
+    {
+        Position = position;
+        Allegiance = allegiance;
+    }
+}
+
+public enum MatchHudMinimapRoadKind : byte
+{
+    Road = 0,
+    Sidewalk = 1,
+    DirtRoad = 2
+}
+
+public readonly struct MatchHudMinimapRoadCellModel
+{
+    public readonly Vector3 WorldPosition;
+    public readonly float CellSize;
+    public readonly MatchHudMinimapRoadKind Kind;
+
+    public MatchHudMinimapRoadCellModel(Vector3 worldPosition, float cellSize, MatchHudMinimapRoadKind kind)
+    {
+        WorldPosition = worldPosition;
+        CellSize = cellSize;
+        Kind = kind;
+    }
+}
+
+public enum MatchHudMinimapSurfaceFeatureKind : byte
+{
+    Road = 0,
+    DirtRoad = 1,
+    Highway = 2,
+    Bridge = 3,
+    Ramp = 4,
+    Plaza = 5,
+    Blocked = 6
+}
+
+public readonly struct MatchHudMinimapSurfaceFeatureModel
+{
+    public readonly Vector3 Center;
+    public readonly Vector2 HalfExtents;
+    public readonly float CellSize;
+    public readonly MatchHudMinimapSurfaceFeatureKind Kind;
+    public readonly bool FillArea;
+
+    public MatchHudMinimapSurfaceFeatureModel(
+        Vector3 center,
+        Vector2 halfExtents,
+        float cellSize,
+        MatchHudMinimapSurfaceFeatureKind kind,
+        bool fillArea)
+    {
+        Center = center;
+        HalfExtents = halfExtents;
+        CellSize = cellSize;
+        Kind = kind;
+        FillArea = fillArea;
+    }
+}
+
+public interface IMatchHudMinimapDataSource
+{
+    bool TryGetGrid(out MatchHudMinimapGridModel grid);
+    void GetMarkers(List<MatchHudMinimapMarkerModel> markers);
+    void GetRoadCells(MatchHudMinimapAreaModel area, List<MatchHudMinimapRoadCellModel> roadCells);
+    void GetSurfaceFeatures(MatchHudMinimapAreaModel area, List<MatchHudMinimapSurfaceFeatureModel> features);
+}
+
 public enum UiBoardCommandModeDirection : byte
 {
     None = 0,

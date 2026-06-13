@@ -105,6 +105,7 @@ internal sealed class MatchBootstrapSystem
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private IMatchRuntimeState _matchRuntimeState;
     private IMatchHudCameraControl _matchHudCameraControl;
+    private IMatchHudMinimapDataSource _matchHudMinimapDataSource;
     private ISelectionRectangleState _selectionRectangleState;
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
@@ -289,6 +290,7 @@ internal sealed class MatchBootstrapSystem
         SelectionRectangle = null;
         _matchRuntimeState = null;
         _matchHudCameraControl = null;
+        _matchHudMinimapDataSource = null;
         _selectionRectangleState = null;
         BuildingSelectionClick = null;
         BuildingSelectionClickContext = default;
@@ -507,7 +509,7 @@ internal sealed class MatchBootstrapSystem
             MainMenu = new MainMenuPlayUI();
 
         EnsureUiRuntimeBoundaryAdapters();
-        MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, resetRuntimeState);
+        MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState);
         ApplyMainMenuBaseBindings();
         ApplyMainMenuFeatureBindingsIfReady();
         return MainMenu;
@@ -973,7 +975,7 @@ internal sealed class MatchBootstrapSystem
         _managedRuntimeInitialized = true;
         if (MainMenu != null)
         {
-            MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, resetRuntimeState: false);
+            MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState: false);
             ApplyMainMenuBaseBindings();
         }
 
@@ -1003,6 +1005,7 @@ internal sealed class MatchBootstrapSystem
     {
         _matchRuntimeState ??= new MatchRuntimeStateAdapter(_runtimeGameplayStateSystem);
         _matchHudCameraControl = new MatchHudCameraControlAdapter(SelectionUiCamera);
+        _matchHudMinimapDataSource ??= new MatchHudMinimapDataSourceAdapter();
         _selectionRectangleState ??= new SelectionRectangleStateAdapter(_matchRuntimeState);
     }
 

@@ -12,6 +12,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private IMatchRuntimeState _runtimeGameplayStateSystem;
     private ISelectionUiCommand _selectionUiCommandSystem;
     private IMatchHudCameraControl _selectionUiCameraSystem;
+    private IMatchHudMinimapDataSource _minimapDataSource;
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
     private MatchHudRightQuickRailView _matchHudRightQuickRailView;
     private MatchHudMinimapView _matchHudMinimapView;
@@ -28,11 +29,13 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         ISelectionUiCommand selectionUiCommandSystem,
         IMatchRuntimeState runtimeGameplayStateSystem,
         IMatchHudCameraControl selectionUiCameraSystem = null,
+        IMatchHudMinimapDataSource minimapDataSource = null,
         bool resetRuntimeState = true)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
         _selectionUiCameraSystem = selectionUiCameraSystem;
+        _minimapDataSource = minimapDataSource;
 
         if (!resetRuntimeState || _runtimeGameplayStateSystem == null)
             return;
@@ -63,6 +66,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _selectionUiCommandSystem = null;
         _runtimeGameplayStateSystem = null;
         _selectionUiCameraSystem = null;
+        _minimapDataSource = null;
     }
 
     public void Update()
@@ -89,7 +93,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _matchHudMinimapInputSystem.Bind(
             minimapView,
             _runtimeGameplayStateSystem,
-            _selectionUiCameraSystem);
+            _selectionUiCameraSystem,
+            _minimapDataSource);
     }
 
     public void BindMatchHudCommandControls(MatchOverlayCommandControlsView commandControlsView)

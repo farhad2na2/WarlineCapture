@@ -1,4 +1,3 @@
-using Unity.Entities;
 using UnityEngine;
 
 public readonly struct MatchHudMinimapProjectionGrid
@@ -14,12 +13,12 @@ public readonly struct MatchHudMinimapProjectionGrid
         Height = Mathf.Max(0.001f, height);
     }
 
-    public static MatchHudMinimapProjectionGrid FromGridConfig(GridConfig grid)
+    public static MatchHudMinimapProjectionGrid FromGridModel(MatchHudMinimapGridModel grid)
     {
         return new MatchHudMinimapProjectionGrid(
-            new Vector3(grid.Origin.x, grid.Origin.y, grid.Origin.z),
-            Mathf.Max(0.001f, grid.Width * grid.CellSize),
-            Mathf.Max(0.001f, grid.Height * grid.CellSize));
+            grid.Origin,
+            grid.WorldWidth,
+            grid.WorldHeight);
     }
 }
 
@@ -34,41 +33,6 @@ public static class MatchHudMinimapProjectionSystem
         new(1f, 1f, 0f),
         new(0f, 1f, 0f)
     };
-
-    public static bool TryGetGrid(out GridConfig grid)
-    {
-        grid = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        grid = query.GetSingleton<GridConfig>();
-        return true;
-    }
-
-    public static bool TryGetGridRoads(out GridConfig grid, out DynamicBuffer<GridRoad> roads)
-    {
-        grid = default;
-        roads = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity gridEntity = query.GetSingletonEntity();
-        grid = em.GetComponentData<GridConfig>(gridEntity);
-        roads = em.GetBuffer<GridRoad>(gridEntity);
-        return true;
-    }
 
     public static bool TryWorldToNormalized(MatchHudMinimapProjectionGrid grid, Vector3 worldPosition, out Vector2 normalized)
     {
@@ -86,9 +50,9 @@ public static class MatchHudMinimapProjectionSystem
             grid.Origin.z + Mathf.Clamp01(normalized.y) * grid.Height);
     }
 
-    public static Vector3 ClampWorldToGrid(GridConfig fullGridConfig, Vector3 worldPosition)
+    public static Vector3 ClampWorldToGrid(MatchHudMinimapGridModel fullGridConfig, Vector3 worldPosition)
     {
-        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridConfig(fullGridConfig);
+        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridModel(fullGridConfig);
         return new Vector3(
             Mathf.Clamp(worldPosition.x, fullGrid.Origin.x, fullGrid.Origin.x + fullGrid.Width),
             fullGrid.Origin.y,
@@ -168,12 +132,12 @@ public static class MatchHudMinimapProjectionSystem
     }
 
     public static MatchHudMinimapProjectionGrid CreateCameraCenteredGrid(
-        GridConfig fullGridConfig,
+        MatchHudMinimapGridModel fullGridConfig,
         Camera worldCamera,
         float mapAspect)
     {
         mapAspect = Mathf.Max(0.1f, mapAspect);
-        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridConfig(fullGridConfig);
+        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridModel(fullGridConfig);
         if (TryGetCameraGroundBounds(worldCamera, fullGrid, out Vector3 boundsCenter, out Vector2 visibleSize))
         {
             Vector3 centeredOn = TryGetCameraGroundCenter(worldCamera, fullGrid.Origin.y, out Vector3 rayCenter)
@@ -188,12 +152,12 @@ public static class MatchHudMinimapProjectionSystem
     }
 
     public static MatchHudMinimapProjectionGrid CreateCenteredGrid(
-        GridConfig fullGridConfig,
+        MatchHudMinimapGridModel fullGridConfig,
         Vector3 center,
         Vector2 visibleSize,
         float mapAspect)
     {
-        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridConfig(fullGridConfig);
+        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridModel(fullGridConfig);
         mapAspect = Mathf.Max(0.1f, mapAspect);
         float localHeight = Mathf.Max(MinLocalWindowHeight, visibleSize.y * LocalWindowVisibleScale);
         float localWidth = Mathf.Max(localHeight * mapAspect, visibleSize.x * LocalWindowVisibleScale);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -231,6 +232,361 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
     public void MoveCameraGroundCenterTo(Vector3 worldPosition)
     {
         cameraSystem?.MoveCameraGroundCenterTo(worldPosition);
+    }
+}
+
+internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSource
+{
+    public bool TryGetGrid(out MatchHudMinimapGridModel grid)
+    {
+        grid = default;
+        if (!TryGetDefaultEntityManager(out EntityManager em) || !TryGetGridEntity(em, out Entity gridEntity))
+            return false;
+
+        GridConfig gridConfig = em.GetComponentData<GridConfig>(gridEntity);
+        grid = ToModel(gridConfig);
+        return grid.IsValid;
+    }
+
+    public void GetMarkers(List<MatchHudMinimapMarkerModel> markers)
+    {
+        if (markers == null)
+            return;
+
+        markers.Clear();
+        if (!TryGetDefaultEntityManager(out EntityManager em))
+            return;
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return;
+
+        DynamicBuffer<MatchHudMinimapMarkerElement> buffer = em.GetBuffer<MatchHudMinimapMarkerElement>(entities[0], true);
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            MatchHudMinimapMarkerElement marker = buffer[i];
+            markers.Add(new MatchHudMinimapMarkerModel(
+                new Vector3(marker.Position.x, marker.Position.y, marker.Position.z),
+                ResolveMarkerAllegiance(marker.FactionId)));
+        }
+    }
+
+    public void GetRoadCells(MatchHudMinimapAreaModel area, List<MatchHudMinimapRoadCellModel> roadCells)
+    {
+        if (roadCells == null)
+            return;
+
+        roadCells.Clear();
+        if (!TryGetDefaultEntityManager(out EntityManager em) || !TryGetGridRoadBuffers(
+                em,
+                out GridConfig grid,
+                out DynamicBuffer<GridRoad> roads,
+                out DynamicBuffer<GridRoadSidewalk> sidewalks,
+                out DynamicBuffer<GridRoadDirt> dirtRoads))
+        {
+            return;
+        }
+
+        int width = grid.Width;
+        int height = grid.Height;
+        if (width <= 0 || height <= 0 || grid.CellSize <= 0f)
+            return;
+
+        int minX = math.clamp((int)math.floor((area.Origin.x - grid.Origin.x) / grid.CellSize) - 2, 0, width - 1);
+        int maxX = math.clamp((int)math.ceil((area.Origin.x + area.Width - grid.Origin.x) / grid.CellSize) + 2, 0, width - 1);
+        int minY = math.clamp((int)math.floor((area.Origin.z - grid.Origin.z) / grid.CellSize) - 2, 0, height - 1);
+        int maxY = math.clamp((int)math.ceil((area.Origin.z + area.Height - grid.Origin.z) / grid.CellSize) + 2, 0, height - 1);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            int rowOffset = y * width;
+            for (int x = minX; x <= maxX; x++)
+            {
+                int index = rowOffset + x;
+                if ((uint)index >= (uint)roads.Length || roads[index].Value == 0)
+                    continue;
+
+                MatchHudMinimapRoadKind kind = MatchHudMinimapRoadKind.Road;
+                if (dirtRoads.IsCreated && index < dirtRoads.Length && dirtRoads[index].Value != 0)
+                    kind = MatchHudMinimapRoadKind.DirtRoad;
+                else if (sidewalks.IsCreated && index < sidewalks.Length && sidewalks[index].Value != 0)
+                    kind = MatchHudMinimapRoadKind.Sidewalk;
+
+                roadCells.Add(new MatchHudMinimapRoadCellModel(
+                    new Vector3(
+                        grid.Origin.x + (x + 0.5f) * grid.CellSize,
+                        grid.Origin.y,
+                        grid.Origin.z + (y + 0.5f) * grid.CellSize),
+                    grid.CellSize,
+                    kind));
+            }
+        }
+    }
+
+    public void GetSurfaceFeatures(MatchHudMinimapAreaModel area, List<MatchHudMinimapSurfaceFeatureModel> features)
+    {
+        if (features == null)
+            return;
+
+        features.Clear();
+        if (!TryGetDefaultEntityManager(out EntityManager em) ||
+            !TryGetMapSurface(em, out MapSurfaceComponent surface, out DynamicBuffer<MapSurfaceSceneOverlay> sceneOverlays, out bool hasSceneOverlays))
+        {
+            return;
+        }
+
+        AppendSurfaceBlobFeatures(area, surface, features);
+        if (hasSceneOverlays)
+            AppendSceneOverlayFeatures(area, sceneOverlays, features);
+    }
+
+    private static MatchHudMinimapGridModel ToModel(GridConfig grid)
+    {
+        return new MatchHudMinimapGridModel(
+            new Vector3(grid.Origin.x, grid.Origin.y, grid.Origin.z),
+            grid.Width,
+            grid.Height,
+            grid.CellSize);
+    }
+
+    private static bool TryGetDefaultEntityManager(out EntityManager em)
+    {
+        em = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        em = world.EntityManager;
+        return true;
+    }
+
+    private static bool TryGetGridEntity(EntityManager em, out Entity gridEntity)
+    {
+        gridEntity = Entity.Null;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return false;
+
+        gridEntity = entities[0];
+        return true;
+    }
+
+    private static bool TryGetGridRoadBuffers(
+        EntityManager em,
+        out GridConfig grid,
+        out DynamicBuffer<GridRoad> roads,
+        out DynamicBuffer<GridRoadSidewalk> sidewalks,
+        out DynamicBuffer<GridRoadDirt> dirtRoads)
+    {
+        grid = default;
+        roads = default;
+        sidewalks = default;
+        dirtRoads = default;
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return false;
+
+        Entity gridEntity = entities[0];
+        grid = em.GetComponentData<GridConfig>(gridEntity);
+        roads = em.GetBuffer<GridRoad>(gridEntity, true);
+        if (em.HasBuffer<GridRoadSidewalk>(gridEntity))
+            sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity, true);
+        if (em.HasBuffer<GridRoadDirt>(gridEntity))
+            dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity, true);
+        return true;
+    }
+
+    private static bool TryGetMapSurface(
+        EntityManager em,
+        out MapSurfaceComponent surface,
+        out DynamicBuffer<MapSurfaceSceneOverlay> sceneOverlays,
+        out bool hasSceneOverlays)
+    {
+        surface = default;
+        sceneOverlays = default;
+        hasSceneOverlays = false;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return false;
+
+        Entity entity = entities[0];
+        surface = em.GetComponentData<MapSurfaceComponent>(entity);
+        if (em.HasBuffer<MapSurfaceSceneOverlay>(entity))
+        {
+            sceneOverlays = em.GetBuffer<MapSurfaceSceneOverlay>(entity, true);
+            hasSceneOverlays = sceneOverlays.IsCreated && sceneOverlays.Length > 0;
+        }
+
+        return true;
+    }
+
+    private static void AppendSurfaceBlobFeatures(
+        MatchHudMinimapAreaModel area,
+        MapSurfaceComponent surface,
+        List<MatchHudMinimapSurfaceFeatureModel> features)
+    {
+        if (surface.HasSurfaceData == 0 ||
+            !surface.SurfaceBlob.IsCreated ||
+            surface.CellSize <= 0f ||
+            surface.Dimensions.x <= 0 ||
+            surface.Dimensions.y <= 0)
+        {
+            return;
+        }
+
+        ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+        int minX = math.clamp((int)math.floor((area.Origin.x - surface.GridOrigin.x) / surface.CellSize) - 2, 0, surface.Dimensions.x - 1);
+        int maxX = math.clamp((int)math.ceil((area.Origin.x + area.Width - surface.GridOrigin.x) / surface.CellSize) + 2, 0, surface.Dimensions.x - 1);
+        int minY = math.clamp((int)math.floor((area.Origin.z - surface.GridOrigin.z) / surface.CellSize) - 2, 0, surface.Dimensions.y - 1);
+        int maxY = math.clamp((int)math.ceil((area.Origin.z + area.Height - surface.GridOrigin.z) / surface.CellSize) + 2, 0, surface.Dimensions.y - 1);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            int rowOffset = y * surface.Dimensions.x;
+            for (int x = minX; x <= maxX; x++)
+            {
+                int index = rowOffset + x;
+                if ((uint)index >= (uint)blob.Cells.Length)
+                    continue;
+
+                MapSurfaceCell cell = blob.Cells[index];
+                if (cell.SurfaceCount == 0 ||
+                    !TryResolveRasterSurfaceSample(ref blob, cell, out MapSurfaceSample sample) ||
+                    !TryResolveSurfaceFeatureKind(sample.SurfaceType, sample.Flags, out MatchHudMinimapSurfaceFeatureKind kind))
+                {
+                    continue;
+                }
+
+                features.Add(new MatchHudMinimapSurfaceFeatureModel(
+                    new Vector3(
+                        surface.GridOrigin.x + (x + 0.5f) * surface.CellSize,
+                        surface.GridOrigin.y,
+                        surface.GridOrigin.z + (y + 0.5f) * surface.CellSize),
+                    new Vector2(surface.CellSize * 0.5f, surface.CellSize * 0.5f),
+                    surface.CellSize,
+                    kind,
+                    fillArea: false));
+            }
+        }
+    }
+
+    private static bool TryResolveRasterSurfaceSample(ref MapSurfaceBlob blob, MapSurfaceCell cell, out MapSurfaceSample sample)
+    {
+        sample = default;
+        for (int i = 0; i < cell.SurfaceCount; i++)
+        {
+            int sampleIndex = cell.FirstSurfaceIndex + i;
+            if ((uint)sampleIndex >= (uint)blob.Samples.Length)
+                continue;
+
+            MapSurfaceSample candidate = blob.Samples[sampleIndex];
+            if (!TryResolveSurfaceFeatureKind(candidate.SurfaceType, candidate.Flags, out _))
+                continue;
+
+            sample = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void AppendSceneOverlayFeatures(
+        MatchHudMinimapAreaModel area,
+        DynamicBuffer<MapSurfaceSceneOverlay> overlays,
+        List<MatchHudMinimapSurfaceFeatureModel> features)
+    {
+        if (!overlays.IsCreated || overlays.Length == 0)
+            return;
+
+        Rect projectionRect = new(area.Origin.x, area.Origin.z, area.Width, area.Height);
+        for (int i = 0; i < overlays.Length; i++)
+        {
+            MapSurfaceSceneOverlay overlay = overlays[i];
+            if (!TryResolveSurfaceFeatureKind(overlay.SurfaceType, overlay.Flags, out MatchHudMinimapSurfaceFeatureKind kind))
+                continue;
+
+            float minX = overlay.Center.x - overlay.HalfExtents.x;
+            float maxX = overlay.Center.x + overlay.HalfExtents.x;
+            float minZ = overlay.Center.z - overlay.HalfExtents.y;
+            float maxZ = overlay.Center.z + overlay.HalfExtents.y;
+            Rect overlayRect = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
+            if (!projectionRect.Overlaps(overlayRect))
+                continue;
+
+            features.Add(new MatchHudMinimapSurfaceFeatureModel(
+                new Vector3(overlay.Center.x, overlay.Center.y, overlay.Center.z),
+                new Vector2(overlay.HalfExtents.x, overlay.HalfExtents.y),
+                math.max(1f, math.max(overlay.HalfExtents.x, overlay.HalfExtents.y) * 2f),
+                kind,
+                fillArea: true));
+        }
+    }
+
+    private static bool TryResolveSurfaceFeatureKind(
+        MapSurfaceType surfaceType,
+        MapSurfaceFlags flags,
+        out MatchHudMinimapSurfaceFeatureKind kind)
+    {
+        if (surfaceType == MapSurfaceType.Blocked)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Blocked;
+            return true;
+        }
+
+        if ((flags & MapSurfaceFlags.Bridge) != 0 || surfaceType == MapSurfaceType.BridgeDeck)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Bridge;
+            return true;
+        }
+
+        if ((flags & MapSurfaceFlags.Ramp) != 0 || surfaceType == MapSurfaceType.Ramp)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Ramp;
+            return true;
+        }
+
+        if ((flags & MapSurfaceFlags.Highway) != 0 || surfaceType == MapSurfaceType.Highway)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Highway;
+            return true;
+        }
+
+        if (surfaceType == MapSurfaceType.DirtRoad)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.DirtRoad;
+            return true;
+        }
+
+        if (surfaceType == MapSurfaceType.Plaza)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Plaza;
+            return true;
+        }
+
+        if (surfaceType == MapSurfaceType.Road || (flags & MapSurfaceFlags.Road) != 0)
+        {
+            kind = MatchHudMinimapSurfaceFeatureKind.Road;
+            return true;
+        }
+
+        kind = default;
+        return false;
+    }
+
+    private static MatchHudMinimapMarkerAllegiance ResolveMarkerAllegiance(byte factionId)
+    {
+        if (FactionIdentitySystem.IsPlayerControlled(factionId))
+            return MatchHudMinimapMarkerAllegiance.Player;
+        if (FactionIdentitySystem.IsHostileToPlayer(factionId))
+            return MatchHudMinimapMarkerAllegiance.Enemy;
+        return MatchHudMinimapMarkerAllegiance.Neutral;
     }
 }
 

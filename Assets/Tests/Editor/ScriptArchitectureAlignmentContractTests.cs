@@ -112,12 +112,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.ConfigsAssemblyMustNotReferenceUiContractsAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
+            tests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly();
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=21");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=22");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -228,6 +229,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
             "`Game.UI.Runtime` must not reference `Game.Authoring`. Composition can inject UI catalog metadata derived from authoring components.");
+    }
+
+    [Test]
+    public void UiRuntimeAssemblyMustNotReferenceComponentsAssembly()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Components\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Game.Components`. Composition owns ECS component reads and maps them into UI contracts.");
     }
 
     [Test]

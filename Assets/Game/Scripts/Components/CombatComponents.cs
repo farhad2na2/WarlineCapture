@@ -175,6 +175,22 @@ public sealed class UnitMuzzleFlashVfxReference : IComponentData
     public float ForwardOffset;
 }
 
+public enum UnitAttackVfxRequestKind : byte
+{
+    None = 0,
+    MuzzleFlash = 1,
+    Impact = 2
+}
+
+public struct UnitAttackVfxRequest : IComponentData
+{
+    public byte Kind;
+    public Entity Source;
+    public Entity Target;
+    public float3 SourcePosition;
+    public float3 TargetPosition;
+}
+
 public enum GroundMissileLauncherPhase : byte
 {
     Idle = 0,

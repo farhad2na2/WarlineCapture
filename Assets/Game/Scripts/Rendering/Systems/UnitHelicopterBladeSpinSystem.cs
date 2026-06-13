@@ -1,7 +1,10 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
 using Unity.Rendering;
 using UnityEngine;
 
@@ -10,30 +13,65 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
 {
     private const float FlyingHeightEpsilon = 0.25f;
     private static bool s_DiagnosticLogged;
+    private BufferLookup<UnitHelicopterBladeReference> _bladeLookup;
+    private BufferLookup<Child> _childLookup;
+    private ComponentLookup<UnitModelInstanceReference> _modelLookup;
+    private ComponentLookup<UnitDetailedVisualReference> _detailLookup;
+    private ComponentLookup<UnitMidLodInstanceReference> _midLookup;
+    private ComponentLookup<UnitLowLodInstanceReference> _lowLookup;
+    private ComponentLookup<UnitSourcePrefabKey> _sourceLookup;
+    private ComponentLookup<UnitDisplayInfo> _displayLookup;
+    private ComponentLookup<UnitRenderVisualComponent> _visualStateLookup;
+    private ComponentLookup<UnitAirMovement> _airLookup;
+    private ComponentLookup<UnitAirComponent> _airStateLookup;
+    private ComponentLookup<LocalTransform> _transformLookup;
 
     public void OnCreate(ref SystemState state)
     {
         s_DiagnosticLogged = false;
+        _bladeLookup = state.GetBufferLookup<UnitHelicopterBladeReference>(true);
+        _childLookup = state.GetBufferLookup<Child>(true);
+        _modelLookup = state.GetComponentLookup<UnitModelInstanceReference>(true);
+        _detailLookup = state.GetComponentLookup<UnitDetailedVisualReference>(true);
+        _midLookup = state.GetComponentLookup<UnitMidLodInstanceReference>(true);
+        _lowLookup = state.GetComponentLookup<UnitLowLodInstanceReference>(true);
+        _sourceLookup = state.GetComponentLookup<UnitSourcePrefabKey>(true);
+        _displayLookup = state.GetComponentLookup<UnitDisplayInfo>(true);
+        _visualStateLookup = state.GetComponentLookup<UnitRenderVisualComponent>(true);
+        _airLookup = state.GetComponentLookup<UnitAirMovement>(true);
+        _airStateLookup = state.GetComponentLookup<UnitAirComponent>(true);
+        _transformLookup = state.GetComponentLookup<LocalTransform>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        _bladeLookup.Update(ref state);
+        _childLookup.Update(ref state);
+        _modelLookup.Update(ref state);
+        _detailLookup.Update(ref state);
+        _midLookup.Update(ref state);
+        _lowLookup.Update(ref state);
+        _sourceLookup.Update(ref state);
+        _displayLookup.Update(ref state);
+        _visualStateLookup.Update(ref state);
+        _airLookup.Update(ref state);
+        _airStateLookup.Update(ref state);
+        _transformLookup.Update(ref state);
+
         var em = state.EntityManager;
         float radians = math.radians(1440f) * SystemAPI.Time.DeltaTime;
-        var bladeLookup = SystemAPI.GetBufferLookup<UnitHelicopterBladeReference>(true);
-        var childLookup = SystemAPI.GetBufferLookup<Child>(true);
-        var modelLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
-        var detailLookup = SystemAPI.GetComponentLookup<UnitDetailedVisualReference>(true);
-        var midLookup = SystemAPI.GetComponentLookup<UnitMidLodInstanceReference>(true);
-        var lowLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
-        var sourceLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
-        var displayLookup = SystemAPI.GetComponentLookup<UnitDisplayInfo>(true);
-        var visualStateLookup = SystemAPI.GetComponentLookup<UnitRenderVisualComponent>(true);
-        var airLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
-        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirComponent>(true);
-        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
         bool shouldLogDiagnostics = SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
                                     SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+
+        JobHandle bakedBladeHandle = new RotateBakedBladeReferencesJob
+        {
+            Radians = radians,
+            BladeLookup = _bladeLookup,
+            TransformLookup = _transformLookup
+        }.Schedule(state.Dependency);
+        bakedBladeHandle.Complete();
+        state.Dependency = bakedBladeHandle;
+
         using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
         foreach (var (_, entity) in SystemAPI
@@ -42,29 +80,29 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                      .WithEntityAccess()
                      )
         {
-            bool shouldSpin = ShouldSpinBlades(entity, transformLookup, airStateLookup);
+            bool shouldSpin = ShouldSpinBlades(entity, _transformLookup, _airStateLookup);
             if (!shouldSpin)
             {
                 if (shouldLogDiagnostics &&
                     !s_DiagnosticLogged &&
-                    IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+                    IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
                 {
                     s_DiagnosticLogged = true;
                     LogHelicopterBladeDiagnostic(
                         em,
-                        childLookup,
+                        _childLookup,
                         entity,
-                        bladeLookup,
-                        detailLookup,
-                        modelLookup,
-                        midLookup,
-                        lowLookup,
-                        sourceLookup,
-                        displayLookup,
-                        visualStateLookup,
-                        airLookup,
-                        airStateLookup,
-                        transformLookup,
+                        _bladeLookup,
+                        _detailLookup,
+                        _modelLookup,
+                        _midLookup,
+                        _lowLookup,
+                        _sourceLookup,
+                        _displayLookup,
+                        _visualStateLookup,
+                        _airLookup,
+                        _airStateLookup,
+                        _transformLookup,
                         false,
                         0,
                         0,
@@ -79,37 +117,34 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
 
             int detailRotated = 0;
             int modelRotated = 0;
-            int bakedRotated = 0;
+            int bakedRotated = MarkBakedBlades(_bladeLookup, entity, rotatedBlades);
 
-            if (detailLookup.HasComponent(entity))
-                detailRotated = RotateBladeDescendants(em, childLookup, detailLookup[entity].Root, radians, rotatedBlades);
+            if (_detailLookup.HasComponent(entity))
+                detailRotated = RotateBladeDescendants(em, _childLookup, _detailLookup[entity].Root, radians, rotatedBlades);
 
-            if (modelLookup.HasComponent(entity))
-                modelRotated = RotateBladeDescendants(em, childLookup, modelLookup[entity].Instance, radians, rotatedBlades);
-
-            if (bladeLookup.HasBuffer(entity))
-                bakedRotated = RotateBakedBlades(em, bladeLookup[entity], radians, rotatedBlades);
+            if (_modelLookup.HasComponent(entity))
+                modelRotated = RotateBladeDescendants(em, _childLookup, _modelLookup[entity].Instance, radians, rotatedBlades);
 
             if (shouldLogDiagnostics &&
                 !s_DiagnosticLogged &&
-                IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+                IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
             {
                 s_DiagnosticLogged = true;
                 LogHelicopterBladeDiagnostic(
                     em,
-                    childLookup,
+                    _childLookup,
                     entity,
-                    bladeLookup,
-                    detailLookup,
-                    modelLookup,
-                    midLookup,
-                    lowLookup,
-                    sourceLookup,
-                    displayLookup,
-                    visualStateLookup,
-                    airLookup,
-                    airStateLookup,
-                    transformLookup,
+                    _bladeLookup,
+                    _detailLookup,
+                    _modelLookup,
+                    _midLookup,
+                    _lowLookup,
+                    _sourceLookup,
+                    _displayLookup,
+                    _visualStateLookup,
+                    _airLookup,
+                    _airStateLookup,
+                    _transformLookup,
                     true,
                     detailRotated,
                     modelRotated,
@@ -132,19 +167,19 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                 s_DiagnosticLogged = true;
                 LogHelicopterBladeDiagnostic(
                     em,
-                    childLookup,
+                    _childLookup,
                     entity,
-                    bladeLookup,
-                    detailLookup,
-                    modelLookup,
-                    midLookup,
-                    lowLookup,
-                    sourceLookup,
-                    displayLookup,
-                    visualStateLookup,
-                    airLookup,
-                    airStateLookup,
-                    transformLookup,
+                    _bladeLookup,
+                    _detailLookup,
+                    _modelLookup,
+                    _midLookup,
+                    _lowLookup,
+                    _sourceLookup,
+                    _displayLookup,
+                    _visualStateLookup,
+                    _airLookup,
+                    _airStateLookup,
+                    _transformLookup,
                     false,
                     0,
                     0,
@@ -177,30 +212,24 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         return transformLookup[entity].Position.y > airState.HomePosition.y + FlyingHeightEpsilon;
     }
 
-    private static int RotateBakedBlades(
-        EntityManager em,
-        DynamicBuffer<UnitHelicopterBladeReference> blades,
-        float radians,
+    private static int MarkBakedBlades(
+        BufferLookup<UnitHelicopterBladeReference> bladeLookup,
+        Entity entity,
         NativeHashSet<Entity> rotatedBlades)
     {
-        int spunCount = 0;
+        if (!bladeLookup.HasBuffer(entity))
+            return 0;
+
+        DynamicBuffer<UnitHelicopterBladeReference> blades = bladeLookup[entity];
+        int markedCount = 0;
         for (int i = 0; i < blades.Length; i++)
         {
             UnitHelicopterBladeReference bladeRef = blades[i];
-            if (!em.Exists(bladeRef.Blade) ||
-                !em.HasComponent<LocalTransform>(bladeRef.Blade) ||
-                !rotatedBlades.Add(bladeRef.Blade))
-            {
-                continue;
-            }
-
-            LocalTransform transform = em.GetComponentData<LocalTransform>(bladeRef.Blade);
-            transform.Rotation = math.mul(transform.Rotation, CreateBladeDeltaRotation(bladeRef.Axis, radians));
-            em.SetComponentData(bladeRef.Blade, transform);
-            spunCount++;
+            if (rotatedBlades.Add(bladeRef.Blade))
+                markedCount++;
         }
 
-        return spunCount;
+        return markedCount;
     }
 
     private static int RotateBladeDescendants(
@@ -412,5 +441,47 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
     private static string FormatEntity(Entity entity)
     {
         return $"{entity.Index}:{entity.Version}";
+    }
+
+    [BurstCompile]
+    [WithNone(typeof(UnitDeathAnimationComponent))]
+    private partial struct RotateBakedBladeReferencesJob : IJobEntity
+    {
+        public float Radians;
+        [ReadOnly] public BufferLookup<UnitHelicopterBladeReference> BladeLookup;
+        [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> TransformLookup;
+
+        private void Execute(Entity entity, in UnitAirMovement airMovement, in UnitAirComponent airState)
+        {
+            if (!BladeLookup.HasBuffer(entity) || !ShouldSpinBlades(entity, airState))
+                return;
+
+            DynamicBuffer<UnitHelicopterBladeReference> blades = BladeLookup[entity];
+            for (int i = 0; i < blades.Length; i++)
+            {
+                UnitHelicopterBladeReference bladeRef = blades[i];
+                if (!TransformLookup.HasComponent(bladeRef.Blade))
+                    continue;
+
+                LocalTransform transform = TransformLookup[bladeRef.Blade];
+                transform.Rotation = math.mul(transform.Rotation, CreateBladeDeltaRotation(bladeRef.Axis, Radians));
+                TransformLookup[bladeRef.Blade] = transform;
+            }
+        }
+
+        private bool ShouldSpinBlades(Entity entity, in UnitAirComponent airState)
+        {
+            if (airState.Airborne != 0 ||
+                airState.TakeoffRolling != 0 ||
+                airState.LandingRolling != 0)
+            {
+                return true;
+            }
+
+            if (airState.HomeInitialized == 0 || !TransformLookup.HasComponent(entity))
+                return false;
+
+            return TransformLookup[entity].Position.y > airState.HomePosition.y + FlyingHeightEpsilon;
+        }
     }
 }

@@ -1,5 +1,7 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -28,6 +30,55 @@ public partial struct UnitAttackSystem : ISystem
         public int2 AttackerCell;
         public float3 AttackerPosition;
         public byte ShowImpactVfx; // only shots that showed a tracer trigger impact VFX
+    }
+
+    private enum StandardAttackPlanKind : byte
+    {
+        None = 0,
+        ClearTarget = 1,
+        Windup = 2,
+        Shot = 3
+    }
+
+    private struct StandardAttackCandidate
+    {
+        public Entity Attacker;
+        public Entity Target;
+        public EngageTarget Engage;
+        public UnitAttackCooldownComponent AttackState;
+        public UnitAttackTraceComponent TraceState;
+        public UnitAttackAnimationComponent AttackAnimationState;
+        public UnitAttack Attack;
+        public int SelfHealth;
+        public int TargetHealth;
+        public float3 AttackerPosition;
+        public float3 TargetPosition;
+        public int2 AttackerCell;
+        public int2 TargetCell;
+        public float SelfCombatRadius;
+        public float TargetCombatRadius;
+        public float AttackAnimationSeconds;
+        public byte TargetExists;
+        public byte TargetHasHealth;
+        public byte TargetHasTransform;
+        public byte TargetIsStaticGridBlocker;
+        public byte IsDebugFireTarget;
+        public byte HasAnimationOrder;
+    }
+
+    private struct StandardAttackPlan
+    {
+        public StandardAttackPlanKind Kind;
+        public UnitAttackCooldownComponent BaseAttackState;
+        public UnitAttackTraceComponent BaseTraceState;
+        public UnitAttackAnimationComponent BaseAttackAnimationState;
+        public UnitAttackCooldownComponent AttackState;
+        public UnitAttackTraceComponent TraceState;
+        public UnitAttackAnimationComponent AttackAnimationState;
+        public EngageTarget Engage;
+        public int Damage;
+        public int2 AttackerCell;
+        public byte ShowTracer;
     }
 
     private NativeParallelHashMap<Entity, int> _predictedHealth;
@@ -64,6 +115,7 @@ public partial struct UnitAttackSystem : ISystem
             _aggregatedEffects = new NativeParallelHashMap<Entity, AggregatedTargetEffect>(InitialAttackScratchCapacity, Allocator.Persistent);
         _predictedHealth.Clear();
         _aggregatedEffects.Clear();
+        using NativeList<StandardAttackCandidate> standardAttackCandidates = new(InitialAttackScratchCapacity, Allocator.TempJob);
         foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
                      .Query<RefRW<EngageTarget>, RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>, RefRW<UnitAttackAnimationComponent>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
                      .WithNone<StaticGridBlocker>()
@@ -87,6 +139,48 @@ public partial struct UnitAttackSystem : ISystem
                 {
                     AttackAnimationSeconds = 0.25f
                 };
+
+            if (!em.HasComponent<GroundMissileLauncherComponent>(entity))
+            {
+                Entity target = engageRw.Target;
+                bool hasTarget = target != Entity.Null;
+                bool targetExists = hasTarget && em.Exists(target);
+                bool targetHasHealth = targetExists && em.HasComponent<UnitHealth>(target);
+                bool targetHasTransform = targetExists && em.HasComponent<LocalTransform>(target);
+                bool targetIsStaticGridBlocker = targetExists && em.HasComponent<StaticGridBlocker>(target);
+                bool standardIsDebugFireTarget = targetExists && IsDebugFireTargetForSource(em, target, entity);
+
+                standardAttackCandidates.Add(new StandardAttackCandidate
+                {
+                    Attacker = entity,
+                    Target = target,
+                    Engage = engageRw,
+                    AttackState = stateRw,
+                    TraceState = traceRw,
+                    AttackAnimationState = attackAnimRw,
+                    Attack = attackRo,
+                    SelfHealth = selfHealth.ValueRO.Current,
+                    TargetHealth = targetHasHealth ? em.GetComponentData<UnitHealth>(target).Current : 0,
+                    AttackerPosition = selfTransform.ValueRO.Position,
+                    TargetPosition = targetHasTransform ? em.GetComponentData<LocalTransform>(target).Position : float3.zero,
+                    AttackerCell = GridUtils.WorldToCell(grid, selfTransform.ValueRO.Position),
+                    TargetCell = engageRw.Cell,
+                    SelfCombatRadius = footprintLookup.HasComponent(entity)
+                        ? GetCombatRadius(footprintLookup[entity].Size, grid.CellSize)
+                        : 0f,
+                    TargetCombatRadius = targetExists && footprintLookup.HasComponent(target)
+                        ? GetCombatRadius(footprintLookup[target].Size, grid.CellSize)
+                        : 0f,
+                    AttackAnimationSeconds = animationSettingsRo.AttackAnimationSeconds,
+                    TargetExists = (byte)(targetExists ? 1 : 0),
+                    TargetHasHealth = (byte)(targetHasHealth ? 1 : 0),
+                    TargetHasTransform = (byte)(targetHasTransform ? 1 : 0),
+                    TargetIsStaticGridBlocker = (byte)(targetIsStaticGridBlocker ? 1 : 0),
+                    IsDebugFireTarget = (byte)(standardIsDebugFireTarget ? 1 : 0),
+                    HasAnimationOrder = (byte)(em.HasBuffer<UnitAnimationOrderEntry>(entity) ? 1 : 0)
+                });
+                continue;
+            }
 
             stateRw.CooldownRemaining -= dt;
             traceRw.TimeRemaining = math.max(0f, traceRw.TimeRemaining - dt);
@@ -184,7 +278,15 @@ public partial struct UnitAttackSystem : ISystem
             // Muzzle flash only on shots that show a tracer, so flash, tracer,
             // and impact always appear together as one visible shot.
             if (tracerShown)
-                PlayMuzzleFlash(em, entity, engageRw.Target, selfTransform.ValueRO);
+            {
+                EnqueueAttackVfxRequest(
+                    ecb,
+                    UnitAttackVfxRequestKind.MuzzleFlash,
+                    entity,
+                    engageRw.Target,
+                    selfTransform.ValueRO.Position,
+                    em.GetComponentData<LocalTransform>(engageRw.Target).Position);
+            }
             if (attackRo.Damage <= 0)
                 continue;
 
@@ -211,6 +313,8 @@ public partial struct UnitAttackSystem : ISystem
                 });
             }
         }
+
+        ProcessStandardAttackPlans(em, ecb, grid, dt, standardAttackCandidates);
 
         foreach (var pair in _aggregatedEffects)
         {
@@ -251,19 +355,15 @@ public partial struct UnitAttackSystem : ISystem
                 TryIssueFleeOrder(em, ecb, grid, pending.AttackerPosition, target);
             }
 
-            if (pending.ShowImpactVfx != 0 && em.HasComponent<UnitAttackImpactVfxReference>(pending.Attacker) && em.HasComponent<LocalTransform>(target))
+            if (pending.ShowImpactVfx != 0 && em.HasComponent<LocalTransform>(target))
             {
-                UnitAttackImpactVfxReference impactVfx = em.GetComponentObject<UnitAttackImpactVfxReference>(pending.Attacker);
-                if (impactVfx?.Prefab != null)
-                {
-                    float3 targetPosition = em.GetComponentData<LocalTransform>(target).Position;
-                    float3 toAttacker = pending.AttackerPosition - targetPosition;
-                    toAttacker.y = 0f;
-                    Quaternion impactRotation = math.lengthsq(toAttacker) > 1e-4f
-                        ? Quaternion.LookRotation(toAttacker)
-                        : Quaternion.identity;
-                    UnitAttackImpactVfxRuntime.Play(impactVfx.Prefab, targetPosition, impactRotation);
-                }
+                EnqueueAttackVfxRequest(
+                    ecb,
+                    UnitAttackVfxRequestKind.Impact,
+                    pending.Attacker,
+                    target,
+                    pending.AttackerPosition,
+                    em.GetComponentData<LocalTransform>(target).Position);
             }
 
             if (em.HasComponent<RecentDamageHealthBarVisibility>(target))
@@ -286,38 +386,207 @@ public partial struct UnitAttackSystem : ISystem
         ecb.Dispose();
     }
 
-    private static void PlayMuzzleFlash(EntityManager em, Entity attacker, Entity target, LocalTransform attackerTransform)
+    private void ProcessStandardAttackPlans(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        GridConfig grid,
+        float dt,
+        NativeList<StandardAttackCandidate> candidates)
     {
-        if (!em.HasComponent<UnitMuzzleFlashVfxReference>(attacker))
+        if (candidates.Length == 0)
             return;
 
-        UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentObject<UnitMuzzleFlashVfxReference>(attacker);
-        if (muzzleVfx?.Prefab == null)
-            return;
-
-        float3 muzzlePosition = attackerTransform.Position;
-        if (em.HasComponent<UnitTurretReference>(attacker))
+        using NativeArray<StandardAttackPlan> plans = new(candidates.Length, Allocator.TempJob);
+        new PlanStandardAttacksJob
         {
-            UnitTurretReference turretRef = em.GetComponentData<UnitTurretReference>(attacker);
-            if (em.Exists(turretRef.Turret) && em.HasComponent<LocalToWorld>(turretRef.Turret))
-                muzzlePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
-        }
+            Candidates = candidates.AsArray(),
+            Plans = plans,
+            DeltaTime = dt,
+            CellSize = grid.CellSize
+        }.Schedule(candidates.Length, 64).Complete();
 
-        muzzlePosition.y += math.max(0f, muzzleVfx.HeightOffset);
-
-        Quaternion rotation = attackerTransform.Rotation;
-        if (target != Entity.Null && em.Exists(target) && em.HasComponent<LocalTransform>(target))
+        for (int i = 0; i < plans.Length; i++)
         {
-            float3 toTarget = em.GetComponentData<LocalTransform>(target).Position - attackerTransform.Position;
-            toTarget.y = 0f;
-            if (math.lengthsq(toTarget) > 1e-4f)
-                rotation = Quaternion.LookRotation(toTarget);
+            StandardAttackCandidate candidate = candidates[i];
+            StandardAttackPlan plan = plans[i];
+            if (!em.Exists(candidate.Attacker))
+                continue;
+
+            if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.BaseAttackState);
+            if (em.HasComponent<UnitAttackTraceComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.BaseTraceState);
+            if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.BaseAttackAnimationState);
+
+            if (plan.Kind == StandardAttackPlanKind.ClearTarget)
+            {
+                if (em.HasComponent<EngageTarget>(candidate.Attacker))
+                    em.SetComponentData(candidate.Attacker, plan.Engage);
+                continue;
+            }
+
+            if (plan.Kind == StandardAttackPlanKind.None)
+                continue;
+
+            if (plan.Kind == StandardAttackPlanKind.Windup)
+            {
+                if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
+                    em.SetComponentData(candidate.Attacker, plan.AttackState);
+                if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
+                    em.SetComponentData(candidate.Attacker, plan.AttackAnimationState);
+                continue;
+            }
+
+            int targetPredictedHealth = _predictedHealth.TryGetValue(candidate.Target, out int existingPredictedHealth)
+                ? existingPredictedHealth
+                : candidate.TargetHealth;
+            if (targetPredictedHealth <= 0)
+            {
+                EngageTarget cleared = candidate.Engage;
+                cleared.Target = Entity.Null;
+                if (em.HasComponent<EngageTarget>(candidate.Attacker))
+                    em.SetComponentData(candidate.Attacker, cleared);
+                continue;
+            }
+
+            if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.AttackState);
+            if (em.HasComponent<UnitAttackTraceComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.TraceState);
+            if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
+                em.SetComponentData(candidate.Attacker, plan.AttackAnimationState);
+
+            if (plan.ShowTracer != 0)
+            {
+                EnqueueAttackVfxRequest(
+                    ecb,
+                    UnitAttackVfxRequestKind.MuzzleFlash,
+                    candidate.Attacker,
+                    candidate.Target,
+                    candidate.AttackerPosition,
+                    candidate.TargetPosition);
+            }
+
+            if (plan.Damage <= 0)
+                continue;
+
+            _predictedHealth[candidate.Target] = math.max(0, targetPredictedHealth - plan.Damage);
+            if (_aggregatedEffects.TryGetValue(candidate.Target, out AggregatedTargetEffect effect))
+            {
+                effect.TotalDamage += plan.Damage;
+                effect.Attacker = candidate.Attacker;
+                effect.AttackerCell = plan.AttackerCell;
+                effect.AttackerPosition = candidate.AttackerPosition;
+                effect.ShowImpactVfx |= plan.ShowTracer;
+                _aggregatedEffects[candidate.Target] = effect;
+            }
+            else
+            {
+                _aggregatedEffects.Add(candidate.Target, new AggregatedTargetEffect
+                {
+                    TotalDamage = plan.Damage,
+                    Attacker = candidate.Attacker,
+                    AttackerCell = plan.AttackerCell,
+                    AttackerPosition = candidate.AttackerPosition,
+                    ShowImpactVfx = plan.ShowTracer
+                });
+            }
         }
+    }
 
-        // Push the flash forward from the body center to the gun muzzle.
-        muzzlePosition += (float3)(Vector3)(rotation * Vector3.forward) * math.max(0f, muzzleVfx.ForwardOffset);
+    [BurstCompile]
+    private struct PlanStandardAttacksJob : IJobParallelFor
+    {
+        [ReadOnly] public NativeArray<StandardAttackCandidate> Candidates;
+        public NativeArray<StandardAttackPlan> Plans;
+        public float DeltaTime;
+        public float CellSize;
 
-        UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, muzzlePosition, rotation);
+        public void Execute(int index)
+        {
+            StandardAttackCandidate candidate = Candidates[index];
+            UnitAttackCooldownComponent baseAttackState = candidate.AttackState;
+            UnitAttackTraceComponent baseTraceState = candidate.TraceState;
+            UnitAttackAnimationComponent baseAnimationState = candidate.AttackAnimationState;
+            baseAttackState.CooldownRemaining -= DeltaTime;
+            baseTraceState.TimeRemaining = math.max(0f, baseTraceState.TimeRemaining - DeltaTime);
+
+            StandardAttackPlan plan = new()
+            {
+                BaseAttackState = baseAttackState,
+                BaseTraceState = baseTraceState,
+                BaseAttackAnimationState = baseAnimationState,
+                AttackState = baseAttackState,
+                TraceState = baseTraceState,
+                AttackAnimationState = baseAnimationState,
+                Engage = candidate.Engage,
+                AttackerCell = candidate.AttackerCell
+            };
+
+            if (candidate.SelfHealth <= 0 ||
+                candidate.Engage.Target == Entity.Null)
+            {
+                Plans[index] = plan;
+                return;
+            }
+
+            if (candidate.TargetExists == 0 ||
+                candidate.TargetHasHealth == 0 ||
+                candidate.TargetHasTransform == 0 ||
+                (candidate.TargetIsStaticGridBlocker != 0 && candidate.IsDebugFireTarget == 0) ||
+                candidate.TargetHealth <= 0)
+            {
+                plan.Kind = StandardAttackPlanKind.ClearTarget;
+                plan.Engage.Target = Entity.Null;
+                Plans[index] = plan;
+                return;
+            }
+
+            float attackRange = math.max(0f, candidate.Attack.Range);
+            if (attackRange <= 0f)
+            {
+                Plans[index] = plan;
+                return;
+            }
+
+            float3 delta = candidate.TargetPosition - candidate.AttackerPosition;
+            delta.y = 0f;
+            float range = attackRange + candidate.SelfCombatRadius + candidate.TargetCombatRadius + CellSize * 0.25f;
+            if (math.lengthsq(delta) > range * range ||
+                baseAttackState.CooldownRemaining > 0f)
+            {
+                Plans[index] = plan;
+                return;
+            }
+
+            if (baseAnimationState.TimeRemaining <= 0f && candidate.HasAnimationOrder != 0)
+            {
+                plan.Kind = StandardAttackPlanKind.Windup;
+                plan.AttackAnimationState.TimeRemaining = math.max(0.01f, candidate.AttackAnimationSeconds);
+                plan.AttackState.CooldownRemaining = math.clamp(candidate.Attack.CooldownSeconds * 0.5f, 0.05f, 0.18f);
+                Plans[index] = plan;
+                return;
+            }
+
+            plan.Kind = StandardAttackPlanKind.Shot;
+            plan.AttackState.CooldownRemaining = math.max(0.01f, candidate.Attack.CooldownSeconds);
+            plan.TraceState.ShotCounter++;
+            int tracerInterval = math.max(1, candidate.Attack.TracerEveryNthShot);
+            bool tracerShown = plan.TraceState.ShotCounter % tracerInterval == 0;
+            if (tracerShown)
+            {
+                plan.TraceState.TimeRemaining = math.max(0.01f, candidate.Attack.TraceVisibleSeconds);
+                plan.TraceState.Phase = math.frac(plan.TraceState.Phase + 0.371f);
+            }
+
+            plan.AttackAnimationState.TimeRemaining = math.max(
+                math.max(0.01f, candidate.AttackAnimationSeconds),
+                candidate.Attack.CooldownSeconds + 0.15f);
+            plan.Damage = candidate.Attack.Damage;
+            plan.ShowTracer = (byte)(tracerShown ? 1 : 0);
+            Plans[index] = plan;
+        }
     }
 
     private static float GetCombatRadius(int2 footprintSize, float cellSize)
@@ -326,6 +595,25 @@ public partial struct UnitAttackSystem : ISystem
         float halfWidth = math.max(0f, (clamped.x - 1) * 0.5f * cellSize);
         float halfDepth = math.max(0f, (clamped.y - 1) * 0.5f * cellSize);
         return math.max(halfWidth, halfDepth);
+    }
+
+    private static void EnqueueAttackVfxRequest(
+        EntityCommandBuffer ecb,
+        UnitAttackVfxRequestKind kind,
+        Entity source,
+        Entity target,
+        float3 sourcePosition,
+        float3 targetPosition)
+    {
+        Entity requestEntity = ecb.CreateEntity();
+        ecb.AddComponent(requestEntity, new UnitAttackVfxRequest
+        {
+            Kind = (byte)kind,
+            Source = source,
+            Target = target,
+            SourcePosition = sourcePosition,
+            TargetPosition = targetPosition
+        });
     }
 
     private static bool TryStartGroundMissileLauncherAttack(
@@ -540,5 +828,131 @@ public partial struct UnitAttackSystem : ISystem
             ecb.RemoveComponent<UnitPathRequest>(target);
         if (em.HasComponent<AutoWanderMoveTag>(target))
             ecb.RemoveComponent<AutoWanderMoveTag>(target);
+    }
+}
+
+[UpdateAfter(typeof(UnitAttackSystem))]
+[UpdateBefore(typeof(UnitDeathSystem))]
+public partial struct UnitAttackVfxRequestSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<UnitAttackVfxRequest>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        EntityManager em = state.EntityManager;
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        foreach (var (request, entity) in SystemAPI
+                     .Query<RefRO<UnitAttackVfxRequest>>()
+                     .WithEntityAccess())
+        {
+            UnitAttackVfxRequest value = request.ValueRO;
+            switch ((UnitAttackVfxRequestKind)value.Kind)
+            {
+                case UnitAttackVfxRequestKind.MuzzleFlash:
+                    PlayMuzzleFlash(em, value);
+                    break;
+                case UnitAttackVfxRequestKind.Impact:
+                    PlayImpact(em, value);
+                    break;
+            }
+
+            ecb.DestroyEntity(entity);
+        }
+
+        ecb.Playback(em);
+        ecb.Dispose();
+    }
+
+    private static void PlayMuzzleFlash(EntityManager em, UnitAttackVfxRequest request)
+    {
+        if (request.Source == Entity.Null ||
+            !em.Exists(request.Source) ||
+            !em.HasComponent<UnitMuzzleFlashVfxReference>(request.Source))
+        {
+            return;
+        }
+
+        UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentObject<UnitMuzzleFlashVfxReference>(request.Source);
+        if (muzzleVfx?.Prefab == null)
+            return;
+
+        LocalTransform sourceTransform = em.HasComponent<LocalTransform>(request.Source)
+            ? em.GetComponentData<LocalTransform>(request.Source)
+            : LocalTransform.FromPosition(request.SourcePosition);
+
+        float3 muzzlePosition = sourceTransform.Position;
+        if (em.HasComponent<UnitTurretReference>(request.Source))
+        {
+            UnitTurretReference turretRef = em.GetComponentData<UnitTurretReference>(request.Source);
+            if (em.Exists(turretRef.Turret) && em.HasComponent<LocalToWorld>(turretRef.Turret))
+                muzzlePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
+        }
+
+        muzzlePosition.y += math.max(0f, muzzleVfx.HeightOffset);
+        Quaternion rotation = ResolveLookRotation(em, request.Target, request.TargetPosition, sourceTransform.Position, sourceTransform.Rotation);
+        float forwardOffset = math.max(0f, muzzleVfx.ForwardOffset);
+        if (forwardOffset > 0f)
+            muzzlePosition += (float3)(rotation * Vector3.forward) * forwardOffset;
+
+        UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, muzzlePosition, rotation);
+    }
+
+    private static void PlayImpact(EntityManager em, UnitAttackVfxRequest request)
+    {
+        if (request.Source == Entity.Null ||
+            !em.Exists(request.Source) ||
+            !em.HasComponent<UnitAttackImpactVfxReference>(request.Source))
+        {
+            return;
+        }
+
+        UnitAttackImpactVfxReference impactVfx = em.GetComponentObject<UnitAttackImpactVfxReference>(request.Source);
+        if (impactVfx?.Prefab == null)
+            return;
+
+        float3 targetPosition = request.TargetPosition;
+        if (request.Target != Entity.Null &&
+            em.Exists(request.Target) &&
+            em.HasComponent<LocalTransform>(request.Target))
+        {
+            targetPosition = em.GetComponentData<LocalTransform>(request.Target).Position;
+        }
+
+        float3 toAttacker = request.SourcePosition - targetPosition;
+        toAttacker.y = 0f;
+        Quaternion impactRotation = math.lengthsq(toAttacker) > 1e-4f
+            ? Quaternion.LookRotation((Vector3)toAttacker)
+            : Quaternion.identity;
+        UnitAttackImpactVfxRuntime.Play(impactVfx.Prefab, targetPosition, impactRotation);
+    }
+
+    private static Quaternion ResolveLookRotation(
+        EntityManager em,
+        Entity target,
+        float3 fallbackTargetPosition,
+        float3 sourcePosition,
+        quaternion fallbackRotation)
+    {
+        float3 targetPosition = fallbackTargetPosition;
+        if (target != Entity.Null &&
+            em.Exists(target) &&
+            em.HasComponent<LocalTransform>(target))
+        {
+            targetPosition = em.GetComponentData<LocalTransform>(target).Position;
+        }
+
+        float3 toTarget = targetPosition - sourcePosition;
+        toTarget.y = 0f;
+        return math.lengthsq(toTarget) > 1e-4f
+            ? Quaternion.LookRotation((Vector3)toTarget)
+            : new Quaternion(
+                fallbackRotation.value.x,
+                fallbackRotation.value.y,
+                fallbackRotation.value.z,
+                fallbackRotation.value.w);
     }
 }

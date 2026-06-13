@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
+using Unity.Jobs;
+using Unity.Mathematics;
 
 public partial struct AIEconomySystem : ISystem
 {
@@ -9,6 +11,18 @@ public partial struct AIEconomySystem : ISystem
     private int _nextSellRequestId;
     private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
+
+    private struct EconomyDecision
+    {
+        public float StoredOil;
+        public float StoredFuel;
+        public float OilIncomeRate;
+        public float FuelIncomeRate;
+        public float OilToSell;
+        public float FuelToSell;
+        public byte ShouldEnqueueSellRequest;
+        public byte ShouldUpdateLastSellTime;
+    }
 
     public void OnCreate(ref SystemState state)
     {
@@ -43,19 +57,6 @@ public partial struct AIEconomySystem : ISystem
             if (policy.Enabled == 0)
                 continue;
 
-            float storedOil = economy.Oil;
-            float storedFuel = economy.Fuel;
-            float oilIncomeRate = 0f;
-            float fuelIncomeRate = 0f;
-
-            if (TryGetFactionResourceEconomy(ref state, economy.FactionId, out BuildingRuntimeFactionSummary snapshot))
-            {
-                storedOil = snapshot.StoredOilBarrels;
-                storedFuel = snapshot.StoredFuelBarrels;
-                oilIncomeRate = snapshot.OilBarrelsPerDay * policy.IncomeMultiplier;
-                fuelIncomeRate = snapshot.FuelBarrelsPerDay * policy.IncomeMultiplier;
-            }
-
             int revenue = 0;
             float soldOil = 0f;
             float soldFuel = 0f;
@@ -64,23 +65,26 @@ public partial struct AIEconomySystem : ISystem
                 ProcessCompletedSellRequests(ref state, boundaryEntity, ref economy, policy, out soldOil, out soldFuel, out revenue);
             }
 
-            float sellInterval = Mathf.Max(1f, policy.SellIntervalSeconds);
-            if (now - economy.LastSellTime >= sellInterval)
+            EconomyDecision decision = ResolveEconomyDecision(ref state, boundaryEntity, economy, policy, now);
+            if (decision.ShouldUpdateLastSellTime != 0)
             {
-                float oilToSell = Mathf.Floor(storedOil);
-                float fuelToSell = Mathf.Floor(storedFuel);
-                if (boundaryEntity != Entity.Null &&
-                    (oilToSell >= MinSellBarrels || fuelToSell >= MinSellBarrels) &&
-                    !HasPendingSellRequest(ref state, boundaryEntity, economy.FactionId))
-                    EnqueueSellRequest(ref state, boundaryEntity, economy.FactionId, oilToSell, fuelToSell);
+                if (decision.ShouldEnqueueSellRequest != 0)
+                {
+                    EnqueueSellRequest(
+                        ref state,
+                        boundaryEntity,
+                        economy.FactionId,
+                        decision.OilToSell,
+                        decision.FuelToSell);
+                }
 
                 economy.LastSellTime = now;
             }
 
-            economy.Oil = storedOil;
-            economy.Fuel = storedFuel;
-            economy.OilIncomeRate = oilIncomeRate;
-            economy.FuelIncomeRate = fuelIncomeRate;
+            economy.Oil = decision.StoredOil;
+            economy.Fuel = decision.StoredFuel;
+            economy.OilIncomeRate = decision.OilIncomeRate;
+            economy.FuelIncomeRate = decision.FuelIncomeRate;
 
             bool shouldLog = shouldLogDiagnostics && (revenue > 0 || now - economy.LastLogTime >= LogIntervalSeconds);
             if (shouldLog)
@@ -90,9 +94,9 @@ public partial struct AIEconomySystem : ISystem
                     ref state,
                     diagnosticQueueEntity,
                     $"[AIEconomy] faction={economy.FactionId} money={economy.Money} " +
-                    $"oil={Mathf.FloorToInt(economy.Oil)} fuel={Mathf.FloorToInt(economy.Fuel)} " +
+                    $"oil={(int)math.floor(economy.Oil)} fuel={(int)math.floor(economy.Fuel)} " +
                     $"oilIncome={economy.OilIncomeRate:F1} fuelIncome={economy.FuelIncomeRate:F1} " +
-                    $"soldOil={Mathf.FloorToInt(soldOil)} soldFuel={Mathf.FloorToInt(soldFuel)} revenue={revenue}");
+                    $"soldOil={(int)math.floor(soldOil)} soldFuel={(int)math.floor(soldFuel)} revenue={revenue}");
             }
 
             economyRef.ValueRW = economy;
@@ -109,28 +113,35 @@ public partial struct AIEconomySystem : ISystem
         return entity != Entity.Null && state.EntityManager.Exists(entity);
     }
 
-    private bool TryGetFactionResourceEconomy(ref SystemState state, byte factionId, out BuildingRuntimeFactionSummary snapshot)
+    private EconomyDecision ResolveEconomyDecision(
+        ref SystemState state,
+        Entity boundaryEntity,
+        FactionEconomy economy,
+        FactionEconomyPolicy policy,
+        float now)
     {
-        snapshot = default;
-        if (!TryGetBuildingRuntimeBoundaryEntity(ref state, out Entity entity))
-            return false;
+        bool hasBoundary = boundaryEntity != Entity.Null;
+        using NativeArray<BuildingRuntimeFactionSummary> summaries = hasBoundary
+            ? CopyBoundaryBuffer<BuildingRuntimeFactionSummary>(state.EntityManager, boundaryEntity, Allocator.TempJob)
+            : new NativeArray<BuildingRuntimeFactionSummary>(0, Allocator.TempJob);
+        using NativeArray<BuildingFactionResourceSellRequest> sellRequests = hasBoundary
+            ? CopyBoundaryBuffer<BuildingFactionResourceSellRequest>(state.EntityManager, boundaryEntity, Allocator.TempJob)
+            : new NativeArray<BuildingFactionResourceSellRequest>(0, Allocator.TempJob);
+        using NativeReference<EconomyDecision> decision = new(Allocator.TempJob);
 
-        if (!state.EntityManager.HasBuffer<BuildingRuntimeFactionSummary>(entity))
-            return false;
-
-        DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
-            state.EntityManager.GetBuffer<BuildingRuntimeFactionSummary>(entity, true);
-        for (int i = 0; i < summaries.Length; i++)
+        new ResolveEconomyDecisionJob
         {
-            BuildingRuntimeFactionSummary summary = summaries[i];
-            if (summary.FactionId != factionId)
-                continue;
+            Summaries = summaries,
+            SellRequests = sellRequests,
+            Economy = economy,
+            Policy = policy,
+            Now = now,
+            MinSellBarrels = MinSellBarrels,
+            HasBoundary = hasBoundary ? (byte)1 : (byte)0,
+            Decision = decision
+        }.Schedule(state.Dependency).Complete();
 
-            snapshot = summary;
-            return true;
-        }
-
-        return false;
+        return decision.Value;
     }
 
     private void ProcessCompletedSellRequests(
@@ -171,30 +182,106 @@ public partial struct AIEconomySystem : ISystem
         if (soldOil <= 0f && soldFuel <= 0f)
             return;
 
-        revenue = Mathf.RoundToInt(
-            soldOil * Mathf.Max(0, policy.OilSellPrice) +
-            soldFuel * Mathf.Max(0, policy.FuelSellPrice));
-        economy.Money = Mathf.Max(0, economy.Money + revenue);
+        revenue = (int)math.round(
+            soldOil * math.max(0, policy.OilSellPrice) +
+            soldFuel * math.max(0, policy.FuelSellPrice));
+        economy.Money = math.max(0, economy.Money + revenue);
     }
 
-    private bool HasPendingSellRequest(ref SystemState state, Entity boundaryEntity, byte factionId)
+    private static NativeArray<T> CopyBoundaryBuffer<T>(
+        EntityManager em,
+        Entity boundaryEntity,
+        Allocator allocator)
+        where T : unmanaged, IBufferElementData
     {
-        if (!state.EntityManager.HasBuffer<BuildingFactionResourceSellRequest>(boundaryEntity))
-            return false;
+        if (!em.HasBuffer<T>(boundaryEntity))
+            return new NativeArray<T>(0, allocator);
 
-        DynamicBuffer<BuildingFactionResourceSellRequest> requests =
-            state.EntityManager.GetBuffer<BuildingFactionResourceSellRequest>(boundaryEntity, true);
-        for (int i = 0; i < requests.Length; i++)
+        DynamicBuffer<T> buffer = em.GetBuffer<T>(boundaryEntity, true);
+        NativeArray<T> copy = new(buffer.Length, allocator);
+        for (int i = 0; i < buffer.Length; i++)
+            copy[i] = buffer[i];
+
+        return copy;
+    }
+
+    [BurstCompile]
+    private struct ResolveEconomyDecisionJob : IJob
+    {
+        [ReadOnly] public NativeArray<BuildingRuntimeFactionSummary> Summaries;
+        [ReadOnly] public NativeArray<BuildingFactionResourceSellRequest> SellRequests;
+        public FactionEconomy Economy;
+        public FactionEconomyPolicy Policy;
+        public float Now;
+        public float MinSellBarrels;
+        public byte HasBoundary;
+        public NativeReference<EconomyDecision> Decision;
+
+        public void Execute()
         {
-            BuildingFactionResourceSellRequest request = requests[i];
-            if (request.FactionId == factionId &&
-                request.Status == BuildingFactionResourceSellRequest.Pending)
+            EconomyDecision decision = new()
             {
-                return true;
+                StoredOil = Economy.Oil,
+                StoredFuel = Economy.Fuel
+            };
+
+            if (TryGetFactionResourceEconomy(Economy.FactionId, out BuildingRuntimeFactionSummary snapshot))
+            {
+                decision.StoredOil = snapshot.StoredOilBarrels;
+                decision.StoredFuel = snapshot.StoredFuelBarrels;
+                decision.OilIncomeRate = snapshot.OilBarrelsPerDay * Policy.IncomeMultiplier;
+                decision.FuelIncomeRate = snapshot.FuelBarrelsPerDay * Policy.IncomeMultiplier;
             }
+
+            float sellInterval = math.max(1f, Policy.SellIntervalSeconds);
+            if (Now - Economy.LastSellTime >= sellInterval)
+            {
+                decision.ShouldUpdateLastSellTime = 1;
+                decision.OilToSell = math.floor(decision.StoredOil);
+                decision.FuelToSell = math.floor(decision.StoredFuel);
+                if (HasBoundary != 0 &&
+                    (decision.OilToSell >= MinSellBarrels || decision.FuelToSell >= MinSellBarrels) &&
+                    !HasPendingSellRequest(Economy.FactionId))
+                {
+                    decision.ShouldEnqueueSellRequest = 1;
+                }
+            }
+
+            Decision.Value = decision;
         }
 
-        return false;
+        private bool TryGetFactionResourceEconomy(
+            byte factionId,
+            out BuildingRuntimeFactionSummary snapshot)
+        {
+            for (int i = 0; i < Summaries.Length; i++)
+            {
+                BuildingRuntimeFactionSummary summary = Summaries[i];
+                if (summary.FactionId != factionId)
+                    continue;
+
+                snapshot = summary;
+                return true;
+            }
+
+            snapshot = default;
+            return false;
+        }
+
+        private bool HasPendingSellRequest(byte factionId)
+        {
+            for (int i = 0; i < SellRequests.Length; i++)
+            {
+                BuildingFactionResourceSellRequest request = SellRequests[i];
+                if (request.FactionId == factionId &&
+                    request.Status == BuildingFactionResourceSellRequest.Pending)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     private void EnqueueSellRequest(ref SystemState state, Entity boundaryEntity, byte factionId, float oilToSell, float fuelToSell)

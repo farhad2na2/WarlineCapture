@@ -1,7 +1,8 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
 [UpdateAfter(typeof(AIProductionSystem))]
 public partial struct AISquadSystem : ISystem
@@ -95,7 +96,7 @@ public partial struct AISquadSystem : ISystem
                 _factionType.Update(ref state);
                 _unitGridType.Update(ref state);
 
-                int activeSquads = CountActiveSquads(_squadQuery, ref _squadType, plan.FactionId);
+                int activeSquads = CountActiveSquads(_squadQuery, ref _squadType, plan.FactionId, state.Dependency);
                 int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
                 if (activeSquads >= maxActiveSquads)
                 {
@@ -137,7 +138,13 @@ public partial struct AISquadSystem : ISystem
                 int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
                 byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
                 int2 rallyCell = cellSum / members.Length;
-                int2 targetCell = ResolveInitialTargetCell(_factionGridQuery, ref _factionType, ref _unitGridType, targetFactionId, rallyCell);
+                int2 targetCell = ResolveInitialTargetCell(
+                    _factionGridQuery,
+                    ref _factionType,
+                    ref _unitGridType,
+                    targetFactionId,
+                    rallyCell,
+                    state.Dependency);
                 Entity squadEntity = em.CreateEntity(typeof(AISquad));
                 DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
                 em.SetComponentData(squadEntity, new AISquad
@@ -196,23 +203,24 @@ public partial struct AISquadSystem : ISystem
 
     }
 
-    private static int CountActiveSquads(EntityQuery squadQuery, ref ComponentTypeHandle<AISquad> squadType, byte factionId)
+    private static int CountActiveSquads(
+        EntityQuery squadQuery,
+        ref ComponentTypeHandle<AISquad> squadType,
+        byte factionId,
+        JobHandle dependency)
     {
-        using NativeArray<ArchetypeChunk> chunks = squadQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = squadQuery.ToArchetypeChunkArray(Allocator.TempJob);
+        using NativeReference<int> count = new(Allocator.TempJob);
 
-        int count = 0;
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        new CountActiveSquadsJob
         {
-            NativeArray<AISquad> squads = chunks[chunkIndex].GetNativeArray(ref squadType);
-            for (int i = 0; i < squads.Length; i++)
-            {
-                AISquad squad = squads[i];
-                if (squad.FactionId == factionId)
-                    count++;
-            }
-        }
+            Chunks = chunks,
+            SquadType = squadType,
+            FactionId = factionId,
+            Count = count
+        }.Schedule(dependency).Complete();
 
-        return count;
+        return count.Value;
     }
 
     private NativeList<CandidateUnitRecord> BuildAvailableUnitCandidates(ref SystemState state)
@@ -226,36 +234,22 @@ public partial struct AISquadSystem : ISystem
         _engageTargetLookup.Update(ref state);
         _pathRequestLookup.Update(ref state);
 
-        NativeList<CandidateUnitRecord> candidates = new(_unitQuery.CalculateEntityCount(), Allocator.Temp);
-        using NativeArray<ArchetypeChunk> chunks = _unitQuery.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        NativeList<CandidateUnitRecord> candidates = new(_unitQuery.CalculateEntityCount(), Allocator.TempJob);
+        using NativeArray<ArchetypeChunk> chunks = _unitQuery.ToArchetypeChunkArray(Allocator.TempJob);
+
+        new BuildAvailableUnitCandidatesJob
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
-            NativeArray<Faction> factions = chunk.GetNativeArray(ref _factionType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref _unitGridType);
-            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref _unitHealthType);
-
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (_squadMemberLookup.HasComponent(entity) ||
-                    _staticGridBlockerLookup.HasComponent(entity) ||
-                    _engageTargetLookup.HasComponent(entity) ||
-                    _pathRequestLookup.HasComponent(entity) ||
-                    healths[i].Current <= 0)
-                {
-                    continue;
-                }
-
-                candidates.Add(new CandidateUnitRecord
-                {
-                    Entity = entity,
-                    FactionId = factions[i].Id,
-                    Cell = grids[i].Cell
-                });
-            }
-        }
+            Chunks = chunks,
+            EntityType = _entityType,
+            FactionType = _factionType,
+            UnitGridType = _unitGridType,
+            UnitHealthType = _unitHealthType,
+            SquadMemberLookup = _squadMemberLookup,
+            StaticGridBlockerLookup = _staticGridBlockerLookup,
+            EngageTargetLookup = _engageTargetLookup,
+            PathRequestLookup = _pathRequestLookup,
+            Candidates = candidates
+        }.Schedule(state.Dependency).Complete();
 
         return candidates;
     }
@@ -265,36 +259,145 @@ public partial struct AISquadSystem : ISystem
         ref ComponentTypeHandle<Faction> factionType,
         ref ComponentTypeHandle<UnitGrid> unitGridType,
         byte targetFactionId,
-        int2 fallbackCell)
+        int2 fallbackCell,
+        JobHandle dependency)
     {
-        using NativeArray<ArchetypeChunk> chunks = factionGridQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = factionGridQuery.ToArchetypeChunkArray(Allocator.TempJob);
+        using NativeReference<int2> targetCell = new(Allocator.TempJob);
 
-        int bestDistance = int.MaxValue;
-        int2 bestCell = fallbackCell;
-        bool found = false;
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        new ResolveInitialTargetCellJob
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
+            Chunks = chunks,
+            FactionType = factionType,
+            UnitGridType = unitGridType,
+            TargetFactionId = targetFactionId,
+            FallbackCell = fallbackCell,
+            TargetCell = targetCell
+        }.Schedule(dependency).Complete();
 
-            for (int i = 0; i < factions.Length; i++)
+        return targetCell.Value;
+    }
+
+    [BurstCompile]
+    private struct CountActiveSquadsJob : IJob
+    {
+        [ReadOnly] public NativeArray<ArchetypeChunk> Chunks;
+        [ReadOnly] public ComponentTypeHandle<AISquad> SquadType;
+        public byte FactionId;
+        public NativeReference<int> Count;
+
+        public void Execute()
+        {
+            int count = 0;
+            ComponentTypeHandle<AISquad> squadType = SquadType;
+            for (int chunkIndex = 0; chunkIndex < Chunks.Length; chunkIndex++)
             {
-                if (factions[i].Id != targetFactionId)
-                    continue;
+                NativeArray<AISquad> squads = Chunks[chunkIndex].GetNativeArray(ref squadType);
+                for (int i = 0; i < squads.Length; i++)
+                {
+                    if (squads[i].FactionId == FactionId)
+                        count++;
+                }
+            }
 
-                int2 cell = grids[i].Cell;
-                int distance = math.abs(cell.x - fallbackCell.x) + math.abs(cell.y - fallbackCell.y);
-                if (found && distance >= bestDistance)
-                    continue;
+            Count.Value = count;
+        }
+    }
 
-                found = true;
-                bestDistance = distance;
-                bestCell = cell;
+    [BurstCompile]
+    private struct BuildAvailableUnitCandidatesJob : IJob
+    {
+        [ReadOnly] public NativeArray<ArchetypeChunk> Chunks;
+        [ReadOnly] public EntityTypeHandle EntityType;
+        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> UnitGridType;
+        [ReadOnly] public ComponentTypeHandle<UnitHealth> UnitHealthType;
+        [ReadOnly] public ComponentLookup<AISquadMember> SquadMemberLookup;
+        [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticGridBlockerLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        public NativeList<CandidateUnitRecord> Candidates;
+
+        public void Execute()
+        {
+            EntityTypeHandle entityType = EntityType;
+            ComponentTypeHandle<Faction> factionType = FactionType;
+            ComponentTypeHandle<UnitGrid> unitGridType = UnitGridType;
+            ComponentTypeHandle<UnitHealth> unitHealthType = UnitHealthType;
+
+            for (int chunkIndex = 0; chunkIndex < Chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = Chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
+                NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref unitHealthType);
+
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity entity = entities[i];
+                    if (SquadMemberLookup.HasComponent(entity) ||
+                        StaticGridBlockerLookup.HasComponent(entity) ||
+                        EngageTargetLookup.HasComponent(entity) ||
+                        PathRequestLookup.HasComponent(entity) ||
+                        healths[i].Current <= 0)
+                    {
+                        continue;
+                    }
+
+                    Candidates.Add(new CandidateUnitRecord
+                    {
+                        Entity = entity,
+                        FactionId = factions[i].Id,
+                        Cell = grids[i].Cell
+                    });
+                }
             }
         }
+    }
 
-        return bestCell;
+    [BurstCompile]
+    private struct ResolveInitialTargetCellJob : IJob
+    {
+        [ReadOnly] public NativeArray<ArchetypeChunk> Chunks;
+        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> UnitGridType;
+        public byte TargetFactionId;
+        public int2 FallbackCell;
+        public NativeReference<int2> TargetCell;
+
+        public void Execute()
+        {
+            int bestDistance = int.MaxValue;
+            int2 bestCell = FallbackCell;
+            bool found = false;
+            ComponentTypeHandle<Faction> factionType = FactionType;
+            ComponentTypeHandle<UnitGrid> unitGridType = UnitGridType;
+
+            for (int chunkIndex = 0; chunkIndex < Chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = Chunks[chunkIndex];
+                NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref unitGridType);
+
+                for (int i = 0; i < factions.Length; i++)
+                {
+                    if (factions[i].Id != TargetFactionId)
+                        continue;
+
+                    int2 cell = grids[i].Cell;
+                    int distance = math.abs(cell.x - FallbackCell.x) + math.abs(cell.y - FallbackCell.y);
+                    if (found && distance >= bestDistance)
+                        continue;
+
+                    found = true;
+                    bestDistance = distance;
+                    bestCell = cell;
+                }
+            }
+
+            TargetCell.Value = bestCell;
+        }
     }
 
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)

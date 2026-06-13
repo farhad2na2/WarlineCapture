@@ -53,6 +53,9 @@ public sealed class TransportBoardingCommandSystem
     private EntityQuery _pathingLiveUnitsQuery;
     private readonly List<Entity> _selectedBoardingSourceEntities = new();
     private readonly List<Entity> _targetedBoardingSourceEntities = new();
+    private readonly List<PendingTransportBoardingOrder> _boardingOrders = new(32);
+    private readonly HashSet<int> _reservedBoardingCells = new();
+    private readonly HashSet<int> _targetedReservedBoardingCells = new();
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -220,9 +223,9 @@ public sealed class TransportBoardingCommandSystem
             hasPendingAirPickupLanding = true;
         }
 
-        List<PendingTransportBoardingOrder> boardingOrders = new();
-        HashSet<int> reservedBoardingCells = new();
-        for (int i = 0; i < selectedCount && boardingOrders.Count < availableSeats; i++)
+        _boardingOrders.Clear();
+        _reservedBoardingCells.Clear();
+        for (int i = 0; i < selectedCount && _boardingOrders.Count < availableSeats; i++)
         {
             Entity passenger = _selectedBoardingSourceEntities[i];
             if (passenger == transport)
@@ -260,7 +263,7 @@ public sealed class TransportBoardingCommandSystem
                     transport,
                     em.GetComponentData<UnitGrid>(transport).Cell,
                     transportSize,
-                    reservedBoardingCells,
+                    _reservedBoardingCells,
                     directBoardingCells,
                     passengerFaction,
                     out int2 goal))
@@ -276,17 +279,17 @@ public sealed class TransportBoardingCommandSystem
                 continue;
             }
 
-            boardingOrders.Add(new PendingTransportBoardingOrder
+            _boardingOrders.Add(new PendingTransportBoardingOrder
             {
                 Passenger = passenger,
                 PassengerCell = referenceCell,
                 Goal = goal,
                 DirectBoarding = goal.Equals(referenceCell)
             });
-            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, _reservedBoardingCells);
         }
 
-        if (boardingOrders.Count <= 0)
+        if (_boardingOrders.Count <= 0)
         {
             if (shouldLogTransportBoarding)
             {
@@ -310,10 +313,10 @@ public sealed class TransportBoardingCommandSystem
         EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
         try
         {
-            for (int i = 0; i < boardingOrders.Count; i++)
+            for (int i = 0; i < _boardingOrders.Count; i++)
             {
-                Entity passenger = boardingOrders[i].Passenger;
-                int2 goal = boardingOrders[i].Goal;
+                Entity passenger = _boardingOrders[i].Passenger;
+                int2 goal = _boardingOrders[i].Goal;
                 if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
@@ -331,7 +334,7 @@ public sealed class TransportBoardingCommandSystem
                     EnqueueTransportBoardingDiagnostic(
                         em,
                         $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                        $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+                        $"from={_boardingOrders[i].PassengerCell} goal={goal} direct={(_boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
                 }
             }
 
@@ -508,7 +511,7 @@ public sealed class TransportBoardingCommandSystem
         byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
         int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
         int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
-        var reservedBoardingCells = new HashSet<int>();
+        _targetedReservedBoardingCells.Clear();
         if (!approachCellSystem.TryFindTransportApproachCell(
                 grid,
                 walkable,
@@ -526,7 +529,7 @@ public sealed class TransportBoardingCommandSystem
                 transport,
                 em.GetComponentData<UnitGrid>(transport).Cell,
                 transportSize,
-                reservedBoardingCells,
+                _targetedReservedBoardingCells,
                 directBoardingCells,
                 passengerFaction,
                 out int2 goal))

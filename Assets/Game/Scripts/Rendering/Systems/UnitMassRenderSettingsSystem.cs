@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Graphics;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
@@ -68,11 +70,10 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         int totalCandidates = _renderQuery.CalculateEntityCount();
         int processed = 0;
         int applied = 0;
-        int lodComponentsPatched = 0;
-        int lodGroupsPatched = 0;
         int deepestUnitAncestor = 0;
-        using NativeList<Entity> unitRenderEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
+        using NativeList<Entity> unitRenderEntities = new(MaxRenderEntitiesPerFrame, Allocator.TempJob);
         using NativeList<Entity> processedEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
+        using NativeArray<int> patchCounts = new(2, Allocator.TempJob);
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         foreach (var (_, entity) in SystemAPI
                      .Query<RefRO<Parent>>()
@@ -94,32 +95,20 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
             unitRenderEntities.Add(entity);
         }
 
-        for (int i = 0; i < unitRenderEntities.Length; i++)
+        JobHandle patchHandle = new PatchMassRenderDataJob
         {
-            Entity entity = unitRenderEntities[i];
-            if (!_renderBoundsLookup.HasComponent(entity))
-                continue;
+            Entities = unitRenderEntities.AsArray(),
+            RenderBoundsLookup = _renderBoundsLookup,
+            MeshLodLookup = _meshLodLookup,
+            MeshLodGroupLookup = _meshLodGroupLookup,
+            PatchCounts = patchCounts
+        }.Schedule(state.Dependency);
+        patchHandle.Complete();
+        state.Dependency = patchHandle;
 
-            Unity.Rendering.RenderBounds bounds = _renderBoundsLookup[entity];
-            bounds.Value.Extents = math.max(bounds.Value.Extents, UnitRenderBoundsMinExtents);
-            _renderBoundsLookup[entity] = bounds;
-
-            if (_meshLodLookup.HasComponent(entity))
-            {
-                MeshLODComponent meshLod = _meshLodLookup[entity];
-                if (meshLod.LODMask != AlwaysVisibleLodMask)
-                {
-                    meshLod.LODMask = AlwaysVisibleLodMask;
-                    _meshLodLookup[entity] = meshLod;
-                    lodComponentsPatched++;
-                }
-
-                lodGroupsPatched += PatchLodGroup(meshLod.Group, _meshLodGroupLookup);
-                lodGroupsPatched += PatchLodGroup(meshLod.ParentGroup, _meshLodGroupLookup);
-            }
-
-            applied++;
-        }
+        applied = unitRenderEntities.Length;
+        int lodComponentsPatched = patchCounts[0];
+        int lodGroupsPatched = patchCounts[1];
 
         for (int i = 0; i < unitRenderEntities.Length; i++)
         {
@@ -200,5 +189,48 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         }
 
         return false;
+    }
+
+    [BurstCompile]
+    private struct PatchMassRenderDataJob : IJob
+    {
+        [ReadOnly] public NativeArray<Entity> Entities;
+        public ComponentLookup<Unity.Rendering.RenderBounds> RenderBoundsLookup;
+        public ComponentLookup<MeshLODComponent> MeshLodLookup;
+        public ComponentLookup<MeshLODGroupComponent> MeshLodGroupLookup;
+        public NativeArray<int> PatchCounts;
+
+        public void Execute()
+        {
+            int lodComponentsPatched = 0;
+            int lodGroupsPatched = 0;
+            for (int i = 0; i < Entities.Length; i++)
+            {
+                Entity entity = Entities[i];
+                if (!RenderBoundsLookup.HasComponent(entity))
+                    continue;
+
+                Unity.Rendering.RenderBounds bounds = RenderBoundsLookup[entity];
+                bounds.Value.Extents = math.max(bounds.Value.Extents, UnitRenderBoundsMinExtents);
+                RenderBoundsLookup[entity] = bounds;
+
+                if (!MeshLodLookup.HasComponent(entity))
+                    continue;
+
+                MeshLODComponent meshLod = MeshLodLookup[entity];
+                if (meshLod.LODMask != AlwaysVisibleLodMask)
+                {
+                    meshLod.LODMask = AlwaysVisibleLodMask;
+                    MeshLodLookup[entity] = meshLod;
+                    lodComponentsPatched++;
+                }
+
+                lodGroupsPatched += PatchLodGroup(meshLod.Group, MeshLodGroupLookup);
+                lodGroupsPatched += PatchLodGroup(meshLod.ParentGroup, MeshLodGroupLookup);
+            }
+
+            PatchCounts[0] = lodComponentsPatched;
+            PatchCounts[1] = lodGroupsPatched;
+        }
     }
 }

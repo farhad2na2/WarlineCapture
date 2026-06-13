@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -9,8 +10,7 @@ using UnityEngine;
 public partial struct UnitDeathSystem : ISystem
 {
     private const float VehicleWreckLifetimeSeconds = 5f;
-    private NativeList<Entity> _deathBeginEntities;
-    private NativeList<float> _deathBeginDurations;
+    private NativeList<DeathBeginCandidate> _deathBeginCandidates;
     private NativeList<Entity> _finalizeEntities;
     private EntityQuery _respawnQueueQuery;
 
@@ -18,21 +18,24 @@ public partial struct UnitDeathSystem : ISystem
     {
     }
 
+    private struct DeathBeginCandidate
+    {
+        public Entity Entity;
+        public float Duration;
+    }
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitHealth>();
         _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
-        _deathBeginEntities = new NativeList<Entity>(64, Allocator.Persistent);
-        _deathBeginDurations = new NativeList<float>(64, Allocator.Persistent);
+        _deathBeginCandidates = new NativeList<DeathBeginCandidate>(64, Allocator.Persistent);
         _finalizeEntities = new NativeList<Entity>(64, Allocator.Persistent);
     }
 
     public void OnDestroy(ref SystemState state)
     {
-        if (_deathBeginEntities.IsCreated)
-            _deathBeginEntities.Dispose();
-        if (_deathBeginDurations.IsCreated)
-            _deathBeginDurations.Dispose();
+        if (_deathBeginCandidates.IsCreated)
+            _deathBeginCandidates.Dispose();
         if (_finalizeEntities.IsCreated)
             _finalizeEntities.Dispose();
     }
@@ -46,23 +49,16 @@ public partial struct UnitDeathSystem : ISystem
         double now = SystemAPI.Time.ElapsedTime;
         double respawnDelay = math.max(0.01f, queueState.RespawnDelaySeconds);
 
-        _deathBeginEntities.Clear();
-        _deathBeginDurations.Clear();
-        foreach (var (health, animationSettings, entity) in SystemAPI
-                 .Query<RefRO<UnitHealth>, RefRO<UnitAnimationSettings>>()
-                 .WithNone<UnitDeathAnimationComponent, StaticGridBlocker>()
-                 .WithEntityAccess())
+        _deathBeginCandidates.Clear();
+        new CollectDeathBeginCandidatesJob
         {
-            if (health.ValueRO.Current > 0)
-                continue;
+            Candidates = _deathBeginCandidates
+        }.Run();
 
-            _deathBeginEntities.Add(entity);
-            _deathBeginDurations.Add(math.max(0.01f, animationSettings.ValueRO.DeathAnimationSeconds));
-        }
-
-        for (int i = 0; i < _deathBeginEntities.Length; i++)
+        for (int i = 0; i < _deathBeginCandidates.Length; i++)
         {
-            Entity entity = _deathBeginEntities[i];
+            DeathBeginCandidate candidate = _deathBeginCandidates[i];
+            Entity entity = candidate.Entity;
             if (!em.Exists(entity) || em.HasComponent<UnitDeathAnimationComponent>(entity))
                 continue;
 
@@ -79,26 +75,56 @@ public partial struct UnitDeathSystem : ISystem
 
             em.AddComponentData(entity, new UnitDeathAnimationComponent
             {
-                TimeRemaining = _deathBeginDurations[i]
+                TimeRemaining = candidate.Duration
             });
         }
 
         _finalizeEntities.Clear();
-        foreach (var (health, deathState, entity) in SystemAPI
-                 .Query<RefRO<UnitHealth>, RefRW<UnitDeathAnimationComponent>>()
-                 .WithNone<StaticGridBlocker>()
-                 .WithEntityAccess())
+        new CollectDeathAnimationFinalizeJob
         {
-            if (health.ValueRO.Current > 0)
-                continue;
-
-            deathState.ValueRW.TimeRemaining -= dt;
-            if (deathState.ValueRW.TimeRemaining <= 0f)
-                _finalizeEntities.Add(entity);
-        }
+            DeltaTime = dt,
+            FinalizeEntities = _finalizeEntities
+        }.Run();
 
         for (int i = 0; i < _finalizeEntities.Length; i++)
             FinalizeDeath(em, queueEntity, _finalizeEntities[i], now, respawnDelay);
+    }
+
+    [BurstCompile]
+    [WithNone(typeof(UnitDeathAnimationComponent), typeof(StaticGridBlocker))]
+    private partial struct CollectDeathBeginCandidatesJob : IJobEntity
+    {
+        public NativeList<DeathBeginCandidate> Candidates;
+
+        private void Execute(Entity entity, in UnitHealth health, in UnitAnimationSettings animationSettings)
+        {
+            if (health.Current > 0)
+                return;
+
+            Candidates.Add(new DeathBeginCandidate
+            {
+                Entity = entity,
+                Duration = math.max(0.01f, animationSettings.DeathAnimationSeconds)
+            });
+        }
+    }
+
+    [BurstCompile]
+    [WithNone(typeof(StaticGridBlocker))]
+    private partial struct CollectDeathAnimationFinalizeJob : IJobEntity
+    {
+        public float DeltaTime;
+        public NativeList<Entity> FinalizeEntities;
+
+        private void Execute(Entity entity, in UnitHealth health, ref UnitDeathAnimationComponent deathState)
+        {
+            if (health.Current > 0)
+                return;
+
+            deathState.TimeRemaining -= DeltaTime;
+            if (deathState.TimeRemaining <= 0f)
+                FinalizeEntities.Add(entity);
+        }
     }
 
     internal static void StripActiveUnitState(EntityManager em, Entity entity)

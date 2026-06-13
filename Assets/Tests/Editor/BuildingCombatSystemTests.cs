@@ -1,11 +1,55 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
 
 public sealed class BuildingCombatSystemTests
 {
     private World _world;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(nameof(TryMarkDestroyed_SetsDestroyedStateAndCleanupDeadline),
+                test => test.TryMarkDestroyed_SetsDestroyedStateAndCleanupDeadline());
+            RunCase(nameof(CollectDestroyedCleanupIds_ReturnsExpiredDestroyedBuildingsOnly),
+                test => test.CollectDestroyedCleanupIds_ReturnsExpiredDestroyedBuildingsOnly());
+            RunCase(nameof(ResolveRuntimeCombatState_DetectsMissingAndDeadCombatEntities),
+                test => test.ResolveRuntimeCombatState_DetectsMissingAndDeadCombatEntities());
+            RunCase(nameof(DestroyBlockerEntity_DestroysEntityAndClearsReference),
+                test => test.DestroyBlockerEntity_DestroysEntityAndClearsReference());
+            Debug.Log("[BuildingCombatFocusedValidation] result=Passed tests=4");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BuildingCombatFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(string name, Action<BuildingCombatSystemTests> action)
+    {
+        BuildingCombatSystemTests tests = new();
+        try
+        {
+            action(tests);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BuildingCombatFocusedValidation] result=Failed test={name} error={exception}");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [TearDown]
     public void TearDown()

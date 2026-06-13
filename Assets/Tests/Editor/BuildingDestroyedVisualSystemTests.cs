@@ -1,6 +1,9 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public sealed class BuildingDestroyedVisualSystemTests
 {
@@ -8,6 +11,44 @@ public sealed class BuildingDestroyedVisualSystemTests
     private GameObject _building;
     private GameObject _aliveRoot;
     private GameObject _destroyedPrefab;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(nameof(BeginDestroyedVisualHidesAliveRootsAndSpawnsConfiguredPrefab),
+                test => test.BeginDestroyedVisualHidesAliveRootsAndSpawnsConfiguredPrefab());
+            RunCase(nameof(BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt),
+                test => test.BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt());
+            Debug.Log("[BuildingDestroyedVisualFocusedValidation] result=Passed tests=2");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BuildingDestroyedVisualFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(string name, Action<BuildingDestroyedVisualSystemTests> action)
+    {
+        BuildingDestroyedVisualSystemTests tests = new();
+        tests.SetUp();
+        try
+        {
+            action(tests);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BuildingDestroyedVisualFocusedValidation] result=Failed test={name} error={exception}");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()

@@ -12,11 +12,13 @@ public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
     private const string RenderingSystemsRoot = "Assets/Game/Scripts/Rendering/Systems";
+    private const string UiShellEcsRoot = "Assets/Game/Scripts/UI/Shell/Ecs";
     private const string GameScriptsRoot = "Assets/Game/Scripts";
     private const int ToArrayDebtCeiling = 0;
     private const int EntityManagerMutationDebtCeiling = 1;
     private const int NonBurstOnUpdateFileDebtCeiling = 23;
-    private const int BurstCompileFileFloor = 38;
+    private const int BurstEcsOnUpdateFileFloor = 49;
+    private const int JobBackedEcsOnUpdateFileFloor = 42;
 
     private static readonly Regex ToArrayRegex = new(
         @"\b(ToEntityArray|ToComponentDataArray)\s*(?:<[^>]+>)?\s*\(",
@@ -38,6 +40,14 @@ public sealed class EcsBurstHotPathArchitectureTests
         @"\[BurstCompile\]",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex JobBackedRegex = new(
+        @"\bIJob(?:Entity|Chunk|ParallelFor|For)?\b|\bJobHandle\b|\.Schedule(?:Parallel)?\s*\(",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex EcsSystemTypeRegex = new(
+        @"\b(?:class|struct)\s+\w+\s*:\s*[^{;\n]*(?:\bISystem\b|\bSystemBase\b|\bComponentSystemBase\b|\bComponentSystem\b|\bJobComponentSystem\b)",
+        RegexOptions.CultureInvariant);
+
     private static readonly Regex ClassBaseRegex = new(
         @"\bclass\s+(?<name>\w+)\s*:\s*(?<bases>[^{\n]+)",
         RegexOptions.CultureInvariant);
@@ -46,37 +56,56 @@ public sealed class EcsBurstHotPathArchitectureTests
         @"\b(GameObject|UnityEngine\.Object|Object\.Instantiate|Object\.Destroy|Resources\.Load|AssetDatabase|GameObject\.Find|Camera\.main|GetComponent(?:InChildren|sInChildren)?\s*\()",
         RegexOptions.CultureInvariant);
 
-    private static readonly Dictionary<string, string> ManagedBoundaryNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    private static readonly Dictionary<string, string> ManagedDiagnosticNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
         ["Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
-        ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
-        ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",
-        ["Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs"] = "bootstrap/blob-builder boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs"] = "pre-game diagnostics boundary; managed reporting only.",
-        ["Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs"] = "startup/runtime-grid ownership boundary; native-container disposal and one-time cleanup stay managed.",
-        ["Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs"] = "developer debug input boundary; intentionally managed and not production gameplay policy.",
         ["Assets/Game/Scripts/Systems/TransportBoardingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
         ["Assets/Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs"] = "diagnostic boundary; managed reporting only.",
         ["Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
+        ["Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDiagnosticLogFlushSystem.cs"] = "render-budget diagnostic flush boundary; managed log formatting only."
+    };
+
+    private static readonly Dictionary<string, string> ManagedBootstrapNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
+        ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",
+        ["Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs"] = "bootstrap/blob-builder boundary; not a recurring simulation hot path.",
+        ["Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs"] = "startup/runtime-grid ownership boundary; native-container disposal and one-time cleanup stay managed."
+    };
+
+    private static readonly Dictionary<string, string> ManagedPresentationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
         ["Assets/Game/Scripts/Systems/UnitRespawnSystem.cs"] = "spawn/presentation boundary; prefab instantiation, grounding warnings, and setup stay managed.",
         ["Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs"] = "GameObject/prefab reference bridge; managed presentation boundary.",
         ["Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs"] = "presentation/prefab instantiate boundary; managed visual lifecycle only.",
+        ["Assets/Game/Scripts/Rendering/Systems/UnitAttachedLightSystem.cs"] = "light presentation bridge; managed object/light state remains outside Burst.",
+        ["Assets/Game/Scripts/Rendering/Systems/UnitFactionTintTargetBackfillSystem.cs"] = "render-material presentation bridge; managed tint/material backfill remains outside Burst.",
+        ["Assets/Game/Scripts/Rendering/Systems/UnitModelSpawnSystem.cs"] = "model/prefab spawn presentation bridge; GameObject and prefab work stays managed.",
+        ["Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSystem.cs"] = "render-budget camera/orchestration shell; pure distance, sorting, banding, and plan helpers are Burst-covered separately."
     };
 
-    private static readonly Dictionary<string, string> TrackedHotPathDebtNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    private static readonly Dictionary<string, string> ManagedUiShellNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs"] = "Phase 5 AI planning hot-path debt; contains authored policy, diagnostics, and command-event work that must be split before Burst.",
-        ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "Phase 5 AI combat-order hot-path debt; command issuance and diagnostics need a data/job split.",
-        ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
-        ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
-        ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
-        ["Assets/Game/Scripts/Systems/UnitAttackSystem.cs"] = "combat hot-path debt; mixed combat simulation, VFX requests, and diagnostics need a split before Burst.",
-        ["Assets/Game/Scripts/Systems/UnitDeathSystem.cs"] = "combat lifecycle debt; death state, presentation requests, and cleanup need clearer data/job boundaries.",
-        ["Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"] = "Phase 6 pathfinding orchestration debt; detached-job/native-container ownership should remain explicit before further Burst changes.",
-        ["Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"] = "transport gameplay/presentation split debt; uses managed visual hiding utility and needs a data-only request split.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs"] = "UI shell state boundary; single boundary entity command consumption stays managed.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs"] = "UI shell bootstrap boundary; creates the shell boundary entity and buffers.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs"] = "UI shell transition boundary; route/popup/presentation command buffering stays managed."
     };
 
+    private static readonly Dictionary<string, string> ManagedDebugInputNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs"] = "developer debug input boundary; intentionally managed and not production gameplay policy."
+    };
+
+    private static readonly Dictionary<string, string> ManagedGameplayOrchestrationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"] = "detached pathfinding job orchestration boundary; expensive path search runs in Burst `PathfindBatchJob`, while this shell owns native snapshot lifetime, pending job state, diagnostics, and result playback."
+    };
+
+    private static readonly Dictionary<string, string> TrackedHotPathDebtNonBurstOnUpdateFiles = new(StringComparer.Ordinal);
+
+    private static readonly IReadOnlyDictionary<string, string> ManagedBoundaryNonBurstOnUpdateFiles = BuildManagedBoundaryNonBurstFiles();
     private static readonly IReadOnlyDictionary<string, string> ClassifiedNonBurstOnUpdateFiles = BuildClassifiedNonBurstFiles();
 
     private static readonly Dictionary<string, string> ClassifiedDirectEntityManagerMutationFiles = new(StringComparer.Ordinal)
@@ -85,8 +114,8 @@ public sealed class EcsBurstHotPathArchitectureTests
     };
 
     private static readonly Regex SystemStateMethodSignatureRegex = new(
-        @"(?:public|private|internal|protected)?\s*(?:static\s+)?(?:[\w<>\[\], ]+\s+)?(?<method>\w+)\s*\([^)]*\bref\s+SystemState\s+(?<state>\w+)[^)]*\)",
-        RegexOptions.CultureInvariant);
+        @"^[ \t]*(?:public|private|internal|protected)?[ \t]*(?:static[ \t]+)?(?:[\w<>\[\],]+[ \t]+)?(?<method>\w+)[ \t]*\([^()\r\n]*\bref[ \t]+SystemState[ \t]+(?<state>\w+)[^()\r\n]*\)",
+        RegexOptions.CultureInvariant | RegexOptions.Multiline);
 
     public static void RunFocusedValidation()
     {
@@ -97,11 +126,12 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.DirectEntityManagerMutationDebtMustNotIncrease();
             tests.NonBurstOnUpdateDebtMustNotIncrease();
             tests.ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt();
+            tests.ManagedBoundaryClassificationsMustBeDisjointAndConcrete();
             tests.RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets();
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=8");
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=9");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -179,11 +209,11 @@ public sealed class EcsBurstHotPathArchitectureTests
     [Test]
     public void NonBurstOnUpdateDebtMustNotIncrease()
     {
-        List<string> files = EnumerateSystemFiles()
+        List<string> files = EnumerateEcsOnUpdateSystemFiles()
             .Where(path =>
             {
                 string text = File.ReadAllText(path);
-                return OnUpdateRegex.IsMatch(text) && !BurstCompileRegex.IsMatch(text);
+                return !BurstCompileRegex.IsMatch(text);
             })
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
@@ -196,7 +226,13 @@ public sealed class EcsBurstHotPathArchitectureTests
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-        Debug.Log("Classified non-Burst OnUpdate files:\n" + FormatClassifiedNonBurstFiles(files));
+        List<string> allEcsOnUpdateFiles = EnumerateEcsOnUpdateSystemFiles().ToList();
+        int burstFiles = CountBurstFiles(allEcsOnUpdateFiles);
+        int jobBackedFiles = CountJobBackedFiles(allEcsOnUpdateFiles);
+
+        Debug.Log(
+            $"ECS OnUpdate coverage: total={allEcsOnUpdateFiles.Count} burst={burstFiles} ({FormatPercent(burstFiles, allEcsOnUpdateFiles.Count)}) jobBacked={jobBackedFiles} ({FormatPercent(jobBackedFiles, allEcsOnUpdateFiles.Count)}) nonBurst={files.Count} ({FormatPercent(files.Count, allEcsOnUpdateFiles.Count)}) unclassified={unclassified.Count}");
+        Debug.Log("Classified non-Burst ECS OnUpdate files:\n" + FormatClassifiedNonBurstFiles(files));
 
         Assert.LessOrEqual(
             files.Count,
@@ -222,11 +258,11 @@ public sealed class EcsBurstHotPathArchitectureTests
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-        List<string> files = EnumerateSystemFiles()
+        List<string> files = EnumerateEcsOnUpdateSystemFiles()
             .Where(path =>
             {
                 string text = File.ReadAllText(path);
-                return OnUpdateRegex.IsMatch(text) && !BurstCompileRegex.IsMatch(text);
+                return !BurstCompileRegex.IsMatch(text);
             })
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
@@ -253,10 +289,42 @@ public sealed class EcsBurstHotPathArchitectureTests
             0,
             "Managed boundary classification unexpectedly became empty; update the guardrail intentionally if all boundaries are converted.");
 
-        Assert.Greater(
-            currentTrackedDebt.Count,
-            0,
-            "Tracked hot-path debt classification unexpectedly became empty; update the roadmap before removing the final debt class.");
+    }
+
+    [Test]
+    public void ManagedBoundaryClassificationsMustBeDisjointAndConcrete()
+    {
+        var categories = new (string Name, IReadOnlyDictionary<string, string> Files)[]
+        {
+            ("diagnostic", ManagedDiagnosticNonBurstOnUpdateFiles),
+            ("bootstrap", ManagedBootstrapNonBurstOnUpdateFiles),
+            ("presentation", ManagedPresentationNonBurstOnUpdateFiles),
+            ("ui", ManagedUiShellNonBurstOnUpdateFiles),
+            ("debug", ManagedDebugInputNonBurstOnUpdateFiles),
+            ("gameplay-orchestration", ManagedGameplayOrchestrationNonBurstOnUpdateFiles)
+        };
+
+        List<string> duplicateManagedClassifications = categories
+            .SelectMany(category => category.Files.Keys.Select(path => (category.Name, Path: path)))
+            .GroupBy(entry => entry.Path, StringComparer.Ordinal)
+            .Where(group => group.Count() > 1)
+            .Select(group => $"{group.Key}: {string.Join(", ", group.Select(entry => entry.Name).OrderBy(name => name, StringComparer.Ordinal))}")
+            .ToList();
+        List<string> weakReasons = categories
+            .SelectMany(category => category.Files.Select(entry => (category.Name, entry.Key, entry.Value)))
+            .Where(entry => IsWeakManagedBoundaryReason(entry.Value))
+            .Select(entry => $"{entry.Key}: {entry.Name}; reason=`{entry.Value}`")
+            .ToList();
+
+        Assert.IsEmpty(
+            duplicateManagedClassifications,
+            "Managed boundary classifications must belong to exactly one managed category:\n" +
+            string.Join(Environment.NewLine, duplicateManagedClassifications));
+
+        Assert.IsEmpty(
+            weakReasons,
+            "Managed boundary classifications need concrete reasons tied to a real boundary, not placeholder exemptions:\n" +
+            string.Join(Environment.NewLine, weakReasons));
     }
 
     [Test]
@@ -300,20 +368,29 @@ public sealed class EcsBurstHotPathArchitectureTests
     [Test]
     public void BurstCompileCoverageMustNotDecrease()
     {
-        int filesWithBurstCompile = EnumerateSystemFiles()
-            .Count(path => BurstCompileRegex.IsMatch(File.ReadAllText(path)));
+        List<string> ecsOnUpdateFiles = EnumerateEcsOnUpdateSystemFiles().ToList();
+        int filesWithBurstCompile = CountBurstFiles(ecsOnUpdateFiles);
+        int filesWithJobBackedWork = CountJobBackedFiles(ecsOnUpdateFiles);
+
+        Debug.Log(
+            $"ECS OnUpdate Burst/job coverage: total={ecsOnUpdateFiles.Count} burst={filesWithBurstCompile} ({FormatPercent(filesWithBurstCompile, ecsOnUpdateFiles.Count)}) jobBacked={filesWithJobBackedWork} ({FormatPercent(filesWithJobBackedWork, ecsOnUpdateFiles.Count)})");
 
         Assert.GreaterOrEqual(
             filesWithBurstCompile,
-            BurstCompileFileFloor,
-            $"Burst coverage dropped below the roadmap baseline. Current={filesWithBurstCompile}, floor={BurstCompileFileFloor}.");
+            BurstEcsOnUpdateFileFloor,
+            $"ECS OnUpdate Burst coverage dropped below the roadmap baseline. Current={filesWithBurstCompile}, floor={BurstEcsOnUpdateFileFloor}.");
+
+        Assert.GreaterOrEqual(
+            filesWithJobBackedWork,
+            JobBackedEcsOnUpdateFileFloor,
+            $"ECS OnUpdate job-backed coverage dropped below the roadmap baseline. Current={filesWithJobBackedWork}, floor={JobBackedEcsOnUpdateFileFloor}.");
     }
 
     [Test]
     public void SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization()
     {
         List<string> violations = new();
-        foreach (string path in EnumerateSystemFiles())
+        foreach (string path in EnumerateRuntimeEcsAuditFiles())
         {
             string text = File.ReadAllText(path);
             foreach (Match methodMatch in SystemStateMethodSignatureRegex.Matches(text))
@@ -379,21 +456,96 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static IEnumerable<string> EnumerateRuntimeSystemFiles()
     {
-        return Directory
-            .GetFiles(SystemsRoot, "*.cs", SearchOption.AllDirectories)
-            .Concat(Directory.GetFiles(RenderingSystemsRoot, "*.cs", SearchOption.AllDirectories))
+        return EnumerateRuntimeEcsAuditFiles();
+    }
+
+    private static IEnumerable<string> EnumerateRuntimeEcsAuditFiles()
+    {
+        return EnumerateFiles(SystemsRoot)
+            .Concat(EnumerateFiles(RenderingSystemsRoot))
+            .Concat(EnumerateFiles(UiShellEcsRoot))
             .Select(NormalizePath)
             .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> EnumerateEcsOnUpdateSystemFiles()
+    {
+        return EnumerateRuntimeEcsAuditFiles()
+            .Where(path =>
+            {
+                string text = File.ReadAllText(path);
+                return EcsSystemTypeRegex.IsMatch(text) && OnUpdateRegex.IsMatch(text);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> EnumerateFiles(string root)
+    {
+        return Directory.Exists(root)
+            ? Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories)
+            : Array.Empty<string>();
+    }
+
+    private static int CountBurstFiles(IEnumerable<string> paths)
+    {
+        return paths.Count(path => BurstCompileRegex.IsMatch(File.ReadAllText(path)));
+    }
+
+    private static int CountJobBackedFiles(IEnumerable<string> paths)
+    {
+        return paths.Count(path => JobBackedRegex.IsMatch(File.ReadAllText(path)));
+    }
+
+    private static string FormatPercent(int numerator, int denominator)
+    {
+        if (denominator <= 0)
+            return "0.0%";
+
+        return $"{(double)numerator / denominator * 100d:F1}%";
+    }
+
+    private static Dictionary<string, string> BuildManagedBoundaryNonBurstFiles()
+    {
+        Dictionary<string, string> result = new(StringComparer.Ordinal);
+        AddRange(result, ManagedDiagnosticNonBurstOnUpdateFiles);
+        AddRange(result, ManagedBootstrapNonBurstOnUpdateFiles);
+        AddRange(result, ManagedPresentationNonBurstOnUpdateFiles);
+        AddRange(result, ManagedUiShellNonBurstOnUpdateFiles);
+        AddRange(result, ManagedDebugInputNonBurstOnUpdateFiles);
+        AddRange(result, ManagedGameplayOrchestrationNonBurstOnUpdateFiles);
+        return result;
     }
 
     private static Dictionary<string, string> BuildClassifiedNonBurstFiles()
     {
         Dictionary<string, string> result = new(StringComparer.Ordinal);
-        foreach (KeyValuePair<string, string> entry in ManagedBoundaryNonBurstOnUpdateFiles)
-            result.Add(entry.Key, entry.Value);
-        foreach (KeyValuePair<string, string> entry in TrackedHotPathDebtNonBurstOnUpdateFiles)
-            result.Add(entry.Key, entry.Value);
+        AddRange(result, ManagedBoundaryNonBurstOnUpdateFiles);
+        AddRange(result, TrackedHotPathDebtNonBurstOnUpdateFiles);
         return result;
+    }
+
+    private static void AddRange(
+        Dictionary<string, string> target,
+        IEnumerable<KeyValuePair<string, string>> source)
+    {
+        foreach (KeyValuePair<string, string> entry in source)
+            target.Add(entry.Key, entry.Value);
+    }
+
+    private static bool IsWeakManagedBoundaryReason(string reason)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+            return true;
+
+        string normalized = reason.Trim();
+        if (normalized.Equals("managed boundary", StringComparison.OrdinalIgnoreCase) ||
+            normalized.Equals("managed boundary.", StringComparison.OrdinalIgnoreCase) ||
+            normalized.Contains("<", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private static IEnumerable<string> EnumerateUnitRenderBudgetSystemFiles()

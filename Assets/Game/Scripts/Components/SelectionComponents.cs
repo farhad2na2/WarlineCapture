@@ -14,6 +14,25 @@ public struct SelectionMarkerVisualChild : IComponentData
     public float VisibleScale;
 }
 
+public struct SelectionMarkerOwner : IComponentData
+{
+    public Entity Value;
+}
+
+public struct SelectionObjectOutlineTag : IComponentData
+{
+}
+
+public struct SelectionObjectOutlineVisibleScale : IComponentData
+{
+    public float Value;
+}
+
+public struct SelectionObjectOutlineInstanceElement : IBufferElementData
+{
+    public Entity Value;
+}
+
 public struct ManualMoveOrderTag : IComponentData
 {
 }

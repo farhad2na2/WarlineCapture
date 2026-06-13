@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
@@ -19,13 +20,22 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(false);
+        var postTransformLookup = SystemAPI.GetComponentLookup<PostTransformMatrix>(false);
 
         state.Dependency = new UpdateSelectionMarkerJob
         {
             SelectedLookup = selectedLookup,
             HealthLookup = healthLookup,
             PassengerLookup = passengerLookup,
-            TransformLookup = transformLookup
+            TransformLookup = transformLookup,
+            PostTransformLookup = postTransformLookup
+        }.ScheduleParallel(state.Dependency);
+
+        state.Dependency = new UpdateSelectionObjectOutlineJob
+        {
+            SelectedLookup = selectedLookup,
+            HealthLookup = healthLookup,
+            PassengerLookup = passengerLookup
         }.ScheduleParallel(state.Dependency);
     }
 
@@ -37,6 +47,7 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
         [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
         [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> TransformLookup;
+        [NativeDisableParallelForRestriction] public ComponentLookup<PostTransformMatrix> PostTransformLookup;
 
         public void Execute(Entity entity, in Parent parent, in SelectionMarkerVisualChild visualChild)
         {
@@ -57,8 +68,41 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
                 return;
 
             LocalTransform childTransform = TransformLookup[visualChild.Value];
+            if (PostTransformLookup.HasComponent(visualChild.Value))
+            {
+                childTransform.Scale = visible ? 1f : 0f;
+                TransformLookup[visualChild.Value] = childTransform;
+                float scale = visible ? math.max(0f, visualChild.VisibleScale) : 0f;
+                PostTransformLookup[visualChild.Value] = new PostTransformMatrix
+                {
+                    Value = float4x4.Scale(new float3(scale, 1f, scale))
+                };
+                return;
+            }
+
             childTransform.Scale = visible ? visualChild.VisibleScale : 0f;
             TransformLookup[visualChild.Value] = childTransform;
+        }
+    }
+
+    [BurstCompile]
+    [WithAll(typeof(SelectionObjectOutlineTag))]
+    private partial struct UpdateSelectionObjectOutlineJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<SelectedUnitTag> SelectedLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
+        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+
+        public void Execute(ref LocalTransform transform, in SelectionMarkerOwner owner, in SelectionObjectOutlineVisibleScale visibleScale)
+        {
+            Entity unit = owner.Value;
+            bool visible =
+                SelectedLookup.HasComponent(unit) &&
+                HealthLookup.HasComponent(unit) &&
+                HealthLookup[unit].Current > 0 &&
+                !PassengerLookup.HasComponent(unit);
+
+            transform.Scale = visible ? math.max(0f, visibleScale.Value) : 0f;
         }
     }
 }

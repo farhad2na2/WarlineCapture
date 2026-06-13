@@ -27,6 +27,7 @@ public sealed class SelectionOrderMarkerSystem
     private Renderer[] _attackTargetSelectionMarkerRenderers;
     private Vector3 _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
     private readonly MaterialPropertyBlock _attackTargetSelectionMarkerPropertyBlock = new();
+    private PremiumWorldSelectionBoundaryView _attackTargetSelectionBoundaryView;
     private GameObject _scanOrderMarker;
     private LineRenderer _scanOrderMarkerRenderer;
     private float _scanOrderMarkerHideTime = -1f;
@@ -45,14 +46,28 @@ public sealed class SelectionOrderMarkerSystem
     private float _nextAttackTargetPreviewUpdateTime;
     private const int MaxAttackTargetPreviewMarkers = 64;
     private const float AttackTargetPreviewUpdateSeconds = 0.15f;
+    private const float MoveOrderMarkerVerticalOffset = 0.1f;
     private const float AttackOrderMarkerVerticalOffset = 0.45f;
-    private const float AttackTargetSelectionMarkerVerticalOffset = 0.035f;
+    private const float AttackTargetSelectionMarkerVerticalOffset = 0.12f;
     private const float AttackTargetSelectionMarkerScaleMultiplier = 1.25f;
     private const float AttackTargetRingMinimumRadius = 0.95f;
     private const float AttackTargetRingWidth = 0.55f;
     private const float AttackTargetMarkerMinimumVisibleSeconds = 14f;
     private const int AttackTargetRingSegments = 96;
+    private const string SelectionObjectOutlineToken = "SelectionObjectOutline";
+    private const string BaseColorProperty = "_BaseColor";
+    private const string LegacyColorProperty = "_Color";
+    private const string EmissionColorProperty = "_EmissionColor";
+    private const string AccentColorProperty = "_AccentColor";
     private static readonly Color AttackTargetMarkerColor = new(1f, 0.08f, 0.04f, 0.95f);
+    private static readonly Color AttackTargetMarkerEmissionColor = new(0.76f, 0.05f, 0.03f, 1f);
+    private static readonly Color AttackTargetMarkerAccentColor = new(1f, 0.92f, 0.5f, 1f);
+    private static readonly Color AttackPreviewMarkerColor = new(0.92f, 0.12f, 0.08f, 0.62f);
+    private static readonly Color AttackPreviewMarkerEmissionColor = new(0.24f, 0.03f, 0.02f, 1f);
+    private static readonly Color AttackPreviewMarkerAccentColor = new(1f, 0.64f, 0.42f, 1f);
+    private static readonly Color BoardPreviewMarkerColor = new(0.2f, 1f, 0.78f, 0.68f);
+    private static readonly Color BoardPreviewMarkerEmissionColor = new(0.04f, 0.34f, 0.25f, 1f);
+    private static readonly Color BoardPreviewMarkerAccentColor = new(0.72f, 1f, 0.88f, 1f);
     private const int ScanMarkerSegments = 72;
 
     public void EnsureEntityQueries(EntityManager em)
@@ -117,6 +132,7 @@ public sealed class SelectionOrderMarkerSystem
         _attackTargetSelectionMarker = null;
         _attackTargetSelectionMarkerRenderers = null;
         _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
+        _attackTargetSelectionBoundaryView = null;
         _scanOrderMarker = null;
         _scanOrderMarkerRenderer = null;
         _attackTargetPreviewMarkers.Clear();
@@ -203,11 +219,12 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         Vector3 worldPosition = worldPoint;
-        worldPosition.y = grid.Origin.y + 0.05f;
+        worldPosition.y = grid.Origin.y + MoveOrderMarkerVerticalOffset;
 
         _moveOrderMarker.transform.position = worldPosition;
         _moveOrderMarker.transform.rotation = Quaternion.identity;
         _moveOrderMarker.SetActive(true);
+        LiftMarkerRendererBoundsAbove(_moveOrderMarker, _moveOrderMarkerRenderers, grid.Origin.y + MoveOrderMarkerVerticalOffset);
 
         for (int i = 0; i < _moveOrderMarkerRenderers.Length; i++)
         {
@@ -288,27 +305,43 @@ public sealed class SelectionOrderMarkerSystem
             return false;
 
         Vector2 markerSize = ResolveAttackMarkerWorldSize(em, targetEntity, grid);
+        Vector2 boundarySize = markerSize;
         Vector3 markerPosition = worldPosition;
         Quaternion markerRotation = ResolveAttackMarkerRotation(em, targetEntity);
+        float markerSurfaceY;
+        float targetHeight = ResolveAttackMarkerWorldHeight(em, targetEntity);
         bool usedRuntimeBounds = TryResolveRuntimeBuildingMarkerPlacement(
             em,
             targetEntity,
+            grid,
             out Vector3 runtimePosition,
-            out Quaternion runtimeRotation);
+            out Quaternion runtimeRotation,
+            out Bounds runtimeBounds);
         if (usedRuntimeBounds)
         {
             markerPosition = runtimePosition;
             markerRotation = runtimeRotation;
+            markerSurfaceY = runtimePosition.y - AttackTargetSelectionMarkerVerticalOffset;
+            boundarySize = new Vector2(
+                Mathf.Max(markerSize.x, runtimeBounds.size.x),
+                Mathf.Max(markerSize.y, runtimeBounds.size.z));
+            targetHeight = Mathf.Max(targetHeight, runtimeBounds.size.y);
         }
         else
         {
-            markerPosition.y = Mathf.Max(grid.Origin.y, worldPosition.y) + AttackTargetSelectionMarkerVerticalOffset;
+            markerSurfaceY = Mathf.Max(grid.Origin.y, worldPosition.y);
+            markerPosition.y = markerSurfaceY + AttackTargetSelectionMarkerVerticalOffset;
         }
 
         Transform markerTransform = _attackTargetSelectionMarker.transform;
         markerTransform.SetPositionAndRotation(markerPosition, markerRotation);
         markerTransform.localScale = ResolveAttackTargetSelectionMarkerScale(markerSize);
         _attackTargetSelectionMarker.SetActive(true);
+        LiftMarkerRendererBoundsAbove(
+            _attackTargetSelectionMarker,
+            _attackTargetSelectionMarkerRenderers,
+            markerSurfaceY + AttackTargetSelectionMarkerVerticalOffset);
+        ConfigureAttackTargetBoundaryView(markerPosition, markerRotation, boundarySize, markerSurfaceY, targetHeight);
         if (_attackTargetRingMarker != null)
             _attackTargetRingMarker.SetActive(false);
 
@@ -549,14 +582,16 @@ public sealed class SelectionOrderMarkerSystem
                 float3 position = transforms[i].Position;
                 marker.transform.position = new Vector3(
                     position.x,
-                    hasGroundY ? groundY : position.y + 0.05f,
+                    hasGroundY ? groundY : position.y + MoveOrderMarkerVerticalOffset,
                     position.z);
                 marker.transform.rotation = Quaternion.identity;
                 if (boardPreview)
                     ApplyBoardTargetPreviewColor(markerIndex);
                 else
-                    ClearTargetPreviewColor(markerIndex);
+                    ApplyAttackTargetPreviewColor(markerIndex);
                 SetMarkerActive(marker, true);
+                if ((uint)markerIndex < (uint)_attackTargetPreviewMarkerRenderers.Count)
+                    LiftMarkerRendererBoundsAbove(marker, _attackTargetPreviewMarkerRenderers[markerIndex], marker.transform.position.y);
                 markerIndex++;
             }
         }
@@ -680,7 +715,31 @@ public sealed class SelectionOrderMarkerSystem
         _attackTargetSelectionMarkerBaseRendererSize = CalculateRendererSize(_attackTargetSelectionMarkerRenderers);
         ConfigureMarkerRenderers(_attackTargetSelectionMarkerRenderers);
         ApplyAttackTargetSelectionMarkerColor();
+        _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.GetComponent<PremiumWorldSelectionBoundaryView>();
+        if (_attackTargetSelectionBoundaryView == null)
+            _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.AddComponent<PremiumWorldSelectionBoundaryView>();
         _attackTargetSelectionMarker.SetActive(false);
+    }
+
+    private void ConfigureAttackTargetBoundaryView(
+        Vector3 markerPosition,
+        Quaternion markerRotation,
+        Vector2 markerSize,
+        float surfaceY,
+        float targetHeight)
+    {
+        if (_attackTargetSelectionBoundaryView == null)
+            return;
+
+        Color accent = Color.Lerp(AttackTargetMarkerAccentColor, Color.white, 0.25f);
+        _attackTargetSelectionBoundaryView.Configure(
+            markerPosition,
+            markerRotation,
+            markerSize,
+            surfaceY,
+            Mathf.Max(0.9f, targetHeight),
+            AttackTargetMarkerColor,
+            accent);
     }
 
     private Vector3 ResolveAttackTargetSelectionMarkerScale(Vector2 markerSize)
@@ -706,8 +765,11 @@ public sealed class SelectionOrderMarkerSystem
 
             _attackTargetSelectionMarkerPropertyBlock.Clear();
             renderer.GetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
-            _attackTargetSelectionMarkerPropertyBlock.SetColor("_BaseColor", AttackTargetMarkerColor);
-            _attackTargetSelectionMarkerPropertyBlock.SetColor("_Color", AttackTargetMarkerColor);
+            SetHologramMarkerColors(
+                _attackTargetSelectionMarkerPropertyBlock,
+                AttackTargetMarkerColor,
+                AttackTargetMarkerEmissionColor,
+                AttackTargetMarkerAccentColor);
             renderer.SetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
         }
     }
@@ -715,11 +777,14 @@ public sealed class SelectionOrderMarkerSystem
     private bool TryResolveRuntimeBuildingMarkerPlacement(
         EntityManager em,
         Entity targetEntity,
+        GridConfig grid,
         out Vector3 position,
-        out Quaternion rotation)
+        out Quaternion rotation,
+        out Bounds bounds)
     {
         position = default;
         rotation = Quaternion.identity;
+        bounds = default;
 
         if (targetEntity == Entity.Null ||
             !em.Exists(targetEntity) ||
@@ -733,13 +798,33 @@ public sealed class SelectionOrderMarkerSystem
         if (info.RuntimeBuildingId <= 0 ||
             !_tryResolveRuntimeBuildingInstance(targetEntity, info.RuntimeBuildingId, out GameObject instance) ||
             instance == null ||
-            !TryCalculateRendererBounds(instance, out Bounds bounds))
+            !TryCalculateRendererBounds(instance, out bounds))
             return false;
 
+        float surfaceY = Mathf.Max(grid.Origin.y, bounds.min.y);
+        if (bounds.min.y < grid.Origin.y - 0.001f)
+            surfaceY = Mathf.Max(surfaceY, instance.transform.position.y);
         position = bounds.center;
-        position.y = bounds.min.y + AttackTargetSelectionMarkerVerticalOffset;
+        position.y = surfaceY + AttackTargetSelectionMarkerVerticalOffset;
         rotation = Quaternion.Euler(0f, instance.transform.eulerAngles.y, 0f);
         return true;
+    }
+
+    private static float ResolveAttackMarkerWorldHeight(EntityManager em, Entity targetEntity)
+    {
+        if (targetEntity == Entity.Null || !em.Exists(targetEntity))
+            return 1.2f;
+
+        if (em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity))
+            return 3.4f;
+
+        if (em.HasComponent<UnitMovementBehavior>(targetEntity) &&
+            em.GetComponentData<UnitMovementBehavior>(targetEntity).UsesVehicleMotion != 0)
+        {
+            return 1.65f;
+        }
+
+        return 1.25f;
     }
 
     private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
@@ -753,7 +838,7 @@ public sealed class SelectionOrderMarkerSystem
         for (int i = 0; i < renderers.Length; i++)
         {
             Renderer renderer = renderers[i];
-            if (renderer == null || !renderer.enabled)
+            if (renderer == null || !renderer.enabled || IsSelectionObjectOutlineRenderer(renderer))
                 continue;
 
             if (hasBounds)
@@ -766,6 +851,22 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         return hasBounds;
+    }
+
+    private static bool IsSelectionObjectOutlineRenderer(Renderer renderer)
+    {
+        if (renderer == null)
+            return false;
+
+        Transform current = renderer.transform;
+        while (current != null)
+        {
+            if (current.name.IndexOf(SelectionObjectOutlineToken, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+            current = current.parent;
+        }
+
+        return false;
     }
 
     private static Quaternion ResolveAttackMarkerRotation(EntityManager em, Entity targetEntity)
@@ -825,8 +926,10 @@ public sealed class SelectionOrderMarkerSystem
         material.SetInt("_Cull", (int)CullMode.Off);
         material.SetInt("_ZWrite", 0);
         material.SetInt("_ZTest", (int)CompareFunction.Always);
-        material.SetColor("_Color", AttackTargetMarkerColor);
-        material.SetColor("_BaseColor", AttackTargetMarkerColor);
+        material.SetColor(LegacyColorProperty, AttackTargetMarkerColor);
+        material.SetColor(BaseColorProperty, AttackTargetMarkerColor);
+        material.SetColor(EmissionColorProperty, AttackTargetMarkerEmissionColor);
+        material.SetColor(AccentColorProperty, AttackTargetMarkerAccentColor);
         return material;
     }
 
@@ -853,6 +956,43 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         return hasBounds ? bounds.size : Vector3.one;
+    }
+
+    private static void LiftMarkerRendererBoundsAbove(GameObject marker, Renderer[] renderers, float minimumWorldY)
+    {
+        if (marker == null || !TryCalculateRendererBounds(renderers, out Bounds markerBounds))
+            return;
+
+        float lift = minimumWorldY - markerBounds.min.y;
+        if (lift <= 0.001f)
+            return;
+
+        marker.transform.position += Vector3.up * lift;
+    }
+
+    private static bool TryCalculateRendererBounds(Renderer[] renderers, out Bounds bounds)
+    {
+        bounds = default;
+        if (renderers == null)
+            return false;
+
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled)
+                continue;
+
+            if (hasBounds)
+                bounds.Encapsulate(renderer.bounds);
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds;
     }
 
     private void HideAttackTargetPreviewMarkersIfNeeded(int startIndex)
@@ -893,7 +1033,6 @@ public sealed class SelectionOrderMarkerSystem
         if (renderers == null)
             return;
 
-        Color color = new(0.22f, 1f, 0.78f, 0.92f);
         for (int i = 0; i < renderers.Length; i++)
         {
             Renderer renderer = renderers[i];
@@ -902,13 +1041,16 @@ public sealed class SelectionOrderMarkerSystem
 
             _boardTargetPreviewPropertyBlock.Clear();
             renderer.GetPropertyBlock(_boardTargetPreviewPropertyBlock);
-            _boardTargetPreviewPropertyBlock.SetColor("_BaseColor", color);
-            _boardTargetPreviewPropertyBlock.SetColor("_Color", color);
+            SetHologramMarkerColors(
+                _boardTargetPreviewPropertyBlock,
+                BoardPreviewMarkerColor,
+                BoardPreviewMarkerEmissionColor,
+                BoardPreviewMarkerAccentColor);
             renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
         }
     }
 
-    private void ClearTargetPreviewColor(int markerIndex)
+    private void ApplyAttackTargetPreviewColor(int markerIndex)
     {
         if ((uint)markerIndex >= (uint)_attackTargetPreviewMarkerRenderers.Count)
             return;
@@ -924,8 +1066,26 @@ public sealed class SelectionOrderMarkerSystem
                 continue;
 
             _boardTargetPreviewPropertyBlock.Clear();
+            renderer.GetPropertyBlock(_boardTargetPreviewPropertyBlock);
+            SetHologramMarkerColors(
+                _boardTargetPreviewPropertyBlock,
+                AttackPreviewMarkerColor,
+                AttackPreviewMarkerEmissionColor,
+                AttackPreviewMarkerAccentColor);
             renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
         }
+    }
+
+    private static void SetHologramMarkerColors(
+        MaterialPropertyBlock propertyBlock,
+        Color baseColor,
+        Color emissionColor,
+        Color accentColor)
+    {
+        propertyBlock.SetColor(BaseColorProperty, baseColor);
+        propertyBlock.SetColor(LegacyColorProperty, baseColor);
+        propertyBlock.SetColor(EmissionColorProperty, emissionColor);
+        propertyBlock.SetColor(AccentColorProperty, accentColor);
     }
 
     private static void SetMarkerActive(GameObject marker, bool active)
@@ -936,13 +1096,13 @@ public sealed class SelectionOrderMarkerSystem
 
     private bool TryGetMarkerGroundY(EntityManager em, out float y)
     {
-        y = 0.05f;
+        y = MoveOrderMarkerVerticalOffset;
         if (_gridBlockerQuery.IsEmptyIgnoreFilter)
             return false;
 
         Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        y = grid.Origin.y + 0.05f;
+        y = grid.Origin.y + MoveOrderMarkerVerticalOffset;
         return true;
     }
 

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public sealed class BuildingVisualSystem
 {
+    private const string BaseColorProperty = "_BaseColor";
+    private const string LegacyColorProperty = "_Color";
+    private const string EmissionColorProperty = "_EmissionColor";
+    private const string AccentColorProperty = "_AccentColor";
+
     public sealed class AnimatedPart
     {
         public Transform Transform;
@@ -25,10 +30,15 @@ public sealed class BuildingVisualSystem
                 continue;
 
             renderer.GetPropertyBlock(propertyBlock);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_BaseColor"))
-                propertyBlock.SetColor("_BaseColor", color);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_Color"))
-                propertyBlock.SetColor("_Color", color);
+            Material material = renderer.sharedMaterial;
+            if (material != null && material.HasProperty(BaseColorProperty))
+                propertyBlock.SetColor(BaseColorProperty, color);
+            if (material != null && material.HasProperty(LegacyColorProperty))
+                propertyBlock.SetColor(LegacyColorProperty, color);
+            if (material != null && material.HasProperty(EmissionColorProperty))
+                propertyBlock.SetColor(EmissionColorProperty, color);
+            if (material != null && material.HasProperty(AccentColorProperty))
+                propertyBlock.SetColor(AccentColorProperty, color);
             renderer.SetPropertyBlock(propertyBlock);
         }
     }

@@ -16,7 +16,7 @@ public partial struct UnitFactionTintTargetBackfillSystem : ISystem
         foreach (var (parent, entity) in SystemAPI
                  .Query<RefRO<Parent>>()
                  .WithAll<MaterialMeshInfo>()
-                 .WithNone<FactionTintTarget>()
+                 .WithNone<FactionTintTarget, SelectionObjectOutlineTag>()
                  .WithEntityAccess())
         {
             if (IsUnitRenderable(em, entity, parent.ValueRO.Value))
@@ -49,6 +49,7 @@ public partial struct UnitFactionTintTargetBackfillSystem : ISystem
         for (int i = 0; i < 64; i++)
         {
             if (em.HasComponent<SelectionMarkerTag>(current) ||
+                em.HasComponent<SelectionObjectOutlineTag>(current) ||
                 em.HasComponent<HealthBarFill>(current))
             {
                 return false;

@@ -1,12 +1,49 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class BuildingSelectionMarkerSystemTests
 {
+    private const string SelectionMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Player_Hologram.mat";
+
     private GameObject _markerPrefab;
     private GameObject _root;
     private readonly System.Collections.Generic.List<GameObject> _objects = new();
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.RefreshMovesSingleMarkerBetweenSelectedBuildings());
+            RunCase(test => test.RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed());
+            RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
+            RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
+            RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
+            RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
+            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=6");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingSelectionMarkerFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<BuildingSelectionMarkerSystemTests> testCase)
+    {
+        var test = new BuildingSelectionMarkerSystemTests();
+        test.SetUp();
+        try
+        {
+            testCase(test);
+        }
+        finally
+        {
+            test.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -59,7 +96,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         Assert.IsTrue(marker.activeSelf);
         Assert.That(marker.transform.position.x, Is.EqualTo(25f).Within(0.001f));
         Assert.That(marker.transform.position.z, Is.EqualTo(12f).Within(0.001f));
-        Assert.That(marker.transform.position.y, Is.EqualTo(0.535f).Within(0.001f));
+        AssertMarkerRenderableMinY(marker, 0.53f);
     }
 
     [Test]
@@ -84,6 +121,61 @@ public sealed class BuildingSelectionMarkerSystemTests
         building.IsDestroyed = true;
         system.Refresh(context);
         Assert.IsFalse(system.RuntimeMarkerForTests.activeSelf);
+    }
+
+    [Test]
+    public void RefreshAppliesHologramCompatibleMarkerColorProperties()
+    {
+        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
+        runtimeBuildings.AddBuilding(building.Id, building);
+
+        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker);
+        Renderer renderer = marker.GetComponentInChildren<Renderer>();
+        Assert.IsNotNull(renderer);
+
+        var propertyBlock = new MaterialPropertyBlock();
+        renderer.GetPropertyBlock(propertyBlock);
+        AssertColorClose(new Color(0.05f, 0.88f, 1f, 0.94f), propertyBlock.GetColor("_BaseColor"));
+        AssertColorClose(new Color(0.05f, 0.88f, 1f, 0.94f), propertyBlock.GetColor("_Color"));
+        AssertColorClose(new Color(0.05f, 0.88f, 1f, 0.94f), propertyBlock.GetColor("_EmissionColor"));
+        AssertColorClose(new Color(0.05f, 0.88f, 1f, 0.94f), propertyBlock.GetColor("_AccentColor"));
+    }
+
+    [Test]
+    public void RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface()
+    {
+        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(4, 4), 0.25f);
+        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>();
+
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(visual.GetComponent<Collider>());
+        visual.name = "Model";
+        visual.transform.SetParent(building.Instance.transform, false);
+        visual.transform.localPosition = new Vector3(0f, -0.8f, 0f);
+        visual.transform.localScale = new Vector3(2f, 1f, 2f);
+        _objects.Add(visual);
+
+        runtimeBuildings.AddBuilding(building.Id, building);
+
+        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker);
+        Assert.IsTrue(marker.activeSelf);
+        AssertMarkerRenderableMinY(marker, 0.3f);
     }
 
     [Test]
@@ -119,6 +211,42 @@ public sealed class BuildingSelectionMarkerSystemTests
         Assert.IsNotNull(building.FactionVisualRenderers);
         Assert.AreEqual(1, building.FactionVisualRenderers.Length);
         Assert.AreSame(model.GetComponent<Renderer>(), building.FactionVisualRenderers[0]);
+    }
+
+    [Test]
+    public void RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding()
+    {
+        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
+        GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(model.GetComponent<Collider>());
+        model.name = "SelectableModel";
+        model.transform.SetParent(building.Instance.transform, false);
+        model.transform.localScale = new Vector3(3f, 1.6f, 2f);
+        _objects.Add(model);
+        runtimeBuildings.AddBuilding(building.Id, building);
+
+        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker.GetComponent<PremiumWorldSelectionObjectOutlineView>());
+        Transform overlay = FindDescendantContaining(building.Instance.transform, "SelectionObjectOutline_");
+        Assert.IsNotNull(overlay, "Selected building model must receive a mesh-bound selection outline overlay.");
+        Assert.IsTrue(overlay.gameObject.activeSelf);
+        MeshRenderer overlayRenderer = overlay.GetComponent<MeshRenderer>();
+        Assert.IsNotNull(overlayRenderer);
+        Assert.IsNotNull(overlayRenderer.sharedMaterial);
+        Assert.AreEqual("WarlineCapture/Markers/SelectionObjectOutline", overlayRenderer.sharedMaterial.shader.name);
+
+        runtimeBuildings.ClearSelection();
+        system.Refresh(context);
+
+        Assert.IsFalse(overlay.gameObject.activeSelf);
+        system.Dispose(context);
     }
 
     private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildings)
@@ -170,9 +298,67 @@ public sealed class BuildingSelectionMarkerSystemTests
         GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Object.DestroyImmediate(model.GetComponent<Collider>());
         model.name = "Model";
+        Material material = AssetDatabase.LoadAssetAtPath<Material>(SelectionMarkerMaterialPath);
+        Assert.IsNotNull(material, $"Missing selection marker material at {SelectionMarkerMaterialPath}");
+        model.GetComponent<Renderer>().sharedMaterial = material;
         model.transform.SetParent(marker.transform, false);
         model.transform.localScale = Vector3.one;
         return marker;
+    }
+
+    private static void AssertMarkerRenderableMinY(GameObject marker, float expectedMinimumY)
+    {
+        Assert.IsTrue(TryCalculateRendererBounds(marker, out Bounds bounds), "Marker must have renderer bounds.");
+        Assert.That(bounds.min.y, Is.GreaterThanOrEqualTo(expectedMinimumY - 0.001f));
+    }
+
+    private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
+    {
+        bounds = default;
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled)
+                continue;
+
+            if (hasBounds)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private static Transform FindDescendantContaining(Transform root, string nameFragment)
+    {
+        Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform transform = transforms[i];
+            if (transform != null &&
+                transform.name.Contains(nameFragment, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return transform;
+            }
+        }
+
+        return null;
+    }
+
+    private static void AssertColorClose(Color expected, Color actual)
+    {
+        Assert.That(actual.r, Is.EqualTo(expected.r).Within(0.001f));
+        Assert.That(actual.g, Is.EqualTo(expected.g).Within(0.001f));
+        Assert.That(actual.b, Is.EqualTo(expected.b).Within(0.001f));
+        Assert.That(actual.a, Is.EqualTo(expected.a).Within(0.001f));
     }
 }
 #endif

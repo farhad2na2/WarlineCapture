@@ -4,8 +4,12 @@ using UnityEngine;
 
 internal sealed class BuildingSelectionMarkerSystem
 {
-    private const float MarkerHeightOffset = 0.035f;
+    private const float MarkerSurfaceClearance = 0.12f;
     private const string RuntimeMarkerName = "BuildingSelectionMarkerRuntime";
+    private const string SelectionObjectOutlineToken = "SelectionObjectOutline";
+    private static readonly Color PremiumSelectionColor = new(0.05f, 0.88f, 1f, 0.94f);
+    private static readonly Color PremiumSelectionEmissionColor = new(0.08f, 0.96f, 1f, 1f);
+    private static readonly Color PremiumSelectionAccentColor = new(0.82f, 1f, 1f, 1f);
 
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
@@ -52,6 +56,9 @@ internal sealed class BuildingSelectionMarkerSystem
     private GameObject _markerInstance;
     private Renderer[] _markerRenderers;
     private Vector3 _baseRendererSize = Vector3.one;
+    private PremiumWorldSelectionBoundaryView _boundaryView;
+    private PremiumWorldSelectionObjectOutlineView _objectOutlineView;
+    private Color _markerColor = PremiumSelectionColor;
 
     internal GameObject RuntimeMarkerForTests => _markerInstance;
 
@@ -74,32 +81,42 @@ internal sealed class BuildingSelectionMarkerSystem
             : Vector2Int.one;
         Vector3 center;
         Quaternion rotation = Quaternion.identity;
-        if (IsMapAuthoredBuilding(building) && TryCalculateRendererBounds(building.Instance, out Bounds bounds))
+        float surfaceY;
+        Bounds bounds = default;
+        bool hasRendererBounds = building.Instance != null &&
+                                 TryCalculateRendererBounds(building.Instance, out bounds);
+        if (IsMapAuthoredBuilding(building) && hasRendererBounds)
         {
             center = bounds.center;
-            center.y = bounds.min.y + MarkerHeightOffset;
+            surfaceY = ResolveMarkerSurfaceY(building.Instance, bounds, grid);
+            center.y = surfaceY;
             rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
         }
         else
         {
             center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
-            float y = building.Instance != null
+            surfaceY = building.Instance != null
                 ? building.Instance.transform.position.y
                 : center.y;
-            center.y = y + MarkerHeightOffset;
+            center.y = surfaceY;
             if (building.Instance != null)
                 rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
         }
 
+        Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid, hasRendererBounds ? bounds : default);
         Transform markerTransform = _markerInstance.transform;
         markerTransform.SetPositionAndRotation(center, rotation);
-        markerTransform.localScale = ResolveScale(footprint, grid);
+        markerTransform.localScale = ResolveScale(markerWorldSize);
         SetActive(true);
+        LiftMarkerRendererBoundsAbove(surfaceY + MarkerSurfaceClearance);
+        ConfigureBoundaryView(building, footprint, grid, center, rotation, surfaceY, hasRendererBounds ? bounds : default);
+        ConfigureObjectOutline(building, hasRendererBounds ? bounds : default);
     }
 
     public void Hide()
     {
         SetActive(false);
+        _objectOutlineView?.Hide();
     }
 
     public void Dispose(Context context)
@@ -123,6 +140,8 @@ internal sealed class BuildingSelectionMarkerSystem
         _markerInstance = null;
         _markerRenderers = null;
         _baseRendererSize = Vector3.one;
+        _boundaryView = null;
+        _objectOutlineView = null;
     }
 
     private bool TryResolveSelection(Context context, out RuntimeBuildingEntity building, out GridConfig grid)
@@ -163,20 +182,84 @@ internal sealed class BuildingSelectionMarkerSystem
         _markerRenderers = _markerInstance.GetComponentsInChildren<Renderer>(true);
         _baseRendererSize = CalculateRendererSize(_markerRenderers);
 
-        Color markerColor = context.FactionVisualSettings != null
-            ? context.FactionVisualSettings.GetColor(1)
-            : new Color(0.15f, 0.85f, 0.2f, 1f);
-        context.VisualSystem?.ApplyMarkerColor(_markerRenderers, markerColor, context.MarkerPropertyBlock);
+        _markerColor = PremiumSelectionColor;
+        context.VisualSystem?.ApplyMarkerColor(_markerRenderers, _markerColor, context.MarkerPropertyBlock);
+        _boundaryView = _markerInstance.GetComponent<PremiumWorldSelectionBoundaryView>();
+        if (_boundaryView == null)
+            _boundaryView = _markerInstance.AddComponent<PremiumWorldSelectionBoundaryView>();
+        _objectOutlineView = _markerInstance.GetComponent<PremiumWorldSelectionObjectOutlineView>();
+        if (_objectOutlineView == null)
+            _objectOutlineView = _markerInstance.AddComponent<PremiumWorldSelectionObjectOutlineView>();
         return true;
     }
 
-    private Vector3 ResolveScale(Vector2Int footprint, GridConfig grid)
+    private void ConfigureBoundaryView(
+        RuntimeBuildingEntity building,
+        Vector2Int footprint,
+        GridConfig grid,
+        Vector3 markerCenter,
+        Quaternion markerRotation,
+        float surfaceY,
+        Bounds rendererBounds)
     {
-        float width = Mathf.Max(grid.CellSize, footprint.x * grid.CellSize);
-        float depth = Mathf.Max(grid.CellSize, footprint.y * grid.CellSize);
+        if (_boundaryView == null)
+            return;
+
+        bool hasRendererBounds = rendererBounds.size.sqrMagnitude > 0.0001f;
+        Vector2 worldSize = hasRendererBounds
+            ? new Vector2(Mathf.Max(grid.CellSize, rendererBounds.size.x), Mathf.Max(grid.CellSize, rendererBounds.size.z))
+            : new Vector2(
+                Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
+                Mathf.Max(grid.CellSize, footprint.y * grid.CellSize));
+        float height = hasRendererBounds
+            ? Mathf.Max(0.8f, rendererBounds.size.y)
+            : Mathf.Max(1.1f, Mathf.Min(4.5f, Mathf.Max(worldSize.x, worldSize.y) * 0.38f));
+        Vector3 center = hasRendererBounds ? rendererBounds.center : markerCenter;
+        center.y = surfaceY;
+        if (building.Instance != null && !hasRendererBounds)
+            markerRotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
+
+        _boundaryView.Configure(center, markerRotation, worldSize, surfaceY, height, _markerColor, PremiumSelectionAccentColor);
+    }
+
+    private void ConfigureObjectOutline(RuntimeBuildingEntity building, Bounds rendererBounds)
+    {
+        if (_objectOutlineView == null || building?.Instance == null)
+            return;
+
+        float longestAxis = rendererBounds.size.sqrMagnitude > 0.0001f
+            ? Mathf.Max(rendererBounds.size.x, rendererBounds.size.y, rendererBounds.size.z)
+            : 4f;
+        float outlineWidth = Mathf.Clamp(longestAxis * 0.0045f, 0.022f, 0.06f);
+        _objectOutlineView.Configure(
+            building.Instance,
+            PremiumSelectionColor,
+            PremiumSelectionEmissionColor,
+            outlineWidth);
+    }
+
+    private static Vector2 ResolveMarkerWorldSize(Vector2Int footprint, GridConfig grid, Bounds rendererBounds)
+    {
+        if (rendererBounds.size.sqrMagnitude > 0.0001f)
+        {
+            return new Vector2(
+                Mathf.Max(grid.CellSize, rendererBounds.size.x),
+                Mathf.Max(grid.CellSize, rendererBounds.size.z));
+        }
+
+        return new Vector2(
+            Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
+            Mathf.Max(grid.CellSize, footprint.y * grid.CellSize));
+    }
+
+    private Vector3 ResolveScale(Vector2 markerWorldSize)
+    {
         float baseX = Mathf.Max(0.001f, _baseRendererSize.x);
         float baseZ = Mathf.Max(0.001f, _baseRendererSize.z);
-        return new Vector3(width / baseX, 1f, depth / baseZ);
+        return new Vector3(
+            Mathf.Max(0.01f, markerWorldSize.x) / baseX,
+            1f,
+            Mathf.Max(0.01f, markerWorldSize.y) / baseZ);
     }
 
     private static Vector3 CalculateRendererSize(Renderer[] renderers)
@@ -212,18 +295,37 @@ internal sealed class BuildingSelectionMarkerSystem
             building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>() != null;
     }
 
-    private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
+    private static float ResolveMarkerSurfaceY(GameObject instance, Bounds bounds, GridConfig grid)
+    {
+        float surfaceY = Mathf.Max(grid.Origin.y, bounds.min.y);
+        if (instance != null && bounds.min.y < grid.Origin.y - 0.001f)
+            surfaceY = Mathf.Max(surfaceY, instance.transform.position.y);
+        return surfaceY;
+    }
+
+    private void LiftMarkerRendererBoundsAbove(float minimumWorldY)
+    {
+        if (!TryCalculateRendererBounds(_markerRenderers, out Bounds markerBounds))
+            return;
+
+        float lift = minimumWorldY - markerBounds.min.y;
+        if (lift <= 0.001f)
+            return;
+
+        _markerInstance.transform.position += Vector3.up * lift;
+    }
+
+    private static bool TryCalculateRendererBounds(Renderer[] renderers, out Bounds bounds)
     {
         bounds = default;
-        if (instance == null)
+        if (renderers == null)
             return false;
 
-        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(false);
         bool hasBounds = false;
         for (int i = 0; i < renderers.Length; i++)
         {
             Renderer renderer = renderers[i];
-            if (renderer == null || !renderer.enabled)
+            if (renderer == null || !renderer.enabled || IsSelectionObjectOutlineRenderer(renderer))
                 continue;
 
             if (hasBounds)
@@ -238,6 +340,50 @@ internal sealed class BuildingSelectionMarkerSystem
         }
 
         return hasBounds;
+    }
+
+    private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
+    {
+        bounds = default;
+        if (instance == null)
+            return false;
+
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(false);
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled || IsSelectionObjectOutlineRenderer(renderer))
+                continue;
+
+            if (hasBounds)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private static bool IsSelectionObjectOutlineRenderer(Renderer renderer)
+    {
+        if (renderer == null)
+            return false;
+
+        Transform current = renderer.transform;
+        while (current != null)
+        {
+            if (current.name.IndexOf(SelectionObjectOutlineToken, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+            current = current.parent;
+        }
+
+        return false;
     }
 
     private void SetActive(bool active)

@@ -43,6 +43,7 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
             None = new[]
             {
                 ComponentType.ReadOnly<UnitMassRenderSettingsApplied>(),
+                ComponentType.ReadOnly<SelectionObjectOutlineTag>(),
             },
             Options = EntityQueryOptions.IncludeDisabledEntities
         });
@@ -78,7 +79,7 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         foreach (var (_, entity) in SystemAPI
                      .Query<RefRO<Parent>>()
                      .WithAll<Unity.Rendering.RenderBounds>()
-                     .WithNone<UnitMassRenderSettingsApplied>()
+                     .WithNone<UnitMassRenderSettingsApplied, SelectionObjectOutlineTag>()
                      .WithOptions(EntityQueryOptions.IncludeDisabledEntities)
                      .WithEntityAccess())
         {
@@ -113,8 +114,11 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         for (int i = 0; i < unitRenderEntities.Length; i++)
         {
             Entity entity = unitRenderEntities[i];
-            if (!em.HasComponent<RenderFilterSettings>(entity))
+            if (em.HasComponent<SelectionObjectOutlineTag>(entity) ||
+                !em.HasComponent<RenderFilterSettings>(entity))
+            {
                 continue;
+            }
 
             RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(entity);
             if (settings.ShadowCastingMode == ShadowCastingMode.On && settings.ReceiveShadows && !settings.StaticShadowCaster)

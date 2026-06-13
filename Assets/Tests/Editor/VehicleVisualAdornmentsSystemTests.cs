@@ -4,11 +4,14 @@ using Unity.Core;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.Graphics;
 using Unity.Mathematics;
 using Unity.Rendering;
 using UnityEditor;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.Rendering;
+using SnivelerCode.GpuAnimation.Scripts.Components;
 
 public sealed class VehicleVisualAdornmentsSystemTests
 {
@@ -22,14 +25,17 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
             tests.UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
+            tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
+            tests.UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
+            tests.UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines();
             tests.UnitRuntimeHealthBarSystemCreatesAndRetainsRuntimeHealthBar();
             tests.UnitRuntimeHealthBarSystemCreatesHealthBarForDamagedCharacterUnit();
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=15");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -153,8 +159,11 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.AreEqual(firstVehicle, em.GetComponentData<Parent>(firstMarker).Value);
         Assert.AreEqual(secondVehicle, em.GetComponentData<Parent>(secondMarker).Value);
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(firstMarker).Scale, 0.001f);
+        Assert.AreEqual(0.12f, em.GetComponentData<LocalTransform>(firstMarker).Position.y, 0.001f);
         Assert.IsTrue(em.HasComponent<SelectionMarkerTag>(firstMarker));
         Assert.AreEqual(4.05f, em.GetComponentData<SelectionMarkerVisualChild>(firstMarker).VisibleScale, 0.001f);
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(firstMarker));
+        AssertPostTransformScale(em, firstMarker, 4.05f, 1f, 4.05f);
 
         em.RemoveComponent<SelectedUnitTag>(firstVehicle);
         system.Update(world.Unmanaged);
@@ -166,7 +175,8 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(firstMarker).Scale, 0.001f);
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(secondVehicle));
         Assert.IsTrue(em.Exists(secondMarker));
-        Assert.AreEqual(4.05f, em.GetComponentData<LocalTransform>(secondMarker).Scale, 0.001f);
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(secondMarker).Scale, 0.001f);
+        AssertPostTransformScale(em, secondMarker, 4.05f, 1f, 4.05f);
     }
 
     [Test]
@@ -185,7 +195,79 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
         Assert.AreEqual(character, em.GetComponentData<Parent>(marker).Value);
+        Assert.AreEqual(0.12f, em.GetComponentData<LocalTransform>(marker).Position.y, 0.001f);
         Assert.AreEqual(1.35f, em.GetComponentData<SelectionMarkerVisualChild>(marker).VisibleScale, 0.001f);
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(marker));
+        AssertPostTransformScale(em, marker, 1.35f, 1f, 1.35f);
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateVisualPrefab(em);
+        Entity vehicle = CreateVehicle(em, health: 100);
+        Entity character = CreateCharacter(em, health: 100);
+        Entity vehicleRenderer = CreateRenderableChild(em, vehicle, "VehicleBody", 1.5f);
+        Entity characterRenderer = CreateRenderableChild(em, character, "CharacterBody", 0.8f);
+        em.AddComponentData(vehicle, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponentData(character, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponent<SelectedUnitTag>(character);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        system.Update(world.Unmanaged);
+
+        Entity vehicleOutline = AssertSelectionObjectOutline(em, vehicle, vehicleRenderer, "Vehicle");
+        Entity characterOutline = AssertSelectionObjectOutline(em, character, characterRenderer, "Character");
+        Assert.AreEqual(1.5f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
+        Assert.AreEqual(0.8f, em.GetComponentData<LocalTransform>(characterOutline).Scale, 0.001f);
+
+        em.RemoveComponent<SelectedUnitTag>(vehicle);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
+        Assert.AreEqual(0.8f, em.GetComponentData<LocalTransform>(characterOutline).Scale, 0.001f);
+
+        em.SetComponentData(character, new UnitHealth { Current = 0, Max = 100 });
+        system.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
+        Assert.IsFalse(em.Exists(characterOutline), "Destroying a selected unit marker must also destroy ECS selection-object outlines that parent outside the marker tree.");
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateVisualPrefab(em);
+        Entity character = CreateCharacter(em, health: 100);
+        CreateRenderableChild(em, character, "GpuAnimatedCharacterBody", 1f);
+        em.AddComponentData(character, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(character);
+        em.AddComponentData(character, new MaterialAnimationIndex { Value = 1 });
+        em.AddComponentData(character, new MaterialAnimationData
+        {
+            AnimationIndex = 1,
+            TransitionIndex = 1,
+            Time = 0f,
+            TransitionTime = 0f,
+            RenderConfig = new float3(1f, 2f, 0.5f)
+        });
+        em.AddComponentData(character, new MaterialAnimatorLink { Value = Entity.Null });
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
+        Assert.IsTrue(em.Exists(marker));
+        Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker));
+        Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Length, "GPU-animated character meshes must not be duplicated by the non-animation outline shader, or the selection renders a bind-pose/T-pose overlay.");
     }
 
     [Test]
@@ -221,7 +303,8 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.CompleteAllTrackedJobs();
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
-        Assert.AreEqual(1.35f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
+        AssertPostTransformScale(em, marker, 1.35f, 1f, 1.35f);
     }
 
     [Test]
@@ -233,6 +316,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(unit);
 
         Entity visualChild = CreateVisualInstance(em);
+        em.AddComponentData(visualChild, new PostTransformMatrix { Value = float4x4.identity });
         Entity marker = CreateVisualInstance(em);
         em.AddComponentData(marker, new Parent { Value = unit });
         em.AddComponent<SelectionMarkerTag>(marker);
@@ -247,7 +331,8 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.CompleteAllTrackedJobs();
 
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
-        Assert.AreEqual(4.05f, em.GetComponentData<LocalTransform>(visualChild).Scale, 0.001f);
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(visualChild).Scale, 0.001f);
+        AssertPostTransformScale(em, visualChild, 4.05f, 1f, 4.05f);
 
         em.RemoveComponent<SelectedUnitTag>(unit);
         system.Update(world.Unmanaged);
@@ -255,6 +340,28 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(marker).Scale, 0.001f);
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(visualChild).Scale, 0.001f);
+        AssertPostTransformScale(em, visualChild, 0f, 1f, 0f);
+    }
+
+    [Test]
+    public void UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines()
+    {
+        using var world = new World(nameof(UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines));
+        EntityManager em = world.EntityManager;
+        Entity character = CreateCharacter(em, health: 100);
+        em.AddComponentData(character, new UnitGrid());
+        em.AddComponentData(character, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Chr_Soldier") });
+        Entity renderer = CreateRenderableChild(em, character, "CharacterBody", 1f);
+        Entity outline = CreateRenderableChild(em, character, "CharacterSelectionOutline", 1f);
+        em.AddComponent<SelectionObjectOutlineTag>(outline);
+
+        SystemHandle backfill = world.CreateSystem<UnitFactionTintTargetBackfillSystem>();
+        backfill.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<FactionTintTarget>(renderer));
+        Assert.IsTrue(em.HasComponent<FactionTintColor>(renderer));
+        Assert.IsFalse(em.HasComponent<FactionTintTarget>(outline), "Selection-object outlines keep their authored cyan material and must not become faction tint targets.");
+        Assert.IsFalse(em.HasComponent<FactionTintColor>(outline));
     }
 
     [Test]
@@ -526,6 +633,15 @@ public sealed class VehicleVisualAdornmentsSystemTests
         return entity;
     }
 
+    private static void AssertPostTransformScale(EntityManager em, Entity entity, float expectedX, float expectedY, float expectedZ)
+    {
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(entity), $"{entity} must use non-uniform marker scale.");
+        float4x4 matrix = em.GetComponentData<PostTransformMatrix>(entity).Value;
+        Assert.AreEqual(expectedX, matrix.c0.x, 0.001f);
+        Assert.AreEqual(expectedY, matrix.c1.y, 0.001f);
+        Assert.AreEqual(expectedZ, matrix.c2.z, 0.001f);
+    }
+
     private static Entity CreateCharacter(EntityManager em, int health)
     {
         Entity entity = em.CreateEntity(
@@ -538,6 +654,107 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, LocalTransform.Identity);
         return entity;
+    }
+
+    private static Entity AssertSelectionObjectOutline(EntityManager em, Entity unit, Entity sourceRenderer, string expectedKind)
+    {
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(unit));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit).Instance;
+        Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker), "Selected units with ECS render children must own outline entities from their marker instance.");
+        DynamicBuffer<SelectionObjectOutlineInstanceElement> outlines = em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker);
+        Assert.Greater(outlines.Length, 0);
+
+        Entity outline = outlines[0].Value;
+        Assert.IsTrue(em.Exists(outline));
+        Assert.IsTrue(em.HasComponent<SelectionObjectOutlineTag>(outline));
+        Assert.AreEqual(unit, em.GetComponentData<SelectionMarkerOwner>(outline).Value);
+        Assert.AreEqual(unit, em.GetComponentData<Parent>(outline).Value);
+        Assert.AreEqual(em.GetComponentData<LocalTransform>(sourceRenderer).Position, em.GetComponentData<LocalTransform>(outline).Position);
+        Assert.AreEqual(em.GetComponentData<LocalTransform>(sourceRenderer).Rotation, em.GetComponentData<LocalTransform>(outline).Rotation);
+        Assert.IsTrue(em.HasComponent<MaterialMeshInfo>(outline));
+        Assert.IsTrue(em.HasComponent<Unity.Rendering.RenderBounds>(outline));
+
+        RenderMeshArray renderMeshArray = em.GetSharedComponentManaged<RenderMeshArray>(outline);
+        Material material = renderMeshArray.GetMaterial(em.GetComponentData<MaterialMeshInfo>(outline));
+        Assert.IsNotNull(material);
+        Assert.IsTrue(material.enableInstancing);
+        Assert.AreEqual("WarlineCapture/Markers/SelectionObjectOutline", material.shader.name);
+        StringAssert.Contains(expectedKind, em.GetName(outline));
+
+        Assert.IsTrue(em.HasComponent<RenderFilterSettings>(outline));
+        RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(outline);
+        Assert.AreEqual(ShadowCastingMode.Off, settings.ShadowCastingMode);
+        Assert.IsFalse(settings.ReceiveShadows);
+        Assert.AreEqual(MotionVectorGenerationMode.ForceNoMotion, settings.MotionMode);
+        Assert.AreEqual(7, settings.Layer);
+        Assert.AreEqual(0x00000004u, settings.RenderingLayerMask);
+        return outline;
+    }
+
+    private static Entity CreateRenderableChild(EntityManager em, Entity parent, string name, float scale)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Parent),
+            typeof(LocalTransform),
+            typeof(MaterialMeshInfo),
+            typeof(Unity.Rendering.RenderBounds));
+        em.SetName(entity, name);
+        em.SetComponentData(entity, new Parent { Value = parent });
+        em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(new float3(0.1f, 0.2f, 0.3f), quaternion.identity, scale));
+        em.SetComponentData(entity, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
+        em.SetComponentData(entity, new Unity.Rendering.RenderBounds
+        {
+            Value = new AABB
+            {
+                Center = float3.zero,
+                Extents = new float3(0.5f, 0.6f, 0.7f)
+            }
+        });
+        em.AddSharedComponentManaged(entity, new RenderMeshArray(
+            new[] { CreateUnitTestMaterial(name + "_Material") },
+            new[] { CreateUnitTestMesh(name + "_Mesh") }));
+        em.AddSharedComponentManaged(entity, new RenderFilterSettings
+        {
+            Layer = 7,
+            RenderingLayerMask = 0x00000004u,
+            MotionMode = MotionVectorGenerationMode.Camera,
+            ShadowCastingMode = ShadowCastingMode.On,
+            ReceiveShadows = true,
+            StaticShadowCaster = false
+        });
+        return entity;
+    }
+
+    private static Material CreateUnitTestMaterial(string name)
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ??
+                        Shader.Find("Unlit/Color") ??
+                        Shader.Find("Standard");
+        return new Material(shader)
+        {
+            name = name,
+            hideFlags = HideFlags.HideAndDontSave
+        };
+    }
+
+    private static Mesh CreateUnitTestMesh(string name)
+    {
+        Mesh mesh = new()
+        {
+            name = name,
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        mesh.vertices = new[]
+        {
+            new Vector3(-0.5f, 0f, -0.5f),
+            new Vector3(0.5f, 0f, -0.5f),
+            new Vector3(0f, 1f, 0.5f),
+            new Vector3(0f, 0f, 0.5f)
+        };
+        mesh.triangles = new[] { 0, 2, 1, 0, 1, 3, 1, 2, 3, 2, 0, 3 };
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     private static Entity CreateVehiclePrefab(EntityManager em, string sourceKey)

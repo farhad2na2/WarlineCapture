@@ -84,6 +84,6 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
 
     private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
     {
-        return UiShellEcsGateway.TryReadLoadingProgress(out loading);
+        return UiShellRuntimeGateway.TryReadLoadingProgress(out loading);
     }
 }

@@ -114,13 +114,14 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceEntitiesPackage();
+            tests.UiRuntimeAssemblyMustNotReferenceUiShellEcsAssembly();
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=24");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=25");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -256,6 +257,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void UiRuntimeAssemblyMustNotReferenceUiShellEcsAssembly()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.UI.Shell.Ecs\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Game.UI.Shell.Ecs`. Concrete UI uses `Game.UI.Contracts`; ECS shell systems provide the registered gateway implementation.");
+    }
+
+    [Test]
     public void ConfigsAssemblyMustNotReferenceUiContractsAssembly()
     {
         string configsAsmdefPath = Path.Combine(GameScriptsRoot, "Configs/Game.Configs.asmdef");
@@ -341,6 +353,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             "World.DefaultGameObjectInjectionWorld",
             "Entity.Null",
             "Action<Entity>",
+            "UiShellEcsGateway",
         };
 
         List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))

@@ -52,7 +52,7 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 #endif
         using (TryGetBoundaryMarker.Auto())
         {
-            if (!UiShellEcsGateway.TryReadShellState(out _))
+            if (!UiShellRuntimeGateway.TryReadShellState(out _))
                 return;
         }
 
@@ -66,7 +66,7 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 
         using (ReadCommandsMarker.Auto())
         {
-            if (!UiShellEcsGateway.TryConsumePresentationCommands(commandScratch))
+            if (!UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch))
                 return;
         }
 
@@ -113,7 +113,7 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
         if (!hasPendingCompletion)
             return;
 
-        if (UiShellEcsGateway.TryEnqueueTransitionComplete(pendingCompletion))
+        if (UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion))
             hasPendingCompletion = false;
     }
 }

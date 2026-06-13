@@ -85,7 +85,7 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
 
     private void SelectCategory(ArmoryCatalogCategory category)
     {
-        if (!UiShellEcsGateway.TryEnqueueArmoryCategory(category))
+        if (!UiShellRuntimeGateway.TryEnqueueArmoryCategory(category))
             return;
 
         activeCategory = category;
@@ -94,7 +94,7 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
 
     private bool TryReadCategory(out ArmoryCatalogCategory category)
     {
-        return UiShellEcsGateway.TryReadArmoryCategory(out category);
+        return UiShellRuntimeGateway.TryReadArmoryCategory(out category);
     }
 
     private void CacheFrameSprite(ArmoryCatalogCategory category, Image frame)

@@ -76,27 +76,27 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
 
     private IEnumerator WaitForBoundary()
     {
-        while (!UiShellEcsGateway.TryReadShellState(out _))
+        while (!UiShellRuntimeGateway.TryReadShellState(out _))
             yield return null;
     }
 
     private void SetLoading(float progress01, string status, bool complete)
     {
-        UiShellEcsGateway.TrySetLoadingProgress(progress01, new FixedString64Bytes(status), complete);
+        UiShellRuntimeGateway.TrySetLoadingProgress(progress01, new FixedString64Bytes(status), complete);
     }
 
     private void EnqueueRoute(UiShellRouteIntent intent, UIRoute route)
     {
-        UiShellEcsGateway.TryEnqueueRouteRequest(intent, route, pushHistory: false);
+        UiShellRuntimeGateway.TryEnqueueRouteRequest(intent, route, pushHistory: false);
     }
 
     private bool TryGetState(out UiShellStateComponent state)
     {
-        return UiShellEcsGateway.TryReadShellState(out state);
+        return UiShellRuntimeGateway.TryReadShellState(out state);
     }
 
     private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
     {
-        return UiShellEcsGateway.TryReadLoadingProgress(out loading);
+        return UiShellRuntimeGateway.TryReadLoadingProgress(out loading);
     }
 }

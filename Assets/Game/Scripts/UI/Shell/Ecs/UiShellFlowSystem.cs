@@ -7,6 +7,7 @@ public partial struct UiShellFlowSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),

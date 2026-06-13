@@ -7,6 +7,7 @@ public partial struct UiShellArmoryCategorySystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UiShellBoundaryComponent>(),
             ComponentType.ReadWrite<UiShellArmoryCategoryComponent>(),

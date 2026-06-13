@@ -43,7 +43,7 @@ public sealed class UIShellRouteButtonView : MonoBehaviour
 
     private void SubmitRouteRequest()
     {
-        if (!UiShellEcsGateway.TryEnqueueRouteRequest(intent, route, pushHistory))
+        if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(intent, route, pushHistory))
         {
             Debug.LogError($"[UiShellRoute] Missing UI shell boundary. intent={intent} route={route}");
         }

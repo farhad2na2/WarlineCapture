@@ -3,11 +3,25 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public static class UiShellEcsGateway
+public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
 {
+    private static readonly UiShellEcsGateway Shared = new();
     private static World cachedWorld;
     private static EntityQuery boundaryQuery;
     private static bool hasBoundaryQuery;
+
+    private UiShellEcsGateway()
+    {
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    public static void RegisterAsRuntimeGateway()
+    {
+        cachedWorld = null;
+        boundaryQuery = default;
+        hasBoundaryQuery = false;
+        UiShellRuntimeGateway.Register(Shared);
+    }
 
     public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
     {
@@ -164,5 +178,45 @@ public static class UiShellEcsGateway
 
         if (!entityManager.HasBuffer<UiShellArmoryCategoryRequestComponent>(boundary))
             entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
+    }
+
+    bool IUiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
+    {
+        return TryEnqueueRouteRequest(intent, route, pushHistory);
+    }
+
+    bool IUiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressComponent loading)
+    {
+        return TryReadLoadingProgress(out loading);
+    }
+
+    bool IUiShellRuntimeGateway.TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete)
+    {
+        return TrySetLoadingProgress(progress01, status, complete);
+    }
+
+    bool IUiShellRuntimeGateway.TryReadShellState(out UiShellStateComponent state)
+    {
+        return TryReadShellState(out state);
+    }
+
+    bool IUiShellRuntimeGateway.TryReadArmoryCategory(out ArmoryCatalogCategory category)
+    {
+        return TryReadArmoryCategory(out category);
+    }
+
+    bool IUiShellRuntimeGateway.TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
+    {
+        return TryEnqueueArmoryCategory(category);
+    }
+
+    bool IUiShellRuntimeGateway.TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands)
+    {
+        return TryConsumePresentationCommands(commands);
+    }
+
+    bool IUiShellRuntimeGateway.TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion)
+    {
+        return TryEnqueueTransitionComplete(completion);
     }
 }

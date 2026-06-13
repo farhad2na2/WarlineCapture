@@ -8,6 +8,7 @@ public partial struct UiShellBoundarySystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
     }
 

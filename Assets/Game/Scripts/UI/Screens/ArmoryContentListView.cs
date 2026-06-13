@@ -212,12 +212,12 @@ public sealed class ArmoryContentListView : MonoBehaviour
 
     private bool TryReadBoundaryCategory(out ArmoryCatalogCategory category)
     {
-        return UiShellEcsGateway.TryReadArmoryCategory(out category);
+        return UiShellRuntimeGateway.TryReadArmoryCategory(out category);
     }
 
     private bool TryQueueBoundaryCategory(ArmoryCatalogCategory category)
     {
-        return UiShellEcsGateway.TryEnqueueArmoryCategory(category);
+        return UiShellRuntimeGateway.TryEnqueueArmoryCategory(category);
     }
 
     private readonly struct ItemClickBinding

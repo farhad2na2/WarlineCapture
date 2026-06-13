@@ -80,6 +80,8 @@ internal sealed class MatchBootstrapSystem
     public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
     public BuildingUiCommandSystem BuildingUiCommand { get; private set; }
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
+    public IBuildingUiCommand BuildingUiCommandContract { get; private set; }
+    public IBuildingUiQuery BuildingUiQueryContract { get; private set; }
     public BuildingRuntimeUpdateSystem BuildingRuntimeUpdate { get; private set; }
     public SelectionUiCommandSystem SelectionUiCommand { get; private set; }
     public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
@@ -87,6 +89,7 @@ internal sealed class MatchBootstrapSystem
     public SelectionBuildingInteractionSystem SelectionBuildingInteraction { get; private set; }
     public SelectionScreenMarkerSystem SelectionScreenMarkers { get; private set; }
     public ISelectionRectangleView SelectionRectangle { get; private set; }
+    public ISelectionDiagnosticsSink SelectionDiagnosticsSink { get; } = new SelectionDiagnosticsSinkAdapter();
     public MainMenuPlayUI MainMenu { get; private set; }
     public DayNightSystem DayNight { get; private set; }
     public FactionVisualSettings FactionVisuals { get; private set; }
@@ -100,6 +103,9 @@ internal sealed class MatchBootstrapSystem
     private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
     private BuildingUiCommandSystem.Context _buildingUiCommandContext;
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
+    private IMatchRuntimeState _matchRuntimeState;
+    private IMatchHudCameraControl _matchHudCameraControl;
+    private ISelectionRectangleState _selectionRectangleState;
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private RoadRuntimeGenerationSystem _roadRuntimeGeneration;
@@ -281,14 +287,19 @@ internal sealed class MatchBootstrapSystem
         SelectionBuildingInteraction = null;
         SelectionScreenMarkers = null;
         SelectionRectangle = null;
+        _matchRuntimeState = null;
+        _matchHudCameraControl = null;
+        _selectionRectangleState = null;
         BuildingSelectionClick = null;
         BuildingSelectionClickContext = default;
         _buildingRuntimeCitySpawn = null;
         _buildingRuntimeCitySpawnContext = default;
         BuildingUiCommand = null;
         _buildingUiCommandContext = default;
+        BuildingUiCommandContract = null;
         BuildingUiQuery = null;
         _buildingUiQueryContext = default;
+        BuildingUiQueryContract = null;
         _buildingPlacementInteraction = null;
         _buildingPlacementInteractionContext = default;
         _roadRuntimeGenerationContext = default;
@@ -495,7 +506,8 @@ internal sealed class MatchBootstrapSystem
         if (MainMenu == null)
             MainMenu = new MainMenuPlayUI();
 
-        MainMenu.Init(SelectionUiCommand, DayNight, SelectionUiCamera, resetRuntimeState);
+        EnsureUiRuntimeBoundaryAdapters();
+        MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, resetRuntimeState);
         ApplyMainMenuBaseBindings();
         ApplyMainMenuFeatureBindingsIfReady();
         return MainMenu;
@@ -921,6 +933,8 @@ internal sealed class MatchBootstrapSystem
         _buildingUiCommandContext = managedSystems.BuildingUiCommandContext;
         BuildingUiQuery = managedSystems.BuildingUiQuery;
         _buildingUiQueryContext = managedSystems.BuildingUiQueryContext;
+        BuildingUiCommandContract = new BuildingUiCommandAdapter(BuildingUiCommand, _buildingUiCommandContext);
+        BuildingUiQueryContract = new BuildingUiQueryAdapter(BuildingUiQuery, _buildingUiQueryContext);
         _buildingPlacementInteraction = managedSystems.BuildingPlacementInteraction;
         _buildingPlacementInteractionContext = managedSystems.BuildingPlacementInteractionContext;
         _bindBuildingMainMenu = managedSystems.BindBuildingMainMenu;
@@ -943,6 +957,9 @@ internal sealed class MatchBootstrapSystem
         SelectionBuildingInteraction = managedSystems.SelectionBuildingInteraction;
         SelectionScreenMarkers = managedSystems.SelectionScreenMarkers;
         SelectionRectangle = managedSystems.SelectionRectangleView;
+        EnsureUiRuntimeBoundaryAdapters();
+        if (SelectionRectangle is SelectionRectangleView selectionRectangleView)
+            selectionRectangleView.BindState(_selectionRectangleState);
         InitializeRenderingSystems(ownerLayer);
         _disposeCitizenPopulation = managedSystems.DisposeCitizenPopulation;
         _citizenPopulationRuntimeUpdate = managedSystems.CitizenPopulationComposition != null
@@ -955,7 +972,7 @@ internal sealed class MatchBootstrapSystem
         _managedRuntimeInitialized = true;
         if (MainMenu != null)
         {
-            MainMenu.Init(SelectionUiCommand, DayNight, SelectionUiCamera, resetRuntimeState: false);
+            MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, resetRuntimeState: false);
             ApplyMainMenuBaseBindings();
         }
 
@@ -979,6 +996,13 @@ internal sealed class MatchBootstrapSystem
 
         SharedPrefabPreviewCache.ConfigureUnitRenderingMetadataResolver(UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
         SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);
+    }
+
+    private void EnsureUiRuntimeBoundaryAdapters()
+    {
+        _matchRuntimeState ??= new MatchRuntimeStateAdapter(_runtimeGameplayStateSystem);
+        _matchHudCameraControl = new MatchHudCameraControlAdapter(SelectionUiCamera);
+        _selectionRectangleState ??= new SelectionRectangleStateAdapter(_matchRuntimeState);
     }
 
     private void InitializeVisualQualitySettingsIfNeeded()

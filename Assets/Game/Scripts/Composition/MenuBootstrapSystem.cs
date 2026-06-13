@@ -13,6 +13,8 @@ internal sealed class MenuBootstrapSystem
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem performanceDiagnosticsReferenceSystem = new();
     private readonly MatchSceneReferenceSystem matchSceneReferenceSystem = new();
+    private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
+    private readonly MatchLaunchCommand matchLaunchCommand = new();
 
     private EntityQuery boundaryQuery;
     private Entity cachedBoundaryEntity;
@@ -64,6 +66,7 @@ internal sealed class MenuBootstrapSystem
             view.ContentSystem.ConfigureCatalogMetadataResolvers(
                 UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
                 UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
         }
         if (view.Router != null)
             view.Router.Initialize();
@@ -384,11 +387,10 @@ internal sealed class MenuBootstrapSystem
             selectionUiCommand,
             mainMenu,
             matchBootstrap.BindMatchHudSelectionPanel,
-            matchBootstrap.BuildingUiCommand,
-            matchBootstrap.BuildingUiCommandContext);
-        view.ContentSystem.BindBuildDrawerRuntimeQueries(
-            matchBootstrap.BuildingUiQuery,
-            matchBootstrap.BuildingUiQueryContext);
+            matchBootstrap.BuildingUiCommandContract,
+            matchBootstrap.SelectionDiagnosticsSink);
+        view.ContentSystem.BindBuildDrawerRuntimeQueries(matchBootstrap.BuildingUiQueryContract);
+        view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
         boundMatchRuntimeView = matchScene;
         boundSelectionUiCommand = selectionUiCommand;
         boundMainMenu = mainMenu;

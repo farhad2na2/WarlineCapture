@@ -9,10 +9,11 @@ public sealed class MatchOverlayCommandInputSystem
 
     public void Bind(
         MatchOverlayCommandControlsView view,
-        SelectionUiCommandSystem selectionUiCommandSystem,
+        ISelectionUiCommand selectionUiCommandSystem,
         BattleHudRuntimeFeedbackView runtimeFeedbackView = null,
         Action showBuildDrawer = null,
-        Action closeBuildDrawer = null)
+        Action closeBuildDrawer = null,
+        ISelectionDiagnosticsSink diagnosticsSink = null)
     {
         if (view == null)
             return;
@@ -20,7 +21,7 @@ public sealed class MatchOverlayCommandInputSystem
         Unbind(view);
         ResetCommandControlRuntimeListeners(view);
 
-        var binding = new Binding(view, selectionUiCommandSystem, runtimeFeedbackView, showBuildDrawer, closeBuildDrawer);
+        var binding = new Binding(view, selectionUiCommandSystem, runtimeFeedbackView, showBuildDrawer, closeBuildDrawer, diagnosticsSink);
         binding.Bind();
         _bindings.Add(view, binding);
     }
@@ -61,10 +62,11 @@ public sealed class MatchOverlayCommandInputSystem
     private sealed class Binding
     {
         private readonly MatchOverlayCommandControlsView _view;
-        private readonly SelectionUiCommandSystem _selectionUiCommandSystem;
+        private readonly ISelectionUiCommand _selectionUiCommandSystem;
         private readonly BattleHudRuntimeFeedbackView _runtimeFeedbackView;
         private readonly Action _showBuildDrawer;
         private readonly Action _closeBuildDrawer;
+        private readonly ISelectionDiagnosticsSink _diagnosticsSink;
         private readonly List<TabButtonBinding> _tabButtonBindings = new();
         private MatchOverlayCommandTabVisualSystem _tabVisualSystem;
         private MatchOverlayCommandTabView _selectCommandTab;
@@ -74,21 +76,23 @@ public sealed class MatchOverlayCommandInputSystem
 
         public Binding(
             MatchOverlayCommandControlsView view,
-            SelectionUiCommandSystem selectionUiCommandSystem,
+            ISelectionUiCommand selectionUiCommandSystem,
             BattleHudRuntimeFeedbackView runtimeFeedbackView,
             Action showBuildDrawer,
-            Action closeBuildDrawer)
+            Action closeBuildDrawer,
+            ISelectionDiagnosticsSink diagnosticsSink)
         {
             _view = view;
             _selectionUiCommandSystem = selectionUiCommandSystem;
             _runtimeFeedbackView = runtimeFeedbackView;
             _showBuildDrawer = showBuildDrawer;
             _closeBuildDrawer = closeBuildDrawer;
+            _diagnosticsSink = diagnosticsSink;
         }
 
         public void Bind()
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            LogMoveCommandTrace(
                 $"matchHudCommandControlsBind view={_view.name} " +
                 $"select={DescribeButton(_view.SelectButton)} move={DescribeButton(_view.MoveButton)} " +
                 $"attack={DescribeButton(_view.AttackButton)} scan={DescribeButton(_view.ScanButton)} " +
@@ -227,12 +231,11 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnMoveButtonClicked()
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            LogMoveCommandTrace(
                 $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestMoveCommandMode();
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"moveButtonRequestMoveCommandMode queued={queued}");
+            LogMoveCommandTrace($"moveButtonRequestMoveCommandMode queued={queued}");
 
             if (!queued)
                 BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
@@ -312,6 +315,11 @@ public sealed class MatchOverlayCommandInputSystem
                 BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Cancel unavailable."));
+        }
+
+        private void LogMoveCommandTrace(string message)
+        {
+            _diagnosticsSink?.LogMoveCommandTrace(message);
         }
 
         private readonly struct TabButtonBinding

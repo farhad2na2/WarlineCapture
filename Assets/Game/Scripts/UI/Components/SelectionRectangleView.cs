@@ -1,4 +1,3 @@
-using Unity.Mathematics;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -8,9 +7,13 @@ public sealed class SelectionRectangleView : MonoBehaviour, ISelectionRectangleV
     [SerializeField] private Color selectionBorder = new(0.2f, 1f, 0.2f, 0.95f);
     [SerializeField, Min(1f)] private float borderThickness = 2f;
 
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-    private readonly RtsSelectionInputStateSystem _inputStateSystem = new();
+    private ISelectionRectangleState _state;
     private Texture2D _pixel;
+
+    public void BindState(ISelectionRectangleState state)
+    {
+        _state = state;
+    }
 
     public void ApplyConfig(RTSSelectionSystemConfig config)
     {
@@ -23,22 +26,11 @@ public sealed class SelectionRectangleView : MonoBehaviour, ISelectionRectangleV
 
     public void Draw()
     {
-        if (!_runtimeGameplayStateSystem.PlayRequested)
-            return;
-
-        if (!_inputStateSystem.TryRead(out _, out RtsSelectionInputStateComponent state))
-            return;
-
-        bool canDrawSelectionRect = _runtimeGameplayStateSystem.SelectionModeActive ||
-                                    (TacticalCommandMode)state.ActiveCommandMode == TacticalCommandMode.Board;
-        if (!canDrawSelectionRect)
-            return;
-
-        if (state.HasLiveSelectionRect == 0)
+        if (_state == null || !_state.TryRead(out SelectionRectangleStateModel state))
             return;
 
         EnsurePixel();
-        DrawRectangle(ToGuiRect(state.LastLiveSelectionRect));
+        DrawRectangle(state.ScreenRect);
     }
 
     private void OnDestroy()
@@ -82,10 +74,4 @@ public sealed class SelectionRectangleView : MonoBehaviour, ISelectionRectangleV
         DrawRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
     }
 
-    private static Rect ToGuiRect(float4 screenRect)
-    {
-        var rect = Rect.MinMaxRect(screenRect.x, screenRect.y, screenRect.z, screenRect.w);
-        rect.y = Screen.height - rect.yMax;
-        return rect;
-    }
 }

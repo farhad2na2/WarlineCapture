@@ -1,29 +1,32 @@
 internal sealed class QuickCustomScreenFlowSystem
 {
-    public void Initialize(QuickCustomScreenView view)
+    public void Initialize(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
     {
-        view?.Bind(QuickGameConfig.FromRuntimeState());
+        view?.Bind(configStore != null ? configStore.Current : QuickGameConfig.Defaults);
     }
 
-    public void ResetToDefaults(QuickCustomScreenView view)
+    public void ResetToDefaults(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
     {
-        view?.Bind(QuickGameConfig.Defaults);
+        view?.Bind(configStore != null ? configStore.Defaults : QuickGameConfig.Defaults);
     }
 
-    public void ApplyCurrentConfigToRuntime(QuickCustomScreenView view)
+    public void ApplyCurrentConfig(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
+    {
+        if (view == null || configStore == null)
+            return;
+
+        configStore.Apply(view.ReadConfigFromControls());
+    }
+
+    public void LaunchMatch(
+        QuickCustomScreenView view,
+        IQuickCustomGameConfigStore configStore,
+        IMatchLaunchCommand launchCommand)
     {
         if (view == null)
             return;
 
-        view.ReadConfigFromControls().ApplyToRuntimeState();
-    }
-
-    public void LaunchMatch(QuickCustomScreenView view)
-    {
-        if (view == null)
-            return;
-
-        ApplyCurrentConfigToRuntime(view);
-        UIGameLaunchUtility.StartExistingGameplayAndHideRouter(view);
+        ApplyCurrentConfig(view, configStore);
+        launchCommand?.LaunchMatch(view);
     }
 }

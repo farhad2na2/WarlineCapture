@@ -16,8 +16,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private readonly BuildDrawerCatalogQuerySystem _query = new();
     private readonly List<BuildDrawerCatalogItem> _items = new();
     private readonly List<BuildDrawerCatalogItem> _countScratch = new();
-    private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _pendingProductions = new();
-    private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _clearProductionScratch = new();
+    private readonly List<BuildingPendingProductionUiEntry> _pendingProductions = new();
+    private readonly List<BuildingPendingProductionUiEntry> _clearProductionScratch = new();
     private readonly List<BuildDrawerItemView> _runtimeItems = new();
     private readonly List<BuildDrawerQueueItemView> _runtimeQueueItems = new();
     private readonly List<ButtonBinding> _tabBindings = new();
@@ -26,10 +26,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private BuildDrawerItemView _selectedItemView;
     private BuildDrawerCatalogItem _selectedItem;
     private bool _hasSelectedItem;
-    private BuildingUiCommandSystem _uiCommandSystem;
-    private BuildingUiCommandSystem.Context _uiCommandContext;
-    private BuildingUiQuerySystem _uiQuerySystem;
-    private BuildingUiQuerySystem.Context _uiQueryContext;
+    private IBuildingUiCommand _uiCommandSystem;
+    private IBuildingUiQuery _uiQuerySystem;
     private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private Action _closeDrawer;
     private Button _primaryActionButton;
@@ -104,7 +102,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         Refresh();
     }
 
-    public void ApplyQueueSnapshotForTests(IReadOnlyList<BuildingUiQuerySystem.PendingProductionUiEntry> entries)
+    public void ApplyQueueSnapshotForTests(IReadOnlyList<BuildingPendingProductionUiEntry> entries)
     {
         _pendingProductions.Clear();
         if (entries != null)
@@ -117,13 +115,11 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     }
 
     public void BindRuntimeCommands(
-        BuildingUiCommandSystem uiCommandSystem,
-        BuildingUiCommandSystem.Context uiCommandContext,
+        IBuildingUiCommand uiCommandSystem,
         Action closeDrawer,
         BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
     {
         _uiCommandSystem = uiCommandSystem;
-        _uiCommandContext = uiCommandContext;
         _closeDrawer = closeDrawer;
         _runtimeFeedbackView = runtimeFeedbackView;
         WirePrimaryAction();
@@ -132,12 +128,9 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         ApplyInstructionForCurrentSelection();
     }
 
-    public void BindRuntimeQueries(
-        BuildingUiQuerySystem uiQuerySystem,
-        BuildingUiQuerySystem.Context uiQueryContext)
+    public void BindRuntimeQueries(IBuildingUiQuery uiQuerySystem)
     {
         _uiQuerySystem = uiQuerySystem;
-        _uiQueryContext = uiQueryContext;
         _nextQueueRefreshTime = 0f;
         RefreshQueue();
     }
@@ -336,7 +329,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     {
         if (!_hasSelectedItem || _selectedItem.Prefab == null)
         {
-            ApplyBuildDrawerCommandResult(BuildingUiCommandSystem.CampRequestFailure.InvalidSelection, string.Empty);
+            ApplyBuildDrawerCommandResult(BuildingUiCommandFailure.InvalidSelection, string.Empty);
             return;
         }
 
@@ -349,14 +342,13 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             return;
         }
 
-        BuildingUiCommandSystem.CampRequestFailure failure = _uiCommandSystem.TryRequestCampItem(
-            _uiCommandContext,
+        BuildingUiCommandFailure failure = _uiCommandSystem.TryRequestCampItem(
             _selectedItem.Prefab,
             _selectedItem.Price,
             out string requiredBuildingDisplayName,
             false);
 
-        if (failure != BuildingUiCommandSystem.CampRequestFailure.None)
+        if (failure != BuildingUiCommandFailure.None)
         {
             ApplyBuildDrawerCommandResult(failure, requiredBuildingDisplayName);
             return;
@@ -389,11 +381,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             return;
         }
 
-        BuildingUiQuerySystem.PendingProductionUiEntry active = _pendingProductions[0];
-        bool cancelled = _uiCommandSystem.CancelProduction(
-            _uiCommandContext,
-            active.BuildingId,
-            active.PendingProductionIndex);
+        BuildingPendingProductionUiEntry active = _pendingProductions[0];
+        bool cancelled = _uiCommandSystem.CancelProduction(active.BuildingId, active.PendingProductionIndex);
         ApplyInstruction(cancelled
                 ? $"Cancelled {ResolveQueueDisplayName(active)}."
                 : "Production cancel unavailable.",
@@ -419,7 +408,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         _clearProductionScratch.Clear();
         for (int i = 0; i < _pendingProductions.Count; i++)
         {
-            BuildingUiQuerySystem.PendingProductionUiEntry entry = _pendingProductions[i];
+            BuildingPendingProductionUiEntry entry = _pendingProductions[i];
             if (entry.PendingProductionIndex >= 0)
                 _clearProductionScratch.Add(entry);
         }
@@ -429,8 +418,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         int cancelledCount = 0;
         for (int i = 0; i < _clearProductionScratch.Count; i++)
         {
-            BuildingUiQuerySystem.PendingProductionUiEntry entry = _clearProductionScratch[i];
-            if (_uiCommandSystem.CancelProduction(_uiCommandContext, entry.BuildingId, entry.PendingProductionIndex))
+            BuildingPendingProductionUiEntry entry = _clearProductionScratch[i];
+            if (_uiCommandSystem.CancelProduction(entry.BuildingId, entry.PendingProductionIndex))
                 cancelledCount++;
         }
 
@@ -460,7 +449,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             return;
         }
 
-        _uiQuerySystem.GetFriendlyPendingProductionUiEntries(_uiQueryContext, _pendingProductions);
+        _uiQuerySystem.GetFriendlyPendingProductionUiEntries(_pendingProductions);
         ApplyQueueEntries();
     }
 
@@ -479,7 +468,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             return;
         }
 
-        BuildingUiQuerySystem.PendingProductionUiEntry active = _pendingProductions[0];
+        BuildingPendingProductionUiEntry active = _pendingProductions[0];
         BindQueueItem(activeItem, active, 1);
         if (activeItem != null)
             activeItem.gameObject.SetActive(true);
@@ -776,7 +765,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         }
     }
 
-    private void BindQueueItem(BuildDrawerQueueItemView item, BuildingUiQuerySystem.PendingProductionUiEntry entry, int queueNumber)
+    private void BindQueueItem(BuildDrawerQueueItemView item, BuildingPendingProductionUiEntry entry, int queueNumber)
     {
         if (item == null)
             return;
@@ -791,14 +780,14 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             queueNumber == 1 && _uiCommandSystem != null && entry.PendingProductionIndex >= 0);
     }
 
-    private string ResolveQueueDisplayName(BuildingUiQuerySystem.PendingProductionUiEntry entry)
+    private string ResolveQueueDisplayName(BuildingPendingProductionUiEntry entry)
     {
         return _query.TryResolvePrefab(unitPrefabRegistryConfig, buildingPlacementConfig, entry.Prefab, out BuildDrawerCatalogItem item)
             ? item.DisplayName
             : entry.Prefab != null ? entry.Prefab.name : "Production";
     }
 
-    private Sprite ResolveQueueThumbnail(BuildingUiQuerySystem.PendingProductionUiEntry entry)
+    private Sprite ResolveQueueThumbnail(BuildingPendingProductionUiEntry entry)
     {
         return _query.TryResolvePrefab(unitPrefabRegistryConfig, buildingPlacementConfig, entry.Prefab, out BuildDrawerCatalogItem item)
             ? item.CardPortrait
@@ -817,8 +806,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     }
 
     private static int CompareProductionCancelOrder(
-        BuildingUiQuerySystem.PendingProductionUiEntry left,
-        BuildingUiQuerySystem.PendingProductionUiEntry right)
+        BuildingPendingProductionUiEntry left,
+        BuildingPendingProductionUiEntry right)
     {
         int buildingComparison = left.BuildingId.CompareTo(right.BuildingId);
         if (buildingComparison != 0)
@@ -828,11 +817,11 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     }
 
     private void ApplyBuildDrawerCommandResult(
-        BuildingUiCommandSystem.CampRequestFailure failure,
+        BuildingUiCommandFailure failure,
         string requiredBuildingDisplayName)
     {
         ApplyInstruction(FormatInstructionFailureMessage(failure, requiredBuildingDisplayName), BuildDrawerInstructionSeverity.Error);
-        TacticalCommandReasonCode reason = failure == BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney
+        TacticalCommandReasonCode reason = failure == BuildingUiCommandFailure.NotEnoughMoney
             ? TacticalCommandReasonCode.InsufficientResources
             : TacticalCommandReasonCode.BuildUnavailable;
         BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
@@ -841,16 +830,16 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     }
 
     private static string FormatFailureMessage(
-        BuildingUiCommandSystem.CampRequestFailure failure,
+        BuildingUiCommandFailure failure,
         string requiredBuildingDisplayName)
     {
         return failure switch
         {
-            BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney => "Insufficient credits.",
-            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+            BuildingUiCommandFailure.NotEnoughMoney => "Insufficient credits.",
+            BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                 $"Requires {requiredBuildingDisplayName}.",
-            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding => "Required producer is missing.",
-            BuildingUiCommandSystem.CampRequestFailure.InvalidSelection => "Select a build drawer item first.",
+            BuildingUiCommandFailure.MissingProducerBuilding => "Required producer is missing.",
+            BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => "Build request unavailable."
         };
     }
@@ -872,19 +861,18 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             return;
         }
 
-        BuildingUiCommandSystem.CampRequestFailure failure = _uiCommandSystem.GetCampRequestFailure(
-            _uiCommandContext,
+        BuildingUiCommandFailure failure = _uiCommandSystem.GetCampRequestFailure(
             _selectedItem.Prefab,
             _selectedItem.Price,
             out string requiredBuildingDisplayName);
 
-        if (failure == BuildingUiCommandSystem.CampRequestFailure.None)
+        if (failure == BuildingUiCommandFailure.None)
         {
             if (_selectedItem.Category == BuildDrawerCategory.Buildings &&
-                _uiCommandSystem.HasPendingBuildingPlacement(_uiCommandContext))
+                _uiCommandSystem.HasPendingBuildingPlacement)
             {
-                string status = _uiCommandSystem.PlacementStatusText(_uiCommandContext);
-                bool canConfirm = _uiCommandSystem.CanConfirmBuildingPlacement(_uiCommandContext);
+                string status = _uiCommandSystem.PlacementStatusText;
+                bool canConfirm = _uiCommandSystem.CanConfirmBuildingPlacement;
                 ApplyInstruction(
                     canConfirm
                         ? $"Place {_selectedItem.DisplayName}: drag to position, then confirm."
@@ -906,19 +894,19 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     }
 
     private string FormatInstructionFailureMessage(
-        BuildingUiCommandSystem.CampRequestFailure failure,
+        BuildingUiCommandFailure failure,
         string requiredBuildingDisplayName)
     {
         string itemName = _hasSelectedItem ? _selectedItem.DisplayName : "item";
         return failure switch
         {
-            BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney =>
+            BuildingUiCommandFailure.NotEnoughMoney =>
                 $"Need {FormatMissingCredits()} more credits to {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}.",
-            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+            BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: requires {requiredBuildingDisplayName}.",
-            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding =>
+            BuildingUiCommandFailure.MissingProducerBuilding =>
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: {FormatMissingProducerFallback(_selectedItem.Category)}.",
-            BuildingUiCommandSystem.CampRequestFailure.InvalidSelection => "Select a build drawer item first.",
+            BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: request unavailable."
         };
     }
@@ -926,7 +914,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private int FormatMissingCredits()
     {
         int current = _uiCommandSystem != null
-            ? _uiCommandSystem.CurrentDollars(_uiCommandContext)
+            ? _uiCommandSystem.CurrentDollars
             : 0;
         return Mathf.Max(0, _selectedItem.Price - current);
     }

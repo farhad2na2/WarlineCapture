@@ -14,11 +14,12 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
-    private SelectionUiCommandSystem _selectionUiCommandSystem;
-    private BuildingUiCommandSystem _buildingUiCommandSystem;
-    private BuildingUiCommandSystem.Context _buildingUiCommandContext;
-    private BuildingUiQuerySystem _buildingUiQuerySystem;
-    private BuildingUiQuerySystem.Context _buildingUiQueryContext;
+    private ISelectionUiCommand _selectionUiCommandSystem;
+    private IBuildingUiCommand _buildingUiCommandSystem;
+    private IBuildingUiQuery _buildingUiQuerySystem;
+    private IQuickCustomGameConfigStore _quickCustomGameConfigStore;
+    private IMatchLaunchCommand _matchLaunchCommand;
+    private ISelectionDiagnosticsSink _selectionDiagnosticsSink;
     private MainMenuPlayUI _mainMenuPlayUi;
     private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
@@ -86,15 +87,15 @@ public sealed class UIShellContentView : MonoBehaviour
     }
 
     public void BindGameplayRuntimeDependencies(
-        SelectionUiCommandSystem selectionUiCommandSystem,
+        ISelectionUiCommand selectionUiCommandSystem,
         MainMenuPlayUI mainMenuPlayUi = null,
         System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel = null,
-        BuildingUiCommandSystem buildingUiCommandSystem = null,
-        BuildingUiCommandSystem.Context buildingUiCommandContext = default)
+        IBuildingUiCommand buildingUiCommandSystem = null,
+        ISelectionDiagnosticsSink selectionDiagnosticsSink = null)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _buildingUiCommandSystem = buildingUiCommandSystem;
-        _buildingUiCommandContext = buildingUiCommandContext;
+        _selectionDiagnosticsSink = selectionDiagnosticsSink;
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
@@ -103,13 +104,20 @@ public sealed class UIShellContentView : MonoBehaviour
         BindBuildPlacementConfirmationBarInRegion();
     }
 
-    public void BindBuildDrawerRuntimeQueries(
-        BuildingUiQuerySystem buildingUiQuerySystem,
-        BuildingUiQuerySystem.Context buildingUiQueryContext)
+    public void BindBuildDrawerRuntimeQueries(IBuildingUiQuery buildingUiQuerySystem)
     {
         _buildingUiQuerySystem = buildingUiQuerySystem;
-        _buildingUiQueryContext = buildingUiQueryContext;
         BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
+    }
+
+    public void BindQuickCustomRuntimeDependencies(
+        IQuickCustomGameConfigStore configStore,
+        IMatchLaunchCommand launchCommand)
+    {
+        _quickCustomGameConfigStore = configStore;
+        _matchLaunchCommand = launchCommand;
+        BindQuickCustomScreens(shellView != null ? shellView.gameObject : null);
+        BindGameStartButtons(shellView != null ? shellView.gameObject : null);
     }
 
     public void ConfigureCatalogMetadataResolvers(
@@ -162,10 +170,12 @@ public sealed class UIShellContentView : MonoBehaviour
 
     private void InstallMainMenuBody()
     {
-        InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
-        InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
-        InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
-        InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
+        GameObject left = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
+        GameObject middle = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
+        GameObject right = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
+        GameObject footer = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
+        BindQuickCustomScreens(left, middle, right, footer);
+        BindGameStartButtons(left, middle, right, footer);
         ClearRegion(UIShellRegionId.PopupLayer);
     }
 
@@ -205,6 +215,40 @@ public sealed class UIShellContentView : MonoBehaviour
         _armoryContentListView = listView;
         BindArmoryCatalogMetadataResolvers(listView);
         listView.SetInspectionPanel(rightView.InspectionPanel);
+    }
+
+    private void BindQuickCustomScreens(params GameObject[] roots)
+    {
+        if (roots == null)
+            return;
+
+        for (int i = 0; i < roots.Length; i++)
+        {
+            GameObject root = roots[i];
+            if (root == null)
+                continue;
+
+            QuickCustomScreenView[] views = root.GetComponentsInChildren<QuickCustomScreenView>(true);
+            for (int j = 0; j < views.Length; j++)
+                views[j]?.BindRuntimeDependencies(_quickCustomGameConfigStore, _matchLaunchCommand);
+        }
+    }
+
+    private void BindGameStartButtons(params GameObject[] roots)
+    {
+        if (roots == null)
+            return;
+
+        for (int i = 0; i < roots.Length; i++)
+        {
+            GameObject root = roots[i];
+            if (root == null)
+                continue;
+
+            UIGameStartButtonView[] views = root.GetComponentsInChildren<UIGameStartButtonView>(true);
+            for (int j = 0; j < views.Length; j++)
+                views[j]?.BindMatchLaunchCommand(_matchLaunchCommand);
+        }
     }
 
     private void InstallMatchHud()
@@ -288,12 +332,13 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         if (view != null)
         {
-            _matchOverlayCommandInputSystem.Bind(
-                view,
-                _selectionUiCommandSystem,
-                _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
-                () => InstallBuildDrawerPopup(),
-                CloseBuildDrawerPopup);
+        _matchOverlayCommandInputSystem.Bind(
+            view,
+            _selectionUiCommandSystem,
+            _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
+            () => InstallBuildDrawerPopup(),
+            CloseBuildDrawerPopup,
+            _selectionDiagnosticsSink);
             _mainMenuPlayUi?.BindMatchHudCommandControls(view);
         }
     }
@@ -337,7 +382,6 @@ public sealed class UIShellContentView : MonoBehaviour
         _buildPlacementConfirmationBarView.transform.SetAsLastSibling();
         _buildPlacementConfirmationBarView?.BindRuntimeCommands(
             _buildingUiCommandSystem,
-            _buildingUiCommandContext,
             ResolveMatchHudRuntimeFeedback());
         _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
     }
@@ -360,7 +404,7 @@ public sealed class UIShellContentView : MonoBehaviour
         _buildDrawerPopupInstance = null;
 
         bool hasActivePlacement = _buildingUiCommandSystem != null &&
-                                  _buildingUiCommandSystem.HasPendingBuildingPlacement(_buildingUiCommandContext);
+                                  _buildingUiCommandSystem.HasPendingBuildingPlacement;
         if (!hasActivePlacement)
             BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
 
@@ -433,12 +477,9 @@ public sealed class UIShellContentView : MonoBehaviour
             _tryResolveUnitCatalogMetadata);
         presenter.BindRuntimeCommands(
             _buildingUiCommandSystem,
-            _buildingUiCommandContext,
             CloseBuildDrawerPopup,
             ResolveMatchHudRuntimeFeedback());
-        presenter.BindRuntimeQueries(
-            _buildingUiQuerySystem,
-            _buildingUiQueryContext);
+        presenter.BindRuntimeQueries(_buildingUiQuerySystem);
     }
 
     private void BindArmoryCatalogMetadataResolvers(ArmoryContentListView listView)

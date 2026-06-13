@@ -9,7 +9,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     [SerializeField] private Button buildButton;
 
     private Action _buildCommandClicked;
-    private SelectionUiCommandSystem _selectionUiCommandSystem;
+    private ISelectionUiCommand _selectionUiCommandSystem;
     private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private bool _buildButtonListenerInstalled;
 
@@ -28,7 +28,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
 
     public void BindBuildCommand(
         Action buildCommandClicked,
-        SelectionUiCommandSystem selectionUiCommandSystem,
+        ISelectionUiCommand selectionUiCommandSystem,
         BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
     {
         _buildCommandClicked = buildCommandClicked;

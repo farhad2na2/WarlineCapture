@@ -5,6 +5,12 @@ using UnityEngine.UI;
 public sealed class UIGameStartButtonView : MonoBehaviour
 {
     private Button _button;
+    private IMatchLaunchCommand _launchCommand;
+
+    public void BindMatchLaunchCommand(IMatchLaunchCommand launchCommand)
+    {
+        _launchCommand = launchCommand;
+    }
 
     private void Awake()
     {
@@ -20,6 +26,6 @@ public sealed class UIGameStartButtonView : MonoBehaviour
 
     private void HandleClick()
     {
-        UIGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
+        _launchCommand?.LaunchMatch(this);
     }
 }

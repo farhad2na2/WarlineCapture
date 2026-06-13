@@ -21,7 +21,7 @@ public static class QuickCustomBalanceProbe
         GameRuntimeStats.Reset();
 
         QuickGameConfig config = definition.QuickGameConfig;
-        config.ApplyToRuntimeState();
+        AISettingsRuntimeState.ApplySnapshot(config.ToAISettingsSnapshot());
 
         BalanceMetrics metrics = BalanceMetrics.FromProbeDefinition(definition);
         return BalanceReportWriter.WriteProjectReport(metrics);

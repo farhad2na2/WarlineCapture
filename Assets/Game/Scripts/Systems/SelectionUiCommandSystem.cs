@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiCommandSystem
+public sealed class SelectionUiCommandSystem : ISelectionUiCommand
 {
     private readonly RtsSelectionInputSystem _inputSystem = new();
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();

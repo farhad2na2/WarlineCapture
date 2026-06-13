@@ -4,7 +4,6 @@
     "references": [
         "Game.Components",
         "Game.Configs",
-        "Game.Runtime",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",
         "Unity.Collections",

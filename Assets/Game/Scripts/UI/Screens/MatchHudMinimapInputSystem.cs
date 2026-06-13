@@ -31,8 +31,8 @@ public sealed class MatchHudMinimapInputSystem
     private const int MinRasterFeatureCount = 24;
 
     private MatchHudMinimapView _view;
-    private RuntimeGameplayStateSystem _runtimeGameplayStateSystem;
-    private SelectionUiCameraSystem _selectionUiCameraSystem;
+    private IMatchRuntimeState _runtimeGameplayStateSystem;
+    private IMatchHudCameraControl _selectionUiCameraSystem;
     private readonly System.Collections.Generic.List<Image> _markerPool = new();
     private Camera _captureCamera;
     private RenderTexture _renderTexture;
@@ -60,8 +60,8 @@ public sealed class MatchHudMinimapInputSystem
 
     public void Bind(
         MatchHudMinimapView view,
-        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        SelectionUiCameraSystem selectionUiCameraSystem)
+        IMatchRuntimeState runtimeGameplayStateSystem,
+        IMatchHudCameraControl selectionUiCameraSystem)
     {
         if (_view == view)
             return;

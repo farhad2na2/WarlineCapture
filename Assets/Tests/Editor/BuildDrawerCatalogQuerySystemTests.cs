@@ -387,8 +387,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
                 null,
                 null,
                 100000,
@@ -396,7 +395,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 {
                     requiredBuilding = "Barracks";
                     return BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding;
-                }),
+                })),
             null);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Soldiers);
 
@@ -423,8 +422,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
                 null,
                 null,
                 1000,
@@ -432,7 +430,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 {
                     requiredBuilding = string.Empty;
                     return BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney;
-                }),
+                })),
             null);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
 
@@ -463,15 +461,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
             {
                 requestedPrefab = requestPrefab;
                 requestedPrice = price;
                 requestedFocus = focusProducer;
                 requiredBuilding = string.Empty;
                 return BuildingUiCommandSystem.CampRequestFailure.None;
-            }),
+            })),
             () => closed = true);
         presenter.RefreshForTests();
 
@@ -506,15 +503,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
             {
                 requestedPrefab = requestPrefab;
                 requestedPrice = price;
                 requestedFocus = focusProducer;
                 requiredBuilding = string.Empty;
                 return BuildingUiCommandSystem.CampRequestFailure.None;
-            }),
+            })),
             () => closed = true);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
 
@@ -562,8 +558,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateRealCommandContext(requestSystem, () => requestContext),
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateRealCommandContext(requestSystem, () => requestContext)),
             () => closed = true);
         presenter.RefreshForTests();
 
@@ -624,10 +619,9 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateRealCommandContext(requestSystem, () => requestContext),
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateRealCommandContext(requestSystem, () => requestContext)),
             () => closed = true);
-        presenter.BindRuntimeQueries(new BuildingUiQuerySystem(), queryContext);
+        presenter.BindRuntimeQueries(new BuildingUiQueryAdapter(new BuildingUiQuerySystem(), queryContext));
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
 
         Assert.AreEqual(0, producer.PendingProductions.Count);
@@ -689,7 +683,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.NotNull(noProductionView, "Build drawer must serialize the empty production panel state.");
         Assert.NotNull(noProductionText, "Build drawer must serialize the empty production label.");
 
-        presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingUiQuerySystem.PendingProductionUiEntry>());
+        presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingPendingProductionUiEntry>());
         Assert.IsFalse(view.ActiveItemView.gameObject.activeSelf);
         Assert.IsFalse(view.QueuedItemTemplate.gameObject.activeSelf);
         Assert.IsTrue(productionPanel.activeSelf, "ProductionPanel should remain visible so the empty state can be shown.");
@@ -697,11 +691,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Assert.IsTrue(noProductionView.activeSelf);
         Assert.AreEqual("NO PRODUCTION QUEUED", noProductionText.text);
 
-        List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
+        List<BuildingPendingProductionUiEntry> entries = new()
         {
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, queuedPrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, thirdPrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
+            new BuildingPendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
+            new BuildingPendingProductionUiEntry(7, queuedPrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
+            new BuildingPendingProductionUiEntry(7, thirdPrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
         };
         presenter.ApplyQueueSnapshotForTests(entries);
 
@@ -743,7 +737,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             GetActiveQueueItemViews(view)[2],
             "Refreshing an unchanged queue must retain the extra queue row instance.");
 
-        presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingUiQuerySystem.PendingProductionUiEntry>());
+        presenter.ApplyQueueSnapshotForTests(Array.Empty<BuildingPendingProductionUiEntry>());
         Assert.AreEqual(
             queueChildCount,
             view.QueueContentRoot.childCount,
@@ -779,7 +773,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         presenter.ApplyQueueSnapshotForTests(new[]
         {
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory")
+            new BuildingPendingProductionUiEntry(7, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory")
         });
 
         Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf);
@@ -825,8 +819,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         int cancelledPendingIndex = -1;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
                 (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
                 {
                     requiredBuilding = string.Empty;
@@ -837,12 +830,12 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                     cancelledBuildingId = buildingId;
                     cancelledPendingIndex = pendingIndex;
                     return true;
-                }),
+                })),
             null);
 
-        List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
+        List<BuildingPendingProductionUiEntry> entries = new()
         {
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 3, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory")
+            new BuildingPendingProductionUiEntry(7, 3, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory")
         };
         presenter.ApplyQueueSnapshotForTests(entries);
         Assert.IsTrue(view.CancelButton.interactable);
@@ -877,8 +870,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         var cancelled = new List<(int BuildingId, int PendingIndex)>();
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandSystem(),
-            CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
                 (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
                 {
                     requiredBuilding = string.Empty;
@@ -888,14 +880,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 {
                     cancelled.Add((buildingId, pendingIndex));
                     return true;
-                }),
+                })),
             null);
 
-        List<BuildingUiQuerySystem.PendingProductionUiEntry> entries = new()
+        List<BuildingPendingProductionUiEntry> entries = new()
         {
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 0, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 1, activePrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
-            new BuildingUiQuerySystem.PendingProductionUiEntry(7, 2, activePrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
+            new BuildingPendingProductionUiEntry(7, 0, activePrefab, 74f, 100f, 0.26f, 0f, 100f, "Factory"),
+            new BuildingPendingProductionUiEntry(7, 1, activePrefab, 12f, 24f, 0.5f, 0f, 24f, "Factory"),
+            new BuildingPendingProductionUiEntry(7, 2, activePrefab, 8f, 20f, 0.6f, 0f, 20f, "Factory")
         };
         presenter.ApplyQueueSnapshotForTests(entries);
         Assert.IsTrue(view.ClearButton.interactable);

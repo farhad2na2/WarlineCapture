@@ -391,7 +391,10 @@ public sealed class MatchHudMinimapProjectionSystemTests
                 LogAssert.ignoreFailingMessages = true;
                 restoreLogAssertIgnore = true;
             }
-            inputSystem.Bind(view, runtimeState, cameraSystem);
+            inputSystem.Bind(
+                view,
+                new MatchRuntimeStateAdapter(runtimeState),
+                new MatchHudCameraControlAdapter(cameraSystem));
 
             Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");
             Assert.NotNull(mapImage.sprite, "Runtime minimap must assign a generated sprite to the existing Map Image.");

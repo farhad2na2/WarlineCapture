@@ -23,7 +23,6 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
     private static readonly Dictionary<string, int> RuntimeUiDebugLogDebtAllowlist = new(StringComparer.Ordinal)
     {
-        { "Assets/Game/Scripts/UI/Shell/UIGameLaunchUtility.cs|Debug.LogError", 2 },
         { "Assets/Game/Scripts/UI/Shell/UIShellRouteButtonView.cs|Debug.LogError", 1 },
     };
 
@@ -69,6 +68,19 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "MatchSceneView",
     };
 
+    private static readonly string[] RuntimeTypesForbiddenInUiRuntime =
+    {
+        "RuntimeGameplayStateSystem",
+        "SelectionUiCameraSystem",
+        "RtsSelectionInputStateSystem",
+        "BuildingUiCommandSystem",
+        "BuildingUiQuerySystem",
+        "SceneLifecycleSystem",
+        "MatchStartRequestSystem",
+        "SelectionRuntimeDiagnosticsSystem",
+        "AISettingsRuntimeState",
+    };
+
     private static readonly string[] BroadNameTokens =
     {
         "Manager",
@@ -97,9 +109,12 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
             tests.RenderingAssemblyMustNotReferenceAuthoringAssembly();
             tests.RenderingAssemblyMustNotReadAuthoringComponents();
+            tests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=15");
+            tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
+            tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=18");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -191,6 +206,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void UiRuntimeAssemblyMustNotReferenceRuntimeAssembly()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Runtime\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Game.Runtime`. Composition owns concrete runtime-to-UI wiring.");
+    }
+
+    [Test]
     public void UiRuntimeAssemblyMustNotReferenceAuthoringAssembly()
     {
         string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
@@ -212,6 +238,32 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "`Game.UI.Runtime` must not read authoring components. Use UI catalog metadata delegates injected by composition.");
+    }
+
+    [Test]
+    public void UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem()
+    {
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
+            .SelectMany(path => FindTokenReferences(path, "SelectionUiCommandSystem"))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` must use `ISelectionUiCommand` from `Game.UI.Contracts`; the concrete `SelectionUiCommandSystem` stays in runtime/composition.");
+    }
+
+    [Test]
+    public void UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes()
+    {
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
+            .SelectMany(path => FindTokenReferences(path, RuntimeTypesForbiddenInUiRuntime))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` must use contracts from `Game.UI.Contracts`; concrete runtime systems stay in runtime/composition.");
     }
 
     [Test]
@@ -851,6 +903,21 @@ public sealed class ScriptArchitectureAlignmentContractTests
                 line.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal))
             {
                 yield return $"{normalized}:{lineIndex + 1} references authoring component: {line.Trim()}";
+            }
+        }
+    }
+
+    private static IEnumerable<string> FindTokenReferences(string path, params string[] tokens)
+    {
+        string normalized = NormalizePath(path);
+        string[] lines = File.ReadAllLines(path);
+        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        {
+            string line = lines[lineIndex];
+            foreach (string token in tokens)
+            {
+                if (line.Contains(token, StringComparison.Ordinal))
+                    yield return $"{normalized}:{lineIndex + 1} references token `{token}`: {line.Trim()}";
             }
         }
     }

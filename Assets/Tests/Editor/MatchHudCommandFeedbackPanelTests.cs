@@ -10,6 +10,45 @@ public sealed class MatchHudCommandFeedbackPanelTests
     private const string MatchHudContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private GameObject _root;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons), tests => tests.RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons());
+            RunValidationStep(nameof(MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned), tests => tests.MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesBoardFeedbackActions), tests => tests.RuntimeFeedbackSystem_AppliesBoardFeedbackActions());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide), tests => tests.RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration), tests => tests.RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration), tests => tests.RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
+            RunValidationStep(nameof(SelectButtonClick_HidesBoardFeedbackActionsImmediately), tests => tests.SelectButtonClick_HidesBoardFeedbackActionsImmediately());
+            RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
+            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=10");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudCommandFeedbackValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunValidationStep(string name, System.Action<MatchHudCommandFeedbackPanelTests> step)
+    {
+        var tests = new MatchHudCommandFeedbackPanelTests();
+        try
+        {
+            step(tests);
+            Debug.Log($"[MatchHudCommandFeedbackValidation] step={name} result=Passed");
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {

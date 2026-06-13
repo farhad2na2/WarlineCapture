@@ -41,11 +41,13 @@ public sealed class QuickCustomScreenView : UIScreenView
     private static readonly string[] ExpansionLabels = { "OFF", "SLOW", "NORMAL", "FAST" };
 
     private QuickGameConfig _config;
+    private IQuickCustomGameConfigStore _configStore;
+    private IMatchLaunchCommand _launchCommand;
 
     private void Awake()
     {
         WireEvents();
-        flowSystem.Initialize(this);
+        flowSystem.Initialize(this, _configStore);
     }
 
     private void OnDestroy()
@@ -89,6 +91,15 @@ public sealed class QuickCustomScreenView : UIScreenView
             mapNameText.text = ResolveMapName(config);
     }
 
+    public void BindRuntimeDependencies(
+        IQuickCustomGameConfigStore configStore,
+        IMatchLaunchCommand launchCommand)
+    {
+        _configStore = configStore;
+        _launchCommand = launchCommand;
+        flowSystem.Initialize(this, _configStore);
+    }
+
     public QuickGameConfig ReadConfigFromControls()
     {
         _config.EnemyType = (QuickGameEnemyType)GetDropdownValue(enemyTypeDropdown, (int)_config.EnemyType);
@@ -122,12 +133,12 @@ public sealed class QuickCustomScreenView : UIScreenView
 
     public void ApplyCurrentConfigToRuntime()
     {
-        flowSystem.ApplyCurrentConfigToRuntime(this);
+        flowSystem.ApplyCurrentConfig(this, _configStore);
     }
 
     public void LaunchMatch()
     {
-        flowSystem.LaunchMatch(this);
+        flowSystem.LaunchMatch(this, _configStore, _launchCommand);
     }
 
     private void WireEvents()
@@ -151,7 +162,7 @@ public sealed class QuickCustomScreenView : UIScreenView
 
     private void ResetToDefaults()
     {
-        flowSystem.ResetToDefaults(this);
+        flowSystem.ResetToDefaults(this, _configStore);
     }
 
     private void WireEnemyCountStepper()

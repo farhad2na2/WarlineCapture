@@ -8,10 +8,10 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
     private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
 
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
-    private SelectionUiCommandSystem _selectionUiCommandSystem;
-    private SelectionUiCameraSystem _selectionUiCameraSystem;
+    private IMatchRuntimeState _runtimeGameplayStateSystem;
+    private ISelectionUiCommand _selectionUiCommandSystem;
+    private IMatchHudCameraControl _selectionUiCameraSystem;
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
     private MatchHudRightQuickRailView _matchHudRightQuickRailView;
     private MatchHudMinimapView _matchHudMinimapView;
@@ -25,15 +25,16 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
-        SelectionUiCommandSystem selectionUiCommandSystem,
-        DayNightSystem dayNightSystem,
-        SelectionUiCameraSystem selectionUiCameraSystem = null,
+        ISelectionUiCommand selectionUiCommandSystem,
+        IMatchRuntimeState runtimeGameplayStateSystem,
+        IMatchHudCameraControl selectionUiCameraSystem = null,
         bool resetRuntimeState = true)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
         _selectionUiCameraSystem = selectionUiCameraSystem;
 
-        if (!resetRuntimeState)
+        if (!resetRuntimeState || _runtimeGameplayStateSystem == null)
             return;
 
         _runtimeGameplayStateSystem.PlayRequested = false;
@@ -60,6 +61,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _bindMatchHudRuntimeFeedback = null;
         _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
+        _runtimeGameplayStateSystem = null;
         _selectionUiCameraSystem = null;
     }
 
@@ -287,6 +289,9 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public void TriggerSelectionModeFromHold()
     {
+        if (_runtimeGameplayStateSystem == null)
+            return;
+
         _runtimeGameplayStateSystem.SelectionModeActive = true;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
     }

@@ -67,11 +67,6 @@ public struct QuickGameConfig
         MapSeed = 104729
     };
 
-    public static QuickGameConfig FromRuntimeState()
-    {
-        return FromAISettingsSnapshot(AISettingsRuntimeState.CurrentSnapshot);
-    }
-
     public static QuickGameConfig FromAISettingsSnapshot(AISettingsSnapshot snapshot)
     {
         QuickGameConfig config = Defaults;
@@ -109,8 +104,4 @@ public struct QuickGameConfig
         };
     }
 
-    public void ApplyToRuntimeState()
-    {
-        AISettingsRuntimeState.ApplySnapshot(ToAISettingsSnapshot());
-    }
 }

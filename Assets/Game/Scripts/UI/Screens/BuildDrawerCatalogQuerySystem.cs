@@ -85,8 +85,8 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     public void Collect(
-        IUiCatalogPrefabSource unitPrefabSource,
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         BuildDrawerCategory category,
         List<BuildDrawerCatalogItem> results)
     {
@@ -103,8 +103,8 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     public void CollectAll(
-        IUiCatalogPrefabSource unitPrefabSource,
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
         if (results == null)
@@ -117,8 +117,8 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     public bool TryResolvePrefab(
-        IUiCatalogPrefabSource unitPrefabSource,
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         GameObject prefab,
         out BuildDrawerCatalogItem item)
     {
@@ -146,14 +146,14 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private void CollectBuildings(
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
         AppendBuildings(buildingPrefabSource, results);
     }
 
     private void AppendBuildings(
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
         IReadOnlyList<GameObject> spawnables = buildingPrefabSource != null
@@ -195,7 +195,7 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private void CollectUnits(
-        IUiCatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
         BuildDrawerCategory category,
         List<BuildDrawerCatalogItem> results)
     {
@@ -228,7 +228,7 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private void AppendUnits(
-        IUiCatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
         List<BuildDrawerCatalogItem> results)
     {
         IReadOnlyList<GameObject> prefabs = unitPrefabSource != null
@@ -397,8 +397,8 @@ public sealed class BuildDrawerCatalogQuerySystem
     }
 
     private bool TryResolveFromConfiguredLists(
-        IUiCatalogPrefabSource unitPrefabSource,
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         GameObject prefab,
         out BuildDrawerCatalogItem item)
     {

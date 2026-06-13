@@ -23,8 +23,8 @@ public sealed class ArmoryContentListView : MonoBehaviour
     private bool hasActiveInspectionItem;
     private bool hasBoundaryQuery;
     private ArmoryCatalogItemView activeItemView;
-    private IUiCatalogPrefabSource unitPrefabSourceOverride;
-    private IUiCatalogPrefabSource buildingPrefabSourceOverride;
+    private ICatalogPrefabSource unitPrefabSourceOverride;
+    private ICatalogPrefabSource buildingPrefabSourceOverride;
 
     private void OnEnable()
     {
@@ -48,8 +48,8 @@ public sealed class ArmoryContentListView : MonoBehaviour
     }
 
     public void ConfigureForTests(
-        IUiCatalogPrefabSource unitRegistry,
-        IUiCatalogPrefabSource buildingPlacement,
+        ICatalogPrefabSource unitRegistry,
+        ICatalogPrefabSource buildingPlacement,
         RectTransform content,
         ArmoryCatalogItemView template,
         ArmoryInspectionPanelView inspection = null)
@@ -91,11 +91,11 @@ public sealed class ArmoryContentListView : MonoBehaviour
         Populate(itemScratch);
     }
 
-    private IUiCatalogPrefabSource UnitPrefabSource =>
-        unitPrefabSourceOverride ?? unitPrefabRegistryConfig as IUiCatalogPrefabSource;
+    private ICatalogPrefabSource UnitPrefabSource =>
+        unitPrefabSourceOverride ?? unitPrefabRegistryConfig as ICatalogPrefabSource;
 
-    private IUiCatalogPrefabSource BuildingPrefabSource =>
-        buildingPrefabSourceOverride ?? buildingPlacementConfig as IUiCatalogPrefabSource;
+    private ICatalogPrefabSource BuildingPrefabSource =>
+        buildingPrefabSourceOverride ?? buildingPlacementConfig as ICatalogPrefabSource;
 
     private void Populate(IReadOnlyList<ArmoryCatalogItem> items)
     {

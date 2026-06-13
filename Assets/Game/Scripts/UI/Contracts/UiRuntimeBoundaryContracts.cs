@@ -113,12 +113,6 @@ public interface IMatchHudCameraControl
     void MoveCameraGroundCenterTo(Vector3 worldPosition);
 }
 
-public interface IUiCatalogPrefabSource
-{
-    IReadOnlyList<GameObject> UnitSpawnPrefabs { get; }
-    IReadOnlyList<GameObject> BuildingSpawnPrefabs { get; }
-}
-
 public enum UiBoardCommandModeDirection : byte
 {
     None = 0,

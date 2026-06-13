@@ -95,8 +95,8 @@ public sealed class ArmoryCatalogQuerySystem
     }
 
     public void Collect(
-        IUiCatalogPrefabSource unitPrefabSource,
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         ArmoryCatalogCategory category,
         List<ArmoryCatalogItem> results)
     {
@@ -115,7 +115,7 @@ public sealed class ArmoryCatalogQuerySystem
     }
 
     private void CollectUnitItems(
-        IUiCatalogPrefabSource unitPrefabSource,
+        ICatalogPrefabSource unitPrefabSource,
         ArmoryCatalogCategory category,
         List<ArmoryCatalogItem> results)
     {
@@ -162,7 +162,7 @@ public sealed class ArmoryCatalogQuerySystem
     }
 
     private void CollectBuildingItems(
-        IUiCatalogPrefabSource buildingPrefabSource,
+        ICatalogPrefabSource buildingPrefabSource,
         List<ArmoryCatalogItem> results)
     {
         IReadOnlyList<GameObject> spawnables = buildingPrefabSource != null

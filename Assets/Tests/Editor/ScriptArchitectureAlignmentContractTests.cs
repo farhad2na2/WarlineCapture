@@ -109,6 +109,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
             tests.RenderingAssemblyMustNotReferenceAuthoringAssembly();
             tests.RenderingAssemblyMustNotReadAuthoringComponents();
+            tests.ConfigsAssemblyMustNotReferenceUiContractsAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
@@ -116,7 +117,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=20");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=21");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -227,6 +228,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
             "`Game.UI.Runtime` must not reference `Game.Authoring`. Composition can inject UI catalog metadata derived from authoring components.");
+    }
+
+    [Test]
+    public void ConfigsAssemblyMustNotReferenceUiContractsAssembly()
+    {
+        string configsAsmdefPath = Path.Combine(GameScriptsRoot, "Configs/Game.Configs.asmdef");
+        string asmdef = File.ReadAllText(configsAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.UI.Contracts\"", StringComparison.Ordinal),
+            "`Game.Configs` must not reference UI contracts. Shared config/UI catalog surfaces belong in `Game.Catalog.Contracts`.");
     }
 
     [Test]

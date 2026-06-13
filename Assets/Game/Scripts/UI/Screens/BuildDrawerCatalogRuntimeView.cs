@@ -37,8 +37,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     private Button _clearButton;
     private UnityAction _clearButtonListener;
     private float _nextQueueRefreshTime;
-    private IUiCatalogPrefabSource _unitPrefabSourceOverride;
-    private IUiCatalogPrefabSource _buildingPrefabSourceOverride;
+    private ICatalogPrefabSource _unitPrefabSourceOverride;
+    private ICatalogPrefabSource _buildingPrefabSourceOverride;
 
     private void Awake()
     {
@@ -79,8 +79,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
 
     public void ConfigureForTests(
         BuildDrawerView drawerView,
-        IUiCatalogPrefabSource unitRegistry,
-        IUiCatalogPrefabSource buildingPlacement)
+        ICatalogPrefabSource unitRegistry,
+        ICatalogPrefabSource buildingPlacement)
     {
         view = drawerView;
         _unitPrefabSourceOverride = unitRegistry;
@@ -244,11 +244,11 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         return counts;
     }
 
-    private IUiCatalogPrefabSource UnitPrefabSource =>
-        _unitPrefabSourceOverride ?? unitPrefabRegistryConfig as IUiCatalogPrefabSource;
+    private ICatalogPrefabSource UnitPrefabSource =>
+        _unitPrefabSourceOverride ?? unitPrefabRegistryConfig as ICatalogPrefabSource;
 
-    private IUiCatalogPrefabSource BuildingPrefabSource =>
-        _buildingPrefabSourceOverride ?? buildingPlacementConfig as IUiCatalogPrefabSource;
+    private ICatalogPrefabSource BuildingPrefabSource =>
+        _buildingPrefabSourceOverride ?? buildingPlacementConfig as ICatalogPrefabSource;
 
     private static bool[] BuildEnabledStates(int[] counts)
     {

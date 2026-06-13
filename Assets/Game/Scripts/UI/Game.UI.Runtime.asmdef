@@ -2,6 +2,7 @@
     "name": "Game.UI.Runtime",
     "rootNamespace": "",
     "references": [
+        "Game.Catalog.Contracts",
         "Game.Components",
         "Game.UI.Contracts",
         "Game.UI.Shell.Ecs",

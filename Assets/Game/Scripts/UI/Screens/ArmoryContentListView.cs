@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,10 +17,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
     private ArmoryInspectionPanelView inspectionPanel;
     private ArmoryCatalogItem activeInspectionItem;
     private ArmoryCatalogCategory activeCategory = ArmoryCatalogCategory.Characters;
-    private EntityQuery boundaryQuery;
-    private World cachedWorld;
     private bool hasActiveInspectionItem;
-    private bool hasBoundaryQuery;
     private ArmoryCatalogItemView activeItemView;
     private ICatalogPrefabSource unitPrefabSourceOverride;
     private ICatalogPrefabSource buildingPrefabSourceOverride;
@@ -216,63 +212,12 @@ public sealed class ArmoryContentListView : MonoBehaviour
 
     private bool TryReadBoundaryCategory(out ArmoryCatalogCategory category)
     {
-        category = ArmoryCatalogCategory.Characters;
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return false;
-
-        UiShellArmoryCategoryComponent state = entityManager.GetComponentData<UiShellArmoryCategoryComponent>(boundary);
-        category = state.Category;
-        return true;
+        return UiShellEcsGateway.TryReadArmoryCategory(out category);
     }
 
     private bool TryQueueBoundaryCategory(ArmoryCatalogCategory category)
     {
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return false;
-
-        DynamicBuffer<UiShellArmoryCategoryRequestComponent> requests =
-            entityManager.GetBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
-        requests.Add(new UiShellArmoryCategoryRequestComponent
-        {
-            Category = category
-        });
-        return true;
-    }
-
-    private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)
-    {
-        entityManager = default;
-        boundary = Entity.Null;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (cachedWorld != world || !hasBoundaryQuery)
-        {
-            cachedWorld = world;
-            boundaryQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellBoundaryComponent>());
-            hasBoundaryQuery = true;
-        }
-
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        entityManager = world.EntityManager;
-        boundary = boundaryQuery.GetSingletonEntity();
-        if (!entityManager.HasComponent<UiShellArmoryCategoryComponent>(boundary))
-        {
-            entityManager.AddComponentData(boundary, new UiShellArmoryCategoryComponent
-            {
-                Category = ArmoryCatalogCategory.Characters
-            });
-        }
-
-        if (!entityManager.HasBuffer<UiShellArmoryCategoryRequestComponent>(boundary))
-            entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
-
-        return true;
+        return UiShellEcsGateway.TryEnqueueArmoryCategory(category);
     }
 
     private readonly struct ItemClickBinding

@@ -1,6 +1,5 @@
 using System.Collections;
 using Unity.Collections;
-using Unity.Entities;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -10,9 +9,6 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
     [SerializeField] private float loadingDurationSeconds = 2f;
     [SerializeField] private float stableHoldSeconds = 0.25f;
 
-    private EntityQuery boundaryQuery;
-    private World cachedWorld;
-    private bool hasBoundaryQuery;
     private bool hasStarted;
     private bool isCompletingLoading;
 
@@ -80,78 +76,27 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
 
     private IEnumerator WaitForBoundary()
     {
-        while (!TryGetBoundary(out _, out _))
+        while (!UiShellEcsGateway.TryReadShellState(out _))
             yield return null;
     }
 
     private void SetLoading(float progress01, string status, bool complete)
     {
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return;
-
-        entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
-        {
-            Progress01 = Mathf.Clamp01(progress01),
-            Status = new FixedString64Bytes(status),
-            IsComplete = complete ? (byte)1 : (byte)0
-        });
+        UiShellEcsGateway.TrySetLoadingProgress(progress01, new FixedString64Bytes(status), complete);
     }
 
     private void EnqueueRoute(UiShellRouteIntent intent, UIRoute route)
     {
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return;
-
-        DynamicBuffer<UiShellRouteRequestComponent> requests = entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
-        requests.Add(new UiShellRouteRequestComponent
-        {
-            Intent = intent,
-            Route = route,
-            PushHistory = 0
-        });
+        UiShellEcsGateway.TryEnqueueRouteRequest(intent, route, pushHistory: false);
     }
 
     private bool TryGetState(out UiShellStateComponent state)
     {
-        state = default;
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return false;
-
-        state = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-        return true;
+        return UiShellEcsGateway.TryReadShellState(out state);
     }
 
     private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
     {
-        loading = default;
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
-            return false;
-
-        loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
-        return true;
-    }
-
-    private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)
-    {
-        entityManager = default;
-        boundary = Entity.Null;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (cachedWorld != world || !hasBoundaryQuery)
-        {
-            cachedWorld = world;
-            boundaryQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
-            hasBoundaryQuery = true;
-        }
-
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        entityManager = world.EntityManager;
-        boundary = boundaryQuery.GetSingletonEntity();
-        return true;
+        return UiShellEcsGateway.TryReadLoadingProgress(out loading);
     }
 }

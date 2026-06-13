@@ -1,5 +1,4 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
 public interface IMatchHudSelectionPanelView
@@ -10,7 +9,7 @@ public interface IMatchHudSelectionPanelView
         Action passengerChipRequested,
         Action passengerDrawerCloseRequested,
         Action passengerExitAllRequested,
-        Action<Entity> passengerExitRequested);
+        Action<UiEntityHandle> passengerExitRequested);
 
     void HideSelection();
 

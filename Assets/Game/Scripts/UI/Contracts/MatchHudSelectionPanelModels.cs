@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
 public enum SelectionSummaryPortraitKind
@@ -18,9 +17,53 @@ public enum SelectionSummaryPortraitKind
     MixedSoldierVehicleAircraft = 11
 }
 
+public readonly struct UiEntityHandle : System.IEquatable<UiEntityHandle>
+{
+    public readonly int Index;
+    public readonly int Version;
+
+    public UiEntityHandle(int index, int version)
+    {
+        Index = index;
+        Version = version;
+    }
+
+    public bool IsNull => Index == 0 && Version == 0;
+
+    public static UiEntityHandle Null => default;
+
+    public bool Equals(UiEntityHandle other)
+    {
+        return Index == other.Index && Version == other.Version;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is UiEntityHandle other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (Index * 397) ^ Version;
+        }
+    }
+
+    public static bool operator ==(UiEntityHandle left, UiEntityHandle right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(UiEntityHandle left, UiEntityHandle right)
+    {
+        return !left.Equals(right);
+    }
+}
+
 public readonly struct MatchHudSelectionPanelPassengerItemModel
 {
-    public readonly Entity Passenger;
+    public readonly UiEntityHandle Passenger;
     public readonly string DisplayName;
     public readonly string RoleText;
     public readonly string HealthText;
@@ -29,7 +72,7 @@ public readonly struct MatchHudSelectionPanelPassengerItemModel
     public readonly bool ExitEnabled;
 
     public MatchHudSelectionPanelPassengerItemModel(
-        Entity passenger,
+        UiEntityHandle passenger,
         string displayName,
         string roleText,
         string healthText,
@@ -51,7 +94,7 @@ public readonly struct MatchHudTransportPassengersModel
 {
     public readonly bool Visible;
     public readonly bool DrawerOpen;
-    public readonly Entity Transport;
+    public readonly UiEntityHandle Transport;
     public readonly int PassengerCount;
     public readonly int Capacity;
     public readonly bool ExitAllEnabled;
@@ -60,7 +103,7 @@ public readonly struct MatchHudTransportPassengersModel
     public MatchHudTransportPassengersModel(
         bool visible,
         bool drawerOpen,
-        Entity transport,
+        UiEntityHandle transport,
         int passengerCount,
         int capacity,
         bool exitAllEnabled,
@@ -75,7 +118,7 @@ public readonly struct MatchHudTransportPassengersModel
         Passengers = passengers;
     }
 
-    public static MatchHudTransportPassengersModel Hidden => new(false, false, Entity.Null, 0, 0, false, null);
+    public static MatchHudTransportPassengersModel Hidden => new(false, false, UiEntityHandle.Null, 0, 0, false, null);
 }
 
 public readonly struct MatchHudSelectionPanelModel

@@ -242,7 +242,7 @@ internal sealed class SelectionGameplayStartupSystem
                 () => { },
                 () => { },
                 () => selectionUiCommand.RequestFocusedTransportDisembark(),
-                passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(passenger));
+                passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(ToEntity(passenger)));
         }
 
         void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
@@ -761,7 +761,7 @@ internal sealed class SelectionGameplayStartupSystem
                 portrait ??= resolveSelectionPortraitSprite?.Invoke(em, passenger);
                 portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
                 transportPassengerPanelItems.Add(new MatchHudSelectionPanelPassengerItemModel(
-                    passenger,
+                    ToUiHandle(passenger),
                     passengerModel.DisplayName.ToString(),
                     ResolvePassengerRoleText(em, passenger),
                     healthLabel,
@@ -773,7 +773,7 @@ internal sealed class SelectionGameplayStartupSystem
             return new MatchHudTransportPassengersModel(
                 true,
                 false,
-                transport,
+                ToUiHandle(transport),
                 transportPassengerPanelItems.Count,
                 capacity,
                 transportPassengerPanelItems.Count > 0,
@@ -962,6 +962,20 @@ internal sealed class SelectionGameplayStartupSystem
 
             healthLabel = $"Health: {math.max(0, current)}/{max}";
             health01 = math.saturate((float)current / max);
+        }
+
+        static UiEntityHandle ToUiHandle(Entity entity)
+        {
+            return entity == Entity.Null
+                ? UiEntityHandle.Null
+                : new UiEntityHandle(entity.Index, entity.Version);
+        }
+
+        static Entity ToEntity(UiEntityHandle handle)
+        {
+            return handle.IsNull
+                ? Entity.Null
+                : new Entity { Index = handle.Index, Version = handle.Version };
         }
 
         bool IsBoardCommandAvailable(EntityManager em, Entity entity)

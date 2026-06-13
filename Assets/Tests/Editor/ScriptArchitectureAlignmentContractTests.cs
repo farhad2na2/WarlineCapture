@@ -113,12 +113,14 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly();
+            tests.UiRuntimeAssemblyMustNotReferenceEntitiesPackage();
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
+            tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=22");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=24");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -243,6 +245,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void UiRuntimeAssemblyMustNotReferenceEntitiesPackage()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.Entities\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Unity.Entities`. Keep direct ECS access in `Game.UI.Shell.Ecs`, contracts, runtime, or composition.");
+    }
+
+    [Test]
     public void ConfigsAssemblyMustNotReferenceUiContractsAssembly()
     {
         string configsAsmdefPath = Path.Combine(GameScriptsRoot, "Configs/Game.Configs.asmdef");
@@ -313,6 +326,32 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "`Game.UI.Runtime` must use contracts from `Game.UI.Contracts`; concrete runtime systems stay in runtime/composition.");
+    }
+
+    [Test]
+    public void UiRuntimeScriptsMustNotUseDirectEcsApis()
+    {
+        string[] forbiddenTokens =
+        {
+            "using Unity.Entities",
+            "Unity.Entities.",
+            "EntityQuery",
+            "EntityManager",
+            "DynamicBuffer<",
+            "World.DefaultGameObjectInjectionWorld",
+            "Entity.Null",
+            "Action<Entity>",
+        };
+
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
+            .Where(IsConcreteUiRuntimePath)
+            .SelectMany(path => FindTokenReferences(path, forbiddenTokens))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` must not directly use ECS APIs. Route shell ECS state through `Game.UI.Shell.Ecs` and map gameplay entities through UI DTOs/contracts.");
     }
 
     [Test]
@@ -1183,6 +1222,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static bool IsUiPath(string path)
     {
         return NormalizePath(path).Contains("/UI/", StringComparison.Ordinal);
+    }
+
+    private static bool IsConcreteUiRuntimePath(string path)
+    {
+        string normalized = NormalizePath(path);
+        return normalized.Contains("/UI/", StringComparison.Ordinal) &&
+               !normalized.Contains("/UI/Contracts/", StringComparison.Ordinal) &&
+               !normalized.Contains("/UI/Shell/Ecs/", StringComparison.Ordinal) &&
+               !IsEditorPath(normalized);
     }
 
     private static bool IsCompositionPath(string path)

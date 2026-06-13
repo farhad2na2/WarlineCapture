@@ -1,4 +1,3 @@
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,9 +10,6 @@ public sealed class UIShellRouteButtonView : MonoBehaviour
     [SerializeField] private bool pushHistory;
 
     private Button button;
-    private EntityQuery boundaryQuery;
-    private World cachedWorld;
-    private bool hasBoundaryQuery;
 
     public UiShellRouteIntent Intent => intent;
     public UIRoute Route => route;
@@ -47,45 +43,9 @@ public sealed class UIShellRouteButtonView : MonoBehaviour
 
     private void SubmitRouteRequest()
     {
-        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+        if (!UiShellEcsGateway.TryEnqueueRouteRequest(intent, route, pushHistory))
         {
             Debug.LogError($"[UiShellRoute] Missing UI shell boundary. intent={intent} route={route}");
-            return;
         }
-
-        DynamicBuffer<UiShellRouteRequestComponent> requests =
-            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
-        requests.Add(new UiShellRouteRequestComponent
-        {
-            Intent = intent,
-            Route = route,
-            PushHistory = pushHistory ? (byte)1 : (byte)0
-        });
-    }
-
-    private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)
-    {
-        entityManager = default;
-        boundary = Entity.Null;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (cachedWorld != world || !hasBoundaryQuery)
-        {
-            cachedWorld = world;
-            boundaryQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellBoundaryComponent>(),
-                ComponentType.ReadWrite<UiShellRouteRequestComponent>());
-            hasBoundaryQuery = true;
-        }
-
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        entityManager = world.EntityManager;
-        boundary = boundaryQuery.GetSingletonEntity();
-        return true;
     }
 }

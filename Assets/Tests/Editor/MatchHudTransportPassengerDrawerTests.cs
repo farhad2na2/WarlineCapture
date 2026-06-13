@@ -72,7 +72,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
         RectTransform contentRoot = GetReference<RectTransform>(new SerializedObject(drawer), "contentRoot");
         Sprite riflemanCardSprite = CreateTestSprite();
-        Entity exitedPassenger = Entity.Null;
+        UiEntityHandle exitedPassenger = UiEntityHandle.Null;
         view.BindTransportPassengerActions(
             () => { },
             () => { },
@@ -81,14 +81,14 @@ public sealed class MatchHudTransportPassengerDrawerTests
 
         var passengers = new List<MatchHudSelectionPanelPassengerItemModel>
         {
-            new(new Entity { Index = 12, Version = 1 }, "Rifleman", "SOLDIER", "Health: 80/100", 0.8f, riflemanCardSprite, true),
-            new(new Entity { Index = 13, Version = 1 }, "Medic", "SOLDIER", "Health: 60/100", 0.6f, null, true)
+            new(new UiEntityHandle(12, 1), "Rifleman", "SOLDIER", "Health: 80/100", 0.8f, riflemanCardSprite, true),
+            new(new UiEntityHandle(13, 1), "Medic", "SOLDIER", "Health: 60/100", 0.6f, null, true)
         };
 
         view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
             true,
             false,
-            new Entity { Index = 99, Version = 1 },
+            new UiEntityHandle(99, 1),
             2,
             8,
             true,
@@ -102,7 +102,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
             true,
             false,
-            new Entity { Index = 99, Version = 1 },
+            new UiEntityHandle(99, 1),
             2,
             8,
             true,

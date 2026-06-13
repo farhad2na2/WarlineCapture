@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -44,7 +43,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     private Action _passengerChipRequested;
     private Action _passengerDrawerCloseRequested;
     private Action _passengerExitAllRequested;
-    private Action<Entity> _passengerExitRequested;
+    private Action<UiEntityHandle> _passengerExitRequested;
     private Button _boundReturnAction;
     private Button _boundDestroyAction;
     private Button _boundBoardAction;
@@ -54,7 +53,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     private bool _boardActionNormalColorCached;
     private bool _boardActionSelected;
     private bool _passengerDrawerOpen;
-    private Entity _passengerDrawerTransport;
+    private UiEntityHandle _passengerDrawerTransport;
     private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
 
     private void Awake()
@@ -84,7 +83,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         Action passengerChipRequested,
         Action passengerDrawerCloseRequested,
         Action passengerExitAllRequested,
-        Action<Entity> passengerExitRequested)
+        Action<UiEntityHandle> passengerExitRequested)
     {
         BindUnityEvents();
         _passengerChipRequested = passengerChipRequested;
@@ -206,10 +205,10 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
 
     public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
     {
-        if (!model.Visible || model.Transport == Entity.Null)
+        if (!model.Visible || model.Transport.IsNull)
         {
             _passengerDrawerOpen = false;
-            _passengerDrawerTransport = Entity.Null;
+            _passengerDrawerTransport = UiEntityHandle.Null;
             ApplyPassengerChip(false, 0, 0);
             passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
             return;
@@ -328,7 +327,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         _passengerExitAllRequested?.Invoke();
     }
 
-    private void HandlePassengerExit(Entity passenger)
+    private void HandlePassengerExit(UiEntityHandle passenger)
     {
         _passengerExitRequested?.Invoke(passenger);
     }

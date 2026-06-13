@@ -1,6 +1,5 @@
 using System;
 using TMPro;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +13,8 @@ public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private Button exitButton;
 
-    private Entity _passenger;
-    private Action<Entity> _exitRequested;
+    private UiEntityHandle _passenger;
+    private Action<UiEntityHandle> _exitRequested;
     private Button _boundExitButton;
 
     private void Awake()
@@ -28,7 +27,7 @@ public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
         UnbindButton(ref _boundExitButton, HandleExit);
     }
 
-    public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<Entity> exitRequested)
+    public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<UiEntityHandle> exitRequested)
     {
         BindUnityEvents();
 
@@ -51,7 +50,7 @@ public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
 
     private void HandleExit()
     {
-        if (_passenger != Entity.Null)
+        if (!_passenger.IsNull)
             _exitRequested?.Invoke(_passenger);
     }
 

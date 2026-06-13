@@ -1,6 +1,5 @@
 using TMPro;
 using Unity.Collections;
-using Unity.Entities;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -14,9 +13,6 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private float fillWidth = 648f;
 
-    private EntityQuery boundaryQuery;
-    private World cachedWorld;
-    private bool hasBoundaryQuery;
     private int lastPercent = -1;
     private bool hasLastStatus;
     private FixedString64Bytes lastStatus;
@@ -88,26 +84,6 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
 
     private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
     {
-        loading = default;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (cachedWorld != world || !hasBoundaryQuery)
-        {
-            cachedWorld = world;
-            boundaryQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellBoundaryComponent>(),
-                ComponentType.ReadOnly<UiShellLoadingProgressComponent>());
-            hasBoundaryQuery = true;
-        }
-
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity boundary = boundaryQuery.GetSingletonEntity();
-        loading = world.EntityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
-        return true;
+        return UiShellEcsGateway.TryReadLoadingProgress(out loading);
     }
 }

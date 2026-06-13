@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +21,7 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
     private readonly List<MatchHudTransportPassengerItemView> _runtimeItems = new();
     private Action _exitAllRequested;
     private Action _closeRequested;
-    private Action<Entity> _exitPassengerRequested;
+    private Action<UiEntityHandle> _exitPassengerRequested;
     private Button _boundExitAllButton;
     private Button _boundCloseButton;
 
@@ -39,7 +38,7 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
         UnbindButton(ref _boundCloseButton, HandleClose);
     }
 
-    public void BindActions(Action exitAllRequested, Action closeRequested, Action<Entity> exitPassengerRequested)
+    public void BindActions(Action exitAllRequested, Action closeRequested, Action<UiEntityHandle> exitPassengerRequested)
     {
         BindUnityEvents();
         _exitAllRequested = exitAllRequested;

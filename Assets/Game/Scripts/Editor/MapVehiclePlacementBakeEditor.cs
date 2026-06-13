@@ -13,6 +13,8 @@ internal static class MapVehiclePlacementBakeEditor
     private const string ConfigAssetPath = "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset";
     private const string VehiclesPrefabRoot = "Assets/Game/Prefabs/Vehicles";
     private const string ReportPath = "/private/tmp/map-vehicle-placement-bake-report.json";
+    private const string RuntimeVehicleCategoryPrefix = "Unit_Veh_";
+    private const string AuthoringVehicleGroupPrefix = "MapVehicle_";
 
     [Serializable]
     private sealed class BakeReport
@@ -66,27 +68,28 @@ internal static class MapVehiclePlacementBakeEditor
             for (int i = 0; i < vehiclesRoot.childCount; i++)
             {
                 Transform categoryRoot = vehiclesRoot.GetChild(i);
-                if (!categoryRoot.name.StartsWith("Unit_Veh_", StringComparison.Ordinal))
+                string categoryName = ResolveVehicleCategoryName(categoryRoot.name);
+                if (string.IsNullOrEmpty(categoryName))
                 {
                     report.skippedFolderCount++;
                     report.skippedFolders.Add(GetHierarchyPath(categoryRoot));
                     continue;
                 }
 
-                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{VehiclesPrefabRoot}/{categoryRoot.name}.prefab");
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{VehiclesPrefabRoot}/{categoryName}.prefab");
                 if (prefab == null)
                 {
                     report.missingPrefabCount++;
-                    report.missingPrefabs.Add($"{VehiclesPrefabRoot}/{categoryRoot.name}.prefab");
+                    report.missingPrefabs.Add($"{VehiclesPrefabRoot}/{categoryName}.prefab");
                     continue;
                 }
 
-                categories.Add(categoryRoot.name);
+                categories.Add(categoryName);
                 if (categoryRoot.childCount == 0)
                 {
                     report.emptyCategoryCount++;
-                    report.emptyCategories.Add(categoryRoot.name);
-                    report.warnings.Add($"Vehicle category has no authored placements: {categoryRoot.name}");
+                    report.emptyCategories.Add(categoryName);
+                    report.warnings.Add($"Vehicle category has no authored placements: {categoryName}");
                     continue;
                 }
 
@@ -99,7 +102,7 @@ internal static class MapVehiclePlacementBakeEditor
                     byte factionId = ResolveFactionId(center, faction1, faction2, placementRoot, report);
                     placements.Add(new MapVehiclePlacementConfigEntry(
                         GetHierarchyPath(placementRoot),
-                        categoryRoot.name,
+                        categoryName,
                         prefab,
                         factionId,
                         center,
@@ -144,6 +147,20 @@ internal static class MapVehiclePlacementBakeEditor
             Debug.LogError($"[MapVehiclePlacement] bake failed: {ex.Message}. Report: {ReportPath}");
             throw;
         }
+    }
+
+    private static string ResolveVehicleCategoryName(string authoringGroupName)
+    {
+        if (string.IsNullOrWhiteSpace(authoringGroupName))
+            return string.Empty;
+
+        string trimmed = authoringGroupName.Trim();
+        if (trimmed.StartsWith(RuntimeVehicleCategoryPrefix, StringComparison.Ordinal))
+            return trimmed;
+
+        return trimmed.StartsWith(AuthoringVehicleGroupPrefix, StringComparison.Ordinal)
+            ? RuntimeVehicleCategoryPrefix + trimmed.Substring(AuthoringVehicleGroupPrefix.Length)
+            : string.Empty;
     }
 
     private static byte ResolveFactionId(

@@ -306,29 +306,40 @@ public sealed class TransportBoardingCommandSystem
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
         }
 
-        for (int i = 0; i < boardingOrders.Count; i++)
+        var passengerStateSystem = new UnitTransportPassengerStateSystem();
+        EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
+        try
         {
-            Entity passenger = boardingOrders[i].Passenger;
-            int2 goal = boardingOrders[i].Goal;
-            if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
-                continue;
-
-            moveOrderSystem.ClearMovementOrderComponents(em, passenger);
-            if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
-                em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
-            moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
-            if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-                em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
-            else
-                em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
-
-            if (shouldLogTransportBoarding)
+            for (int i = 0; i < boardingOrders.Count; i++)
             {
-                EnqueueTransportBoardingDiagnostic(
+                Entity passenger = boardingOrders[i].Passenger;
+                int2 goal = boardingOrders[i].Goal;
+                if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                    continue;
+
+                moveOrderSystem.ClearMovementOrderComponents(em, passenger);
+                moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
+                passengerStateSystem.ApplyBoardingOrderState(
                     em,
-                    $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                    $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+                    ref boardingStateEcb,
+                    passenger,
+                    transport,
+                    goal);
+
+                if (shouldLogTransportBoarding)
+                {
+                    EnqueueTransportBoardingDiagnostic(
+                        em,
+                        $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                        $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+                }
             }
+
+            boardingStateEcb.Playback(em);
+        }
+        finally
+        {
+            boardingStateEcb.Dispose();
         }
 
         float3 markerPosition = em.GetComponentData<LocalTransform>(transport).Position;
@@ -539,13 +550,23 @@ public sealed class TransportBoardingCommandSystem
         }
 
         moveOrderSystem.ClearMovementOrderComponents(em, passenger);
-        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
-            em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
         moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
-        if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-            em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
-        else
-            em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
+        var passengerStateSystem = new UnitTransportPassengerStateSystem();
+        EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
+        try
+        {
+            passengerStateSystem.ApplyBoardingOrderState(
+                em,
+                ref boardingStateEcb,
+                passenger,
+                transport,
+                goal);
+            boardingStateEcb.Playback(em);
+        }
+        finally
+        {
+            boardingStateEcb.Dispose();
+        }
 
         if (shouldLogTransportBoarding)
         {

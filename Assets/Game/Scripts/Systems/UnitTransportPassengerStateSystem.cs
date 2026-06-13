@@ -1,7 +1,25 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
 public readonly struct UnitTransportPassengerStateSystem
 {
+    public void ApplyBoardingOrderState(
+        EntityManager em,
+        ref EntityCommandBuffer ecb,
+        Entity passenger,
+        Entity transport,
+        int2 goal)
+    {
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
+            ecb.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
+
+        var boardingTarget = new UnitTransportBoardingTarget { Transport = transport, Goal = goal };
+        if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
+            ecb.SetComponent(passenger, boardingTarget);
+        else
+            ecb.AddComponent(passenger, boardingTarget);
+    }
+
     public int BoardPassenger(
         EntityManager em,
         ref EntityCommandBuffer ecb,

@@ -90,8 +90,8 @@ public sealed class SelectionSummaryQuerySystemTests
         Assert.AreEqual(2, summary.UnitCount);
         Assert.AreEqual(2, summary.SoldierCount);
         Assert.AreEqual("2 SOLDIERS", summary.Title);
-        Assert.AreEqual("Infantry squad", summary.Subtitle);
-        Assert.AreEqual("Health: 140/200", summary.HealthText);
+        Assert.AreEqual("Infantry Squad", summary.Subtitle);
+        Assert.AreEqual("140/200", summary.HealthText);
         Assert.AreEqual(0.7f, summary.Health01, 0.001f);
         Assert.AreEqual(SelectionSummaryPortraitKind.Soldiers, summary.PortraitKind);
     }
@@ -115,8 +115,8 @@ public sealed class SelectionSummaryQuerySystemTests
         Assert.AreEqual(1, summary.SoldierCount);
         Assert.AreEqual(1, summary.VehicleCount);
         Assert.AreEqual("MIXED SQUAD", summary.Title);
-        Assert.AreEqual("1 infantry / 1 vehicles", summary.Subtitle);
-        Assert.AreEqual("Health: 125/200", summary.HealthText);
+        Assert.AreEqual("1 Infantry / 1 Vehicles", summary.Subtitle);
+        Assert.AreEqual("125/200", summary.HealthText);
         Assert.AreEqual(0.625f, summary.Health01, 0.001f);
         Assert.AreEqual(SelectionSummaryPortraitKind.MixedSoldierVehicle, summary.PortraitKind);
     }
@@ -204,7 +204,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         Assert.AreEqual(2, summary.VehicleCount);
         Assert.AreEqual("2 VEHICLES", summary.Title);
-        Assert.AreEqual("Vehicle squad", summary.Subtitle);
+        Assert.AreEqual("Vehicle Squad", summary.Subtitle);
         Assert.AreEqual(SelectionSummaryPortraitKind.Vehicles, summary.PortraitKind);
     }
 

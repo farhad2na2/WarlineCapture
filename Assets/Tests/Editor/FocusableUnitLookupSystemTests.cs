@@ -10,6 +10,36 @@ public sealed class FocusableUnitLookupSystemTests
     private World _world;
     private EntityManager _entityManager;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.LookupRefreshesWhenGridOrFootprintChangesWithoutCountChange());
+            RunCase(test => test.ScreenDistanceFallback_SkipsActiveTransitAirUnits());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=2");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[FocusableUnitLookupFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<FocusableUnitLookupSystemTests> testCase)
+    {
+        var tests = new FocusableUnitLookupSystemTests();
+        try
+        {
+            tests.SetUp();
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -80,6 +110,52 @@ public sealed class FocusableUnitLookupSystemTests
                 new Vector2(50f, 50f),
                 out Entity focusedAfterFootprintChange));
             Assert.AreEqual(unit, focusedAfterFootprintChange);
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void ScreenDistanceFallback_SkipsActiveTransitAirUnits()
+    {
+        GameObject cameraObject = new("FocusableUnitScreenDistanceCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 10f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(32, 32);
+            Entity activeTransit = CreateFocusableUnit(new int2(4, 4), new int2(1, 1));
+            _entityManager.AddComponent<UnitSpawnTransitTag>(activeTransit);
+            _entityManager.AddComponentData(activeTransit, new UnitAirComponent { Airborne = 1 });
+
+            Entity groundedIdleTransit = CreateFocusableUnit(new int2(5, 4), new int2(1, 1));
+            _entityManager.AddComponent<UnitSpawnTransitTag>(groundedIdleTransit);
+            _entityManager.AddComponentData(groundedIdleTransit, new UnitAirComponent());
+
+            var lookup = new FocusableUnitLookupSystem();
+            Assert.IsTrue(lookup.TryGetClickedUnitEntityByScreenDistance(
+                _entityManager,
+                camera,
+                new Vector2(50f, 50f),
+                1000f,
+                out Entity focused));
+            Assert.AreEqual(groundedIdleTransit, focused);
+
+            _entityManager.SetComponentData(activeTransit, new UnitAirComponent());
+
+            Assert.IsTrue(lookup.TryGetClickedUnitEntityByScreenDistance(
+                _entityManager,
+                camera,
+                new Vector2(50f, 50f),
+                1000f,
+                out focused));
+            Assert.AreEqual(activeTransit, focused);
         }
         finally
         {

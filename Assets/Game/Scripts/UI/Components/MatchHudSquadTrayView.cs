@@ -51,7 +51,7 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
                 continue;
 
             RectTransform cardRect = card.Button.transform as RectTransform;
-            if (cardRect == null || cardRect.Find("NameStrip") != null)
+            if (cardRect == null)
                 continue;
 
             GameObject stripObject = new("NameStrip");

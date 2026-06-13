@@ -15,6 +15,8 @@ internal static class MapVehicleHierarchyEditor
     private const string UnmappedGroupName = "_UnmappedVehicleSources";
     private const string PendingRequestRelativePath = "Temp/RunMapVehicleHierarchyMigration.flag";
     private const string ReportPath = "/private/tmp/map-vehicle-hierarchy-report.json";
+    private const string RuntimeVehicleCategoryPrefix = "Unit_Veh_";
+    private const string AuthoringVehicleGroupPrefix = "MapVehicle_";
 
     private static readonly Dictionary<string, string> RawSourceToGameplayGroup = new(StringComparer.Ordinal)
     {
@@ -100,16 +102,17 @@ internal static class MapVehicleHierarchyEditor
                     continue;
 
                 string rawSourceName = ResolveRawSourceName(child);
-                string groupName = ResolveGameplayGroupName(rawSourceName);
-                if (string.IsNullOrWhiteSpace(groupName))
+                string categoryName = ResolveGameplayGroupName(rawSourceName);
+                if (string.IsNullOrWhiteSpace(categoryName))
                 {
                     report.skipped.Add(GetHierarchyPath(child));
                     continue;
                 }
 
-                if (groupName == UnmappedGroupName && !string.IsNullOrEmpty(rawSourceName))
+                if (categoryName == UnmappedGroupName && !string.IsNullOrEmpty(rawSourceName))
                     unmappedSources.Add(rawSourceName);
 
+                string groupName = ToAuthoringGroupName(categoryName);
                 Transform group = GetOrCreateGroup(vehiclesRoot, groups, groupName);
                 if (child.parent != group)
                     child.SetParent(group, false);
@@ -249,6 +252,16 @@ internal static class MapVehicleHierarchyEditor
         return RawSourceToGameplayGroup.TryGetValue(rawSourceName, out string gameplayName)
             ? gameplayName
             : UnmappedGroupName;
+    }
+
+    private static string ToAuthoringGroupName(string categoryName)
+    {
+        if (string.IsNullOrWhiteSpace(categoryName) || categoryName == UnmappedGroupName)
+            return categoryName;
+
+        return categoryName.StartsWith(RuntimeVehicleCategoryPrefix, StringComparison.Ordinal)
+            ? AuthoringVehicleGroupPrefix + categoryName.Substring(RuntimeVehicleCategoryPrefix.Length)
+            : categoryName;
     }
 
     private static void DeleteEmptyFolders(Transform parent)

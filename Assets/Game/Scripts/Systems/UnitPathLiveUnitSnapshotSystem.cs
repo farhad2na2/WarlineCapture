@@ -29,16 +29,14 @@ internal struct UnitPathLiveUnitSnapshotSystem
 
     public void Capture(ref SystemState state, EntityQuery liveUnitsQuery)
     {
-        Dispose();
-
         int capacity = liveUnitsQuery.CalculateEntityCount();
         if (capacity < 1)
             capacity = 1;
 
-        _entities = new NativeList<Entity>(capacity, Allocator.Persistent);
-        _grids = new NativeList<UnitGrid>(capacity, Allocator.Persistent);
-        _footprints = new NativeList<UnitFootprint>(capacity, Allocator.Persistent);
-        _manualGroupMembers = new NativeList<byte>(capacity, Allocator.Persistent);
+        EnsureList(ref _entities, capacity);
+        EnsureList(ref _grids, capacity);
+        EnsureList(ref _footprints, capacity);
+        EnsureList(ref _manualGroupMembers, capacity);
 
         state.EntityManager.CompleteDependencyBeforeRO<UnitGrid>();
         state.EntityManager.CompleteDependencyBeforeRO<UnitFootprint>();
@@ -76,5 +74,18 @@ internal struct UnitPathLiveUnitSnapshotSystem
             _footprints.Dispose();
         if (_manualGroupMembers.IsCreated)
             _manualGroupMembers.Dispose();
+    }
+
+    private static void EnsureList<T>(ref NativeList<T> list, int capacity) where T : unmanaged
+    {
+        if (!list.IsCreated)
+        {
+            list = new NativeList<T>(capacity, Allocator.Persistent);
+            return;
+        }
+
+        list.Clear();
+        if (list.Capacity < capacity)
+            list.Capacity = capacity;
     }
 }

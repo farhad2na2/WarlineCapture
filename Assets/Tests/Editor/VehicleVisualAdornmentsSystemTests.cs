@@ -268,6 +268,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(vehicle, new RecentDamageHealthBarVisibility { TimeRemaining = 1f });
 
         SystemHandle system = world.CreateSystem<UnitRuntimeHealthBarSystem>();
+        world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
         SystemHandle visibilitySystem = world.CreateSystem<UnitHealthBarSystem>();
         system.Update(world.Unmanaged);
 
@@ -315,6 +316,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(character, new RecentDamageHealthBarVisibility { TimeRemaining = 1f });
 
         SystemHandle system = world.CreateSystem<UnitRuntimeHealthBarSystem>();
+        world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
         SystemHandle visibilitySystem = world.CreateSystem<UnitHealthBarSystem>();
         system.Update(world.Unmanaged);
 
@@ -357,8 +359,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
             DestroyedVisibleScale = 1.25f
         });
 
+        SystemHandle endSimulationEcbSystem = world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
         SystemHandle system = world.CreateSystem<UnitDestroyedVisualSystem>();
         system.Update(world.Unmanaged);
+        endSimulationEcbSystem.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitDestroyedVisualInitialized>(unit));
         Assert.AreEqual(1.75f, em.GetComponentData<LocalTransform>(aliveVisual).Scale, 0.001f);
@@ -377,8 +381,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(healthBar, new Parent { Value = unit });
         em.AddComponentData(healthBar, new HealthBarFill { Value = 1f });
 
+        SystemHandle endSimulationEcbSystem = world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
         SystemHandle system = world.CreateSystem<UnitHealthBarSystem>();
         system.Update(world.Unmanaged);
+        endSimulationEcbSystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
         Assert.IsFalse(em.HasComponent<RecentDamageHealthBarVisibility>(unit));

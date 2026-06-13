@@ -13,6 +13,7 @@ public partial struct UnitDestroyedVisualSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitDestroyedVisualReference>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         _localTransformLookup = state.GetComponentLookup<LocalTransform>();
     }
 
@@ -20,14 +21,13 @@ public partial struct UnitDestroyedVisualSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         _localTransformLookup.Update(ref state);
-        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
         new InitializeDestroyedVisualJob
         {
             LocalTransforms = _localTransformLookup,
             Ecb = ecb
         }.Run();
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 
     public static void SetChildVisible(EntityManager em, Entity child, bool visible, float visibleScale = 1f)

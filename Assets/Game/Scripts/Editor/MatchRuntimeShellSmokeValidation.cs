@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -19,11 +23,15 @@ public static class MatchRuntimeShellSmokeValidation
     private const string ErrorCountKey = "MatchRuntimeShellSmokeValidation.ErrorCount";
     private const string RequireFrameDiagKey = "MatchRuntimeShellSmokeValidation.RequireFrameDiag";
     private const string RequireAirMissileSmokeKey = "MatchRuntimeShellSmokeValidation.RequireAirMissileSmoke";
+    private const string RequireBaselineMetricsKey = "MatchRuntimeShellSmokeValidation.RequireBaselineMetrics";
     private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
     private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
+    private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
     private const double AirMissileSmokeTimeoutSeconds = 20d;
     private const double TimeoutSeconds = 120d;
     private const double StableFrameDiagObservationSeconds = 4d;
+    private const double BaselineMetricsObservationSeconds = 4d;
+    private const int BaselineMetricsFrameTarget = 180;
     private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
     private enum Phase
@@ -33,7 +41,8 @@ public static class MatchRuntimeShellSmokeValidation
         WaitingForShellReady = 2,
         WaitingForMatchReady = 3,
         WaitingForFrameDiag = 4,
-        WaitingForAirMissileSmoke = 5
+        WaitingForAirMissileSmoke = 5,
+        WaitingForBaselineMetrics = 6
     }
 
     private static Entity _airSmokeLauncher = Entity.Null;
@@ -41,6 +50,10 @@ public static class MatchRuntimeShellSmokeValidation
     private static bool _airSmokeProjectileSeen;
     private static bool _airSmokeTrailSeen;
     private static double _airSmokeStartedAt;
+    private static readonly List<double> BaselineFrameTimesMs = new(BaselineMetricsFrameTarget + 16);
+    private static double _baselineMetricsStartedAt;
+    private static long _baselineMetricsAllocatedBytesAtStart;
+    private static int _baselineMetricsLastFrame = -1;
 
     [InitializeOnLoadMethod]
     private static void ResumeActiveValidation()
@@ -66,22 +79,34 @@ public static class MatchRuntimeShellSmokeValidation
         RunInternal(requireFrameDiag: false, requireAirMissileSmoke: true);
     }
 
+    public static void RunBaselineMetrics()
+    {
+        RunInternal(requireFrameDiag: false, requireAirMissileSmoke: false, requireBaselineMetrics: true);
+    }
+
     private static void RunInternal(bool requireFrameDiag)
     {
-        RunInternal(requireFrameDiag, requireAirMissileSmoke: false);
+        RunInternal(requireFrameDiag, requireAirMissileSmoke: false, requireBaselineMetrics: false);
     }
 
     private static void RunInternal(bool requireFrameDiag, bool requireAirMissileSmoke)
     {
+        RunInternal(requireFrameDiag, requireAirMissileSmoke, requireBaselineMetrics: false);
+    }
+
+    private static void RunInternal(bool requireFrameDiag, bool requireAirMissileSmoke, bool requireBaselineMetrics)
+    {
         try
         {
             ResetAirMissileSmokeState();
+            ResetBaselineMetricsState();
             SessionState.SetBool(ActiveKey, true);
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
             SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
             SessionState.SetInt(ErrorCountKey, 0);
             SessionState.SetBool(RequireFrameDiagKey, requireFrameDiag);
             SessionState.SetBool(RequireAirMissileSmokeKey, requireAirMissileSmoke);
+            SessionState.SetBool(RequireBaselineMetricsKey, requireBaselineMetrics);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseFloat(ReadyAtKey);
 
@@ -217,6 +242,25 @@ public static class MatchRuntimeShellSmokeValidation
             return;
         }
 
+        if (phase == Phase.WaitingForBaselineMetrics)
+        {
+            if (UpdateBaselineMetrics(out bool complete, out string metricsStatus))
+            {
+                Finish(complete, metricsStatus);
+                return;
+            }
+
+            int metricsErrorCount = SessionState.GetInt(ErrorCountKey, 0);
+            if (metricsErrorCount > 0)
+            {
+                IsMatchRuntimeReady(out string errorStatus);
+                Finish(false, $"Match baseline metrics logged {metricsErrorCount} runtime error(s). status={errorStatus}");
+                return;
+            }
+
+            return;
+        }
+
         if (phase != Phase.WaitingForMatchReady)
             return;
 
@@ -243,6 +287,14 @@ public static class MatchRuntimeShellSmokeValidation
         {
             Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady startingAirMissileSmoke {status}");
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForAirMissileSmoke);
+            return;
+        }
+
+        if (SessionState.GetBool(RequireBaselineMetricsKey, false))
+        {
+            Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady collectingBaselineMetrics {status}");
+            ResetBaselineMetricsState();
+            SessionState.SetInt(PhaseKey, (int)Phase.WaitingForBaselineMetrics);
             return;
         }
 
@@ -599,6 +651,287 @@ public static class MatchRuntimeShellSmokeValidation
         return false;
     }
 
+    private static bool UpdateBaselineMetrics(out bool complete, out string status)
+    {
+        complete = false;
+        status = "baselineMetrics=waiting";
+
+        if (!IsMatchRuntimeReady(out string readyStatus))
+            return false;
+
+        if (!IsGameplayStableForFrameDiag(out string stableStatus))
+        {
+            ResetBaselineMetricsState();
+            status = $"baselineMetrics=waiting stable={stableStatus}";
+            return false;
+        }
+
+        if (_baselineMetricsStartedAt <= 0d)
+        {
+            _baselineMetricsStartedAt = EditorApplication.timeSinceStartup;
+            _baselineMetricsAllocatedBytesAtStart = GC.GetAllocatedBytesForCurrentThread();
+        }
+
+        if (Time.frameCount != _baselineMetricsLastFrame && Time.unscaledDeltaTime > 0f)
+        {
+            BaselineFrameTimesMs.Add(Time.unscaledDeltaTime * 1000d);
+            _baselineMetricsLastFrame = Time.frameCount;
+        }
+
+        double elapsedSeconds = EditorApplication.timeSinceStartup - _baselineMetricsStartedAt;
+        if (BaselineFrameTimesMs.Count < BaselineMetricsFrameTarget ||
+            elapsedSeconds < BaselineMetricsObservationSeconds)
+        {
+            status =
+                $"baselineMetrics=collecting frames={BaselineFrameTimesMs.Count}/{BaselineMetricsFrameTarget} " +
+                $"elapsed={elapsedSeconds:0.0}s {readyStatus} stable={stableStatus}";
+            return false;
+        }
+
+        long allocatedBytes = Math.Max(
+            0,
+            GC.GetAllocatedBytesForCurrentThread() - _baselineMetricsAllocatedBytesAtStart);
+        if (!TryWriteBaselineMetricsReport(readyStatus, stableStatus, elapsedSeconds, allocatedBytes, out string reportStatus))
+        {
+            status = reportStatus;
+            return true;
+        }
+
+        complete = true;
+        status = reportStatus;
+        return true;
+    }
+
+    private static bool TryWriteBaselineMetricsReport(
+        string readyStatus,
+        string stableStatus,
+        double elapsedSeconds,
+        long allocatedBytes,
+        out string status)
+    {
+        status = string.Empty;
+        try
+        {
+            double averageMs = Average(BaselineFrameTimesMs);
+            double p95Ms = Percentile(BaselineFrameTimesMs, 0.95d);
+            double p99Ms = Percentile(BaselineFrameTimesMs, 0.99d);
+            double maxMs = Max(BaselineFrameTimesMs);
+            BaselineEntityCounts counts = CaptureBaselineEntityCounts();
+
+            StringBuilder builder = new();
+            builder.AppendLine("{");
+            AppendJson(builder, "observationSeconds", elapsedSeconds, trailingComma: true);
+            AppendJson(builder, "frameCount", BaselineFrameTimesMs.Count, trailingComma: true);
+            AppendJson(builder, "averageFrameMs", averageMs, trailingComma: true);
+            AppendJson(builder, "p95FrameMs", p95Ms, trailingComma: true);
+            AppendJson(builder, "p99FrameMs", p99Ms, trailingComma: true);
+            AppendJson(builder, "maxFrameMs", maxMs, trailingComma: true);
+            AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
+            AppendJson(builder, "unitCount", counts.UnitCount, trailingComma: true);
+            AppendJson(builder, "runtimeBuildingCount", counts.RuntimeBuildingCount, trailingComma: true);
+            AppendJson(builder, "groundMissileProjectileCount", counts.GroundMissileProjectileCount, trailingComma: true);
+            AppendJson(builder, "airMissileProjectileCount", counts.AirMissileProjectileCount, trailingComma: true);
+            AppendJson(builder, "projectileCount", counts.ProjectileCount, trailingComma: true);
+            AppendJson(builder, "selectionMarkerEntityCount", counts.SelectionMarkerEntityCount, trailingComma: true);
+            AppendJson(builder, "minimapMarkerCount", counts.MinimapMarkerCount, trailingComma: true);
+            AppendJson(builder, "markerCount", counts.MarkerCount, trailingComma: true);
+            AppendJson(builder, "unitModelInstanceCount", counts.UnitModelInstanceCount, trailingComma: true);
+            AppendJson(builder, "culledUnitCount", counts.CulledUnitCount, trailingComma: true);
+            AppendJson(builder, "visibleRenderStateCount", counts.VisibleRenderStateCount, trailingComma: true);
+            AppendJson(builder, "visibleModelEstimate", counts.VisibleModelEstimate, trailingComma: true);
+            AppendJson(builder, "renderVisualStateCount", counts.RenderVisualStateCount, trailingComma: true);
+            AppendJson(builder, "readyStatus", readyStatus, trailingComma: true);
+            AppendJson(builder, "stableStatus", stableStatus, trailingComma: false);
+            builder.AppendLine("}");
+            File.WriteAllText(BaselineMetricsReportPath, builder.ToString());
+
+            status =
+                $"[MatchRuntimeBaselineMetrics] result=Passed report={BaselineMetricsReportPath} " +
+                $"frames={BaselineFrameTimesMs.Count} avg={averageMs:F2}ms p95={p95Ms:F2}ms " +
+                $"p99={p99Ms:F2}ms max={maxMs:F2}ms alloc={allocatedBytes} " +
+                $"units={counts.UnitCount} buildings={counts.RuntimeBuildingCount} projectiles={counts.ProjectileCount} " +
+                $"markers={counts.MarkerCount} visibleModels={counts.VisibleModelEstimate}";
+            return true;
+        }
+        catch (Exception exception)
+        {
+            status = $"[MatchRuntimeBaselineMetrics] result=Failed {exception.Message}";
+            return false;
+        }
+    }
+
+    private static BaselineEntityCounts CaptureBaselineEntityCounts()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return default;
+
+        EntityManager em = world.EntityManager;
+        int groundProjectileCount = CountEntities(em, ComponentType.ReadOnly<GroundMissileProjectileComponent>());
+        int airProjectileCount = CountEntities(em, ComponentType.ReadOnly<AirMissileProjectileComponent>());
+        int unitModelInstanceCount = CountEntities(em, ComponentType.ReadOnly<UnitModelInstanceReference>());
+        int culledUnitCount = CountEntities(em, ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>());
+        int renderVisualStateCount = CountEntities(em, ComponentType.ReadOnly<UnitRenderVisualComponent>());
+        int visibleRenderStateCount = CountEntities(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<UnitRenderVisualComponent>() },
+            None = new[] { ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>() }
+        });
+        int visibleModelEstimate = unitModelInstanceCount > 0
+            ? Math.Max(0, unitModelInstanceCount - culledUnitCount)
+            : visibleRenderStateCount;
+        int selectionMarkerEntityCount = CountEntities(em, ComponentType.ReadOnly<SelectionMarkerTag>());
+        int minimapMarkerCount = CountMinimapMarkers(em);
+
+        return new BaselineEntityCounts
+        {
+            UnitCount = CountEntities(em, ComponentType.ReadOnly<UnitSourcePrefabKey>()),
+            RuntimeBuildingCount = CountEntities(em, ComponentType.ReadOnly<RuntimeBuildingCombatTag>()),
+            GroundMissileProjectileCount = groundProjectileCount,
+            AirMissileProjectileCount = airProjectileCount,
+            ProjectileCount = groundProjectileCount + airProjectileCount,
+            SelectionMarkerEntityCount = selectionMarkerEntityCount,
+            MinimapMarkerCount = minimapMarkerCount,
+            MarkerCount = selectionMarkerEntityCount + minimapMarkerCount,
+            UnitModelInstanceCount = unitModelInstanceCount,
+            CulledUnitCount = culledUnitCount,
+            VisibleModelEstimate = visibleModelEstimate,
+            VisibleRenderStateCount = visibleRenderStateCount,
+            RenderVisualStateCount = renderVisualStateCount
+        };
+    }
+
+    private static int CountEntities(EntityQueryDesc queryDescription)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return 0;
+
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(queryDescription);
+        return query.CalculateEntityCount();
+    }
+
+    private static int CountEntities(EntityManager em, params ComponentType[] componentTypes)
+    {
+        using EntityQuery query = em.CreateEntityQuery(componentTypes);
+        return query.CalculateEntityCount();
+    }
+
+    private static int CountMinimapMarkers(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        if (query.IsEmptyIgnoreFilter)
+            return 0;
+
+        int count = 0;
+        using NativeArray<Entity> boundaries = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < boundaries.Length; i++)
+            count += em.GetBuffer<MatchHudMinimapMarkerElement>(boundaries[i], true).Length;
+
+        return count;
+    }
+
+    private static double Average(List<double> values)
+    {
+        if (values.Count == 0)
+            return 0d;
+
+        double total = 0d;
+        for (int i = 0; i < values.Count; i++)
+            total += values[i];
+        return total / values.Count;
+    }
+
+    private static double Max(List<double> values)
+    {
+        if (values.Count == 0)
+            return 0d;
+
+        double max = values[0];
+        for (int i = 1; i < values.Count; i++)
+            max = Math.Max(max, values[i]);
+        return max;
+    }
+
+    private static double Percentile(List<double> values, double percentile)
+    {
+        if (values.Count == 0)
+            return 0d;
+
+        double[] sorted = values.ToArray();
+        Array.Sort(sorted);
+        int index = (int)Math.Ceiling(percentile * sorted.Length) - 1;
+        index = Math.Max(0, Math.Min(sorted.Length - 1, index));
+        return sorted[index];
+    }
+
+    private static void AppendJson(StringBuilder builder, string name, int value, bool trailingComma)
+    {
+        builder.Append("  \"").Append(name).Append("\": ").Append(value);
+        builder.AppendLine(trailingComma ? "," : string.Empty);
+    }
+
+    private static void AppendJson(StringBuilder builder, string name, long value, bool trailingComma)
+    {
+        builder.Append("  \"").Append(name).Append("\": ").Append(value);
+        builder.AppendLine(trailingComma ? "," : string.Empty);
+    }
+
+    private static void AppendJson(StringBuilder builder, string name, double value, bool trailingComma)
+    {
+        builder
+            .Append("  \"")
+            .Append(name)
+            .Append("\": ")
+            .Append(value.ToString("0.###", CultureInfo.InvariantCulture));
+        builder.AppendLine(trailingComma ? "," : string.Empty);
+    }
+
+    private static void AppendJson(StringBuilder builder, string name, string value, bool trailingComma)
+    {
+        builder
+            .Append("  \"")
+            .Append(name)
+            .Append("\": \"")
+            .Append(EscapeJson(value))
+            .Append('"');
+        builder.AppendLine(trailingComma ? "," : string.Empty);
+    }
+
+    private static string EscapeJson(string value)
+    {
+        return value == null
+            ? string.Empty
+            : value.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal);
+    }
+
+    private static void ResetBaselineMetricsState()
+    {
+        BaselineFrameTimesMs.Clear();
+        _baselineMetricsStartedAt = 0d;
+        _baselineMetricsAllocatedBytesAtStart = 0;
+        _baselineMetricsLastFrame = -1;
+    }
+
+    private struct BaselineEntityCounts
+    {
+        public int UnitCount;
+        public int RuntimeBuildingCount;
+        public int GroundMissileProjectileCount;
+        public int AirMissileProjectileCount;
+        public int ProjectileCount;
+        public int SelectionMarkerEntityCount;
+        public int MinimapMarkerCount;
+        public int MarkerCount;
+        public int UnitModelInstanceCount;
+        public int CulledUnitCount;
+        public int VisibleModelEstimate;
+        public int VisibleRenderStateCount;
+        public int RenderVisualStateCount;
+    }
+
     private static void CreateAirMissileSmokeScenario(EntityManager em)
     {
         _airSmokeStartedAt = EditorApplication.timeSinceStartup;
@@ -765,7 +1098,9 @@ public static class MatchRuntimeShellSmokeValidation
         SessionState.EraseInt(ErrorCountKey);
         SessionState.EraseBool(RequireFrameDiagKey);
         SessionState.EraseBool(RequireAirMissileSmokeKey);
+        SessionState.EraseBool(RequireBaselineMetricsKey);
         SessionState.EraseString(FrameDiagKey);
         SessionState.EraseFloat(ReadyAtKey);
+        ResetBaselineMetricsState();
     }
 }

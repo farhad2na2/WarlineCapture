@@ -11,19 +11,19 @@ public partial struct UnitHealthBarSystem : ISystem
     {
         state.RequireForUpdate<UnitHealth>();
         state.RequireForUpdate<HealthBarFill>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
         new ExpireRecentDamageVisibilityJob
         {
             DeltaTime = deltaTime,
             Ecb = ecb
         }.Run();
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
 
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);

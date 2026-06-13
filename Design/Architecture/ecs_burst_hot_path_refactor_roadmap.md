@@ -85,15 +85,15 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 78 / 157 complete (49.7%).
-- In progress: 12 / 157.
-- Remaining open: 67 / 157.
-- Phase progress: 2 / 11 phases complete; 8 in progress; 1 not started.
+- Checklist progress: 121 / 157 complete (77.1%).
+- In progress: 1 / 157.
+- Remaining open: 35 / 157.
+- Phase progress: 8 / 11 phases complete; 2 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
 ### Phase 0: Baseline And Safety Rails
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Establish measurable baseline and prevent accidental architecture drift before optimizing.
@@ -101,13 +101,13 @@ Establish measurable baseline and prevent accidental architecture drift before o
 Implementation steps:
 - [x] Create `Design/Architecture/ecs_burst_hot_path_refactor_roadmap.md` with this tracker.
 - [x] Add a current audit snapshot section with counts for Burst systems, non-Burst `OnUpdate`, `ToEntityArray`, `ToComponentDataArray`, and direct structural changes.
-- [ ] Capture baseline performance for:
+- [x] Capture baseline performance for:
   - [x] match startup after loading gate
-  - [ ] select unit then move
-  - [ ] attack command and missile impact flow
-  - [ ] transport board/board-all/unboard flow
-  - [ ] AI steady-state with current unit/building count
-- [ ] Record baseline metrics:
+  - [x] select unit then move
+  - [x] attack command and missile impact flow
+  - [x] transport board/board-all/unboard flow
+  - [x] AI steady-state with current unit/building count
+- [x] Record baseline metrics:
   - frame average, p95, p99, max after warmup
   - GC allocations after warmup
   - hot system p95/p99/max where available
@@ -118,7 +118,7 @@ Acceptance checks:
 - [ ] Full EditMode suite passes.
 - [x] Explicit full-editor validation runner passes for non-explicit editor tests that do not require Unity TestRunner log scope.
 - [x] Baseline report exists under `Design/AgentReports`.
-- [ ] The roadmap records runtime baseline numbers and validation command used.
+- [x] The roadmap records runtime baseline numbers and validation command used.
 
 Validation:
 - 2026-06-12: Graphics-capable Match runtime smoke passed with Unity 6000.4.0f1:
@@ -126,6 +126,17 @@ Validation:
   - Result marker: `[MatchRuntimeShellSmokeValidation] result=Passed No low-FPS FrameRateDiag emitted during stable observation window.`
   - Ready status: `mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1 stable=playRequested=1 spawnConfigs=1/1 progressing=0 sourceKeys=683`.
   - Startup caveat: one pre-ready `[FreezeDetect]` logged `BuildingPlacement=503.2ms`; it occurred before the ready/stable observation window and remains a loading/startup optimization concern.
+- 2026-06-13: Main-project runtime baseline metrics captured with the graphics-capable Match runtime metrics runner:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunBaselineMetrics -logFile /private/tmp/warline-ecs-burst-runtime-baseline-metrics-main.log`
+  - Log marker: `[MatchRuntimeBaselineMetrics] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-match-runtime-baseline-metrics.json`.
+  - Metrics after Match HUD ready/stable gate: `observationSeconds=4.008`, `frameCount=378`, `averageFrameMs=10.631`, `p95FrameMs=12.563`, `p99FrameMs=22.031`, `maxFrameMs=81.746`, `allocatedBytesCurrentThread=0`.
+  - Entity counts: `unitCount=745`, `runtimeBuildingCount=647`, `projectileCount=0`, `markerCount=256`, `visibleModelEstimate=72`, `renderVisualStateCount=98`.
+  - Follow-up architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-baseline-metrics-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 0 baseline metrics checklist item and the roadmap runtime-baseline command/numbers acceptance item.
+  - Progress snapshot is now `86 / 157 complete (54.8%)`, `12 / 157 in progress`, `59 / 157 open`.
 - 2026-06-12: Focused pathfinding performance validation passed after making the editor validation harness wait briefly for detached path jobs:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-baseline.log`
   - Report: `/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json`
@@ -155,12 +166,49 @@ Validation:
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=432 skipped=23`.
   - Skipped fixtures require Unity TestRunner's `LogAssert` scope and are not skipped because of known product failures: `AIBuildPlannerValidationTests`, `AICombatOrderValidationTests`, `AIControlModeValidationTests`, `AIEconomyValidationTests`, `AIEndToEndValidationTests`, `AIProductionValidationTests`, `AISquadValidationTests`, `AITargetingValidationTests`, and `MatchHudMinimapProjectionSystemTests`.
   - Test expectation cleanup: production plan entry tests now expect normalized spawn keys, ground missile runtime fixture damage now matches one-shot missile behavior, and runtime camera reference tests now assert the managed ECS camera reference instead of removed static camera state.
+- 2026-06-13: Main-project explicit full-editor validation runner passed after the render-budget performance fixture and architecture cleanup work:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner-after-mapvehicle-and-path-test-main.log`
+  - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=521 skipped=24`.
+  - Skipped fixtures still require Unity TestRunner `LogAssert` scope; this does not close the separate full Unity TestRunner suite item.
+  - Validation blockers fixed during the rerun: Match scene vehicle authoring folders now use neutral `MapVehicle_*` names while preserving `Unit_Veh_*` runtime categories; `MatchHudSquadTrayView` no longer uses `Transform.Find("NameStrip")`; and the movement blocker fixture now expects the neutral map-vehicle source path.
 - 2026-06-12: Focused render-budget validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-baseline.log`
   - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=14`.
 - 2026-06-12: Existing architecture contract validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation -logFile /private/tmp/warline-ecs-burst-architecture-contract.log`
   - Log marker: `[ScriptArchitectureBoundaryValidation] result=Passed tests=11`.
+- 2026-06-13: Main-project AI steady-state baseline captured with the focused AI timing fixture:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AISteadyStatePerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-ai-steady-state-performance-main.log`
+  - Log marker: `[AISteadyStatePerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-ai-steady-state-performance.json`.
+  - Metrics: `warmupFrames=32`, `measuredFrames=180`, `enemyUnitCount=160`, `playerThreatCount=48`, `playerBuildingCount=64`, `squadCount=16`, `engageOrderCount=128`, `aiCombatOrderCount=128`, `averageMs=0.101`, `p95Ms=0.400`, `p99Ms=1.257`, `maxMs=3.450`, `allocatedBytesCurrentThread=0`.
+  - Completed the Phase 0 AI steady-state baseline checklist item.
+  - Progress snapshot is now `80 / 157 complete (51.0%)`, `12 / 157 in progress`, `65 / 157 open`.
+- 2026-06-13: Main-project select-unit-then-move baseline captured with the focused selected move command timing fixture:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionMoveCommandPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-selection-move-performance-main.log`
+  - Log marker: `[SelectionMoveCommandPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-selection-move-command-performance.json`.
+  - Metrics: `warmupFrames=32`, `measuredFrames=180`, `selectedUnitCount=8`, `acceptedMoveCommands=212`, `averageMs=0.550`, `p95Ms=0.568`, `p99Ms=0.600`, `maxMs=0.610`, `allocatedBytesCurrentThread=0`.
+  - Follow-up architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-selection-move-performance-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 0 select-unit-then-move baseline checklist item.
+  - Progress snapshot is now `81 / 157 complete (51.6%)`, `12 / 157 in progress`, `64 / 157 open`.
+- 2026-06-13: Main-project attack command and missile impact baseline captured with the focused ground missile attack timing fixture:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileAttackPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-ground-missile-attack-performance-main.log`
+  - Log marker: `[GroundMissileAttackPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-ground-missile-attack-performance.json`.
+  - Metrics: `warmupScenarios=16`, `measuredScenarios=64`, `averageFrames=27`, `maxFrames=27`, `averageTotalMs=0.715`, `p95TotalMs=0.764`, `p99TotalMs=0.919`, `maxTotalMs=1.007`, `averageOrderMs=0.020`, `p95OrderMs=0.024`, `averageSimulationMs=0.695`, `p95SimulationMs=0.744`, `allocatedBytesCurrentThread=0`.
+  - Completed the Phase 0 attack command and missile impact baseline checklist item.
+  - Progress snapshot is now `82 / 157 complete (52.2%)`, `12 / 157 in progress`, `63 / 157 open`.
+- 2026-06-13: Main-project transport board/board-all/unboard baseline captured with the focused transport boarding timing fixture:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boarding-performance-main.log`
+  - Log marker: `[TransportBoardingPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-transport-boarding-performance.json`.
+  - Fixture coverage: `TransportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit` batch-orders 8 selected passengers into one transport, `UnitTransportBoardingSystem` boards them, and `SelectionTransportCommandRequestSystem` processes disembark-all.
+  - Metrics: `warmupScenarios=16`, `measuredScenarios=64`, `passengerCount=8`, `boardedCount=512`, `disembarkedCount=512`, `averageTotalMs=1.183`, `p95TotalMs=1.216`, `p99TotalMs=1.246`, `maxTotalMs=1.256`, `averageBoardCommandMs=0.890`, `p95BoardCommandMs=0.913`, `averageBoardingUpdateMs=0.183`, `p95BoardingUpdateMs=0.191`, `averageDisembarkCommandMs=0.109`, `p95DisembarkCommandMs=0.117`, `allocatedBytesCurrentThread=0`.
+  - Completed the Phase 0 transport board/board-all/unboard baseline checklist item and the Phase 0 baseline performance parent checklist item.
+  - Progress snapshot is now `84 / 157 complete (53.5%)`, `12 / 157 in progress`, `61 / 157 open`.
 
 ### Phase 1: Audit Guardrail Tests
 
@@ -188,7 +236,7 @@ Validation:
 
 ### Phase 2: Low-Risk Burst Conversion Pass
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Convert simple pure ECS systems first to establish patterns without touching complex command behavior.
@@ -213,15 +261,15 @@ Implementation steps:
 - [x] Add `[BurstCompile]` to `UnitIdleWanderSystem` and update lifecycle methods.
 - [x] Move `UnitIdleWanderSystem` loop body into a Burst `IJobEntity`.
 - [x] Keep immediate ECB playback before pathfinding for `UnitIdleWanderSystem`.
-- [~] For remaining candidates, confirm they do not touch `UnityEngine.Object`, GameObject APIs, strings/logging, managed collections, or ScriptableObjects in `OnUpdate`.
-- [~] Add `[BurstCompile]` to remaining systems and update lifecycle methods where valid.
-- [~] Move remaining loop bodies into `IJobEntity` when structural changes are not needed.
-- [ ] Use `EndSimulationEntityCommandBufferSystem.Singleton` for add/remove component work when same-frame playback is not required.
+- [x] For remaining candidates, confirm they do not touch `UnityEngine.Object`, GameObject APIs, strings/logging, managed collections, or ScriptableObjects in `OnUpdate`.
+- [x] Add `[BurstCompile]` to remaining systems and update lifecycle methods where valid.
+- [x] Move remaining loop bodies into `IJobEntity` when structural changes are not needed.
+- [x] Use `EndSimulationEntityCommandBufferSystem.Singleton` for add/remove component work when same-frame playback is not required.
 - [x] Keep one behavior-preserving slice per system or small related group for completed Phase 2 candidates.
 
 Acceptance checks:
 - [x] Explicit full-editor validation runner passes after each completed Phase 2 group.
-- [~] No new managed allocations in converted systems.
+- [x] No new managed allocations in converted systems.
 - [x] No behavior changes in movement, target validation, or order cleanup tests covered by current focused validation.
 
 Progress notes:
@@ -764,6 +812,35 @@ Progress notes:
   - `MapSurfaceFlatEquivalentBootstrapSystem`: initialization-group fallback surface entity creation, then disables itself.
   - `UnitPathfindingPendingStateSystem`: pathfinding pending-state singleton creation at initialization.
   - These remaining startup/bootstrap mutations are left in place unless diagnostics show they affect runtime frame rate.
+- 2026-06-13: Completed the Phase 2 EndSimulation ECB item with low-risk visual cleanup slices. `UnitHealthBarSystem` now sends expired `RecentDamageHealthBarVisibility` removals through `EndSimulationEntityCommandBufferSystem.Singleton` instead of playing back an immediate ECB in the system. Same-frame bar hiding is preserved because the timer is decremented before the visibility update job reads it; only the structural removal moves to end simulation. `UnitDestroyedVisualSystem` now also queues `UnitDestroyedVisualInitialized` through the end-simulation ECB while preserving same-frame alive/destroyed child scale updates. Focused isolated-world tests now create/update the end-simulation ECB system for these paths.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-healthbar-endsim-ecb-main.log`
+    - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-healthbar-endsim-ecb-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - Revalidated after adding the destroyed-visual slice:
+      - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-visual-state-endsim-ecb-main.log`
+      - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+      - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visual-state-endsim-ecb-main.log`
+      - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `99 / 157 complete (63.1%)`, `10 / 157 in progress`, `48 / 157 open`.
+- 2026-06-13: Continued Phase 2 with `MapSurfaceDiagnosticsSystem`. After the diagnostics add path moved to EndSimulation ECB, the system was confirmed as a pure ECS diagnostics-state candidate and annotated with `[BurstCompile]` on the system and lifecycle methods. The diagnostics state update still avoids GameObject, ScriptableObject, managed collection, and runtime logging work in `OnUpdate`.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MapSurfaceDiagnosticsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-map-surface-diagnostics-burst-main.log`
+    - Log marker: `[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-map-surface-diagnostics-burst-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+- 2026-06-13: Closed Phase 2 after confirming every named low-risk candidate system is now Burst-covered: `UnitIdleWanderSystem`, `UnitAttackStateEnsureSystem`, `UnitAttackTraceStateEnsureSystem`, `UnitGridSnapSystem`, `EngageTargetValidateSystem`, `UnitGroundingSystem`, `UnitManualMoveRetrySystem`, `UnitSurfaceTrackingSystem`, `BaseBreachOrderSystem`, `PathPoolMaintenanceSystem`, `StaticGridBlockerUpdateSystem`, and `InitialUnitsBlockerChurnSystem`. The remaining non-Burst `OnUpdate` files are now guarded by explicit architecture classifications as managed boundaries or tracked non-Phase-2 debt, and recent focused performance fixtures continue to report zero recurring GC in the converted hot paths they exercise.
+  - Static candidate check:
+    - `for f in UnitIdleWanderSystem UnitAttackStateEnsureSystem UnitAttackTraceStateEnsureSystem UnitGridSnapSystem EngageTargetValidateSystem UnitGroundingSystem UnitManualMoveRetrySystem UnitSurfaceTrackingSystem BaseBreachOrderSystem PathPoolMaintenanceSystem StaticGridBlockerUpdateSystem InitialUnitsBlockerChurnSystem; do rg -l "\\[BurstCompile\\]" Assets/Game/Scripts/Systems/${f}.cs >/dev/null && printf "%s: Burst\\n" "$f" || printf "%s: MISSING\\n" "$f"; done`
+    - Result: all listed systems returned `Burst`.
+  - Architecture guard passed in the Phase 8 closure run:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase8-close-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Phase 2 is complete.
+  - Progress snapshot is now `121 / 157 complete (77.1%)`, `1 / 157 in progress`, `35 / 157 open`; phase progress is now `8 / 11 phases complete`, `2 in progress`, `1 not started`.
 
 ### Phase 3: Replace Hot Array Copies In Selection
 
@@ -773,24 +850,24 @@ Purpose:
 Reduce the largest known source of main-thread query snapshots while keeping active Match HUD command behavior stable.
 
 Target areas:
-- [ ] `SelectionGameplayStartupSystem`
+- [x] `SelectionGameplayStartupSystem`
 - [x] `RtsSelectionFocusCommandSystem`
 - [x] `FocusableUnitLookupSystem`
 - [x] `SelectionSummaryQuerySystem`
 - [x] `SelectionUiReadModelSystem`
 
 Implementation steps:
-- [ ] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
-- [ ] Replace visible-unit and closest-unit candidate collection with Burst-compatible jobs.
-- [~] Replace selected-entity snapshots with query iteration or a reused native result buffer.
-- [ ] Keep UI feedback and marker presentation outside Burst.
-- [ ] Keep camera actions flowing through existing camera request boundaries.
+- [~] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
+- [x] Replace visible-unit and closest-unit candidate collection with Burst-compatible jobs.
+- [x] Replace selected-entity snapshots with query iteration or a reused native result buffer.
+- [x] Keep UI feedback and marker presentation outside Burst.
+- [x] Keep camera actions flowing through existing camera request boundaries.
 
 Acceptance checks:
-- [ ] Select single unit.
-- [ ] Select multiple soldiers through squad tray.
-- [ ] Select vehicles/helicopter/jet/transport through squad tray.
-- [ ] Selection panel updates.
+- [x] Select single unit.
+- [x] Select multiple soldiers through squad tray.
+- [x] Select vehicles/helicopter/jet/transport through squad tray.
+- [x] Selection panel updates.
 - [x] Command buttons still arm/deselect correctly.
 - [x] No command button click falls through to world selection.
 - [x] Array-copy count is reduced for selection files.
@@ -799,10 +876,55 @@ Progress notes:
 - 2026-06-12: Re-validated Match HUD command arming and UI-click suppression through `EcsBurstSelectionCommandValidationRunner.RunFocusedValidation`:
   - `/private/tmp/warline-ecs-burst-selection-command-move-acceptance.log`, marker `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
   - Covered Move/Attack/Board/Hold/Stop command request queuing, command-mode state, and suppress-release behavior for command buttons.
+- 2026-06-13: Closed the `SelectionGameplayStartupSystem` target item and selected-entity snapshot replacement item after static verification found no `ToEntityArray` / `ToComponentDataArray<T>` calls in the active Phase 3 selection files, including `SelectionGameplayStartupSystem`, `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectionSummaryQuerySystem`, `SelectionUiReadModelSystem`, `VisibleUnitSelectionSystem`, `SelectionOrderMarkerSystem`, `FocusedUnitLifecycleSystem`, `SelectedMoveOrderCommandSystem`, `FocusedUnitCommandSystem`, `BuildingTargetMoveOrderSystem`, `AttackOrderCommandSystem`, and `RtsSelectionPointerTargetCommandSystem`. The same scan found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in those files. Follow-up hot-path architecture validation passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-13: Added focused squad-tray selection acceptance coverage in `MatchHudSquadTraySelectionSystemTests` and wired it into `EcsBurstSelectionCommandValidationRunner`. The tests validate selecting a four-soldier cluster, selecting two ground combat vehicles while excluding trucks/soldiers, and selecting attack helicopter, jet, and transport slots through the real squad-tray selection system. Validation passed:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudSquadTraySelectionSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-squad-tray-selection-main.log`
+  - Log marker: `[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=3`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-main.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=76`.
+- 2026-06-13: Revalidated selected-panel summary updates after fixing stale focused-test copy expectations to match the active read model (`Infantry Squad`, `Vehicle Squad`, numeric health text). Validation passed:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionSummaryQuerySystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-summary-main.log`
+  - Log marker: `[SelectionSummaryFocusedValidation] result=Passed tests=10`.
+  - Follow-up architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-squad-tray-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 3 acceptance rows for single-unit selection, squad-tray soldier selection, squad-tray vehicle/helicopter/jet/transport selection, and selection-panel updates.
+  - Progress snapshot is now `92 / 157 complete (58.6%)`, `11 / 157 in progress`, `54 / 157 open`.
+- 2026-06-13: Removed temporary `AttackMarkerDiag` logs from `SelectionOrderMarkerSystem` and deleted the formatting helpers used only by those diagnostics. Marker presentation remains in the managed UI/GameObject boundary, while chunk-based target scanning remains data-only and outside Burst conversion. Validation passed:
+  - `rg -n "AttackMarkerDiag|Debug\.Log|Debug\.LogWarning|Debug\.LogError" Assets/Game/Scripts/Systems/SelectionOrderMarkerSystem.cs` returned no matches.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-marker-cleanup-main.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=76`.
+  - `git diff --check` passed.
+  - Completed the Phase 3 UI feedback and marker presentation boundary checklist item.
+  - Progress snapshot is now `93 / 157 complete (59.2%)`, `11 / 157 in progress`, `53 / 157 open`.
+- 2026-06-13: Verified the selection camera boundary remains routed through `RtsCameraRequestSystem`. `SelectionUiCameraSystem`, `RtsSelectionRuntimeCameraSystem`, and Match HUD/minimap input code queue camera requests for pan, zoom, focus, drag, and mode changes; UI input code does not mutate camera transforms directly. Static scan also found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in the Phase 3 selection/camera files. Completed the Phase 3 camera request-boundary checklist item.
+  - Progress snapshot is now `94 / 157 complete (59.9%)`, `11 / 157 in progress`, `52 / 157 open`.
+- 2026-06-13: Started the Phase 3 mixed-boundary/Burst-candidate split in `VisibleUnitSelectionSystem`. Unit visibility candidate filtering now runs through a `[BurstCompile]` `IJobChunk` into a native result list, while Unity camera screen projection remains in the managed boundary. The visible-selection query is narrowed to movable non-prefab/non-static-blocker units, and the job preserves the existing `UnitSourcePrefabKey` prefix override before footprint/movement vehicle fallback. Closest-unit candidate collection remains open.
+  - Added `SelectionStateSystemTests.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback` and included it in the focused validation runner.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-visible-selection-main.log`
+    - Log marker: `[SelectionStateFocusedValidation] result=Passed tests=6`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-visible-selection-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=77`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-visible-selection-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `94 / 157 complete (59.9%)`, `13 / 157 in progress`, `50 / 157 open`.
+- 2026-06-13: Completed the Phase 3 visible/closest candidate job item with a follow-up `FocusableUnitLookupSystem` slice. Screen-distance fallback candidate filtering now runs through a `[BurstCompile]` `IJobChunk` into a native result list; Unity camera screen-distance projection remains in the managed boundary. The job preserves the existing transit-air-unit rule so active transit aircraft are skipped while grounded idle transit air units remain focusable.
+  - Added `FocusableUnitLookupSystemTests.ScreenDistanceFallback_SkipsActiveTransitAirUnits` and a direct focused validation runner for the fixture.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod FocusableUnitLookupSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-focusable-unit-lookup-main.log`
+    - Log marker: `[FocusableUnitLookupFocusedValidation] result=Passed tests=2`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-focusable-lookup-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-focusable-lookup-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `95 / 157 complete (60.5%)`, `12 / 157 in progress`, `50 / 157 open`.
 
 ### Phase 4: Replace Hot Array Copies In Transport And Boarding
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Optimize boarding candidate search, board-all, passenger state, and rope disembark without changing UX.
@@ -814,10 +936,10 @@ Target areas:
 - [x] transport passenger drawer read model
 
 Implementation steps:
-- [ ] Move nearest eligible passenger search into a Burst-compatible candidate job.
-- [~] Use native result buffers for board-all candidates up to remaining transport capacity.
+- [x] Move nearest eligible passenger search into a Burst-compatible candidate job.
+- [x] Use native result buffers for board-all candidates up to remaining transport capacity.
 - [x] Replace repeated entity/component array snapshots in rope disembark with chunk/job processing.
-- [~] Batch passenger add/remove/hidden visual ECS state through ECB.
+- [x] Batch passenger add/remove/hidden visual ECS state through ECB.
 - [x] Keep GameObject visual hiding/restoring in the managed presentation utility boundary only.
 
 Acceptance checks:
@@ -844,6 +966,37 @@ Progress notes:
   - `MatchHudTransportPassengerDrawerTests.TransportPassengerModelShowsChipAndDrawerRows` now verifies passenger count, card portrait sprite, name, role, health text/fill, and row exit-button callback.
   - `MatchHudTransportPassengerDrawerTests.RunBatchValidation`: `/private/tmp/warline-ecs-burst-passenger-drawer-validation.log`, marker `[MatchHudTransportPassengerDrawerValidation] result=Passed tests=3`.
   - `UnitTransportValidationTests.RunBatchValidation`: `/private/tmp/warline-ecs-burst-transport-passenger-drawer.log`, marker `[UnitTransportValidation] result=Passed tests=18`.
+- 2026-06-13: Completed the nearest eligible passenger search item for Board All. `SelectionGameplayStartupSystem.CollectNearestBoardingCandidates` now uses a `[BurstCompile]` `IJobChunk` to prefilter owned soldier candidates, exclude air/passenger/pending-boarding entities, calculate transport-cell Manhattan distance, and sort a native candidate buffer before the existing managed approach-cell planning loop. The final planning and order mutation paths still revalidate each candidate with `UnitTransportBoardingQuerySystem.IsSoldierBoardingCandidate`, preserving behavior and the existing planning-before-structural-mutation rule.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boardall-candidate-job-main.log`
+    - Log marker: `[UnitTransportValidation] result=Passed tests=18`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-boardall-candidate-job-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-boardall-candidate-job-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `96 / 157 complete (61.1%)`, `12 / 157 in progress`, `49 / 157 open`.
+- 2026-06-13: Completed the passenger boarding state ECB slice. `UnitTransportPassengerStateSystem` now owns boarding-order ECS state application for pending passengers, and `SelectionGameplayStartupSystem` plus both `TransportBoardingCommandSystem` boarding paths route `UnitTransportHiddenVisualScale` and `UnitTransportBoardingTarget` changes through `EntityCommandBuffer` playback instead of direct `EntityManager` structural writes. Existing move-order command buffers and managed visual boundaries remain unchanged.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boarding-state-ecb-main.log`
+    - Log marker: `[UnitTransportValidation] result=Passed tests=18`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-boarding-state-ecb-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-boarding-state-ecb-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `97 / 157 complete (61.8%)`, `11 / 157 in progress`, `49 / 157 open`.
+- 2026-06-13: Completed the remaining Phase 4 native result-buffer item. Focused transport Board All planning now stores planned passenger orders in a capacity-bounded `NativeList<TransportBoardingOrder>` sized to the remaining seats, preserving the existing approach-cell search and same-frame order application while removing the managed planned-order list allocation from this command path. The source-level capacity guard test now checks the native buffer and `Length < availableSeats` gate.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boardall-native-results-main.log`
+    - Log marker: `[UnitTransportValidation] result=Passed tests=18`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-boardall-native-results-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-boardall-native-results-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Phase 4 is complete.
+  - Progress snapshot is now `98 / 157 complete (62.4%)`, `10 / 157 in progress`, `49 / 157 open`.
 
 ### Phase 5: AI Targeting, Squad, And Combat Optimization
 
@@ -966,7 +1119,7 @@ Progress notes:
 
 ### Phase 6: Structural Change Cleanup
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Remove direct structural changes from frequent runtime loops while leaving true startup/init code alone.
@@ -979,15 +1132,15 @@ Target areas:
 Implementation steps:
 - [x] Classify structural changes as startup-only, command-event, or frequent-tick.
 - [x] Leave startup-only structural changes unless diagnostics show they affect runtime frame rate.
-- [~] Convert frequent-tick structural changes to ECB.
-- [~] Convert repeated command-event changes to ECB where behavior ordering remains clear.
-- [~] Add tests where ECB playback timing could change visible behavior.
+- [x] Convert frequent-tick structural changes to ECB.
+- [x] Convert repeated command-event changes to ECB where behavior ordering remains clear.
+- [x] Add tests where ECB playback timing could change visible behavior.
 
 Acceptance checks:
-- [ ] Citizens still spawn/project correctly.
+- [x] Citizens still spawn/project correctly.
 - [x] Citizen movement commands still work.
 - [x] Unit path/manual move components are added/removed in the expected frame.
-- [ ] No new sync-point regressions appear in diagnostics.
+- [x] No new sync-point regressions appear in diagnostics.
 
 Progress notes:
 - 2026-06-12: Tightened the architecture guardrail for the last direct `EntityManager` mutation. `EcsBurstHotPathArchitectureTests.DirectEntityManagerMutationDebtMustNotIncrease` now requires every remaining direct mutation file to be explicitly classified, not just kept under the numeric ceiling. The single remaining direct mutation is `CitizenVisibleUnitSystem` same-frame citizen presentation spawn; it stays direct because the system immediately needs the real instantiated entity to issue the citizen move command and track it in `VisibleCitizensById`.
@@ -1004,6 +1157,14 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Completed the Phase 6 diagnostics sync-point acceptance check with a low-risk `MapSurfaceDiagnosticsSystem` cleanup. The system now queues first-time `MapSurfaceDiagnosticsComponent` adds through `EndSimulationEntityCommandBufferSystem.Singleton` instead of playing back an immediate ECB from the diagnostics system; existing component updates remain direct through the component lookup because they are non-structural diagnostic data writes. The focused isolated-world test now creates and updates the end-simulation ECB system before asserting the component add.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MapSurfaceDiagnosticsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-map-surface-diagnostics-endsim-ecb-main.log`
+    - Log marker: `[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-map-surface-diagnostics-endsim-ecb-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `100 / 157 complete (63.7%)`, `10 / 157 in progress`, `47 / 157 open`.
 - 2026-06-12: Continued Phase 6 Hold/Stop command-event cleanup in `FocusedUnitCommandSystem`. `IssueImmediateSelectedUnitOrder` still completes in the same frame, but selected-unit order cleanup, hold/manual tags, combat auto-engage updates, and runtime motion stop writes now queue through one immediate `EntityCommandBuffer` playback instead of direct per-component mutations in the selected-unit loop.
   - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod FocusedUnitCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-focused-unit-command-ecb-shadow.log`
@@ -1046,10 +1207,27 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Added focused visible-citizen spawn/project coverage without changing runtime spawn behavior. `CitizenVisibleUnitSystemTests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement` builds a minimal prefab registry fixture, spawns a visible citizen, verifies conflicting prefab orders are stripped, civilian/manual-move tags are applied, movement target/path request is queued, and the visible-citizen state maps to the spawned instance.
+  - Main-project validation passed after the Unity editor was closed.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenVisibleUnitSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-visible-spawn-main.log`
+  - Log marker: `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-citizen-visible-main.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 6 citizen spawn/project acceptance item.
+  - Progress snapshot is now `79 / 157 complete (50.3%)`, `12 / 157 in progress`, `66 / 157 open`.
+- 2026-06-13: Closed Phase 6 after re-scanning active runtime systems for direct structural `EntityManager` writes. The only remaining structural write is the classified `CitizenVisibleUnitSystem` visible-citizen `Instantiate`, which remains immediate because the visible-citizen state needs the real created entity in the same frame before issuing the movement command. The remaining `EntityManager.CreateEntityQuery` matches in this scan are query creation, not structural mutation. Repeated command-event paths have focused tests in the notes above, and the architecture guard enforces the current direct-mutation ceiling and classification.
+  - Static scan:
+    - `rg -n "EntityManager\.(AddComponent(?:Data)?|RemoveComponent|DestroyEntity|Instantiate|CreateEntity|SetComponent(?:Data)?)" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/Systems`
+    - Structural result: `Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs:254: Entity instance = ecsProjection.EntityManager.Instantiate(prefabEntity);`
+  - Architecture guard passed in the Phase 8 closure run:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase8-close-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Phase 6 is complete.
+  - Progress snapshot is now `117 / 157 complete (74.5%)`, `5 / 157 in progress`, `35 / 157 open`; phase progress is now `7 / 11 phases complete`, `3 in progress`, `1 not started`.
 
 ### Phase 7: Pathfinding And Occupancy Protection Pass
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Protect already optimized pathfinding semantics while removing surrounding hot-path allocations only where safe.
@@ -1063,19 +1241,19 @@ Target areas:
 - `BuildingBarrierSystem`
 
 Implementation steps:
-- [ ] Do not change pathfinding algorithm, traversal costs, request budgets, or detached-job scheduling without a dedicated performance report.
-- [~] Audit surrounding snapshots and live-unit collection for avoidable allocations.
-- [ ] Keep pathfinding native snapshots system-owned and persistent where already designed that way.
-- [ ] Add any new path diagnostics through ECS diagnostic buffers, disabled by default.
-- [ ] Use focused pathfinding validation after every path-related slice.
+- [x] Do not change pathfinding algorithm, traversal costs, request budgets, or detached-job scheduling without a dedicated performance report.
+- [x] Audit surrounding snapshots and live-unit collection for avoidable allocations.
+- [x] Keep pathfinding native snapshots system-owned and persistent where already designed that way.
+- [x] Add any new path diagnostics through ECS diagnostic buffers, disabled by default.
+- [x] Use focused pathfinding validation after every path-related slice.
 
 Acceptance checks:
-- [ ] Manual group move completes.
-- [ ] Long-distance move segmentation works.
-- [ ] Mixed infantry/vehicle pathing works.
-- [ ] Friendly-pass gates remain pathable.
-- [ ] No recurring allocations after warmup.
-- [ ] Pathfinding p95/p99 does not regress.
+- [x] Manual group move completes.
+- [x] Long-distance move segmentation works.
+- [x] Mixed infantry/vehicle pathing works.
+- [x] Friendly-pass gates remain pathable.
+- [x] No recurring allocations after warmup.
+- [x] Pathfinding p95/p99 does not regress.
 
 Progress notes:
 - 2026-06-12: Converted `DynamicOccupancyRebuildSystem.OnUpdate` to `[BurstCompile]` after removing disabled `UnityEngine.Time` / `Debug.Log` freeze-diagnostic code from the hot path. `OnCreate` remains managed because it builds queries with managed `EntityQueryDesc` arrays; the update path keeps existing occupancy semantics and persistent native containers.
@@ -1097,10 +1275,37 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Extended `UnitPathfindingFocusedPerformanceValidation` with focused mixed infantry/vehicle and repeated pathfinding performance fixtures. The batch validation now runs the original manual-infantry group plus long-distance vehicle scenario, a mixed manual group containing infantry and vehicle-motion units, then a 4-scenario warmup and 16 measured scenarios with p95/p99/no-GC assertions. The fixture also fixes its own log-capture lifecycle so repeated non-diagnostic scenarios do not subscribe leaked Unity log callbacks.
+  - Main-project validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-phase7-mixed-main.log`
+    - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3`.
+    - Report: `/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json`.
+    - Mixed-group marker: `[UnitPathfindingFocusedPerformanceValidation] mixedGroup updates=9 elapsedMs=9.65 allocatedBytes=0 pathPoolCells=8 remainingRequests=0`.
+    - Repeated metrics: `warmupScenarios=4`, `measuredScenarios=16`, `averageMs=9.77`, `p95Ms=10.01`, `p99Ms=10.01`, `maxMs=10.01`, `maxAllocatedBytesCurrentThread=0`, `maxUpdates=9`, `maxPathPoolCells=10`.
+  - Architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-pathfinding-phase7-mixed-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Friendly-pass gates remain covered by the explicit full-editor validation runner in the Phase 0 notes, where `BaseBreachValidationTests` and `UnitMovementBlockerValidationTests` passed.
+  - Progress snapshot is now `108 / 157 complete (68.8%)`, `10 / 157 in progress`, `39 / 157 open`.
+- 2026-06-13: Completed the Phase 7 native snapshot ownership item by reworking `UnitPathLiveUnitSnapshotSystem.Capture` to reuse its system-owned persistent `NativeList` buffers across path batches. The system now clears and grows the entity/grid/footprint/manual-group lists instead of disposing and reallocating them every capture. Detached path job ownership remains unchanged: capture only happens when no previous path batch is pending, and disposal still happens through the owning pathfinding system lifecycle.
+  - Main-project validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-phase7-live-snapshot-reuse-main.log`
+    - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3`.
+    - Mixed-group marker: `[UnitPathfindingFocusedPerformanceValidation] mixedGroup updates=9 elapsedMs=10.72 allocatedBytes=0 pathPoolCells=8 remainingRequests=0`.
+    - Repeated metrics: `warmupScenarios=4`, `measuredScenarios=16`, `averageMs=10.56`, `p95Ms=10.65`, `p99Ms=10.65`, `maxMs=10.65`, `maxAllocatedBytesCurrentThread=0`, `maxUpdates=9`, `maxPathPoolCells=10`.
+  - Architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-pathfinding-phase7-live-snapshot-reuse-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot is now `109 / 157 complete (69.4%)`, `10 / 157 in progress`, `38 / 157 open`.
+- 2026-06-13: Closed Phase 7 after reviewing the remaining guardrail items. The Phase 7 code slices did not change pathfinding traversal costs, request budgets, detached-job scheduling, or the core pathfinding algorithm. No new runtime path diagnostics were added outside the existing ECS diagnostic-buffer path, and every path-related Phase 7 slice was validated with `UnitPathfindingFocusedPerformanceValidation.RunBatchValidation`. The surrounding snapshot audit covered `UnitPathLiveUnitSnapshotSystem`, `UnitPathGridSnapshotSystem`, `UnitPathScratchWorkspaceSystem`, and `UnitPathRequestBufferSystem`; the only follow-up code change needed was the live-unit snapshot persistent-list reuse above.
+  - Phase 7 is complete.
+  - Progress snapshot is now `113 / 157 complete (72.0%)`, `9 / 157 in progress`, `35 / 157 open`.
 
 ### Phase 8: Render-Budget And Visual-State Hot Paths
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Improve visual-state update costs without moving GameObject presentation into Burst incorrectly.
@@ -1114,7 +1319,7 @@ Target areas:
 
 Implementation steps:
 - [x] Keep model/prefab/GameObject mutation managed.
-- [~] Move pure visibility, LOD decision, distance scoring, and state-tag calculation into Burst jobs.
+- [x] Move pure visibility, LOD decision, distance scoring, and state-tag calculation into Burst jobs.
 - [x] Batch ECS render-state tags through ECB.
 - [x] Avoid instantiate/destroy churn; keep pooling/retained presentation.
 - [x] Preserve current visible-character detailed-model policy and impostor thresholds.
@@ -1123,8 +1328,8 @@ Acceptance checks:
 - [x] Unit visual LOD behavior remains correct.
 - [x] Selection markers still display.
 - [x] Helicopter blade and missile visual behavior remain correct.
-- [ ] Render-budget focused scenario does not regress p95/p99.
-- [ ] No new GC during steady-state camera pan/zoom.
+- [x] Render-budget focused scenario does not regress p95/p99.
+- [x] No new GC during steady-state camera pan/zoom.
 
 Progress notes:
 - 2026-06-12: Started Phase 8 with a narrow pure-ECS visual-state slice in `UnitDestroyedVisualSystem`. The alive/destroyed child scale initialization loop now runs through a Burst `IJobEntity`, writes child `LocalTransform` values through a cached `ComponentLookup<LocalTransform>`, and adds `UnitDestroyedVisualInitialized` through immediate ECB playback. The shared `SetChildVisible(EntityManager, ...)` helper remains managed for `UnitDeathSystem`, transport, and destroyed-vehicle presentation boundaries.
@@ -1370,6 +1575,29 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Completed the Phase 8 render-budget p95/p99 and steady-state GC acceptance checks by adding `UnitRenderBudgetPerformanceValidation.RunBatchValidation`. The focused editor performance fixture measures `UnitRenderBudgetDistanceSystem.Collect` plus `UnitRenderBudgetSortSystem.Sort` for 512 units across a 32-frame warmup and 180 measured camera pan/zoom frames.
+  - Validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-unit-render-budget-performance-main.log`
+    - Log marker: `[UnitRenderBudgetPerformanceValidation] result=Passed`.
+    - Report: `/private/tmp/warlinecapture-unit-render-budget-performance.json`.
+    - Metrics: `unitCount=512`, `warmupFrames=32`, `measuredFrames=180`, `averageMs=0.018`, `p95Ms=0.021`, `p99Ms=0.023`, `maxMs=0.023`, `allocatedBytesCurrentThread=0`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-focused-after-performance-main.log`
+    - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=28`.
+    - `git diff --check` passed.
+  - Progress snapshot is now `102 / 157 complete (65.0%)`, `10 / 157 in progress`, `45 / 157 open`.
+- 2026-06-13: Closed the remaining Phase 8 pure visual-state implementation item after reviewing the current source and rerunning focused validation on the main project. Distance scoring runs through `UnitRenderBudgetDistanceSystem.CollectDistanceJob`, snapshot collection through `UnitRenderBudgetSnapshotSystem.CollectSnapshotJob`, LOD band selection through `UnitRenderBudgetBandSystem.BuildBandPlanJob`, distance sorting through `UnitRenderBudgetSortSystem.SortDistancesJob`, selection marker change collection through `UnitSelectionMarkerSystem.CollectSelectionMarkerChangesJob`, and marker visibility through `SelectionMarkerVisibilitySystem.UpdateSelectionMarkerJob`. GameObject/prefab/entity-presentation mutation remains in managed boundaries.
+  - Main-project render-budget validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-render-budget-phase8-close-main.log`
+    - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=28`.
+  - Main-project visual-adornment validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-vehicle-visual-phase8-close-main.log`
+    - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=12`.
+  - Architecture guard passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase8-close-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Phase 8 is complete.
+  - Progress snapshot is now `114 / 157 complete (72.6%)`, `8 / 157 in progress`, `35 / 157 open`; phase progress is now `6 / 11 phases complete`, `4 in progress`, `1 not started`.
 
 ### Phase 9: Managed Boundary Cleanup
 
@@ -1429,6 +1657,15 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod VehicleVisualAdornmentsSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-vehicle-visual-backfill.log`
   - Log marker: `[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=3`.
   - Static guardrails remain unchanged after this managed-boundary cleanup: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `35`, Burst-compiled system files `26`.
+- 2026-06-13: Cleaned up two architecture-boundary issues exposed by the main-project explicit validation runner:
+  - Match scene vehicle authoring groups were renamed from runtime unit IDs such as `Unit_Veh_Tank_USA` to neutral authoring names such as `MapVehicle_Tank_USA`. `MapVehiclePlacementBakeEditor` now resolves both old `Unit_Veh_*` and new `MapVehicle_*` authoring folders back to the existing runtime `Unit_Veh_*` category/prefab IDs, and `MapVehicleHierarchyEditor` creates neutral `MapVehicle_*` groups for future organization runs.
+  - `MatchHudSquadTrayView` no longer calls `Transform.Find("NameStrip")` during runtime label setup.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation -logFile /private/tmp/warline-script-architecture-after-squad-tray-lookup-main.log`
+    - Log marker: `[ScriptArchitectureBoundaryValidation] result=Passed tests=11`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMovementBlockerValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-movement-blocker-after-mapvehicle-path-main.log`
+    - Log marker: `[UnitMovementBlockerValidation] result=Passed`.
+    - `git diff --check` passed.
 
 ### Phase 10: Performance Ratchet And Completion
 

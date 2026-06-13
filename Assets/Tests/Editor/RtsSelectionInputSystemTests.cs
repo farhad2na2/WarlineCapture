@@ -737,7 +737,8 @@ public sealed class RtsSelectionInputSystemTests
 
         StringAssert.Contains("int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);", boarding);
         StringAssert.Contains("int availableSeats = capacity - occupiedSeats;", boarding);
-        StringAssert.Contains("plannedOrders.Count < availableSeats", boarding);
+        StringAssert.Contains("using NativeList<TransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats), Allocator.Temp);", boarding);
+        StringAssert.Contains("plannedOrders.Length < availableSeats", boarding);
     }
 
     [Test]

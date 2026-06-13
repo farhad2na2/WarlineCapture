@@ -669,7 +669,7 @@ public sealed class UnitMovementBlockerValidationTests
     {
         const string vehicleConfigPath = "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset";
         const string mapSurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
-        const string loggedSourcePath = "Map/Vehicles/Unit_Veh_Tank_USA/SM_Veh_Tank_USA_01 (1)";
+        const string loggedSourcePath = "Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01 (1)";
 
         MapVehiclePlacementConfig vehicleConfig = AssetDatabase.LoadAssetAtPath<MapVehiclePlacementConfig>(vehicleConfigPath);
         MapSurfaceDataAsset mapSurfaceData = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(mapSurfacePath);

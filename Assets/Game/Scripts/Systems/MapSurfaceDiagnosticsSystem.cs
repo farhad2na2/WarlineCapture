@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
+[BurstCompile]
 public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
     private const double DiagnosticsIntervalSeconds = 1d;
@@ -11,11 +12,14 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
     private SurfaceDiagnosticsSignature _lastSignature;
     private bool _hasLastSignature;
 
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         _diagnosticsLookup = state.GetComponentLookup<MapSurfaceDiagnosticsComponent>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         double now = SystemAPI.Time.ElapsedTime;
@@ -52,10 +56,9 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             _diagnosticsLookup[surfaceEntity] = diagnostics;
         else
         {
-            EntityCommandBuffer ecb = new(Allocator.Temp);
+            var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
             ecb.AddComponent(surfaceEntity, diagnostics);
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
         }
 
         _lastSignature = signature;

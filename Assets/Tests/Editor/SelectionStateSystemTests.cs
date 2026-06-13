@@ -17,9 +17,10 @@ public sealed class SelectionStateSystemTests
             RunCase(test => test.FocusedUnit_CanBeSetAndCleared());
             RunCase(test => test.CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits());
             RunCase(test => test.VisibleUnitSelection_IgnoresPlayerBuildingsWithoutUnitMove());
+            RunCase(test => test.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=5");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=6");
         }
         catch (System.Exception ex)
         {
@@ -130,6 +131,65 @@ public sealed class SelectionStateSystemTests
             Assert.AreEqual(1, selectedCount);
             Assert.AreEqual(movableUnit, selected[0]);
             Assert.IsFalse(selected.Contains(buildingLikeEntity));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback()
+    {
+        GameObject cameraObject = new("VisibleUnitSelectionPrefixCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 5f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            Entity sourceVehicle = CreateVisibleEntity(hasMove: true, new float3(-1f, 0f, 0f));
+            _entityManager.AddComponentData(sourceVehicle, new UnitSourcePrefabKey
+            {
+                Value = new Unity.Collections.FixedString64Bytes("Unit_Veh_Test_APC")
+            });
+
+            Entity sourceCharacterWithVehicleFallback = CreateVisibleEntity(hasMove: true, new float3(1f, 0f, 0f));
+            _entityManager.AddComponentData(sourceCharacterWithVehicleFallback, new UnitSourcePrefabKey
+            {
+                Value = new Unity.Collections.FixedString64Bytes("Unit_Chr_Test_Soldier")
+            });
+            _entityManager.AddComponentData(sourceCharacterWithVehicleFallback, new UnitFootprint { Size = new int2(2, 2) });
+            _entityManager.AddComponentData(sourceCharacterWithVehicleFallback, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+            var system = new VisibleUnitSelectionSystem();
+            var selected = new System.Collections.Generic.List<Entity>();
+            Rect screenRect = new(0f, 0f, 100f, 100f);
+            var querySystem = new SelectionUiQuerySystem();
+
+            int vehicleCount = system.CollectVisiblePlayerUnits(
+                _entityManager,
+                camera,
+                querySystem,
+                screenRect,
+                VisibleUnitSelectionSystem.Filter.Vehicles,
+                selected);
+
+            Assert.AreEqual(1, vehicleCount);
+            Assert.AreEqual(sourceVehicle, selected[0]);
+
+            int soldierCount = system.CollectVisiblePlayerUnits(
+                _entityManager,
+                camera,
+                querySystem,
+                screenRect,
+                VisibleUnitSelectionSystem.Filter.Soldiers,
+                selected);
+
+            Assert.AreEqual(1, soldierCount);
+            Assert.AreEqual(sourceCharacterWithVehicleFallback, selected[0]);
         }
         finally
         {

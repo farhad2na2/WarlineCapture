@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -29,6 +31,18 @@ internal sealed class SelectionGameplayStartupSystem
         {
             Entity = entity;
             Distance = distance;
+        }
+    }
+
+    private struct NativeTransportBoardingCandidate : System.IComparable<NativeTransportBoardingCandidate>
+    {
+        public Entity Entity;
+        public int Distance;
+
+        public int CompareTo(NativeTransportBoardingCandidate other)
+        {
+            int distanceCompare = Distance.CompareTo(other.Distance);
+            return distanceCompare != 0 ? distanceCompare : Entity.Index.CompareTo(other.Entity.Index);
         }
     }
 
@@ -1575,9 +1589,9 @@ internal sealed class SelectionGameplayStartupSystem
             int2 boardingTransportSize = em.HasComponent<UnitAirMovement>(transport) ? new int2(1, 1) : transportSize;
             int directBoardingCells = unitTransportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
             var reservedBoardingCells = new HashSet<int>();
-            var plannedOrders = new List<TransportBoardingOrder>(math.min(candidates.Count, availableSeats));
+            using NativeList<TransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats), Allocator.Temp);
 
-            for (int i = 0; i < candidates.Count && plannedOrders.Count < availableSeats; i++)
+            for (int i = 0; i < candidates.Count && plannedOrders.Length < availableSeats; i++)
             {
                 Entity passenger = candidates[i].Entity;
                 if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
@@ -1615,22 +1629,33 @@ internal sealed class SelectionGameplayStartupSystem
                 plannedOrders.Add(new TransportBoardingOrder(passenger, goal));
             }
 
-            for (int i = 0; i < plannedOrders.Count; i++)
+            var unitTransportPassengerStateSystem = new UnitTransportPassengerStateSystem();
+            EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
+            try
             {
-                TransportBoardingOrder order = plannedOrders[i];
-                Entity passenger = order.Passenger;
-                if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
-                    continue;
+                for (int i = 0; i < plannedOrders.Length; i++)
+                {
+                    TransportBoardingOrder order = plannedOrders[i];
+                    Entity passenger = order.Passenger;
+                    if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                        continue;
 
-                unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
-                if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
-                    em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
-                unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, order.Goal);
-                if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-                    em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = order.Goal });
-                else
-                    em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = order.Goal });
-                orderedCount++;
+                    unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
+                    unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, order.Goal);
+                    unitTransportPassengerStateSystem.ApplyBoardingOrderState(
+                        em,
+                        ref boardingStateEcb,
+                        passenger,
+                        transport,
+                        order.Goal);
+                    orderedCount++;
+                }
+
+                boardingStateEcb.Playback(em);
+            }
+            finally
+            {
+                boardingStateEcb.Dispose();
             }
 
             return orderedCount > 0;
@@ -1652,35 +1677,32 @@ internal sealed class SelectionGameplayStartupSystem
             if (query.IsEmptyIgnoreFilter)
                 return candidates;
 
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            ComponentTypeHandle<UnitGrid> gridType = em.GetComponentTypeHandle<UnitGrid>(true);
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            using NativeList<NativeTransportBoardingCandidate> nativeCandidates = new(
+                query.CalculateEntityCount(),
+                Allocator.TempJob);
+            new CollectNearestBoardingCandidatesJob
             {
-                ArchetypeChunk chunk = chunks[chunkIndex];
-                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (entity == transport ||
-                        !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity) ||
-                        em.HasComponent<UnitTransportBoardingTarget>(entity))
-                    {
-                        continue;
-                    }
+                Transport = transport,
+                TransportCell = transportCell,
+                EntityType = em.GetEntityTypeHandle(),
+                FactionType = em.GetComponentTypeHandle<Faction>(true),
+                UnitGridType = em.GetComponentTypeHandle<UnitGrid>(true),
+                UnitFootprintType = em.GetComponentTypeHandle<UnitFootprint>(true),
+                UnitMovementBehaviorType = em.GetComponentTypeHandle<UnitMovementBehavior>(true),
+                SourcePrefabKeyType = em.GetComponentTypeHandle<UnitSourcePrefabKey>(true),
+                UnitAirMovementType = em.GetComponentTypeHandle<UnitAirMovement>(true),
+                UnitTransportPassengerType = em.GetComponentTypeHandle<UnitTransportPassenger>(true),
+                UnitTransportBoardingTargetType = em.GetComponentTypeHandle<UnitTransportBoardingTarget>(true),
+                Candidates = nativeCandidates
+            }.Run(query);
 
-                    int2 cell = grids[i].Cell;
-                    int distance = math.abs(cell.x - transportCell.x) + math.abs(cell.y - transportCell.y);
-                    candidates.Add(new TransportBoardingCandidate(entity, distance));
-                }
+            nativeCandidates.Sort();
+            for (int i = 0; i < nativeCandidates.Length; i++)
+            {
+                NativeTransportBoardingCandidate candidate = nativeCandidates[i];
+                candidates.Add(new TransportBoardingCandidate(candidate.Entity, candidate.Distance));
             }
 
-            candidates.Sort((left, right) =>
-            {
-                int distanceCompare = left.Distance.CompareTo(right.Distance);
-                return distanceCompare != 0 ? distanceCompare : left.Entity.Index.CompareTo(right.Entity.Index);
-            });
             return candidates;
         }
 
@@ -1951,6 +1973,179 @@ internal sealed class SelectionGameplayStartupSystem
             source = null;
             return mainMenuPlayUi != null &&
                    mainMenuPlayUi.IsPointerOverRaycastableUi(screenPosition, out source);
+        }
+    }
+
+    [BurstCompile]
+    private struct CollectNearestBoardingCandidatesJob : IJobChunk
+    {
+        public Entity Transport;
+        public int2 TransportCell;
+        [ReadOnly] public EntityTypeHandle EntityType;
+        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> UnitGridType;
+        [ReadOnly] public ComponentTypeHandle<UnitFootprint> UnitFootprintType;
+        [ReadOnly] public ComponentTypeHandle<UnitMovementBehavior> UnitMovementBehaviorType;
+        [ReadOnly] public ComponentTypeHandle<UnitSourcePrefabKey> SourcePrefabKeyType;
+        [ReadOnly] public ComponentTypeHandle<UnitAirMovement> UnitAirMovementType;
+        [ReadOnly] public ComponentTypeHandle<UnitTransportPassenger> UnitTransportPassengerType;
+        [ReadOnly] public ComponentTypeHandle<UnitTransportBoardingTarget> UnitTransportBoardingTargetType;
+        public NativeList<NativeTransportBoardingCandidate> Candidates;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            if (chunk.Has(ref UnitAirMovementType) ||
+                chunk.Has(ref UnitTransportPassengerType) ||
+                chunk.Has(ref UnitTransportBoardingTargetType))
+            {
+                return;
+            }
+
+            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref FactionType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref UnitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref UnitFootprintType);
+            NativeArray<UnitMovementBehavior> movementBehaviors = chunk.GetNativeArray(ref UnitMovementBehaviorType);
+            bool hasSourcePrefabKey = chunk.Has(ref SourcePrefabKeyType);
+            NativeArray<UnitSourcePrefabKey> sourcePrefabKeys = hasSourcePrefabKey
+                ? chunk.GetNativeArray(ref SourcePrefabKeyType)
+                : default;
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (entity == Transport ||
+                    factions[i].Id != FactionIdentitySystem.PlayerFactionId ||
+                    !IsSoldierBoardingCandidate(
+                        i,
+                        hasSourcePrefabKey,
+                        sourcePrefabKeys,
+                        footprints,
+                        movementBehaviors))
+                {
+                    continue;
+                }
+
+                int2 cell = grids[i].Cell;
+                int distance = math.abs(cell.x - TransportCell.x) + math.abs(cell.y - TransportCell.y);
+                Candidates.Add(new NativeTransportBoardingCandidate
+                {
+                    Entity = entity,
+                    Distance = distance
+                });
+            }
+        }
+
+        private static bool IsSoldierBoardingCandidate(
+            int index,
+            bool hasSourcePrefabKey,
+            NativeArray<UnitSourcePrefabKey> sourcePrefabKeys,
+            NativeArray<UnitFootprint> footprints,
+            NativeArray<UnitMovementBehavior> movementBehaviors)
+        {
+            if (hasSourcePrefabKey)
+            {
+                FixedString64Bytes sourceName = sourcePrefabKeys[index].Value;
+                if (ContainsUnitCharacterToken(sourceName) || StartsWithUnitCharacterPrefix(sourceName))
+                    return true;
+                if (ContainsUnitVehicleToken(sourceName) || StartsWithUnitVehiclePrefix(sourceName))
+                    return false;
+            }
+
+            return !UnitVehicleMovementUtility.IsVehicle(footprints[index], movementBehaviors[index]);
+        }
+
+        private static bool ContainsUnitCharacterToken(FixedString64Bytes value)
+        {
+            return ContainsAsciiTokenIgnoreCase(value, (byte)'_', (byte)'C', (byte)'h', (byte)'r', (byte)'_');
+        }
+
+        private static bool ContainsUnitVehicleToken(FixedString64Bytes value)
+        {
+            return ContainsAsciiTokenIgnoreCase(value, (byte)'_', (byte)'V', (byte)'e', (byte)'h', (byte)'_');
+        }
+
+        private static bool StartsWithUnitCharacterPrefix(FixedString64Bytes value)
+        {
+            return HasEightBytePrefixIgnoreCase(
+                value,
+                (byte)'U',
+                (byte)'n',
+                (byte)'i',
+                (byte)'t',
+                (byte)'_',
+                (byte)'C',
+                (byte)'h',
+                (byte)'r');
+        }
+
+        private static bool StartsWithUnitVehiclePrefix(FixedString64Bytes value)
+        {
+            return HasEightBytePrefixIgnoreCase(
+                value,
+                (byte)'U',
+                (byte)'n',
+                (byte)'i',
+                (byte)'t',
+                (byte)'_',
+                (byte)'V',
+                (byte)'e',
+                (byte)'h');
+        }
+
+        private static bool ContainsAsciiTokenIgnoreCase(FixedString64Bytes value, byte c0, byte c1, byte c2, byte c3, byte c4)
+        {
+            for (int i = 0; i <= value.Length - 5; i++)
+            {
+                if (EqualsAsciiIgnoreCase(value[i], c0) &&
+                    EqualsAsciiIgnoreCase(value[i + 1], c1) &&
+                    EqualsAsciiIgnoreCase(value[i + 2], c2) &&
+                    EqualsAsciiIgnoreCase(value[i + 3], c3) &&
+                    EqualsAsciiIgnoreCase(value[i + 4], c4))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasEightBytePrefixIgnoreCase(
+            FixedString64Bytes value,
+            byte c0,
+            byte c1,
+            byte c2,
+            byte c3,
+            byte c4,
+            byte c5,
+            byte c6,
+            byte c7)
+        {
+            return value.Length >= 8 &&
+                   EqualsAsciiIgnoreCase(value[0], c0) &&
+                   EqualsAsciiIgnoreCase(value[1], c1) &&
+                   EqualsAsciiIgnoreCase(value[2], c2) &&
+                   EqualsAsciiIgnoreCase(value[3], c3) &&
+                   EqualsAsciiIgnoreCase(value[4], c4) &&
+                   EqualsAsciiIgnoreCase(value[5], c5) &&
+                   EqualsAsciiIgnoreCase(value[6], c6) &&
+                   EqualsAsciiIgnoreCase(value[7], c7);
+        }
+
+        private static bool EqualsAsciiIgnoreCase(byte a, byte b)
+        {
+            return ToLowerAscii(a) == ToLowerAscii(b);
+        }
+
+        private static byte ToLowerAscii(byte value)
+        {
+            return value >= (byte)'A' && value <= (byte)'Z'
+                ? (byte)(value + 32)
+                : value;
         }
     }
 

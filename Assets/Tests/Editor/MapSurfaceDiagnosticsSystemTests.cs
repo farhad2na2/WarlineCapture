@@ -36,8 +36,10 @@ public sealed class MapSurfaceDiagnosticsSystemTests
             HasSurfaceData = 0
         });
 
+        SystemHandle endSimulationEcbSystem = world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
         SystemHandle system = world.CreateSystem<MapSurfaceDiagnosticsSystem>();
         system.Update(world.Unmanaged);
+        endSimulationEcbSystem.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<MapSurfaceDiagnosticsComponent>(surfaceEntity));
         MapSurfaceDiagnosticsComponent diagnostics =

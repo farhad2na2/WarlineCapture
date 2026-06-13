@@ -53,12 +53,17 @@ Captured:
 - Match startup after loading gate.
 - Graphics-capable shell-to-Match smoke.
 - Stable post-intro observation window.
+- Runtime baseline frame percentiles, allocation, and entity counts after the stable Match HUD gate.
 - Focused pathfinding group/long-distance validation.
 - Focused transport boarding/disembark validation.
 - Focused ground missile projectile dependency validation.
+- Focused attack command and missile impact timing validation.
 - Performance diagnostics allocation validation.
 - Focused selection/command validation.
+- Focused select-unit-then-move timing validation.
 - Focused render-budget validation.
+- Focused AI steady-state timing validation.
+- Focused transport board/board-all/unboard timing validation.
 - Existing architecture contract validation.
 - Explicit full-editor validation runner for non-explicit editor tests that do not require Unity TestRunner log scope.
 
@@ -72,12 +77,21 @@ Result:
 - Startup caveat: one pre-ready `[FreezeDetect]` logged `BuildingPlacement=503.2ms`; it occurred before the ready/stable observation window and is not evidence of a post-ready frame regression, but it remains a loading/startup optimization concern.
 
 Required next baseline capture:
-- select unit then move
-- attack command and missile impact flow
-- transport board/board-all/unboard flow
-- AI steady-state with current unit/building count
+- None remaining for the Phase 0 named scenario list or baseline metric list. Remaining Phase 0 work is reliable full EditMode suite reporting.
 
 ## Focused Validation Additions
+
+Runtime baseline metrics:
+- Command:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunBaselineMetrics -logFile /private/tmp/warline-ecs-burst-runtime-baseline-metrics-main.log`
+- Result:
+  - Passed.
+  - Log marker: `[MatchRuntimeBaselineMetrics] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-match-runtime-baseline-metrics.json`.
+  - Stable gate: `mode=MatchHud`, `route=Match`, `phase=MatchHudReady`, `matchIntro=Complete`, `inputLocked=0`, `curtainHidden=1`, `spawnConfigs=1/1`, `progressing=0`, `sourceKeys=745`.
+  - Frame timing after ready/stable gate: `observationSeconds=4.008`, `frameCount=378`, `averageFrameMs=10.631`, `p95FrameMs=12.563`, `p99FrameMs=22.031`, `maxFrameMs=81.746`.
+  - Allocation: `allocatedBytesCurrentThread=0`.
+  - Entity counts: `unitCount=745`, `runtimeBuildingCount=647`, `groundMissileProjectileCount=0`, `airMissileProjectileCount=0`, `projectileCount=0`, `selectionMarkerEntityCount=0`, `minimapMarkerCount=256`, `markerCount=256`, `visibleRenderStateCount=72`, `visibleModelEstimate=72`, `renderVisualStateCount=98`.
 
 Pathfinding:
 - Command:
@@ -96,12 +110,36 @@ Transport:
   - Passed.
   - Log marker: `[UnitTransportValidation] result=Passed tests=16`.
 
+Transport board/board-all/unboard timing:
+- Command:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boarding-performance-main.log`
+- Result:
+  - Passed.
+  - Log marker: `[TransportBoardingPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-transport-boarding-performance.json`.
+  - Fixture: `warmupScenarios=16`, `measuredScenarios=64`, `passengerCount=8`, `boardedCount=512`, `disembarkedCount=512`.
+  - Total timing: `averageTotalMs=1.183`, `p95TotalMs=1.216`, `p99TotalMs=1.246`, `maxTotalMs=1.256`.
+  - Breakdown: `averageBoardCommandMs=0.890`, `p95BoardCommandMs=0.913`, `averageBoardingUpdateMs=0.183`, `p95BoardingUpdateMs=0.191`, `averageDisembarkCommandMs=0.109`, `p95DisembarkCommandMs=0.117`.
+  - Allocation: `allocatedBytesCurrentThread=0`.
+
 Ground missile:
 - Command:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileLauncherRuntimeTests.RunProjectileDependencyValidation -logFile /private/tmp/warline-ecs-burst-ground-missile-baseline.log`
 - Result:
   - Passed.
   - Log marker: `[GroundMissileProjectileDependencyValidation] result=Passed tests=1`.
+
+Attack command and missile impact timing:
+- Command:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileAttackPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-ground-missile-attack-performance-main.log`
+- Result:
+  - Passed.
+  - Log marker: `[GroundMissileAttackPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-ground-missile-attack-performance.json`.
+  - Fixture: `warmupScenarios=16`, `measuredScenarios=64`, `averageFrames=27`, `maxFrames=27`.
+  - Total timing: `averageTotalMs=0.715`, `p95TotalMs=0.764`, `p99TotalMs=0.919`, `maxTotalMs=1.007`.
+  - Breakdown: `averageOrderMs=0.020`, `p95OrderMs=0.024`, `averageSimulationMs=0.695`, `p95SimulationMs=0.744`.
+  - Allocation: `allocatedBytesCurrentThread=0`.
 
 Performance diagnostics:
 - Command:
@@ -117,6 +155,18 @@ Selection/command:
   - Passed.
   - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=57`.
   - Covered fixtures: `RtsSelectionInputSystemTests`, `UnitMoveOrderSystemTests`, `SelectionUiQuerySystemTests`, `SelectionOrderMarkerSystemTests`, `MatchHudCommandFeedbackPanelTests`, `MatchHudCommandControlsCurrentPrefabTests`, and `ScanIntelCommandSystemTests`.
+
+Select-unit-then-move timing:
+- Command:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionMoveCommandPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-selection-move-performance-main.log`
+- Result:
+  - Passed.
+  - Log marker: `[SelectionMoveCommandPerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-selection-move-command-performance.json`.
+  - Fixture: `selectedUnitCount=8`, `acceptedMoveCommands=212`.
+  - Timing: `warmupFrames=32`, `measuredFrames=180`, `averageMs=0.550`, `p95Ms=0.568`, `p99Ms=0.600`, `maxMs=0.610`.
+  - Allocation: `allocatedBytesCurrentThread=0`.
+  - Follow-up architecture guard: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6` from `/private/tmp/warline-ecs-burst-hot-path-architecture-selection-move-performance-main.log`.
 
 Full EditMode attempt:
 - Command:
@@ -142,6 +192,17 @@ Render budget:
   - Passed.
   - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=14`.
 
+AI steady state:
+- Command:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AISteadyStatePerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-ai-steady-state-performance-main.log`
+- Result:
+  - Passed.
+  - Log marker: `[AISteadyStatePerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-ai-steady-state-performance.json`.
+  - Fixture: `enemyUnitCount=160`, `playerThreatCount=48`, `playerBuildingCount=64`, `squadCount=16`, `engageOrderCount=128`, `aiCombatOrderCount=128`.
+  - Timing: `warmupFrames=32`, `measuredFrames=180`, `averageMs=0.101`, `p95Ms=0.400`, `p99Ms=1.257`, `maxMs=3.450`.
+  - Allocation: `allocatedBytesCurrentThread=0`.
+
 Architecture contract:
 - Command:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation -logFile /private/tmp/warline-ecs-burst-architecture-contract.log`
@@ -149,11 +210,8 @@ Architecture contract:
   - Passed.
   - Log marker: `[ScriptArchitectureBoundaryValidation] result=Passed tests=11`.
 
-Metrics to record:
-- frame average, p95, p99, and max after warmup
-- GC allocation after warmup
-- hot system p95, p99, and max where available
-- entity counts for units, buildings, projectiles, markers, and visible models
+Metrics still intentionally scenario-local:
+- Hot system p95, p99, and max are recorded where focused fixtures own the relevant system timing breakdown. Full runtime hot-system percentile attribution remains a final-report comparison item because the runtime smoke records whole-frame timing, not profiler-marker percentiles.
 
 ## Guardrail Added
 

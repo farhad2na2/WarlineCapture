@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -33,18 +35,8 @@ public sealed class FocusableUnitLookupSystem
         _queryWorld = world;
         ResetLookup();
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _focusableUnitsQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableCoverageQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
+        _focusableUnitsQuery = em.CreateEntityQuery(CreateFocusableUnitsQueryDesc());
+        _changedFocusableCoverageQuery = em.CreateEntityQuery(CreateFocusableUnitsQueryDesc());
         _changedFocusableCoverageQuery.SetChangedVersionFilter(new[]
         {
             ComponentType.ReadOnly<UnitGrid>(),
@@ -124,29 +116,31 @@ public sealed class FocusableUnitLookupSystem
 
         float maxDistanceSq = maxDistancePixels * maxDistancePixels;
         float bestDistanceSq = maxDistanceSq;
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        ComponentTypeHandle<LocalToWorld> localToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true);
-        using NativeArray<ArchetypeChunk> chunks = _focusableUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        using NativeList<FocusableScreenDistanceCandidate> candidates = new(
+            _focusableUnitsQuery.CalculateEntityCount(),
+            Allocator.TempJob);
+        new CollectFocusableScreenDistanceCandidatesJob
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref localToWorldType);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (!IsFocusableUnitCandidate(em, entity))
-                    continue;
+            EntityType = em.GetEntityTypeHandle(),
+            LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
+            TransitTagType = em.GetComponentTypeHandle<UnitSpawnTransitTag>(true),
+            UnitAirType = em.GetComponentTypeHandle<UnitAirComponent>(true),
+            UnitTargetType = em.GetComponentTypeHandle<UnitTarget>(true),
+            EngageTargetType = em.GetComponentTypeHandle<EngageTarget>(true),
+            Candidates = candidates
+        }.Run(_focusableUnitsQuery);
 
-                Vector3 worldPosition = transforms[i].Position;
-                float distanceSq = math.min(
-                    ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
-                    ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
-                if (distanceSq < bestDistanceSq)
-                {
-                    bestDistanceSq = distanceSq;
-                    bestEntity = entity;
-                }
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            FocusableScreenDistanceCandidate candidate = candidates[i];
+            Vector3 worldPosition = candidate.Position;
+            float distanceSq = math.min(
+                ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
+                ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
+            if (distanceSq < bestDistanceSq)
+            {
+                bestDistanceSq = distanceSq;
+                bestEntity = candidate.Entity;
             }
         }
 
@@ -158,6 +152,26 @@ public sealed class FocusableUnitLookupSystem
         _focusableUnitsByCell.Clear();
         _focusableUnitCoverage.Clear();
         _lastFocusableUnitCount = -1;
+    }
+
+    private static EntityQueryDesc CreateFocusableUnitsQueryDesc()
+    {
+        return new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitMove>(),
+                ComponentType.ReadOnly<UnitFootprint>(),
+                ComponentType.ReadOnly<LocalToWorld>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<StaticGridBlocker>()
+            }
+        };
     }
 
     private void RefreshLookup(EntityManager em)
@@ -333,5 +347,73 @@ public sealed class FocusableUnitLookupSystem
             return float.MaxValue;
 
         return (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+    }
+
+    private struct FocusableScreenDistanceCandidate
+    {
+        public Entity Entity;
+        public float3 Position;
+    }
+
+    [BurstCompile]
+    private struct CollectFocusableScreenDistanceCandidatesJob : IJobChunk
+    {
+        [ReadOnly] public EntityTypeHandle EntityType;
+        [ReadOnly] public ComponentTypeHandle<LocalToWorld> LocalToWorldType;
+        [ReadOnly] public ComponentTypeHandle<UnitSpawnTransitTag> TransitTagType;
+        [ReadOnly] public ComponentTypeHandle<UnitAirComponent> UnitAirType;
+        [ReadOnly] public ComponentTypeHandle<UnitTarget> UnitTargetType;
+        [ReadOnly] public ComponentTypeHandle<EngageTarget> EngageTargetType;
+        public NativeList<FocusableScreenDistanceCandidate> Candidates;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            bool hasTransitTag = chunk.Has(ref TransitTagType);
+            bool hasAir = chunk.Has(ref UnitAirType);
+            bool hasUnitTarget = chunk.Has(ref UnitTargetType);
+            bool hasEngageTarget = chunk.Has(ref EngageTargetType);
+            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref LocalToWorldType);
+            NativeArray<UnitAirComponent> airStates = hasAir
+                ? chunk.GetNativeArray(ref UnitAirType)
+                : default;
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (!IsFocusableTransitState(i, hasTransitTag, hasAir, hasUnitTarget, hasEngageTarget, airStates))
+                    continue;
+
+                Candidates.Add(new FocusableScreenDistanceCandidate
+                {
+                    Entity = entities[i],
+                    Position = transforms[i].Position
+                });
+            }
+        }
+
+        private static bool IsFocusableTransitState(
+            int index,
+            bool hasTransitTag,
+            bool hasAir,
+            bool hasUnitTarget,
+            bool hasEngageTarget,
+            NativeArray<UnitAirComponent> airStates)
+        {
+            if (!hasTransitTag)
+                return true;
+
+            if (!hasAir || hasUnitTarget || hasEngageTarget)
+                return false;
+
+            UnitAirComponent air = airStates[index];
+            return air.Airborne == 0 &&
+                   air.ReturningHome == 0 &&
+                   air.TakeoffRolling == 0 &&
+                   air.LandingRolling == 0;
+        }
     }
 }

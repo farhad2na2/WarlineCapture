@@ -20,7 +20,14 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
     private const int GridWidth = 240;
     private const int GridHeight = 240;
     private const int ManualInfantryCount = 4;
+    private const int MixedInfantryCount = 2;
+    private const int MixedVehicleCount = 2;
+    private const int MixedGroupUnitCount = MixedInfantryCount + MixedVehicleCount;
     private const int MaxPathfindingUpdates = 128;
+    private const int WarmupScenarioCount = 4;
+    private const int MeasuredScenarioCount = 16;
+    private const double P95BudgetMs = 60d;
+    private const double P99BudgetMs = 90d;
 
     public static void RunBatchValidation()
     {
@@ -28,7 +35,9 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         {
             var tests = new UnitPathfindingFocusedPerformanceValidation();
             tests.ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics();
-            Debug.Log("[UnitPathfindingFocusedPerformanceValidation] result=Passed");
+            tests.MixedInfantryVehicleGroupPathingCompletes();
+            tests.RepeatedFocusedPathfindingDoesNotAllocateOrRegress();
+            Debug.Log("[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3");
             EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -42,6 +51,51 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
     [Test]
     public void ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics()
     {
+        ScenarioResult result = RunFocusedScenario(captureDiagnostics: true);
+        WriteReport(result);
+    }
+
+    [Test]
+    public void MixedInfantryVehicleGroupPathingCompletes()
+    {
+        ScenarioResult result = RunMixedInfantryVehicleScenario(captureDiagnostics: true);
+        Assert.Zero(result.RemainingRequests, "Mixed infantry/vehicle pathfinding should consume all focused path requests.");
+    }
+
+    [Test]
+    public void RepeatedFocusedPathfindingDoesNotAllocateOrRegress()
+    {
+        for (int i = 0; i < WarmupScenarioCount; i++)
+            RunFocusedScenario(captureDiagnostics: false);
+
+        var elapsedSamples = new double[MeasuredScenarioCount];
+        long maxAllocatedBytes = 0;
+        int maxUpdates = 0;
+        int maxPathPoolCells = 0;
+        for (int i = 0; i < MeasuredScenarioCount; i++)
+        {
+            ScenarioResult result = RunFocusedScenario(captureDiagnostics: false);
+            elapsedSamples[i] = result.ElapsedMs;
+            maxAllocatedBytes = math.max(maxAllocatedBytes, result.AllocatedBytes);
+            maxUpdates = math.max(maxUpdates, result.Updates);
+            maxPathPoolCells = math.max(maxPathPoolCells, result.PathPoolCells);
+        }
+
+        Array.Sort(elapsedSamples);
+        double averageMs = CalculateAverage(elapsedSamples);
+        double p95Ms = PercentileSorted(elapsedSamples, 0.95d);
+        double p99Ms = PercentileSorted(elapsedSamples, 0.99d);
+        double maxMs = elapsedSamples[elapsedSamples.Length - 1];
+
+        Assert.Zero(maxAllocatedBytes, "Focused pathfinding should not allocate on the measured update path after warmup.");
+        Assert.LessOrEqual(p95Ms, P95BudgetMs, "Focused pathfinding p95 regressed beyond the current safety budget.");
+        Assert.LessOrEqual(p99Ms, P99BudgetMs, "Focused pathfinding p99 regressed beyond the current safety budget.");
+
+        WritePerformanceReport(averageMs, p95Ms, p99Ms, maxMs, maxAllocatedBytes, maxUpdates, maxPathPoolCells);
+    }
+
+    private static ScenarioResult RunFocusedScenario(bool captureDiagnostics)
+    {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World world = new("UnitPathfindingFocusedPerformanceValidation");
         World.DefaultGameObjectInjectionWorld = world;
@@ -51,9 +105,13 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
         NativeList<int2> pathPool = default;
-        var capturedDiagnostics = new List<string>();
+        NativeArray<Entity> manualUnits = default;
+        var capturedDiagnostics = captureDiagnostics ? new List<string>() : null;
         Application.LogCallback logCapture = (condition, _, _) =>
         {
+            if (capturedDiagnostics == null)
+                return;
+
             if (condition.Contains("[FreezeDetect:ECS]", StringComparison.Ordinal) ||
                 condition.Contains("[PathDiag", StringComparison.Ordinal) ||
                 condition.Contains("[HierPathValidate]", StringComparison.Ordinal))
@@ -64,10 +122,12 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
 
         try
         {
-            Application.logMessageReceived += logCapture;
+            if (captureDiagnostics)
+                Application.logMessageReceived += logCapture;
+
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             Entity gridEntity = CreateGrid(em, GridWidth, GridHeight, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
-            var manualUnits = new NativeArray<Entity>(ManualInfantryCount, Allocator.Temp);
+            manualUnits = new NativeArray<Entity>(ManualInfantryCount, Allocator.Temp);
             for (int i = 0; i < ManualInfantryCount; i++)
             {
                 manualUnits[i] = CreatePathfindingUnit(
@@ -99,21 +159,129 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
             Assert.IsTrue(
                 em.HasComponent<UnitLongDistanceMove>(longDistanceVehicle),
                 "The long-distance vehicle request should stay segmented after the first pathfinding pass.");
-            Assert.IsEmpty(capturedDiagnostics, "Focused pathfinding validation should not emit freeze/path diagnostics with default disabled flags.");
+            if (captureDiagnostics)
+                Assert.IsEmpty(capturedDiagnostics, "Focused pathfinding validation should not emit freeze/path diagnostics with default disabled flags.");
+
             Assert.Greater(em.GetComponentData<PathPoolComponent>(gridEntity).Cells.Length, 0, "Pathfinding should write path cells into the shared path pool.");
 
-            WriteReport(
+            return new ScenarioResult(
                 updates,
                 stopwatch.Elapsed.TotalMilliseconds,
                 allocatedBytes,
                 em.GetComponentData<PathPoolComponent>(gridEntity).Cells.Length,
                 CountPathRequests(em),
-                capturedDiagnostics.Count);
+                capturedDiagnostics?.Count ?? 0);
         }
         finally
         {
-            Application.logMessageReceived -= logCapture;
+            if (captureDiagnostics)
+                Application.logMessageReceived -= logCapture;
             World.DefaultGameObjectInjectionWorld = previousWorld;
+            if (manualUnits.IsCreated)
+                manualUnits.Dispose();
+            if (world.IsCreated)
+                world.Dispose();
+            if (pathPool.IsCreated)
+                pathPool.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    private static ScenarioResult RunMixedInfantryVehicleScenario(bool captureDiagnostics)
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World world = new("UnitPathfindingMixedGroupFocusedValidation");
+        World.DefaultGameObjectInjectionWorld = world;
+        EntityManager em = world.EntityManager;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeList<int2> pathPool = default;
+        NativeArray<Entity> mixedUnits = default;
+        var capturedDiagnostics = captureDiagnostics ? new List<string>() : null;
+        Application.LogCallback logCapture = (condition, _, _) =>
+        {
+            if (capturedDiagnostics == null)
+                return;
+
+            if (condition.Contains("[FreezeDetect:ECS]", StringComparison.Ordinal) ||
+                condition.Contains("[PathDiag", StringComparison.Ordinal) ||
+                condition.Contains("[HierPathValidate]", StringComparison.Ordinal))
+            {
+                capturedDiagnostics.Add(condition);
+            }
+        };
+
+        try
+        {
+            if (captureDiagnostics)
+                Application.logMessageReceived += logCapture;
+
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            Entity gridEntity = CreateGrid(em, GridWidth, GridHeight, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
+            mixedUnits = new NativeArray<Entity>(MixedGroupUnitCount, Allocator.Temp);
+            int index = 0;
+            for (int i = 0; i < MixedInfantryCount; i++)
+            {
+                mixedUnits[index++] = CreatePathfindingUnit(
+                    em,
+                    factionId: 0,
+                    startCell: new int2(18, 34 + i),
+                    goalCell: new int2(172, 156 + i),
+                    usesVehicleMotion: false,
+                    manualGroupMember: true);
+            }
+
+            for (int i = 0; i < MixedVehicleCount; i++)
+            {
+                mixedUnits[index++] = CreatePathfindingUnit(
+                    em,
+                    factionId: 0,
+                    startCell: new int2(24, 42 + i * 4),
+                    goalCell: new int2(178, 164 + i * 4),
+                    usesVehicleMotion: true,
+                    manualGroupMember: true);
+            }
+
+            SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
+            var stopwatch = Stopwatch.StartNew();
+            long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+            int updates = RunPathfindingUntilComplete(world, em, pathSystem, mixedUnits);
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+            stopwatch.Stop();
+
+            AssertPathCreated(em, mixedUnits, "Mixed infantry/vehicle group pathfinding should produce paths for every selected unit.");
+            if (captureDiagnostics)
+                Assert.IsEmpty(capturedDiagnostics, "Mixed infantry/vehicle pathfinding should not emit freeze/path diagnostics with default disabled flags.");
+
+            int pathPoolCells = em.GetComponentData<PathPoolComponent>(gridEntity).Cells.Length;
+            Assert.Greater(pathPoolCells, 0, "Mixed infantry/vehicle pathfinding should write path cells into the shared path pool.");
+
+            ScenarioResult result = new(
+                updates,
+                stopwatch.Elapsed.TotalMilliseconds,
+                allocatedBytes,
+                pathPoolCells,
+                CountPathRequests(em),
+                capturedDiagnostics?.Count ?? 0);
+            Debug.Log($"[UnitPathfindingFocusedPerformanceValidation] mixedGroup updates={result.Updates} elapsedMs={result.ElapsedMs:F2} allocatedBytes={result.AllocatedBytes} pathPoolCells={result.PathPoolCells} remainingRequests={result.RemainingRequests}");
+            return result;
+        }
+        finally
+        {
+            if (captureDiagnostics)
+                Application.logMessageReceived -= logCapture;
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            if (mixedUnits.IsCreated)
+                mixedUnits.Dispose();
             if (world.IsCreated)
                 world.Dispose();
             if (pathPool.IsCreated)
@@ -150,15 +318,44 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         return MaxPathfindingUpdates;
     }
 
+    private static int RunPathfindingUntilComplete(World world, EntityManager em, SystemHandle pathSystem, NativeArray<Entity> units)
+    {
+        for (int update = 1; update <= MaxPathfindingUpdates; update++)
+        {
+            world.SetTime(new TimeData(update * 0.016d, 0.016f));
+            pathSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+            if (AllHavePaths(em, units))
+                return update;
+
+            // UnitPathfindingSystem schedules a detached job that is intentionally
+            // not chained into state.Dependency. Give editor batchmode worker
+            // threads a tiny window so this validation measures current path
+            // behavior instead of a tight-loop starvation artifact.
+            System.Threading.Thread.Sleep(1);
+        }
+
+        Assert.Fail($"Pathfinding did not complete focused requests within {MaxPathfindingUpdates} updates. remainingRequests={CountPathRequests(em)}");
+        return MaxPathfindingUpdates;
+    }
+
     private static bool AllHavePaths(EntityManager em, NativeArray<Entity> manualUnits, Entity longDistanceVehicle)
     {
-        for (int i = 0; i < manualUnits.Length; i++)
+        if (!AllHavePaths(em, manualUnits))
+            return false;
+
+        return em.HasComponent<UnitPathRange>(longDistanceVehicle);
+    }
+
+    private static bool AllHavePaths(EntityManager em, NativeArray<Entity> units)
+    {
+        for (int i = 0; i < units.Length; i++)
         {
-            if (!em.HasComponent<UnitPathRange>(manualUnits[i]))
+            if (!em.HasComponent<UnitPathRange>(units[i]))
                 return false;
         }
 
-        return em.HasComponent<UnitPathRange>(longDistanceVehicle);
+        return true;
     }
 
     private static void AssertPathCreated(EntityManager em, NativeArray<Entity> units, string message)
@@ -269,23 +466,83 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         return query.CalculateEntityCount();
     }
 
-    private static void WriteReport(int updates, double elapsedMs, long allocatedBytes, int pathPoolCells, int remainingRequests, int diagnosticsCount)
+    private readonly struct ScenarioResult
+    {
+        public readonly int Updates;
+        public readonly double ElapsedMs;
+        public readonly long AllocatedBytes;
+        public readonly int PathPoolCells;
+        public readonly int RemainingRequests;
+        public readonly int DiagnosticsCount;
+
+        public ScenarioResult(int updates, double elapsedMs, long allocatedBytes, int pathPoolCells, int remainingRequests, int diagnosticsCount)
+        {
+            Updates = updates;
+            ElapsedMs = elapsedMs;
+            AllocatedBytes = allocatedBytes;
+            PathPoolCells = pathPoolCells;
+            RemainingRequests = remainingRequests;
+            DiagnosticsCount = diagnosticsCount;
+        }
+    }
+
+    private static double CalculateAverage(double[] sortedSamples)
+    {
+        double total = 0d;
+        for (int i = 0; i < sortedSamples.Length; i++)
+            total += sortedSamples[i];
+        return sortedSamples.Length > 0 ? total / sortedSamples.Length : 0d;
+    }
+
+    private static double PercentileSorted(double[] sortedSamples, double percentile)
+    {
+        if (sortedSamples == null || sortedSamples.Length == 0)
+            return 0d;
+
+        int index = (int)math.ceil(percentile * sortedSamples.Length) - 1;
+        index = math.clamp(index, 0, sortedSamples.Length - 1);
+        return sortedSamples[index];
+    }
+
+    private static void WriteReport(ScenarioResult result)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
         var json = new StringBuilder();
         json.AppendLine("{");
         AppendJson(json, "result", "completed", comma: true);
-        AppendJson(json, "updates", updates, comma: true);
-        AppendJson(json, "elapsedMs", elapsedMs, comma: true);
-        AppendJson(json, "allocatedBytesCurrentThread", allocatedBytes, comma: true);
+        AppendJson(json, "updates", result.Updates, comma: true);
+        AppendJson(json, "elapsedMs", result.ElapsedMs, comma: true);
+        AppendJson(json, "allocatedBytesCurrentThread", result.AllocatedBytes, comma: true);
         AppendJson(json, "manualInfantryRequests", ManualInfantryCount, comma: true);
         AppendJson(json, "longDistanceVehicleRequests", 1, comma: true);
-        AppendJson(json, "pathPoolCells", pathPoolCells, comma: true);
-        AppendJson(json, "remainingRequests", remainingRequests, comma: true);
-        AppendJson(json, "pathDiagnosticsCount", diagnosticsCount, comma: false);
+        AppendJson(json, "pathPoolCells", result.PathPoolCells, comma: true);
+        AppendJson(json, "remainingRequests", result.RemainingRequests, comma: true);
+        AppendJson(json, "pathDiagnosticsCount", result.DiagnosticsCount, comma: false);
         json.AppendLine("}");
         File.WriteAllText(ReportPath, json.ToString());
-        Debug.Log($"[UnitPathfindingFocusedPerformanceValidation] report={ReportPath} updates={updates} elapsedMs={elapsedMs:F2} allocatedBytes={allocatedBytes} pathPoolCells={pathPoolCells} remainingRequests={remainingRequests}");
+        Debug.Log($"[UnitPathfindingFocusedPerformanceValidation] report={ReportPath} updates={result.Updates} elapsedMs={result.ElapsedMs:F2} allocatedBytes={result.AllocatedBytes} pathPoolCells={result.PathPoolCells} remainingRequests={result.RemainingRequests}");
+    }
+
+    private static void WritePerformanceReport(double averageMs, double p95Ms, double p99Ms, double maxMs, long maxAllocatedBytes, int maxUpdates, int maxPathPoolCells)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
+        var json = new StringBuilder();
+        json.AppendLine("{");
+        AppendJson(json, "result", "completed", comma: true);
+        AppendJson(json, "warmupScenarios", WarmupScenarioCount, comma: true);
+        AppendJson(json, "measuredScenarios", MeasuredScenarioCount, comma: true);
+        AppendJson(json, "averageMs", averageMs, comma: true);
+        AppendJson(json, "p95Ms", p95Ms, comma: true);
+        AppendJson(json, "p99Ms", p99Ms, comma: true);
+        AppendJson(json, "maxMs", maxMs, comma: true);
+        AppendJson(json, "maxAllocatedBytesCurrentThread", maxAllocatedBytes, comma: true);
+        AppendJson(json, "maxUpdates", maxUpdates, comma: true);
+        AppendJson(json, "maxPathPoolCells", maxPathPoolCells, comma: true);
+        AppendJson(json, "manualInfantryRequests", ManualInfantryCount, comma: true);
+        AppendJson(json, "longDistanceVehicleRequests", 1, comma: false);
+        json.AppendLine("}");
+        File.WriteAllText(ReportPath, json.ToString());
+        Debug.Log($"[UnitPathfindingFocusedPerformanceValidation] report={ReportPath} averageMs={averageMs:F2} p95Ms={p95Ms:F2} p99Ms={p99Ms:F2} maxMs={maxMs:F2} maxAllocatedBytes={maxAllocatedBytes}");
     }
 
     private static void AppendJson(StringBuilder json, string name, string value, bool comma)

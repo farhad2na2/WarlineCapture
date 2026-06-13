@@ -73,6 +73,17 @@ public static class BuildDrawerCategoryFormatter
 
 public sealed class BuildDrawerCatalogQuerySystem
 {
+    private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingMetadata;
+    private TryResolveUiUnitCatalogMetadata _tryResolveUnitMetadata;
+
+    public void ConfigureMetadataResolvers(
+        TryResolveUiBuildingCatalogMetadata tryResolveBuildingMetadata,
+        TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
+    {
+        _tryResolveBuildingMetadata = tryResolveBuildingMetadata;
+        _tryResolveUnitMetadata = tryResolveUnitMetadata;
+    }
+
     public void Collect(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
@@ -115,33 +126,33 @@ public sealed class BuildDrawerCatalogQuerySystem
         if (prefab == null)
             return false;
 
-        BuildingDefinitionAuthoring buildingAuthoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-        if (buildingAuthoring != null && buildingAuthoring.ConfiguredCanRequest)
+        if (TryResolveBuildingMetadata(prefab, out UiBuildingCatalogMetadata buildingMetadata) &&
+            buildingMetadata.CanRequest)
         {
-            item = BuildBuildingItem(prefab, buildingAuthoring);
+            item = BuildBuildingItem(prefab, buildingMetadata);
             return true;
         }
 
-        UnitGridAuthoring unitAuthoring = prefab.GetComponent<UnitGridAuthoring>();
-        if (unitAuthoring != null && unitAuthoring.CanRequest)
+        if (TryResolveUnitMetadata(prefab, out UiUnitCatalogMetadata unitMetadata) &&
+            unitMetadata.CanRequest)
         {
-            bool isAir = unitAuthoring.IsAirUnit;
-            bool isVehicle = IsVehicle(prefab, unitAuthoring);
-            item = BuildUnitItem(prefab, unitAuthoring, ResolveUnitCategory(isAir, isVehicle), isVehicle, isAir);
+            bool isAir = unitMetadata.IsAirUnit;
+            bool isVehicle = IsVehicle(prefab, unitMetadata);
+            item = BuildUnitItem(prefab, unitMetadata, ResolveUnitCategory(isAir, isVehicle), isVehicle, isAir);
             return true;
         }
 
         return TryResolveFromConfiguredLists(unitPrefabRegistryConfig, buildingPlacementConfig, prefab, out item);
     }
 
-    private static void CollectBuildings(
+    private void CollectBuildings(
         BuildingPlacementSystemConfig buildingPlacementConfig,
         List<BuildDrawerCatalogItem> results)
     {
         AppendBuildings(buildingPlacementConfig, results);
     }
 
-    private static void AppendBuildings(
+    private void AppendBuildings(
         BuildingPlacementSystemConfig buildingPlacementConfig,
         List<BuildDrawerCatalogItem> results)
     {
@@ -157,31 +168,33 @@ public sealed class BuildDrawerCatalogQuerySystem
             if (prefab == null)
                 continue;
 
-            BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-            if (authoring == null || !authoring.ConfiguredCanRequest)
+            if (!TryResolveBuildingMetadata(prefab, out UiBuildingCatalogMetadata metadata) ||
+                !metadata.CanRequest)
+            {
                 continue;
+            }
 
-            results.Add(BuildBuildingItem(prefab, authoring));
+            results.Add(BuildBuildingItem(prefab, metadata));
         }
     }
 
-    private static BuildDrawerCatalogItem BuildBuildingItem(GameObject prefab, BuildingDefinitionAuthoring authoring)
+    private static BuildDrawerCatalogItem BuildBuildingItem(GameObject prefab, UiBuildingCatalogMetadata metadata)
     {
         return new BuildDrawerCatalogItem(
             BuildDrawerCategory.Buildings,
             prefab,
-            string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName) ? prefab.name : authoring.ConfiguredDisplayName,
-            ResolveBuildingTypeLabel(authoring),
-            ResolveBuildingDescription(authoring),
-            authoring.ConfiguredPrice,
-            authoring.ConfiguredProductionDurationSeconds,
-            authoring.ConfiguredFootprintCells,
-            authoring.ConfiguredPortraitSprite,
-            authoring.ConfiguredPortraitCardSprite,
-            authoring.ConfiguredPortraitActionSprite);
+            string.IsNullOrWhiteSpace(metadata.DisplayName) ? prefab.name : metadata.DisplayName,
+            ResolveBuildingTypeLabel(metadata),
+            ResolveBuildingDescription(metadata),
+            metadata.Price,
+            metadata.ProductionDurationSeconds,
+            metadata.FootprintCells,
+            metadata.Portrait,
+            metadata.CardPortrait,
+            metadata.ActionPortrait);
     }
 
-    private static void CollectUnits(
+    private void CollectUnits(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         BuildDrawerCategory category,
         List<BuildDrawerCatalogItem> results)
@@ -198,21 +211,23 @@ public sealed class BuildDrawerCatalogQuerySystem
             if (prefab == null)
                 continue;
 
-            UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-            if (authoring == null || !authoring.CanRequest)
+            if (!TryResolveUnitMetadata(prefab, out UiUnitCatalogMetadata metadata) ||
+                !metadata.CanRequest)
+            {
                 continue;
+            }
 
-            bool isAir = authoring.IsAirUnit;
-            bool isVehicle = IsVehicle(prefab, authoring);
+            bool isAir = metadata.IsAirUnit;
+            bool isVehicle = IsVehicle(prefab, metadata);
             BuildDrawerCategory resolvedCategory = ResolveUnitCategory(isAir, isVehicle);
             if (resolvedCategory != category)
                 continue;
 
-            results.Add(BuildUnitItem(prefab, authoring, resolvedCategory, isVehicle, isAir));
+            results.Add(BuildUnitItem(prefab, metadata, resolvedCategory, isVehicle, isAir));
         }
     }
 
-    private static void AppendUnits(
+    private void AppendUnits(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         List<BuildDrawerCatalogItem> results)
     {
@@ -228,20 +243,22 @@ public sealed class BuildDrawerCatalogQuerySystem
             if (prefab == null)
                 continue;
 
-            UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-            if (authoring == null || !authoring.CanRequest)
+            if (!TryResolveUnitMetadata(prefab, out UiUnitCatalogMetadata metadata) ||
+                !metadata.CanRequest)
+            {
                 continue;
+            }
 
-            bool isAir = authoring.IsAirUnit;
-            bool isVehicle = IsVehicle(prefab, authoring);
+            bool isAir = metadata.IsAirUnit;
+            bool isVehicle = IsVehicle(prefab, metadata);
             BuildDrawerCategory category = ResolveUnitCategory(isAir, isVehicle);
-            results.Add(BuildUnitItem(prefab, authoring, category, isVehicle, isAir));
+            results.Add(BuildUnitItem(prefab, metadata, category, isVehicle, isAir));
         }
     }
 
     private static BuildDrawerCatalogItem BuildUnitItem(
         GameObject prefab,
-        UnitGridAuthoring authoring,
+        UiUnitCatalogMetadata metadata,
         BuildDrawerCategory category,
         bool isVehicle,
         bool isAir)
@@ -249,15 +266,15 @@ public sealed class BuildDrawerCatalogQuerySystem
         return new BuildDrawerCatalogItem(
             category,
             prefab,
-            ResolveUnitDisplayName(prefab, authoring),
-            ResolveUnitTypeLabel(prefab, authoring, isVehicle, isAir),
-            ResolveUnitDescription(prefab, authoring),
-            authoring.Price,
-            authoring.ProductionDurationSeconds,
-            authoring.GetConfiguredFootprintCells(),
-            authoring.PortraitSprite,
-            authoring.PortraitCardSprite,
-            authoring.PortraitActionSprite);
+            ResolveUnitDisplayName(prefab, metadata),
+            ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
+            ResolveUnitDescription(prefab, metadata),
+            metadata.Price,
+            metadata.ProductionDurationSeconds,
+            metadata.FootprintCells,
+            metadata.Portrait,
+            metadata.CardPortrait,
+            metadata.ActionPortrait);
     }
 
     private static BuildDrawerCategory ResolveUnitCategory(bool isAir, bool isVehicle)
@@ -268,16 +285,13 @@ public sealed class BuildDrawerCatalogQuerySystem
         return isVehicle ? BuildDrawerCategory.Vehicles : BuildDrawerCategory.Soldiers;
     }
 
-    private static bool IsVehicle(GameObject prefab, UnitGridAuthoring authoring)
+    private static bool IsVehicle(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null)
-        {
-            Vector2Int footprint = authoring.GetConfiguredFootprintCells();
-            if (footprint.x > 1 || footprint.y > 1 || authoring.SoldierTransportCapacity > 0)
-                return true;
-        }
+        Vector2Int footprint = metadata.FootprintCells;
+        if (footprint.x > 1 || footprint.y > 1 || metadata.SoldierTransportCapacity > 0)
+            return true;
 
-        string identity = $"{prefab?.name} {authoring?.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         return ContainsIdentityToken(identity, "Veh") ||
                ContainsIdentityToken(identity, "Truck") ||
                ContainsIdentityToken(identity, "Tank") ||
@@ -286,24 +300,24 @@ public sealed class BuildDrawerCatalogQuerySystem
                ContainsIdentityToken(identity, "Drone");
     }
 
-    private static string ResolveUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
+    private static string ResolveUnitDisplayName(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return authoring.ConfiguredDisplayName;
+        if (!string.IsNullOrWhiteSpace(metadata.DisplayName))
+            return metadata.DisplayName;
 
         return prefab != null ? prefab.name : "Unit";
     }
 
-    private static string ResolveUnitTypeLabel(GameObject prefab, UnitGridAuthoring authoring, bool isVehicle, bool isAir)
+    private static string ResolveUnitTypeLabel(GameObject prefab, UiUnitCatalogMetadata metadata, bool isVehicle, bool isAir)
     {
-        bool isTransport = IsTransportUnit(prefab, authoring);
+        bool isTransport = IsTransportUnit(prefab, metadata);
         if (isAir)
             return isTransport ? "TRANSPORT AIRCRAFT" : "AIRCRAFT";
 
         if (isVehicle)
             return isTransport ? "TRANSPORT VEHICLE" : "VEHICLE";
 
-        string identity = $"{prefab?.name} {authoring?.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         if (ContainsIdentityToken(identity, "Civilian"))
             return "CIVILIAN";
 
@@ -320,37 +334,31 @@ public sealed class BuildDrawerCatalogQuerySystem
         return "SOLDIER";
     }
 
-    private static bool IsTransportUnit(GameObject prefab, UnitGridAuthoring authoring)
+    private static bool IsTransportUnit(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null &&
-            (authoring.SoldierTransportCapacity > 0 || authoring.IsProductionTransportUnit))
-        {
+        if (metadata.SoldierTransportCapacity > 0 || metadata.IsProductionTransportUnit)
             return true;
-        }
 
-        string identity = $"{prefab?.name} {authoring?.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         return ContainsIdentityToken(identity, "Transport") ||
                ContainsIdentityToken(identity, "Truck") ||
                ContainsIdentityToken(identity, "Cargo") ||
                ContainsIdentityToken(identity, "Tanker");
     }
 
-    private static string ResolveUnitDescription(GameObject prefab, UnitGridAuthoring authoring)
+    private static string ResolveUnitDescription(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription))
-            return authoring.ConfiguredDescription;
+        if (!string.IsNullOrWhiteSpace(metadata.Description))
+            return metadata.Description;
 
-        string name = ResolveUnitDisplayName(prefab, authoring);
+        string name = ResolveUnitDisplayName(prefab, metadata);
         return string.IsNullOrWhiteSpace(name) ? "No description configured." : $"{name} has no configured production description.";
     }
 
-    private static string ResolveBuildingTypeLabel(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingTypeLabel(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring == null)
-            return "STRUCTURE";
-
-        string identity = authoring.ConfiguredDisplayName;
-        if (authoring.ConfiguredIsWall ||
+        string identity = metadata.DisplayName;
+        if (metadata.IsWall ||
             ContainsIdentityToken(identity, "Wall") ||
             ContainsIdentityToken(identity, "Fence") ||
             ContainsIdentityToken(identity, "Barrier"))
@@ -358,8 +366,7 @@ public sealed class BuildDrawerCatalogQuerySystem
             return "WALL";
         }
 
-        if (authoring.ConfiguredRole == BuildingRole.TentRefugee ||
-            ContainsIdentityToken(identity, "Tent"))
+        if (metadata.IsTentRefugee || ContainsIdentityToken(identity, "Tent"))
         {
             return "TENT";
         }
@@ -367,10 +374,10 @@ public sealed class BuildDrawerCatalogQuerySystem
         return "STRUCTURE";
     }
 
-    private static string ResolveBuildingDescription(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingDescription(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription))
-            return authoring.ConfiguredDescription;
+        if (!string.IsNullOrWhiteSpace(metadata.Description))
+            return metadata.Description;
 
         return "No description configured.";
     }
@@ -389,7 +396,7 @@ public sealed class BuildDrawerCatalogQuerySystem
             : string.Compare(left.DisplayName, right.DisplayName, System.StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool TryResolveFromConfiguredLists(
+    private bool TryResolveFromConfiguredLists(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         GameObject prefab,
@@ -406,10 +413,10 @@ public sealed class BuildDrawerCatalogQuerySystem
                 if (candidate != prefab)
                     continue;
 
-                BuildingDefinitionAuthoring authoring = candidate != null ? candidate.GetComponent<BuildingDefinitionAuthoring>() : null;
-                if (authoring != null && authoring.ConfiguredCanRequest)
+                if (TryResolveBuildingMetadata(candidate, out UiBuildingCatalogMetadata metadata) &&
+                    metadata.CanRequest)
                 {
-                    item = BuildBuildingItem(candidate, authoring);
+                    item = BuildBuildingItem(candidate, metadata);
                     return true;
                 }
             }
@@ -426,12 +433,12 @@ public sealed class BuildDrawerCatalogQuerySystem
                 if (candidate != prefab)
                     continue;
 
-                UnitGridAuthoring authoring = candidate != null ? candidate.GetComponent<UnitGridAuthoring>() : null;
-                if (authoring != null && authoring.CanRequest)
+                if (TryResolveUnitMetadata(candidate, out UiUnitCatalogMetadata metadata) &&
+                    metadata.CanRequest)
                 {
-                    bool isAir = authoring.IsAirUnit;
-                    bool isVehicle = IsVehicle(candidate, authoring);
-                    item = BuildUnitItem(candidate, authoring, ResolveUnitCategory(isAir, isVehicle), isVehicle, isAir);
+                    bool isAir = metadata.IsAirUnit;
+                    bool isVehicle = IsVehicle(candidate, metadata);
+                    item = BuildUnitItem(candidate, metadata, ResolveUnitCategory(isAir, isVehicle), isVehicle, isAir);
                     return true;
                 }
             }
@@ -439,5 +446,19 @@ public sealed class BuildDrawerCatalogQuerySystem
 
         item = default;
         return false;
+    }
+
+    private bool TryResolveBuildingMetadata(GameObject prefab, out UiBuildingCatalogMetadata metadata)
+    {
+        metadata = default;
+        return _tryResolveBuildingMetadata != null &&
+               _tryResolveBuildingMetadata(prefab, out metadata);
+    }
+
+    private bool TryResolveUnitMetadata(GameObject prefab, out UiUnitCatalogMetadata metadata)
+    {
+        metadata = default;
+        return _tryResolveUnitMetadata != null &&
+               _tryResolveUnitMetadata(prefab, out metadata);
     }
 }

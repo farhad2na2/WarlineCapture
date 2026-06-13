@@ -97,7 +97,9 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
             tests.RenderingAssemblyMustNotReferenceAuthoringAssembly();
             tests.RenderingAssemblyMustNotReadAuthoringComponents();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=13");
+            tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
+            tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=15");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -186,6 +188,30 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Game.Authoring`. Composition and authoring assemblies own prefab authoring reads.");
+    }
+
+    [Test]
+    public void UiRuntimeAssemblyMustNotReferenceAuthoringAssembly()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Game.Authoring`. Composition can inject UI catalog metadata derived from authoring components.");
+    }
+
+    [Test]
+    public void UiRuntimeAssemblyMustNotReadAuthoringComponents()
+    {
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
+            .SelectMany(path => FindAuthoringComponentReferences(path))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` must not read authoring components. Use UI catalog metadata delegates injected by composition.");
     }
 
     [Test]

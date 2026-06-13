@@ -2,7 +2,6 @@
     "name": "Game.UI.Runtime",
     "rootNamespace": "",
     "references": [
-        "Game.Authoring",
         "Game.Components",
         "Game.Configs",
         "Game.Runtime",

@@ -26,6 +26,9 @@ public sealed class UIShellContentView : MonoBehaviour
     private MatchHudFooterContentView _matchHudFooterContentView;
     private MatchHudRightQuickRailView _rightQuickRailView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
+    private ArmoryContentListView _armoryContentListView;
+    private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingCatalogMetadata;
+    private TryResolveUiUnitCatalogMetadata _tryResolveUnitCatalogMetadata;
     private Button _rightQuickRailBuildButton;
     private Button _buildDrawerPopupCloseButton;
     private UnityAction _buildDrawerPopupCloseButtonListener;
@@ -109,6 +112,16 @@ public sealed class UIShellContentView : MonoBehaviour
         BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
     }
 
+    public void ConfigureCatalogMetadataResolvers(
+        TryResolveUiBuildingCatalogMetadata tryResolveBuildingMetadata,
+        TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
+    {
+        _tryResolveBuildingCatalogMetadata = tryResolveBuildingMetadata;
+        _tryResolveUnitCatalogMetadata = tryResolveUnitMetadata;
+        BindArmoryCatalogMetadataResolvers(_armoryContentListView);
+        BindBuildDrawerCatalogMetadataResolvers(_buildDrawerPopupInstance);
+    }
+
     public bool TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView view)
     {
         view = _matchHudSelectionPanelView;
@@ -179,7 +192,7 @@ public sealed class UIShellContentView : MonoBehaviour
         ClearRegion(UIShellRegionId.PopupLayer);
     }
 
-    private static void WireArmorySections(GameObject middle, GameObject right)
+    private void WireArmorySections(GameObject middle, GameObject right)
     {
         if (middle == null || right == null)
             return;
@@ -189,6 +202,8 @@ public sealed class UIShellContentView : MonoBehaviour
         if (listView == null || rightView == null)
             return;
 
+        _armoryContentListView = listView;
+        BindArmoryCatalogMetadataResolvers(listView);
         listView.SetInspectionPanel(rightView.InspectionPanel);
     }
 
@@ -413,6 +428,9 @@ public sealed class UIShellContentView : MonoBehaviour
         if (presenter == null)
             return;
 
+        presenter.ConfigureCatalogMetadataResolvers(
+            _tryResolveBuildingCatalogMetadata,
+            _tryResolveUnitCatalogMetadata);
         presenter.BindRuntimeCommands(
             _buildingUiCommandSystem,
             _buildingUiCommandContext,
@@ -421,6 +439,24 @@ public sealed class UIShellContentView : MonoBehaviour
         presenter.BindRuntimeQueries(
             _buildingUiQuerySystem,
             _buildingUiQueryContext);
+    }
+
+    private void BindArmoryCatalogMetadataResolvers(ArmoryContentListView listView)
+    {
+        listView?.ConfigureCatalogMetadataResolvers(
+            _tryResolveBuildingCatalogMetadata,
+            _tryResolveUnitCatalogMetadata);
+    }
+
+    private void BindBuildDrawerCatalogMetadataResolvers(GameObject popup)
+    {
+        if (popup == null)
+            return;
+
+        BuildDrawerCatalogRuntimeView presenter = popup.GetComponent<BuildDrawerCatalogRuntimeView>();
+        presenter?.ConfigureCatalogMetadataResolvers(
+            _tryResolveBuildingCatalogMetadata,
+            _tryResolveUnitCatalogMetadata);
     }
 
     private void UnbindBuildDrawerPopupCloseButton()

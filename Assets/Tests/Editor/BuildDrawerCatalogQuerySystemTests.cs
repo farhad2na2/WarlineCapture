@@ -16,6 +16,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     private readonly List<BuildDrawerCatalogItem> _results = new();
     private readonly BuildDrawerCatalogQuerySystem _query = new();
 
+    public BuildDrawerCatalogQuerySystemTests()
+    {
+        ConfigureCatalogMetadataResolvers(_query);
+    }
+
     public static void RunFocusedValidation()
     {
         int passed = 0;
@@ -239,6 +244,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view, "Build drawer popup must serialize BuildDrawerView on the root.");
         Assert.NotNull(presenter, "Build drawer popup must serialize BuildDrawerCatalogRuntimeView on the root.");
+        ConfigureCatalogMetadataResolvers(presenter);
         Assert.NotNull(view.ItemTemplate, "Build drawer must serialize its item template.");
         Assert.NotNull(view.ItemTemplate.SelectionButton, "Build drawer item template must expose a selection button.");
         Assert.NotNull(view.ItemTemplate.FrameImage, "Build drawer item template must expose a frame image for selected state.");
@@ -281,6 +287,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
         Assert.NotNull(view);
         Assert.NotNull(presenter);
+        ConfigureCatalogMetadataResolvers(presenter);
 
         SerializedObject presenterObject = new SerializedObject(presenter);
         UnitPrefabRegistryAuthoringConfig unitConfig = GetSerializedReference<UnitPrefabRegistryAuthoringConfig>(
@@ -378,7 +385,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         GameObject soldier = CreateUnit("Bomb Suit Specialist", true, false, Vector2Int.one, 0);
         unitConfig.UnitSpawnPrefabs.Add(soldier);
 
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext(
@@ -414,7 +421,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         GameObject vehicle = CreateUnit("Light Vehicle", true, false, new Vector2Int(2, 2), 0);
         unitConfig.UnitSpawnPrefabs.Add(vehicle);
 
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext(
@@ -454,7 +461,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         int requestedPrice = -1;
         bool requestedFocus = true;
         bool closed = false;
-        presenter.ConfigureForTests(view, null, buildingConfig);
+        ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
@@ -497,7 +504,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         int requestedPrice = -1;
         bool requestedFocus = true;
         bool closed = false;
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
@@ -553,7 +560,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             amount => true,
             amount => activePlacementCost = amount);
 
-        presenter.ConfigureForTests(view, null, buildingConfig);
+        ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateRealCommandContext(requestSystem, () => requestContext),
@@ -615,7 +622,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             world.EntityManager);
 
         bool closed = false;
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateRealCommandContext(requestSystem, () => requestContext),
@@ -670,7 +677,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         unitConfig.UnitSpawnPrefabs.Add(activePrefab);
         unitConfig.UnitSpawnPrefabs.Add(queuedPrefab);
         unitConfig.UnitSpawnPrefabs.Add(thirdPrefab);
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
 
         SerializedObject viewObject = new SerializedObject(view);
         GameObject productionPanel = GetSerializedReference<GameObject>(viewObject, "productionPanel");
@@ -768,7 +775,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         Sprite activePortrait = CreateTestSprite(Color.magenta);
         AssignUnitPortraitSprites(activePrefab, activePortrait);
         unitConfig.UnitSpawnPrefabs.Add(activePrefab);
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
 
         presenter.ApplyQueueSnapshotForTests(new[]
         {
@@ -816,7 +823,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         int cancelledBuildingId = -1;
         int cancelledPendingIndex = -1;
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext(
@@ -868,7 +875,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         unitConfig.UnitSpawnPrefabs.Add(activePrefab);
 
         var cancelled = new List<(int BuildingId, int PendingIndex)>();
-        presenter.ConfigureForTests(view, unitConfig, null);
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
             new BuildingUiCommandSystem(),
             CreateCommandContext(
@@ -928,7 +935,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         buildingConfig.Spawnables.Add(airport);
         buildingConfig.Spawnables.Add(barracks);
 
-        presenter.ConfigureForTests(view, null, buildingConfig);
+        ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.RefreshForTests();
 
         List<BuildDrawerItemView> activeRows = GetActiveCatalogItemRows(view);
@@ -1050,7 +1057,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
         buildingConfig.Spawnables.Add(CreateBuilding("Requestable Barracks", true, BuildingRole.MilitaryCamp, false));
-        presenter.ConfigureForTests(view, null, buildingConfig);
+        ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.RefreshForTests();
         Canvas.ForceUpdateCanvases();
 
@@ -1089,6 +1096,30 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         T asset = ScriptableObject.CreateInstance<T>();
         _createdObjects.Add(asset);
         return asset;
+    }
+
+    private static void ConfigurePresenterForTests(
+        BuildDrawerCatalogRuntimeView presenter,
+        BuildDrawerView view,
+        UnitPrefabRegistryAuthoringConfig unitRegistry,
+        BuildingPlacementSystemConfig buildingPlacement)
+    {
+        presenter.ConfigureForTests(view, unitRegistry, buildingPlacement);
+        ConfigureCatalogMetadataResolvers(presenter);
+    }
+
+    private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogRuntimeView presenter)
+    {
+        presenter.ConfigureCatalogMetadataResolvers(
+            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+    }
+
+    private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogQuerySystem query)
+    {
+        query.ConfigureMetadataResolvers(
+            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
     }
 
     private GameObject CreateBuilding(string displayName, bool canRequest, BuildingRole role, bool isWall)

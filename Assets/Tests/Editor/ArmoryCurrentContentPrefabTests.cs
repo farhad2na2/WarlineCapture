@@ -61,6 +61,9 @@ public sealed class ArmoryCurrentContentPrefabTests
         Assert.NotNull(list);
         Assert.NotNull(inspection);
 
+        list.ConfigureCatalogMetadataResolvers(
+            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
         list.SetInspectionPanel(inspection);
         list.RefreshForTests(ArmoryCatalogCategory.Characters);
 

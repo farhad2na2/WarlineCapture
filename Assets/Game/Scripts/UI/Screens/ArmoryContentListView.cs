@@ -59,6 +59,13 @@ public sealed class ArmoryContentListView : MonoBehaviour
         inspectionPanel = inspection;
     }
 
+    public void ConfigureCatalogMetadataResolvers(
+        TryResolveUiBuildingCatalogMetadata tryResolveBuildingMetadata,
+        TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
+    {
+        catalogQuerySystem.ConfigureMetadataResolvers(tryResolveBuildingMetadata, tryResolveUnitMetadata);
+    }
+
     public void SetInspectionPanel(ArmoryInspectionPanelView panel)
     {
         inspectionPanel = panel;

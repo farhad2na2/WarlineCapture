@@ -59,6 +59,12 @@ internal sealed class MenuBootstrapSystem
 
         if (view.ShellEcsPresentation != null)
             view.ShellEcsPresentation.Configure(view.ShellView);
+        if (view.ContentSystem != null)
+        {
+            view.ContentSystem.ConfigureCatalogMetadataResolvers(
+                UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+                UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+        }
         if (view.Router != null)
             view.Router.Initialize();
 

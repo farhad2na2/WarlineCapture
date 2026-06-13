@@ -87,6 +87,13 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         buildingPlacementConfig = buildingPlacement;
     }
 
+    public void ConfigureCatalogMetadataResolvers(
+        TryResolveUiBuildingCatalogMetadata tryResolveBuildingMetadata,
+        TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
+    {
+        _query.ConfigureMetadataResolvers(tryResolveBuildingMetadata, tryResolveUnitMetadata);
+    }
+
     public void SelectCategoryForTests(BuildDrawerCategory category)
     {
         SelectCategory(category);

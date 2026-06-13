@@ -83,6 +83,17 @@ public readonly struct ArmoryCatalogItem
 
 public sealed class ArmoryCatalogQuerySystem
 {
+    private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingMetadata;
+    private TryResolveUiUnitCatalogMetadata _tryResolveUnitMetadata;
+
+    public void ConfigureMetadataResolvers(
+        TryResolveUiBuildingCatalogMetadata tryResolveBuildingMetadata,
+        TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
+    {
+        _tryResolveBuildingMetadata = tryResolveBuildingMetadata;
+        _tryResolveUnitMetadata = tryResolveUnitMetadata;
+    }
+
     public void Collect(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
@@ -103,7 +114,7 @@ public sealed class ArmoryCatalogQuerySystem
         CollectUnitItems(unitPrefabRegistryConfig, category, results);
     }
 
-    private static void CollectUnitItems(
+    private void CollectUnitItems(
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig,
         ArmoryCatalogCategory category,
         List<ArmoryCatalogItem> results)
@@ -120,35 +131,37 @@ public sealed class ArmoryCatalogQuerySystem
             if (prefab == null)
                 continue;
 
-            UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-            bool isAir = authoring != null && authoring.IsAirUnit;
-            bool isVehicle = IsVehicle(prefab, authoring);
-            bool isTransport = IsTransportUnit(prefab, authoring);
+            if (!TryResolveUnitMetadata(prefab, out UiUnitCatalogMetadata metadata))
+                continue;
+
+            bool isAir = metadata.IsAirUnit;
+            bool isVehicle = IsVehicle(prefab, metadata);
+            bool isTransport = IsTransportUnit(prefab, metadata);
             if (!MatchesUnitCategory(category, isVehicle, isAir))
                 continue;
 
             results.Add(new ArmoryCatalogItem(
-                ResolveUnitDisplayName(prefab, authoring),
-                ResolveUnitTypeLabel(prefab, authoring, isVehicle, isAir),
-                ResolveUnitDescription(prefab, authoring),
-                ResolveUnitHealthValue(authoring),
-                ResolveUnitDamageValue(authoring),
-                ResolveUnitRangeValue(authoring),
-                ResolveUnitSpeedValue(authoring),
-                ResolveUnitMoveCapability(authoring, isVehicle, isAir, isTransport),
-                ResolveUnitPatrolCapability(prefab, authoring, isTransport),
-                ResolveUnitAttackCapability(authoring),
-                ResolveUnitHoldCapability(prefab, authoring, isAir),
-                authoring != null ? authoring.PortraitSprite : null,
-                authoring != null ? authoring.PortraitCardSprite : null,
-                authoring != null ? authoring.PortraitActionSprite : null,
+                ResolveUnitDisplayName(prefab, metadata),
+                ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
+                ResolveUnitDescription(prefab, metadata),
+                ResolveUnitHealthValue(metadata),
+                ResolveUnitDamageValue(metadata),
+                ResolveUnitRangeValue(metadata),
+                ResolveUnitSpeedValue(metadata),
+                ResolveUnitMoveCapability(isVehicle, isAir, isTransport),
+                ResolveUnitPatrolCapability(prefab, metadata, isTransport),
+                ResolveUnitAttackCapability(metadata),
+                ResolveUnitHoldCapability(prefab, metadata, isAir),
+                metadata.Portrait,
+                metadata.CardPortrait,
+                metadata.ActionPortrait,
                 category));
         }
 
         results.Sort(CompareItems);
     }
 
-    private static void CollectBuildingItems(
+    private void CollectBuildingItems(
         BuildingPlacementSystemConfig buildingPlacementConfig,
         List<ArmoryCatalogItem> results)
     {
@@ -164,39 +177,38 @@ public sealed class ArmoryCatalogQuerySystem
             if (prefab == null)
                 continue;
 
-            BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-            if (authoring == null || !authoring.ConfiguredCanRequest)
+            if (!TryResolveBuildingMetadata(prefab, out UiBuildingCatalogMetadata metadata) ||
+                !metadata.CanRequest)
+            {
                 continue;
+            }
 
             results.Add(new ArmoryCatalogItem(
-                string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName) ? prefab.name : authoring.ConfiguredDisplayName,
-                ResolveBuildingTypeLabel(authoring),
-                ResolveBuildingDescription(authoring),
-                ResolveBuildingHealthValue(authoring),
+                string.IsNullOrWhiteSpace(metadata.DisplayName) ? prefab.name : metadata.DisplayName,
+                ResolveBuildingTypeLabel(metadata),
+                ResolveBuildingDescription(metadata),
+                ResolveBuildingHealthValue(metadata),
                 "-",
-                ResolveBuildingRangeValue(authoring),
+                ResolveBuildingRangeValue(metadata),
                 "-",
-                ResolveBuildingMoveCapability(authoring),
+                ResolveBuildingMoveCapability(),
                 ResolveBuildingPatrolCapability(),
-                ResolveBuildingAttackCapability(authoring),
-                ResolveBuildingHoldCapability(authoring),
-                authoring.ConfiguredPortraitSprite,
-                authoring.ConfiguredPortraitCardSprite,
-                authoring.ConfiguredPortraitActionSprite,
+                ResolveBuildingAttackCapability(),
+                ResolveBuildingHoldCapability(metadata),
+                metadata.Portrait,
+                metadata.CardPortrait,
+                metadata.ActionPortrait,
                 ArmoryCatalogCategory.Buildings));
         }
 
         results.Sort(CompareItems);
     }
 
-    private static bool IsVehicle(GameObject prefab, UnitGridAuthoring authoring)
+    private static bool IsVehicle(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null)
-        {
-            Vector2Int footprint = authoring.GetConfiguredFootprintCells();
-            if (footprint.x > 1 || footprint.y > 1)
-                return true;
-        }
+        Vector2Int footprint = metadata.FootprintCells;
+        if (footprint.x > 1 || footprint.y > 1)
+            return true;
 
         return prefab != null && prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
@@ -212,24 +224,24 @@ public sealed class ArmoryCatalogQuerySystem
         };
     }
 
-    private static string ResolveUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
+    private static string ResolveUnitDisplayName(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return authoring.ConfiguredDisplayName;
+        if (!string.IsNullOrWhiteSpace(metadata.DisplayName))
+            return metadata.DisplayName;
 
         return prefab != null ? prefab.name : "Unit";
     }
 
-    private static string ResolveUnitTypeLabel(GameObject prefab, UnitGridAuthoring authoring, bool isVehicle, bool isAir)
+    private static string ResolveUnitTypeLabel(GameObject prefab, UiUnitCatalogMetadata metadata, bool isVehicle, bool isAir)
     {
-        bool isTransport = IsTransportUnit(prefab, authoring);
+        bool isTransport = IsTransportUnit(prefab, metadata);
         if (isAir)
             return isTransport ? "TRANSPORT AIRCRAFT" : "AIRCRAFT";
 
         if (isVehicle)
             return isTransport ? "TRANSPORT VEHICLE" : "VEHICLE";
 
-        string identity = $"{prefab?.name} {authoring?.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         if (ContainsIdentityToken(identity, "Civilian"))
             return "CIVILIAN";
 
@@ -248,69 +260,59 @@ public sealed class ArmoryCatalogQuerySystem
         return "INFANTRY";
     }
 
-    private static bool IsTransportUnit(GameObject prefab, UnitGridAuthoring authoring)
+    private static bool IsTransportUnit(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null &&
-            (authoring.SoldierTransportCapacity > 0 || authoring.IsProductionTransportUnit))
-        {
+        if (metadata.SoldierTransportCapacity > 0 || metadata.IsProductionTransportUnit)
             return true;
-        }
 
-        string identity = $"{prefab?.name} {authoring?.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         return ContainsIdentityToken(identity, "Transport") ||
                ContainsIdentityToken(identity, "Truck") ||
                ContainsIdentityToken(identity, "Cargo") ||
                ContainsIdentityToken(identity, "Tanker");
     }
 
-    private static string ResolveUnitDescription(GameObject prefab, UnitGridAuthoring authoring)
+    private static string ResolveUnitDescription(GameObject prefab, UiUnitCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription))
-            return authoring.ConfiguredDescription;
+        if (!string.IsNullOrWhiteSpace(metadata.Description))
+            return metadata.Description;
 
-        string name = ResolveUnitDisplayName(prefab, authoring);
+        string name = ResolveUnitDisplayName(prefab, metadata);
         return string.IsNullOrWhiteSpace(name)
             ? "No description configured."
             : $"{name} has no configured armory description.";
     }
 
-    private static string ResolveUnitHealthValue(UnitGridAuthoring authoring)
+    private static string ResolveUnitHealthValue(UiUnitCatalogMetadata metadata)
     {
-        return authoring != null ? FormatInt(authoring.ConfiguredMaxHealth) : "-";
+        return FormatInt(metadata.MaxHealth);
     }
 
-    private static string ResolveUnitDamageValue(UnitGridAuthoring authoring)
+    private static string ResolveUnitDamageValue(UiUnitCatalogMetadata metadata)
     {
-        if (authoring == null || !authoring.ConfiguredCanAttack || authoring.ConfiguredAttackDamage <= 0)
+        if (!metadata.CanAttack || metadata.AttackDamage <= 0)
             return "-";
 
-        return FormatInt(authoring.ConfiguredAttackDamage);
+        return FormatInt(metadata.AttackDamage);
     }
 
-    private static string ResolveUnitRangeValue(UnitGridAuthoring authoring)
+    private static string ResolveUnitRangeValue(UiUnitCatalogMetadata metadata)
     {
-        if (authoring == null || !authoring.ConfiguredCanAttack || authoring.ConfiguredAttackRange <= 0f)
+        if (!metadata.CanAttack || metadata.AttackRange <= 0f)
             return "-";
 
-        return FormatNumber(authoring.ConfiguredAttackRange);
+        return FormatNumber(metadata.AttackRange);
     }
 
-    private static string ResolveUnitSpeedValue(UnitGridAuthoring authoring)
+    private static string ResolveUnitSpeedValue(UiUnitCatalogMetadata metadata)
     {
-        return authoring != null && authoring.ConfiguredSpeed > 0f
-            ? FormatNumber(authoring.ConfiguredSpeed)
+        return metadata.Speed > 0f
+            ? FormatNumber(metadata.Speed)
             : "-";
     }
 
-    private static string ResolveUnitMoveCapability(
-        UnitGridAuthoring authoring,
-        bool isVehicle,
-        bool isAir,
-        bool isTransport)
+    private static string ResolveUnitMoveCapability(bool isVehicle, bool isAir, bool isTransport)
     {
-        if (authoring == null)
-            return "N/A";
-
         if (isAir)
             return isTransport ? "AIR CARGO" : "AIR";
 
@@ -322,55 +324,46 @@ public sealed class ArmoryCatalogQuerySystem
 
     private static string ResolveUnitPatrolCapability(
         GameObject prefab,
-        UnitGridAuthoring authoring,
+        UiUnitCatalogMetadata metadata,
         bool isTransport)
     {
-        if (authoring == null)
-            return "N/A";
-
-        string identity = $"{prefab?.name} {authoring.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         if (ContainsIdentityToken(identity, "Civilian"))
-            return authoring.ConfiguredAllowIdleWander ? "WANDER" : "N/A";
+            return metadata.AllowIdleWander ? "WANDER" : "N/A";
 
-        if (authoring.ConfiguredResourceHaulerBarrelCapacity > 0)
+        if (metadata.ResourceHaulerBarrelCapacity > 0)
             return "HAUL";
 
-        if (isTransport || authoring.SoldierTransportCapacity > 0)
+        if (isTransport || metadata.SoldierTransportCapacity > 0)
             return "BOARD";
 
         return "N/A";
     }
 
-    private static string ResolveUnitAttackCapability(UnitGridAuthoring authoring)
+    private static string ResolveUnitAttackCapability(UiUnitCatalogMetadata metadata)
     {
-        if (authoring == null || !authoring.ConfiguredCanAttack || authoring.ConfiguredAttackDamage <= 0)
+        if (!metadata.CanAttack || metadata.AttackDamage <= 0)
             return "UNARMED";
 
-        return $"DMG {FormatInt(authoring.ConfiguredAttackDamage)}";
+        return $"DMG {FormatInt(metadata.AttackDamage)}";
     }
 
     private static string ResolveUnitHoldCapability(
         GameObject prefab,
-        UnitGridAuthoring authoring,
+        UiUnitCatalogMetadata metadata,
         bool isAir)
     {
-        if (authoring == null)
-            return "N/A";
-
-        string identity = $"{prefab?.name} {authoring.ConfiguredDisplayName}";
+        string identity = $"{prefab?.name} {metadata.DisplayName}";
         if (ContainsIdentityToken(identity, "Civilian"))
             return "N/A";
 
         return isAir ? "LOITER" : "DEFEND";
     }
 
-    private static string ResolveBuildingTypeLabel(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingTypeLabel(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring == null)
-            return "STRUCTURE";
-
-        string identity = authoring.ConfiguredDisplayName;
-        if (authoring.ConfiguredIsWall ||
+        string identity = metadata.DisplayName;
+        if (metadata.IsWall ||
             ContainsIdentityToken(identity, "Wall") ||
             ContainsIdentityToken(identity, "Fence") ||
             ContainsIdentityToken(identity, "Barrier"))
@@ -378,8 +371,7 @@ public sealed class ArmoryCatalogQuerySystem
             return "WALL";
         }
 
-        if (authoring.ConfiguredRole == BuildingRole.TentRefugee ||
-            ContainsIdentityToken(identity, "Tent"))
+        if (metadata.IsTentRefugee || ContainsIdentityToken(identity, "Tent"))
         {
             return "TENT";
         }
@@ -387,30 +379,30 @@ public sealed class ArmoryCatalogQuerySystem
         return "STRUCTURE";
     }
 
-    private static string ResolveBuildingDescription(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingDescription(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription))
-            return authoring.ConfiguredDescription;
+        if (!string.IsNullOrWhiteSpace(metadata.Description))
+            return metadata.Description;
 
         return "No description configured.";
     }
 
-    private static string ResolveBuildingHealthValue(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingHealthValue(UiBuildingCatalogMetadata metadata)
     {
-        return authoring != null ? FormatInt(authoring.ConfiguredMaxHealth) : "-";
+        return FormatInt(metadata.MaxHealth);
     }
 
-    private static string ResolveBuildingRangeValue(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingRangeValue(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring == null || authoring.ConfiguredThreatDetectionRadiusCells <= 0)
+        if (metadata.ThreatDetectionRadiusCells <= 0)
             return "-";
 
-        return FormatInt(authoring.ConfiguredThreatDetectionRadiusCells);
+        return FormatInt(metadata.ThreatDetectionRadiusCells);
     }
 
-    private static string ResolveBuildingMoveCapability(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingMoveCapability()
     {
-        return authoring != null ? "STATIC" : "N/A";
+        return "STATIC";
     }
 
     private static string ResolveBuildingPatrolCapability()
@@ -418,29 +410,25 @@ public sealed class ArmoryCatalogQuerySystem
         return "N/A";
     }
 
-    private static string ResolveBuildingAttackCapability(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingAttackCapability()
     {
-        return authoring != null ? "NO WEAPON" : "N/A";
+        return "NO WEAPON";
     }
 
-    private static string ResolveBuildingHoldCapability(BuildingDefinitionAuthoring authoring)
+    private static string ResolveBuildingHoldCapability(UiBuildingCatalogMetadata metadata)
     {
-        if (authoring == null)
-            return "N/A";
-
-        if (authoring.ConfiguredThreatDetectionKind != ThreatDetectionKind.None &&
-            authoring.ConfiguredThreatDetectionRadiusCells > 0)
+        if (metadata.HasThreatDetection && metadata.ThreatDetectionRadiusCells > 0)
         {
-            return authoring.ConfiguredThreatDetectionKind == ThreatDetectionKind.Air ? "AIR WATCH" : "WATCH";
+            return metadata.DetectsAirThreats ? "AIR WATCH" : "WATCH";
         }
 
-        if (authoring.ConfiguredIsWall)
+        if (metadata.IsWall)
             return "FORTIFY";
 
-        if (authoring.ConfiguredRole == BuildingRole.TentRefugee)
+        if (metadata.IsTentRefugee)
             return "SHELTER";
 
-        if (authoring.ConfiguredProductionCount > 0)
+        if (metadata.ProductionCount > 0)
             return "PRODUCE";
 
         return "STATIC";
@@ -468,5 +456,19 @@ public sealed class ArmoryCatalogQuerySystem
     private static int CompareItems(ArmoryCatalogItem left, ArmoryCatalogItem right)
     {
         return string.Compare(left.DisplayName, right.DisplayName, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool TryResolveBuildingMetadata(GameObject prefab, out UiBuildingCatalogMetadata metadata)
+    {
+        metadata = default;
+        return _tryResolveBuildingMetadata != null &&
+               _tryResolveBuildingMetadata(prefab, out metadata);
+    }
+
+    private bool TryResolveUnitMetadata(GameObject prefab, out UiUnitCatalogMetadata metadata)
+    {
+        metadata = default;
+        return _tryResolveUnitMetadata != null &&
+               _tryResolveUnitMetadata(prefab, out metadata);
     }
 }

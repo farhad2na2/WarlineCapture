@@ -71,15 +71,21 @@ public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
     private int _renderLayer;
     private bool _initialized;
     private bool _hasQuery;
+    private TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
 
     public int LastDrawnCount { get; private set; }
     public int LastCulledCandidateCount { get; private set; }
     public int LastSourceKeyFallbackCandidateCount { get; private set; }
 
-    public void Init(Camera camera, int renderLayer, UnitPrefabRegistryAuthoringConfig registryConfig)
+    public void Init(
+        Camera camera,
+        int renderLayer,
+        UnitPrefabRegistryAuthoringConfig registryConfig,
+        TryGetUnitRenderingMetadataDelegate tryGetUnitRenderingMetadata = null)
     {
         _camera = camera;
         _renderLayer = ResolveRenderLayer(camera, renderLayer);
+        _tryGetUnitRenderingMetadata = tryGetUnitRenderingMetadata;
         _quadMesh = CreateBillboardQuad();
         _fallbackMaterial = CreateFallbackMaterial();
         if (_fallbackMaterial == null)
@@ -494,7 +500,7 @@ public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
         return style.DirectionMaterials[index] != null ? style.DirectionMaterials[index] : style.DirectionMaterials[0];
     }
 
-    private static void ResolveBaseSize(GameObject prefab, out float width, out float height)
+    private void ResolveBaseSize(GameObject prefab, out float width, out float height)
     {
         width = BaseCharacterWidth;
         height = BaseCharacterHeight;
@@ -507,18 +513,20 @@ public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
             height = Mathf.Max(height, meshHeight * 1.1f);
         }
 
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        if (authoring == null)
+        if (_tryGetUnitRenderingMetadata == null ||
+            !_tryGetUnitRenderingMetadata(prefab, out UnitRenderingMetadata metadata))
+        {
             return;
+        }
 
-        if (authoring.IsAirUnit)
+        if (metadata.IsAirUnit)
         {
             width = Mathf.Max(width, BaseAirWidth);
             height = Mathf.Max(height, BaseAirHeight);
             return;
         }
 
-        Vector2Int footprint = authoring.GetConfiguredFootprintCells();
+        Vector2Int footprint = metadata.FootprintCells;
         bool vehicleLike = footprint.x > 1 || footprint.y > 1;
         if (vehicleLike)
         {

@@ -970,9 +970,14 @@ internal sealed class MatchBootstrapSystem
         UnitAttackTraces = unitAttackTraces;
 
         var unitImpostors = new UnitImpostorRenderSystem();
-        unitImpostors.Init(WorldCamera, ownerLayer, BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
+        unitImpostors.Init(
+            WorldCamera,
+            ownerLayer,
+            BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null,
+            UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
         UnitImpostors = unitImpostors;
 
+        SharedPrefabPreviewCache.ConfigureUnitRenderingMetadataResolver(UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
         SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);
     }
 

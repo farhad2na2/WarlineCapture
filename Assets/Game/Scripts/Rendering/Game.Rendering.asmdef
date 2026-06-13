@@ -2,7 +2,6 @@
     "name": "Game.Rendering",
     "rootNamespace": "",
     "references": [
-        "Game.Authoring",
         "Game.Components",
         "Game.Configs",
         "Game.Rendering.Contracts",

@@ -77,6 +77,7 @@ public static class SharedPrefabPreviewCache
     private static Quaternion _buildingPreviewModelRotation = DefaultBuildingPreviewModelRotation;
     private static Vector3 _buildingPreviewCameraPosition = DefaultBuildingPreviewCameraPosition;
     private static Quaternion _buildingPreviewCameraRotation = DefaultBuildingPreviewCameraRotation;
+    private static TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
     public static int Revision => _revision;
 
     public static void RefreshConfig()
@@ -89,6 +90,11 @@ public static class SharedPrefabPreviewCache
     {
         _previewConfig = config;
         ApplyPreviewConfig(config);
+    }
+
+    public static void ConfigureUnitRenderingMetadataResolver(TryGetUnitRenderingMetadataDelegate tryGetUnitRenderingMetadata)
+    {
+        _tryGetUnitRenderingMetadata = tryGetUnitRenderingMetadata;
     }
 
     public static bool TryGetOrCreate(GameObject prefab, float distanceMultiplier, out RenderTexture texture)
@@ -456,8 +462,12 @@ public static class SharedPrefabPreviewCache
         if (animatorAuthoring == null || animatorAuthoring.animations == null || animatorAuthoring.animations.Count == 0)
             return;
 
-        UnitGridAuthoring authoring = previewInstance.GetComponent<UnitGridAuthoring>();
-        int animationIndex = ResolveConfiguredPreviewAnimationIndex(authoring, UnitAnimationKind.Idle, UnitAnimationKind.Walk, UnitAnimationKind.Aim);
+        IReadOnlyList<UnitAnimationKind> animationOrder =
+            _tryGetUnitRenderingMetadata != null &&
+            _tryGetUnitRenderingMetadata(previewInstance, out UnitRenderingMetadata metadata)
+                ? metadata.AnimationOrder
+                : null;
+        int animationIndex = ResolveConfiguredPreviewAnimationIndex(animationOrder, UnitAnimationKind.Idle, UnitAnimationKind.Walk, UnitAnimationKind.Aim);
         animationIndex = Mathf.Clamp(animationIndex, 0, animatorAuthoring.animations.Count - 1);
         MaterialAnimatorBake animation = animatorAuthoring.animations[animationIndex];
         int boneCount = Mathf.Max(1, animatorAuthoring.bonesCount);
@@ -489,21 +499,17 @@ public static class SharedPrefabPreviewCache
         }
     }
 
-    private static int ResolveConfiguredPreviewAnimationIndex(UnitGridAuthoring authoring, params UnitAnimationKind[] preferredKinds)
+    private static int ResolveConfiguredPreviewAnimationIndex(IReadOnlyList<UnitAnimationKind> animationOrder, params UnitAnimationKind[] preferredKinds)
     {
-        if (authoring != null)
+        if (animationOrder != null)
         {
-            IReadOnlyList<UnitAnimationKind> animationOrder = authoring.AnimationOrder;
-            if (animationOrder != null)
+            for (int preferredIndex = 0; preferredIndex < preferredKinds.Length; preferredIndex++)
             {
-                for (int preferredIndex = 0; preferredIndex < preferredKinds.Length; preferredIndex++)
+                UnitAnimationKind preferred = preferredKinds[preferredIndex];
+                for (int orderIndex = 0; orderIndex < animationOrder.Count; orderIndex++)
                 {
-                    UnitAnimationKind preferred = preferredKinds[preferredIndex];
-                    for (int orderIndex = 0; orderIndex < animationOrder.Count; orderIndex++)
-                    {
-                        if (animationOrder[orderIndex] == preferred)
-                            return (int)preferred + 1;
-                    }
+                    if (animationOrder[orderIndex] == preferred)
+                        return (int)preferred + 1;
                 }
             }
         }

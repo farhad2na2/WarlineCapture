@@ -95,7 +95,9 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=11");
+            tests.RenderingAssemblyMustNotReferenceAuthoringAssembly();
+            tests.RenderingAssemblyMustNotReadAuthoringComponents();
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=13");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -261,6 +263,30 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Runtime\"", StringComparison.Ordinal),
             "`Game.Rendering` must not reference `Game.Runtime`. Move shared renderer-facing data into contracts/configs/components instead of creating an assembly cycle.");
+    }
+
+    [Test]
+    public void RenderingAssemblyMustNotReferenceAuthoringAssembly()
+    {
+        string renderingAsmdefPath = Path.Combine(GameScriptsRoot, "Rendering/Game.Rendering.asmdef");
+        string asmdef = File.ReadAllText(renderingAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
+            "`Game.Rendering` must not reference `Game.Authoring`. Composition can inject rendering metadata derived from authoring components.");
+    }
+
+    [Test]
+    public void RenderingAssemblyMustNotReadAuthoringComponents()
+    {
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "Rendering"))
+            .SelectMany(path => FindAuthoringComponentReferences(path))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.Rendering` must not read authoring components. Use rendering metadata delegates injected by composition.");
     }
 
     [Test]
@@ -785,6 +811,21 @@ public sealed class ScriptArchitectureAlignmentContractTests
                 continue;
 
             yield return path;
+        }
+    }
+
+    private static IEnumerable<string> FindAuthoringComponentReferences(string path)
+    {
+        string normalized = NormalizePath(path);
+        string[] lines = File.ReadAllLines(path);
+        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        {
+            string line = lines[lineIndex];
+            if (line.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
+                line.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal))
+            {
+                yield return $"{normalized}:{lineIndex + 1} references authoring component: {line.Trim()}";
+            }
         }
     }
 

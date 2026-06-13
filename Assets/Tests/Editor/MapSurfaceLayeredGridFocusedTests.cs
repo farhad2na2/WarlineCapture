@@ -21,11 +21,12 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             tests.LayeredCellsDoNotPermitSurfaceJumpWithoutExplicitConnection();
             tests.RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation();
             tests.PerformanceValidationProbeKeepsSurfaceSamplingAllocationBounded();
+            tests.PathingValidationUsesTraversableLayerWhenFirstSampleIsBlocked();
             tests.MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain();
             tests.MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps();
             tests.MapSurfaceBakePrefersRoadHeightOverHigherTerrain();
             tests.MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps();
-            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=11");
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=12");
         }
         catch (System.Exception exception)
         {
@@ -174,6 +175,37 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             int2.zero,
             MapSurfaceMovementMask.Infantry,
             out _));
+    }
+
+    [Test]
+    public void PathingValidationUsesTraversableLayerWhenFirstSampleIsBlocked()
+    {
+        MapSurfaceSample blocker = Sample(new int2(0, 0), 100, 1, 2f, surfaceType: MapSurfaceType.Blocked);
+        MapSurfaceSample ground = Sample(new int2(0, 0), 101, 0, 0f, surfaceType: MapSurfaceType.Terrain);
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(1, 1),
+            new[]
+            {
+                new MapSurfaceCell { FirstSurfaceIndex = 0, SurfaceCount = 2, InlineSurfaceIndex = 0 }
+            },
+            new[] { blocker, ground },
+            Array.Empty<MapSurfaceConnection>());
+
+        var validationSystem = new MapSurfacePathingValidationSystem();
+        var grid = new GridConfig
+        {
+            Width = 1,
+            Height = 1,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+
+        Assert.IsTrue(
+            validationSystem.CanTraverse(scope.Surface, scope.Surface.HasSurfaceData, int2.zero, MapSurfaceMovementMask.TrackedVehicle),
+            "Pathing must use the traversable ground layer when a blocked mesh sample is stored first.");
+        Assert.IsTrue(
+            validationSystem.CanTraverseFootprint(scope.Surface, scope.Surface.HasSurfaceData, grid, int2.zero, new int2(1, 1), true),
+            "Vehicle footprint validation must agree with single-cell pathing over layered blocked/ground cells.");
     }
 
     [Test]

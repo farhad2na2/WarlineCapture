@@ -25,16 +25,22 @@ public readonly struct MapSurfacePathingValidationSystem
         if (surfaceCell.SurfaceCount == 0 || (uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
             return false;
 
-        MapSurfaceSample sample = blob.Samples[surfaceCell.FirstSurfaceIndex];
-        if ((sample.MovementMask & movementMask) == 0 ||
-            sample.SurfaceType == MapSurfaceType.Blocked ||
-            (sample.Flags & MapSurfaceFlags.Reserved) != 0)
-        {
+        int firstSurfaceIndex = surfaceCell.FirstSurfaceIndex;
+        int surfaceEnd = firstSurfaceIndex + surfaceCell.SurfaceCount;
+        if ((uint)surfaceEnd > (uint)blob.Samples.Length)
             return false;
-        }
 
         float maxSlopeDegrees = GetMaxSlopeForMovement(movementMask);
-        return maxSlopeDegrees > 0f && math.max(0f, sample.SlopeDegrees) <= maxSlopeDegrees;
+        if (maxSlopeDegrees <= 0f)
+            return false;
+
+        for (int i = firstSurfaceIndex; i < surfaceEnd; i++)
+        {
+            if (CanTraverseSample(blob.Samples[i], movementMask, maxSlopeDegrees))
+                return true;
+        }
+
+        return false;
     }
 
     public MapSurfaceMovementMask ResolveMovementMask(bool isVehicle)
@@ -84,5 +90,17 @@ public readonly struct MapSurfacePathingValidationSystem
             return MapSurfaceSlopeClassificationSystem.GentleSlopeDegrees;
 
         return 0f;
+    }
+
+    private static bool CanTraverseSample(MapSurfaceSample sample, MapSurfaceMovementMask movementMask, float maxSlopeDegrees)
+    {
+        if ((sample.MovementMask & movementMask) == 0 ||
+            sample.SurfaceType == MapSurfaceType.Blocked ||
+            (sample.Flags & MapSurfaceFlags.Reserved) != 0)
+        {
+            return false;
+        }
+
+        return math.max(0f, sample.SlopeDegrees) <= maxSlopeDegrees;
     }
 }

@@ -23,7 +23,9 @@ public sealed class UnitMovementBlockerValidationTests
             tests.InfantryMovementDoesNotStallOnOwnPreviousOccupancySnapshot();
             tests.VehicleConfiguredFootprintOverridesRenderedBounds();
             tests.AuthoredUsaTankPlacementsAreVehicleWalkableInBakedSurface();
+            tests.LoggedAuthoredUsaTankPlacementHasVehicleDepartureSurface();
             tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
+            tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
             tests.VehiclePathingCanDepartFromCurrentDynamicBlockedFootprint();
             tests.VehiclePathingStillRejectsNewDynamicBlockedFootprintCells();
             tests.PathRequestIgnoredOccupancyDefaultsToMovingUnitFootprint();
@@ -663,6 +665,91 @@ public sealed class UnitMovementBlockerValidationTests
     }
 
     [Test]
+    public void LoggedAuthoredUsaTankPlacementHasVehicleDepartureSurface()
+    {
+        const string vehicleConfigPath = "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset";
+        const string mapSurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
+        const string loggedSourcePath = "Map/Vehicles/Unit_Veh_Tank_USA/SM_Veh_Tank_USA_01 (1)";
+
+        MapVehiclePlacementConfig vehicleConfig = AssetDatabase.LoadAssetAtPath<MapVehiclePlacementConfig>(vehicleConfigPath);
+        MapSurfaceDataAsset mapSurfaceData = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(mapSurfacePath);
+
+        Assert.NotNull(vehicleConfig, $"Missing map vehicle placement config at {vehicleConfigPath}.");
+        Assert.NotNull(mapSurfaceData, $"Missing map surface data at {mapSurfacePath}.");
+        Assert.IsTrue(mapSurfaceData.TryCreateRuntimeBlobAsset(Allocator.Temp, out BlobAssetReference<MapSurfaceBlob> surfaceBlob));
+
+        try
+        {
+            MapVehiclePlacementConfigEntry loggedPlacement = null;
+            for (int i = 0; i < vehicleConfig.Placements.Count; i++)
+            {
+                MapVehiclePlacementConfigEntry placement = vehicleConfig.Placements[i];
+                if (placement == null ||
+                    placement.FactionId != 1 ||
+                    placement.Category != "Unit_Veh_Tank_USA" ||
+                    placement.SourcePath != loggedSourcePath)
+                {
+                    continue;
+                }
+
+                loggedPlacement = placement;
+                break;
+            }
+
+            Assert.NotNull(loggedPlacement, $"Could not find the logged stuck tank placement `{loggedSourcePath}`.");
+
+            ref MapSurfaceBlob surface = ref surfaceBlob.Value;
+            var grid = new GridConfig
+            {
+                Width = surface.Dimensions.x,
+                Height = surface.Dimensions.y,
+                CellSize = surface.CellSize,
+                Origin = surface.GridOrigin
+            };
+            var surfaceComponent = new MapSurfaceComponent
+            {
+                SurfaceBlob = surfaceBlob,
+                GridOrigin = surface.GridOrigin,
+                CellSize = surface.CellSize,
+                Dimensions = surface.Dimensions,
+                HasSurfaceData = 1,
+                HasLayeredCells = 1
+            };
+            var validation = new MapSurfacePathingValidationSystem();
+            int2 centerCell = GridUtils.WorldToCell(grid, new float3(loggedPlacement.WorldCenter.x, loggedPlacement.WorldCenter.y, loggedPlacement.WorldCenter.z));
+            int2 footprintSize = new(3, 3);
+            int2[] offsets =
+            {
+                new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+                new(1, 1), new(1, -1), new(-1, 1), new(-1, -1)
+            };
+
+            bool hasDeparture = false;
+            int2 firstValidDeparture = default;
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                int2 candidate = centerCell + offsets[i];
+                if (validation.CanTraverseFootprint(surfaceComponent, surfaceComponent.HasSurfaceData, grid, candidate, footprintSize, true))
+                {
+                    hasDeparture = true;
+                    firstValidDeparture = candidate;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(
+                hasDeparture,
+                $"Logged tank placement has no adjacent tracked-vehicle surface footprint. source={loggedSourcePath} center={centerCell}");
+            Assert.AreNotEqual(centerCell, firstValidDeparture);
+        }
+        finally
+        {
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
+        }
+    }
+
+    [Test]
     public void MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint()
     {
         var grid = new GridConfig
@@ -729,6 +816,83 @@ public sealed class UnitMovementBlockerValidationTests
             Assert.IsTrue(blocked.IsSet(adjacentIndex), "Adjacent blocker cells must not be cleared.");
             Assert.AreEqual(3, blockerCounts[adjacentIndex]);
             Assert.AreEqual(7, friendlyPassFactionIds[adjacentIndex]);
+        }
+        finally
+        {
+            friendlyPassFactionIds.Dispose();
+            blocked.Dispose();
+            blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers()
+    {
+        var grid = new GridConfig
+        {
+            Width = 8,
+            Height = 8,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+        int gridSize = grid.Width * grid.Height;
+        var blockerCounts = new NativeArray<int>(gridSize, Allocator.Temp);
+        var blocked = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Temp);
+
+        try
+        {
+            for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+                friendlyPassFactionIds[i] = 7;
+
+            int2 center = new(4, 4);
+            int2 footprint = new(3, 3);
+            int2 min = UnitFootprintUtility.GetMinCell(center, footprint) - new int2(1, 1);
+            int2 max = min + footprint + new int2(2, 2);
+            for (int y = min.y; y < max.y; y++)
+            {
+                for (int x = min.x; x < max.x; x++)
+                {
+                    int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
+                    blocked.Set(index, true);
+                    blockerCounts[index] = 2;
+                }
+            }
+
+            int adjacentOutsidePaddingIndex = GridUtils.CellToIndex(new int2(1, 1), grid.Width);
+            blocked.Set(adjacentOutsidePaddingIndex, true);
+            blockerCounts[adjacentOutsidePaddingIndex] = 3;
+
+            var blockerData = new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            };
+
+            int cleared = MapVehiclePlacementSpawnSystem.ClearRuntimeBlockersInFootprint(
+                grid,
+                ref blockerData,
+                center,
+                footprint,
+                UnitPathPlacementValidationSystem.VehicleOccupancyPaddingCells);
+
+            Assert.AreEqual(25, cleared, "Map-authored vehicles need a one-cell blocker-free departure pad around their footprint.");
+            for (int y = min.y; y < max.y; y++)
+            {
+                for (int x = min.x; x < max.x; x++)
+                {
+                    int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
+                    Assert.IsFalse(blocked.IsSet(index), $"Vehicle departure blocker was not cleared at {x},{y}.");
+                    Assert.AreEqual(0, blockerCounts[index], $"Vehicle departure blocker count was not cleared at {x},{y}.");
+                    Assert.AreEqual(byte.MaxValue, friendlyPassFactionIds[index], $"Vehicle departure pass id was not reset at {x},{y}.");
+                }
+            }
+
+            Assert.IsTrue(blocked.IsSet(adjacentOutsidePaddingIndex), "Blockers outside the one-cell departure pad must not be cleared.");
+            Assert.AreEqual(3, blockerCounts[adjacentOutsidePaddingIndex]);
+            Assert.AreEqual(7, friendlyPassFactionIds[adjacentOutsidePaddingIndex]);
         }
         finally
         {

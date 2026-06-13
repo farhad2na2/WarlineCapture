@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class SelectionRuntimeDiagnosticsSystem
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
-    public static readonly bool EnableMoveCommandTrace = true;
+    public static readonly bool EnableMoveCommandTrace = false;
 
     private const string SelectionClickPrefix = "[SelectionClick]";
     private const string MoveCommandTracePrefix = "[MoveCommandTrace]";

@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
 {
-    private const bool EnableDiagnostics = true;
+    private const bool EnableDiagnostics = false;
     private const double SlowLogThresholdSeconds = 0.01d;
     private const double SlowLogCooldownSeconds = 1d;
     private double _nextSlowLogAt;

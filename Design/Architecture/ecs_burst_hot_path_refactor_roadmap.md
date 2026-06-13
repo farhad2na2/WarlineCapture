@@ -85,10 +85,10 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 74 / 157 complete (47.1%).
+- Checklist progress: 78 / 157 complete (49.7%).
 - In progress: 12 / 157.
-- Remaining open: 71 / 157.
-- Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
+- Remaining open: 67 / 157.
+- Phase progress: 2 / 11 phases complete; 8 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
 ### Phase 0: Baseline And Safety Rails
@@ -847,7 +847,7 @@ Progress notes:
 
 ### Phase 5: AI Targeting, Squad, And Combat Optimization
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Reduce main-thread copies in AI steady state, especially targeting and combat orders.
@@ -863,9 +863,9 @@ Target areas:
 
 Implementation steps:
 - [x] Convert target scanning to chunk/job-based collection.
-- [ ] Build temporary native target/squad data only once per AI update tick when cross-query matching is required.
-- [ ] Reuse persistent native containers owned by the system where safe.
-- [ ] Batch combat/path/engage mutations through ECB.
+- [x] Build temporary native target/squad data only once per AI update tick when cross-query matching is required.
+- [x] Reuse persistent native containers owned by the system where safe.
+- [x] Batch combat/path/engage mutations through ECB.
 - [x] Keep authored AI config and policy unchanged.
 - [x] Keep diagnostics gated and outside hot loops.
 
@@ -874,7 +874,7 @@ Acceptance checks:
 - [x] AI targets valid enemies/buildings.
 - [x] AI combat orders still issue.
 - [x] No AI behavior regressions in existing EditMode tests.
-- [ ] AI steady-state frame/system timing improves or remains equal.
+- [x] AI steady-state frame/system timing improves or remains equal.
 
 Progress notes:
 - 2026-06-12: Removed the recurring `FactionControlEntry` temporary native-array snapshot from `AIBuildPlannerSystem`, `AIProductionSystem`, and `AISquadSystem`; all three now read the singleton control buffer directly like `AICombatOrderSystem`. Authored AI plan/config policy is unchanged. Focused validation passed:
@@ -918,6 +918,51 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `74 / 157 complete (47.1%)`, `12 / 157 in progress`, `71 / 157 open`.
+- 2026-06-13: Continued Phase 5 in `AIBuildPlannerSystem`. The build planner now collects faction economy records once per AI build tick with cached type handles, then reuses and updates that native record list while iterating plans. This removes the per-plan economy chunk rescan while preserving same-tick economy state for multiple plans from the same faction.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AIBuildPlannerValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-build-planner-economy-records-shadow.log`
+  - Log marker: `[AIBuildPlannerFocusedValidation] result=Passed tests=1`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-build-economy-records-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 5 one-pass temporary target/squad data checklist item.
+  - `git diff --check` passed.
+  - Progress snapshot is now `75 / 157 complete (47.8%)`, `12 / 157 in progress`, `70 / 157 open`.
+- 2026-06-13: Continued Phase 5 persistent-container cleanup in `AITargetingSystem`. Target diagnostic events now use a system-owned persistent `NativeList` cleared per target refresh and disposed in `OnDestroy`, instead of allocating a new `TempJob` list every AI targeting pass. Frame-specific target and priority chunk arrays remain temporary because they mirror the current query chunk state.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AITargetingValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-targeting-persistent-diagnostics-shadow.log`
+  - Log marker: `[AITargetingFocusedValidation] result=Passed tests=3`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-build-targeting-persistent-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `75 / 157 complete (47.8%)`, `12 / 157 in progress`, `70 / 157 open`.
+- 2026-06-13: Continued Phase 5 persistent-container cleanup in `AICombatOrderSystem`. Runtime building combat records now use a system-owned persistent `NativeList` cleared per combat evaluation and disposed in `OnDestroy`, instead of allocating a temporary record list whenever a breach context is needed. Frame-specific query chunk arrays remain temporary because they mirror the current chunk state.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AICombatOrderValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-combat-persistent-buildings-shadow.log`
+  - Log marker: `[AICombatOrderFocusedValidation] result=Passed tests=2`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-combat-persistent-buildings-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 5 persistent native-container checklist item. Remaining AI chunk arrays intentionally stay temporary because cached `ArchetypeChunk` arrays must reflect the current query state.
+  - `git diff --check` passed.
+  - Progress snapshot is now `76 / 157 complete (48.4%)`, `12 / 157 in progress`, `69 / 157 open`.
+- 2026-06-13: Continued Phase 5 combat/path/engage ECB cleanup in `AICombatOrderSystem`. Existing `EngageTarget`, `BaseBreachOrder`, `UnitTarget`, and `UnitPathRequest` writes now route through the same immediate `EntityCommandBuffer` used for AI combat add/remove operations, preserving same-frame playback while removing direct `EntityManager.SetComponentData` writes from the combat order path.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AICombatOrderValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-combat-ecb-engage-shadow.log`
+  - Log marker: `[AICombatOrderFocusedValidation] result=Passed tests=2`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-combat-ecb-engage-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 5 combat/path/engage ECB checklist item.
+  - `git diff --check` passed.
+  - Progress snapshot is now `77 / 157 complete (49.0%)`, `12 / 157 in progress`, `68 / 157 open`.
+- 2026-06-13: Completed Phase 5 timing acceptance by adding and running `AISteadyStatePerformanceValidation.RunBatchValidation`, a focused editor-only AI steady-state fixture covering squad formation, target selection, and combat-order issue across 160 enemy units, 48 player threat units, and 64 player buildings.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AISteadyStatePerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-ai-steady-state-performance-shadow.log`
+  - Log marker: `[AISteadyStatePerformanceValidation] result=Passed`.
+  - Report: `/private/tmp/warlinecapture-ai-steady-state-performance.json`.
+  - Metrics: `measuredFrames=180`, `squadCount=16`, `engageOrderCount=128`, `aiCombatOrderCount=128`, `averageMs=0.098`, `p95Ms=0.392`, `p99Ms=1.227`, `maxMs=3.254`, `allocatedBytesCurrentThread=0`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-steady-state-performance-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Completed the Phase 5 AI steady-state timing acceptance item and Phase 5 is now complete.
+  - Progress snapshot is now `78 / 157 complete (49.7%)`, `12 / 157 in progress`, `67 / 157 open`.
 
 ### Phase 6: Structural Change Cleanup
 

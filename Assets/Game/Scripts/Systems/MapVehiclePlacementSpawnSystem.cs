@@ -8,7 +8,7 @@ using UnityEngine;
 internal sealed class MapVehiclePlacementSpawnSystem
 {
     private const int MaxPlacementsPerUpdate = 32;
-    private const int ClearanceRefreshFrameCount = 16;
+    private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidationSystem.VehicleOccupancyPaddingCells;
     private const float UniformScaleEpsilon = 0.0001f;
 
     public delegate bool TryGetGridDataDelegate(
@@ -50,7 +50,6 @@ internal sealed class MapVehiclePlacementSpawnSystem
     private bool _warnedMissingConfig;
     private bool _warnedMissingPrefab;
     private int _nextPlacementIndex;
-    private int _clearanceRefreshFramesRemaining;
     private int _lastClearedBlockerCells;
     private uint _randomState = 0x6D2B79F5u;
 
@@ -123,7 +122,6 @@ internal sealed class MapVehiclePlacementSpawnSystem
         if (_nextPlacementIndex >= context.Config.Placements.Count)
         {
             _queued = true;
-            _clearanceRefreshFramesRemaining = ClearanceRefreshFrameCount;
             RefreshPlacementClearance(context);
             HideAuthoringVisuals(context);
         }
@@ -213,8 +211,7 @@ internal sealed class MapVehiclePlacementSpawnSystem
     private void RefreshPlacementClearance(Context context)
     {
         _lastClearedBlockerCells = 0;
-        if (_clearanceRefreshFramesRemaining <= 0 ||
-            context.Config == null ||
+        if (context.Config == null ||
             context.Config.Placements == null ||
             context.UnitPrefabContext.TryGetEntityManager == null ||
             !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
@@ -238,11 +235,10 @@ internal sealed class MapVehiclePlacementSpawnSystem
             }
 
             int2 centerCell = GridUtils.WorldToCell(grid, ToFloat3(placement.WorldCenter));
-            clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize);
+            clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize, VehicleDepartureClearancePaddingCells);
         }
 
         _lastClearedBlockerCells = clearedCells;
-        _clearanceRefreshFramesRemaining--;
     }
 
     private static bool TryResolvePlacementFootprint(
@@ -275,7 +271,8 @@ internal sealed class MapVehiclePlacementSpawnSystem
         in GridConfig grid,
         ref DynamicBlockerComponent blockerData,
         int2 centerCell,
-        int2 footprintSize)
+        int2 footprintSize,
+        int paddingCells = 0)
     {
         if (!blockerData.Blocked.IsCreated || grid.Width <= 0 || grid.Height <= 0)
             return 0;
@@ -283,8 +280,9 @@ internal sealed class MapVehiclePlacementSpawnSystem
         int2 clampedSize = UnitFootprintUtility.ClampSize(footprintSize);
         int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize);
         int2 max = min + clampedSize;
-        min = math.max(min, int2.zero);
-        max = math.min(max, new int2(grid.Width, grid.Height));
+        int padding = math.max(0, paddingCells);
+        min = math.max(min - new int2(padding, padding), int2.zero);
+        max = math.min(max + new int2(padding, padding), new int2(grid.Width, grid.Height));
 
         int clearedCells = 0;
         for (int y = min.y; y < max.y; y++)

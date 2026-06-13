@@ -25,6 +25,7 @@ public partial struct AITargetingSystem : ISystem
     private ComponentLookup<StaticGridBlocker> _staticGridBlockerLookup;
     private ComponentLookup<GridBlockerSize> _gridBlockerSizeLookup;
     private ComponentLookup<UnitResourceHauler> _resourceHaulerLookup;
+    private NativeList<TargetingDiagnosticEvent> _diagnosticEvents;
     private float _nextTargetRefreshTime;
 
     private enum TargetReason : byte
@@ -59,8 +60,15 @@ public partial struct AITargetingSystem : ISystem
         _staticGridBlockerLookup = state.GetComponentLookup<StaticGridBlocker>(true);
         _gridBlockerSizeLookup = state.GetComponentLookup<GridBlockerSize>(true);
         _resourceHaulerLookup = state.GetComponentLookup<UnitResourceHauler>(true);
+        _diagnosticEvents = new NativeList<TargetingDiagnosticEvent>(Allocator.Persistent);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        if (_diagnosticEvents.IsCreated)
+            _diagnosticEvents.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -92,7 +100,7 @@ public partial struct AITargetingSystem : ISystem
 
         using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.TempJob);
         using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.TempJob);
-        using NativeList<TargetingDiagnosticEvent> diagnosticEvents = new(Allocator.TempJob);
+        _diagnosticEvents.Clear();
 
         new AssignTargetsJob
         {
@@ -111,15 +119,15 @@ public partial struct AITargetingSystem : ISystem
             StaticGridBlockerLookup = _staticGridBlockerLookup,
             GridBlockerSizeLookup = _gridBlockerSizeLookup,
             ResourceHaulerLookup = _resourceHaulerLookup,
-            Diagnostics = diagnosticEvents
+            Diagnostics = _diagnosticEvents
         }.Run(_squadQuery);
 
         if (!shouldLog)
             return;
 
-        for (int i = 0; i < diagnosticEvents.Length; i++)
+        for (int i = 0; i < _diagnosticEvents.Length; i++)
         {
-            TargetingDiagnosticEvent diagnostic = diagnosticEvents[i];
+            TargetingDiagnosticEvent diagnostic = _diagnosticEvents[i];
             if (diagnostic.HasTarget == 0)
             {
                 EnqueueDiagnostic(ref state, diagnosticQueueEntity, $"[AITarget] faction={diagnostic.FactionId} squad={diagnostic.SquadId} result=NoTarget");

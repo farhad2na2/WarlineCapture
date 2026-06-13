@@ -56,6 +56,7 @@ public partial struct AIBuildPlannerSystem : ISystem
 
         EntityManager em = state.EntityManager;
         _entityType.Update(ref state);
+        _economyType.Update(ref state);
         using NativeArray<ArchetypeChunk> planChunks = _planQuery.ToArchetypeChunkArray(Allocator.Temp);
         using NativeList<Entity> planEntities = new(_planQuery.CalculateEntityCount(), Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < planChunks.Length; chunkIndex++)
@@ -64,130 +65,146 @@ public partial struct AIBuildPlannerSystem : ISystem
             planEntities.AddRange(entities);
         }
 
-        for (int i = 0; i < planEntities.Length; i++)
+        NativeList<FactionEconomyRecord> economyRecords = BuildFactionEconomyRecords();
+        try
         {
-            Entity planEntity = planEntities[i];
-            AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
-            if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
-                continue;
-
-            _economyType.Update(ref state);
-            if (!TryFindEconomyEntity(_economyQuery, _entityType, ref _economyType, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
-                continue;
-
-            ProcessCompletedSpawnRequests(ref state, boundaryEntity, planEntity, ref plan, ref economy, shouldLog);
-            em.SetComponentData(economyEntity, economy);
-
-            float interval = Mathf.Max(0.1f, plan.BuildIntervalSeconds);
-            if (now - plan.LastBuildTime < interval)
+            for (int i = 0; i < planEntities.Length; i++)
             {
-                em.SetComponentData(planEntity, plan);
-                continue;
-            }
-
-            DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
-            if (entries.Length == 0)
-            {
-                LogNoPlanIfNeeded(ref state, ref plan, now, shouldLog);
-                em.SetComponentData(planEntity, plan);
-                continue;
-            }
-
-            if (plan.BaseCenterCell.x <= 0 && plan.BaseCenterCell.y <= 0)
-                plan.BaseCenterCell = ResolveDefaultBaseCenter(plan.FactionId, grid);
-
-            bool handledDecision = false;
-            int attempts = math.max(1, entries.Length);
-            for (int attempt = 0; attempt < attempts; attempt++)
-            {
-                int entryIndex = PositiveModulo(plan.NextBuildIndex + attempt, entries.Length);
-                string buildingId = entries[entryIndex].BuildingId.ToString();
-                if (string.IsNullOrWhiteSpace(buildingId))
+                Entity planEntity = planEntities[i];
+                AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
+                if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                     continue;
 
-                if (TryGetOwnedBuildingCount(ref state, boundaryEntity, plan.FactionId, buildingId, out int ownedCount) &&
-                    ownedCount > 0)
+                if (!TryFindEconomyRecord(economyRecords, plan.FactionId, out int economyRecordIndex, out FactionEconomyRecord economyRecord))
                     continue;
 
-                handledDecision = true;
-                if (HasPendingSpawnRequest(ref state, boundaryEntity, plan.FactionId, buildingId))
+                Entity economyEntity = economyRecord.Entity;
+                FactionEconomy economy = economyRecord.Economy;
+                ProcessCompletedSpawnRequests(ref state, boundaryEntity, planEntity, ref plan, ref economy, shouldLog);
+                em.SetComponentData(economyEntity, economy);
+                economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyEntity, economy);
+
+                float interval = Mathf.Max(0.1f, plan.BuildIntervalSeconds);
+                if (now - plan.LastBuildTime < interval)
                 {
-                    plan.LastBuildTime = now;
-                    break;
+                    em.SetComponentData(planEntity, plan);
+                    continue;
                 }
 
-                if (!TryResolveSpawnableReadModel(ref state, boundaryEntity, buildingId, out BuildingConfiguredSpawnableReadModel spawnable) ||
-                    spawnable.CanRequest == 0)
+                DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
+                if (entries.Length == 0)
                 {
-                    plan.NextBuildIndex = entryIndex + 1;
+                    LogNoPlanIfNeeded(ref state, ref plan, now, shouldLog);
+                    em.SetComponentData(planEntity, plan);
+                    continue;
+                }
+
+                if (plan.BaseCenterCell.x <= 0 && plan.BaseCenterCell.y <= 0)
+                    plan.BaseCenterCell = ResolveDefaultBaseCenter(plan.FactionId, grid);
+
+                bool handledDecision = false;
+                int attempts = math.max(1, entries.Length);
+                for (int attempt = 0; attempt < attempts; attempt++)
+                {
+                    int entryIndex = PositiveModulo(plan.NextBuildIndex + attempt, entries.Length);
+                    string buildingId = entries[entryIndex].BuildingId.ToString();
+                    if (string.IsNullOrWhiteSpace(buildingId))
+                        continue;
+
+                    if (TryGetOwnedBuildingCount(ref state, boundaryEntity, plan.FactionId, buildingId, out int ownedCount) &&
+                        ownedCount > 0)
+                        continue;
+
+                    handledDecision = true;
+                    if (HasPendingSpawnRequest(ref state, boundaryEntity, plan.FactionId, buildingId))
+                    {
+                        plan.LastBuildTime = now;
+                        break;
+                    }
+
+                    if (!TryResolveSpawnableReadModel(ref state, boundaryEntity, buildingId, out BuildingConfiguredSpawnableReadModel spawnable) ||
+                        spawnable.CanRequest == 0)
+                    {
+                        plan.NextBuildIndex = entryIndex + 1;
+                        plan.LastBuildTime = now;
+                        if (shouldLog)
+                            EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
+                        break;
+                    }
+
+                    int cost = Mathf.Max(0, spawnable.Price);
+                    if (economy.Money < cost)
+                    {
+                        plan.LastBuildTime = now;
+                        if (shouldLog)
+                            EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName.ToString()} cost={cost} result=InsufficientFunds money={economy.Money}");
+                        break;
+                    }
+
+                    Vector2Int preferredOrigin = ResolvePreferredOrigin(plan.BaseCenterCell, entryIndex);
+                    EnqueueSpawnRequest(ref state, boundaryEntity, planEntity, plan.FactionId, buildingId, entryIndex, preferredOrigin, cost, spawnable.DisplayName);
                     plan.LastBuildTime = now;
                     if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
+                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName.ToString()} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Requested");
                     break;
                 }
 
-                int cost = Mathf.Max(0, spawnable.Price);
-                if (economy.Money < cost)
+                if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
                 {
-                    plan.LastBuildTime = now;
+                    plan.LastLogTime = now;
                     if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName.ToString()} cost={cost} result=InsufficientFunds money={economy.Money}");
-                    break;
+                    {
+                        TryGetFactionBuildingCount(ref state, boundaryEntity, plan.FactionId, out int ownedBuildings);
+                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={ownedBuildings}");
+                    }
                 }
 
-                Vector2Int preferredOrigin = ResolvePreferredOrigin(plan.BaseCenterCell, entryIndex);
-                EnqueueSpawnRequest(ref state, boundaryEntity, planEntity, plan.FactionId, buildingId, entryIndex, preferredOrigin, cost, spawnable.DisplayName);
-                plan.LastBuildTime = now;
-                if (shouldLog)
-                    EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName.ToString()} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Requested");
-                break;
+                em.SetComponentData(planEntity, plan);
             }
-
-            if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
-            {
-                plan.LastLogTime = now;
-                if (shouldLog)
-                {
-                    TryGetFactionBuildingCount(ref state, boundaryEntity, plan.FactionId, out int ownedBuildings);
-                    EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={ownedBuildings}");
-                }
-            }
-
-            em.SetComponentData(planEntity, plan);
+        }
+        finally
+        {
+            economyRecords.Dispose();
         }
 
     }
 
-    private static bool TryFindEconomyEntity(
-        EntityQuery economyQuery,
-        EntityTypeHandle entityType,
-        ref ComponentTypeHandle<FactionEconomy> economyType,
-        byte factionId,
-        out Entity entity,
-        out FactionEconomy economy)
+    private NativeList<FactionEconomyRecord> BuildFactionEconomyRecords()
     {
-        using NativeArray<ArchetypeChunk> chunks = economyQuery.ToArchetypeChunkArray(Allocator.Temp);
-
+        int count = _economyQuery.CalculateEntityCount();
+        NativeList<FactionEconomyRecord> records = new(count, Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = _economyQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
-
-            for (int i = 0; i < entities.Length; i++)
-            {
-                FactionEconomy candidate = economies[i];
-                if (candidate.FactionId != factionId)
-                    continue;
-
-                entity = entities[i];
-                economy = candidate;
-                return true;
-            }
+            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
+            NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref _economyType);
+            for (int i = 0; i < chunk.Count; i++)
+                records.Add(new FactionEconomyRecord(entities[i], economies[i]));
         }
 
-        entity = Entity.Null;
-        economy = default;
+        return records;
+    }
+
+    private static bool TryFindEconomyRecord(
+        NativeList<FactionEconomyRecord> records,
+        byte factionId,
+        out int index,
+        out FactionEconomyRecord record)
+    {
+        for (int i = 0; i < records.Length; i++)
+        {
+            FactionEconomyRecord candidate = records[i];
+            if (candidate.Economy.FactionId != factionId)
+                continue;
+
+            index = i;
+            record = candidate;
+            return true;
+        }
+
+        index = -1;
+        record = default;
         return false;
     }
 
@@ -469,5 +486,17 @@ public partial struct AIBuildPlannerSystem : ISystem
     private static FixedString128Bytes ToFixedString128(string value)
     {
         return new FixedString128Bytes(value ?? string.Empty);
+    }
+
+    private readonly struct FactionEconomyRecord
+    {
+        public FactionEconomyRecord(Entity entity, FactionEconomy economy)
+        {
+            Entity = entity;
+            Economy = economy;
+        }
+
+        public readonly Entity Entity;
+        public readonly FactionEconomy Economy;
     }
 }

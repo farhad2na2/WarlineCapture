@@ -16,6 +16,7 @@ public partial struct AICombatOrderSystem : ISystem
     private ComponentTypeHandle<RuntimeBuildingCombatInfo> _runtimeBuildingCombatInfoType;
     private ComponentTypeHandle<UnitHealth> _unitHealthType;
     private ComponentTypeHandle<LocalTransform> _localTransformType;
+    private NativeList<RuntimeBuildingCombatRecord> _runtimeBuildingCombatRecords;
     private float _nextEvaluationTime;
 
     private readonly struct RuntimeBuildingCombatRecord
@@ -91,9 +92,16 @@ public partial struct AICombatOrderSystem : ISystem
         _runtimeBuildingCombatInfoType = state.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
         _unitHealthType = state.GetComponentTypeHandle<UnitHealth>(true);
         _localTransformType = state.GetComponentTypeHandle<LocalTransform>(true);
+        _runtimeBuildingCombatRecords = new NativeList<RuntimeBuildingCombatRecord>(Allocator.Persistent);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        if (_runtimeBuildingCombatRecords.IsCreated)
+            _runtimeBuildingCombatRecords.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -115,73 +123,63 @@ public partial struct AICombatOrderSystem : ISystem
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
-        NativeList<RuntimeBuildingCombatRecord> runtimeBuildingRecords = default;
         RuntimeBuildingCombatData runtimeBuildings = default;
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
 
-        try
+        foreach (var (squadRef, squadEntity) in SystemAPI
+                     .Query<RefRW<AISquad>>()
+                     .WithAll<AISquadUnit>()
+                     .WithEntityAccess())
         {
-            foreach (var (squadRef, squadEntity) in SystemAPI
-                         .Query<RefRW<AISquad>>()
-                         .WithAll<AISquadUnit>()
-                         .WithEntityAccess())
+            AISquad squad = squadRef.ValueRO;
+            if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
+                continue;
+
+            if (squad.TargetEntity == Entity.Null ||
+                !em.Exists(squad.TargetEntity) ||
+                !em.HasComponent<UnitHealth>(squad.TargetEntity) ||
+                em.GetComponentData<UnitHealth>(squad.TargetEntity).Current <= 0)
             {
-                AISquad squad = squadRef.ValueRO;
-                if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
-                    continue;
-
-                if (squad.TargetEntity == Entity.Null ||
-                    !em.Exists(squad.TargetEntity) ||
-                    !em.HasComponent<UnitHealth>(squad.TargetEntity) ||
-                    em.GetComponentData<UnitHealth>(squad.TargetEntity).Current <= 0)
-                {
-                    continue;
-                }
-
-                if (now - squad.LastOrderTime < OrderRefreshSeconds && CountMembersNeedingOrder(em, squadEntity, squad) == 0)
-                    continue;
-
-                EnsureBreachContext(
-                    ref state,
-                    ref runtimeBuildingRecords,
-                    ref runtimeBuildings,
-                    ref gridBreachContext,
-                    ref breachContextCreated);
-
-                float3 targetPosition = ResolveTargetPosition(em, squad.TargetEntity, squad.TargetCell);
-                DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squadEntity);
-                int issued = 0;
-                for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
-                {
-                    Entity unit = members[memberIndex].Unit;
-                    if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
-                        continue;
-
-                    if (!hasEcb)
-                    {
-                        ecb = new EntityCommandBuffer(Allocator.Temp);
-                        hasEcb = true;
-                    }
-
-                    IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
-                    issued++;
-                }
-
-                if (issued <= 0)
-                    continue;
-
-                squad.LastOrderTime = now;
-                squad.LastLogTime = now;
-                squadRef.ValueRW = squad;
-                if (shouldLog)
-                    EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
+                continue;
             }
-        }
-        finally
-        {
-            if (runtimeBuildingRecords.IsCreated)
-                runtimeBuildingRecords.Dispose();
+
+            if (now - squad.LastOrderTime < OrderRefreshSeconds && CountMembersNeedingOrder(em, squadEntity, squad) == 0)
+                continue;
+
+            EnsureBreachContext(
+                ref state,
+                ref runtimeBuildings,
+                ref gridBreachContext,
+                ref breachContextCreated);
+
+            float3 targetPosition = ResolveTargetPosition(em, squad.TargetEntity, squad.TargetCell);
+            DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squadEntity);
+            int issued = 0;
+            for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
+            {
+                Entity unit = members[memberIndex].Unit;
+                if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
+                    continue;
+
+                if (!hasEcb)
+                {
+                    ecb = new EntityCommandBuffer(Allocator.Temp);
+                    hasEcb = true;
+                }
+
+                IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
+                issued++;
+            }
+
+            if (issued <= 0)
+                continue;
+
+            squad.LastOrderTime = now;
+            squad.LastLogTime = now;
+            squadRef.ValueRW = squad;
+            if (shouldLog)
+                EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
         }
 
         if (hasEcb)
@@ -193,7 +191,6 @@ public partial struct AICombatOrderSystem : ISystem
 
     private void EnsureBreachContext(
         ref SystemState state,
-        ref NativeList<RuntimeBuildingCombatRecord> runtimeBuildingRecords,
         ref RuntimeBuildingCombatData runtimeBuildings,
         ref GridBreachContext gridBreachContext,
         ref bool breachContextCreated)
@@ -206,8 +203,7 @@ public partial struct AICombatOrderSystem : ISystem
         _unitHealthType.Update(ref state);
         _localTransformType.Update(ref state);
 
-        int buildingCount = _runtimeBuildingCombatQuery.CalculateEntityCount();
-        runtimeBuildingRecords = new NativeList<RuntimeBuildingCombatRecord>(buildingCount, Allocator.Temp);
+        _runtimeBuildingCombatRecords.Clear();
         using NativeArray<ArchetypeChunk> chunks = _runtimeBuildingCombatQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
@@ -219,7 +215,7 @@ public partial struct AICombatOrderSystem : ISystem
 
             for (int i = 0; i < entities.Length; i++)
             {
-                runtimeBuildingRecords.Add(new RuntimeBuildingCombatRecord(
+                _runtimeBuildingCombatRecords.Add(new RuntimeBuildingCombatRecord(
                     entities[i],
                     infos[i],
                     healths[i],
@@ -227,7 +223,7 @@ public partial struct AICombatOrderSystem : ISystem
             }
         }
 
-        runtimeBuildings = new RuntimeBuildingCombatData(runtimeBuildingRecords);
+        runtimeBuildings = new RuntimeBuildingCombatData(_runtimeBuildingCombatRecords);
         gridBreachContext = TryGetGridBreachContext(ref state, out GridBreachContext foundGridContext)
             ? foundGridContext
             : default;
@@ -353,7 +349,7 @@ public partial struct AICombatOrderSystem : ISystem
             };
 
             if (em.HasComponent<EngageTarget>(unit))
-                em.SetComponentData(unit, order);
+                ecb.SetComponent(unit, order);
             else
                 ecb.AddComponent(unit, order);
             if (!em.HasComponent<AICombatOrderTag>(unit))
@@ -375,7 +371,7 @@ public partial struct AICombatOrderSystem : ISystem
             };
 
             if (em.HasComponent<BaseBreachOrder>(unit))
-                em.SetComponentData(unit, breachOrder);
+                ecb.SetComponent(unit, breachOrder);
             else
                 ecb.AddComponent(unit, breachOrder);
         }
@@ -700,12 +696,12 @@ public partial struct AICombatOrderSystem : ISystem
     private static void SetPathRequest(EntityManager em, EntityCommandBuffer ecb, Entity entity, int2 goal)
     {
         if (em.HasComponent<UnitTarget>(entity))
-            em.SetComponentData(entity, new UnitTarget { Cell = goal });
+            ecb.SetComponent(entity, new UnitTarget { Cell = goal });
         else
             ecb.AddComponent(entity, new UnitTarget { Cell = goal });
 
         if (em.HasComponent<UnitPathRequest>(entity))
-            em.SetComponentData(entity, new UnitPathRequest { Goal = goal });
+            ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
         else
             ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
     }

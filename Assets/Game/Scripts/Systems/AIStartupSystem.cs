@@ -132,9 +132,6 @@ public sealed class AIStartupSystem
 
     private bool ShouldQueueAIConfigDiagnostics()
     {
-        if (Application.isBatchMode)
-            return true;
-
         return _runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
     }
 

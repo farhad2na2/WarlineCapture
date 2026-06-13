@@ -401,7 +401,7 @@ public sealed class RtsSelectionInputSystem
             removed++;
         }
 
-        if (removed > 0)
+        if (removed > 0 && SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                 $"pendingMoveRequestsCleared removed={removed} frame={Time.frameCount}");
 
@@ -434,8 +434,12 @@ public sealed class RtsSelectionInputSystem
             ScreenPosition = ToFloat2(screenPosition),
             HasScreenPosition = 1
         });
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+        }
+
         return queued;
     }
 

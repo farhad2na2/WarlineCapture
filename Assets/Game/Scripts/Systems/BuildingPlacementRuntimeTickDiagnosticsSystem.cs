@@ -70,6 +70,11 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
         }
     }
 
+    public static Context CreateContext(Func<int> getRuntimeBuildingCount, Action<string> log)
+    {
+        return new Context(getRuntimeBuildingCount, log);
+    }
+
     public void LogIfSlow(Context context, Timing timing)
     {
         double now = Time.realtimeSinceStartupAsDouble;

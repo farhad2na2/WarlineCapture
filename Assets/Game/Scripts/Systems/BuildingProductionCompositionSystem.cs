@@ -38,7 +38,12 @@ internal sealed class BuildingProductionCompositionSystem
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 cost),
             (building, productionIndex, spawnUnitPrefab) =>
-                TryQueuePlayerUnitProduction(source, productionSource, building, productionIndex, spawnUnitPrefab),
+                source.BuildingProductionContextSystem.TryQueuePlayerUnitProduction(
+                    productionSource,
+                    building,
+                    productionIndex,
+                    spawnUnitPrefab,
+                    Time.time),
             buildingId => source.RuntimeBuildingSystem.SelectBuilding(buildingId),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
             () => runtimeSource.RefreshBuildingMarkerVisibility?.Invoke(),
@@ -62,24 +67,5 @@ internal sealed class BuildingProductionCompositionSystem
             runtimeSource.GetEffectivePlacementRect,
             source.PrepareTransportDropVisual);
         return productionSource;
-    }
-
-    private static bool TryQueuePlayerUnitProduction(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingProductionContextSystem.Source productionSource,
-        RuntimeBuildingEntity building,
-        int productionIndex,
-        GameObject spawnUnitPrefab)
-    {
-        if (!productionSource.TryGetEntityManager(out EntityManager em))
-            return false;
-
-        return source.BuildingProductionSystem.TryQueuePlayerUnitFromBuilding(
-            source.BuildingProductionContextSystem.CreateProductionQueueContext(productionSource),
-            building,
-            productionIndex,
-            spawnUnitPrefab,
-            em,
-            Time.time);
     }
 }

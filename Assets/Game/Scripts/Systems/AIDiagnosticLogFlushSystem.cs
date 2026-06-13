@@ -40,10 +40,8 @@ public partial struct AIDiagnosticLogFlushSystem : ISystem
 
     private bool ShouldFlushDiagnostics(ref SystemState state)
     {
-        if (Application.isBatchMode)
-            return true;
-
-        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+        return InitialUnitsRuntimeState.VerboseAILogs ||
+            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 }

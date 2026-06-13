@@ -118,11 +118,14 @@ public partial struct AICombatOrderSystem : ISystem
         EntityManager em = state.EntityManager;
         EntityCommandBuffer ecb = default;
         bool hasEcb = false;
+        bool shouldLog = ShouldQueueDiagnostics(ref state);
+        if (shouldLog)
+            EnsureDiagnosticLogQueue(ref state);
+
         bool hasControls = SystemAPI.HasSingleton<FactionControlConfigTag>();
         DynamicBuffer<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
-        bool shouldLog = ShouldQueueDiagnostics(ref state);
         RuntimeBuildingCombatData runtimeBuildings = default;
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
@@ -760,29 +763,30 @@ public partial struct AICombatOrderSystem : ISystem
 
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
-        if (Application.isBatchMode)
-            return false;
-
-        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+        return InitialUnitsRuntimeState.VerboseAILogs ||
+            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 
     private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
     {
-        EntityManager em = state.EntityManager;
-        Entity queueEntity;
         if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
-        {
-            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
-            em.SetName(queueEntity, "AIDiagnosticLogQueue");
-            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
-        }
-        else
-        {
-            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
-        }
+            return;
 
+        EntityManager em = state.EntityManager;
+        Entity queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
         DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
         logs.Add(new AIDiagnosticLogComponent { Message = message });
+    }
+
+    private void EnsureDiagnosticLogQueue(ref SystemState state)
+    {
+        if (!_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+            return;
+
+        EntityManager em = state.EntityManager;
+        Entity queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+        em.SetName(queueEntity, "AIDiagnosticLogQueue");
+        em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
     }
 }

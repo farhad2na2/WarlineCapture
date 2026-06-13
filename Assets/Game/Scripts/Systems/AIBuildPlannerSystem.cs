@@ -447,10 +447,8 @@ public partial struct AIBuildPlannerSystem : ISystem
 
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
-        if (Application.isBatchMode)
-            return false;
-
-        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+        return InitialUnitsRuntimeState.VerboseAILogs ||
+            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 

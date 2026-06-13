@@ -42,13 +42,8 @@ internal sealed class BuildingRuntimeTickCompositionSystem
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
-            CreateRuntimeTickDiagnosticsContext(source));
-    }
-
-    private static BuildingPlacementRuntimeTickDiagnosticsSystem.Context CreateRuntimeTickDiagnosticsContext(BuildingGameplayCompositionSourceSystem source)
-    {
-        return new BuildingPlacementRuntimeTickDiagnosticsSystem.Context(
-            () => source.RuntimeBuildingSystem.Count,
-            Debug.Log);
+            BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext(
+                () => source.RuntimeBuildingSystem.Count,
+                Debug.Log));
     }
 }

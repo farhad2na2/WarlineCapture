@@ -112,6 +112,13 @@ internal sealed class BuildingPlacementQuerySystem
         return $"{placement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
     }
 
+    public float GetActivePlacementDurationSeconds(BuildingPlacementInputSystem.IPlacementState placement)
+    {
+        return placement?.Definition != null
+            ? placement.Definition.ProductionDurationSeconds
+            : 0f;
+    }
+
     public string GetSelectedBuildingLabel(Context context)
     {
         if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)

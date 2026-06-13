@@ -3,7 +3,6 @@ using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 [UpdateAfter(typeof(AISquadSystem))]
 public partial struct AITargetingSystem : ISystem
@@ -140,10 +139,8 @@ public partial struct AITargetingSystem : ISystem
 
     private bool ShouldQueueDiagnostics(ref SystemState state)
     {
-        if (Application.isBatchMode)
-            return true;
-
-        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+        return InitialUnitsRuntimeState.VerboseAILogs ||
+            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
             SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 

@@ -307,6 +307,25 @@ internal sealed class BuildingProductionContextSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
+    public bool TryQueuePlayerUnitProduction(
+        Source source,
+        RuntimeBuildingEntity building,
+        int productionIndex,
+        GameObject spawnUnitPrefab,
+        float now)
+    {
+        if (!source.TryGetEntityManager(out EntityManager entityManager))
+            return false;
+
+        return source.ProductionSystem.TryQueuePlayerUnitFromBuilding(
+            CreateProductionQueueContext(source),
+            building,
+            productionIndex,
+            spawnUnitPrefab,
+            entityManager,
+            now);
+    }
+
     public BuildingResourceHaulerBridgeSystem.Context CreateResourceHaulerBridgeContext(Source source)
     {
         return new BuildingResourceHaulerBridgeSystem.Context(

@@ -19,8 +19,8 @@ Scanned root:
 - `Assets/Game/Scripts/Systems`
 
 Observed:
-- 723 system source files.
-- 38 system files currently use `[BurstCompile]`.
+- 731 system source files.
+- 41 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
 - 23 files have `OnUpdate` and no `[BurstCompile]`.
 - 0 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count after the `CustomGameStartupSystem` startup-boundary cleanup slice.
@@ -85,10 +85,10 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 125 / 157 complete (79.6%).
-- In progress: 1 / 157.
-- Remaining open: 31 / 157.
-- Phase progress: 9 / 11 phases complete; 1 in progress; 1 not started.
+- Checklist progress: 154 / 157 complete (98.1%).
+- In progress: 0 / 157.
+- Remaining open: 3 / 157.
+- Phase progress: 10 / 11 phases complete; 1 in progress; 0 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
 ### Phase 0: Baseline And Safety Rails
@@ -115,7 +115,7 @@ Implementation steps:
 - [x] Add an allowlist for systems that are intentionally managed.
 
 Acceptance checks:
-- [ ] Full EditMode suite passes.
+- [x] Full EditMode suite passes.
 - [x] Explicit full-editor validation runner passes for non-explicit editor tests that do not require Unity TestRunner log scope.
 - [x] Baseline report exists under `Design/AgentReports`.
 - [x] The roadmap records runtime baseline numbers and validation command used.
@@ -1609,7 +1609,7 @@ Progress notes:
 
 ### Phase 9: Managed Boundary Cleanup
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Make it obvious which systems are intentionally managed and prevent accidental performance debt from hiding there.
@@ -1617,7 +1617,7 @@ Make it obvious which systems are intentionally managed and prevent accidental p
 Implementation steps:
 - [x] Name and document managed boundary systems clearly.
 - [x] Ensure managed systems do not own gameplay policy if they are presentation/binding boundaries.
-- [~] Move data-only logic out of managed composition classes into ECS systems or stateless utilities.
+- [x] Move data-only logic out of managed composition classes into ECS systems or stateless utilities.
 - [x] Keep config projection at startup and ECS-native data during runtime.
 - [x] Update architecture docs with the Burst/managed-boundary rule.
 
@@ -1722,43 +1722,202 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving runtime tick diagnostics context creation out of `BuildingRuntimeTickCompositionSystem` and into `BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext`. Runtime tick composition now only wires the runtime-building count and logging delegates into the diagnostics boundary.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-runtime-tick-diagnostics-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the player-unit production queue handoff out of `BuildingProductionCompositionSystem` and into `BuildingProductionContextSystem.TryQueuePlayerUnitProduction`. Production composition now only supplies the current timestamp and delegates the entity-manager/queue-context handoff to the production context boundary.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-ecs-burst-building-production-composition-queue-main.log`
+    - Log marker: `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-production-queue-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
+  - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
+- 2026-06-13: Closed the Phase 9 data-only composition cleanup after moving active-placement duration reads from `BuildingUiCompositionSystem` to `BuildingPlacementQuerySystem.GetActivePlacementDurationSeconds`. Composition scans now show no `DefaultGameObjectInjectionWorld`, authored config, ScriptableObject, Resources, runtime Find/Object.Find/GameObject.Find, Camera.main, or Transform.Find usage in `*CompositionSystem.cs`. The only remaining private helper is `RoadBuildCompositionSystem.BindDependencies`, which is dependency wiring and not data policy.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingUiQuerySystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-building-ui-query-placement-duration-main.log`
+    - Log marker: `[BuildingUiQueryValidation] result=Passed tests=3`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-placement-duration-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - `git diff --check` passed.
+  - Phase 9 is complete.
+  - Progress snapshot is now `126 / 157 complete (80.3%)`, `0 / 157 in progress`, `31 / 157 open`; phase progress is now `10 / 11 phases complete`, `0 in progress`, `1 not started`.
 
 ### Phase 10: Performance Ratchet And Completion
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Lock in improvements and prevent backsliding.
 
 Implementation steps:
-- [ ] Re-run all baseline scenarios.
-- [ ] Compare before/after metrics.
-- [ ] Record the final report under `Design/AgentReports`.
-- [ ] Tighten architecture tests from report-only to fail-on-new-debt where stable.
-- [ ] Update this roadmap with completed counts:
+- [x] Re-run all baseline scenarios.
+- [x] Compare before/after metrics.
+- [x] Record the final report under `Design/AgentReports`.
+- [x] Tighten architecture tests from report-only to fail-on-new-debt where stable.
+- [x] Update this roadmap with completed counts:
   - Burst systems increased where appropriate.
   - `To*Array` hot-path count reduced.
   - direct structural changes in frequent loops reduced.
   - no new managed hot-path debt.
-- [ ] Keep skipped opt-in balance probes skipped unless explicitly running balance reports.
+- [x] Keep skipped opt-in balance probes skipped unless explicitly running balance reports.
 
 Acceptance checks:
-- [ ] Full EditMode suite passes.
-- [ ] Focused PlayMode/runtime smoke passes.
-- [ ] `git diff --check` passes.
+- [x] Full EditMode suite passes.
+- [x] Focused PlayMode/runtime smoke passes.
+- [x] `git diff --check` passes.
 - [ ] Performance report shows no regression and documents improvements.
 - [ ] Roadmap has no incomplete required steps.
 
+Progress notes:
+- 2026-06-13: Started Phase 10 final baseline reruns after closing Phase 9. Completed the first batch of final validation in the main project:
+  - Runtime Match baseline metrics:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunBaselineMetrics -logFile /private/tmp/warline-ecs-burst-runtime-final-baseline-metrics-main.log`
+    - Log marker: `[MatchRuntimeBaselineMetrics] result=Passed`.
+    - Report: `/private/tmp/warlinecapture-match-runtime-baseline-metrics.json`.
+    - Metrics: `frames=375`, `averageFrameMs=10.706`, `p95FrameMs=12.604`, `p99FrameMs=24.976`, `maxFrameMs=91.179`, `allocatedBytesCurrentThread=0`, `unitCount=745`, `runtimeBuildingCount=647`, `markerCount=256`, `visibleModelEstimate=72`.
+    - Caveat: one pre-stable startup `[FreezeDetect]` logged `BuildingPlacement=577.5ms`; the stable Match HUD observation still passed and matches the known startup-hitch caveat from baseline collection.
+  - Focused pathfinding validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-final-pathfinding-baseline-main.log`
+    - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3`.
+    - Report metrics: `averageMs=10.72`, `p95Ms=10.83`, `p99Ms=10.83`, `maxMs=10.83`, `maxAllocatedBytesCurrentThread=0`, `maxPathPoolCells=10`.
+  - Focused transport validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-final-transport-baseline-main.log`
+    - Log marker: `[UnitTransportValidation] result=Passed tests=18`.
+  - Focused render-budget validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-final-render-budget-baseline-main.log`
+    - Log marker: `[UnitRenderBudgetFocusedValidation] result=Passed tests=28`.
+  - Focused selection/command validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-final-selection-command-baseline-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+  - Focused ground missile attack validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod GroundMissileLauncherRuntimeTests.RunAttackFocusedValidation -logFile /private/tmp/warline-ecs-burst-final-ground-missile-attack-main.log`
+    - Log marker: `[GroundMissileAttackFocusedValidation] result=Passed tests=5`.
+  - `git diff --check` passed after the Phase 9 cleanup slices and this baseline batch.
+- 2026-06-13: Continued Phase 10 final baseline reruns:
+  - AI steady-state validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AISteadyStatePerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-final-ai-steady-state-main.log`
+    - Log marker: `[AISteadyStatePerformanceValidation] result=Passed`.
+  - Initial faction/base validation:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod InitialFactionBaseValidationTests.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-final-initial-faction-base-main.log`
+    - Log marker: `[InitialFactionBaseValidation] result=Passed`.
+  - `git diff --check` passed.
+  - Remaining baseline reruns include camera pan/zoom while units are visible, full explicit editor validation, final report writing, and roadmap completion ratchets.
+  - Progress snapshot is now `130 / 157 complete (82.8%)`, `1 / 157 in progress`, `26 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Completed the remaining Phase 10 baseline scenario reruns and recorded explicit editor validation evidence:
+  - Camera pan/zoom while units are visible:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitRenderBudgetPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-final-render-budget-performance-main.log`
+    - Log marker: `[UnitRenderBudgetPerformanceValidation] result=Passed`.
+    - Report: `/private/tmp/warlinecapture-unit-render-budget-performance.json`.
+    - Metrics: `unitCount=512`, `warmupFrames=32`, `measuredFrames=180`, `averageMs=0.019`, `p95Ms=0.023`, `p99Ms=0.026`, `maxMs=0.027`, `allocatedBytesCurrentThread=0`.
+  - Explicit full-editor validation runner:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-final-full-editor-runner-main.log`
+    - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=525 skipped=24`.
+    - The skipped fixtures still require Unity TestRunner `LogAssert` scope; this is not treated as the separate full Unity TestRunner suite pass.
+  - `git diff --check` passed.
+  - Progress snapshot is now `132 / 157 complete (84.1%)`, `0 / 157 in progress`, `25 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Added the final comparison report and closed the stable architecture ratchet/count updates:
+  - Final report: `Design/AgentReports/2026-06-13_ecs-burst-hot-path-final-report.md`.
+  - Current static counts: `731` system source files, `41` Burst files, `73` `OnUpdate` source matches, `23` files with `OnUpdate` and no Burst, `0` hot-path `ToEntityArray` / `ToComponentDataArray<T>` calls, and `1` classified direct `EntityManager` mutation.
+  - Architecture guardrails are now fail-on-new-debt for stable rules: `ToArrayDebtCeiling=0`, `EntityManagerMutationDebtCeiling=1`, `NonBurstOnUpdateFileDebtCeiling=23`, and `BurstCompileFileFloor=38`.
+  - Final focused guard validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-final-hot-path-architecture-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - Final focused select/move timing rerun passed with zero allocation but did not compare cleanly against the earlier baseline: final `p95=1.092ms`, `p99=1.806ms` versus earlier `p95=0.568ms`, `p99=0.600ms`. The strict performance no-regression checkbox remains open for this reason.
+  - Final focused transport timing rerun passed and improved versus baseline: final `p95=1.195ms`, `p99=1.225ms`, `allocatedBytesCurrentThread=0`.
+  - Full Unity TestRunner reruns remain blocked as a reporting path:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform EditMode -testResults /private/tmp/warline-ecs-burst-final-full-editmode.xml -logFile /private/tmp/warline-ecs-burst-final-full-editmode.log`
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform editmode -testResults /private/tmp/warline-ecs-burst-final-full-editmode-lowercase.xml -logFile /private/tmp/warline-ecs-burst-final-full-editmode-lowercase.log`
+    - Both exited `0`, but neither produced a `testResults` XML file or a TestRunner summary in the log. Keep the full-suite acceptance open; use the explicit full-editor validation runner as the current usable editor-validation evidence.
+  - `git diff --check` passed.
+  - Progress snapshot is now `143 / 157 complete (91.1%)`, `0 / 157 in progress`, `14 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Reduced the select/move command-event timing variance by routing `SelectedMoveOrderCommandSystem` through the existing `SelectionStateSystem.CachedSelectedMoveEntities` cache. The command system validates cached entities and falls back to the selected query when the cache is missing or stale, preserving command behavior while avoiding the common selected-entity chunk walk in runtime command processing.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-move-cache-final-unit-move-order-main.log`
+    - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=9`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-move-cache-selection-command-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-move-cache-final-hot-path-architecture-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - Select/move performance rerun passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionMoveCommandPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-move-cache-final-selection-move-performance-main.log`
+    - Log marker: `[SelectionMoveCommandPerformanceValidation] result=Passed`.
+    - Metrics: `averageMs=0.675`, `p95Ms=1.091`, `p99Ms=1.775`, `maxMs=5.695`, `allocatedBytesCurrentThread=0`.
+  - The cache-aware path removes the common selected-entity query walk, but the latest final timing still does not beat the earlier focused baseline (`p95=0.568ms`, `p99=0.600ms`), so the strict performance no-regression checklist item remains open.
+  - `git diff --check` passed.
+  - Progress snapshot remains `143 / 157 complete (91.1%)`, `0 / 157 in progress`, `14 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Removed the remaining disabled move-command trace formatting from the focused select/move hot path. `SelectedMoveOrderCommandSystem`, `UnitMoveOrderSystem`, `SelectionMoveCommandRequestSystem`, `RtsSelectionCommandResultFlushSystem`, `RtsSelectionInputSystem`, and `RtsSelectionPointerTargetCommandSystem` now guard `SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(...)` call sites before building interpolated diagnostic strings. This preserves the existing trace behavior when `EnableMoveCommandTrace` is enabled, but avoids default-runtime string allocation, ECS component reads for diagnostics, and `StackTrace` construction in `UnitMoveOrderSystem.ResolveCaller()`.
+  - Focused validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-unit-move-order-focused-main.log`
+    - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=9`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-selection-command-focused-main.log`
+    - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=78`.
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - Select/move performance rerun passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionMoveCommandPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-selection-move-performance-main.log`
+    - Log marker: `[SelectionMoveCommandPerformanceValidation] result=Passed`.
+    - Metrics: `averageMs=0.100`, `p95Ms=0.110`, `p99Ms=0.131`, `maxMs=0.135`, `allocatedBytesCurrentThread=0`.
+  - The focused select/move timing now beats the earlier baseline (`p95=0.568ms`, `p99=0.600ms`). The strict performance no-regression checklist still remains open until the stable Match runtime p99 item is rerun or triaged.
+  - `git diff --check` passed.
+  - Progress snapshot remains `143 / 157 complete (91.1%)`, `0 / 157 in progress`, `14 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Removed unconditional batch-mode AI diagnostic logging from runtime performance validation. `InitialUnitsRuntimeState.ShouldLogAI`, `RuntimeDiagnosticsSystem.ShouldLogAI`, `AITargetingSystem.ShouldQueueDiagnostics`, and `AIDiagnosticLogFlushSystem.ShouldFlushDiagnostics` now require explicit `VerboseAILogs` instead of treating every batch run as verbose. This keeps the opt-in AI diagnostic tests working while preventing AI target/config logs and stack-trace formatting from affecting normal batch performance metrics.
+  - Focused AI validation passed:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod AITargetingValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ai-targeting-focused-main.log`
+    - Log marker: `[AITargetingFocusedValidation] result=Passed tests=3`.
+  - Runtime baseline metrics rerun passed without AI diagnostic spam in the log:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunBaselineMetrics -logFile /private/tmp/warline-ecs-burst-runtime-ai-log-gate-main.log`
+    - Log marker: `[MatchRuntimeBaselineMetrics] result=Passed`.
+    - Metrics: `averageFrameMs=10.503`, `p95FrameMs=11.928`, `p99FrameMs=23.404`, `maxFrameMs=84.041`, `allocatedBytesCurrentThread=0`.
+  - Architecture guard passed after the diagnostic gate change:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-after-ai-log-gate-main.log`
+    - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
+  - This improves the runtime average and p95 versus the earlier baseline (`average=10.650ms`, `p95=12.563ms`) but still does not close strict p99 no-regression versus baseline `p99=22.031ms`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `143 / 157 complete (91.1%)`, `0 / 157 in progress`, `14 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Restored the official full Unity EditMode TestRunner path and closed the full-suite validation gates. The working command uses the editor test assembly filter and omits `-quit`, allowing the TestRunner to finish and write XML:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform editmode -assemblyNames Game.Tests.Editor -testResults /private/tmp/warline-ecs-burst-full-editmode-assembly-after-ai-gate.xml -logFile /private/tmp/warline-ecs-burst-full-editmode-assembly-after-ai-gate.log`
+  - XML result: `Passed`, `total=551`, `passed=551`, `failed=0`, `skipped=0`.
+  - The rerun required keeping AI diagnostics explicit-only while preserving tests that opt in with `InitialUnitsRuntimeState.VerboseAILogs`. AI production and combat diagnostics now ensure the diagnostic queue before taking buffer/type-handle-backed views, avoiding structural changes during chunk or `SystemAPI.Query` iteration.
+  - Focused validation passed before the full suite:
+    - `[AIBuildPlannerFocusedValidation] result=Passed tests=1`
+    - `[AIProductionFocusedValidation] result=Passed tests=1`
+    - `[AISquadFocusedValidation] result=Passed tests=1`
+    - `[AICombatOrderFocusedValidation] result=Passed tests=2`
+    - `[AIEndToEndFocusedValidation] result=Passed tests=1`
+  - `git diff --check` passed.
+  - Progress snapshot is now `146 / 157 complete (93.0%)`, `0 / 157 in progress`, `11 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Reran stable Match runtime metrics after also gating AI startup config diagnostics. The run contained no `AIConfigSummary` or `AITarget` diagnostic spam and still passed, but the strict wall-clock p95/p99 gate remains open because editor batchmode timing was worse in this sample:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunBaselineMetrics -logFile /private/tmp/warline-ecs-burst-runtime-after-ai-startup-log-gate-main.log`
+  - Log marker: `[MatchRuntimeBaselineMetrics] result=Passed`.
+  - Metrics: `averageFrameMs=13.340`, `p95FrameMs=17.139`, `p99FrameMs=29.053`, `maxFrameMs=91.039`, `allocatedBytesCurrentThread=0`.
+  - Stable-window frame-rate diagnostic follow-up passed without low-FPS `FrameRateDiag` output:
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.RunFrameRateDiagnostics -logFile /private/tmp/warline-ecs-burst-runtime-framerate-after-ai-gate-main.log`
+    - Log marker: `[MatchRuntimeShellSmokeValidation] result=Passed No low-FPS FrameRateDiag emitted during stable observation window.`
+  - Both runtime logs still show only the known pre-stable `[FreezeDetect]` building-placement hitch before Match HUD ready/stable observation.
+  - `git diff --check` passed.
+  - Progress snapshot remains `146 / 157 complete (93.0%)`, `0 / 157 in progress`, `11 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+- 2026-06-13: Closed the per-slice validation process checklist for the AI diagnostic/validation slice. Main-project full EditMode validation was used for the full-suite check because the user confirmed the main project was closed and available for validation.
+  - `git diff --check` passed.
+  - Progress snapshot is now `154 / 157 complete (98.1%)`, `0 / 157 in progress`, `3 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
+
 ## Per-Slice Validation Checklist
 
-- [ ] Inspect touched systems and contracts first.
-- [ ] Confirm the system is a real hot path or dependency of a hot path.
-- [ ] Make the smallest behavior-preserving change.
-- [ ] Run focused tests for the touched domain.
-- [ ] Run full EditMode suite in the shadow project after each phase.
-- [ ] Run `git diff --check`.
-- [ ] Record progress notes in this roadmap.
-- [ ] Remove temporary diagnostics/logs before handoff.
+- [x] Inspect touched systems and contracts first.
+- [x] Confirm the system is a real hot path or dependency of a hot path.
+- [x] Make the smallest behavior-preserving change.
+- [x] Run focused tests for the touched domain.
+- [x] Run full EditMode suite in the shadow project after each phase.
+- [x] Run `git diff --check`.
+- [x] Record progress notes in this roadmap.
+- [x] Remove temporary diagnostics/logs before handoff.
+
+Note: for the 2026-06-13 AI diagnostic/validation slice, the full EditMode suite was run in the main project because the user confirmed Unity was closed and main-project validation was available.
 
 ## Test Scenarios
 
@@ -1768,13 +1927,13 @@ Required focused scenarios:
 - [x] Select missile launcher and issue Attack.
 - [x] Select transport and Board All.
 - [x] Passenger drawer unboard/exit-all.
-- [ ] AI steady-state with current unit/building counts.
-- [ ] Camera pan/zoom while units are visible.
+- [x] AI steady-state with current unit/building counts.
+- [x] Camera pan/zoom while units are visible.
 - [x] Pathfinding group move and long-distance move.
-- [ ] Initial units spawn with faction base and air platforms.
+- [x] Initial units spawn with faction base and air platforms.
 
 Required automated validation:
-- [ ] Full EditMode suite.
+- [x] Full EditMode suite.
 - [x] Existing architecture contract tests.
 - [x] Focused pathfinding validation.
 - [x] Focused render-budget validation.
@@ -1783,10 +1942,10 @@ Required automated validation:
 
 ## Definition Of Done
 
-- [ ] No valid editor tests fail.
-- [ ] No gameplay UX regression is found in the focused runtime scenarios.
-- [ ] Hot-path `ToEntityArray` / `ToComponentDataArray` counts are materially reduced in selection, transport, AI, and combat systems.
-- [ ] Frequent structural changes use ECB unless explicitly allowed.
-- [ ] Pure ECS hot systems touched by the refactor are Burst-compatible.
-- [ ] Managed systems are documented as presentation/bootstrap/config/diagnostic boundaries.
+- [x] No valid editor tests fail.
+- [x] No gameplay UX regression is found in the focused runtime scenarios.
+- [x] Hot-path `ToEntityArray` / `ToComponentDataArray` counts are materially reduced in selection, transport, AI, and combat systems.
+- [x] Frequent structural changes use ECB unless explicitly allowed.
+- [x] Pure ECS hot systems touched by the refactor are Burst-compatible.
+- [x] Managed systems are documented as presentation/bootstrap/config/diagnostic boundaries.
 - [ ] Performance reports show equal or improved p95/p99 frame time and no recurring GC regression after warmup.

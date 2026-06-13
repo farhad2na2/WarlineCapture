@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,6 +15,7 @@ public sealed class SelectionMoveCommandRequestSystem
         EntityQuery selectedMoveQuery,
         EntityQuery gridConfigQuery,
         EntityQuery mapSurfaceQuery,
+        IReadOnlyList<Entity> cachedSelectedMoveEntities,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionOrderMarkerSystem orderMarkerSystem,
         SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
@@ -38,9 +40,13 @@ public sealed class SelectionMoveCommandRequestSystem
         {
             RtsSelectionCommandIntentRequestElement request = _pendingMoveRequests[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"requestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
-                $"screen={screenPosition} pendingCount={_pendingMoveRequests.Count}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"requestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
+                    $"screen={screenPosition} pendingCount={_pendingMoveRequests.Count}");
+            }
+
             SelectedMoveOrderCommandSystem.Result result = selectedMoveOrderCommandSystem.TryIssueMoveOrder(
                 em,
                 screenPosition,
@@ -51,11 +57,16 @@ public sealed class SelectionMoveCommandRequestSystem
                 orderMarkerSystem,
                 tryGetClickedUnit,
                 tryGetClickedCell,
-                request.Frame);
+                request.Frame,
+                cachedSelectedMoveEntities);
 
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"requestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
-                $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"requestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
+                    $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
+            }
+
             AddCommandResult(em, commandEntity, commandResults, ToResultElement(request, result));
         }
 

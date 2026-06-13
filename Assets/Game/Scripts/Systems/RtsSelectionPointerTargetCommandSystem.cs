@@ -133,17 +133,25 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     public void IssueMoveOrder(Context context, Vector2 screenPosition)
     {
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"issueMoveOrderEnter screen={screenPosition} frame={Time.frameCount} " +
-            $"hasInput={context.InputSystem != null} hasProcess={context.ProcessMoveCommandRequests != null}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"issueMoveOrderEnter screen={screenPosition} frame={Time.frameCount} " +
+                $"hasInput={context.InputSystem != null} hasProcess={context.ProcessMoveCommandRequests != null}");
+        }
+
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
         context.LogSelectionDiagnostic?.Invoke($"moveAttempt pos={screenPosition} frame={Time.frameCount}");
 
         if (!context.InputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"issueMoveOrderQueueFailed screen={screenPosition} frame={Time.frameCount}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"issueMoveOrderQueueFailed screen={screenPosition} frame={Time.frameCount}");
+            }
+
             context.LogSelectionDiagnostic?.Invoke($"moveAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
@@ -151,11 +159,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return;
         }
 
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"issueMoveOrderQueued screen={screenPosition} frame={Time.frameCount}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={Time.frameCount}");
         context.ProcessMoveCommandRequests?.Invoke();
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"issueMoveOrderProcessReturned screen={screenPosition} frame={Time.frameCount}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={Time.frameCount}");
     }
 
     public bool TryIssueAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
@@ -482,10 +490,14 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         cell = target.Cell;
         worldPoint = target.WorldPoint;
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"moveTargetResolved screen={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} " +
-            $"surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} " +
-            $"height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"moveTargetResolved screen={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} " +
+                $"surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} " +
+                $"height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
+        }
+
         context.LogSelectionDiagnostic?.Invoke(
             $"moveTargetResolved pos={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
         return true;

@@ -38,9 +38,7 @@ internal sealed class BuildingUiCompositionSystem
             () => source.BuildingPlacementQuerySystem.GetPlacementStatusText(source.BuildingPlacementLifecycleSystem.ActivePlacement),
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
             () => source.BuildingPlacementLifecycleSystem.ActivePlacementCost,
-            () => source.BuildingPlacementLifecycleSystem.ActivePlacement?.Definition != null
-                ? source.BuildingPlacementLifecycleSystem.ActivePlacement.Definition.ProductionDurationSeconds
-                : 0f,
+            () => source.BuildingPlacementQuerySystem.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleSystem.ActivePlacement),
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
             () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
             (out int current, out int max) => source.BuildingPlacementQuerySystem.TryGetSelectedBuildingHealth(

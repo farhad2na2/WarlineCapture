@@ -180,7 +180,8 @@ public sealed class SelectionMoveCommandPerformanceValidation
                 orderMarkerSystem,
                 clickedUnitResolver,
                 clickedCellResolver,
-                currentFrame);
+                currentFrame,
+                selectionStateSystem.CachedSelectedMoveEntities);
             em.CompleteAllTrackedJobs();
             long stopTicks = Stopwatch.GetTimestamp();
 

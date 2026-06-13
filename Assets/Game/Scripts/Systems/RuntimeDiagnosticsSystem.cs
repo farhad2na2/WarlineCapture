@@ -1,5 +1,4 @@
 using Unity.Entities;
-using UnityEngine;
 
 public sealed class RuntimeDiagnosticsSystem
 {
@@ -18,7 +17,7 @@ public sealed class RuntimeDiagnosticsSystem
         });
     }
 
-    public bool ShouldLogAI => Application.isBatchMode || InitialUnitsRuntimeState.VerboseAILogs;
+    public bool ShouldLogAI => InitialUnitsRuntimeState.VerboseAILogs;
 
     public bool TransportBoardingDiagnostics
     {

@@ -33,9 +33,12 @@ public sealed class UnitMoveOrderSystem
         int currentFrame)
     {
         MoveOrderCommandResult result = new() { Issued = true };
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"unitMoveOrderGrouped caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} " +
-            $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"unitMoveOrderGrouped caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} " +
+                $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
+        }
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
@@ -90,10 +93,13 @@ public sealed class UnitMoveOrderSystem
 
             ecb.Playback(entityManager);
 
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"unitMoveOrderGroupedApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal} " +
-                $"pathRequests={result.PathRequests} staggered={result.StaggeredPathRequests} air={result.AirUnits} " +
-                $"adds={result.StructuralAdds} removes={result.StructuralRemoves}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"unitMoveOrderGroupedApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal} " +
+                    $"pathRequests={result.PathRequests} staggered={result.StaggeredPathRequests} air={result.AirUnits} " +
+                    $"adds={result.StructuralAdds} removes={result.StructuralRemoves}");
+            }
         }
         finally
         {
@@ -105,7 +111,8 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediate caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediate caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -132,7 +139,8 @@ public sealed class UnitMoveOrderSystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {
@@ -142,7 +150,8 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnly caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnly caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -156,7 +165,8 @@ public sealed class UnitMoveOrderSystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {
@@ -390,35 +400,53 @@ public sealed class UnitMoveOrderSystem
             return cells;
 
         for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!entityManager.HasComponent<UnitGrid>(entity))
-                continue;
-
-            int2 unitCell = entityManager.GetComponentData<UnitGrid>(entity).Cell;
-            int2 unitSize = entityManager.HasComponent<UnitFootprint>(entity)
-                ? entityManager.GetComponentData<UnitFootprint>(entity).Size
-                : new int2(1, 1);
-            int2 min = UnitFootprintUtility.GetMinCell(unitCell, UnitFootprintUtility.ClampSize(unitSize));
-            int2 max = min + UnitFootprintUtility.ClampSize(unitSize);
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                if (y < 0 || y >= grid.Height)
-                    continue;
-
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    if (x < 0 || x >= grid.Width)
-                        continue;
-
-                    cells.Add(row + x);
-                }
-            }
-        }
+            AddSelectedCurrentFootprintCells(entityManager, grid, entities[i], cells);
 
         return cells;
+    }
+
+    public HashSet<int> BuildSelectedCurrentFootprintCells(EntityManager entityManager, in GridConfig grid, IReadOnlyList<Entity> entities)
+    {
+        var cells = new HashSet<int>();
+        if (entities == null || entities.Count == 0)
+            return cells;
+
+        for (int i = 0; i < entities.Count; i++)
+            AddSelectedCurrentFootprintCells(entityManager, grid, entities[i], cells);
+
+        return cells;
+    }
+
+    private static void AddSelectedCurrentFootprintCells(
+        EntityManager entityManager,
+        in GridConfig grid,
+        Entity entity,
+        HashSet<int> cells)
+    {
+        if (!entityManager.HasComponent<UnitGrid>(entity))
+            return;
+
+        int2 unitCell = entityManager.GetComponentData<UnitGrid>(entity).Cell;
+        int2 unitSize = entityManager.HasComponent<UnitFootprint>(entity)
+            ? entityManager.GetComponentData<UnitFootprint>(entity).Size
+            : new int2(1, 1);
+        int2 min = UnitFootprintUtility.GetMinCell(unitCell, UnitFootprintUtility.ClampSize(unitSize));
+        int2 max = min + UnitFootprintUtility.ClampSize(unitSize);
+
+        for (int y = min.y; y < max.y; y++)
+        {
+            if (y < 0 || y >= grid.Height)
+                continue;
+
+            int row = y * grid.Width;
+            for (int x = min.x; x < max.x; x++)
+            {
+                if (x < 0 || x >= grid.Width)
+                    continue;
+
+                cells.Add(row + x);
+            }
+        }
     }
 
     public void ReserveManualMoveGoalFootprint(

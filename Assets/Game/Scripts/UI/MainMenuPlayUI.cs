@@ -180,7 +180,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
         if (_matchHudCommandControlsView != null && _matchHudCommandControlsView.ContainsScreenPoint(screenPosition))
         {
-            source = "MatchHudCommandControls";
+            source = $"MatchHudCommandControls:{_matchHudCommandControlsView.DescribeScreenPointHit(screenPosition)}";
             return true;
         }
 

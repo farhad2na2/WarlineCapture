@@ -41,16 +41,17 @@ public sealed class SelectedMoveOrderCommandSystem
         Vector2 screenPosition,
         EntityQuery selectedMoveQuery,
         EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionOrderMarkerSystem orderMarkerSystem,
         ClickedUnitResolver tryGetClickedUnit,
         ClickedCellResolver tryGetClickedCell,
         int currentFrame)
     {
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveStart frame={currentFrame} screen={screenPosition}");
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveStart frame={currentFrame} screen={screenPosition}");
         if (tryGetClickedUnit != null && tryGetClickedUnit(screenPosition, em, out Entity clickedUnit))
         {
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveRejected reason=ClickedUnit screen={screenPosition} clicked={DescribeMoveEntity(em, clickedUnit)}");
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=ClickedUnit screen={screenPosition} clicked={DescribeMoveEntity(em, clickedUnit)}");
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
@@ -58,18 +59,18 @@ public sealed class SelectedMoveOrderCommandSystem
         NativeArray<Entity> entities = selectedEntities.AsArray();
         if (entities.Length == 0)
         {
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveRejected reason=NoSelection screen={screenPosition}");
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoSelection screen={screenPosition}");
             return Result.Rejected(TacticalCommandReasonCode.NoSelection);
         }
 
         if (tryGetClickedCell == null || !tryGetClickedCell(screenPosition, em, out int2 goal, out Vector3 clickWorldPoint))
         {
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-            $"[SelectionClick] selectedMoveTarget screen={screenPosition} desiredGoal={goal} clickWorld={clickWorldPoint} " +
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"selectedMoveTarget screen={screenPosition} desiredGoal={goal} clickWorld={clickWorldPoint} " +
             $"selected={entities.Length} first={DescribeMoveEntity(em, entities[0])}");
 
         byte factionId = 0;
@@ -84,6 +85,11 @@ public sealed class SelectedMoveOrderCommandSystem
         NativeBitArray blocked = blockerData.Blocked;
         NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
         NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+        MapSurfacePathfindingReadSystem surfaceReadSystem = new();
+        MapSurfacePathfindingReadSystem.Context surfaceContext =
+            surfaceReadSystem.TryCreateContext(em, mapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+                ? resolvedSurfaceContext
+                : surfaceReadSystem.CreateFlatFallbackContext();
         var reservedGoalCells = new HashSet<int>();
         HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
         var issuedGoals = new int2[entities.Length];
@@ -112,12 +118,13 @@ public sealed class SelectedMoveOrderCommandSystem
                 selectedCurrentCells,
                 entity,
                 goal,
-                i);
+                i,
+                surfaceContext);
             issuedGoals[i] = issuedGoal;
             if (i < 12)
             {
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                    $"[SelectionClick] selectedMoveCandidate index={i} entity={DescribeMoveEntity(em, entity)} " +
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"selectedMoveCandidate index={i} entity={DescribeMoveEntity(em, entity)} " +
                     $"desiredGoal={goal} issuedGoal={issuedGoal} selectedCurrent={ResolveUnitCell(em, entity)}");
             }
 
@@ -126,7 +133,7 @@ public sealed class SelectedMoveOrderCommandSystem
                 skipIssue[i] = true;
                 skippedAlreadyMovingCount++;
                 if (i < 12)
-                    SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] selectedMoveSkip index={i} reason=AlreadyMoving issuedGoal={issuedGoal} entity={DescribeMoveEntity(em, entity)}");
+                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveSkip index={i} reason=AlreadyMoving issuedGoal={issuedGoal} entity={DescribeMoveEntity(em, entity)}");
             }
             else if (!em.HasComponent<UnitAirMovement>(entity))
             {
@@ -162,8 +169,8 @@ public sealed class SelectedMoveOrderCommandSystem
                 currentFrame);
             if (i < 12)
             {
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                    $"[SelectionClick] selectedMoveIssued index={i} entity={DescribeMoveEntity(em, entity)} " +
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"selectedMoveIssued index={i} entity={DescribeMoveEntity(em, entity)} " +
                     $"issuedGoal={issuedGoal} issuePathNow={issuePathNow} resumeFrame={resumeFrame} " +
                     $"targetNow={(em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none")} " +
                     $"pathRequestNow={(em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none")}");
@@ -184,8 +191,8 @@ public sealed class SelectedMoveOrderCommandSystem
 
         if (!issuedMoveOrder)
         {
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[SelectionClick] selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
                 $"skippedAlreadyMoving={skippedAlreadyMovingCount} groundCandidates={groundPathCandidateCount}");
             return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
         }
@@ -204,8 +211,8 @@ public sealed class SelectedMoveOrderCommandSystem
                 $"airUnits={airUnitCount} skippedSameGoal={skippedAlreadyMovingCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves} " +
                 $"uniqueGoals={uniqueGoalCount} staggeredPathRequests={staggeredPathRequestCount} goal={goal}");
 
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-            $"[SelectionClick] selectedMoveSuccess frame={currentFrame} selected={entities.Length} desiredGoal={goal} " +
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"selectedMoveSuccess frame={currentFrame} selected={entities.Length} desiredGoal={goal} " +
             $"pathRequests={pathRequestCount} staggeredPathRequests={staggeredPathRequestCount} skippedAlreadyMoving={skippedAlreadyMovingCount} " +
             $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
         return Result.Success();
@@ -220,14 +227,21 @@ public sealed class SelectedMoveOrderCommandSystem
             ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
             : em.GetName(entity);
         byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        string gridCell = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
+        string targetCell = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+        string pathGoal = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+        int2 footprintSize = em.HasComponent<UnitFootprint>(entity) ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+        UnitMovementBehavior movementBehavior = em.HasComponent<UnitMovementBehavior>(entity)
+            ? em.GetComponentData<UnitMovementBehavior>(entity)
+            : default;
+        bool isVehicle = UnitVehicleMovementUtility.IsVehicle(new UnitFootprint { Size = footprintSize }, movementBehavior);
         bool selected = em.HasComponent<SelectedUnitTag>(entity);
         bool move = em.HasComponent<UnitMove>(entity);
-        bool grid = em.HasComponent<UnitGrid>(entity);
-        bool target = em.HasComponent<UnitTarget>(entity);
-        bool pathRequest = em.HasComponent<UnitPathRequest>(entity);
         bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+        bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        bool longMove = em.HasComponent<UnitLongDistanceMove>(entity);
         bool disabled = em.HasComponent<Disabled>(entity);
-        return $"{entity}/{name}/faction={faction}/selected={selected}/move={move}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/disabled={disabled}";
+        return $"{entity}/{name}/faction={faction}/selected={selected}/move={move}/vehicle={isVehicle}/footprint={footprintSize}/grid={gridCell}/target={targetCell}/pathRequest={pathGoal}/pathFollow={pathFollow}/manual={manual}/longMove={longMove}/disabled={disabled}";
     }
 
     private static string ResolveUnitCell(EntityManager em, Entity entity)

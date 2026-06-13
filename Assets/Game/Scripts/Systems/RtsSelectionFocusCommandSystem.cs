@@ -149,7 +149,16 @@ public sealed class RtsSelectionFocusCommandSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out _))
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"externalSelectionCommandsNoBuffers frame={Time.frameCount}");
             return false;
+        }
+
+        int moveModeRequests = CountExternalCommandRequests(commandRequests, RtsSelectionCommandIntentKind.EnterMoveTargetMode);
+        if (moveModeRequests > 0)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"externalSelectionCommandsEnter totalRequests={commandRequests.Length} moveModeRequests={moveModeRequests} frame={Time.frameCount}");
         }
 
         _externalSelectionCommandScratch.Clear();
@@ -168,7 +177,16 @@ public sealed class RtsSelectionFocusCommandSystem
 
         bool processedAny = false;
         for (int i = 0; i < _externalSelectionCommandScratch.Count; i++)
+        {
+            if (_externalSelectionCommandScratch[i].Kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"externalSelectionCommandProcess kind={_externalSelectionCommandScratch[i].Kind} frame={Time.frameCount}");
+            }
+
             processedAny |= ProcessExternalSelectionCommand(context, _externalSelectionCommandScratch[i]);
+        }
+
         return processedAny;
     }
 
@@ -303,6 +321,20 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
     }
 
+    private static int CountExternalCommandRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        RtsSelectionCommandIntentKind kind)
+    {
+        int count = 0;
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            if (commandRequests[i].Kind == kind)
+                count++;
+        }
+
+        return count;
+    }
+
     private bool ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentRequestElement request)
     {
         switch (request.Kind)
@@ -430,6 +462,8 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private static void EnterMoveTargetMode(Context context)
     {
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"enterMoveTargetModeStart frame={Time.frameCount}");
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
@@ -437,7 +471,10 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ClearQueuedMoveOrder();
         context.InputSystem.ClearPendingMoveCommandRequests();
 
-        if (!TryHasSelectedMovableUnit(context))
+        bool hasSelectedMovableUnit = TryHasSelectedMovableUnit(context);
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"enterMoveTargetModeSelectionCheck hasSelectedMovableUnit={hasSelectedMovableUnit} frame={Time.frameCount}");
+        if (!hasSelectedMovableUnit)
         {
             context.InputSystem.ClearActiveCommandMode();
             context.ClearHudCommandMode?.Invoke();
@@ -464,6 +501,8 @@ public sealed class RtsSelectionFocusCommandSystem
         context.SetCameraDragging?.Invoke(false);
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} frame={Time.frameCount}");
         context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
     }
 
@@ -613,14 +652,29 @@ public sealed class RtsSelectionFocusCommandSystem
     private static bool TryHasSelectedMovableUnit(Context context)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"tryHasSelectedMovableUnit result=False reason=NoEntityManager frame={Time.frameCount}");
             return false;
+        }
 
         context.EnsureEntityQueries?.Invoke(em);
+        Entity focused = context.SelectionStateSystem.FocusedUnit;
+        int selectedQueryCount = CountSelectedMoveQuery(em);
         List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"tryHasSelectedMovableUnit enter focused={DescribeMoveEligibility(em, focused)} " +
+            $"cacheCount={cached.Count} selectedMoveQueryCount={selectedQueryCount} frame={Time.frameCount}");
         for (int i = 0; i < cached.Count; i++)
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"tryHasSelectedMovableUnit cache[{i}]={DescribeMoveEligibility(em, cached[i])}");
             if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, cached[i]))
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"tryHasSelectedMovableUnit result=True source=Cache index={i} frame={Time.frameCount}");
                 return true;
+            }
         }
 
         using EntityQuery query = em.CreateEntityQuery(
@@ -628,7 +682,11 @@ public sealed class RtsSelectionFocusCommandSystem
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitMove>());
         if (query.IsEmptyIgnoreFilter)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"tryHasSelectedMovableUnit result=False reason=SelectedMoveQueryEmpty focused={DescribeMoveEligibility(em, focused)} frame={Time.frameCount}");
             return false;
+        }
 
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
@@ -637,12 +695,56 @@ public sealed class RtsSelectionFocusCommandSystem
             NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
             for (int i = 0; i < selectedEntities.Length; i++)
             {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"tryHasSelectedMovableUnit selected[{chunkIndex}:{i}]={DescribeMoveEligibility(em, selectedEntities[i])}");
                 if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, selectedEntities[i]))
+                {
+                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                        $"tryHasSelectedMovableUnit result=True source=SelectedQuery chunk={chunkIndex} index={i} frame={Time.frameCount}");
                     return true;
+                }
             }
         }
 
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"tryHasSelectedMovableUnit result=False reason=NoCacheableSelected focused={DescribeMoveEligibility(em, focused)} " +
+            $"cacheCount={cached.Count} selectedMoveQueryCount={selectedQueryCount} frame={Time.frameCount}");
         return false;
+    }
+
+    private static int CountSelectedMoveQuery(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
+        return query.CalculateEntityCount();
+    }
+
+    private static string DescribeMoveEligibility(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null)
+            return "null";
+        if (!em.Exists(entity))
+            return $"{entity}/missing";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        bool player = em.HasComponent<Faction>(entity) && FactionIdentitySystem.IsPlayerControlled(faction);
+        string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
+        string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+        string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+        string footprint = em.HasComponent<UnitFootprint>(entity) ? em.GetComponentData<UnitFootprint>(entity).Size.ToString() : "none";
+        bool selected = em.HasComponent<SelectedUnitTag>(entity);
+        bool hasMove = em.HasComponent<UnitMove>(entity);
+        bool hasGrid = em.HasComponent<UnitGrid>(entity);
+        bool disabled = em.HasComponent<Disabled>(entity);
+        bool passenger = em.HasComponent<UnitTransportPassenger>(entity);
+        bool transit = em.HasComponent<UnitSpawnTransitTag>(entity);
+        bool cacheable = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
+        return $"{entity}/{source}/faction={faction}/player={player}/selected={selected}/cacheable={cacheable}/move={hasMove}/grid={hasGrid}:{grid}/footprint={footprint}/target={target}/pathRequest={pathRequest}/disabled={disabled}/passenger={passenger}/transit={transit}";
     }
 
     private static AttackModeSelectionState ResolveSelectedAttackModeState(Context context)

@@ -442,6 +442,8 @@ public partial struct UnitGridMoveJob : IJobEntity
         int2 currentMax = currentMin + clamped;
         int2 paddedMin = min - new int2(padding, padding);
         int2 paddedMax = max + new int2(padding, padding);
+        int2 currentPaddedMin = currentMin - new int2(padding, padding);
+        int2 currentPaddedMax = currentMax + new int2(padding, padding);
 
         if (paddedMin.x < 0 || paddedMin.y < 0 || paddedMax.x > Grid.Width || paddedMax.y > Grid.Height)
             return false;
@@ -461,10 +463,10 @@ public partial struct UnitGridMoveJob : IJobEntity
                         return false;
                 }
 
-                bool isCurrentFootprintCell =
-                    x >= currentMin.x && x < currentMax.x &&
-                    y >= currentMin.y && y < currentMax.y;
-                if (!isCurrentFootprintCell && Occupied.IsCreated && Occupied.IsSet(idx) && !IsOnlySoftBlockerAtCell(idx))
+                bool isCurrentClearanceCell =
+                    x >= currentPaddedMin.x && x < currentPaddedMax.x &&
+                    y >= currentPaddedMin.y && y < currentPaddedMax.y;
+                if (!isCurrentClearanceCell && Occupied.IsCreated && Occupied.IsSet(idx) && !IsOnlySoftBlockerAtCell(idx))
                     return false;
             }
         }

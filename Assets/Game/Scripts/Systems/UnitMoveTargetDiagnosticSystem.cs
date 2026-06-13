@@ -17,7 +17,7 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
             ComponentType.ReadOnly<UnitTarget>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<Faction>());
-        if (!SelectionRuntimeDiagnosticsSystem.EnableSelectionClickDiagnostics)
+        if (!SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             Enabled = false;
     }
 
@@ -53,8 +53,8 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
                     continue;
 
                 _lastTargets[entity] = target.Cell;
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                    $"[SelectionClick] playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
                     $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
                     $"pathRequest={ResolvePathRequest(entity)} pathFollow={EntityManager.HasComponent<UnitPathFollow>(entity)} " +
                     $"manual={EntityManager.HasComponent<ManualMoveOrderTag>(entity)} engage={EntityManager.HasComponent<EngageTarget>(entity)} " +

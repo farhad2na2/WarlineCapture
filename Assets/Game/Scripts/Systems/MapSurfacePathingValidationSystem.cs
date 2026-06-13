@@ -44,6 +44,36 @@ public readonly struct MapSurfacePathingValidationSystem
             : MapSurfaceMovementMask.Infantry;
     }
 
+    public bool CanTraverseFootprint(
+        MapSurfaceComponent surface,
+        byte hasSurfaceData,
+        in GridConfig grid,
+        int2 cell,
+        int2 footprintSize,
+        bool isVehicle)
+    {
+        if (hasSurfaceData == 0)
+            return true;
+
+        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
+        int2 max = min + clamped;
+        if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
+            return false;
+
+        MapSurfaceMovementMask movementMask = ResolveMovementMask(isVehicle);
+        for (int y = min.y; y < max.y; y++)
+        {
+            for (int x = min.x; x < max.x; x++)
+            {
+                if (!CanTraverse(surface, hasSurfaceData, new int2(x, y), movementMask))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
     private static float GetMaxSlopeForMovement(MapSurfaceMovementMask movementMask)
     {
         if ((movementMask & MapSurfaceMovementMask.Infantry) != 0)

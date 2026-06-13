@@ -8,10 +8,12 @@ internal struct UnitPathfindingApplySystem
 {
     private MapSurfacePathfindingReadSystem _surfaceReadSystem;
     private ComponentLookup<PathPoolComponent> _pathPoolLookup;
+    private EntityTypeHandle _pendingManualMoveEntityType;
 
     public void Initialize(ref SystemState state)
     {
         _pathPoolLookup = state.GetComponentLookup<PathPoolComponent>();
+        _pendingManualMoveEntityType = state.GetEntityTypeHandle();
     }
 
     public void Apply(
@@ -70,6 +72,8 @@ internal struct UnitPathfindingApplySystem
         NativeArray<UnitPathRequest> requestGoals = requestBuffers.Goals.AsArray();
         NativeArray<int2> assignedGoals = requestBuffers.AssignedGoals.AsArray();
         NativeArray<byte> status = requestBuffers.Status.AsArray();
+        NativeArray<int> failureCodes = requestBuffers.FailureCodes.AsArray();
+        NativeArray<int> expansionCounts = requestBuffers.ExpansionCounts.AsArray();
         NativeArray<byte> segmented = requestBuffers.Segmented.AsArray();
         NativeArray<byte> requestContinuationMoves = requestBuffers.ContinuationMoves.AsArray();
         NativeArray<byte> cheapSegmentModes = requestBuffers.CheapSegmentModes.AsArray();
@@ -88,6 +92,8 @@ internal struct UnitPathfindingApplySystem
             surfaceContext,
             pendingPathStream,
             status,
+            failureCodes,
+            expansionCounts,
             out int completedCount,
             out int completedSegmentCount,
             out int manualCompletedCount,
@@ -176,6 +182,7 @@ internal struct UnitPathfindingApplySystem
 
         if (manualValidationActive)
         {
+            _pendingManualMoveEntityType.Update(ref state);
             if (validationMetrics.RecordActiveFrameAndShouldLogStuck(Time.frameCount, validationInputs, validationResults))
                 LogValidationStuck(
                     ref state,
@@ -346,25 +353,24 @@ internal struct UnitPathfindingApplySystem
             samples);
     }
 
-    private static string BuildManualMoveSamples(
+    private string BuildManualMoveSamples(
         ref SystemState state,
         ref UnitPathfindingQuerySystem queries,
         ref UnitPathfindingDiagnosticSystem diagnostics,
         int maxSamples)
     {
         EntityManager em = state.EntityManager;
-        using NativeList<Entity> entities = CollectPendingManualMoveEntities(em, queries.PendingManualMoveQuery);
+        using NativeList<Entity> entities = CollectPendingManualMoveEntities(queries.PendingManualMoveQuery);
         return diagnostics.BuildManualMoveSamples(em, entities.AsArray(), maxSamples);
     }
 
-    private static NativeList<Entity> CollectPendingManualMoveEntities(EntityManager em, EntityQuery query)
+    private NativeList<Entity> CollectPendingManualMoveEntities(EntityQuery query)
     {
         var entities = new NativeList<Entity>(query.CalculateEntityCount(), Allocator.Temp);
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(_pendingManualMoveEntityType);
             for (int i = 0; i < chunkEntities.Length; i++)
                 entities.Add(chunkEntities[i]);
         }

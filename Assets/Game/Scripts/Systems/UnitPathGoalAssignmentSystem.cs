@@ -24,6 +24,7 @@ internal struct UnitPathGoalAssignmentSystem
         Entity ignoredOccupancyEntity,
         int2 ignoredOccupancyCell,
         int2 ignoredOccupancySize,
+        MapSurfacePathfindingReadSystem.Context surfaceContext,
         int2 desiredGoal,
         int2 startCell,
         int2 footprintSize,
@@ -65,6 +66,7 @@ internal struct UnitPathGoalAssignmentSystem
                     ignoredOccupancyEntity,
                     ignoredOccupancyCell,
                     ignoredOccupancySize,
+                    surfaceContext,
                     desiredGoal,
                     footprintSize,
                     startCell,
@@ -114,6 +116,7 @@ internal struct UnitPathGoalAssignmentSystem
                         ignoredOccupancyEntity,
                         ignoredOccupancyCell,
                         ignoredOccupancySize,
+                        surfaceContext,
                         cell,
                         footprintSize,
                         startCell,
@@ -150,6 +153,7 @@ internal struct UnitPathGoalAssignmentSystem
         Entity ignoredOccupancyEntity,
         int2 ignoredOccupancyCell,
         int2 ignoredOccupancySize,
+        MapSurfacePathfindingReadSystem.Context surfaceContext,
         int2 cell,
         int2 footprintSize,
         int2 startCell,
@@ -157,6 +161,10 @@ internal struct UnitPathGoalAssignmentSystem
     {
         bool isVehicle = footprintSize.x > 1 || footprintSize.y > 1;
         if (!UnitPathPlacementValidationSystem.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, default, movingEntity, cell, footprintSize, startCell, isVehicle, false, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
+            return false;
+
+        MapSurfacePathingValidationSystem surfaceValidation = new();
+        if (!surfaceValidation.CanTraverseFootprint(surfaceContext.Surface, surfaceContext.HasSurfaceData, grid, cell, footprintSize, isVehicle))
             return false;
 
         int2 size = UnitFootprintUtility.ClampSize(footprintSize);

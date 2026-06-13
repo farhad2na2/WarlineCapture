@@ -401,6 +401,10 @@ public sealed class RtsSelectionInputSystem
             removed++;
         }
 
+        if (removed > 0)
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"pendingMoveRequestsCleared removed={removed} frame={Time.frameCount}");
+
         return removed;
     }
 
@@ -423,13 +427,16 @@ public sealed class RtsSelectionInputSystem
 
     public bool QueueMoveCommandRequest(Vector2 screenPosition, int frame)
     {
-        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        bool queued = _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
         {
             Kind = RtsSelectionCommandIntentKind.Move,
             Frame = frame,
             ScreenPosition = ToFloat2(screenPosition),
             HasScreenPosition = 1
         });
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+        return queued;
     }
 
     public bool QueueFocusUnitCommandRequest(Vector2 screenPosition, int frame)

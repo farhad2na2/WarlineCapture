@@ -1,3 +1,5 @@
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -18,6 +20,11 @@ public partial struct AITargetingSystem : ISystem
     private ComponentTypeHandle<UnitGrid> _unitGridType;
     private ComponentTypeHandle<UnitHealth> _unitHealthType;
     private ComponentTypeHandle<AITargetPrioritySetting> _targetPriorityType;
+    private ComponentLookup<UnitAttack> _unitAttackLookup;
+    private ComponentLookup<UnitCombat> _unitCombatLookup;
+    private ComponentLookup<StaticGridBlocker> _staticGridBlockerLookup;
+    private ComponentLookup<GridBlockerSize> _gridBlockerSizeLookup;
+    private ComponentLookup<UnitResourceHauler> _resourceHaulerLookup;
     private float _nextTargetRefreshTime;
 
     private enum TargetReason : byte
@@ -47,6 +54,11 @@ public partial struct AITargetingSystem : ISystem
         _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
         _unitHealthType = state.GetComponentTypeHandle<UnitHealth>(true);
         _targetPriorityType = state.GetComponentTypeHandle<AITargetPrioritySetting>(true);
+        _unitAttackLookup = state.GetComponentLookup<UnitAttack>(true);
+        _unitCombatLookup = state.GetComponentLookup<UnitCombat>(true);
+        _staticGridBlockerLookup = state.GetComponentLookup<StaticGridBlocker>(true);
+        _gridBlockerSizeLookup = state.GetComponentLookup<GridBlockerSize>(true);
+        _resourceHaulerLookup = state.GetComponentLookup<UnitResourceHauler>(true);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
@@ -63,8 +75,8 @@ public partial struct AITargetingSystem : ISystem
 
         _nextTargetRefreshTime = now + TargetRefreshSeconds;
 
-        EntityManager em = state.EntityManager;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
+        Entity diagnosticQueueEntity = shouldLog ? EnsureDiagnosticQueue(ref state) : Entity.Null;
 
         _entityType.Update(ref state);
         _squadType.Update(ref state);
@@ -72,30 +84,141 @@ public partial struct AITargetingSystem : ISystem
         _unitGridType.Update(ref state);
         _unitHealthType.Update(ref state);
         _targetPriorityType.Update(ref state);
+        _unitAttackLookup.Update(ref state);
+        _unitCombatLookup.Update(ref state);
+        _staticGridBlockerLookup.Update(ref state);
+        _gridBlockerSizeLookup.Update(ref state);
+        _resourceHaulerLookup.Update(ref state);
 
-        using NativeArray<ArchetypeChunk> squadChunks = _squadQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.TempJob);
+        using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.TempJob);
+        using NativeList<TargetingDiagnosticEvent> diagnosticEvents = new(Allocator.TempJob);
 
-        for (int chunkIndex = 0; chunkIndex < squadChunks.Length; chunkIndex++)
+        new AssignTargetsJob
         {
-            ArchetypeChunk squadChunk = squadChunks[chunkIndex];
-            NativeArray<AISquad> squads = squadChunk.GetNativeArray(ref _squadType);
+            Now = now,
+            ShouldLog = (byte)(shouldLog ? 1 : 0),
+            TargetChunks = targetChunks,
+            TargetPriorityChunks = targetPriorityChunks,
+            EntityType = _entityType,
+            SquadType = _squadType,
+            FactionType = _factionType,
+            UnitGridType = _unitGridType,
+            UnitHealthType = _unitHealthType,
+            TargetPriorityType = _targetPriorityType,
+            UnitAttackLookup = _unitAttackLookup,
+            UnitCombatLookup = _unitCombatLookup,
+            StaticGridBlockerLookup = _staticGridBlockerLookup,
+            GridBlockerSizeLookup = _gridBlockerSizeLookup,
+            ResourceHaulerLookup = _resourceHaulerLookup,
+            Diagnostics = diagnosticEvents
+        }.Run(_squadQuery);
 
+        if (!shouldLog)
+            return;
+
+        for (int i = 0; i < diagnosticEvents.Length; i++)
+        {
+            TargetingDiagnosticEvent diagnostic = diagnosticEvents[i];
+            if (diagnostic.HasTarget == 0)
+            {
+                EnqueueDiagnostic(ref state, diagnosticQueueEntity, $"[AITarget] faction={diagnostic.FactionId} squad={diagnostic.SquadId} result=NoTarget");
+                continue;
+            }
+
+            EnqueueDiagnostic(ref state, diagnosticQueueEntity, $"[AITarget] faction={diagnostic.FactionId} squad={diagnostic.SquadId} target={diagnostic.TargetKind} score={diagnostic.Score} reason={TargetReasonLabel(diagnostic.Reason)} targetFaction={diagnostic.TargetFactionId} targetCell={diagnostic.TargetCell}");
+        }
+    }
+
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private Entity EnsureDiagnosticQueue(ref SystemState state)
+    {
+        EntityManager em = state.EntityManager;
+        if (!_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+            return _diagnosticLogQueueQuery.GetSingletonEntity();
+
+        Entity queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+        em.SetName(queueEntity, "AIDiagnosticLogQueue");
+        em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        return queueEntity;
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, Entity queueEntity, FixedString512Bytes message)
+    {
+        if (queueEntity == Entity.Null)
+        {
+            queueEntity = EnsureDiagnosticQueue(ref state);
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = state.EntityManager.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
+    }
+
+    private struct TargetingDiagnosticEvent
+    {
+        public byte HasTarget;
+        public byte FactionId;
+        public int SquadId;
+        public AITargetKind TargetKind;
+        public int Score;
+        public TargetReason Reason;
+        public byte TargetFactionId;
+        public int2 TargetCell;
+    }
+
+    [BurstCompile]
+    private struct AssignTargetsJob : IJobChunk
+    {
+        public float Now;
+        public byte ShouldLog;
+        [ReadOnly] public NativeArray<ArchetypeChunk> TargetChunks;
+        [ReadOnly] public NativeArray<ArchetypeChunk> TargetPriorityChunks;
+        [ReadOnly] public EntityTypeHandle EntityType;
+        public ComponentTypeHandle<AISquad> SquadType;
+        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+        [ReadOnly] public ComponentTypeHandle<UnitGrid> UnitGridType;
+        [ReadOnly] public ComponentTypeHandle<UnitHealth> UnitHealthType;
+        [ReadOnly] public ComponentTypeHandle<AITargetPrioritySetting> TargetPriorityType;
+        [ReadOnly] public ComponentLookup<UnitAttack> UnitAttackLookup;
+        [ReadOnly] public ComponentLookup<UnitCombat> UnitCombatLookup;
+        [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticGridBlockerLookup;
+        [ReadOnly] public ComponentLookup<GridBlockerSize> GridBlockerSizeLookup;
+        [ReadOnly] public ComponentLookup<UnitResourceHauler> ResourceHaulerLookup;
+        public NativeList<TargetingDiagnosticEvent> Diagnostics;
+
+        public void Execute(
+            in ArchetypeChunk chunk,
+            int unfilteredChunkIndex,
+            bool useEnabledMask,
+            in v128 chunkEnabledMask)
+        {
+            NativeArray<AISquad> squads = chunk.GetNativeArray(ref SquadType);
             for (int i = 0; i < squads.Length; i++)
             {
                 AISquad squad = squads[i];
                 if (squad.Purpose != (byte)AISquadPurpose.Attack)
                     continue;
 
-                AITargetPriority priority = ResolveTargetPriority(targetPriorityChunks, ref _targetPriorityType, squad.FactionId);
+                AITargetPriority priority = ResolveTargetPriority(TargetPriorityChunks, ref TargetPriorityType, squad.FactionId);
                 if (!TrySelectTarget(
-                        em,
-                        targetChunks,
-                        _entityType,
-                        ref _factionType,
-                        ref _unitGridType,
-                        ref _unitHealthType,
+                        TargetChunks,
+                        EntityType,
+                        ref FactionType,
+                        ref UnitGridType,
+                        ref UnitHealthType,
+                        UnitAttackLookup,
+                        UnitCombatLookup,
+                        StaticGridBlockerLookup,
+                        GridBlockerSizeLookup,
+                        ResourceHaulerLookup,
                         squad,
                         priority,
                         out Entity target,
@@ -105,13 +228,21 @@ public partial struct AITargetingSystem : ISystem
                         out int score,
                         out TargetReason reason))
                 {
-                    if (now - squad.LastLogTime >= LogIntervalSeconds)
+                    if (Now - squad.LastLogTime >= LogIntervalSeconds)
                     {
-                        squad.LastLogTime = now;
+                        squad.LastLogTime = Now;
                         squads[i] = squad;
-                        if (shouldLog)
-                            EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
+                        if (ShouldLog != 0)
+                        {
+                            Diagnostics.Add(new TargetingDiagnosticEvent
+                            {
+                                HasTarget = 0,
+                                FactionId = squad.FactionId,
+                                SquadId = squad.SquadId
+                            });
+                        }
                     }
+
                     continue;
                 }
 
@@ -128,12 +259,24 @@ public partial struct AITargetingSystem : ISystem
                 squad.TargetCell = targetCell;
                 squad.TargetScore = score;
 
-                if (changed || now - squad.LastLogTime >= LogIntervalSeconds)
+                if (changed || Now - squad.LastLogTime >= LogIntervalSeconds)
                 {
-                    squad.LastLogTime = now;
+                    squad.LastLogTime = Now;
                     squads[i] = squad;
-                    if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={TargetReasonLabel(reason)} targetFaction={targetFaction} targetCell={targetCell}");
+                    if (ShouldLog != 0)
+                    {
+                        Diagnostics.Add(new TargetingDiagnosticEvent
+                        {
+                            HasTarget = 1,
+                            FactionId = squad.FactionId,
+                            SquadId = squad.SquadId,
+                            TargetKind = kind,
+                            Score = score,
+                            Reason = reason,
+                            TargetFactionId = targetFaction,
+                            TargetCell = targetCell
+                        });
+                    }
                 }
                 else
                 {
@@ -143,41 +286,17 @@ public partial struct AITargetingSystem : ISystem
         }
     }
 
-    private bool ShouldQueueDiagnostics(ref SystemState state)
-    {
-        if (Application.isBatchMode)
-            return true;
-
-        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
-            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
-    }
-
-    private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
-    {
-        EntityManager em = state.EntityManager;
-        Entity queueEntity;
-        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
-        {
-            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
-            em.SetName(queueEntity, "AIDiagnosticLogQueue");
-            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
-        }
-        else
-        {
-            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
-        }
-
-        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
-        logs.Add(new AIDiagnosticLogComponent { Message = message });
-    }
-
     private static bool TrySelectTarget(
-        EntityManager em,
         NativeArray<ArchetypeChunk> targetChunks,
         EntityTypeHandle entityType,
         ref ComponentTypeHandle<Faction> factionType,
         ref ComponentTypeHandle<UnitGrid> unitGridType,
         ref ComponentTypeHandle<UnitHealth> unitHealthType,
+        ComponentLookup<UnitAttack> unitAttackLookup,
+        ComponentLookup<UnitCombat> unitCombatLookup,
+        ComponentLookup<StaticGridBlocker> staticGridBlockerLookup,
+        ComponentLookup<GridBlockerSize> gridBlockerSizeLookup,
+        ComponentLookup<UnitResourceHauler> resourceHaulerLookup,
         AISquad squad,
         AITargetPriority priority,
         out Entity bestTarget,
@@ -214,8 +333,21 @@ public partial struct AITargetingSystem : ISystem
                     continue;
 
                 UnitGrid grid = grids[i];
-                AITargetKind kind = ResolveTargetKind(em, target);
-                int score = ScoreTarget(em, target, kind, priority, squad.RallyCell, grid.Cell, health, out TargetReason reason);
+                AITargetKind kind = ResolveTargetKind(
+                    unitAttackLookup,
+                    unitCombatLookup,
+                    staticGridBlockerLookup,
+                    gridBlockerSizeLookup,
+                    target);
+                int score = ScoreTarget(
+                    resourceHaulerLookup,
+                    target,
+                    kind,
+                    priority,
+                    squad.RallyCell,
+                    grid.Cell,
+                    health,
+                    out TargetReason reason);
                 if (score <= bestScore)
                     continue;
 
@@ -231,11 +363,16 @@ public partial struct AITargetingSystem : ISystem
         return bestTarget != Entity.Null;
     }
 
-    private static AITargetKind ResolveTargetKind(EntityManager em, Entity target)
+    private static AITargetKind ResolveTargetKind(
+        ComponentLookup<UnitAttack> unitAttackLookup,
+        ComponentLookup<UnitCombat> unitCombatLookup,
+        ComponentLookup<StaticGridBlocker> staticGridBlockerLookup,
+        ComponentLookup<GridBlockerSize> gridBlockerSizeLookup,
+        Entity target)
     {
-        if (em.HasComponent<UnitAttack>(target) || em.HasComponent<UnitCombat>(target))
+        if (unitAttackLookup.HasComponent(target) || unitCombatLookup.HasComponent(target))
             return AITargetKind.Threat;
-        if (em.HasComponent<StaticGridBlocker>(target) || em.HasComponent<GridBlockerSize>(target))
+        if (staticGridBlockerLookup.HasComponent(target) || gridBlockerSizeLookup.HasComponent(target))
             return AITargetKind.Building;
         return AITargetKind.Unit;
     }
@@ -262,7 +399,15 @@ public partial struct AITargetingSystem : ISystem
         return AITargetPriority.Balanced;
     }
 
-    private static int ScoreTarget(EntityManager em, Entity target, AITargetKind kind, AITargetPriority priority, int2 origin, int2 targetCell, UnitHealth health, out TargetReason reason)
+    private static int ScoreTarget(
+        ComponentLookup<UnitResourceHauler> resourceHaulerLookup,
+        Entity target,
+        AITargetKind kind,
+        AITargetPriority priority,
+        int2 origin,
+        int2 targetCell,
+        UnitHealth health,
+        out TargetReason reason)
     {
         int distance = math.abs(targetCell.x - origin.x) + math.abs(targetCell.y - origin.y);
         int healthValue = math.clamp(health.Max / 10, 0, 30);
@@ -284,7 +429,8 @@ public partial struct AITargetingSystem : ISystem
                 break;
         }
 
-        if (em.HasComponent<UnitResourceHauler>(target))
+        bool isResourceHauler = resourceHaulerLookup.HasComponent(target);
+        if (isResourceHauler)
         {
             score += 20;
             reason = TargetReason.Economy;
@@ -304,7 +450,7 @@ public partial struct AITargetingSystem : ISystem
                 }
                 break;
             case AITargetPriority.Economy:
-                if (em.HasComponent<UnitResourceHauler>(target))
+                if (isResourceHauler)
                 {
                     score += 50;
                     reason = TargetReason.Economy;

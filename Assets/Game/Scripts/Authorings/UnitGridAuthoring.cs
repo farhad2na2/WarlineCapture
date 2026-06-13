@@ -754,6 +754,9 @@ public class UnitGridAuthoring : MonoBehaviour
             if (!authoring.usesVehicleMotion)
                 return configured;
 
+            if (configured.x > 1 || configured.y > 1)
+                return configured;
+
             if (!hasModelBounds)
                 return configured;
 
@@ -762,12 +765,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 math.max(1, (int)math.ceil(modelBounds.size.z)));
 
             if (!authoring.autoCalculateFootprint)
-            {
-                // Never let a manually configured unit footprint shrink below the actual rendered model size.
-                return new int2(
-                    math.max(configured.x, modelFootprint.x),
-                    math.max(configured.y, modelFootprint.y));
-            }
+                return configured;
 
             return modelFootprint;
         }

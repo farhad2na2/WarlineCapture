@@ -16,6 +16,8 @@ internal struct UnitPathRequestBufferSystem
     public NativeList<int2> IgnoredOccupancySizes;
     public NativeList<int2> AssignedGoals;
     public NativeList<byte> Status;
+    public NativeList<int> FailureCodes;
+    public NativeList<int> ExpansionCounts;
     public NativeList<byte> Segmented;
     public NativeList<byte> ContinuationMoves;
     public NativeList<byte> CheapSegmentModes;
@@ -37,6 +39,8 @@ internal struct UnitPathRequestBufferSystem
         IgnoredOccupancySizes = new NativeList<int2>(capacity, Allocator.Persistent);
         AssignedGoals = new NativeList<int2>(capacity, Allocator.Persistent);
         Status = new NativeList<byte>(capacity, Allocator.Persistent);
+        FailureCodes = new NativeList<int>(capacity, Allocator.Persistent);
+        ExpansionCounts = new NativeList<int>(capacity, Allocator.Persistent);
         Segmented = new NativeList<byte>(capacity, Allocator.Persistent);
         ContinuationMoves = new NativeList<byte>(capacity, Allocator.Persistent);
         CheapSegmentModes = new NativeList<byte>(capacity, Allocator.Persistent);
@@ -58,6 +62,8 @@ internal struct UnitPathRequestBufferSystem
         if (IgnoredOccupancySizes.IsCreated) IgnoredOccupancySizes.Dispose();
         if (AssignedGoals.IsCreated) AssignedGoals.Dispose();
         if (Status.IsCreated) Status.Dispose();
+        if (FailureCodes.IsCreated) FailureCodes.Dispose();
+        if (ExpansionCounts.IsCreated) ExpansionCounts.Dispose();
         if (Segmented.IsCreated) Segmented.Dispose();
         if (ContinuationMoves.IsCreated) ContinuationMoves.Dispose();
         if (CheapSegmentModes.IsCreated) CheapSegmentModes.Dispose();

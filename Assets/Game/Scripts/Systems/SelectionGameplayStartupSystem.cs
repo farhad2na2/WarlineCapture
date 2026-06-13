@@ -1937,7 +1937,11 @@ internal sealed class SelectionGameplayStartupSystem
         {
             if (mainMenuPlayUi != null &&
                 mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source))
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"gameplayUiHit source={source} pos={screenPosition} frame={Time.frameCount}");
                 return true;
+            }
 
             return IsPointerOverRaycastableUi(screenPosition, out source);
         }

@@ -13,16 +13,16 @@ Target shape:
 
 ## Current Audit Snapshot
 
-Audit date: 2026-06-12.
+Audit date: 2026-06-13.
 
 Scanned root:
 - `Assets/Game/Scripts/Systems`
 
 Observed:
 - 723 system source files.
-- 37 system files currently use `[BurstCompile]`.
+- 38 system files currently use `[BurstCompile]`.
 - 73 `OnUpdate` source matches.
-- 24 files have `OnUpdate` and no `[BurstCompile]`.
+- 23 files have `OnUpdate` and no `[BurstCompile]`.
 - 0 generic-aware `ToEntityArray` / `ToComponentDataArray<T>` calls; this is the active guardrail count after the `CustomGameStartupSystem` startup-boundary cleanup slice.
 - 1 direct `EntityManager` structural or component mutation call.
 - Main array-copy offenders:
@@ -85,9 +85,9 @@ Hot managed systems that are not exempt:
 
 Always include this snapshot in status handoffs and heartbeat progress messages.
 
-- Checklist progress: 73 / 157 complete (46.5%).
+- Checklist progress: 74 / 157 complete (47.1%).
 - In progress: 12 / 157.
-- Remaining open: 72 / 157.
+- Remaining open: 71 / 157.
 - Phase progress: 1 / 11 phases complete; 9 in progress; 1 not started.
 - Counting rule: `[x]` is complete, `[~]` is in progress, and `[ ]` is open. Percent complete uses strict `[x] / total`.
 
@@ -862,7 +862,7 @@ Target areas:
 - adjacent detection/warning helpers such as `ThreatDetectionWarningSystem`
 
 Implementation steps:
-- [ ] Convert target scanning to chunk/job-based collection.
+- [x] Convert target scanning to chunk/job-based collection.
 - [ ] Build temporary native target/squad data only once per AI update tick when cross-query matching is required.
 - [ ] Reuse persistent native containers owned by the system where safe.
 - [ ] Batch combat/path/engage mutations through ECB.
@@ -901,6 +901,23 @@ Progress notes:
   - `AISquadValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-squad-acceptance.log`, marker `[AISquadFocusedValidation] result=Passed tests=1`.
   - `AICombatOrderValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-combat-order-acceptance.log`, marker `[AICombatOrderFocusedValidation] result=Passed tests=2`.
 - 2026-06-12: Superseded the earlier broad AI regression blocker. The filtered Unity TestRunner invocation remained unreliable for these AI fixtures, so the current accepted coverage is the focused execute-method validator set above.
+- 2026-06-13: Continued Phase 5 in `AITargetingSystem`. Target scoring now runs through a Burst `IJobChunk` over squad chunks, while hostile target and priority chunks are passed in as `TempJob` native inputs. Per-target `EntityManager.HasComponent` checks were replaced with cached read-only component lookups, the diagnostic queue is created before lookup refresh to avoid invalidating lookups mid-scan, and managed diagnostic string formatting remains outside the job.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AITargetingValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-targeting-job-shadow-rerun2.log`
+  - Log marker: `[AITargetingFocusedValidation] result=Passed tests=3`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-targeting-job-shadow-rerun.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - Guardrail ratchet: non-Burst `OnUpdate` ceiling reduced to `23`, Burst file floor increased to `38`.
+  - `git diff --check` passed.
+  - Progress snapshot is now `74 / 157 complete (47.1%)`, `12 / 157 in progress`, `71 / 157 open`.
+- 2026-06-13: Continued Phase 5 in `AISquadSystem`. Squad formation now builds one native candidate-unit record list per AI tick with cached type handles/lookups, instead of collecting unit entities and re-reading faction, health, grid, and exclusion components through `EntityManager` for each plan. Candidate records are marked assigned only after a squad is actually created, preserving same-tick reuse for plans that fail `minUnits`.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod AISquadValidationTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-ai-squad-candidate-records-shadow-rerun.log`
+  - Log marker: `[AISquadFocusedValidation] result=Passed tests=1`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-ai-squad-candidates-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `74 / 157 complete (47.1%)`, `12 / 157 in progress`, `71 / 157 open`.
 
 ### Phase 6: Structural Change Cleanup
 
@@ -974,6 +991,16 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
+- 2026-06-13: Continued Phase 6 move-order clear cleanup in `UnitMoveOrderSystem`. The public same-frame `ClearMovementOrderComponents(EntityManager, Entity)` helper now routes through the existing ECB overload and immediate playback, removing the direct per-component `EntityManager.RemoveComponent` helper path while preserving callers in transport, rope-disembark, and command systems.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-unit-move-order-clear-ecb-shadow.log`
+  - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=9`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-unit-move-order-clear-ecb-shadow.log`
+  - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=73`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-move-order-clear-ecb-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
 
 ### Phase 7: Pathfinding And Occupancy Protection Pass
 
@@ -1017,6 +1044,14 @@ Progress notes:
 - 2026-06-12: Focused runtime-grid deduplication validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod RuntimeGridDeduplicationSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-runtime-grid-dedup.log`
   - Log marker: `[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=2`.
+- 2026-06-13: Continued Phase 7 pathfinding diagnostic sampling cleanup in `UnitPathfindingApplySystem`. The stuck manual-move sample collector now uses an `EntityTypeHandle` cached during `Initialize` and refreshed before diagnostic sampling instead of creating a handle from `EntityManager` when validation logging is active. Runtime pathfinding behavior is unchanged.
+  - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-unit-pathfinding-apply-cached-handle-shadow.log`
+  - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed`; report `/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json`, `updates=11`, `allocatedBytes=0`, `remainingRequests=0`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-unit-pathfinding-apply-cached-handle-shadow.log`
+  - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+  - `git diff --check` passed.
+  - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
 
 ### Phase 8: Render-Budget And Visual-State Hot Paths
 

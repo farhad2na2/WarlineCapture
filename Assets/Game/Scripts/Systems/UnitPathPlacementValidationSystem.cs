@@ -108,11 +108,12 @@ internal struct UnitPathPlacementValidationSystem
                 int idx = row + x;
                 if (walkable[idx].Value == 0)
                     return false;
-                if (dynamicBlocked.IsCreated && dynamicBlocked.IsSet(idx) &&
-                    (!friendlyPassFactionIds.IsCreated || (uint)idx >= (uint)friendlyPassFactionIds.Length || friendlyPassFactionIds[idx] != factionId))
-                    return false;
 
                 bool isCurrentFootprintCell = UnitFootprintUtility.ContainsCell(currentCell, clamped, new int2(x, y));
+                if (!isCurrentFootprintCell &&
+                    IsBlockedForFaction(dynamicBlocked, friendlyPassFactionIds, idx, factionId))
+                    return false;
+
                 bool isIgnoredOccupancyCell =
                     ignoredOccupancyEntity != Entity.Null &&
                     UnitFootprintUtility.ContainsCell(ignoredOccupancyCell, ignoredOccupancySize, new int2(x, y));
@@ -201,6 +202,8 @@ internal struct UnitPathPlacementValidationSystem
         int2 currentMax = currentMin + clamped;
         int2 paddedMin = min - new int2(padding, padding);
         int2 paddedMax = max + new int2(padding, padding);
+        int2 currentPaddedMin = currentMin - new int2(padding, padding);
+        int2 currentPaddedMax = currentMax + new int2(padding, padding);
 
         if (paddedMin.x < 0 || paddedMin.y < 0 || paddedMax.x > grid.Width || paddedMax.y > grid.Height)
             return false;
@@ -216,18 +219,22 @@ internal struct UnitPathPlacementValidationSystem
                 {
                     if (walkable[idx].Value == 0)
                         return false;
-                    if (dynamicBlocked.IsCreated && dynamicBlocked.IsSet(idx) &&
-                        (!friendlyPassFactionIds.IsCreated || (uint)idx >= (uint)friendlyPassFactionIds.Length || friendlyPassFactionIds[idx] != factionId))
+
+                    bool isCurrentActualFootprintCell =
+                        x >= currentMin.x && x < currentMax.x &&
+                        y >= currentMin.y && y < currentMax.y;
+                    if (!isCurrentActualFootprintCell &&
+                        IsBlockedForFaction(dynamicBlocked, friendlyPassFactionIds, idx, factionId))
                         return false;
                 }
 
-                bool isCurrentFootprintCell =
-                    x >= currentMin.x && x < currentMax.x &&
-                    y >= currentMin.y && y < currentMax.y;
+                bool isCurrentClearanceCell =
+                    x >= currentPaddedMin.x && x < currentPaddedMax.x &&
+                    y >= currentPaddedMin.y && y < currentPaddedMax.y;
                 bool isIgnoredOccupancyCell =
                     ignoredOccupancyEntity != Entity.Null &&
                     UnitFootprintUtility.ContainsCell(ignoredOccupancyCell, ignoredOccupancySize, new int2(x, y));
-                if (!isCurrentFootprintCell && occupied.IsCreated && occupied.IsSet(idx))
+                if (!isCurrentClearanceCell && occupied.IsCreated && occupied.IsSet(idx))
                 {
                     if (!isIgnoredOccupancyCell &&
                         !IsOnlySoftBlockerAtCell(grid.Width, idx, liveUnitEntities, liveUnitGrids, liveUnitFootprints, movingEntity))
@@ -279,6 +286,20 @@ internal struct UnitPathPlacementValidationSystem
         }
 
         return foundSoft;
+    }
+
+    private static bool IsBlockedForFaction(
+        NativeBitArray dynamicBlocked,
+        NativeArray<byte> friendlyPassFactionIds,
+        int idx,
+        byte factionId)
+    {
+        if (!dynamicBlocked.IsCreated || !dynamicBlocked.IsSet(idx))
+            return false;
+
+        return !friendlyPassFactionIds.IsCreated ||
+            (uint)idx >= (uint)friendlyPassFactionIds.Length ||
+            friendlyPassFactionIds[idx] != factionId;
     }
 
     private static bool IsSoftBlocker(int2 size)

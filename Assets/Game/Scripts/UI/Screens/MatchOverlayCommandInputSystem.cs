@@ -88,6 +88,11 @@ public sealed class MatchOverlayCommandInputSystem
 
         public void Bind()
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"matchHudCommandControlsBind view={_view.name} " +
+                $"select={DescribeButton(_view.SelectButton)} move={DescribeButton(_view.MoveButton)} " +
+                $"attack={DescribeButton(_view.AttackButton)} scan={DescribeButton(_view.ScanButton)} " +
+                $"build={DescribeButton(_view.BuildButton)} tabs={CountTabs(_view.CommandTabGroup)}");
             BindCommandTabs();
             _runtimeFeedbackView?.BindFeedbackActionCallbacks(OnBoardAllFeedbackClicked, OnCancelFeedbackClicked);
 
@@ -99,6 +104,20 @@ public sealed class MatchOverlayCommandInputSystem
             _view.HoldButton?.onClick.AddListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.AddListener(OnStopButtonClicked);
             _view.CommandWheelStopButton?.onClick.AddListener(OnCommandWheelStopButtonClicked);
+        }
+
+        private static string DescribeButton(Button button)
+        {
+            return button != null ? button.name : "null";
+        }
+
+        private static int CountTabs(MatchOverlayCommandTabGroupView tabGroup)
+        {
+            if (tabGroup == null)
+                return -1;
+
+            MatchOverlayCommandTabView[] tabs = tabGroup.Tabs;
+            return tabs != null ? tabs.Length : 0;
         }
 
         public void Unbind()
@@ -208,8 +227,12 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnMoveButtonClicked()
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestMoveCommandMode();
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"moveButtonRequestMoveCommandMode queued={queued}");
 
             if (!queued)
                 BattleHudRuntimeFeedbackSystem.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(

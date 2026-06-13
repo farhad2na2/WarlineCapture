@@ -16,6 +16,19 @@ public partial struct AISquadSystem : ISystem
     private ComponentTypeHandle<AISquad> _squadType;
     private ComponentTypeHandle<Faction> _factionType;
     private ComponentTypeHandle<UnitGrid> _unitGridType;
+    private ComponentTypeHandle<UnitHealth> _unitHealthType;
+    private ComponentLookup<AISquadMember> _squadMemberLookup;
+    private ComponentLookup<StaticGridBlocker> _staticGridBlockerLookup;
+    private ComponentLookup<EngageTarget> _engageTargetLookup;
+    private ComponentLookup<UnitPathRequest> _pathRequestLookup;
+
+    private struct CandidateUnitRecord
+    {
+        public Entity Entity;
+        public byte FactionId;
+        public int2 Cell;
+        public byte Assigned;
+    }
 
     public void OnCreate(ref SystemState state)
     {
@@ -34,6 +47,11 @@ public partial struct AISquadSystem : ISystem
         _squadType = state.GetComponentTypeHandle<AISquad>(true);
         _factionType = state.GetComponentTypeHandle<Faction>(true);
         _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _unitHealthType = state.GetComponentTypeHandle<UnitHealth>(true);
+        _squadMemberLookup = state.GetComponentLookup<AISquadMember>(true);
+        _staticGridBlockerLookup = state.GetComponentLookup<StaticGridBlocker>(true);
+        _engageTargetLookup = state.GetComponentLookup<EngageTarget>(true);
+        _pathRequestLookup = state.GetComponentLookup<UnitPathRequest>(true);
         state.RequireForUpdate<AISquadPlan>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitGrid>();
@@ -63,119 +81,117 @@ public partial struct AISquadSystem : ISystem
             planEntities.AddRange(entities);
         }
 
-        using NativeArray<ArchetypeChunk> unitChunks = _unitQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using NativeList<Entity> unitEntities = new(_unitQuery.CalculateEntityCount(), Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < unitChunks.Length; chunkIndex++)
+        NativeList<CandidateUnitRecord> candidateUnits = BuildAvailableUnitCandidates(ref state);
+        try
         {
-            NativeArray<Entity> entities = unitChunks[chunkIndex].GetNativeArray(_entityType);
-            unitEntities.AddRange(entities);
-        }
-
-        for (int i = 0; i < planEntities.Length; i++)
-        {
-            Entity planEntity = planEntities[i];
-            AISquadPlan plan = em.GetComponentData<AISquadPlan>(planEntity);
-            if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
-                continue;
-
-            _squadType.Update(ref state);
-            _factionType.Update(ref state);
-            _unitGridType.Update(ref state);
-
-            int activeSquads = CountActiveSquads(_squadQuery, ref _squadType, plan.FactionId);
-            int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
-            if (activeSquads >= maxActiveSquads)
+            for (int i = 0; i < planEntities.Length; i++)
             {
-                LogCompleteIfNeeded(ref state, ref plan, now, activeSquads, shouldLog);
-                em.SetComponentData(planEntity, plan);
-                continue;
-            }
+                Entity planEntity = planEntities[i];
+                AISquadPlan plan = em.GetComponentData<AISquadPlan>(planEntity);
+                if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
+                    continue;
 
-            int maxUnits = math.max(1, plan.MaxUnits);
-            int minUnits = math.clamp(math.max(1, plan.MinUnits), 1, maxUnits);
-            using NativeList<Entity> members = new(maxUnits, Allocator.Temp);
-            int2 cellSum = int2.zero;
+                _squadType.Update(ref state);
+                _factionType.Update(ref state);
+                _unitGridType.Update(ref state);
 
-            for (int unitIndex = 0; unitIndex < unitEntities.Length && members.Length < maxUnits; unitIndex++)
-            {
-                Entity unit = unitEntities[unitIndex];
-                if (!em.Exists(unit) ||
-                    em.HasComponent<AISquadMember>(unit) ||
-                    em.HasComponent<StaticGridBlocker>(unit) ||
-                    em.HasComponent<EngageTarget>(unit) ||
-                    em.HasComponent<UnitPathRequest>(unit))
+                int activeSquads = CountActiveSquads(_squadQuery, ref _squadType, plan.FactionId);
+                int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
+                if (activeSquads >= maxActiveSquads)
                 {
+                    LogCompleteIfNeeded(ref state, ref plan, now, activeSquads, shouldLog);
+                    em.SetComponentData(planEntity, plan);
                     continue;
                 }
 
-                if (em.GetComponentData<Faction>(unit).Id != plan.FactionId)
-                    continue;
+                int maxUnits = math.max(1, plan.MaxUnits);
+                int minUnits = math.clamp(math.max(1, plan.MinUnits), 1, maxUnits);
+                using NativeList<Entity> members = new(maxUnits, Allocator.Temp);
+                using NativeList<int> memberCandidateIndices = new(maxUnits, Allocator.Temp);
+                int2 cellSum = int2.zero;
 
-                UnitHealth health = em.GetComponentData<UnitHealth>(unit);
-                if (health.Current <= 0)
-                    continue;
-
-                UnitGrid grid = em.GetComponentData<UnitGrid>(unit);
-                members.Add(unit);
-                cellSum += grid.Cell;
-            }
-
-            if (members.Length < minUnits)
-            {
-                if (now - plan.LastLogTime >= LogIntervalSeconds)
+                for (int unitIndex = 0; unitIndex < candidateUnits.Length && members.Length < maxUnits; unitIndex++)
                 {
-                    plan.LastLogTime = now;
-                    if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
+                    CandidateUnitRecord candidate = candidateUnits[unitIndex];
+                    if (candidate.Assigned != 0 ||
+                        candidate.FactionId != plan.FactionId)
+                        continue;
+
+                    members.Add(candidate.Entity);
+                    memberCandidateIndices.Add(unitIndex);
+                    cellSum += candidate.Cell;
                 }
-                em.SetComponentData(planEntity, plan);
-                continue;
-            }
 
-            int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
-            byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
-            int2 rallyCell = cellSum / members.Length;
-            int2 targetCell = ResolveInitialTargetCell(_factionGridQuery, ref _factionType, ref _unitGridType, targetFactionId, rallyCell);
-            Entity squadEntity = em.CreateEntity(typeof(AISquad));
-            DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
-            em.SetComponentData(squadEntity, new AISquad
-            {
-                SquadId = squadId,
-                FactionId = plan.FactionId,
-                Purpose = (byte)AISquadPurpose.Attack,
-                TargetFactionId = targetFactionId,
-                TargetKind = (byte)AITargetKind.None,
-                TargetEntity = Entity.Null,
-                RallyCell = rallyCell,
-                TargetCell = targetCell,
-                TargetScore = 0,
-                MinUnits = minUnits,
-                MaxUnits = maxUnits,
-                LastOrderTime = -999f,
-                LastLogTime = now
-            });
-
-            for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
-            {
-                Entity unit = members[memberIndex];
-                squadUnits.Add(new AISquadUnit { Unit = unit });
-            }
-
-            for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
-            {
-                Entity unit = members[memberIndex];
-                em.AddComponentData(unit, new AISquadMember
+                if (members.Length < minUnits)
                 {
-                    Squad = squadEntity,
-                    SquadId = squadId
+                    if (now - plan.LastLogTime >= LogIntervalSeconds)
+                    {
+                        plan.LastLogTime = now;
+                        if (shouldLog)
+                            EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
+                    }
+                    em.SetComponentData(planEntity, plan);
+                    continue;
+                }
+
+                int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
+                byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
+                int2 rallyCell = cellSum / members.Length;
+                int2 targetCell = ResolveInitialTargetCell(_factionGridQuery, ref _factionType, ref _unitGridType, targetFactionId, rallyCell);
+                Entity squadEntity = em.CreateEntity(typeof(AISquad));
+                DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
+                em.SetComponentData(squadEntity, new AISquad
+                {
+                    SquadId = squadId,
+                    FactionId = plan.FactionId,
+                    Purpose = (byte)AISquadPurpose.Attack,
+                    TargetFactionId = targetFactionId,
+                    TargetKind = (byte)AITargetKind.None,
+                    TargetEntity = Entity.Null,
+                    RallyCell = rallyCell,
+                    TargetCell = targetCell,
+                    TargetScore = 0,
+                    MinUnits = minUnits,
+                    MaxUnits = maxUnits,
+                    LastOrderTime = -999f,
+                    LastLogTime = now
                 });
-            }
 
-            plan.NextSquadId = squadId + 1;
-            plan.LastLogTime = now;
-            em.SetComponentData(planEntity, plan);
-            if (shouldLog)
-                EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
+                for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
+                {
+                    Entity unit = members[memberIndex];
+                    squadUnits.Add(new AISquadUnit { Unit = unit });
+                }
+
+                for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
+                {
+                    Entity unit = members[memberIndex];
+                    em.AddComponentData(unit, new AISquadMember
+                    {
+                        Squad = squadEntity,
+                        SquadId = squadId
+                    });
+                }
+
+                for (int memberIndex = 0; memberIndex < memberCandidateIndices.Length; memberIndex++)
+                {
+                    int candidateIndex = memberCandidateIndices[memberIndex];
+                    CandidateUnitRecord candidate = candidateUnits[candidateIndex];
+                    candidate.Assigned = 1;
+                    candidateUnits[candidateIndex] = candidate;
+                }
+
+                plan.NextSquadId = squadId + 1;
+                plan.LastLogTime = now;
+                em.SetComponentData(planEntity, plan);
+                if (shouldLog)
+                    EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
+            }
+        }
+        finally
+        {
+            if (candidateUnits.IsCreated)
+                candidateUnits.Dispose();
         }
 
     }
@@ -197,6 +213,51 @@ public partial struct AISquadSystem : ISystem
         }
 
         return count;
+    }
+
+    private NativeList<CandidateUnitRecord> BuildAvailableUnitCandidates(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        _factionType.Update(ref state);
+        _unitGridType.Update(ref state);
+        _unitHealthType.Update(ref state);
+        _squadMemberLookup.Update(ref state);
+        _staticGridBlockerLookup.Update(ref state);
+        _engageTargetLookup.Update(ref state);
+        _pathRequestLookup.Update(ref state);
+
+        NativeList<CandidateUnitRecord> candidates = new(_unitQuery.CalculateEntityCount(), Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = _unitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
+            NativeArray<Faction> factions = chunk.GetNativeArray(ref _factionType);
+            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref _unitGridType);
+            NativeArray<UnitHealth> healths = chunk.GetNativeArray(ref _unitHealthType);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (_squadMemberLookup.HasComponent(entity) ||
+                    _staticGridBlockerLookup.HasComponent(entity) ||
+                    _engageTargetLookup.HasComponent(entity) ||
+                    _pathRequestLookup.HasComponent(entity) ||
+                    healths[i].Current <= 0)
+                {
+                    continue;
+                }
+
+                candidates.Add(new CandidateUnitRecord
+                {
+                    Entity = entity,
+                    FactionId = factions[i].Id,
+                    Cell = grids[i].Cell
+                });
+            }
+        }
+
+        return candidates;
     }
 
     private static int2 ResolveInitialTargetCell(

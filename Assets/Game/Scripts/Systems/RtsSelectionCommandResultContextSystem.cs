@@ -69,6 +69,7 @@ public sealed class RtsSelectionCommandResultContextSystem
             buildingPlacementInteractionContext,
             querySystem.SelectedMoveQuery,
             querySystem.GridConfigQuery,
+            querySystem.MapSurfaceQuery,
             tryGetDefaultEntityManager,
             ensureRuntimeSelectionDependencies,
             clearCurrentSelection,

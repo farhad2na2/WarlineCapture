@@ -18,6 +18,7 @@ internal struct PathfindBatchJob : IJobFor
     private const int InfantryMaxAStarExpansions = 450;
     private const int InfantrySegmentedMaxAStarExpansions = 30000;
     private const int VehicleMaxAStarExpansions = 1600;
+    private const int VehicleManualMaxAStarExpansions = 12000;
     private const int InfantrySearchBoundsPaddingCells = 8;
     private const int InfantrySegmentedSearchBoundsPaddingCells = 180;
     private const int VehicleSearchBoundsPaddingCells = 12;
@@ -60,6 +61,8 @@ internal struct PathfindBatchJob : IJobFor
 
     public NativeStream.Writer Output;
     public NativeArray<byte> Status; // 1 = found, 0 = none/invalid
+    public NativeArray<int> FailureCodes;
+    public NativeArray<int> ExpansionCounts;
     [ReadOnly] public NativeArray<byte> CheapSegmentModes;
     [ReadOnly] public NativeArray<byte> AlternateSearchSkipped;
     [NativeDisableParallelForRestriction] public NativeArray<int> AlternateAttempts;
@@ -97,6 +100,7 @@ internal struct PathfindBatchJob : IJobFor
         if (!GridUtils.InBounds(start, Grid.Width, Grid.Height))
         {
             Status[index] = 0;
+            FailureCodes[index] = 1;
             Output.EndForEachIndex();
             return;
         }
@@ -105,6 +109,7 @@ internal struct PathfindBatchJob : IJobFor
         if (Walkable[startIndex].Value == 0)
         {
             Status[index] = 0;
+            FailureCodes[index] = 2;
             Output.EndForEachIndex();
             return;
         }
@@ -112,12 +117,13 @@ internal struct PathfindBatchJob : IJobFor
         if (!IsSurfaceCellPathable(start, isVehicle))
         {
             Status[index] = 0;
+            FailureCodes[index] = 3;
             Output.EndForEachIndex();
             return;
         }
 
         int searchEpoch = SearchEpochBase + (index * UnitPathScratchWorkspaceSystem.EpochsPerRequest);
-        if (TryWritePath(movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, goal, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch))
+        if (TryWritePath(index, movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, goal, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch))
         {
             Status[index] = 1;
             Output.EndForEachIndex();
@@ -165,7 +171,7 @@ internal struct PathfindBatchJob : IJobFor
                         continue;
 
                     candidateAttempts++;
-                    if (TryWritePath(movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, candidate, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch + candidateAttempts + 1))
+                    if (TryWritePath(index, movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, candidate, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch + candidateAttempts + 1))
                     {
                         AlternateAttempts[index] = candidateAttempts;
                         Goals[index] = candidate;
@@ -179,7 +185,7 @@ internal struct PathfindBatchJob : IJobFor
 
         AlternateAttempts[index] = candidateAttempts;
 
-        if (manualMove && !isVehicle &&
+        if (manualMove &&
             TryWriteSegmentProgressFallback(movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, desiredGoal, footprintSize, isVehicle, manualMove, factionId, out int2 fallbackGoal))
         {
             Goals[index] = fallbackGoal;
@@ -190,6 +196,8 @@ internal struct PathfindBatchJob : IJobFor
         }
 
         Status[index] = 0;
+        if (FailureCodes[index] == 0)
+            FailureCodes[index] = 12;
         Output.EndForEachIndex();
     }
 
@@ -281,10 +289,13 @@ internal struct PathfindBatchJob : IJobFor
             IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
     }
 
-    private bool TryWritePath(Entity movingEntity, Entity ignoredOccupancyEntity, int2 ignoredOccupancyCell, int2 ignoredOccupancySize, int2 start, int2 goal, int2 footprintSize, bool isVehicle, bool manualMove, bool cheapSegmentMode, byte factionId, int searchEpoch)
+    private bool TryWritePath(int index, Entity movingEntity, Entity ignoredOccupancyEntity, int2 ignoredOccupancyCell, int2 ignoredOccupancySize, int2 start, int2 goal, int2 footprintSize, bool isVehicle, bool manualMove, bool cheapSegmentMode, byte factionId, int searchEpoch)
     {
         if (!GridUtils.InBounds(goal, Grid.Width, Grid.Height))
+        {
+            FailureCodes[index] = 4;
             return false;
+        }
 
         int startIndex = GridUtils.CellToIndex(start, Grid.Width);
         int goalIndex = GridUtils.CellToIndex(goal, Grid.Width);
@@ -296,12 +307,18 @@ internal struct PathfindBatchJob : IJobFor
         int minSearchY = math.max(0, math.min(start.y, goal.y) - searchBoundsPadding);
         int maxSearchY = math.min(Grid.Height - 1, math.max(start.y, goal.y) + searchBoundsPadding);
         if (Walkable[goalIndex].Value == 0)
+        {
+            FailureCodes[index] = 5;
             return false;
+        }
 
         if (!IsSurfaceCellPathable(goal, isVehicle))
+        {
+            FailureCodes[index] = 6;
             return false;
+        }
 
-        bool goalValid = UnitPathPlacementValidationSystem.CanPlaceForPathing(
+        bool goalPlacementValid = UnitPathPlacementValidationSystem.CanPlaceForPathing(
             Grid,
             Walkable,
             DynamicBlocked,
@@ -321,15 +338,29 @@ internal struct PathfindBatchJob : IJobFor
             ignoredOccupancyEntity,
             ignoredOccupancyCell,
             ignoredOccupancySize);
-        goalValid = goalValid && IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
-        if (goalIndex != startIndex && !goalValid)
-            return false;
+        bool goalSurfaceFootprintValid = IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
+        if (goalIndex != startIndex)
+        {
+            if (!goalPlacementValid)
+            {
+                FailureCodes[index] = 7;
+                return false;
+            }
+
+            if (!goalSurfaceFootprintValid)
+            {
+                FailureCodes[index] = 8;
+                return false;
+            }
+        }
 
         if (HasDirectPath(Grid, Walkable, DynamicBlocked, FriendlyPassFactionIds, Occupied, LiveUnitEntities, LiveUnitGrids, LiveUnitFootprints, LiveUnitManualGroupMembers, movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, goal, footprintSize, isVehicle, manualMove, factionId))
         {
             Output.Write(start);
             if (!start.Equals(goal))
                 Output.Write(goal);
+            FailureCodes[index] = 0;
+            ExpansionCounts[index] = 0;
             return true;
         }
 
@@ -341,8 +372,8 @@ internal struct PathfindBatchJob : IJobFor
         HeapPush(threadOffset, ref heapCount, PackHeapEntry(HeuristicOctile(start, goal), startIndex));
         int expansions = 0;
         int maxExpansions = isVehicle
-            ? VehicleMaxAStarExpansions
-            : cheapSegmentMode ? InfantrySegmentedMaxAStarExpansions : InfantryMaxAStarExpansions;
+            ? (manualMove ? VehicleManualMaxAStarExpansions : VehicleMaxAStarExpansions)
+            : (cheapSegmentMode ? InfantrySegmentedMaxAStarExpansions : InfantryMaxAStarExpansions);
 
         bool found = false;
 
@@ -354,7 +385,11 @@ internal struct PathfindBatchJob : IJobFor
 
             expansions++;
             if (expansions > maxExpansions)
+            {
+                FailureCodes[index] = 9;
+                ExpansionCounts[index] = expansions;
                 return false;
+            }
 
             if (current == goalIndex)
             {
@@ -475,7 +510,11 @@ internal struct PathfindBatchJob : IJobFor
         }
 
         if (!found)
+        {
+            FailureCodes[index] = 10;
+            ExpansionCounts[index] = expansions;
             return false;
+        }
 
         int pathLen = 0;
         int cur = goalIndex;
@@ -490,7 +529,11 @@ internal struct PathfindBatchJob : IJobFor
         }
 
         if (pathLen == 0 || ScratchPath[threadOffset + (pathLen - 1)] != startIndex)
+        {
+            FailureCodes[index] = 11;
+            ExpansionCounts[index] = expansions;
             return false;
+        }
 
         bool keepFullPath = !isVehicle;
         for (int i = pathLen - 1; i >= 0; i--)
@@ -515,6 +558,8 @@ internal struct PathfindBatchJob : IJobFor
                 Output.Write(cell);
         }
 
+        FailureCodes[index] = 0;
+        ExpansionCounts[index] = expansions;
         return true;
     }
 
@@ -616,26 +661,7 @@ internal struct PathfindBatchJob : IJobFor
 
     private bool IsSurfaceFootprintPathable(int2 cell, int2 footprintSize, bool isVehicle)
     {
-        if (HasMapSurface == 0)
-            return true;
-
-        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
-        int2 max = min + clamped;
-        if (min.x < 0 || min.y < 0 || max.x > Grid.Width || max.y > Grid.Height)
-            return false;
-
-        MapSurfaceMovementMask movementMask = SurfaceValidation.ResolveMovementMask(isVehicle);
-        for (int y = min.y; y < max.y; y++)
-        {
-            for (int x = min.x; x < max.x; x++)
-            {
-                if (!SurfaceValidation.CanTraverse(MapSurface, HasMapSurface, new int2(x, y), movementMask))
-                    return false;
-            }
-        }
-
-        return true;
+        return SurfaceValidation.CanTraverseFootprint(MapSurface, HasMapSurface, Grid, cell, footprintSize, isVehicle);
     }
 
     // Binary min-heap over packed (fScore << 32 | cellIndex) entries stored in ScratchOpen.

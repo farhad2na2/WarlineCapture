@@ -14,8 +14,8 @@ public sealed class EcsBurstHotPathArchitectureTests
     private const string RenderingSystemsRoot = "Assets/Game/Scripts/Rendering/Systems";
     private const int ToArrayDebtCeiling = 0;
     private const int EntityManagerMutationDebtCeiling = 1;
-    private const int NonBurstOnUpdateFileDebtCeiling = 24;
-    private const int BurstCompileFileFloor = 37;
+    private const int NonBurstOnUpdateFileDebtCeiling = 23;
+    private const int BurstCompileFileFloor = 38;
 
     private static readonly Regex ToArrayRegex = new(
         @"\b(ToEntityArray|ToComponentDataArray)\s*(?:<[^>]+>)?\s*\(",
@@ -45,7 +45,6 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/AIEconomySystem.cs"] = "Phase 5 AI economy debt; managed resource summary and request-buffer policy need a result-buffer split before Burst.",
         ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "Phase 5 AI production debt; queue/build request policy remains managed until production data is projected ECS-native.",
         ["Assets/Game/Scripts/Systems/AISquadSystem.cs"] = "Phase 5 AI squad debt; squad membership policy and diagnostics need a chunk/job rewrite.",
-        ["Assets/Game/Scripts/Systems/AITargetingSystem.cs"] = "Phase 5 AI targeting hot-path debt; target scoring and component-presence checks still need a data/job split.",
         ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs"] = "diagnostic flush boundary; managed log formatting outside gameplay hot paths.",
         ["Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"] = "startup spawn/config projection boundary; entity creation and prefab/config projection stay managed.",

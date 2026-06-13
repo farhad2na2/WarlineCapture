@@ -52,7 +52,10 @@ public sealed class SelectionUiCommandSystem
     public bool RequestMoveCommandMode()
     {
         CaptureUiClickSequence();
-        return Queue(RtsSelectionCommandIntentKind.EnterMoveTargetMode);
+        bool queued = Queue(RtsSelectionCommandIntentKind.EnterMoveTargetMode);
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"requestMoveCommandMode queued={queued} frame={Time.frameCount}");
+        return queued;
     }
 
     public bool RequestAttackCommandMode()
@@ -145,9 +148,20 @@ public sealed class SelectionUiCommandSystem
     private bool Queue(RtsSelectionCommandIntentKind kind)
     {
         if (IsGameplayInputLocked())
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={Time.frameCount}");
             return false;
+        }
 
-        return _inputSystem.QueueCommandIntentRequest(kind, Time.frameCount);
+        bool queued = _inputSystem.QueueCommandIntentRequest(kind, Time.frameCount);
+        if (kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"uiCommandQueued kind={kind} queued={queued} frame={Time.frameCount}");
+        }
+
+        return queued;
     }
 
     private bool IsGameplayInputLocked()

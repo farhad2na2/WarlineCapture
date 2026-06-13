@@ -33,8 +33,8 @@ public sealed class UnitMoveOrderSystem
         int currentFrame)
     {
         MoveOrderCommandResult result = new() { Issued = true };
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-            $"[SelectionClick] unitMoveOrderGrouped caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} " +
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"unitMoveOrderGrouped caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} " +
             $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -89,6 +89,11 @@ public sealed class UnitMoveOrderSystem
             }
 
             ecb.Playback(entityManager);
+
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"unitMoveOrderGroupedApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal} " +
+                $"pathRequests={result.PathRequests} staggered={result.StaggeredPathRequests} air={result.AirUnits} " +
+                $"adds={result.StructuralAdds} removes={result.StructuralRemoves}");
         }
         finally
         {
@@ -100,7 +105,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderImmediate caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediate caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -127,6 +132,7 @@ public sealed class UnitMoveOrderSystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {
@@ -136,7 +142,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnly caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -150,6 +156,7 @@ public sealed class UnitMoveOrderSystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {
@@ -159,21 +166,16 @@ public sealed class UnitMoveOrderSystem
 
     public void ClearMovementOrderComponents(EntityManager entityManager, Entity entity)
     {
-        RemoveComponentIfPresent<UnitTarget>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathRequest>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
-        RemoveComponentIfPresent<UnitPathRetryCooldown>(entityManager, entity);
-        RemoveComponentIfPresent<UnitLongDistanceMove>(entityManager, entity);
-        RemoveComponentIfPresent<ManualMoveOrderTag>(entityManager, entity);
-        RemoveComponentIfPresent<ManualMoveGroupMemberTag>(entityManager, entity);
-        RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, entity);
-        RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, entity);
-        RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
-        RemoveComponentIfPresent<BaseBreachOrder>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
-        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
-        RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, entity);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            ClearMovementOrderComponents(entityManager, ecb, entity);
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 
     public void ClearMovementOrderComponents(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity)
@@ -193,16 +195,6 @@ public sealed class UnitMoveOrderSystem
         RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
-    }
-
-    public bool RemoveComponentIfPresent<T>(EntityManager entityManager, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (!entityManager.Exists(entity) || !entityManager.HasComponent<T>(entity))
-            return false;
-
-        entityManager.RemoveComponent<T>(entity);
-        return true;
     }
 
     public bool RemoveComponentIfPresent<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity)
@@ -226,7 +218,8 @@ public sealed class UnitMoveOrderSystem
         HashSet<int> selectedCurrentCells,
         Entity entity,
         int2 desiredGoal,
-        int slotIndex)
+        int slotIndex,
+        MapSurfacePathfindingReadSystem.Context surfaceContext = default)
     {
         int2 footprintSize = entityManager.HasComponent<UnitFootprint>(entity)
             ? entityManager.GetComponentData<UnitFootprint>(entity).Size
@@ -250,7 +243,9 @@ public sealed class UnitMoveOrderSystem
                 slotAnchor,
                 footprintSize,
                 goalPadding,
-                factionId))
+                factionId,
+                surfaceContext,
+                isVehicle))
         {
             ReserveManualMoveGoalFootprint(grid, reservedGoalCells, slotAnchor, footprintSize, goalPadding);
             return slotAnchor;
@@ -274,7 +269,9 @@ public sealed class UnitMoveOrderSystem
                         candidate,
                         footprintSize,
                         goalPadding,
-                        factionId))
+                        factionId,
+                        surfaceContext,
+                        isVehicle))
                 {
                     continue;
                 }
@@ -322,7 +319,9 @@ public sealed class UnitMoveOrderSystem
         int2 cell,
         int2 footprintSize,
         int padding,
-        byte factionId)
+        byte factionId,
+        MapSurfacePathfindingReadSystem.Context surfaceContext = default,
+        bool isVehicle = false)
     {
         int2 size = UnitFootprintUtility.ClampSize(footprintSize);
         int2 min = UnitFootprintUtility.GetMinCell(cell, size);
@@ -331,6 +330,9 @@ public sealed class UnitMoveOrderSystem
         int2 paddedMax = max + new int2(padding, padding);
 
         if (paddedMin.x < 0 || paddedMin.y < 0 || paddedMax.x > grid.Width || paddedMax.y > grid.Height)
+            return false;
+
+        if (!CanUseSurfaceFootprint(surfaceContext, grid, cell, size, isVehicle))
             return false;
 
         for (int y = paddedMin.y; y < paddedMax.y; y++)
@@ -359,6 +361,26 @@ public sealed class UnitMoveOrderSystem
         }
 
         return true;
+    }
+
+    private static bool CanUseSurfaceFootprint(
+        MapSurfacePathfindingReadSystem.Context surfaceContext,
+        in GridConfig grid,
+        int2 cell,
+        int2 footprintSize,
+        bool isVehicle)
+    {
+        if (surfaceContext.HasSurfaceData == 0)
+            return true;
+
+        MapSurfacePathingValidationSystem validationSystem = new();
+        return validationSystem.CanTraverseFootprint(
+            surfaceContext.Surface,
+            surfaceContext.HasSurfaceData,
+            grid,
+            cell,
+            footprintSize,
+            isVehicle);
     }
 
     public HashSet<int> BuildSelectedCurrentFootprintCells(EntityManager entityManager, in GridConfig grid, NativeArray<Entity> entities)
@@ -489,13 +511,19 @@ public sealed class UnitMoveOrderSystem
             ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
             : em.GetName(entity);
         byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        int2 footprintSize = em.HasComponent<UnitFootprint>(entity) ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+        UnitMovementBehavior movementBehavior = em.HasComponent<UnitMovementBehavior>(entity)
+            ? em.GetComponentData<UnitMovementBehavior>(entity)
+            : default;
+        bool isVehicle = UnitVehicleMovementUtility.IsVehicle(new UnitFootprint { Size = footprintSize }, movementBehavior);
         bool selected = em.HasComponent<SelectedUnitTag>(entity);
         string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
         string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
         string path = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
         bool follow = em.HasComponent<UnitPathFollow>(entity);
         bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        bool longMove = em.HasComponent<UnitLongDistanceMove>(entity);
         bool disabled = em.HasComponent<Disabled>(entity);
-        return $"{entity}/{source}/faction={faction}/selected={selected}/grid={grid}/target={target}/pathRequest={path}/pathFollow={follow}/manual={manual}/disabled={disabled}";
+        return $"{entity}/{source}/faction={faction}/selected={selected}/vehicle={isVehicle}/footprint={footprintSize}/grid={grid}/target={target}/pathRequest={path}/pathFollow={follow}/manual={manual}/longMove={longMove}/disabled={disabled}";
     }
 }

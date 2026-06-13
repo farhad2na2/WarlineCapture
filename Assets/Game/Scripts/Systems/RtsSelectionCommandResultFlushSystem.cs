@@ -41,6 +41,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly EntityQuery SelectedMoveQuery;
         public readonly EntityQuery GridConfigQuery;
+        public readonly EntityQuery MapSurfaceQuery;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly ClearCurrentSelectionAction ClearCurrentSelection;
@@ -85,6 +86,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             EntityQuery selectedMoveQuery,
             EntityQuery gridConfigQuery,
+            EntityQuery mapSurfaceQuery,
             TryGetEntityManagerAction tryGetDefaultEntityManager,
             Action<EntityManager> ensureEntityQueries,
             ClearCurrentSelectionAction clearCurrentSelection,
@@ -128,6 +130,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             SelectedMoveQuery = selectedMoveQuery;
             GridConfigQuery = gridConfigQuery;
+            MapSurfaceQuery = mapSurfaceQuery;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
             EnsureEntityQueries = ensureEntityQueries;
             ClearCurrentSelection = clearCurrentSelection;
@@ -159,6 +162,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     public void ProcessMoveCommandRequests(Context context)
     {
         EnsureFeedbackQueue(context);
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsEnter frame={Time.frameCount}");
 
         if (!context.InputSystem.TryGetCommandBuffers(
                 out EntityManager em,
@@ -166,12 +170,16 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsNoBuffers frame={Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return;
         }
 
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"processMoveCommandRequestsBuffers commandEntity={commandEntity} totalRequests={commandRequests.Length} " +
+            $"moveRequests={CountRequests(commandRequests, RtsSelectionCommandIntentKind.Move)} resultBuffer={commandResults.Length} frame={Time.frameCount}");
         context.EnsureEntityQueries?.Invoke(em);
         context.MoveCommandRequestSystem.ProcessPendingRequests(
             em,
@@ -180,6 +188,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             commandResults,
             context.SelectedMoveQuery,
             context.GridConfigQuery,
+            context.MapSurfaceQuery,
             context.UnitMoveOrderSystem,
             context.OrderMarkerSystem,
             context.SelectedMoveOrderCommandSystem,
@@ -188,6 +197,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Move, _moveCommandResultScratch);
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"processMoveCommandRequestsDrained results={_moveCommandResultScratch.Count} remainingResultBuffer={commandResults.Length} frame={Time.frameCount}");
 
         bool handled = false;
         for (int i = 0; i < _moveCommandResultScratch.Count; i++)
@@ -219,10 +230,25 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         if (!handled)
         {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsUnhandled frame={Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         }
+    }
+
+    private static int CountRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+        RtsSelectionCommandIntentKind kind)
+    {
+        int count = 0;
+        for (int i = 0; i < requests.Length; i++)
+        {
+            if (requests[i].Kind == kind)
+                count++;
+        }
+
+        return count;
     }
 
     public bool ProcessAttackCommandRequests(Context context, bool explicitAttackTargetModeActive)

@@ -48,12 +48,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {
         Camera eventCamera = ResolveEventCamera();
-        if (ContainsButton(buildButton, screenPosition, eventCamera))
-            return true;
-
-        RectTransform root = transform as RectTransform;
-        return root != null &&
-               RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera);
+        return ContainsButton(buildButton, screenPosition, eventCamera);
     }
 
     private void OnBuildButtonClicked()

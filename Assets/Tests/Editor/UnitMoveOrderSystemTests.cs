@@ -291,6 +291,7 @@ public sealed class UnitMoveOrderSystemTests
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<DynamicBlockerComponent>(),
             ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        EntityQuery mapSurfaceQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         int2 goal = new(7, 8);
 
         SelectedMoveOrderCommandSystem.Result result = new SelectedMoveOrderCommandSystem().TryIssueMoveOrder(
@@ -298,6 +299,7 @@ public sealed class UnitMoveOrderSystemTests
             Vector2.zero,
             selectedMoveQuery,
             gridQuery,
+            mapSurfaceQuery,
             new UnitMoveOrderSystem(),
             new SelectionOrderMarkerSystem(),
             tryGetClickedUnit: (Vector2 screenPosition, EntityManager em, out Entity clicked) =>

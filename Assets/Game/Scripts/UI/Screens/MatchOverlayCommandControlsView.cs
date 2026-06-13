@@ -42,6 +42,32 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
                ContainsButton(commandWheelStopButton, screenPosition, eventCamera);
     }
 
+    public string DescribeScreenPointHit(Vector2 screenPosition)
+    {
+        Camera eventCamera = ResolveEventCamera();
+        if (ContainsButton(selectButton, screenPosition, eventCamera))
+            return "SelectCommand";
+        if (ContainsButton(moveButton, screenPosition, eventCamera))
+            return "MoveCommand";
+        if (ContainsButton(attackButton, screenPosition, eventCamera))
+            return "AttackCommand";
+        if (ContainsButton(scanButton, screenPosition, eventCamera))
+            return "ScanCommand";
+        if (ContainsButton(buildButton, screenPosition, eventCamera))
+            return "BuildCommand";
+        if (ContainsButton(holdButton, screenPosition, eventCamera))
+            return "HoldCommand";
+        if (ContainsButton(stopButton, screenPosition, eventCamera))
+            return "StopCommand";
+        if (ContainsButton(commandWheelStopButton, screenPosition, eventCamera))
+            return "CommandWheelStop";
+
+        RectTransform root = transform as RectTransform;
+        return root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera)
+            ? "CommandControlsRoot"
+            : "None";
+    }
+
     private Camera ResolveEventCamera()
     {
         Canvas canvas = GetComponentInParent<Canvas>();

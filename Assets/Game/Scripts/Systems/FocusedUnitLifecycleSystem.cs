@@ -172,6 +172,12 @@ public sealed class FocusedUnitLifecycleSystem
         bool cacheableAfterAdd = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);
         string description = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
+        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            $"focusUnitEntity source={diagnosticSource} result=True entity={description} " +
+            $"playerControlled={playerControlled} selectedAfterAdd={selectedAfterAdd} cacheable={cacheableAfterAdd} " +
+            $"cacheCount={selectionStateSystem.CachedSelectedMoveEntities.Count} hasMove={em.HasComponent<UnitMove>(entity)} " +
+            $"hasGrid={em.HasComponent<UnitGrid>(entity)} disabled={em.HasComponent<Disabled>(entity)} " +
+            $"passenger={em.HasComponent<UnitTransportPassenger>(entity)} frame={Time.frameCount}");
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
             $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={Time.frameCount} " +
             $"entity={description} selectedAfterAdd={selectedAfterAdd} cache={selectionStateSystem.CachedSelectedMoveEntities.Count} " +
@@ -208,9 +214,17 @@ public sealed class FocusedUnitLifecycleSystem
         focusedEntity = Entity.Null;
         EnsureEntityQueries(em);
         if (!tryGetClickedUnitEntity(screenPosition, em, out Entity bestEntity))
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={Time.frameCount}");
             return false;
+        }
         if (targetOrderSystem.IsBuildingEntity(em, bestEntity))
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={Time.frameCount}");
             return false;
+        }
         if (!FocusUnitEntity(
                 em,
                 bestEntity,

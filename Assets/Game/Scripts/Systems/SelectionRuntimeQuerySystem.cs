@@ -6,10 +6,12 @@ public sealed class SelectionRuntimeQuerySystem
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _selectedTagQuery;
+    private EntityQuery _mapSurfaceQuery;
 
     public EntityQuery SelectedMoveQuery => _selectedMoveQuery;
     public EntityQuery GridConfigQuery => _gridConfigQuery;
     public EntityQuery SelectedTagQuery => _selectedTagQuery;
+    public EntityQuery MapSurfaceQuery => _mapSurfaceQuery;
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -24,5 +26,6 @@ public sealed class SelectionRuntimeQuerySystem
             ComponentType.ReadOnly<UnitMove>());
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
     }
 }

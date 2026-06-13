@@ -16,6 +16,8 @@ internal struct UnitPathResultApplySystem
         MapSurfacePathfindingReadSystem.Context surfaceContext,
         NativeStream stream,
         NativeArray<byte> status,
+        NativeArray<int> failureCodes,
+        NativeArray<int> expansionCounts,
         out int completedCount,
         out int completedSegmentCount,
         out int manualCompletedCount,
@@ -36,6 +38,7 @@ internal struct UnitPathResultApplySystem
         var follow = new UnitPathFollow { PathIndex = 0 };
         var retry = new UnitPathRetrySystem();
         var surfaceMetadata = new UnitPathSurfaceMetadataSystem();
+        int manualTraceCount = 0;
 
         for (int i = 0; i < entities.Length; i++)
         {
@@ -73,6 +76,16 @@ internal struct UnitPathResultApplySystem
                     reader.Read<int2>();
             }
             reader.EndForEachIndex();
+
+            if (manualMoves[i] != 0 && manualTraceCount < 12)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"pathResult frame={UnityEngine.Time.frameCount} index={i} entity={DescribePathEntity(em, entity)} " +
+                    $"matchingRequest={entityHasMatchingRequest} status={status[i]} pathCount={count} pathStart={start} " +
+                    $"requestGoal={requests[i].Goal} assignedGoal={assignedGoals[i]} segmented={segmented[i]} " +
+                    $"failure={DescribeFailure(failureCodes[i])} expansions={expansionCounts[i]}");
+                manualTraceCount++;
+            }
 
             if (!entityHasMatchingRequest)
                 continue;
@@ -138,5 +151,44 @@ internal struct UnitPathResultApplySystem
             if (em.HasComponent<UnitPathRequest>(entity))
                 em.RemoveComponent<UnitPathRequest>(entity);
         }
+    }
+
+    private static string DescribePathEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
+        string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+        string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+        bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+        bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        bool retry = em.HasComponent<UnitPathRetryCooldown>(entity);
+        bool longMove = em.HasComponent<UnitLongDistanceMove>(entity);
+        return $"{entity}/{source}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/manual={manual}/retry={retry}/longMove={longMove}";
+    }
+
+    private static string DescribeFailure(int code)
+    {
+        return code switch
+        {
+            0 => "None",
+            1 => "StartOutOfBounds",
+            2 => "StartGridNotWalkable",
+            3 => "StartSurfaceBlocked",
+            4 => "GoalOutOfBounds",
+            5 => "GoalGridNotWalkable",
+            6 => "GoalSurfaceBlocked",
+            7 => "GoalPlacementBlocked",
+            8 => "GoalSurfaceFootprintBlocked",
+            9 => "ExpansionLimit",
+            10 => "NoPath",
+            11 => "PathReconstructionFailed",
+            12 => "ProgressFallbackFailed",
+            _ => $"Unknown({code})"
+        };
     }
 }

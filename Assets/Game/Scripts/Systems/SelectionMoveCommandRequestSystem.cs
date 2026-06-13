@@ -13,6 +13,7 @@ public sealed class SelectionMoveCommandRequestSystem
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         EntityQuery selectedMoveQuery,
         EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionOrderMarkerSystem orderMarkerSystem,
         SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
@@ -37,22 +38,23 @@ public sealed class SelectionMoveCommandRequestSystem
         {
             RtsSelectionCommandIntentRequestElement request = _pendingMoveRequests[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[SelectionClick] moveRequestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"requestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
                 $"screen={screenPosition} pendingCount={_pendingMoveRequests.Count}");
             SelectedMoveOrderCommandSystem.Result result = selectedMoveOrderCommandSystem.TryIssueMoveOrder(
                 em,
                 screenPosition,
                 selectedMoveQuery,
                 gridConfigQuery,
+                mapSurfaceQuery,
                 moveOrderSystem,
                 orderMarkerSystem,
                 tryGetClickedUnit,
                 tryGetClickedCell,
                 request.Frame);
 
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[SelectionClick] moveRequestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"requestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
                 $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
             AddCommandResult(em, commandEntity, commandResults, ToResultElement(request, result));
         }

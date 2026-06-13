@@ -8,6 +8,7 @@ using UnityEngine;
 internal sealed class MapVehiclePlacementSpawnSystem
 {
     private const int MaxPlacementsPerUpdate = 32;
+    private const int ClearanceRefreshFrameCount = 16;
     private const float UniformScaleEpsilon = 0.0001f;
 
     public delegate bool TryGetGridDataDelegate(
@@ -49,7 +50,11 @@ internal sealed class MapVehiclePlacementSpawnSystem
     private bool _warnedMissingConfig;
     private bool _warnedMissingPrefab;
     private int _nextPlacementIndex;
+    private int _clearanceRefreshFramesRemaining;
+    private int _lastClearedBlockerCells;
     private uint _randomState = 0x6D2B79F5u;
+
+    internal int LastClearedBlockerCells => _lastClearedBlockerCells;
 
     public void Update(Context context)
     {
@@ -58,6 +63,7 @@ internal sealed class MapVehiclePlacementSpawnSystem
 
         if (_queued)
         {
+            RefreshPlacementClearance(context);
             HideAuthoringVisuals(context);
             return;
         }
@@ -117,6 +123,8 @@ internal sealed class MapVehiclePlacementSpawnSystem
         if (_nextPlacementIndex >= context.Config.Placements.Count)
         {
             _queued = true;
+            _clearanceRefreshFramesRemaining = ClearanceRefreshFrameCount;
+            RefreshPlacementClearance(context);
             HideAuthoringVisuals(context);
         }
     }
@@ -200,6 +208,106 @@ internal sealed class MapVehiclePlacementSpawnSystem
         uniformScale = math.max(UniformScaleEpsilon, scale.x);
         return math.abs(scale.x - scale.y) <= UniformScaleEpsilon &&
                math.abs(scale.x - scale.z) <= UniformScaleEpsilon;
+    }
+
+    private void RefreshPlacementClearance(Context context)
+    {
+        _lastClearedBlockerCells = 0;
+        if (_clearanceRefreshFramesRemaining <= 0 ||
+            context.Config == null ||
+            context.Config.Placements == null ||
+            context.UnitPrefabContext.TryGetEntityManager == null ||
+            !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
+            context.TryGetGridData == null ||
+            !context.TryGetGridData(out _, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) ||
+            !blockerData.Blocked.IsCreated)
+        {
+            return;
+        }
+
+        context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+        int clearedCells = 0;
+        for (int i = 0; i < context.Config.Placements.Count; i++)
+        {
+            MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
+            if (placement == null ||
+                placement.VehiclePrefab == null ||
+                !TryResolvePlacementFootprint(context, em, placement, out int2 footprintSize))
+            {
+                continue;
+            }
+
+            int2 centerCell = GridUtils.WorldToCell(grid, ToFloat3(placement.WorldCenter));
+            clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize);
+        }
+
+        _lastClearedBlockerCells = clearedCells;
+        _clearanceRefreshFramesRemaining--;
+    }
+
+    private static bool TryResolvePlacementFootprint(
+        Context context,
+        EntityManager em,
+        MapVehiclePlacementConfigEntry placement,
+        out int2 footprintSize)
+    {
+        footprintSize = new int2(1, 1);
+        if (placement == null || placement.VehiclePrefab == null)
+            return false;
+
+        if (context.UnitPrefabSystem != null &&
+            context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+                context.UnitPrefabContext,
+                placement.VehiclePrefab,
+                out Entity prefabEntity) &&
+            prefabEntity != Entity.Null &&
+            em.Exists(prefabEntity) &&
+            em.HasComponent<UnitFootprint>(prefabEntity))
+        {
+            footprintSize = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static int ClearRuntimeBlockersInFootprint(
+        in GridConfig grid,
+        ref DynamicBlockerComponent blockerData,
+        int2 centerCell,
+        int2 footprintSize)
+    {
+        if (!blockerData.Blocked.IsCreated || grid.Width <= 0 || grid.Height <= 0)
+            return 0;
+
+        int2 clampedSize = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize);
+        int2 max = min + clampedSize;
+        min = math.max(min, int2.zero);
+        max = math.min(max, new int2(grid.Width, grid.Height));
+
+        int clearedCells = 0;
+        for (int y = min.y; y < max.y; y++)
+        {
+            int row = y * grid.Width;
+            for (int x = min.x; x < max.x; x++)
+            {
+                int index = row + x;
+                if ((uint)index >= (uint)blockerData.GridSize)
+                    continue;
+
+                if (blockerData.Blocked.IsSet(index))
+                    clearedCells++;
+
+                blockerData.Blocked.Set(index, false);
+                if (blockerData.Counts.IsCreated && (uint)index < (uint)blockerData.Counts.Length)
+                    blockerData.Counts[index] = 0;
+                if (blockerData.FriendlyPassFactionIds.IsCreated && (uint)index < (uint)blockerData.FriendlyPassFactionIds.Length)
+                    blockerData.FriendlyPassFactionIds[index] = byte.MaxValue;
+            }
+        }
+
+        return clearedCells;
     }
 
     private static float3 ToFloat3(Vector3 value)

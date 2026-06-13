@@ -109,10 +109,14 @@ internal struct UnitPathfindingScheduleSystem
 
             requestBuffers.AssignedGoals.ResizeUninitialized(requestCount);
             requestBuffers.Status.ResizeUninitialized(requestCount);
+            requestBuffers.FailureCodes.ResizeUninitialized(requestCount);
+            requestBuffers.ExpansionCounts.ResizeUninitialized(requestCount);
             requestBuffers.Segmented.ResizeUninitialized(requestCount);
             for (int i = 0; i < requestCount; i++)
             {
                 requestBuffers.Status[i] = 0;
+                requestBuffers.FailureCodes[i] = 0;
+                requestBuffers.ExpansionCounts[i] = 0;
                 requestBuffers.Segmented[i] = 0;
             }
 
@@ -128,6 +132,8 @@ internal struct UnitPathfindingScheduleSystem
             NativeArray<int2> requestIgnoredOccupancySizes = requestBuffers.IgnoredOccupancySizes.AsArray();
             NativeArray<int2> assignedGoals = requestBuffers.AssignedGoals.AsArray();
             NativeArray<byte> status = requestBuffers.Status.AsArray();
+            NativeArray<int> failureCodes = requestBuffers.FailureCodes.AsArray();
+            NativeArray<int> expansionCounts = requestBuffers.ExpansionCounts.AsArray();
             NativeArray<byte> segmented = requestBuffers.Segmented.AsArray();
             requestBuffers.CheapSegmentModes.ResizeUninitialized(requestCount);
             requestBuffers.AlternateSearchSkipped.ResizeUninitialized(requestCount);
@@ -138,6 +144,7 @@ internal struct UnitPathfindingScheduleSystem
             NativeArray<int> reservedGoalEpochs = reservedGoals.Epochs;
             int reservedGoalGeneration = reservedGoals.Generation;
             int scratchSearchEpochBase = scratchWorkspace.ReserveEpochs(requestCount);
+            int manualTraceCount = 0;
             int manualRequestCount = 0;
             int hierarchicalEligibleCount = 0;
             int hierarchicalWaypointCount = 0;
@@ -198,6 +205,7 @@ internal struct UnitPathfindingScheduleSystem
                     requestIgnoredOccupancyEntities[i],
                     requestIgnoredOccupancyCells[i],
                     requestIgnoredOccupancySizes[i],
+                    surfaceContext,
                     pathGoal,
                     start,
                     footprintSize,
@@ -206,6 +214,21 @@ internal struct UnitPathfindingScheduleSystem
                 if (assignedGoal.Equals(start) && !pathGoal.Equals(start))
                     assignedGoal = pathGoal;
                 assignedGoals[i] = assignedGoal;
+
+                if (isManualMove && manualTraceCount < 12)
+                {
+                    bool startInBounds = startIndex >= 0;
+                    bool startWalkable = startInBounds && walkable[startIndex].Value != 0;
+                    bool startBlocked = startInBounds && dynamicBlockers.IsCreated && dynamicBlockers.IsSet(startIndex);
+                    bool startOccupied = startInBounds && occupied.IsCreated && occupied.IsSet(startIndex);
+                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                        $"pathSchedule frame={Time.frameCount} index={i} entity={DescribePathEntity(em, requestEntities[i])} " +
+                        $"start={start} requestedGoal={requestedGoal} pathGoal={pathGoal} assignedGoal={assignedGoal} " +
+                        $"footprint={footprintSize} vehicle={isVehicle} faction={requestFactions[i]} segmented={isSegmentedRequest} " +
+                        $"startWalkable={startWalkable} startBlocked={startBlocked} startOccupied={startOccupied} " +
+                        $"ignoredEntity={requestIgnoredOccupancyEntities[i]} ignoredCell={requestIgnoredOccupancyCells[i]} ignoredSize={requestIgnoredOccupancySizes[i]}");
+                    manualTraceCount++;
+                }
             }
 
             if (enableHierarchicalPathValidationLog &&
@@ -266,6 +289,8 @@ internal struct UnitPathfindingScheduleSystem
                 Segmented = segmented,
                 Output = pendingPathStream.AsWriter(),
                 Status = status,
+                FailureCodes = failureCodes,
+                ExpansionCounts = expansionCounts,
                 CheapSegmentModes = cheapSegmentModes,
                 AlternateSearchSkipped = alternateSearchSkipped,
                 AlternateAttempts = alternateAttempts,
@@ -348,6 +373,21 @@ internal struct UnitPathfindingScheduleSystem
                     gridHeightForLog);
             }
         }
+    }
+
+    private static string DescribePathEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+        string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+        bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+        bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        return $"{entity}/{source}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/manual={manual}";
     }
 
     private static int2 GetSegmentGoalHierarchical(

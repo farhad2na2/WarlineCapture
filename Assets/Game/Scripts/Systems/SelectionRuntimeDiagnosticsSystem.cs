@@ -5,8 +5,10 @@ using UnityEngine;
 public sealed class SelectionRuntimeDiagnosticsSystem
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
+    public static readonly bool EnableMoveCommandTrace = true;
 
     private const string SelectionClickPrefix = "[SelectionClick]";
+    private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
 
     public void EnqueueSelectionDiagnostic(string message)
     {
@@ -32,6 +34,14 @@ public sealed class SelectionRuntimeDiagnosticsSystem
     public static void LogSelectionClickDebug(string message)
     {
         Debug.Log(message);
+    }
+
+    public static void LogMoveCommandTrace(string message)
+    {
+        if (!EnableMoveCommandTrace)
+            return;
+
+        Debug.Log($"{MoveCommandTracePrefix} {message}");
     }
 
     private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)

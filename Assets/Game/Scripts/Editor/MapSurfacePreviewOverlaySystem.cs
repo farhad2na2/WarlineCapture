@@ -82,6 +82,7 @@ public static class MapSurfacePreviewOverlaySystem
 
     private static PreviewMeshItem[] BuildWalkableBlockedPreviewMeshes(MapSurfaceAuthoring authoring)
     {
+        var walkableSurfaces = new List<PreviewMeshItem>(256);
         var roads = new List<PreviewMeshItem>(256);
         var blockers = new List<PreviewMeshItem>(256);
         if (!TryGetGridBounds(authoring, out Bounds gridBounds))
@@ -93,10 +94,10 @@ public static class MapSurfacePreviewOverlaySystem
             MapBakeGroupAuthoring group = groups[i];
             if (group == null || !ShouldPreviewRole(group.Role, MapSurfaceEditorOverlaySystem.OverlayMode.Blocked))
                 continue;
-            if (group.Role == MapBakeGroupRole.Terrain)
+            if (IsUnderMapVehicles(group.transform))
                 continue;
 
-            List<PreviewMeshItem> target = ResolveWalkableBlockedTarget(group.Role, roads, blockers);
+            List<PreviewMeshItem> target = ResolveWalkableBlockedTarget(group.Role, walkableSurfaces, roads, blockers);
             int limit = group.Role == MapBakeGroupRole.Blocker ? MaxBlockerPreviewMeshes : MaxWalkablePreviewMeshes;
             if (target.Count >= limit)
                 continue;
@@ -106,8 +107,11 @@ public static class MapSurfacePreviewOverlaySystem
                 AddMeshItem(filters[filterIndex], group, group.Role, target, limit, gridBounds);
         }
 
-        var combined = new List<PreviewMeshItem>(1 + blockers.Count + roads.Count);
-        combined.Add(BuildGridPreviewItem(authoring, gridBounds));
+        var combined = new List<PreviewMeshItem>((walkableSurfaces.Count == 0 ? 1 : walkableSurfaces.Count) + blockers.Count + roads.Count);
+        if (walkableSurfaces.Count == 0)
+            combined.Add(BuildGridPreviewItem(authoring, gridBounds));
+        else
+            combined.AddRange(walkableSurfaces);
         combined.AddRange(blockers);
         combined.AddRange(roads);
         return combined.ToArray();
@@ -115,6 +119,7 @@ public static class MapSurfacePreviewOverlaySystem
 
     private static List<PreviewMeshItem> ResolveWalkableBlockedTarget(
         MapBakeGroupRole role,
+        List<PreviewMeshItem> walkableSurfaces,
         List<PreviewMeshItem> roads,
         List<PreviewMeshItem> blockers)
     {
@@ -128,7 +133,7 @@ public static class MapSurfacePreviewOverlaySystem
                 return blockers;
             case MapBakeGroupRole.Terrain:
             default:
-                return roads;
+                return walkableSurfaces;
         }
     }
 
@@ -286,6 +291,21 @@ public static class MapSurfacePreviewOverlaySystem
         return nearestGroup == ownerGroup;
     }
 
+    private static bool IsUnderMapVehicles(Transform transform)
+    {
+        for (Transform current = transform; current != null; current = current.parent)
+        {
+            if (current.name == "Vehicles" &&
+                current.parent != null &&
+                current.parent.name == "Map")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static bool ShouldPreviewRole(MapBakeGroupRole role, MapSurfaceEditorOverlaySystem.OverlayMode mode)
     {
         switch (mode)
@@ -332,19 +352,20 @@ public static class MapSurfacePreviewOverlaySystem
     {
         Color color = ResolveColorForCapture(item, previewMode, minHeight, maxHeight);
         material.SetColor("_Color", color);
-        material.SetInt("_ZTest", IsBlockerOverlayMode(previewMode) && IsPriorityWalkableBlockedRole(item.Role)
+        material.SetInt("_ZTest", IsBlockerOverlayMode(previewMode) && IsPriorityWalkableBlockedItem(item)
             ? (int)CompareFunction.Always
             : (int)CompareFunction.LessEqual);
         material.SetPass(0);
         Graphics.DrawMeshNow(item.Mesh, ResolvePreviewDrawMatrix(item, previewMode));
     }
 
-    private static bool IsPriorityWalkableBlockedRole(MapBakeGroupRole role)
+    private static bool IsPriorityWalkableBlockedItem(PreviewMeshItem item)
     {
-        return role == MapBakeGroupRole.Blocker ||
-               role == MapBakeGroupRole.Road ||
-               role == MapBakeGroupRole.Bridge ||
-               role == MapBakeGroupRole.Ramp;
+        return item.Role == MapBakeGroupRole.Terrain ||
+               item.Role == MapBakeGroupRole.Blocker ||
+               item.Role == MapBakeGroupRole.Road ||
+               item.Role == MapBakeGroupRole.Bridge ||
+               item.Role == MapBakeGroupRole.Ramp;
     }
 
     public static Matrix4x4 ResolveDrawMatrixForCapture(
@@ -436,7 +457,7 @@ public static class MapSurfacePreviewOverlaySystem
             }
         }
 
-        return $"{authoringName}: walkable={walkable}, infantryOnly={infantryOnly}, roads={roads}, blockers={blockers}, blockers drawn as top-down footprints, roads drawn last, no asset saved";
+        return $"{authoringName}: walkable={walkable}, infantryOnly={infantryOnly}, roads={roads}, blockers={blockers}, vehicles ignored, blockers drawn as top-down footprints, roads drawn last, no asset saved";
     }
 
     private static Material GetPreviewMaterial()

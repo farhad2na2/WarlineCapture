@@ -73,7 +73,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "RuntimeGameplayStateSystem",
         "SelectionUiCameraSystem",
         "RtsSelectionInputStateSystem",
-        "BuildingUiCommandSystem",
+        "BuildingUiCommandBoundary",
         "BuildingUiQuerySystem",
         "SceneLifecycleSystem",
         "MatchStartRequestSystem",

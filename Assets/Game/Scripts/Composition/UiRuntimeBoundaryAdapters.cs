@@ -6,66 +6,66 @@ using UnityEngine;
 
 internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
 {
-    private readonly BuildingUiCommandSystem system;
-    private readonly BuildingUiCommandSystem.Context context;
+    private readonly BuildingUiCommandBoundary boundary;
+    private readonly BuildingUiCommandBoundary.Context context;
 
-    public BuildingUiCommandAdapter(BuildingUiCommandSystem system, BuildingUiCommandSystem.Context context)
+    public BuildingUiCommandAdapter(BuildingUiCommandBoundary boundary, BuildingUiCommandBoundary.Context context)
     {
-        this.system = system;
+        this.boundary = boundary;
         this.context = context;
     }
 
-    public int CurrentDollars => system != null ? system.CurrentDollars(context) : 0;
-    public bool HasPendingBuildingPlacement => system != null && system.HasPendingBuildingPlacement(context);
-    public bool CanConfirmBuildingPlacement => system != null && system.CanConfirmBuildingPlacement(context);
-    public string PlacementStatusText => system != null ? system.PlacementStatusText(context) : string.Empty;
-    public int ActivePlacementCost => system != null ? system.ActivePlacementCost(context) : 0;
-    public float ActivePlacementDurationSeconds => system != null ? system.ActivePlacementDurationSeconds(context) : 0f;
+    public int CurrentDollars => boundary != null ? boundary.CurrentDollars(context) : 0;
+    public bool HasPendingBuildingPlacement => boundary != null && boundary.HasPendingBuildingPlacement(context);
+    public bool CanConfirmBuildingPlacement => boundary != null && boundary.CanConfirmBuildingPlacement(context);
+    public string PlacementStatusText => boundary != null ? boundary.PlacementStatusText(context) : string.Empty;
+    public int ActivePlacementCost => boundary != null ? boundary.ActivePlacementCost(context) : 0;
+    public float ActivePlacementDurationSeconds => boundary != null ? boundary.ActivePlacementDurationSeconds(context) : 0f;
 
     public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
     {
         requiredBuildingDisplayName = string.Empty;
-        return system != null
-            ? Map(system.GetCampRequestFailure(context, prefab, price, out requiredBuildingDisplayName))
+        return boundary != null
+            ? Map(boundary.GetCampRequestFailure(context, prefab, price, out requiredBuildingDisplayName))
             : BuildingUiCommandFailure.InvalidSelection;
     }
 
     public BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
     {
         requiredBuildingDisplayName = string.Empty;
-        return system != null
-            ? Map(system.TryRequestCampItem(context, prefab, price, out requiredBuildingDisplayName, focusProducerOnSuccess))
+        return boundary != null
+            ? Map(boundary.TryRequestCampItem(context, prefab, price, out requiredBuildingDisplayName, focusProducerOnSuccess))
             : BuildingUiCommandFailure.InvalidSelection;
     }
 
     public bool CancelProduction(int buildingId, int pendingProductionIndex)
     {
-        return system != null && system.CancelProduction(context, buildingId, pendingProductionIndex);
+        return boundary != null && boundary.CancelProduction(context, buildingId, pendingProductionIndex);
     }
 
     public bool ConfirmBuildingPlacement()
     {
-        return system != null && system.ConfirmBuildingPlacement(context);
+        return boundary != null && boundary.ConfirmBuildingPlacement(context);
     }
 
     public void CancelBuildingPlacement()
     {
-        system?.CancelBuildingPlacement(context);
+        boundary?.CancelBuildingPlacement(context);
     }
 
     public bool RotateBuildingPlacement()
     {
-        return system != null && system.RotateBuildingPlacement(context);
+        return boundary != null && boundary.RotateBuildingPlacement(context);
     }
 
-    private static BuildingUiCommandFailure Map(BuildingUiCommandSystem.CampRequestFailure failure)
+    private static BuildingUiCommandFailure Map(BuildingUiCommandBoundary.CampRequestFailure failure)
     {
         return failure switch
         {
-            BuildingUiCommandSystem.CampRequestFailure.None => BuildingUiCommandFailure.None,
-            BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney => BuildingUiCommandFailure.NotEnoughMoney,
-            BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
-            BuildingUiCommandSystem.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
+            BuildingUiCommandBoundary.CampRequestFailure.None => BuildingUiCommandFailure.None,
+            BuildingUiCommandBoundary.CampRequestFailure.NotEnoughMoney => BuildingUiCommandFailure.NotEnoughMoney,
+            BuildingUiCommandBoundary.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
+            BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
             _ => BuildingUiCommandFailure.InvalidSelection
         };
     }

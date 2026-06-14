@@ -387,14 +387,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext(
                 null,
                 null,
                 100000,
                 (GameObject requestPrefab, int price, out string requiredBuilding) =>
                 {
                     requiredBuilding = "Barracks";
-                    return BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding;
+                    return BuildingUiCommandBoundary.CampRequestFailure.MissingProducerBuilding;
                 })),
             null);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Soldiers);
@@ -422,14 +422,14 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext(
                 null,
                 null,
                 1000,
                 (GameObject requestPrefab, int price, out string requiredBuilding) =>
                 {
                     requiredBuilding = string.Empty;
-                    return BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney;
+                    return BuildingUiCommandBoundary.CampRequestFailure.NotEnoughMoney;
                 })),
             null);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
@@ -461,13 +461,13 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
             {
                 requestedPrefab = requestPrefab;
                 requestedPrice = price;
                 requestedFocus = focusProducer;
                 requiredBuilding = string.Empty;
-                return BuildingUiCommandSystem.CampRequestFailure.None;
+                return BuildingUiCommandBoundary.CampRequestFailure.None;
             })),
             () => closed = true);
         presenter.RefreshForTests();
@@ -503,13 +503,13 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext((GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
             {
                 requestedPrefab = requestPrefab;
                 requestedPrice = price;
                 requestedFocus = focusProducer;
                 requiredBuilding = string.Empty;
-                return BuildingUiCommandSystem.CampRequestFailure.None;
+                return BuildingUiCommandBoundary.CampRequestFailure.None;
             })),
             () => closed = true);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
@@ -558,7 +558,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateRealCommandContext(requestSystem, () => requestContext)),
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateRealCommandContext(requestSystem, () => requestContext)),
             () => closed = true);
         presenter.RefreshForTests();
 
@@ -619,7 +619,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         bool closed = false;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateRealCommandContext(requestSystem, () => requestContext)),
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateRealCommandContext(requestSystem, () => requestContext)),
             () => closed = true);
         presenter.BindRuntimeQueries(new BuildingUiQueryAdapter(new BuildingUiQuerySystem(), queryContext));
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
@@ -819,11 +819,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         int cancelledPendingIndex = -1;
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext(
                 (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
                 {
                     requiredBuilding = string.Empty;
-                    return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+                    return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
                 },
                 (buildingId, pendingIndex) =>
                 {
@@ -870,11 +870,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         var cancelled = new List<(int BuildingId, int PendingIndex)>();
         ConfigurePresenterForTests(presenter, view, unitConfig, null);
         presenter.BindRuntimeCommands(
-            new BuildingUiCommandAdapter(new BuildingUiCommandSystem(), CreateCommandContext(
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext(
                 (GameObject requestPrefab, int price, out string requiredBuilding, bool focusProducer) =>
                 {
                     requiredBuilding = string.Empty;
-                    return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+                    return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
                 },
                 (buildingId, pendingIndex) =>
                 {
@@ -1263,11 +1263,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             (_, _) => 0);
     }
 
-    private static BuildingUiCommandSystem.Context CreateRealCommandContext(
+    private static BuildingUiCommandBoundary.Context CreateRealCommandContext(
         BuildingProductionRequestSystem requestSystem,
         Func<BuildingProductionRequestSystem.Context> createRequestContext)
     {
-        return new BuildingUiCommandSystem.Context(
+        return new BuildingUiCommandBoundary.Context(
             () => 100000,
             () => 0,
             null,
@@ -1291,13 +1291,6 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             () => string.Empty,
             () => 0,
             () => 0f,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
             null,
             null,
             null);
@@ -1406,13 +1399,13 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         return count;
     }
 
-    private static BuildingUiCommandSystem.Context CreateCommandContext(
-        BuildingUiCommandSystem.TryRequestCampItemDelegate tryRequestCampItem,
-        BuildingUiCommandSystem.CancelProductionDelegate cancelProduction = null,
+    private static BuildingUiCommandBoundary.Context CreateCommandContext(
+        BuildingUiCommandBoundary.TryRequestCampItemDelegate tryRequestCampItem,
+        BuildingUiCommandBoundary.CancelProductionDelegate cancelProduction = null,
         int currentDollars = 100000,
-        BuildingUiCommandSystem.GetCampRequestFailureDelegate getCampRequestFailure = null)
+        BuildingUiCommandBoundary.GetCampRequestFailureDelegate getCampRequestFailure = null)
     {
-        return new BuildingUiCommandSystem.Context(
+        return new BuildingUiCommandBoundary.Context(
             () => currentDollars,
             () => 0,
             null,
@@ -1428,13 +1421,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             () => 0f,
             null,
             null,
-            null,
-            null,
-            null,
-            null,
-            null,
             cancelProduction,
-            null,
             null);
     }
 

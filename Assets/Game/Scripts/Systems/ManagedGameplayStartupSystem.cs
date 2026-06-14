@@ -24,8 +24,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
         public readonly BuildingRuntimeCitySpawnSystem.Context BuildingRuntimeCitySpawnContext;
-        public readonly BuildingUiCommandSystem BuildingUiCommand;
-        public readonly BuildingUiCommandSystem.Context BuildingUiCommandContext;
+        public readonly BuildingUiCommandBoundary BuildingUiCommand;
+        public readonly BuildingUiCommandBoundary.Context BuildingUiCommandContext;
         public readonly BuildingUiQuerySystem BuildingUiQuery;
         public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
@@ -63,8 +63,8 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
             BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
-            BuildingUiCommandSystem buildingUiCommand,
-            BuildingUiCommandSystem.Context buildingUiCommandContext,
+            BuildingUiCommandBoundary buildingUiCommand,
+            BuildingUiCommandBoundary.Context buildingUiCommandContext,
             BuildingUiQuerySystem buildingUiQuery,
             BuildingUiQuerySystem.Context buildingUiQueryContext,
             BuildingPlacementInteractionSystem buildingPlacementInteraction,

@@ -21,8 +21,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         Func<BuildingBarrierSystem.Context> createBarrierContext,
         BuildingCombatSystem combat,
         Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
-        BuildingUiCommandSystem uiCommand,
-        BuildingUiCommandSystem.Context uiCommandContext,
+        BuildingUiCommandBoundary uiCommand,
+        BuildingUiCommandBoundary.Context uiCommandContext,
         BuildingUiQuerySystem uiQuery,
         BuildingUiQuerySystem.Context uiQueryContext,
         BuildingPlacementInteractionSystem interaction,
@@ -95,8 +95,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         public readonly Func<BuildingBarrierSystem.Context> CreateBarrierContext;
         public readonly BuildingCombatSystem Combat;
         public readonly Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> CreateCombatContext;
-        public readonly BuildingUiCommandSystem UiCommand;
-        public readonly BuildingUiCommandSystem.Context UiCommandContext;
+        public readonly BuildingUiCommandBoundary UiCommand;
+        public readonly BuildingUiCommandBoundary.Context UiCommandContext;
         public readonly BuildingUiQuerySystem UiQuery;
         public readonly BuildingUiQuerySystem.Context UiQueryContext;
         public readonly BuildingPlacementInteractionSystem Interaction;
@@ -131,8 +131,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
             Func<BuildingBarrierSystem.Context> createBarrierContext,
             BuildingCombatSystem combat,
             Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
-            BuildingUiCommandSystem uiCommand,
-            BuildingUiCommandSystem.Context uiCommandContext,
+            BuildingUiCommandBoundary uiCommand,
+            BuildingUiCommandBoundary.Context uiCommandContext,
             BuildingUiQuerySystem uiQuery,
             BuildingUiQuerySystem.Context uiQueryContext,
             BuildingPlacementInteractionSystem interaction,

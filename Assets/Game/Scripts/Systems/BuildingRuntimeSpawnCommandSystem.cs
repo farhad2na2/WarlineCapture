@@ -44,7 +44,8 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
         Vector2Int preferredOrigin,
         byte factionId,
         out int requestId,
-        bool rotateVertical = false)
+        bool rotateVertical = false,
+        bool hasOwnerFaction = true)
     {
         requestId = 0;
         string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
@@ -62,6 +63,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
             preferredOrigin,
             default,
             factionId,
+            hasOwnerFaction,
             rotateVertical,
             allowExistingWallOverlap: false);
         return true;
@@ -91,6 +93,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
             startOrigin,
             endOrigin,
             factionId,
+            hasOwnerFaction: true,
             rotateVertical: false,
             allowExistingWallOverlap: false);
         return true;
@@ -121,6 +124,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
             origin,
             default,
             factionId,
+            hasOwnerFaction: true,
             rotateVertical,
             allowExistingWallOverlap);
         return true;
@@ -300,6 +304,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
         Vector2Int preferredOrigin,
         Vector2Int endOrigin,
         byte factionId,
+        bool hasOwnerFaction,
         bool rotateVertical,
         bool allowExistingWallOverlap)
     {
@@ -310,7 +315,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
             RequestId = requestId,
             RequestKind = requestKind,
             FactionId = factionId,
-            HasOwnerFaction = 1,
+            HasOwnerFaction = hasOwnerFaction ? (byte)1 : (byte)0,
             BuildingId = new FixedString128Bytes(normalizedBuildingId),
             PreferredOrigin = new int2(preferredOrigin.x, preferredOrigin.y),
             EndOrigin = new int2(endOrigin.x, endOrigin.y),

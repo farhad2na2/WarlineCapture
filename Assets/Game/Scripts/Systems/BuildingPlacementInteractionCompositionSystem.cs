@@ -43,9 +43,9 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingPlacementInteractionSystem.Context> getInteractionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiCommandSystem.Context> createBuildingUiCommandContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestSystem.Context> createProductionRequestContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
@@ -71,8 +71,9 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
                 () => EnqueueAndProcessCancelBuildingPlacement(
                     source,
                     createPlacementCommandContext(source, getInteractionContext(), markerPropertyBlock)),
-                () => source.BuildingUiCommandSystem.CreateUnitFromSelectedBuilding(
-                    createBuildingUiCommandContext(source, getInteractionContext(), markerPropertyBlock)),
+                () => EnqueueAndProcessCreateUnitFromSelectedBuilding(
+                    source,
+                    createProductionRequestContext(source, getInteractionContext(), markerPropertyBlock)),
                 () => EnqueueAndProcessDeleteSelectedBuilding(
                     source,
                     createBuildingSelectionContext(source),
@@ -106,6 +107,24 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
                     out breachCell,
                     out breachPosition,
                     out reason)));
+    }
+
+    private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingProductionRequestSystem.Context context)
+    {
+        if (source.BuildingProductionRequestSystem == null ||
+            !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
+        {
+            return;
+        }
+
+        source.BuildingProductionRequestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
+            entityManager,
+            context,
+            source.RuntimeBuildingSystem.CurrentActiveBuildingId,
+            productionIndex: 0,
+            Time.frameCount);
     }
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(

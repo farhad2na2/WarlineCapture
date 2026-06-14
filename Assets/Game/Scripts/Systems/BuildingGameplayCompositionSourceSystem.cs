@@ -21,7 +21,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementQuerySystem BuildingPlacementQuerySystem = new();
     internal readonly BuildingPlacementQueryCompositionSystem BuildingPlacementQueryCompositionSystem = new();
     internal readonly BuildingUiQuerySystem BuildingUiQuerySystem = new();
-    internal readonly BuildingUiCommandSystem BuildingUiCommandSystem = new();
+    internal readonly BuildingUiCommandBoundary BuildingUiCommandBoundary = new();
     internal readonly BuildingUiContextSystem BuildingUiContextSystem = new();
     internal readonly BuildingUiCompositionSystem BuildingUiCompositionSystem = new();
     internal readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem = new();

@@ -29,11 +29,13 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesBoundarySpawnRequest();
             tests.TearDown();
+            tests.RuntimeCitySpawnUsesBoundarySpawnRequestAndPreservesUnownedBuilding();
+            tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesWallRunSpawnRequest();
             tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesWallSegmentSpawnRequest();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=4");
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=5");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (System.Exception ex)
@@ -113,6 +115,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         {
             RequestId = 1,
             FactionId = 1,
+            HasOwnerFaction = 1,
             BuildingId = new FixedString128Bytes("Tent_Regular"),
             PreferredOrigin = new int2(10, 10),
             Status = BuildingRuntimeSpawnRequest.Pending
@@ -173,9 +176,64 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             requestId,
             out BuildingRuntimeSpawnRequest request));
         Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, request.Status);
+        Assert.AreEqual(1, request.HasOwnerFaction);
         Assert.AreNotEqual(0, request.BuildingRuntimeId);
         Assert.AreEqual(new int2(12, 11), request.ActualOrigin);
         Assert.AreEqual(new int2(2, 2), request.ActualFootprint);
+    }
+
+    [Test]
+    public void RuntimeCitySpawnUsesBoundarySpawnRequestAndPreservesUnownedBuilding()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeCitySpawnCommandValidationTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 32, 32);
+        _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2);
+        _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
+
+        _runtimeRoot = new GameObject("BuildingRuntimeCitySpawnCommand_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeCitySpawn.TrySpawnRuntimeBuilding(
+            _buildingGameplay.RuntimeCitySpawnContext,
+            _buildingPrefab,
+            new Vector2Int(14, 13),
+            out int buildingId,
+            out Vector2Int actualOrigin,
+            out Vector2Int actualFootprint,
+            "Tent_Regular",
+            "Runtime city spawn test.",
+            new Vector2Int(2, 2),
+            500));
+
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, requests[0].Status);
+        Assert.AreEqual(0, requests[0].HasOwnerFaction);
+        Assert.AreEqual(buildingId, requests[0].BuildingRuntimeId);
+        Assert.AreEqual(new Vector2Int(14, 13), actualOrigin);
+        Assert.AreEqual(new Vector2Int(2, 2), actualFootprint);
+        Assert.IsTrue(_buildingGameplay.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building));
+        Assert.IsFalse(building.HasOwnerFaction);
     }
 
     [Test]

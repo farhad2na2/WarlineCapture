@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using CampRequestFailure = BuildingUiCommandSystem.CampRequestFailure;
+using CampRequestFailure = BuildingUiCommandBoundary.CampRequestFailure;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 
 internal sealed class BuildingProductionRequestSystem

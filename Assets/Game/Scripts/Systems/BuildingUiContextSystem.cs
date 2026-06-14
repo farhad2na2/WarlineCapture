@@ -34,11 +34,8 @@ internal sealed class BuildingUiContextSystem
         public readonly BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
         public readonly Func<Camera, bool> HasVisibleSelectableBuilding;
         public readonly BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
-        public readonly Action DeleteSelectedBuilding;
         public readonly Func<bool> ConfirmBuildingPlacement;
         public readonly Action CancelBuildingPlacement;
-        public readonly Action<string> ClearSelectedBuilding;
-        public readonly Action ExitBuildMode;
         public readonly Func<bool> RotateBuildingPlacement;
 
         public Source(
@@ -69,11 +66,8 @@ internal sealed class BuildingUiContextSystem
             BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
             Func<Camera, bool> hasVisibleSelectableBuilding,
             BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
-            Action deleteSelectedBuilding,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
-            Action<string> clearSelectedBuilding,
-            Action exitBuildMode,
             Func<bool> rotateBuildingPlacement = null)
         {
             RuntimeResourceSystem = runtimeResourceSystem;
@@ -103,11 +97,8 @@ internal sealed class BuildingUiContextSystem
             TryGetRuntimeBuildingOwnerFaction = tryGetRuntimeBuildingOwnerFaction;
             HasVisibleSelectableBuilding = hasVisibleSelectableBuilding;
             TryResolveLiveUnitPreviewPrefab = tryResolveLiveUnitPreviewPrefab;
-            DeleteSelectedBuilding = deleteSelectedBuilding;
             ConfirmBuildingPlacement = confirmBuildingPlacement;
             CancelBuildingPlacement = cancelBuildingPlacement;
-            ClearSelectedBuilding = clearSelectedBuilding;
-            ExitBuildMode = exitBuildMode;
             RotateBuildingPlacement = rotateBuildingPlacement;
         }
     }
@@ -140,11 +131,8 @@ internal sealed class BuildingUiContextSystem
         BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
         Func<Camera, bool> hasVisibleSelectableBuilding,
         BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
-        Action deleteSelectedBuilding,
         Func<bool> confirmBuildingPlacement,
         Action cancelBuildingPlacement,
-        Action<string> clearSelectedBuilding,
-        Action exitBuildMode,
         Func<bool> rotateBuildingPlacement = null)
     {
         return new Source(
@@ -175,17 +163,14 @@ internal sealed class BuildingUiContextSystem
             tryGetRuntimeBuildingOwnerFaction,
             hasVisibleSelectableBuilding,
             tryResolveLiveUnitPreviewPrefab,
-            deleteSelectedBuilding,
             confirmBuildingPlacement,
             cancelBuildingPlacement,
-            clearSelectedBuilding,
-            exitBuildMode,
             rotateBuildingPlacement);
     }
 
-    public BuildingUiCommandSystem.Context CreateCommandContext(Source source)
+    public BuildingUiCommandBoundary.Context CreateCommandContext(Source source)
     {
-        return new BuildingUiCommandSystem.Context(
+        return new BuildingUiCommandBoundary.Context(
             () => source.RuntimeResourceSystem.CurrentDollars,
             () => source.DefinitionSystem.ConfiguredSpawnableCount,
             source.DefinitionSystem.TryGetConfiguredSpawnable,
@@ -212,17 +197,9 @@ internal sealed class BuildingUiContextSystem
             source.GetPlacementStatusText,
             source.GetActivePlacementCost,
             source.GetActivePlacementDurationSeconds,
-            productionIndex => EnqueueAndProcessCreateUnitFromSelectedBuilding(source, productionIndex),
-            (buildingId, productionIndex) => EnqueueAndProcessCreateUnitFromBuilding(source, buildingId, productionIndex),
-            source.DeleteSelectedBuilding,
             source.ConfirmBuildingPlacement,
             source.CancelBuildingPlacement,
-            () => source.ProductionRequestSystem?.FocusLastCampProductionRequest(
-                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default),
-            () => source.ProductionRequestSystem?.ArmNextProductionFromUi(source.GetFrameCount?.Invoke() ?? 0),
             (buildingId, pendingProductionIndex) => CancelProduction(source, buildingId, pendingProductionIndex),
-            source.ClearSelectedBuilding,
-            source.ExitBuildMode,
             source.RotateBuildingPlacement);
     }
 
@@ -242,7 +219,7 @@ internal sealed class BuildingUiContextSystem
             source.GetNow?.Invoke() ?? Time.time);
     }
 
-    private static BuildingUiCommandSystem.CampRequestFailure RequestCampItem(
+    private static BuildingUiCommandBoundary.CampRequestFailure RequestCampItem(
         Source source,
         GameObject prefab,
         int price,
@@ -251,7 +228,7 @@ internal sealed class BuildingUiContextSystem
     {
         requiredBuildingDisplayName = string.Empty;
         if (source.ProductionRequestSystem == null)
-            return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+            return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
 
         BuildingProductionRequestSystem.Context context =
             source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default;
@@ -275,38 +252,6 @@ internal sealed class BuildingUiContextSystem
             focusProducerOnSuccess,
             frameCount,
             out requiredBuildingDisplayName);
-    }
-
-    private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(Source source, int productionIndex)
-    {
-        if (source.ProductionRequestSystem == null ||
-            !TryGetEntityManager(source, out EntityManager entityManager))
-        {
-            return;
-        }
-
-        source.ProductionRequestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
-            entityManager,
-            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
-            source.GetActiveBuildingId?.Invoke(),
-            productionIndex,
-            source.GetFrameCount?.Invoke() ?? 0);
-    }
-
-    private static void EnqueueAndProcessCreateUnitFromBuilding(Source source, int buildingId, int productionIndex)
-    {
-        if (source.ProductionRequestSystem == null ||
-            !TryGetEntityManager(source, out EntityManager entityManager))
-        {
-            return;
-        }
-
-        source.ProductionRequestSystem.EnqueueAndProcessCreateUnitFromBuilding(
-            entityManager,
-            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
-            buildingId,
-            productionIndex,
-            source.GetFrameCount?.Invoke() ?? 0);
     }
 
     private static bool TryGetEntityManager(Source source, out EntityManager entityManager)
@@ -342,9 +287,9 @@ internal sealed class BuildingUiContextSystem
             source.TryResolveLiveUnitPreviewPrefab);
     }
 
-    private static BuildingUiCommandSystem.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)
+    private static BuildingUiCommandBoundary.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)
     {
         requiredBuildingDisplayName = string.Empty;
-        return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+        return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
     }
 }

@@ -11,8 +11,7 @@ internal sealed class BuildingUiCompositionSystem
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext)
+        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateSource(
             source.RuntimeResourceSystem,
@@ -67,20 +66,10 @@ internal sealed class BuildingUiCompositionSystem
                 source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(source.BuildingRuntimeResourcePrefabCompositionSystem.Create(source)),
                 unitEntity,
                 out prefab),
-            () => EnqueueAndProcessDeleteSelectedBuilding(
-                source,
-                createBuildingSelectionContext(source),
-                buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(createBuildingRuntimeEntityContext(source), buildingId)),
             () => EnqueueAndProcessConfirmBuildingPlacement(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
             () => EnqueueAndProcessCancelBuildingPlacement(
-                source,
-                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            _ => EnqueueAndProcessClearSelectedBuilding(
-                source,
-                createBuildingSelectionContext(source)),
-            () => EnqueueAndProcessExitBuildMode(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
             () => EnqueueAndProcessRotateBuildingPlacement(
@@ -88,15 +77,14 @@ internal sealed class BuildingUiCompositionSystem
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
     }
 
-    public BuildingUiCommandSystem.Context CreateCommandContext(
+    public BuildingUiCommandBoundary.Context CreateCommandContext(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext)
+        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateCommandContext(
             CreateSource(
@@ -106,8 +94,7 @@ internal sealed class BuildingUiCompositionSystem
                 createRuntimeContextSource,
                 createPlacementCommandContext,
                 createBuildingPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext));
+                createBuildingSelectionContext));
     }
 
     public BuildingUiQuerySystem.Context CreateQueryContext(
@@ -117,8 +104,7 @@ internal sealed class BuildingUiCompositionSystem
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext)
+        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateQueryContext(
             CreateSource(
@@ -128,8 +114,7 @@ internal sealed class BuildingUiCompositionSystem
                 createRuntimeContextSource,
                 createPlacementCommandContext,
                 createBuildingPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext));
+                createBuildingSelectionContext));
     }
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(
@@ -149,16 +134,6 @@ internal sealed class BuildingUiCompositionSystem
             source.BuildingPlacementCommandSystem.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
         else
             CancelBuildingPlacementWithoutEntityManager(context);
-    }
-
-    private static void EnqueueAndProcessExitBuildMode(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingPlacementCommandSystem.Context context)
-    {
-        if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandSystem.EnqueueAndProcessExitBuildMode(entityManager, context);
-        else
-            ExitBuildModeWithoutEntityManager(context);
     }
 
     private static bool EnqueueAndProcessRotateBuildingPlacement(
@@ -181,51 +156,9 @@ internal sealed class BuildingUiCompositionSystem
         context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
     }
 
-    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
-    {
-        context.SessionSystem?.ExitBuildMode(context.SessionContext);
-    }
-
     private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
     {
         return context.SessionSystem != null &&
                context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
-    }
-
-    private static bool EnqueueAndProcessDeleteSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingSelectionSystem.Context context,
-        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
-    {
-        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingSelectionSystem.EnqueueAndProcessDeleteSelectedBuilding(entityManager, context, deleteBuildingById)
-            : DeleteSelectedBuilding(source, context, deleteBuildingById);
-    }
-
-    private static bool EnqueueAndProcessClearSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingSelectionSystem.Context context)
-    {
-        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingSelectionSystem.EnqueueAndProcessClearSelectedBuilding(entityManager, context)
-            : ClearSelectedBuilding(source, context);
-    }
-
-    private static bool DeleteSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingSelectionSystem.Context context,
-        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
-    {
-        int? buildingId = source.RuntimeBuildingSystem.CurrentActiveBuildingId;
-        source.BuildingSelectionSystem.DeleteSelectedBuilding(context, deleteBuildingById);
-        return buildingId.HasValue && !source.RuntimeBuildingSystem.ContainsBuilding(buildingId.Value);
-    }
-
-    private static bool ClearSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
-        BuildingSelectionSystem.Context context)
-    {
-        source.BuildingSelectionSystem.ClearSelectedBuilding(context);
-        return !source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue;
     }
 }

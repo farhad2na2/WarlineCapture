@@ -360,15 +360,6 @@ internal sealed class BuildingGameplayCompositionSystem
             childSystems,
             () => interactionContext,
             markerPropertyBlock,
-            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingUiCompositionSystem.CreateCommandContext(
-                source,
-                placementInteractionContext,
-                placementMarkerPropertyBlock,
-                createRuntimeContextSource,
-                createPlacementCommandContext,
-                createPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext),
             (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingUiCompositionSystem.CreateQueryContext(
                 source,
                 placementInteractionContext,
@@ -376,9 +367,16 @@ internal sealed class BuildingGameplayCompositionSystem
                 createRuntimeContextSource,
                 createPlacementCommandContext,
                 createPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext),
+                createBuildingSelectionContext),
             createPlacementCommandContext,
+            (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                source.BuildingProductionContextSystem.CreateProductionRequestContext(
+                    source.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                        source,
+                        createRuntimeContextSource,
+                        createPlacementCommandContext,
+                        placementInteractionContext,
+                        placementMarkerPropertyBlock)),
             createBuildingSelectionContext,
             createBuildingRuntimeEntityContext,
             createRuntimeContextSource);
@@ -548,7 +546,7 @@ internal sealed class BuildingGameplayCompositionSystem
             createBarrierContext,
             childSystems.BuildingCombatSystem,
             createCombatContext,
-            childSystems.BuildingUiCommandSystem,
+            childSystems.BuildingUiCommandBoundary,
             childSystems.BuildingUiCompositionSystem.CreateCommandContext(
                 childSystems,
                 interactionContext,
@@ -556,8 +554,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 createRuntimeContextSource,
                 createPlacementCommandContext,
                 createPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext),
+                createBuildingSelectionContext),
             childSystems.BuildingUiQuerySystem,
             childSystems.BuildingUiCompositionSystem.CreateQueryContext(
                 childSystems,
@@ -566,8 +563,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 createRuntimeContextSource,
                 createPlacementCommandContext,
                 createPlacementQueryContext,
-                createBuildingSelectionContext,
-                createBuildingRuntimeEntityContext),
+                createBuildingSelectionContext),
             childSystems.BuildingPlacementInteractionSystem,
             interactionContext,
             childSystems.BuildingGameplayDependencySystem,

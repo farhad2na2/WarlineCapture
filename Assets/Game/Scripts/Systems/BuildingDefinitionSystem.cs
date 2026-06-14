@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
-using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
-using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
+using ConfiguredSpawnableEntry = BuildingUiCommandBoundary.ConfiguredSpawnableEntry;
+using ConfiguredUnitEntry = BuildingUiCommandBoundary.ConfiguredUnitEntry;
 
 internal sealed class BuildingDefinitionSystem
 {

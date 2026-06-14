@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `73 / 113 complete (64.6%)`.
-- In progress: `3`.
+- Checklist progress: `74 / 113 complete (65.5%)`.
+- In progress: `2`.
 - Remaining open: `37`.
 - Phase progress: `7 / 13 phases complete; 1 in progress; 5 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `389` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `288` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `5`.
-- Kept as passive view/config/authoring/editor boundary: `0`.
-- Remaining plain runtime gameplay `*System` classes: `390`.
+- Kept as passive view/config/authoring/editor boundary: `1`.
+- Remaining plain runtime gameplay `*System` classes: `389`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 completed the `BuildingPlacementCommandSystem` split by routing begin, confirm, rotate, cancel, and exit placement commands through ECS request/result buffers.
+- Last implementation update: 2026-06-14 completed the `BuildingUiCommandSystem` split by renaming the remaining pass-through UI command shell to `BuildingUiCommandBoundary` and regenerating the authoritative inventory.
 
 ## Architecture Rules
 
@@ -446,7 +446,7 @@ Recommended disposition:
 
 Implementation steps:
 
-- [~] Split `BuildingUiCommandSystem` into passive UI request creation plus ECS command processors.
+- [x] Split `BuildingUiCommandSystem` into passive UI request creation plus ECS command processors.
 - [~] Split `BuildingProductionRequestSystem` into ECS production validation/request processing and managed prefab/config boundary.
 - [x] Split `BuildingPlacementCommandSystem` into ECS placement command state plus managed placement visual/session boundary.
 - [x] Split `RoadBuildCommandSystem` into ECS road-build command state plus managed road-build visual/session boundary.
@@ -481,6 +481,12 @@ Progress notes:
 - 2026-06-14: Started the `BuildingRuntimeSpawnCommandSystem` split by adding command-level enqueue/result helpers over existing ECS `BuildingRuntimeSpawnRequest` data on the runtime boundary entity. The managed prefab/GameObject spawn remains inside `BuildingRuntimeBoundarySystem`, and focused validation now proves command-enqueued spawn requests complete through that boundary. Focused Unity validation passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=2`.
 - 2026-06-14: Extended the `BuildingRuntimeSpawnCommandSystem` ECS request API to wall-run and wall-segment request kinds. `BuildingRuntimeBoundarySystem` now records wall-segment actual origin/footprint metadata from the managed runtime spawn boundary while prefab/GameObject work remains outside unmanaged ECS, and focused coverage now validates building, wall-run, and wall-segment command-enqueued requests. Focused Unity validation passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=4` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-14: Completed the `RoadBuildCommandSystem` split by removing unused public direct command helpers from the command system. External road-build command execution now uses enqueue/process/result APIs, runtime ticks drain queued ECS road-build commands, and the remaining no-`EntityManager` disposal path is isolated in `RoadBuildCompositionLifecycleSystem` as managed teardown. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Advanced the `BuildingRuntimeSpawnCommandSystem` split by routing runtime city building spawns through `BuildingRuntimeSpawnRequest` when the prefab has configured spawn data and an ECS boundary is available. The request path drains only runtime spawn requests through the managed `BuildingRuntimeBoundarySystem`, preserves unowned city buildings with explicit owner-presence request data, and falls back to the prior direct managed spawn only when the ECS request path is unavailable. Focused Unity validation passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=5`.
+- 2026-06-14: Advanced the `BuildingRuntimeSpawnCommandSystem` split by adding explicit owner-presence data to the runtime spawn command enqueue API. Existing owned building spawn requests keep `HasOwnerFaction=1` by default, while runtime city spawns now enqueue `HasOwnerFaction=0` directly instead of mutating the boundary request buffer after enqueue. This keeps the managed prefab spawn boundary unchanged and makes the ECS request payload authoritative for owner intent.
+- 2026-06-14: Advanced the `BuildingUiCommandSystem` and `BuildingProductionRequestSystem` split by removing the placement-interaction selected-building unit production action's hop through `BuildingUiCommandSystem`. `BuildingPlacementInteractionCompositionSystem` now builds the existing managed production request context and calls `BuildingProductionRequestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding` directly when an `EntityManager` is available, preserving the same-frame request/result flow and the existing production-arm frame guard.
+- 2026-06-14: Advanced the `BuildingUiCommandSystem` split by removing the now-unused direct unit-production delegates and wrapper methods from `BuildingUiCommandSystem.Context`. Unit production from UI and placement interaction now routes through `BuildingProductionRequestSystem` request/result helpers, while the remaining UI command contract surface is limited to camp requests, production cancellation, placement confirmation/cancel/rotate, and passive UI state.
+- 2026-06-14: Advanced the `BuildingUiCommandSystem` split by removing stale delete/clear/exit/focus/arm delegates and wrapper methods from the UI command context. Delete and clear selection remain routed through `BuildingSelectionSystem` request/result owners from placement interaction, placement confirm/cancel/rotate stay on `BuildingPlacementCommandSystem` request/result paths, and production focus/arm state stays inside `BuildingProductionRequestSystem` instead of being exposed as UI command methods. `BuildingUiCompositionSystem` also dropped the now-dead runtime-entity dependency that only existed for the removed delete delegate. Focused Unity validation passed with `[BuildDrawerCatalogQueryValidation] result=Passed tests=21` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Completed the `BuildingUiCommandSystem` split by renaming the remaining pass-through UI command shell to `BuildingUiCommandBoundary`. The type no longer appears in the runtime non-ECS `*System` inventory; it only exposes the managed UI boundary contract over ECS request/result owners for camp items, production cancellation, placement confirmation/cancel/rotate, and passive UI state. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `389`, ConvertToSystemBase candidates are now `288`, and passive boundary completions are now `1`.
 
 ## Phase 8: HUD Feedback, Markers, And Presentation Boundaries
 

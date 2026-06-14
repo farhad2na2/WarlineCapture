@@ -1249,14 +1249,14 @@ public sealed class BuildingProductionSystemTests
                 tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
                 tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
 
-            BuildingUiCommandSystem.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
+            BuildingUiCommandBoundary.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
                 result.UiCommandContext,
                 buildingPrefab,
                 price: 500,
                 out _,
                 focusProducerOnSuccess: true);
 
-            Assert.AreEqual(BuildingUiCommandSystem.CampRequestFailure.None, failure);
+            Assert.AreEqual(BuildingUiCommandBoundary.CampRequestFailure.None, failure);
         }
         finally
         {

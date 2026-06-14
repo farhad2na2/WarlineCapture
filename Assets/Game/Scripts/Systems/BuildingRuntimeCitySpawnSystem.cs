@@ -73,10 +73,13 @@ internal sealed class BuildingRuntimeCitySpawnSystem
                 preferredOrigin,
                 out buildingId,
                 out actualOrigin,
-                out actualFootprint))
+                out actualFootprint,
+                out bool attemptedRequest))
         {
             return true;
         }
+        if (attemptedRequest)
+            return false;
 
         if (context.RuntimeSpawnCommandSystem == null ||
             !context.RuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding(
@@ -106,11 +109,13 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         Vector2Int preferredOrigin,
         out int buildingId,
         out Vector2Int actualOrigin,
-        out Vector2Int actualFootprint)
+        out Vector2Int actualFootprint,
+        out bool attemptedRequest)
     {
         buildingId = 0;
         actualOrigin = default;
         actualFootprint = default;
+        attemptedRequest = false;
         if (prefab == null ||
             context.RuntimeSpawnCommandSystem == null ||
             context.RuntimeBoundarySystem == null ||
@@ -129,23 +134,14 @@ internal sealed class BuildingRuntimeCitySpawnSystem
                 buildingIdKey,
                 preferredOrigin,
                 FactionIdentitySystem.NeutralFactionId,
-                out int requestId))
+                out int requestId,
+                rotateVertical: false,
+                hasOwnerFaction: false))
         {
             return false;
         }
 
-        DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
-        for (int i = 0; i < requests.Length; i++)
-        {
-            BuildingRuntimeSpawnRequest request = requests[i];
-            if (request.RequestId != requestId)
-                continue;
-
-            request.HasOwnerFaction = 0;
-            requests[i] = request;
-            break;
-        }
-
+        attemptedRequest = true;
         context.RuntimeBoundarySystem.ProcessRuntimeSpawnRequestsForBoundary(
             context.DefinitionSystem,
             context.RuntimeSpawnCommandContext.RuntimeSpawnSystem,

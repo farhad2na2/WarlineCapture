@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public sealed class BuildingUiCommandSystem
+public sealed class BuildingUiCommandBoundary
 {
     public readonly struct ConfiguredSpawnableEntry
     {
@@ -53,8 +53,6 @@ public sealed class BuildingUiCommandSystem
     public delegate bool TryGetConfiguredUnitDelegate(int index, out ConfiguredUnitEntry entry);
     public delegate CampRequestFailure GetCampRequestFailureDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName);
     public delegate CampRequestFailure TryRequestCampItemDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
-    public delegate void CreateSelectedBuildingUnitDelegate(int productionIndex);
-    public delegate void CreateBuildingUnitDelegate(int buildingId, int productionIndex);
     public delegate bool CancelProductionDelegate(int buildingId, int pendingProductionIndex);
 
     public readonly struct Context
@@ -72,16 +70,9 @@ public sealed class BuildingUiCommandSystem
         public readonly Func<string> GetPlacementStatusText;
         public readonly Func<int> GetActivePlacementCost;
         public readonly Func<float> GetActivePlacementDurationSeconds;
-        public readonly CreateSelectedBuildingUnitDelegate CreateSelectedBuildingUnit;
-        public readonly CreateBuildingUnitDelegate CreateBuildingUnit;
-        public readonly Action DeleteSelectedBuilding;
         public readonly Func<bool> ConfirmBuildingPlacement;
         public readonly Action CancelBuildingPlacement;
-        public readonly Action FocusLastCampProductionRequest;
-        public readonly Action ArmNextProductionFromUi;
         public readonly CancelProductionDelegate CancelProduction;
-        public readonly Action<string> ClearSelectedBuilding;
-        public readonly Action ExitBuildMode;
         public readonly Func<bool> RotateBuildingPlacement;
 
         public Context(
@@ -98,16 +89,9 @@ public sealed class BuildingUiCommandSystem
             Func<string> getPlacementStatusText,
             Func<int> getActivePlacementCost,
             Func<float> getActivePlacementDurationSeconds,
-            CreateSelectedBuildingUnitDelegate createSelectedBuildingUnit,
-            CreateBuildingUnitDelegate createBuildingUnit,
-            Action deleteSelectedBuilding,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
-            Action focusLastCampProductionRequest,
-            Action armNextProductionFromUi,
             CancelProductionDelegate cancelProduction,
-            Action<string> clearSelectedBuilding,
-            Action exitBuildMode,
             Func<bool> rotateBuildingPlacement = null)
         {
             GetCurrentDollars = getCurrentDollars;
@@ -123,16 +107,9 @@ public sealed class BuildingUiCommandSystem
             GetPlacementStatusText = getPlacementStatusText;
             GetActivePlacementCost = getActivePlacementCost;
             GetActivePlacementDurationSeconds = getActivePlacementDurationSeconds;
-            CreateSelectedBuildingUnit = createSelectedBuildingUnit;
-            CreateBuildingUnit = createBuildingUnit;
-            DeleteSelectedBuilding = deleteSelectedBuilding;
             ConfirmBuildingPlacement = confirmBuildingPlacement;
             CancelBuildingPlacement = cancelBuildingPlacement;
-            FocusLastCampProductionRequest = focusLastCampProductionRequest;
-            ArmNextProductionFromUi = armNextProductionFromUi;
             CancelProduction = cancelProduction;
-            ClearSelectedBuilding = clearSelectedBuilding;
-            ExitBuildMode = exitBuildMode;
             RotateBuildingPlacement = rotateBuildingPlacement;
         }
     }
@@ -222,71 +199,6 @@ public sealed class BuildingUiCommandSystem
         return Mathf.Max(0f, context.GetActivePlacementDurationSeconds?.Invoke() ?? 0f);
     }
 
-    public void DeleteSelectedBuilding(Context context)
-    {
-        context.DeleteSelectedBuilding?.Invoke();
-    }
-
-    public void CreateUnitFromSelectedBuilding(Context context)
-    {
-        CreateUnitFromSelectedBuilding(context, 0);
-    }
-
-    public void CreateUnitFromSelectedBuilding(Context context, int productionIndex)
-    {
-        context.CreateSelectedBuildingUnit?.Invoke(productionIndex);
-    }
-
-    public void CreateUnitFromBuilding(Context context, int buildingId)
-    {
-        CreateUnitFromBuilding(context, buildingId, 0);
-    }
-
-    public void CreateUnitFromBuilding(Context context, int buildingId, int productionIndex)
-    {
-        context.CreateBuildingUnit?.Invoke(buildingId, productionIndex);
-    }
-
-    public void CreateSecondaryUnitFromSelectedBuilding(Context context)
-    {
-        CreateUnitFromSelectedBuilding(context, 1);
-    }
-
-    public void CreateSecondaryUnitFromBuilding(Context context, int buildingId)
-    {
-        CreateUnitFromBuilding(context, buildingId, 1);
-    }
-
-    public void CreateTertiaryUnitFromSelectedBuilding(Context context)
-    {
-        CreateUnitFromSelectedBuilding(context, 2);
-    }
-
-    public void CreateTertiaryUnitFromBuilding(Context context, int buildingId)
-    {
-        CreateUnitFromBuilding(context, buildingId, 2);
-    }
-
-    public void CreateQuaternaryUnitFromSelectedBuilding(Context context)
-    {
-        CreateUnitFromSelectedBuilding(context, 3);
-    }
-
-    public void CreateQuaternaryUnitFromBuilding(Context context, int buildingId)
-    {
-        CreateUnitFromBuilding(context, buildingId, 3);
-    }
-
-    public void CreateSoldierFromSelectedBuilding(Context context)
-    {
-        CreateUnitFromSelectedBuilding(context);
-    }
-
-    public void ArmNextProductionFromUi(Context context)
-    {
-        context.ArmNextProductionFromUi?.Invoke();
-    }
-
     public bool CancelProduction(Context context, int buildingId, int pendingProductionIndex)
     {
         return context.CancelProduction != null &&
@@ -308,20 +220,5 @@ public sealed class BuildingUiCommandSystem
     {
         return context.RotateBuildingPlacement != null &&
                context.RotateBuildingPlacement();
-    }
-
-    public void FocusLastCampProductionRequest(Context context)
-    {
-        context.FocusLastCampProductionRequest?.Invoke();
-    }
-
-    public void ClearSelectedBuilding(Context context, string reason)
-    {
-        context.ClearSelectedBuilding?.Invoke(reason);
-    }
-
-    public void ExitBuildMode(Context context)
-    {
-        context.ExitBuildMode?.Invoke();
     }
 }

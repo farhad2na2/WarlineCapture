@@ -1,3 +1,5 @@
+using Unity.Entities;
+
 internal sealed class RoadBuildCompositionSourceSystem
 {
     public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
@@ -14,8 +16,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadNetworkSystem RoadNetworkSystem = new();
     public readonly RoadPathPlanningSystem RoadPathPlanningSystem = new();
     public readonly RoadSurfacePlacementSystem RoadSurfacePlacementSystem = new();
-    public readonly RoadFootprintQuerySystem RoadFootprintQuerySystem = new();
-    public readonly RoadGridProjectionSystem RoadGridProjectionSystem = new();
+    public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
     public readonly RoadVisualVariantSystem RoadVisualVariantSystem = new();
     public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem = new();
     public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem = new();
@@ -50,9 +51,18 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     public RoadBuildCompositionSourceSystem()
     {
+        RoadGridProjectionSystem = ResolveRoadGridProjectionSystem();
         RoadBuildRuntimeActionState = RoadBuildRuntimeActionSystem.CreateState();
         RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
         RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem.CreateState();
         RoadBuildPlacementState = RoadBuildBuildingPlacementSystem.CreateState();
+    }
+
+    private static RoadGridProjectionSystem ResolveRoadGridProjectionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadGridProjectionSystem>()
+            : null;
     }
 }

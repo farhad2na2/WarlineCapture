@@ -10,8 +10,7 @@ internal sealed class RoadBuildCompositionSystem
         public readonly RoadBuildReadModelSystem RoadBuildReadModel;
         public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
         public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
-        public readonly RoadFootprintQuerySystem RoadFootprintQuery;
-        public readonly RoadFootprintQuerySystem.Context RoadFootprintQueryContext;
+        public readonly RoadGridProjectionSystem.RoadFootprintState RoadFootprintState;
         public readonly Action RuntimeUpdate;
         public readonly Action OnGui;
         public readonly Action Dispose;
@@ -20,8 +19,7 @@ internal sealed class RoadBuildCompositionSystem
             RoadBuildReadModelSystem roadBuildReadModel,
             RoadRuntimeGenerationSystem roadRuntimeGeneration,
             RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
-            RoadFootprintQuerySystem roadFootprintQuery,
-            RoadFootprintQuerySystem.Context roadFootprintQueryContext,
+            RoadGridProjectionSystem.RoadFootprintState roadFootprintState,
             Action runtimeUpdate,
             Action onGui,
             Action dispose)
@@ -29,8 +27,7 @@ internal sealed class RoadBuildCompositionSystem
             RoadBuildReadModel = roadBuildReadModel;
             RoadRuntimeGeneration = roadRuntimeGeneration;
             RoadRuntimeGenerationContext = roadRuntimeGenerationContext;
-            RoadFootprintQuery = roadFootprintQuery;
-            RoadFootprintQueryContext = roadFootprintQueryContext;
+            RoadFootprintState = roadFootprintState;
             RuntimeUpdate = runtimeUpdate;
             OnGui = onGui;
             Dispose = dispose;
@@ -54,8 +51,7 @@ internal sealed class RoadBuildCompositionSystem
             roadBuildReadModel,
             roadSource.RoadRuntimeGenerationSystem,
             contextSystem.CreateRoadRuntimeGenerationContext(roadSource),
-            roadSource.RoadFootprintQuerySystem,
-            contextSystem.CreateRoadFootprintQueryContext(roadSource),
+            contextSystem.CreateRoadFootprintState(roadSource),
             () => roadSource.RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState),
             () => roadSource.RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState),
             () => lifecycleSystem.Dispose(roadSource, contextSystem));

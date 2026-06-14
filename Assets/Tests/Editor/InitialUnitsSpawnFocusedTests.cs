@@ -11,7 +11,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         string[] methodNames =
         {
-            nameof(InitialSpawnResourceSystem_CreatesPlayerEconomyWithConfiguredDollars),
+            nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
             nameof(InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel),
             nameof(InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitSourceKeySystem_SkipsUnresolvedSourceKeyWithoutFallback),
@@ -47,12 +47,12 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         string[] methodNames =
         {
-            nameof(InitialUnitsSpawnProgressSystem_InitializesProgressAndUnitEntries),
+            nameof(InitialUnitsSpawnSystem_InitializesProgressAndUnitEntries),
             nameof(InitialUnitSpawnBatchSystem_ClampsEntryToInitialSpawnBatchSize),
-            nameof(InitialUnitSpawnCellSystem_RejectsReservedFootprint),
+            nameof(InitialUnitsSpawnSystem_RejectsReservedFootprint),
             nameof(InitialAirPlatformSpawnSystem_ResolvesConfiguredHelipadSlot),
             nameof(InitialBlockerSpawnSystem_PreservesPlannedProgressIncrement),
-            nameof(InitialSpawnCompletionSystem_WaitsThenFailOpens)
+            nameof(InitialUnitsSpawnSystem_WaitsThenFailOpens)
         };
 
         try
@@ -81,12 +81,12 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialSpawnResourceSystem_CreatesPlayerEconomyWithConfiguredDollars()
+    public void InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars()
     {
-        using var world = new World("InitialSpawnResourceSystemTest");
+        using var world = new World("InitialUnitsSpawnResourceTest");
         EntityManager em = world.EntityManager;
 
-        new InitialSpawnResourceSystem().ApplyInitialTotals(
+        InitialUnitsSpawnSystem.ApplyInitialResourceTotals(
             em,
             new InitialUnitsSpawnConfig { InitialDollars = 345 });
 
@@ -322,9 +322,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialUnitsSpawnProgressSystem_InitializesProgressAndUnitEntries()
+    public void InitialUnitsSpawnSystem_InitializesProgressAndUnitEntries()
     {
-        using var world = new World("InitialUnitsSpawnProgressSystemTest");
+        using var world = new World("InitialUnitsSpawnProgressTest");
         EntityManager em = world.EntityManager;
         Entity configEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig));
         em.SetComponentData(configEntity, new InitialUnitsSpawnConfig { RandomSeed = 0 });
@@ -354,7 +354,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             pendingInitQuery,
             dummyQuery);
 
-        new InitialUnitsSpawnProgressSystem().InitializePending(em, context);
+        InitialUnitsSpawnSystem.InitializeInitialSpawnProgress(em, context);
 
         Assert.IsTrue(em.HasComponent<InitialUnitsSpawnProgress>(configEntity));
         InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(configEntity);
@@ -404,7 +404,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialUnitSpawnCellSystem_RejectsReservedFootprint()
+    public void InitialUnitsSpawnSystem_RejectsReservedFootprint()
     {
         GridConfig grid = new()
         {
@@ -423,7 +423,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             reserved.Set(0, true);
             Unity.Mathematics.Random rng = new(1);
 
-            bool found = new InitialUnitSpawnCellSystem().TryFindInitialUnitSpawnCell(
+            bool found = InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(
                 ref rng,
                 grid,
                 walkable,
@@ -546,9 +546,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialSpawnCompletionSystem_WaitsThenFailOpens()
+    public void InitialUnitsSpawnSystem_WaitsThenFailOpens()
     {
-        using var world = new World("InitialSpawnCompletionSystemTest");
+        using var world = new World("InitialUnitsSpawnCompletionTest");
         EntityManager em = world.EntityManager;
         Entity configEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig), typeof(InitialUnitsSpawnProgress));
         em.SetComponentData(configEntity, new InitialUnitsSpawnConfig { CreateFactionBases = 1 });
@@ -560,7 +560,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(configEntity);
         try
         {
-            bool completed = new InitialSpawnCompletionSystem().Update(
+            bool completed = InitialUnitsSpawnSystem.UpdateInitialSpawnCompletion(
                 em,
                 ecb,
                 configEntity,
@@ -577,7 +577,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(1, progress.InitialBuildingCompletionWaitFrames);
             Assert.AreEqual(0, progress.InitialBuildingsSpawned);
 
-            completed = new InitialSpawnCompletionSystem().Update(
+            completed = InitialUnitsSpawnSystem.UpdateInitialSpawnCompletion(
                 em,
                 ecb,
                 configEntity,

@@ -25,8 +25,7 @@ internal sealed class BuildingGameplayCompositionSystem
         Camera worldCamera,
         Transform runtimeTransportsRoot,
         Transform runtimeUiRoot,
-        RoadFootprintQuerySystem roadFootprintQuerySystem,
-        RoadFootprintQuerySystem.Context roadFootprintQueryContext,
+        RoadGridProjectionSystem.RoadFootprintState roadFootprintState,
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight,
         RTSSelectionSystemConfig rtsSelectionConfig = null,
@@ -55,8 +54,7 @@ internal sealed class BuildingGameplayCompositionSystem
             buildingPlacementConfig,
             worldCamera,
             runtimeUiRoot,
-            roadFootprintQuerySystem,
-            roadFootprintQueryContext,
+            roadFootprintState,
             factionVisuals,
             dayNight);
         BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource =

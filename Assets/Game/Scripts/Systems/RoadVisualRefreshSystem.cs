@@ -47,7 +47,7 @@ internal sealed class RoadVisualRefreshSystem
         foreach (var cell in dirtyCells)
             RefreshCell(context, cell);
 
-        context.RoadGridProjectionSystem.RequestRoadEcsSync(context.RoadGridProjectionContext);
+        context.RoadGridProjectionSystem?.RequestRoadEcsSync(context.RoadGridProjectionContext);
         context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext);
         RebuildSpecialRoadObjects(context, dirtyCells);
     }
@@ -62,7 +62,7 @@ internal sealed class RoadVisualRefreshSystem
         foreach (var cell in context.RoadNetworkSystem.RoadTiles.Keys)
             context.RoadChunkVisualSystem.AddCellToChunk(context.RoadChunkVisualContext, cell);
 
-        context.RoadGridProjectionSystem.SyncRoadCellsToEcs(context.RoadGridProjectionContext);
+        context.RoadGridProjectionSystem?.SyncRoadCellsToEcs(context.RoadGridProjectionContext);
         context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext);
         context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext);
     }

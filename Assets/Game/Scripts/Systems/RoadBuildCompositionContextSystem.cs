@@ -8,9 +8,9 @@ using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed class RoadBuildCompositionContextSystem
 {
-    public RoadFootprintQuerySystem.Context CreateRoadFootprintQueryContext(RoadBuildCompositionSourceSystem source)
+    public RoadGridProjectionSystem.RoadFootprintState CreateRoadFootprintState(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadFootprintQuerySystem.Context(
+        return new RoadGridProjectionSystem.RoadFootprintState(
             source.RoadNetworkSystem.RoadTiles,
             source.RoadSpecialVisualSystem.SpecialRoadObjects,
             source.RoadVisualVariantSystem.VisualData,
@@ -118,8 +118,7 @@ internal sealed class RoadBuildCompositionContextSystem
     {
         return new RoadGridProjectionSystem.Context(
             source.RoadNetworkSystem.RoadTiles,
-            source.RoadFootprintQuerySystem,
-            CreateRoadFootprintQueryContext(source),
+            CreateRoadFootprintState(source),
             source.RoadBuildStartupState.RoadGridSize);
     }
 
@@ -362,7 +361,7 @@ internal sealed class RoadBuildCompositionContextSystem
 
     private void RemoveRuntimeBlockersUnderRoads(RoadBuildCompositionSourceSystem source)
     {
-        source.RoadGridProjectionSystem.RemoveRuntimeBlockersUnderRoads(
+        source.RoadGridProjectionSystem?.RemoveRuntimeBlockersUnderRoads(
             CreateRoadGridProjectionContext(source),
             source.RoadBuildDependencyState.RuntimeGridBlockers);
     }

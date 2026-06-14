@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Object;
-using CombinedRoadVisualData = RoadFootprintQuerySystem.CombinedRoadVisualData;
-using FootprintBoundsData = RoadFootprintQuerySystem.FootprintBoundsData;
-using FootprintKind = RoadFootprintQuerySystem.FootprintKind;
+using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
+using FootprintBoundsData = RoadGridProjectionSystem.RoadFootprintBoundsData;
+using FootprintKind = RoadGridProjectionSystem.RoadFootprintKind;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 
@@ -305,12 +305,12 @@ public sealed class RoadVisualVariantSystem
                 continue;
 
             MeshRenderer meshRenderer = meshFilter.GetComponent<MeshRenderer>();
-            if (RoadFootprintQuerySystem.TryGetFootprintKind(
+            if (RoadGridProjectionSystem.TryGetFootprintKind(
                     meshFilter.transform,
                     type == RoadVisualType.Autobahn || type == RoadVisualType.AutobahnConnect,
                     out FootprintKind footprintKind))
             {
-                Bounds localBounds = RoadFootprintQuerySystem.TransformBounds(
+                Bounds localBounds = RoadGridProjectionSystem.TransformBounds(
                     meshFilter.sharedMesh.bounds,
                     temp.transform.worldToLocalMatrix * meshFilter.transform.localToWorldMatrix);
                 footprintBounds.Add(new FootprintBoundsData

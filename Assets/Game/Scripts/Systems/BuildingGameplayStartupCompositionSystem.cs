@@ -7,8 +7,7 @@ internal sealed class BuildingGameplayStartupCompositionSystem
         BuildingPlacementSystemConfig buildingPlacementConfig,
         Camera worldCamera,
         Transform runtimeUiRoot,
-        RoadFootprintQuerySystem roadFootprintQuerySystem,
-        RoadFootprintQuerySystem.Context roadFootprintQueryContext,
+        RoadGridProjectionSystem.RoadFootprintState roadFootprintState,
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight)
     {
@@ -18,9 +17,7 @@ internal sealed class BuildingGameplayStartupCompositionSystem
             null,
             factionVisuals,
             dayNight);
-        childSystems.BuildingPlacementStartupSystem.ConfigureRoadFootprintQuery(
-            roadFootprintQuerySystem,
-            roadFootprintQueryContext);
+        childSystems.BuildingPlacementStartupSystem.ConfigureRoadFootprintState(roadFootprintState);
         childSystems.BuildingPlacementStartupSystem.Init(
             buildingPlacementConfig,
             worldCamera,

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using CombinedRoadVisualData = RoadFootprintQuerySystem.CombinedRoadVisualData;
+using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using VariantData = RoadVisualVariantSystem.VariantData;

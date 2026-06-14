@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CombinedRoadVisualData = RoadFootprintQuerySystem.CombinedRoadVisualData;
+using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;

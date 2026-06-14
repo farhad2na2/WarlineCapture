@@ -64,7 +64,7 @@ internal sealed class RoadBuildDisposalSystem
         context.EcsBoundarySystem.DisposeRuntimeBuildings(context.PlacementStorageSystem.RuntimeBuildings);
         context.SpecialVisualSystem.DisposeVisuals();
         context.MinimapEventSystem.Clear();
-        context.GridProjectionSystem.ClearRoadDataInEcs();
+        context.GridProjectionSystem?.ClearRoadDataInEcs();
         context.RoadTiles.Clear();
         context.PlacementStorageSystem.Clear();
     }

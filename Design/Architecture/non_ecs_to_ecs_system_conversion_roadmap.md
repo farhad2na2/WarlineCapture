@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `86 / 113 complete (76.1%)`.
+- Checklist progress: `87 / 113 complete (77.0%)`.
 - In progress: `1`.
-- Remaining open: `26`.
+- Remaining open: `25`.
 - Phase progress: `9 / 13 phases complete; 1 in progress; 3 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `379` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `371` after excluding `106` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `283` ConvertToSystemBase, `69` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `275` ConvertToSystemBase, `69` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
-- Converted to `SystemBase`: `0`.
-- Folded into ECS owners/jobs: `11`.
+- Converted to `SystemBase`: `1`.
+- Folded into ECS owners/jobs: `18`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `379`.
+- Remaining plain runtime gameplay `*System` classes: `371`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 folded `RoadBuildGridQuerySystem` into `RoadBuildCompositionContextSystem`, removed the standalone helper asset, and regenerated the authoritative inventory.
+- Last implementation update: 2026-06-15 folded initial-spawn resource, progress, and completion helpers into `InitialUnitsSpawnSystem` and regenerated the authoritative inventory.
 
 ## Architecture Rules
 
@@ -546,8 +546,8 @@ Implementation steps:
 - [x] Inventory pure helper `*System` types such as transport boarding rule/query/approach helpers.
 - [x] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
 - [x] Fold map-surface command target logic into the pointer target boundary or map-surface ECS owner.
-- [~] Fold road footprint/grid helper logic into road/building ECS owners.
-- [ ] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
+- [x] Fold road footprint/grid helper logic into road/building ECS owners.
+- [~] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
 - [ ] Remove or rename files only when Unity `.meta` preservation is planned.
 - [ ] Add tests around helper behavior before folding risky algorithms.
 
@@ -567,6 +567,11 @@ Progress notes:
 - 2026-06-15: Folded `MapSurfaceCommandTargetSystem` into the pointer-target boundary owner. `RtsSelectionPointerTargetCommandSystem` now owns map-surface command target resolution, move-footprint target adjustment, and layered-surface fallback result data; building interaction and focused map-surface tests call the owner API instead of constructing a standalone command-target helper. Removed `MapSurfaceCommandTargetSystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `382` to `381`. Focused Unity validation passed with `[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=15`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Started the road footprint/grid helper fold by folding `RoadGridContextSystem` into the road composition owner. `RoadBuildCompositionContextSystem` now builds `RoadFootprintQuerySystem.Context` and `RoadGridProjectionSystem.Context` directly from `RoadBuildCompositionSourceSystem`; the standalone road-grid context helper and `.meta` were removed, and `Design/Architecture/non_ecs_to_ecs_system_inventory.md` was regenerated with the authoritative runtime non-ECS denominator reduced from `381` to `380`. Remaining road footprint/grid fold work still includes the larger `RoadFootprintQuerySystem` / `RoadGridProjectionSystem` helper boundary. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Continued the road footprint/grid helper fold by folding `RoadBuildGridQuerySystem` into the road composition owner. `RoadBuildCompositionContextSystem` now supplies road-build grid data, footprint-center, and camera-to-grid-cell delegates directly from `RoadGridProjectionSystem` and `RoadBuildStartupSystem.State`; the standalone road-build grid helper and `.meta` were removed, and `Design/Architecture/non_ecs_to_ecs_system_inventory.md` was regenerated with the authoritative runtime non-ECS denominator reduced from `380` to `379`. Remaining road footprint/grid fold work still includes the larger `RoadFootprintQuerySystem` / `RoadGridProjectionSystem` helper boundary. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the road footprint/grid helper fold by folding `RoadFootprintQuerySystem` into the road grid projection owner. `RoadGridProjectionSystem` now owns road footprint state, footprint bounds data, road-footprint iteration, grid occupancy mask filling, and road-under-building overlap checks; building startup receives a `RoadFootprintState` instead of a standalone query helper. Removed `RoadFootprintQuerySystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `379` to `378`. Remaining road footprint/grid fold work is the larger `RoadGridProjectionSystem` managed boundary conversion/split. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6`, `[BuildingPlacementCommandRequestValidation] result=Passed tests=11`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Completed the road footprint/grid helper cleanup by converting `RoadGridProjectionSystem` into a managed `SystemBase` boundary. `RoadBuildCompositionSourceSystem` now resolves the projection boundary from `World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<RoadGridProjectionSystem>()`; road visual refresh, runtime generation, disposal, and blocker cleanup tolerate a missing world by no-oping the projection call. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, which reduced the authoritative runtime non-ECS denominator from `378` to `377` and raised Unity ECS exclusions from `105` to `106`. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6`, `[BuildingPlacementCommandRequestValidation] result=Passed tests=11`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Started the initial spawn helper fold by folding `InitialUnitSpawnCellSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns initial unit spawn-cell selection and initial air-cell reservation directly; the standalone helper asset and `.meta` were removed, and the focused test now exercises the owner method. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `377` to `376`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by folding `InitialSpawnReservationSystem` and `InitialSpawnGridContextSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns static-blocker/existing-unit footprint reservation and the initial-spawn grid context snapshot directly; both standalone helper assets and `.meta` files were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `376` to `374`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by folding `InitialSpawnResourceSystem`, `InitialUnitsSpawnProgressSystem`, and `InitialSpawnCompletionSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns initial resource totals, pending progress initialization, and completion/fail-open behavior as owner-local APIs; the standalone helper assets and `.meta` files were removed, and focused tests now exercise the owner APIs. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `374` to `371`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5`, `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 

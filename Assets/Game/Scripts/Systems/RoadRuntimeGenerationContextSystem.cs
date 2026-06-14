@@ -39,11 +39,11 @@ internal sealed class RoadRuntimeGenerationContextSystem
 
     public void BeginDeferredRoadEcsSync(Context context)
     {
-        context.RoadGridProjectionSystem.BeginDeferredRoadEcsSync();
+        context.RoadGridProjectionSystem?.BeginDeferredRoadEcsSync();
     }
 
     public void EndDeferredRoadEcsSync(Context context)
     {
-        context.RoadGridProjectionSystem.EndDeferredRoadEcsSync(context.RoadGridProjectionContext);
+        context.RoadGridProjectionSystem?.EndDeferredRoadEcsSync(context.RoadGridProjectionContext);
     }
 }

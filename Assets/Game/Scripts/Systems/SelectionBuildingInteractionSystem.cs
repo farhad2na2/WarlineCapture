@@ -81,7 +81,10 @@ public sealed class SelectionBuildingInteractionSystem
         if (!TryGetDefaultEntityManager(out EntityManager em))
             return false;
 
-        bool issued = _buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(em, originCell, footprintCells);
+        bool issued = _buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(
+            em,
+            new int2(originCell.x, originCell.y),
+            new int2(footprintCells.x, footprintCells.y));
         if (!issued)
             return false;
 

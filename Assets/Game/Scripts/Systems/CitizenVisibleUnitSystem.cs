@@ -19,7 +19,6 @@ internal sealed class CitizenVisibleUnitSystem
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
-        CitizenMovementCommandSystem movementCommandSystem,
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,
         CitizenPrefabSelectionSystem prefabSelectionSystem,
@@ -48,7 +47,7 @@ internal sealed class CitizenVisibleUnitSystem
             }
 
             if (state.VisibleCitizensById.TryGetValue(citizenId, out VisibleCitizenComponent visibleCitizen))
-                SyncVisibleCitizenTravel(state, ecsProjection, buildingReadSystem, statusTransitionSystem, movementCommandSystem, travelSystem, now, storeCitizen, handleCitizenDeath, citizenId, citizen, visibleCitizen);
+                SyncVisibleCitizenTravel(state, ecsProjection, buildingReadSystem, statusTransitionSystem, travelSystem, now, storeCitizen, handleCitizenDeath, citizenId, citizen, visibleCitizen);
         }
 
         state.PopulateCitizenIds();
@@ -71,7 +70,6 @@ internal sealed class CitizenVisibleUnitSystem
                 travelSystem,
                 buildingReadSystem,
                 statusTransitionSystem,
-                movementCommandSystem,
                 citizen,
                 worldPosition);
         }
@@ -109,7 +107,6 @@ internal sealed class CitizenVisibleUnitSystem
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
-        CitizenMovementCommandSystem movementCommandSystem,
         CitizenTravelSystem travelSystem,
         float now,
         CitizenStatusTransitionSystem.StoreCitizenAction storeCitizen,
@@ -160,11 +157,11 @@ internal sealed class CitizenVisibleUnitSystem
             if (hasLongMove)
             {
                 int2 finalGoal = ecsProjection.EntityManager.GetComponentData<UnitLongDistanceMove>(visibleCitizen.UnitEntity).FinalGoal;
-                movementCommandSystem.IssueCitizenMoveCommand(ecsProjection, visibleCitizen.UnitEntity, finalGoal);
+                CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, finalGoal);
             }
             else if (travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 retryGoal))
             {
-                movementCommandSystem.IssueCitizenMoveCommand(ecsProjection, visibleCitizen.UnitEntity, retryGoal);
+                CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, retryGoal);
                 visibleCitizen.GoalCell = retryGoal;
                 visibleCitizen.TargetBuildingId = citizen.CurrentTargetBuildingId;
                 state.VisibleCitizensById[citizenId] = visibleCitizen;
@@ -176,7 +173,7 @@ internal sealed class CitizenVisibleUnitSystem
             travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 goalCell) &&
             !currentCell.Equals(goalCell))
         {
-            movementCommandSystem.IssueCitizenMoveCommand(ecsProjection, visibleCitizen.UnitEntity, goalCell);
+            CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, goalCell);
             visibleCitizen.GoalCell = goalCell;
             visibleCitizen.TargetBuildingId = citizen.CurrentTargetBuildingId;
             state.VisibleCitizensById[citizenId] = visibleCitizen;
@@ -232,7 +229,6 @@ internal sealed class CitizenVisibleUnitSystem
         CitizenTravelSystem travelSystem,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
-        CitizenMovementCommandSystem movementCommandSystem,
         CitizenRecordComponent citizen,
         Vector3 worldPosition)
     {
@@ -328,7 +324,7 @@ internal sealed class CitizenVisibleUnitSystem
         int2 goalCell = spawnCell;
         if (travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, worldPosition, out int2 resolvedGoalCell))
             goalCell = resolvedGoalCell;
-        movementCommandSystem.IssueCitizenMoveCommand(ecsProjection, instance, goalCell);
+        CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, instance, goalCell);
 
         state.VisibleCitizensById[citizen.CitizenId] = new VisibleCitizenComponent
         {

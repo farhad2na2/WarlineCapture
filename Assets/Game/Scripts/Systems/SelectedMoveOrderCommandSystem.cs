@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class SelectedMoveOrderCommandSystem
+public partial struct SelectedMoveOrderCommandSystem : ISystem
 {
     public delegate bool ClickedUnitResolver(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate bool ClickedCellResolver(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint);
@@ -14,27 +14,77 @@ public sealed class SelectedMoveOrderCommandSystem
     private const int GroupMoveStaggerMinGroundUnits = 12;
     private const int GroupMoveImmediatePathRequests = 8;
     private const int GroupMovePathRequestsPerFrame = 8;
-    private readonly List<Entity> _selectedMoveEntityScratch = new();
+    private EntityQuery _commandQueueQuery;
+    private EntityQuery _selectedMoveQuery;
+    private EntityQuery _gridConfigQuery;
+    private EntityQuery _mapSurfaceQuery;
+    private EntityTypeHandle _entityType;
 
     public readonly struct Result
     {
         public readonly TacticalCommandResult CommandResult;
         public readonly bool EmitScreenMarker;
         public readonly bool ShowWorldMarkers;
+        public readonly int2 MarkerCell;
+        public readonly float3 MarkerPosition;
+        public readonly byte MarkerFactionId;
 
-        private Result(TacticalCommandResult commandResult, bool emitScreenMarker, bool showWorldMarkers)
+        private Result(
+            TacticalCommandResult commandResult,
+            bool emitScreenMarker,
+            bool showWorldMarkers,
+            int2 markerCell,
+            float3 markerPosition,
+            byte markerFactionId)
         {
             CommandResult = commandResult;
             EmitScreenMarker = emitScreenMarker;
             ShowWorldMarkers = showWorldMarkers;
+            MarkerCell = markerCell;
+            MarkerPosition = markerPosition;
+            MarkerFactionId = markerFactionId;
         }
 
-        public static Result Success() => new(TacticalCommandResult.Success(), true, true);
+        public static Result Success(int2 markerCell, float3 markerPosition, byte markerFactionId)
+        {
+            return new Result(TacticalCommandResult.Success(), true, true, markerCell, markerPosition, markerFactionId);
+        }
 
         public static Result Rejected(TacticalCommandReasonCode reasonCode)
         {
-            return new(TacticalCommandResult.Rejected(reasonCode), false, false);
+            return new Result(TacticalCommandResult.Rejected(reasonCode), false, false, default, default, 0);
         }
+    }
+
+    public void OnCreate(ref SystemState state)
+    {
+        _commandQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
+            ComponentType.ReadWrite<RtsSelectionCommandResultElement>());
+        _selectedMoveQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
+        _gridConfigQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<GridWalkable>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        _mapSurfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        _entityType = state.GetEntityTypeHandle();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        ProcessPreResolvedMoveRequests(
+            state.EntityManager,
+            _commandQueueQuery,
+            _selectedMoveQuery,
+            _gridConfigQuery,
+            _mapSurfaceQuery,
+            _entityType);
     }
 
     public Result TryIssueMoveOrder(
@@ -59,8 +109,11 @@ public sealed class SelectedMoveOrderCommandSystem
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        IReadOnlyList<Entity> entities = CollectSelectedMoveEntities(em, selectedMoveQuery, cachedSelectedMoveEntities);
-        if (entities.Count == 0)
+        using NativeList<Entity> selectedEntities = new(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, cachedSelectedMoveEntities, selectedEntities);
+        NativeArray<Entity> entities = selectedEntities.AsArray();
+        if (entities.Length == 0)
         {
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoSelection screen={screenPosition}");
@@ -70,7 +123,7 @@ public sealed class SelectedMoveOrderCommandSystem
         if (tryGetClickedCell == null || !tryGetClickedCell(screenPosition, em, out int2 goal, out Vector3 clickWorldPoint))
         {
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Count}");
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
@@ -78,13 +131,73 @@ public sealed class SelectedMoveOrderCommandSystem
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                 $"selectedMoveTarget screen={screenPosition} desiredGoal={goal} clickWorld={clickWorldPoint} " +
-                $"selected={entities.Count} first={DescribeMoveEntity(em, entities[0])}");
+                $"selected={entities.Length} first={DescribeMoveEntity(em, entities[0])}");
         }
 
         byte factionId = 0;
         if (em.HasComponent<Faction>(entities[0]))
             factionId = em.GetComponentData<Faction>(entities[0]).Id;
-        orderMarkerSystem.ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
+        orderMarkerSystem?.ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
+
+        return TryIssueMoveOrderToCell(
+            em,
+            entities,
+            gridConfigQuery,
+            mapSurfaceQuery,
+            moveOrderSystem,
+            goal,
+            clickWorldPoint,
+            currentFrame,
+            factionId);
+    }
+
+    public Result TryIssueMoveOrderToCell(
+        EntityManager em,
+        EntityQuery selectedMoveQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
+        UnitMoveOrderSystem moveOrderSystem,
+        int2 goal,
+        Vector3 clickWorldPoint,
+        int currentFrame,
+        IReadOnlyList<Entity> cachedSelectedMoveEntities = null)
+    {
+        using NativeList<Entity> selectedEntities = new(Allocator.Temp);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, cachedSelectedMoveEntities, selectedEntities);
+        NativeArray<Entity> entities = selectedEntities.AsArray();
+        if (entities.Length == 0)
+            return Result.Rejected(TacticalCommandReasonCode.NoSelection);
+
+        byte factionId = 0;
+        if (em.HasComponent<Faction>(entities[0]))
+            factionId = em.GetComponentData<Faction>(entities[0]).Id;
+
+        return TryIssueMoveOrderToCell(
+            em,
+            entities,
+            gridConfigQuery,
+            mapSurfaceQuery,
+            moveOrderSystem,
+            goal,
+            clickWorldPoint,
+            currentFrame,
+            factionId);
+    }
+
+    private static Result TryIssueMoveOrderToCell(
+        EntityManager em,
+        NativeArray<Entity> entities,
+        EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
+        UnitMoveOrderSystem moveOrderSystem,
+        int2 goal,
+        Vector3 clickWorldPoint,
+        int currentFrame,
+        byte factionId)
+    {
+        if (gridConfigQuery.IsEmptyIgnoreFilter)
+            return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
 
         Entity gridEntity = gridConfigQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
@@ -100,8 +213,8 @@ public sealed class SelectedMoveOrderCommandSystem
                 : surfaceReadSystem.CreateFlatFallbackContext();
         var reservedGoalCells = new HashSet<int>();
         HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
-        var issuedGoals = new int2[entities.Count];
-        var skipIssue = new bool[entities.Count];
+        var issuedGoals = new int2[entities.Length];
+        var skipIssue = new bool[entities.Length];
         bool issuedMoveOrder = false;
         int pathRequestCount = 0;
         int staggeredPathRequestCount = 0;
@@ -112,7 +225,7 @@ public sealed class SelectedMoveOrderCommandSystem
         int structuralRemoves = 0;
         int uniqueGoalCount = 0;
         int groundPathCandidateCount = 0;
-        for (int i = 0; i < entities.Count; i++)
+        for (int i = 0; i < entities.Length; i++)
         {
             Entity entity = entities[i];
             int2 issuedGoal = moveOrderSystem.FindManualMoveGoal(
@@ -151,7 +264,7 @@ public sealed class SelectedMoveOrderCommandSystem
 
         bool staggerGroundPathRequests = groundPathCandidateCount >= GroupMoveStaggerMinGroundUnits;
         int immediateGroundPathRequests = 0;
-        for (int i = 0; i < entities.Count; i++)
+        for (int i = 0; i < entities.Length; i++)
         {
             if (skipIssue[i])
                 continue;
@@ -202,36 +315,224 @@ public sealed class SelectedMoveOrderCommandSystem
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"selectedMoveRejected reason=TargetBlocked selected={entities.Count} desiredGoal={goal} " +
+                    $"selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
                     $"skippedAlreadyMoving={skippedAlreadyMovingCount} groundCandidates={groundPathCandidateCount}");
             }
 
             return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
         }
 
-        if (EnableGroupMoveValidationLog && entities.Count > 1)
+        if (EnableGroupMoveValidationLog && entities.Length > 1)
         {
             SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[GroupMoveValidate] selected={entities.Count} ground={groundPathCandidateCount} immediate={pathRequestCount} " +
+                $"[GroupMoveValidate] selected={entities.Length} ground={groundPathCandidateCount} immediate={pathRequestCount} " +
                 $"staggered={staggeredPathRequestCount} perFrame={GroupMovePathRequestsPerFrame} maxDelayFrames={maxStaggerDelayFrames} " +
                 $"uniqueGoals={uniqueGoalCount} skippedSameGoal={skippedAlreadyMovingCount} air={airUnitCount} goal={goal}");
         }
 
-        if (EnableMoveOrderDiagnostics && entities.Count > 1)
+        if (EnableMoveOrderDiagnostics && entities.Length > 1)
             SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                $"[MoveOrderDiag] frame={currentFrame} selected={entities.Count} pathRequests={pathRequestCount} " +
+                $"[MoveOrderDiag] frame={currentFrame} selected={entities.Length} pathRequests={pathRequestCount} " +
                 $"airUnits={airUnitCount} skippedSameGoal={skippedAlreadyMovingCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves} " +
                 $"uniqueGoals={uniqueGoalCount} staggeredPathRequests={staggeredPathRequestCount} goal={goal}");
 
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"selectedMoveSuccess frame={currentFrame} selected={entities.Count} desiredGoal={goal} " +
+                $"selectedMoveSuccess frame={currentFrame} selected={entities.Length} desiredGoal={goal} " +
                 $"pathRequests={pathRequestCount} staggeredPathRequests={staggeredPathRequestCount} skippedAlreadyMoving={skippedAlreadyMovingCount} " +
                 $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
         }
 
-        return Result.Success();
+        return Result.Success(goal, clickWorldPoint, factionId);
+    }
+
+    public bool ProcessCommandIntentRequests(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
+        EntityQuery selectedMoveQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
+        IReadOnlyList<Entity> cachedSelectedMoveEntities,
+        UnitMoveOrderSystem moveOrderSystem,
+        SelectionOrderMarkerSystem orderMarkerSystem,
+        ClickedUnitResolver tryGetClickedUnit,
+        ClickedCellResolver tryGetClickedCell)
+    {
+        int handledCount = 0;
+        int pendingMoveRequestCount = SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace
+            ? CountMoveRequests(commandRequests)
+            : 0;
+
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Move)
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            handledCount++;
+            Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"requestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
+                    $"screen={screenPosition} pendingCount={pendingMoveRequestCount}");
+            }
+
+            Result result = TryIssueMoveOrder(
+                em,
+                screenPosition,
+                selectedMoveQuery,
+                gridConfigQuery,
+                mapSurfaceQuery,
+                moveOrderSystem,
+                orderMarkerSystem,
+                tryGetClickedUnit,
+                tryGetClickedCell,
+                request.Frame,
+                cachedSelectedMoveEntities);
+
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            {
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    $"requestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
+                    $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
+            }
+
+            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+        }
+
+        return handledCount > 0;
+    }
+
+    private static bool ProcessPreResolvedMoveRequests(
+        EntityManager em,
+        EntityQuery commandQueueQuery,
+        EntityQuery selectedMoveQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
+        EntityTypeHandle entityType)
+    {
+        if (commandQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity commandEntity = commandQueueQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        bool handledAny = false;
+        var moveOrderSystem = new UnitMoveOrderSystem();
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
+                request.HasTargetCell == 0 ||
+                request.HasWorldPosition == 0)
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            handledAny = true;
+            using NativeList<Entity> selectedEntities = new(Allocator.Temp);
+            CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, null, selectedEntities);
+            NativeArray<Entity> entities = selectedEntities.AsArray();
+            Vector3 worldPoint = new(request.WorldPosition.x, request.WorldPosition.y, request.WorldPosition.z);
+            Result result = entities.Length == 0
+                ? Result.Rejected(TacticalCommandReasonCode.NoSelection)
+                : TryIssueMoveOrderToCell(
+                    em,
+                    entities,
+                    gridConfigQuery,
+                    mapSurfaceQuery,
+                    moveOrderSystem,
+                    request.TargetCell,
+                    worldPoint,
+                    request.Frame,
+                    ResolveMarkerFaction(em, entities));
+            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+            if (em.Exists(commandEntity))
+            {
+                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            }
+        }
+
+        return handledAny;
+    }
+
+    private static byte ResolveMarkerFaction(EntityManager em, NativeArray<Entity> entities)
+    {
+        if (entities.Length == 0 || !em.HasComponent<Faction>(entities[0]))
+            return 0;
+
+        return em.GetComponentData<Faction>(entities[0]).Id;
+    }
+
+    private static int CountMoveRequests(DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests)
+    {
+        int count = 0;
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Move)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private static void AddCommandResult(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
+        RtsSelectionCommandResultElement result)
+    {
+        if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
+            return;
+        }
+
+        fallbackResults.Add(result);
+    }
+
+    private static RtsSelectionCommandResultElement ToCommandResultElement(
+        RtsSelectionCommandIntentRequestElement request,
+        Result result)
+    {
+        TacticalCommandResult commandResult = result.CommandResult;
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            ScreenPosition = request.ScreenPosition,
+            TargetCell = result.MarkerCell,
+            WorldPosition = result.MarkerPosition,
+            TargetKind = commandResult.Accepted ? RtsSelectionCommandTargetKind.Cell : RtsSelectionCommandTargetKind.None,
+            CommandMode = (int)TacticalCommandMode.Move,
+            HasCommandResult = 1,
+            Accepted = commandResult.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = (int)commandResult.ReasonCode,
+            FeedbackLifetime = RtsSelectionCommandFeedbackLifetime.Transient,
+            EmitScreenMarker = result.EmitScreenMarker ? (byte)1 : (byte)0,
+            MarkerFactionId = result.MarkerFactionId,
+            HasTargetCell = commandResult.Accepted ? (byte)1 : (byte)0,
+            HasWorldPosition = commandResult.Accepted ? (byte)1 : (byte)0,
+            ShowWorldMarkers = result.ShowWorldMarkers ? (byte)1 : (byte)0
+        };
     }
 
     private static string DescribeMoveEntity(EntityManager em, Entity entity)
@@ -267,12 +568,14 @@ public sealed class SelectedMoveOrderCommandSystem
             : "none";
     }
 
-    private IReadOnlyList<Entity> CollectSelectedMoveEntities(
+    private static void CollectSelectedMoveEntities(
         EntityManager em,
         EntityQuery selectedMoveQuery,
-        IReadOnlyList<Entity> cachedSelectedMoveEntities)
+        EntityTypeHandle entityType,
+        IReadOnlyList<Entity> cachedSelectedMoveEntities,
+        NativeList<Entity> selectedEntities)
     {
-        _selectedMoveEntityScratch.Clear();
+        selectedEntities.Clear();
         if (cachedSelectedMoveEntities != null && cachedSelectedMoveEntities.Count > 0)
         {
             for (int i = 0; i < cachedSelectedMoveEntities.Count; i++)
@@ -281,28 +584,25 @@ public sealed class SelectedMoveOrderCommandSystem
                 if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity) &&
                     em.HasComponent<SelectedUnitTag>(entity))
                 {
-                    _selectedMoveEntityScratch.Add(entity);
+                    selectedEntities.Add(entity);
                 }
             }
 
-            if (_selectedMoveEntityScratch.Count > 0)
-                return _selectedMoveEntityScratch;
+            if (selectedEntities.Length > 0)
+                return;
         }
 
         int count = selectedMoveQuery.CalculateEntityCount();
         if (count <= 0)
-            return _selectedMoveEntityScratch;
+            return;
 
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
             for (int i = 0; i < chunkEntities.Length; i++)
-                _selectedMoveEntityScratch.Add(chunkEntities[i]);
+                selectedEntities.Add(chunkEntities[i]);
         }
-
-        return _selectedMoveEntityScratch;
     }
 
     private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)

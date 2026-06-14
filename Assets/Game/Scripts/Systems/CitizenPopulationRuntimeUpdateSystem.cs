@@ -231,7 +231,6 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             _systems.EcsProjection,
             _systems.BuildingReadSystem,
             _systems.StatusTransitionSystem,
-            _systems.MovementCommandSystem,
             _systems.CitizenPrefabSystem,
             _systems.CitizenPrefabContext,
             _systems.PrefabSelectionSystem,
@@ -241,6 +240,8 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             Time.time,
             StoreCitizen,
             HandleCitizenDeath);
+        if (_systems.EcsProjection.HasWorld)
+            CitizenMovementCommandSystem.ProcessPendingRequests(_systems.EcsProjection.EntityManager);
     }
 
     private void UpdateHouseholdDisplacementState()

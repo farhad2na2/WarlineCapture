@@ -339,13 +339,24 @@ public sealed class UnitMoveOrderSystemTests
         });
         _entityManager.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
 
-        bool issued = new BuildingTargetMoveOrderSystem().TryIssueMoveOrderToBuilding(
+        SystemHandle buildingTargetMoveOrderSystem = _world.CreateSystem<BuildingTargetMoveOrderSystem>();
+        int requestId = BuildingTargetMoveOrderSystem.EnqueueMoveOrderToBuilding(
             _entityManager,
-            new Vector2Int(6, 6),
-            new Vector2Int(2, 2));
+            new int2(6, 6),
+            new int2(2, 2));
+        buildingTargetMoveOrderSystem.Update(_world.Unmanaged);
 
         int2 expectedApproachCell = new(5, 5);
-        Assert.IsTrue(issued);
+        using EntityQuery resultQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingTargetMoveOrderQueueComponent>(),
+            ComponentType.ReadOnly<BuildingTargetMoveOrderResultElement>());
+        DynamicBuffer<BuildingTargetMoveOrderResultElement> results =
+            _entityManager.GetBuffer<BuildingTargetMoveOrderResultElement>(resultQuery.GetSingletonEntity());
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(requestId, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(expectedApproachCell, results[0].GoalCell);
+        Assert.AreEqual(1, results[0].IssuedUnitCount);
         Assert.AreEqual(expectedApproachCell, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
         Assert.AreEqual(expectedApproachCell, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));

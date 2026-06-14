@@ -1024,7 +1024,7 @@ public sealed class RtsSelectionInputSystemTests
                 unitTransportApproachCellSystem: default,
                 unitTransportAirPickupSystem: default,
                 unitTransportRopeDisembarkCommandSystem: default,
-                buildingTargetMoveOrderSystem: null,
+                buildingTargetMoveOrderSystem: default,
                 buildingPlacementInteractionSystem: null,
                 buildingPlacementInteractionContext: default,
                 worldCamera: camera,

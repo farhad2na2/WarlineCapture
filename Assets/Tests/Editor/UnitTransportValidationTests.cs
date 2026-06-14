@@ -692,13 +692,12 @@ public sealed class UnitTransportValidationTests
                 HasTargetEntity = 1
             });
 
-            var transportRequestSystem = new SelectionTransportCommandRequestSystem();
-            transportRequestSystem.ProcessPendingRequests(
+            var transportRequestSystem = new TransportBoardingCommandSystem();
+            transportRequestSystem.ProcessCommandIntentRequests(
                 em,
                 queue,
                 requests,
                 results,
-                new TransportBoardingCommandSystem(),
                 new UnitTransportCapacitySystem(),
                 new UnitTransportBoardingQuerySystem(),
                 new UnitTransportBoardingRuleSystem(),

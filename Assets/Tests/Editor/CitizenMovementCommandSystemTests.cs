@@ -41,13 +41,10 @@ public sealed class CitizenMovementCommandSystemTests
                 typeof(AutoWanderMoveTag),
                 typeof(UnitTarget),
                 typeof(UnitPathRequest));
-            var projection = new CitizenPopulationEcsProjectionSystem();
-            projection.ResolveEntityManager();
+            SystemHandle movementSystem = world.CreateSystem<CitizenMovementCommandSystem>();
 
-            new CitizenMovementCommandSystem().IssueCitizenMoveCommand(
-                projection,
-                entity,
-                new int2(12, 34));
+            Assert.IsTrue(CitizenMovementCommandSystem.TryEnqueueMoveCommand(em, entity, new int2(12, 34)));
+            movementSystem.Update(world.Unmanaged);
 
             Assert.IsFalse(em.HasComponent<EngageTarget>(entity));
             Assert.IsFalse(em.HasComponent<UnitPathFollow>(entity));
@@ -56,6 +53,7 @@ public sealed class CitizenMovementCommandSystemTests
             Assert.AreEqual(new int2(12, 34), em.GetComponentData<UnitTarget>(entity).Cell);
             Assert.AreEqual(new int2(12, 34), em.GetComponentData<UnitPathRequest>(entity).Goal);
             Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(entity));
+            AssertAcceptedResult(em, entity, new int2(12, 34));
         }
         finally
         {
@@ -76,22 +74,34 @@ public sealed class CitizenMovementCommandSystemTests
                 typeof(UnitAirMovement),
                 typeof(UnitTarget),
                 typeof(UnitPathRequest));
-            var projection = new CitizenPopulationEcsProjectionSystem();
-            projection.ResolveEntityManager();
+            SystemHandle movementSystem = world.CreateSystem<CitizenMovementCommandSystem>();
 
-            new CitizenMovementCommandSystem().IssueCitizenMoveCommand(
-                projection,
-                entity,
-                new int2(56, 78));
+            Assert.IsTrue(CitizenMovementCommandSystem.TryEnqueueMoveCommand(em, entity, new int2(56, 78)));
+            movementSystem.Update(world.Unmanaged);
 
             Assert.AreEqual(new int2(56, 78), em.GetComponentData<UnitTarget>(entity).Cell);
             Assert.IsFalse(em.HasComponent<UnitPathRequest>(entity));
             Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(entity));
+            AssertAcceptedResult(em, entity, new int2(56, 78));
         }
         finally
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    private static void AssertAcceptedResult(EntityManager em, Entity entity, int2 goal)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<CitizenMovementCommandQueueComponent>(),
+            ComponentType.ReadOnly<CitizenMoveCommandResultElement>());
+        Entity queueEntity = query.GetSingletonEntity();
+        DynamicBuffer<CitizenMoveCommandResultElement> results = em.GetBuffer<CitizenMoveCommandResultElement>(queueEntity);
+
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(entity, results[0].UnitEntity);
+        Assert.AreEqual(goal, results[0].Goal);
+        Assert.AreEqual(1, results[0].Accepted);
     }
 }
 #endif

@@ -26,7 +26,13 @@ public enum TacticalCommandReasonCode
     CameraJumpUnavailable,
     ScanUnavailable,
     ScanCooldown,
-    InsufficientResources
+    InsufficientResources,
+    InvalidTransport,
+    InvalidPassenger,
+    TransportFull,
+    NoEligiblePassengers,
+    NoDisembarkCell,
+    TransportPassengerMissing
 }
 
 public enum CommandFeedbackSeverity
@@ -204,6 +210,12 @@ public static class TacticalCommandFeedbackText
             TacticalCommandReasonCode.ScanUnavailable => "Scan unavailable.",
             TacticalCommandReasonCode.ScanCooldown => "Scan cooling down.",
             TacticalCommandReasonCode.InsufficientResources => "Insufficient resources.",
+            TacticalCommandReasonCode.InvalidTransport => "Select a transport vehicle or aircraft first.",
+            TacticalCommandReasonCode.InvalidPassenger => "Select soldiers that can board.",
+            TacticalCommandReasonCode.TransportFull => "Transport is full.",
+            TacticalCommandReasonCode.NoEligiblePassengers => "No nearby soldiers can board this transport.",
+            TacticalCommandReasonCode.NoDisembarkCell => "No clear exit point for passengers.",
+            TacticalCommandReasonCode.TransportPassengerMissing => "Passenger is not inside this transport.",
             _ => string.Empty
         };
     }

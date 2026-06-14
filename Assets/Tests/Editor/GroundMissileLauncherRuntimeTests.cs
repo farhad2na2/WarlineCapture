@@ -636,13 +636,12 @@ public sealed class GroundMissileLauncherRuntimeTests
             ScreenPosition = new float2(10f, 20f)
         });
 
-        var requestSystem = new SelectionAttackCommandRequestSystem();
-        requestSystem.ProcessPendingRequests(
+        var requestSystem = new AttackOrderCommandSystem();
+        requestSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             requests,
             results,
-            new AttackOrderCommandSystem(),
             new UnitTargetOrderSystem(),
             (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
             {
@@ -688,13 +687,12 @@ public sealed class GroundMissileLauncherRuntimeTests
             ScreenPosition = new float2(10f, 20f)
         });
 
-        var requestSystem = new SelectionAttackCommandRequestSystem();
-        requestSystem.ProcessPendingRequests(
+        var requestSystem = new AttackOrderCommandSystem();
+        requestSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             requests,
             results,
-            new AttackOrderCommandSystem(),
             new UnitTargetOrderSystem(),
             (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
             {

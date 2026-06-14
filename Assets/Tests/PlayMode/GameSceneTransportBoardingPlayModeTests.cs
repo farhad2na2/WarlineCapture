@@ -254,12 +254,11 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             HasTargetEntity = 1
         });
 
-        bool processed = new SelectionTransportCommandRequestSystem().ProcessPendingRequests(
+        bool processed = new TransportBoardingCommandSystem().ProcessCommandIntentRequests(
             em,
             queue,
             requests,
             results,
-            new TransportBoardingCommandSystem(),
             new UnitTransportCapacitySystem(),
             new UnitTransportBoardingQuerySystem(),
             new UnitTransportBoardingRuleSystem(),

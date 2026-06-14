@@ -91,6 +91,46 @@ public sealed class AttackOrderCommandSystem
         return IssueAttackTarget(em, targetEntity, targetOrderSystem, TryResolveBaseBreachTargetForAttackOrder, collectSelectedAttackSources);
     }
 
+    public bool ProcessCommandIntentRequests(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
+        UnitTargetOrderSystem targetOrderSystem,
+        TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
+        CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
+    {
+        bool handledAny = false;
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Attack)
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            handledAny = true;
+            Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
+            Result result = TryIssueAttackOrderToClickedUnit(
+                em,
+                screenPosition,
+                targetOrderSystem,
+                tryGetClickedUnitEntity,
+                collectSelectedAttackSources,
+                buildingPlacementInteractionSystem,
+                buildingPlacementInteractionContext,
+                request.ExplicitAttackTargetMode != 0);
+
+            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+        }
+
+        return handledAny;
+    }
+
     public Result IssueAttackTarget(
         EntityManager em,
         Entity targetEntity,
@@ -105,6 +145,56 @@ public sealed class AttackOrderCommandSystem
         return issueResult.CommandResult.Accepted
             ? Result.Accepted(issueResult)
             : Result.Rejected(issueResult.CommandResult);
+    }
+
+    private static void AddCommandResult(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
+        RtsSelectionCommandResultElement result)
+    {
+        if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
+            return;
+        }
+
+        fallbackResults.Add(result);
+    }
+
+    private static RtsSelectionCommandResultElement ToCommandResultElement(
+        RtsSelectionCommandIntentRequestElement request,
+        Result result)
+    {
+        TacticalCommandResult commandResult = result.HasCommandResult
+            ? result.CommandResult
+            : default;
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            TargetEntity = result.TargetEntity,
+            ScreenPosition = request.ScreenPosition,
+            WorldPosition = result.TargetPosition,
+            TargetKind = result.TargetEntity != Entity.Null
+                ? RtsSelectionCommandTargetKind.Entity
+                : result.Issued
+                    ? RtsSelectionCommandTargetKind.WorldPosition
+                    : RtsSelectionCommandTargetKind.None,
+            CommandMode = (int)TacticalCommandMode.Attack,
+            HasCommandResult = result.HasCommandResult ? (byte)1 : (byte)0,
+            Accepted = result.Issued ? (byte)1 : (byte)0,
+            ReasonCode = result.HasCommandResult ? (int)commandResult.ReasonCode : 0,
+            FeedbackLifetime = result.HasCommandResult
+                ? RtsSelectionCommandFeedbackLifetime.Transient
+                : RtsSelectionCommandFeedbackLifetime.Hidden,
+            Message = result.HasCommandResult ? new FixedString64Bytes(commandResult.Message ?? string.Empty) : default,
+            EmitScreenMarker = result.Issued ? (byte)1 : (byte)0,
+            HasTargetEntity = result.Issued && result.TargetEntity != Entity.Null ? (byte)1 : (byte)0,
+            HasWorldPosition = result.Issued ? (byte)1 : (byte)0,
+            ShowWorldMarkers = result.Issued ? (byte)1 : (byte)0
+        };
     }
 
     private NativeList<Entity> CreateSelectedAttackSourceList(

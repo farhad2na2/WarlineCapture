@@ -18,10 +18,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionHudFeedbackSystem HudFeedbackSystem;
         public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
-        public readonly SelectionMoveCommandRequestSystem MoveCommandRequestSystem;
-        public readonly SelectionAttackCommandRequestSystem AttackCommandRequestSystem;
-        public readonly SelectionScanCommandRequestSystem ScanCommandRequestSystem;
-        public readonly SelectionTransportCommandRequestSystem TransportCommandRequestSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
         public readonly AttackOrderCommandSystem AttackOrderCommandSystem;
         public readonly ScanIntelCommandSystem ScanIntelCommandSystem;
@@ -63,10 +59,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             RtsSelectionInputSystem inputSystem,
             SelectionHudFeedbackSystem hudFeedbackSystem,
             SelectionOrderMarkerSystem orderMarkerSystem,
-            SelectionMoveCommandRequestSystem moveCommandRequestSystem,
-            SelectionAttackCommandRequestSystem attackCommandRequestSystem,
-            SelectionScanCommandRequestSystem scanCommandRequestSystem,
-            SelectionTransportCommandRequestSystem transportCommandRequestSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
             AttackOrderCommandSystem attackOrderCommandSystem,
             ScanIntelCommandSystem scanIntelCommandSystem,
@@ -107,10 +99,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             InputSystem = inputSystem;
             HudFeedbackSystem = hudFeedbackSystem;
             OrderMarkerSystem = orderMarkerSystem;
-            MoveCommandRequestSystem = moveCommandRequestSystem;
-            AttackCommandRequestSystem = attackCommandRequestSystem;
-            ScanCommandRequestSystem = scanCommandRequestSystem;
-            TransportCommandRequestSystem = transportCommandRequestSystem;
             SelectedMoveOrderCommandSystem = selectedMoveOrderCommandSystem;
             AttackOrderCommandSystem = attackOrderCommandSystem;
             ScanIntelCommandSystem = scanIntelCommandSystem;
@@ -185,7 +173,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        context.MoveCommandRequestSystem.ProcessPendingRequests(
+        context.SelectedMoveOrderCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             commandRequests,
@@ -196,7 +184,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.SelectionStateSystem?.CachedSelectedMoveEntities,
             context.UnitMoveOrderSystem,
             context.OrderMarkerSystem,
-            context.SelectedMoveOrderCommandSystem,
             context.TryGetMoveClickedUnitEntity,
             context.TryGetMoveClickedCell);
 
@@ -276,12 +263,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        context.AttackCommandRequestSystem.ProcessPendingRequests(
+        context.AttackOrderCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             commandRequests,
             commandResults,
-            context.AttackOrderCommandSystem,
             context.UnitTargetOrderSystem,
             context.TryGetAttackClickedUnitEntity,
             context.CollectSelectedAttackSources,
@@ -340,13 +326,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        context.ScanCommandRequestSystem.ProcessPendingRequests(
+        context.ScanIntelCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             commandRequests,
             commandResults,
             context.GridConfigQuery,
-            context.ScanIntelCommandSystem,
             context.TryGetScanClickedCell);
 
         commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
@@ -395,12 +380,11 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        context.TransportCommandRequestSystem.ProcessPendingRequests(
+        context.TransportBoardingCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
             commandRequests,
             commandResults,
-            context.TransportBoardingCommandSystem,
             context.UnitTransportCapacitySystem,
             context.UnitTransportBoardingQuerySystem,
             context.UnitTransportBoardingRuleSystem,

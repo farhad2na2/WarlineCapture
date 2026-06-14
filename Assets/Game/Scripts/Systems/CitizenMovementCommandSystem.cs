@@ -2,11 +2,109 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal sealed class CitizenMovementCommandSystem
+internal partial struct CitizenMovementCommandSystem : ISystem
 {
-    public void IssueCitizenMoveCommand(CitizenPopulationEcsProjectionSystem ecsProjection, Entity entity, int2 goal)
+    private EntityQuery _queueQuery;
+
+    public void OnCreate(ref SystemState state)
     {
-        EntityManager em = ecsProjection.EntityManager;
+        _queueQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<CitizenMovementCommandQueueComponent>(),
+            ComponentType.ReadWrite<CitizenMoveCommandRequestElement>(),
+            ComponentType.ReadWrite<CitizenMoveCommandResultElement>());
+        EnsureCommandEntity(state.EntityManager, _queueQuery);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        ProcessPendingRequests(state.EntityManager, _queueQuery);
+    }
+
+    public static bool TryEnqueueMoveCommand(EntityManager em, Entity entity, int2 goal)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return false;
+
+        Entity queueEntity = EnsureCommandEntity(em);
+        CitizenMovementCommandQueueComponent queue = em.GetComponentData<CitizenMovementCommandQueueComponent>(queueEntity);
+        queue.LastRequestId++;
+        em.SetComponentData(queueEntity, queue);
+
+        em.GetBuffer<CitizenMoveCommandRequestElement>(queueEntity).Add(new CitizenMoveCommandRequestElement
+        {
+            RequestId = queue.LastRequestId,
+            UnitEntity = entity,
+            Goal = goal
+        });
+        return true;
+    }
+
+    public static void ProcessPendingRequests(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<CitizenMovementCommandQueueComponent>());
+        ProcessPendingRequests(em, query);
+    }
+
+    private static void ProcessPendingRequests(EntityManager em, EntityQuery query)
+    {
+        Entity queueEntity = EnsureCommandEntity(em, query);
+        DynamicBuffer<CitizenMoveCommandRequestElement> requests = em.GetBuffer<CitizenMoveCommandRequestElement>(queueEntity);
+        if (requests.Length == 0)
+            return;
+
+        DynamicBuffer<CitizenMoveCommandResultElement> results = em.GetBuffer<CitizenMoveCommandResultElement>(queueEntity);
+        results.Clear();
+        for (int i = 0; i < requests.Length; i++)
+        {
+            CitizenMoveCommandRequestElement request = requests[i];
+            bool accepted = TryApplyMoveCommand(em, request.UnitEntity, request.Goal);
+            results.Add(new CitizenMoveCommandResultElement
+            {
+                RequestId = request.RequestId,
+                UnitEntity = request.UnitEntity,
+                Goal = request.Goal,
+                Accepted = accepted ? (byte)1 : (byte)0
+            });
+        }
+
+        requests.Clear();
+    }
+
+    private static Entity EnsureCommandEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<CitizenMovementCommandQueueComponent>());
+        return EnsureCommandEntity(em, query);
+    }
+
+    private static Entity EnsureCommandEntity(EntityManager em, EntityQuery query)
+    {
+        Entity entity;
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            entity = query.GetSingletonEntity();
+            EnsureBuffers(em, entity);
+            return entity;
+        }
+
+        entity = em.CreateEntity(typeof(CitizenMovementCommandQueueComponent));
+        em.SetName(entity, "CitizenMovementCommands");
+        EnsureBuffers(em, entity);
+        return entity;
+    }
+
+    private static void EnsureBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasBuffer<CitizenMoveCommandRequestElement>(entity))
+            em.AddBuffer<CitizenMoveCommandRequestElement>(entity);
+        if (!em.HasBuffer<CitizenMoveCommandResultElement>(entity))
+            em.AddBuffer<CitizenMoveCommandResultElement>(entity);
+    }
+
+    private static bool TryApplyMoveCommand(EntityManager em, Entity entity, int2 goal)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return false;
+
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
         if (em.HasComponent<EngageTarget>(entity))
@@ -40,5 +138,6 @@ internal sealed class CitizenMovementCommandSystem
 
         ecb.Playback(em);
         ecb.Dispose();
+        return true;
     }
 }

@@ -134,12 +134,9 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
         var unitMoveOrderSystem = new UnitMoveOrderSystem();
         var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
-        var selectionMoveCommandRequestSystem = new SelectionMoveCommandRequestSystem();
         var unitTargetOrderSystem = new UnitTargetOrderSystem();
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
-        var selectionAttackCommandRequestSystem = new SelectionAttackCommandRequestSystem();
         var scanIntelCommandSystem = new ScanIntelCommandSystem();
-        var selectionScanCommandRequestSystem = new SelectionScanCommandRequestSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
         var selectionHudFeedbackSystem = new SelectionHudFeedbackSystem();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
@@ -147,7 +144,6 @@ internal sealed class SelectionGameplayStartupSystem
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
         var buildingTargetMoveOrderSystem = new BuildingTargetMoveOrderSystem();
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
-        var selectionTransportCommandRequestSystem = new SelectionTransportCommandRequestSystem();
         var focusableUnitLookupSystem = new FocusableUnitLookupSystem();
         var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionSystem();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
@@ -388,10 +384,6 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
                 selectionOrderMarkerSystem,
-                selectionMoveCommandRequestSystem,
-                selectionAttackCommandRequestSystem,
-                selectionScanCommandRequestSystem,
-                selectionTransportCommandRequestSystem,
                 selectedMoveOrderCommandSystem,
                 attackOrderCommandSystem,
                 scanIntelCommandSystem,
@@ -628,7 +620,6 @@ internal sealed class SelectionGameplayStartupSystem
             focusedUnitCommandSystem.EnsureEntityQueries(em);
             focusedUnitLifecycleSystem.EnsureEntityQueries(em);
             selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
-            buildingTargetMoveOrderSystem.EnsureEntityQueries(em);
             transportBoardingCommandSystem.EnsureEntityQueries(em);
         }
 

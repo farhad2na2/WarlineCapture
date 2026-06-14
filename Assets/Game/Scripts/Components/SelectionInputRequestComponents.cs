@@ -54,6 +54,22 @@ public enum BoardCommandModeDirection : byte
     TransportToPassenger
 }
 
+public enum RtsSelectionCommandTargetKind : byte
+{
+    None,
+    Entity,
+    Cell,
+    WorldPosition,
+    ScreenRect
+}
+
+public enum RtsSelectionCommandFeedbackLifetime : byte
+{
+    Hidden,
+    Persistent,
+    Transient
+}
+
 public struct RtsSelectionInputRequestQueueComponent : IComponentData
 {
     public int LastRequestId;
@@ -112,13 +128,16 @@ public struct RtsSelectionCommandIntentRequestElement : IBufferElementData
     public Entity TargetEntity;
     public Entity SecondaryTargetEntity;
     public int2 TargetCell;
+    public float3 WorldPosition;
     public float2 ScreenPosition;
     public float2 DragStart;
     public float2 DragCurrent;
+    public RtsSelectionCommandTargetKind TargetKind;
     public byte ExplicitAttackTargetMode;
     public byte HasTargetEntity;
     public byte HasSecondaryTargetEntity;
     public byte HasTargetCell;
+    public byte HasWorldPosition;
     public byte HasScreenPosition;
     public byte HasScreenRect;
 }
@@ -132,9 +151,13 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public int2 TargetCell;
     public float2 ScreenPosition;
     public float3 WorldPosition;
+    public RtsSelectionCommandTargetKind TargetKind;
+    public int CommandMode;
     public byte HasCommandResult;
     public byte Accepted;
     public int ReasonCode;
+    public RtsSelectionCommandFeedbackLifetime FeedbackLifetime;
+    public float FeedbackDurationSeconds;
     public byte EmitScreenMarker;
     public byte MarkerFactionId;
     public byte HasTargetEntity;
@@ -144,4 +167,26 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public int RevealedCount;
     public int RadiusCells;
     public FixedString64Bytes Message;
+}
+
+public struct BuildingTargetMoveOrderQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct BuildingTargetMoveOrderRequestElement : IBufferElementData
+{
+    public int RequestId;
+    public int2 OriginCell;
+    public int2 FootprintCells;
+}
+
+public struct BuildingTargetMoveOrderResultElement : IBufferElementData
+{
+    public int RequestId;
+    public int2 OriginCell;
+    public int2 FootprintCells;
+    public int2 GoalCell;
+    public int IssuedUnitCount;
+    public byte Accepted;
 }

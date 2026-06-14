@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
 public struct CitizenTag : IComponentData
 {
@@ -68,4 +69,24 @@ public struct CitizenPopulationSummaryTag : IComponentData
 
 public struct CivilianUnitTag : IComponentData
 {
+}
+
+public struct CitizenMovementCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct CitizenMoveCommandRequestElement : IBufferElementData
+{
+    public int RequestId;
+    public Entity UnitEntity;
+    public int2 Goal;
+}
+
+public struct CitizenMoveCommandResultElement : IBufferElementData
+{
+    public int RequestId;
+    public Entity UnitEntity;
+    public int2 Goal;
+    public byte Accepted;
 }

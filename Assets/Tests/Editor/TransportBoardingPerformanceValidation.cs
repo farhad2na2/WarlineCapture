@@ -97,7 +97,6 @@ public sealed class TransportBoardingPerformanceValidation
             Entity[] passengers = CreateSelectedPassengers(em);
 
             var boardingCommandSystem = new TransportBoardingCommandSystem();
-            var transportRequestSystem = new SelectionTransportCommandRequestSystem();
             var capacitySystem = new UnitTransportCapacitySystem();
             var boardingQuerySystem = new UnitTransportBoardingQuerySystem();
             var boardingRuleSystem = new UnitTransportBoardingRuleSystem();
@@ -163,12 +162,11 @@ public sealed class TransportBoardingPerformanceValidation
             });
 
             long disembarkStartTicks = Stopwatch.GetTimestamp();
-            bool processed = transportRequestSystem.ProcessPendingRequests(
+            bool processed = boardingCommandSystem.ProcessCommandIntentRequests(
                 em,
                 queue,
                 requests,
                 results,
-                boardingCommandSystem,
                 capacitySystem,
                 boardingQuerySystem,
                 boardingRuleSystem,

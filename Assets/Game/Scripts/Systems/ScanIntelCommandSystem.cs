@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class ScanIntelCommandSystem
+public partial struct ScanIntelCommandSystem : ISystem
 {
     public const int DefaultScanRadiusCells = 12;
 
@@ -44,12 +44,68 @@ public sealed class ScanIntelCommandSystem
         }
     }
 
-    private World _queryWorld;
+    private EntityQuery _queueQuery;
+    private EntityQuery _gridConfigQuery;
     private EntityQuery _unitScanTargetQuery;
     private EntityQuery _buildingScanTargetQuery;
     private EntityQuery _feedQueueQuery;
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<Faction> _factionType;
+    private ComponentTypeHandle<UnitGrid> _unitGridType;
+    private ComponentTypeHandle<UnitHealth> _healthType;
+    private ComponentTypeHandle<LocalTransform> _transformType;
+    private ComponentTypeHandle<RuntimeBuildingCombatInfo> _buildingInfoType;
 
-    public Result TryIssueScan(
+    public void OnCreate(ref SystemState state)
+    {
+        _queueQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<ScanIntelCommandQueueComponent>(),
+            ComponentType.ReadWrite<ScanIntelCommandRequestElement>(),
+            ComponentType.ReadWrite<ScanIntelCommandResultElement>());
+        _gridConfigQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _unitScanTargetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>());
+        _buildingScanTargetQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());
+        _feedQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<ScanIntelFeedQueueTag>(),
+            ComponentType.ReadWrite<ScanIntelFeedEntry>());
+        _entityType = state.GetEntityTypeHandle();
+        _factionType = state.GetComponentTypeHandle<Faction>(true);
+        _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _healthType = state.GetComponentTypeHandle<UnitHealth>(true);
+        _transformType = state.GetComponentTypeHandle<LocalTransform>(true);
+        _buildingInfoType = state.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
+        EnsureCommandEntity(state.EntityManager, _queueQuery);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        _factionType.Update(ref state);
+        _unitGridType.Update(ref state);
+        _healthType.Update(ref state);
+        _transformType.Update(ref state);
+        _buildingInfoType.Update(ref state);
+
+        ProcessPendingRequests(
+            state.EntityManager,
+            _queueQuery,
+            _gridConfigQuery,
+            _unitScanTargetQuery,
+            _buildingScanTargetQuery,
+            _feedQueueQuery,
+            _entityType,
+            _factionType,
+            _unitGridType,
+            _healthType,
+            _transformType,
+            _buildingInfoType);
+    }
+
+    public readonly Result TryIssueScan(
         EntityManager em,
         Vector2 screenPosition,
         int requestId,
@@ -57,7 +113,6 @@ public sealed class ScanIntelCommandSystem
         EntityQuery gridConfigQuery,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetClickedCell)
     {
-        EnsureEntityQueries(em);
         if (gridConfigQuery.IsEmptyIgnoreFilter)
             return Result.Rejected(TacticalCommandReasonCode.ScanUnavailable);
 
@@ -71,50 +126,358 @@ public sealed class ScanIntelCommandSystem
         if (!GridUtils.InBounds(centerCell, grid.Width, grid.Height))
             return Result.Rejected(TacticalCommandReasonCode.TargetOutOfBounds);
 
-        int radiusCells = DefaultScanRadiusCells;
-        int revealedCount = RevealUnits(em, grid, centerCell, radiusCells, frame);
-        revealedCount += RevealBuildings(em, grid, centerCell, radiusCells, frame);
-        AppendFeedEntry(em, requestId, frame, centerCell, centerWorld, radiusCells, revealedCount);
-
-        return Result.Success(centerCell, centerWorld, radiusCells, revealedCount);
+        EnqueueScan(em, requestId, frame, centerCell, centerWorld);
+        ProcessPendingRequests(em);
+        return TryGetResult(em, requestId, out ScanIntelCommandResultElement result)
+            ? ToResult(result)
+            : Result.Rejected(TacticalCommandReasonCode.ScanUnavailable);
     }
 
-    private void EnsureEntityQueries(EntityManager em)
+    public readonly bool ProcessCommandIntentRequests(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
+        EntityQuery gridConfigQuery,
+        SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetClickedCell)
     {
-        World world = em.World;
-        if (_queryWorld == world && world != null && world.IsCreated)
-            return;
+        bool handledAny = false;
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Scan)
+            {
+                i++;
+                continue;
+            }
 
-        _queryWorld = world;
-        _unitScanTargetQuery = em.CreateEntityQuery(
+            commandRequests.RemoveAt(i);
+            handledAny = true;
+            Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
+            Result result = TryIssueScan(
+                em,
+                screenPosition,
+                request.RequestId,
+                request.Frame,
+                gridConfigQuery,
+                tryGetClickedCell);
+
+            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+        }
+
+        return handledAny;
+    }
+
+    public static int EnqueueScan(
+        EntityManager em,
+        int requestId,
+        int frame,
+        int2 centerCell,
+        float3 centerWorld)
+    {
+        Entity queueEntity = EnsureCommandEntity(em);
+        ScanIntelCommandQueueComponent queue = em.GetComponentData<ScanIntelCommandQueueComponent>(queueEntity);
+        queue.LastRequestId = math.max(queue.LastRequestId, requestId);
+        em.SetComponentData(queueEntity, queue);
+
+        em.GetBuffer<ScanIntelCommandRequestElement>(queueEntity).Add(new ScanIntelCommandRequestElement
+        {
+            RequestId = requestId,
+            Frame = frame,
+            CenterCell = centerCell,
+            CenterWorld = centerWorld,
+            HasWorldPosition = 1
+        });
+        return requestId;
+    }
+
+    public static void ProcessPendingRequests(EntityManager em)
+    {
+        using EntityQuery queueQuery = em.CreateEntityQuery(ComponentType.ReadOnly<ScanIntelCommandQueueComponent>());
+        using EntityQuery gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        using EntityQuery unitScanTargetQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>());
-        _buildingScanTargetQuery = em.CreateEntityQuery(
+        using EntityQuery buildingScanTargetQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());
-        _feedQueueQuery = em.CreateEntityQuery(
+        using EntityQuery feedQueueQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<ScanIntelFeedQueueTag>(),
             ComponentType.ReadWrite<ScanIntelFeedEntry>());
+
+        ProcessPendingRequests(
+            em,
+            queueQuery,
+            gridConfigQuery,
+            unitScanTargetQuery,
+            buildingScanTargetQuery,
+            feedQueueQuery,
+            em.GetEntityTypeHandle(),
+            em.GetComponentTypeHandle<Faction>(true),
+            em.GetComponentTypeHandle<UnitGrid>(true),
+            em.GetComponentTypeHandle<UnitHealth>(true),
+            em.GetComponentTypeHandle<LocalTransform>(true),
+            em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true));
     }
 
-    private int RevealUnits(
+    private static void ProcessPendingRequests(
         EntityManager em,
+        EntityQuery queueQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery unitScanTargetQuery,
+        EntityQuery buildingScanTargetQuery,
+        EntityQuery feedQueueQuery,
+        EntityTypeHandle entityType,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<UnitGrid> unitGridType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<LocalTransform> transformType,
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType)
+    {
+        Entity queueEntity = EnsureCommandEntity(em, queueQuery);
+        DynamicBuffer<ScanIntelCommandRequestElement> requests = em.GetBuffer<ScanIntelCommandRequestElement>(queueEntity);
+        if (requests.Length == 0)
+            return;
+
+        DynamicBuffer<ScanIntelCommandResultElement> results = em.GetBuffer<ScanIntelCommandResultElement>(queueEntity);
+        results.Clear();
+        for (int i = 0; i < requests.Length; i++)
+        {
+            ScanIntelCommandRequestElement request = requests[i];
+            TacticalCommandResult commandResult = TryApplyScan(
+                em,
+                gridConfigQuery,
+                unitScanTargetQuery,
+                buildingScanTargetQuery,
+                feedQueueQuery,
+                entityType,
+                factionType,
+                unitGridType,
+                healthType,
+                transformType,
+                buildingInfoType,
+                request,
+                out int2 centerCell,
+                out float3 centerWorld,
+                out int radiusCells,
+                out int revealedCount,
+                out bool hasWorldPosition);
+
+            results.Add(new ScanIntelCommandResultElement
+            {
+                RequestId = request.RequestId,
+                Frame = request.Frame,
+                CenterCell = centerCell,
+                CenterWorld = centerWorld,
+                RadiusCells = radiusCells,
+                RevealedCount = revealedCount,
+                ReasonCode = (int)commandResult.ReasonCode,
+                Accepted = commandResult.Accepted ? (byte)1 : (byte)0,
+                HasWorldPosition = hasWorldPosition ? (byte)1 : (byte)0
+            });
+        }
+
+        requests.Clear();
+    }
+
+    private static TacticalCommandResult TryApplyScan(
+        EntityManager em,
+        EntityQuery gridConfigQuery,
+        EntityQuery unitScanTargetQuery,
+        EntityQuery buildingScanTargetQuery,
+        EntityQuery feedQueueQuery,
+        EntityTypeHandle entityType,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<UnitGrid> unitGridType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<LocalTransform> transformType,
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType,
+        ScanIntelCommandRequestElement request,
+        out int2 centerCell,
+        out float3 centerWorld,
+        out int radiusCells,
+        out int revealedCount,
+        out bool hasWorldPosition)
+    {
+        centerCell = request.CenterCell;
+        centerWorld = request.CenterWorld;
+        radiusCells = DefaultScanRadiusCells;
+        revealedCount = 0;
+        hasWorldPosition = request.HasWorldPosition != 0;
+
+        if (gridConfigQuery.IsEmptyIgnoreFilter)
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+
+        Entity gridEntity = gridConfigQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+        if (!GridUtils.InBounds(centerCell, grid.Width, grid.Height))
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetOutOfBounds);
+
+        if (!hasWorldPosition)
+        {
+            centerWorld = GridUtils.CellToWorldCenter(grid, centerCell);
+            hasWorldPosition = true;
+        }
+
+        int expectedCandidates = math.max(
+            1,
+            (unitScanTargetQuery.IsEmptyIgnoreFilter ? 0 : unitScanTargetQuery.CalculateEntityCount()) +
+            (buildingScanTargetQuery.IsEmptyIgnoreFilter ? 0 : buildingScanTargetQuery.CalculateEntityCount()));
+        using NativeList<ScanRevealCandidate> candidates = new(expectedCandidates, Allocator.Temp);
+        CollectRevealUnits(
+            em,
+            unitScanTargetQuery,
+            entityType,
+            factionType,
+            unitGridType,
+            healthType,
+            transformType,
+            buildingInfoType,
+            grid,
+            centerCell,
+            radiusCells,
+            candidates);
+        CollectRevealBuildings(
+            em,
+            buildingScanTargetQuery,
+            entityType,
+            factionType,
+            buildingInfoType,
+            healthType,
+            transformType,
+            grid,
+            centerCell,
+            radiusCells,
+            candidates);
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            ScanRevealCandidate candidate = candidates[i];
+            RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, request.Frame);
+        }
+
+        revealedCount = candidates.Length;
+        AppendFeedEntry(em, feedQueueQuery, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells, revealedCount);
+
+        return TacticalCommandResult.Success();
+    }
+
+    private static bool TryGetResult(EntityManager em, int requestId, out ScanIntelCommandResultElement result)
+    {
+        result = default;
+        Entity queueEntity = EnsureCommandEntity(em);
+        DynamicBuffer<ScanIntelCommandResultElement> results = em.GetBuffer<ScanIntelCommandResultElement>(queueEntity);
+        for (int i = 0; i < results.Length; i++)
+        {
+            if (results[i].RequestId == requestId)
+            {
+                result = results[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static Result ToResult(ScanIntelCommandResultElement result)
+    {
+        return result.Accepted != 0
+            ? Result.Success(result.CenterCell, result.CenterWorld, result.RadiusCells, result.RevealedCount)
+            : Result.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+    }
+
+    private static void AddCommandResult(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
+        RtsSelectionCommandResultElement result)
+    {
+        if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
+            return;
+        }
+
+        fallbackResults.Add(result);
+    }
+
+    private static RtsSelectionCommandResultElement ToCommandResultElement(
+        RtsSelectionCommandIntentRequestElement request,
+        Result result)
+    {
+        TacticalCommandResult commandResult = result.CommandResult;
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            TargetCell = result.CenterCell,
+            ScreenPosition = request.ScreenPosition,
+            WorldPosition = result.CenterWorld,
+            TargetKind = commandResult.Accepted
+                ? RtsSelectionCommandTargetKind.Cell
+                : RtsSelectionCommandTargetKind.None,
+            CommandMode = (int)TacticalCommandMode.Scan,
+            HasCommandResult = 1,
+            Accepted = commandResult.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = (int)commandResult.ReasonCode,
+            FeedbackLifetime = RtsSelectionCommandFeedbackLifetime.Transient,
+            EmitScreenMarker = commandResult.Accepted ? (byte)1 : (byte)0,
+            HasTargetCell = commandResult.Accepted ? (byte)1 : (byte)0,
+            HasWorldPosition = result.HasWorldPosition ? (byte)1 : (byte)0,
+            ShowWorldMarkers = commandResult.Accepted ? (byte)1 : (byte)0,
+            RevealedCount = result.RevealedCount,
+            RadiusCells = result.RadiusCells
+        };
+    }
+
+    private static Entity EnsureCommandEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<ScanIntelCommandQueueComponent>());
+        return EnsureCommandEntity(em, query);
+    }
+
+    private static Entity EnsureCommandEntity(EntityManager em, EntityQuery query)
+    {
+        Entity entity;
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            entity = query.GetSingletonEntity();
+            EnsureBuffers(em, entity);
+            return entity;
+        }
+
+        entity = em.CreateEntity(typeof(ScanIntelCommandQueueComponent));
+        em.SetName(entity, "ScanIntelCommands");
+        EnsureBuffers(em, entity);
+        return entity;
+    }
+
+    private static void EnsureBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasBuffer<ScanIntelCommandRequestElement>(entity))
+            em.AddBuffer<ScanIntelCommandRequestElement>(entity);
+        if (!em.HasBuffer<ScanIntelCommandResultElement>(entity))
+            em.AddBuffer<ScanIntelCommandResultElement>(entity);
+    }
+
+    private static void CollectRevealUnits(
+        EntityManager em,
+        EntityQuery unitScanTargetQuery,
+        EntityTypeHandle entityType,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<UnitGrid> unitGridType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<LocalTransform> transformType,
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType,
         in GridConfig grid,
         int2 centerCell,
         int radiusCells,
-        int frame)
+        NativeList<ScanRevealCandidate> candidates)
     {
-        if (_unitScanTargetQuery.IsEmptyIgnoreFilter)
-            return 0;
+        if (unitScanTargetQuery.IsEmptyIgnoreFilter)
+            return;
 
-        using NativeList<ScanRevealCandidate> candidates = new(math.max(1, _unitScanTargetQuery.CalculateEntityCount()), Allocator.Temp);
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
-        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
-        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
-        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
-        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
-        using NativeArray<ArchetypeChunk> chunks = _unitScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = unitScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             ArchetypeChunk chunk = chunks[chunkIndex];
@@ -147,33 +510,25 @@ public sealed class ScanIntelCommandSystem
                 candidates.Add(new ScanRevealCandidate(entities[i], cell, position));
             }
         }
-
-        for (int i = 0; i < candidates.Length; i++)
-        {
-            ScanRevealCandidate candidate = candidates[i];
-            RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, frame);
-        }
-
-        return candidates.Length;
     }
 
-    private int RevealBuildings(
+    private static void CollectRevealBuildings(
         EntityManager em,
+        EntityQuery buildingScanTargetQuery,
+        EntityTypeHandle entityType,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<LocalTransform> transformType,
         in GridConfig grid,
         int2 centerCell,
         int radiusCells,
-        int frame)
+        NativeList<ScanRevealCandidate> candidates)
     {
-        if (_buildingScanTargetQuery.IsEmptyIgnoreFilter)
-            return 0;
+        if (buildingScanTargetQuery.IsEmptyIgnoreFilter)
+            return;
 
-        using NativeList<ScanRevealCandidate> candidates = new(math.max(1, _buildingScanTargetQuery.CalculateEntityCount()), Allocator.Temp);
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
-        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
-        ComponentTypeHandle<UnitHealth> healthType = em.GetComponentTypeHandle<UnitHealth>(true);
-        ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
-        using NativeArray<ArchetypeChunk> chunks = _buildingScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = buildingScanTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             ArchetypeChunk chunk = chunks[chunkIndex];
@@ -204,14 +559,6 @@ public sealed class ScanIntelCommandSystem
                 candidates.Add(new ScanRevealCandidate(entities[i], center, position));
             }
         }
-
-        for (int i = 0; i < candidates.Length; i++)
-        {
-            ScanRevealCandidate candidate = candidates[i];
-            RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, frame);
-        }
-
-        return candidates.Length;
     }
 
     private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health)
@@ -241,8 +588,9 @@ public sealed class ScanIntelCommandSystem
             em.AddComponentData(entity, lastSeen);
     }
 
-    private void AppendFeedEntry(
+    private static void AppendFeedEntry(
         EntityManager em,
+        EntityQuery feedQueueQuery,
         int requestId,
         int frame,
         int2 centerCell,
@@ -250,7 +598,7 @@ public sealed class ScanIntelCommandSystem
         int radiusCells,
         int revealedCount)
     {
-        Entity feedEntity = EnsureFeedQueue(em);
+        Entity feedEntity = EnsureFeedQueue(em, feedQueueQuery);
         DynamicBuffer<ScanIntelFeedEntry> feed = em.GetBuffer<ScanIntelFeedEntry>(feedEntity);
         feed.Add(new ScanIntelFeedEntry
         {
@@ -263,10 +611,10 @@ public sealed class ScanIntelCommandSystem
         });
     }
 
-    private Entity EnsureFeedQueue(EntityManager em)
+    private static Entity EnsureFeedQueue(EntityManager em, EntityQuery feedQueueQuery)
     {
-        if (!_feedQueueQuery.IsEmptyIgnoreFilter)
-            return _feedQueueQuery.GetSingletonEntity();
+        if (!feedQueueQuery.IsEmptyIgnoreFilter)
+            return feedQueueQuery.GetSingletonEntity();
 
         Entity entity = em.CreateEntity(typeof(ScanIntelFeedQueueTag));
         em.SetName(entity, "ScanIntelFeedQueue");

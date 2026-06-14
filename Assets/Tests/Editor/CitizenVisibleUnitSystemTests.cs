@@ -99,6 +99,7 @@ public sealed class CitizenVisibleUnitSystemTests
             var state = new CitizenPopulationStateSystem();
             var projection = new CitizenPopulationEcsProjectionSystem();
             projection.ResolveEntityManager();
+            SystemHandle movementSystem = world.CreateSystem<CitizenMovementCommandSystem>();
             var citizen = new CitizenRecordComponent
             {
                 CitizenId = 15,
@@ -119,11 +120,11 @@ public sealed class CitizenVisibleUnitSystemTests
                 new CitizenTravelSystem(),
                 new CitizenBuildingReadSystem(),
                 new CitizenStatusTransitionSystem(),
-                new CitizenMovementCommandSystem(),
                 citizen,
                 new Vector3(4f, 0f, 6f));
 
             Assert.IsTrue(state.VisibleCitizensById.TryGetValue(15, out VisibleCitizenComponent visibleCitizen));
+            movementSystem.Update(world.Unmanaged);
             Assert.AreNotEqual(Entity.Null, visibleCitizen.UnitEntity);
             Assert.AreNotEqual(prefabEntity, visibleCitizen.UnitEntity);
             Assert.IsTrue(em.Exists(visibleCitizen.UnitEntity));

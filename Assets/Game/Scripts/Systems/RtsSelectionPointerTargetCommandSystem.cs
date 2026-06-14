@@ -225,7 +225,10 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (!context.TryGetEntityManager(out EntityManager em))
             return false;
 
-        bool issued = context.BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(em, originCell, footprintCells);
+        bool issued = context.BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(
+            em,
+            new int2(originCell.x, originCell.y),
+            new int2(footprintCells.x, footprintCells.y));
         if (!issued)
             return false;
 

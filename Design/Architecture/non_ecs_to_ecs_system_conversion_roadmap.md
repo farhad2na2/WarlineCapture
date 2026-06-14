@@ -33,17 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `0 / TBD complete (0.0%)`.
+- Checklist progress: `24 / 113 complete (21.2%)`.
 - In progress: `0`.
-- Remaining open: `TBD`.
-- Phase progress: `0 / 12 phases complete; 0 in progress; 12 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `TBD`.
-- Converted to `ISystem`: `0`.
+- Remaining open: `89`.
+- Phase progress: `2 / 13 phases complete; 1 in progress; 10 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `393` after excluding `90` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
+- Proposed inventory dispositions: `9` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+- Converted to `ISystem`: `4`.
 - Converted to `SystemBase`: `0`.
-- Folded into ECS owners/jobs: `0`.
+- Folded into ECS owners/jobs: `4`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
-- Remaining plain runtime gameplay `*System` classes: `TBD`.
+- Remaining plain runtime gameplay `*System` classes: `393`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
+- Last implementation update: 2026-06-14 converted `SelectedMoveOrderCommandSystem` into an `ISystem` move command owner and regenerated the inventory.
 
 ## Architecture Rules
 
@@ -129,21 +132,21 @@ These are the agreed defaults for planning:
 
 ## Phase 0: Authoritative Inventory
 
-Status: [ ]
+Status: [x]
 
 Purpose:
 Create the exact list of non-ECS runtime `*System` types and classify each one before conversion starts.
 
 Implementation steps:
 
-- [ ] Build a script or focused architecture test that enumerates all runtime `*System` type declarations.
-- [ ] Exclude actual Unity ECS systems: `ISystem` and `SystemBase`.
-- [ ] Exclude `MonoBehaviour` views and shell components from the gameplay conversion denominator.
-- [ ] Exclude editor-only systems from runtime gameplay conversion, but list them separately.
-- [ ] Classify every remaining type into Disposition A, B, C, or D.
-- [ ] Produce a generated inventory table with file path, type name, current base type, disposition, owner phase, and reason.
-- [ ] Add a guardrail test that fails if a new plain runtime gameplay `*System` is added without classification.
-- [ ] Update the progress snapshot with the authoritative denominator.
+- [x] Build a script or focused architecture test that enumerates all runtime `*System` type declarations.
+- [x] Exclude actual Unity ECS systems: `ISystem` and `SystemBase`.
+- [x] Exclude `MonoBehaviour` views and shell components from the gameplay conversion denominator.
+- [x] Exclude editor-only systems from runtime gameplay conversion, but list them separately.
+- [x] Classify every remaining type into Disposition A, B, C, or D.
+- [x] Produce a generated inventory table with file path, type name, current base type, disposition, owner phase, and reason.
+- [x] Add a guardrail test that fails if a new plain runtime gameplay `*System` is added without classification.
+- [x] Update the progress snapshot with the authoritative denominator.
 
 Acceptance checks:
 
@@ -151,23 +154,30 @@ Acceptance checks:
 - No system is counted in two dispositions.
 - The inventory distinguishes "convert to ECS" from "fold helper into ECS owner".
 
+Progress notes:
+
+- 2026-06-14: Added `Assets/Tests/Editor/NonEcsSystemConversionArchitectureTests.cs` with `RuntimeSystemInventoryCanBeEnumerated` and `RunFocusedValidation`. The test enumerates runtime `*System` declarations under `Assets/Game/Scripts`, excludes Unity ECS systems, excludes `MonoBehaviour` systems from the conversion denominator, lists editor-only systems separately, and logs the first-wave command conversion candidates. Focused Unity validation reported `totalSystemDeclarations=496`, `unityEcs=86`, `monoBehaviour=1`, `editorOnly=8`, and `runtimeNonEcsDenominator=401`.
+- 2026-06-14: Added `Tools/Architecture/generate_non_ecs_system_inventory.py` and generated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`. The generated table includes file path, type name, current base type, proposed disposition, owner phase, and reason for all `401` runtime non-ECS `*System` declarations.
+- 2026-06-14: Extended `NonEcsSystemConversionArchitectureTests` with `GeneratedInventoryContainsEveryRuntimeNonEcsSystem`, which compares the live runtime non-ECS denominator against the generated inventory file and fails on missing or stale rows. Focused Unity validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Completed Phase 0 classification. Current proposed split is `15` ConvertToISystem, `291` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+
 ## Phase 1: Command Request/Result Foundation
 
-Status: [ ]
+Status: [x]
 
 Purpose:
 Standardize command request and result flow before converting individual command systems.
 
 Implementation steps:
 
-- [ ] Review `RtsSelectionCommandIntentRequestElement` and `RtsSelectionCommandResultElement`.
-- [ ] Decide whether current shared buffers are enough or whether specific request/result components are needed for Move, Attack, Scan, and Board.
-- [ ] Add stable reason-code enums where current results rely on loose text.
-- [ ] Ensure command requests can carry pre-resolved target data: entity, cell, world position, screen position, and target kind.
-- [ ] Ensure command results can carry accepted/rejected state, reason code, command mode, target entity/cell/world position, marker intent, and feedback lifetime.
-- [ ] Ensure command requests are consumed exactly once.
-- [ ] Ensure command results are drained exactly once by presentation boundaries.
-- [ ] Add EditMode tests for request consumption and result emission.
+- [x] Review `RtsSelectionCommandIntentRequestElement` and `RtsSelectionCommandResultElement`.
+- [x] Decide whether current shared buffers are enough or whether specific request/result components are needed for Move, Attack, Scan, and Board.
+- [x] Add stable reason-code enums where current results rely on loose text.
+- [x] Ensure command requests can carry pre-resolved target data: entity, cell, world position, screen position, and target kind.
+- [x] Ensure command results can carry accepted/rejected state, reason code, command mode, target entity/cell/world position, marker intent, and feedback lifetime.
+- [x] Ensure command requests are consumed exactly once.
+- [x] Ensure command results are drained exactly once by presentation boundaries.
+- [x] Add EditMode tests for request consumption and result emission.
 
 Acceptance checks:
 
@@ -175,26 +185,31 @@ Acceptance checks:
 - Result feedback is the only source of accepted/rejected command feedback.
 - No command processor needs direct UI references.
 
+Progress notes:
+
+- 2026-06-14: Reviewed the existing shared command intent/result buffers and kept the shared-buffer model for Move, Attack, Scan, Board, Disembark, and selection-mode commands. Added `RtsSelectionCommandTargetKind`, `RtsSelectionCommandFeedbackLifetime`, request `WorldPosition`/`TargetKind` fields, result `TargetKind`/`CommandMode`/feedback lifetime fields, and transport-specific `TacticalCommandReasonCode` values. Added `Assets/Tests/Editor/SelectionCommandRequestResultContractTests.cs` to guard pre-resolved target data, marker/result metadata, feedback lifetime data, and transport failure reason text. Focused EditMode validation for `SelectionCommandRequestResultContractTests` exited successfully after sandboxed Unity hit the known UPM IPC restriction and the same command was rerun outside the sandbox.
+- 2026-06-14: Extended `SelectionCommandRequestResultContractTests` with first-wave request consumption/result emission coverage for Move, Attack, Scan, and Transport rejection paths, plus a Scan presentation-boundary drain test through `RtsSelectionCommandResultFlushSystem`. Focused EditMode validation passed for `SelectionCommandRequestResultContractTests`.
+
 ## Phase 2: Straightforward Selection Command Processors
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Convert the command processors that already follow the request/result shape.
 
 Implementation steps:
 
-- [ ] Convert `SelectionMoveCommandRequestSystem` into an ECS system or fold it into the new move command ECS owner.
-- [ ] Convert `SelectedMoveOrderCommandSystem` into the move command ECS owner.
-- [ ] Convert `SelectionAttackCommandRequestSystem` into an ECS system or fold it into the new attack command ECS owner.
+- [x] Convert `SelectionMoveCommandRequestSystem` into an ECS system or fold it into the new move command ECS owner.
+- [x] Convert `SelectedMoveOrderCommandSystem` into the move command ECS owner.
+- [x] Convert `SelectionAttackCommandRequestSystem` into an ECS system or fold it into the new attack command ECS owner.
 - [ ] Convert `AttackOrderCommandSystem` into the attack command ECS owner.
-- [ ] Convert `SelectionScanCommandRequestSystem` into an ECS system or fold it into the new scan command ECS owner.
-- [ ] Convert `ScanIntelCommandSystem` into the scan command ECS owner.
-- [ ] Convert `SelectionTransportCommandRequestSystem` into an ECS system or fold it into the new transport command ECS owner.
+- [x] Convert `SelectionScanCommandRequestSystem` into an ECS system or fold it into the new scan command ECS owner.
+- [x] Convert `ScanIntelCommandSystem` into the scan command ECS owner.
+- [x] Convert `SelectionTransportCommandRequestSystem` into an ECS system or fold it into the new transport command ECS owner.
 - [ ] Convert `TransportBoardingCommandSystem` into the transport boarding command ECS owner.
 - [ ] Fold `UnitTransportRopeDisembarkCommandSystem` into the transport command ECS owner or make it a narrow disembark request processor.
-- [ ] Convert `BuildingTargetMoveOrderSystem` into a request/result ECS command processor.
-- [ ] Convert `CitizenMovementCommandSystem` into a request/result ECS command processor.
+- [x] Convert `BuildingTargetMoveOrderSystem` into a request/result ECS command processor.
+- [x] Convert `CitizenMovementCommandSystem` into a request/result ECS command processor.
 
 Acceptance checks:
 
@@ -204,6 +219,19 @@ Acceptance checks:
 - Board/disembark command requests produce accepted/rejected transport results.
 - Current user-visible behavior is preserved.
 - Command processors do not call UI, camera, or GameObject APIs.
+
+Progress notes:
+
+- 2026-06-14: Prepared first-wave command request processors for ECS result presentation by populating `CommandMode`, `TargetKind`, and `FeedbackLifetime` on Move, Attack, Scan, Board, and Disembark `RtsSelectionCommandResultElement` outputs. Added focused assertions in `SelectionCommandRequestResultContractTests`. This is metadata-only prep; the processors are not yet converted to `ISystem`, so Phase 2 conversion checklist items remain open.
+- 2026-06-14: Removed managed pending-request list fields from `SelectionMoveCommandRequestSystem`, `SelectionAttackCommandRequestSystem`, `SelectionScanCommandRequestSystem`, and `SelectionTransportCommandRequestSystem`. These processors now consume matching command-buffer entries in place and emit the same result-buffer data, which reduces direct-call wrapper state before moving execution into ECS owners. Transport passenger/disembark working buffers remain for a later ECS data split. No Phase 2 conversion checklist item is complete yet.
+- 2026-06-14: Converted `CitizenMovementCommandSystem` from a plain helper class into an `ISystem` that consumes `CitizenMoveCommandRequestElement` and emits `CitizenMoveCommandResultElement`. Managed visible-citizen code now queues requests only; `CitizenPopulationRuntimeUpdateSystem` flushes the queue after visible-citizen sync to preserve same-frame movement setup during the transition. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `400`, Unity ECS systems excluded is now `87`, converted-to-`ISystem` count is now `1`.
+- 2026-06-14: Converted `BuildingTargetMoveOrderSystem` from a plain helper class into an `ISystem` that consumes `BuildingTargetMoveOrderRequestElement` and emits `BuildingTargetMoveOrderResultElement`. Existing managed selection/building boundaries now pass building target cells into the ECS request/result path and synchronously flush during the transition to preserve immediate selection clearing and marker behavior. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `399`, Unity ECS systems excluded is now `88`, converted-to-`ISystem` count is now `2`.
+- 2026-06-14: Converted `ScanIntelCommandSystem` from a plain helper class into an `ISystem` that consumes `ScanIntelCommandRequestElement` and emits `ScanIntelCommandResultElement`. The selection scan boundary still resolves screen taps through the existing managed resolver, then enqueues and synchronously flushes the scan request during the transition. The scan owner collects all unit/building reveal candidates before applying reveal components, avoiding type-handle invalidation from mid-scan structural changes. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `398`, Unity ECS systems excluded is now `89`, converted-to-`ISystem` count is now `3`.
+- 2026-06-14: Folded `SelectionScanCommandRequestSystem` into `ScanIntelCommandSystem`. The scan ECS owner now drains scan command-intent requests, maps scan results into `RtsSelectionCommandResultElement`, and keeps the managed screen-tap resolver as a transition boundary method. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `397`, first-wave ConvertToISystem candidates are now `13`, and folded count is now `1`.
+- 2026-06-14: Folded `SelectionMoveCommandRequestSystem` into `SelectedMoveOrderCommandSystem`. The move command owner now drains move command-intent requests, maps move results into `RtsSelectionCommandResultElement`, and keeps the managed pointer/cell resolvers as transition boundary delegates. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `396`, first-wave ConvertToISystem candidates are now `12`, and folded count is now `2`.
+- 2026-06-14: Folded `SelectionAttackCommandRequestSystem` into `AttackOrderCommandSystem`. The attack command owner now drains attack command-intent requests, maps attack results into `RtsSelectionCommandResultElement`, and keeps clicked-target/source collection and base-breach resolution as existing transition delegates. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `395`, first-wave ConvertToISystem candidates are now `11`, and folded count is now `3`.
+- 2026-06-14: Folded `SelectionTransportCommandRequestSystem` into `TransportBoardingCommandSystem`. The transport command owner now drains board/disembark command-intent requests, maps transport results into `RtsSelectionCommandResultElement`, owns disembark helper state, and refreshes command buffers after structural disembark/boarding changes. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `394`, first-wave ConvertToISystem candidates are now `10`, and folded count is now `4`.
+- 2026-06-14: Converted `SelectedMoveOrderCommandSystem` into an `ISystem` move command owner. It now owns an ECS `OnUpdate` path for pre-resolved Move command requests carrying target cell/world data, while the existing managed transition method continues to resolve screen clicks and leaves screen-only requests untouched. Removed managed selection scratch state from the owner by collecting selected units into caller-owned `NativeList<Entity>` storage. Also fixed `BuildingTargetMoveOrderSystem` request/result buffer lifetime so structural move-order changes do not invalidate result writes during focused move validation. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `393`, Unity ECS excluded count is now `90`, and converted-to-`ISystem` count is now `4`.
 
 ## Phase 3: Pointer Target Boundary Split
 
@@ -533,7 +561,6 @@ This order keeps behavior stable by converting command execution before removing
 - `AttackOrderCommandSystem`
 - `SelectionScanCommandRequestSystem`
 - `ScanIntelCommandSystem`
-- `SelectionTransportCommandRequestSystem`
 - `TransportBoardingCommandSystem`
 - `UnitTransportRopeDisembarkCommandSystem`
 - `BuildingTargetMoveOrderSystem`

@@ -19,7 +19,6 @@ internal sealed class CitizenPopulationCompositionSystem
         public readonly CitizenStatusTransitionSystem StatusTransitionSystem = new();
         public readonly CitizenDangerSystem DangerSystem = new();
         public readonly CitizenTravelSystem TravelSystem = new();
-        public readonly CitizenMovementCommandSystem MovementCommandSystem = new();
         public readonly CitizenPrefabSelectionSystem PrefabSelectionSystem = new();
         public readonly CitizenVisibleUnitSystem VisibleUnitSystem = new();
         public readonly CitizenPopulationEventSystem EventSystem = new();

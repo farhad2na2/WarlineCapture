@@ -58,11 +58,12 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
             RunCase(test => test.SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
+            RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=45");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=46");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -2235,6 +2236,7 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
         StringAssert.Contains("direction != BoardCommandModeDirection.TransportToPassenger", passengerPress);
         StringAssert.Contains("context.IsBoardSelectedTransportPassengerTarget.Invoke(transport, pointerPosition)", passengerPress);
+        StringAssert.Contains("activeMode == TacticalCommandMode.Move", commandPan);
         StringAssert.Contains("activeMode == TacticalCommandMode.Attack", commandPan);
         StringAssert.Contains("return !input.BoardPassengerDragArmed;", commandPan);
         StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);
@@ -2337,6 +2339,48 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
         Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+    }
+
+    [Test]
+    public void RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pressPosition = new(16f, 24f);
+        Vector2 heldPosition = new(22f, 31f);
+        bool cameraDragging = false;
+        int panCalls = 0;
+        Vector2 panDelta = default;
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Move,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            panCamera: delta =>
+            {
+                panCalls++;
+                panDelta = delta;
+            });
+
+        InvokeRuntimePointerPressed(context, pressPosition);
+        Assert.IsTrue(cameraDragging);
+
+        InvokeRuntimePointerHeld(context, heldPosition);
+
+        Assert.AreEqual(1, panCalls);
+        Assert.AreEqual(heldPosition - pressPosition, panDelta);
     }
 
     [Test]
@@ -2450,7 +2494,7 @@ public sealed class RtsSelectionInputSystemTests
         string move = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedMoveCommand");
         StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", move);
         StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", move);
-        StringAssert.Contains("targetBoundary.TryGetClickedCell", move);
+        StringAssert.Contains("targetBoundary.TryGetMoveCommandCell", move);
         Assert.IsFalse(move.Contains("TryGetClickedCell(context", StringComparison.Ordinal));
 
         string attack = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedAttackCommand");

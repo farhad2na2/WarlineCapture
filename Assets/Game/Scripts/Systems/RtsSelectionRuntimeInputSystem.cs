@@ -648,7 +648,8 @@ public sealed class RtsSelectionRuntimeInputSystem
     private static bool AllowsCameraPanDuringCommandMode(RtsSelectionInputSystem input)
     {
         if (input.TryGetActiveCommandMode(out TacticalCommandMode activeMode) &&
-            activeMode == TacticalCommandMode.Attack)
+            (activeMode == TacticalCommandMode.Move ||
+             activeMode == TacticalCommandMode.Attack))
         {
             return true;
         }

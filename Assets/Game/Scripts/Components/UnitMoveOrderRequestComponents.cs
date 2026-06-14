@@ -6,6 +6,7 @@ public enum UnitMoveOrderRequestKind : byte
     GroupedManual,
     Immediate,
     TargetOnly,
+    TargetPathOnly,
     ClearMovement
 }
 

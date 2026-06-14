@@ -120,15 +120,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
         if (isAirUnit && !isSpawnTransit)
             return;
 
-        if (em.HasComponent<UnitTarget>(entity))
-            em.SetComponentData(entity, new UnitTarget { Cell = goalCell });
-        else
-            em.AddComponentData(entity, new UnitTarget { Cell = goalCell });
-
-        if (em.HasComponent<UnitPathRequest>(entity))
-            em.SetComponentData(entity, new UnitPathRequest { Goal = goalCell });
-        else
-            em.AddComponentData(entity, new UnitPathRequest { Goal = goalCell });
+        UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder(em, entity, goalCell);
     }
 
     public void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingEntity building, Vector3 forward)

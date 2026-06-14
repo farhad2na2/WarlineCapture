@@ -25,12 +25,13 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest());
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown());
             RunCase(test => test.UnitMoveOrderRequestSystem_GroupedManualRequestWritesResultAndMoveComponents());
+            RunCase(test => test.UnitMoveOrderRequestSystem_TargetPathRequestWritesOnlyTargetAndPath());
             RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
             RunCase(test => test.UnitMoveOrderRequestSystem_ClearMovementRequestRemovesSharedMoveOrderComponents());
             RunCase(test => test.SelectedMoveOrderCommand_IssuesMoveOrderForSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=12");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=13");
         }
         catch (System.Exception ex)
         {
@@ -264,6 +265,39 @@ public sealed class UnitMoveOrderSystemTests
         Assert.AreEqual(42, _entityManager.GetComponentData<UnitPathRetryCooldown>(unit).ResumeFrame);
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+    }
+
+    [Test]
+    public void UnitMoveOrderRequestSystem_TargetPathRequestWritesOnlyTargetAndPath()
+    {
+        Entity unit = _entityManager.CreateEntity(typeof(UnitResourceHaulOrder));
+        int2 goal = new(21, 22);
+        SystemHandle requestSystem = _world.CreateSystem<UnitMoveOrderRequestSystem>();
+
+        int requestId = UnitMoveOrderRequestSystem.EnqueueTargetPathMoveOrder(_entityManager, unit, goal);
+        requestSystem.Update(_world.Unmanaged);
+
+        using EntityQuery queueQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitMoveOrderQueueComponent>(),
+            ComponentType.ReadOnly<UnitMoveOrderRequestElement>(),
+            ComponentType.ReadOnly<UnitMoveOrderResultElement>());
+        Entity queueEntity = queueQuery.GetSingletonEntity();
+        DynamicBuffer<UnitMoveOrderRequestElement> requests =
+            _entityManager.GetBuffer<UnitMoveOrderRequestElement>(queueEntity);
+        DynamicBuffer<UnitMoveOrderResultElement> results =
+            _entityManager.GetBuffer<UnitMoveOrderResultElement>(queueEntity);
+
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(requestId, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Issued);
+        Assert.AreEqual(2, results[0].StructuralAdds);
+        Assert.AreEqual(1, results[0].PathRequests);
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(goal, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
+        Assert.IsTrue(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
     }
 
     [Test]

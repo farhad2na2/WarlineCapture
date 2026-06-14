@@ -180,10 +180,7 @@ public sealed class UnitTargetOrderSystem
             ClearInterruptedOrderComponents(entityManager, entity, removeEngageTarget: issuedBreachOrder);
             if (issuedBreachOrder)
             {
-                SetOrAdd(entityManager, entity, new UnitTarget { Cell = engageCell });
-                SetOrAdd(entityManager, entity, new UnitPathRequest { Goal = engageCell });
-                if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
-                    entityManager.AddComponent<ManualMoveOrderTag>(entity);
+                UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(entityManager, entity, engageCell);
             }
             else
             {

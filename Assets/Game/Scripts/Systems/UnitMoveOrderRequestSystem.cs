@@ -82,6 +82,27 @@ public partial struct UnitMoveOrderRequestSystem : ISystem
                result.Issued != 0;
     }
 
+    public static int EnqueueTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
+    {
+        return EnqueueMoveOrder(
+            em,
+            entity,
+            goal,
+            UnitMoveOrderRequestKind.TargetPathOnly,
+            issueGroundPathNow: true,
+            useGroundPathRetryCooldown: false,
+            resumeFrame: 0,
+            currentFrame: 0);
+    }
+
+    public static bool EnqueueAndProcessTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
+    {
+        int requestId = EnqueueTargetPathMoveOrder(em, entity, goal);
+        ProcessPendingRequests(em);
+        return TryGetResult(em, requestId, out UnitMoveOrderResultElement result) &&
+               result.Issued != 0;
+    }
+
     public static int EnqueueClearMovementOrder(EntityManager em, Entity entity)
     {
         return EnqueueMoveOrder(
@@ -211,6 +232,8 @@ public partial struct UnitMoveOrderRequestSystem : ISystem
             case UnitMoveOrderRequestKind.TargetOnly:
                 moveOrderSystem.IssueTargetOnlyMoveCommand(em, request.Entity, request.Goal);
                 return new UnitMoveOrderSystem.MoveOrderCommandResult { Issued = true };
+            case UnitMoveOrderRequestKind.TargetPathOnly:
+                return ApplyTargetPathMoveOrder(em, request.Entity, request.Goal);
             case UnitMoveOrderRequestKind.ClearMovement:
                 ClearMovementOrderComponents(em, request.Entity);
                 return new UnitMoveOrderSystem.MoveOrderCommandResult { Issued = true };
@@ -231,6 +254,46 @@ public partial struct UnitMoveOrderRequestSystem : ISystem
         {
             ecb.Dispose();
         }
+    }
+
+    private static UnitMoveOrderSystem.MoveOrderCommandResult ApplyTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
+    {
+        UnitMoveOrderSystem.MoveOrderCommandResult result = new()
+        {
+            Issued = true,
+            PathRequests = 1
+        };
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            if (em.HasComponent<UnitTarget>(entity))
+            {
+                ecb.SetComponent(entity, new UnitTarget { Cell = goal });
+            }
+            else
+            {
+                ecb.AddComponent(entity, new UnitTarget { Cell = goal });
+                result.StructuralAdds++;
+            }
+
+            if (em.HasComponent<UnitPathRequest>(entity))
+            {
+                ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
+            }
+            else
+            {
+                ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
+                result.StructuralAdds++;
+            }
+
+            ecb.Playback(em);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+
+        return result;
     }
 
     private static UnitMoveOrderResultElement ToResult(

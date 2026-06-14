@@ -257,15 +257,7 @@ internal sealed class BuildingPlacementRedirectSystem
             }
             else
             {
-                if (em.HasComponent<UnitTarget>(unit))
-                    em.SetComponentData(unit, new UnitTarget { Cell = goal });
-                else
-                    em.AddComponentData(unit, new UnitTarget { Cell = goal });
-
-                if (em.HasComponent<UnitPathRequest>(unit))
-                    em.SetComponentData(unit, new UnitPathRequest { Goal = goal });
-                else
-                    em.AddComponentData(unit, new UnitPathRequest { Goal = goal });
+                UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder(em, unit, goal);
             }
         }
     }

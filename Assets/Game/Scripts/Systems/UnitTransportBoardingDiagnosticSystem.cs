@@ -94,7 +94,7 @@ public readonly struct UnitTransportBoardingDiagnosticSystem
         Entity diagnosticQueueEntity,
         Entity passenger,
         Entity transport,
-        UnitTransportBoardingRuleSystem.ReachState reach,
+        TransportBoardingReachState reach,
         int occupiedSeats,
         int capacity)
     {

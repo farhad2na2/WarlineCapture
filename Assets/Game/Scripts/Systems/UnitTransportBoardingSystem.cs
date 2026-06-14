@@ -208,7 +208,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
         public BoardingDecisionKind Kind;
         public int OccupiedSeats;
         public int Capacity;
-        public UnitTransportBoardingRuleSystem.ReachState Reach;
+        public TransportBoardingReachState Reach;
     }
 
     [BurstCompile]
@@ -278,7 +278,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                 return;
             }
 
-            UnitTransportBoardingRuleSystem.ReachState reach = EvaluateReach(
+            TransportBoardingReachState reach = EvaluateReach(
                 entity,
                 transport,
                 passengerGrid.Cell,
@@ -328,7 +328,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                    !RopeDisembarkLookup.HasComponent(transport);
         }
 
-        private UnitTransportBoardingRuleSystem.ReachState EvaluateReach(
+        private TransportBoardingReachState EvaluateReach(
             Entity passenger,
             Entity transport,
             int2 passengerCell,
@@ -361,7 +361,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                 math.distancesq(passengerPosition, transportPosition) <= boardDistanceSq ||
                 math.max(math.abs(passengerCell.x - transportCell.x), math.abs(passengerCell.y - transportCell.y)) <= boardCellDistance;
 
-            return new UnitTransportBoardingRuleSystem.ReachState(
+            return new TransportBoardingReachState(
                 transportCell,
                 transportSize,
                 passengerCell,

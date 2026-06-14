@@ -33,10 +33,10 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `75 / 113 complete (66.4%)`.
-- In progress: `1`.
-- Remaining open: `36`.
-- Phase progress: `7 / 13 phases complete; 1 in progress; 5 not started`.
+- Checklist progress: `76 / 113 complete (67.3%)`.
+- In progress: `2`.
+- Remaining open: `35`.
+- Phase progress: `7 / 13 phases complete; 2 in progress; 4 not started`.
 - Authoritative non-ECS runtime `*System` inventory: `388` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `287` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
@@ -46,7 +46,7 @@ Always update this section when implementation begins or a phase completes.
 - Kept as passive view/config/authoring/editor boundary: `2`.
 - Remaining plain runtime gameplay `*System` classes: `388`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 advanced the `BuildingRuntimeSpawnCommandSystem` split by routing initial placement origin resolution directly through `BuildingRuntimeSpawnSystem` instead of the spawn command owner.
+- Last implementation update: 2026-06-14 started Phase 9 helper cleanup by moving the transport boarding reach-state payload out of the standalone rule helper and into neutral ECS transport boarding data.
 
 ## Architecture Rules
 
@@ -495,7 +495,7 @@ Progress notes:
 
 ## Phase 8: HUD Feedback, Markers, And Presentation Boundaries
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Make feedback and marker systems consume ECS read models/results instead of owning gameplay decisions.
@@ -536,8 +536,8 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Inventory pure helper `*System` types such as transport boarding rule/query/approach helpers.
-- [ ] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
+- [x] Inventory pure helper `*System` types such as transport boarding rule/query/approach helpers.
+- [~] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
 - [ ] Fold map-surface command target logic into the pointer target boundary or map-surface ECS owner.
 - [ ] Fold road footprint/grid helper logic into road/building ECS owners.
 - [ ] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
@@ -549,6 +549,10 @@ Acceptance checks:
 - No public gameplay helper remains as a plain non-ECS `*System` without an explicit owner.
 - Folded helpers do not create broad owners.
 - Existing pathing, boarding, placement, and selection behavior is preserved.
+
+Progress notes:
+
+- 2026-06-14: Started Phase 9 helper cleanup with the transport boarding helper cluster. `UnitTransportBoardingQuerySystem`, `UnitTransportBoardingRuleSystem`, and `UnitTransportApproachCellSystem` are pure/helper-style `*System` types that should be folded into `TransportBoardingCommandSystem`, `UnitTransportBoardingSystem`, or private helper structs as their owning call sites are narrowed. First slice moved the shared boarding reach-state payload out of `UnitTransportBoardingRuleSystem` and into neutral ECS transport boarding data as `TransportBoardingReachState`; `UnitTransportBoardingSystem` and `UnitTransportBoardingDiagnosticSystem` now share that payload without depending on a nested type on the standalone rule helper. Command-side rule-helper calls remain open for the next transport fold slice. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 

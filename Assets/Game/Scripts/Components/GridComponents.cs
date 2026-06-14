@@ -88,6 +88,53 @@ public struct UnitTransportBoardingTarget : IComponentData
     public int2 Goal;
 }
 
+public readonly struct TransportBoardingReachState
+{
+    public readonly int2 TransportCell;
+    public readonly int2 TransportSize;
+    public readonly int2 PassengerCell;
+    public readonly int2 BoardingGoal;
+    public readonly int BoardingClearance;
+    public readonly bool MovementFinished;
+    public readonly bool AirTransport;
+    public readonly bool ReachedBoardingGoal;
+    public readonly int DistanceToBoardingGoal;
+    public readonly bool SettledNearBoardingGoal;
+    public readonly bool NearTransportFootprint;
+    public readonly bool BoardingGoalNearTransport;
+    public readonly bool ReachedTransport;
+
+    public TransportBoardingReachState(
+        int2 transportCell,
+        int2 transportSize,
+        int2 passengerCell,
+        int2 boardingGoal,
+        int boardingClearance,
+        bool movementFinished,
+        bool airTransport,
+        bool reachedBoardingGoal,
+        int distanceToBoardingGoal,
+        bool settledNearBoardingGoal,
+        bool nearTransportFootprint,
+        bool boardingGoalNearTransport,
+        bool reachedTransport)
+    {
+        TransportCell = transportCell;
+        TransportSize = transportSize;
+        PassengerCell = passengerCell;
+        BoardingGoal = boardingGoal;
+        BoardingClearance = boardingClearance;
+        MovementFinished = movementFinished;
+        AirTransport = airTransport;
+        ReachedBoardingGoal = reachedBoardingGoal;
+        DistanceToBoardingGoal = distanceToBoardingGoal;
+        SettledNearBoardingGoal = settledNearBoardingGoal;
+        NearTransportFootprint = nearTransportFootprint;
+        BoardingGoalNearTransport = boardingGoalNearTransport;
+        ReachedTransport = reachedTransport;
+    }
+}
+
 public struct UnitTransportPassengerElement : IBufferElementData
 {
     public Entity Passenger;

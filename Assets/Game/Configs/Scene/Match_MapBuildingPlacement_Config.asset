@@ -118,16 +118,6 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01
     category: Building_Fuel_Bladder
     buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 0
-    worldCenter: {x: 803.41504, y: -42.437416, z: 368.5733}
-    worldPosition: {x: 803.4092, y: -43.350883, z: 368.48578}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
     factionId: 1
     worldCenter: {x: 829.71594, y: 2.1634657, z: 374.7975}
     worldPosition: {x: 829.7101, y: 1.25, z: 374.70996}
@@ -171,16 +161,6 @@ MonoBehaviour:
     factionId: 2
     worldCenter: {x: 1744.1165, y: 4.763466, z: 289.7974}
     worldPosition: {x: 1744.1106, y: 3.8500004, z: 289.7099}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_02
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 0
-    worldCenter: {x: 803.22736, y: -42.669277, z: 378.6733}
-    worldPosition: {x: 803.1492, y: -43.350883, z: 378.5858}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90

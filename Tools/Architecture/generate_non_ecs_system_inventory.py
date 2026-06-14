@@ -36,7 +36,6 @@ MANAGED_BOUNDARY_NAMES = {
     "RtsSelectionPointerTargetCommandSystem",
     "RtsSelectionFocusCommandSystem",
     "RtsSelectionCommandResultFlushSystem",
-    "SelectionHudFeedbackSystem",
     "SelectionOrderMarkerSystem",
     "RtsCameraRequestSystem",
     "RtsCameraSystem",
@@ -44,7 +43,6 @@ MANAGED_BOUNDARY_NAMES = {
     "BuildingUiCommandSystem",
     "BuildingPlacementCommandSystem",
     "RoadBuildCommandSystem",
-    "BuildingRuntimeSpawnCommandSystem",
 }
 
 FOCUSED_SPLIT_NAMES = {

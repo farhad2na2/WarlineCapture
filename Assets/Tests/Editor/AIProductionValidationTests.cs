@@ -130,19 +130,19 @@ public sealed class AIProductionValidationTests
         _buildingGameplayInitialized = true;
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-            _buildingGameplay.RuntimeSpawnCommandContext,
+        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnContext = _buildingGameplay.RuntimeSpawnCommandContext;
+        Assert.IsTrue(runtimeSpawnContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
+            runtimeSpawnContext.SpawnContext,
             _buildingPrefab,
             new Vector2Int(24, 24),
-            out _,
-            out _,
-            out _,
             "Tent_Regular",
             "AI test producer.",
             null,
             500,
-            false,
-            1));
+            isCityGenerated: false,
+            ownerFactionId: 1,
+            rotateVertical: false,
+            out _));
 
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 50000, LastLogTime = -999f });

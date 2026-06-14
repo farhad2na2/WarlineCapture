@@ -303,20 +303,20 @@ public sealed class UIShellContentView : MonoBehaviour
         _selectionUiCommandSystem?.CaptureUiClickSequence();
         if (_buildDrawerPopupInstance != null)
         {
-            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
             return;
         }
 
         GameObject popup = InstallBuildDrawerPopup();
         if (popup == null)
         {
-            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
             return;
         }
 
-        BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+        BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
     }
 
     private void BindBuildPlacementConfirmationBarInRegion()
@@ -406,7 +406,7 @@ public sealed class UIShellContentView : MonoBehaviour
         bool hasActivePlacement = _buildingUiCommandSystem != null &&
                                   _buildingUiCommandSystem.HasPendingBuildingPlacement;
         if (!hasActivePlacement)
-            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackBoundary.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
 
         if (popup != null)
         {

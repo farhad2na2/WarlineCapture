@@ -300,8 +300,8 @@ public sealed class InitialFactionBaseValidationTests
             buildingGameplay = CreateBuildingGameplay(placementConfig, runtimeRoot.transform);
             buildingGameplayInitialized = true;
 
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                buildingGameplay.RuntimeSpawnCommandContext,
+            Assert.IsTrue(TrySpawnRuntimeBuilding(
+                buildingGameplay,
                 helipad,
                 new Vector2Int(50, 60),
                 out _,
@@ -361,16 +361,16 @@ public sealed class InitialFactionBaseValidationTests
             buildingGameplay = CreateBuildingGameplay(placementConfig, runtimeRoot.transform);
             buildingGameplayInitialized = true;
 
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                buildingGameplay.RuntimeSpawnCommandContext,
+            Assert.IsTrue(TrySpawnRuntimeBuilding(
+                buildingGameplay,
                 helipad,
                 new Vector2Int(50, 60),
                 out _,
                 out _,
                 out _,
                 ownerFactionId: FactionIdentitySystem.PlayerFactionId));
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                buildingGameplay.RuntimeSpawnCommandContext,
+            Assert.IsTrue(TrySpawnRuntimeBuilding(
+                buildingGameplay,
                 helipad,
                 new Vector2Int(85, 60),
                 out _,
@@ -462,10 +462,10 @@ public sealed class InitialFactionBaseValidationTests
 
             var placements = new List<InitialFactionBasePlacement>();
             InitialFactionBaseLayoutPlanner.BuildPlacements(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells, placements);
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseGatePrefab, false, out Vector2Int bottomGateFootprint));
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseGatePrefab, true, out Vector2Int sideGateFootprint));
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseWallPrefab, false, out Vector2Int bottomWallFootprint));
-            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseWallPrefab, true, out Vector2Int sideWallFootprint));
+            Assert.IsTrue(TryGetRuntimeBuildingPlacementFootprint(buildingGameplay, spawnConfig.BaseGatePrefab, false, out Vector2Int bottomGateFootprint));
+            Assert.IsTrue(TryGetRuntimeBuildingPlacementFootprint(buildingGameplay, spawnConfig.BaseGatePrefab, true, out Vector2Int sideGateFootprint));
+            Assert.IsTrue(TryGetRuntimeWallSegmentFootprint(buildingGameplay, spawnConfig.BaseWallPrefab, false, out Vector2Int bottomWallFootprint));
+            Assert.IsTrue(TryGetRuntimeWallSegmentFootprint(buildingGameplay, spawnConfig.BaseWallPrefab, true, out Vector2Int sideWallFootprint));
             int gateHalfGap = InitialFactionBaseLayoutPlanner.CalculateGateHalfGap(bottomGateFootprint, sideGateFootprint, bottomWallFootprint, sideWallFootprint);
             var wallRuns = new List<InitialFactionBaseWallRun>();
             InitialFactionBaseLayoutPlanner.BuildWallRuns(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells, gateHalfGap, wallRuns);
@@ -487,8 +487,8 @@ public sealed class InitialFactionBaseValidationTests
                 for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
                 {
                     InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
-                    int wallSegments = buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallRun(
-                        buildingGameplay.RuntimeSpawnCommandContext,
+                    int wallSegments = TrySpawnRuntimeWallRun(
+                        buildingGameplay,
                         spawnConfig.BaseWallPrefab,
                         anchor + run.StartOffset,
                         anchor + run.EndOffset,
@@ -499,8 +499,8 @@ public sealed class InitialFactionBaseValidationTests
                 {
                     InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
                     Assert.IsTrue(
-                        buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallSegment(
-                            buildingGameplay.RuntimeSpawnCommandContext,
+                        TrySpawnRuntimeWallSegment(
+                            buildingGameplay,
                             spawnConfig.BaseWallPrefab,
                             anchor + flank.OriginOffset,
                             flank.RotateVertical,
@@ -517,10 +517,10 @@ public sealed class InitialFactionBaseValidationTests
                         : FindSpawnablePrefab(placementConfig, placement.PrefabKey);
                     Assert.NotNull(prefab, $"Missing prefab for {placement.PrefabKey}.");
 
-                    Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, prefab, placement.RotateVertical, out Vector2Int plannedFootprint));
+                    Assert.IsTrue(TryGetRuntimeBuildingPlacementFootprint(buildingGameplay, prefab, placement.RotateVertical, out Vector2Int plannedFootprint));
                     Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, plannedFootprint);
-                    bool spawned = buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                        buildingGameplay.RuntimeSpawnCommandContext,
+                    bool spawned = TrySpawnRuntimeBuilding(
+                        buildingGameplay,
                         prefab,
                         origin,
                         out _,
@@ -667,6 +667,112 @@ public sealed class InitialFactionBaseValidationTests
             resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
             tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+    }
+
+    private static bool TrySpawnRuntimeBuilding(
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        GameObject prefab,
+        Vector2Int preferredOrigin,
+        out int buildingId,
+        out Vector2Int actualOrigin,
+        out Vector2Int actualFootprint,
+        byte? ownerFactionId = null,
+        bool rotateVertical = false)
+    {
+        buildingId = 0;
+        actualOrigin = default;
+        actualFootprint = default;
+        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        if (commandContext.RuntimeSpawnSystem == null ||
+            !commandContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
+                commandContext.SpawnContext,
+                prefab,
+                preferredOrigin,
+                "Building",
+                "Operational building.",
+                null,
+                500,
+                isCityGenerated: false,
+                ownerFactionId: ownerFactionId,
+                rotateVertical: rotateVertical,
+                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+        {
+            return false;
+        }
+
+        buildingId = result.BuildingId;
+        actualOrigin = result.ActualOrigin;
+        actualFootprint = result.ActualFootprint;
+        return true;
+    }
+
+    private static int TrySpawnRuntimeWallRun(
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        GameObject prefab,
+        Vector2Int startOrigin,
+        Vector2Int endOrigin,
+        byte? ownerFactionId)
+    {
+        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        return commandContext.RuntimeSpawnSystem != null
+            ? commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallRun(
+                commandContext.SpawnContext,
+                prefab,
+                startOrigin,
+                endOrigin,
+                ownerFactionId)
+            : 0;
+    }
+
+    private static bool TrySpawnRuntimeWallSegment(
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        GameObject prefab,
+        Vector2Int origin,
+        bool rotateVertical,
+        byte? ownerFactionId,
+        bool allowExistingWallOverlap)
+    {
+        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        return commandContext.RuntimeSpawnSystem != null &&
+               commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
+                   commandContext.SpawnContext,
+                   prefab,
+                   origin,
+                   rotateVertical,
+                   ownerFactionId,
+                   allowExistingWallOverlap);
+    }
+
+    private static bool TryGetRuntimeWallSegmentFootprint(
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        GameObject prefab,
+        bool rotateVertical,
+        out Vector2Int footprint)
+    {
+        footprint = default;
+        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        return commandContext.RuntimeSpawnSystem != null &&
+               commandContext.RuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
+                   commandContext.SpawnContext,
+                   prefab,
+                   rotateVertical,
+                   out footprint);
+    }
+
+    private static bool TryGetRuntimeBuildingPlacementFootprint(
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        GameObject prefab,
+        bool rotateVertical,
+        out Vector2Int footprint)
+    {
+        footprint = default;
+        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        return commandContext.RuntimeSpawnSystem != null &&
+               commandContext.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
+                   commandContext.SpawnContext,
+                   prefab,
+                   rotateVertical,
+                   out footprint);
     }
 
     private static Entity GetGridEntity(EntityManager em)

@@ -69,14 +69,12 @@ public sealed class SelectionMoveCommandPerformanceValidation
             var selectionStateSystem = new SelectionStateSystem();
             var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
             var moveOrderSystem = new UnitMoveOrderSystem();
-            var orderMarkerSystem = new SelectionOrderMarkerSystem();
 
             int acceptedWarmup = RunFrames(
                 em,
                 selectionStateSystem,
                 selectedMoveOrderCommandSystem,
                 moveOrderSystem,
-                orderMarkerSystem,
                 selectedMoveQuery,
                 gridQuery,
                 mapSurfaceQuery,
@@ -93,7 +91,6 @@ public sealed class SelectionMoveCommandPerformanceValidation
                 selectionStateSystem,
                 selectedMoveOrderCommandSystem,
                 moveOrderSystem,
-                orderMarkerSystem,
                 selectedMoveQuery,
                 gridQuery,
                 mapSurfaceQuery,
@@ -150,7 +147,6 @@ public sealed class SelectionMoveCommandPerformanceValidation
         SelectionStateSystem selectionStateSystem,
         SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionOrderMarkerSystem orderMarkerSystem,
         EntityQuery selectedMoveQuery,
         EntityQuery gridQuery,
         EntityQuery mapSurfaceQuery,
@@ -177,7 +173,6 @@ public sealed class SelectionMoveCommandPerformanceValidation
                 gridQuery,
                 mapSurfaceQuery,
                 moveOrderSystem,
-                orderMarkerSystem,
                 clickedUnitResolver,
                 clickedCellResolver,
                 currentFrame,

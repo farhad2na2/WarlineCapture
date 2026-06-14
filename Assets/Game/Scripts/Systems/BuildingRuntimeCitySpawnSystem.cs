@@ -6,8 +6,8 @@ internal sealed class BuildingRuntimeCitySpawnSystem
 {
     public readonly struct Context
     {
-        public readonly BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommandSystem;
-        public readonly BuildingRuntimeSpawnCommandSystem.Context RuntimeSpawnCommandContext;
+        public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommandBoundary;
+        public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingRuntimeBoundarySystem RuntimeBoundarySystem;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -16,8 +16,8 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         public readonly Action EndDeferredRuntimeBuildingSideEffects;
 
         public Context(
-            BuildingRuntimeSpawnCommandSystem runtimeSpawnCommandSystem,
-            BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
+            BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
+            BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
             BuildingDefinitionSystem definitionSystem,
             BuildingRuntimeBoundarySystem runtimeBoundarySystem,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -25,7 +25,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
             Action beginDeferredRuntimeBuildingSideEffects,
             Action endDeferredRuntimeBuildingSideEffects)
         {
-            RuntimeSpawnCommandSystem = runtimeSpawnCommandSystem;
+            RuntimeSpawnCommandBoundary = runtimeSpawnCommandBoundary;
             RuntimeSpawnCommandContext = runtimeSpawnCommandContext;
             DefinitionSystem = definitionSystem;
             RuntimeBoundarySystem = runtimeBoundarySystem;
@@ -81,25 +81,27 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         if (attemptedRequest)
             return false;
 
-        if (context.RuntimeSpawnCommandSystem == null ||
-            !context.RuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding(
-                context.RuntimeSpawnCommandContext,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem = context.RuntimeSpawnCommandContext.RuntimeSpawnSystem;
+        if (runtimeSpawnSystem == null ||
+            !runtimeSpawnSystem.TrySpawnRuntimeBuilding(
+                context.RuntimeSpawnCommandContext.SpawnContext,
                 prefab,
                 preferredOrigin,
-                out buildingId,
-                out actualOrigin,
-                out actualFootprint,
                 fallbackDisplayName,
                 fallbackDescription,
                 fallbackFootprint,
                 fallbackMaxHealth,
                 isCityGenerated: true,
                 ownerFactionId: null,
-                rotateVertical: false))
+                rotateVertical: false,
+                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
         {
             return false;
         }
 
+        buildingId = result.BuildingId;
+        actualOrigin = result.ActualOrigin;
+        actualFootprint = result.ActualFootprint;
         return true;
     }
 
@@ -117,19 +119,19 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         actualFootprint = default;
         attemptedRequest = false;
         if (prefab == null ||
-            context.RuntimeSpawnCommandSystem == null ||
+            context.RuntimeSpawnCommandBoundary == null ||
             context.RuntimeBoundarySystem == null ||
             context.DefinitionSystem == null ||
             context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em) ||
             !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out _) ||
-            !BuildingRuntimeSpawnCommandSystem.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
+            !BuildingRuntimeSpawnCommandBoundary.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
         {
             return false;
         }
 
         string buildingIdKey = BuildingDefinitionSystem.GetSpawnableLookupKey(prefab);
-        if (!context.RuntimeSpawnCommandSystem.TryEnqueueRuntimeBuildingSpawnRequest(
+        if (!context.RuntimeSpawnCommandBoundary.TryEnqueueRuntimeBuildingSpawnRequest(
                 em,
                 buildingIdKey,
                 preferredOrigin,
@@ -149,7 +151,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
             em,
             boundaryEntity);
 
-        if (!context.RuntimeSpawnCommandSystem.TryGetRuntimeSpawnRequestResult(
+        if (!context.RuntimeSpawnCommandBoundary.TryGetRuntimeSpawnRequestResult(
                 em,
                 requestId,
                 out BuildingRuntimeSpawnRequest result) ||

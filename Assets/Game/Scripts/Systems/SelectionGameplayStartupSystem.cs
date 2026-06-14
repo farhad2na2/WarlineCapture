@@ -96,8 +96,8 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem buildingInteraction,
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
-        SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
-        SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
+        SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
+        SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
         SelectionOrderMarkerSystem.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
         FactionVisualSettings factionVisuals,
@@ -137,7 +137,7 @@ internal sealed class SelectionGameplayStartupSystem
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
         var scanIntelCommandSystem = new ScanIntelCommandSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
-        var selectionHudFeedbackSystem = new SelectionHudFeedbackSystem();
+        var selectionHudFeedbackSystem = new SelectionHudFeedbackBoundary();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleSystem();
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
@@ -842,9 +842,9 @@ internal sealed class SelectionGameplayStartupSystem
                 DescribeTransportBoardingEntity);
         }
 
-        SelectionHudFeedbackSystem.Context CreateHudFeedbackContext()
+        SelectionHudFeedbackBoundary.Context CreateHudFeedbackContext()
         {
-            return new SelectionHudFeedbackSystem.Context(
+            return new SelectionHudFeedbackBoundary.Context(
                 selectionUiQuerySystem,
                 TryGetDefaultEntityManager,
                 resolveSelectionPortraitSprite);

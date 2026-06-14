@@ -12,8 +12,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         BuildingRuntimeCitySpawnSystem.Context runtimeCitySpawnContext,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
-        BuildingRuntimeSpawnCommandSystem runtimeSpawnCommand,
-        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
+        BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
+        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
         BuildingSpawnSystem spawn,
         BuildingSpawnSystem.Context spawnContext,
         Func<BuildingSpawnSystem.Context> createSpawnContext,
@@ -86,8 +86,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
         public readonly BuildingRuntimeCitySpawnSystem.Context RuntimeCitySpawnContext;
         public readonly BuildingRuntimeQuerySystem RuntimeQuery;
         public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
-        public readonly BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommand;
-        public readonly BuildingRuntimeSpawnCommandSystem.Context RuntimeSpawnCommandContext;
+        public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommand;
+        public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
         public readonly BuildingSpawnSystem Spawn;
         public readonly BuildingSpawnSystem.Context SpawnContext;
         public readonly Func<BuildingSpawnSystem.Context> CreateSpawnContext;
@@ -122,8 +122,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
             BuildingRuntimeCitySpawnSystem.Context runtimeCitySpawnContext,
             BuildingRuntimeQuerySystem runtimeQuery,
             BuildingRuntimeQuerySystem.Context runtimeQueryContext,
-            BuildingRuntimeSpawnCommandSystem runtimeSpawnCommand,
-            BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
+            BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
+            BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
             BuildingSpawnSystem spawn,
             BuildingSpawnSystem.Context spawnContext,
             Func<BuildingSpawnSystem.Context> createSpawnContext,

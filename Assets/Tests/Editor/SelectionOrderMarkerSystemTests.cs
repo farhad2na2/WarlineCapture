@@ -32,6 +32,7 @@ public sealed class SelectionOrderMarkerSystemTests
         try
         {
             RunCase(test => test.ShowMoveOrderMarker_ShowsUpgradedMoveMarker());
+            RunCase(test => test.TryShowCommandResultMarker_ConsumesMoveAttackScanAndBoardResults());
             RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForBuildingTargets());
             RunCase(test => test.ShowAttackOrderMarker_UsesRuntimeBuildingBoundsWhenAvailable());
             RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForEntityTargets());
@@ -43,7 +44,7 @@ public sealed class SelectionOrderMarkerSystemTests
             RunCase(test => test.MoveMarkerPrefab_UsesCleanConnectedWaypointPieces());
             RunCase(test => test.SelectionHologramShader_DefinesDotsInstancingVariant());
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=12");
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=13");
         }
         catch (System.Exception ex)
         {
@@ -88,6 +89,88 @@ public sealed class SelectionOrderMarkerSystemTests
             Assert.IsNotNull(renderer);
             AssertRuntimeMarkerRendererConfigured(renderer, MoveMarkerMaterialPath);
             AssertMarkerRenderableMinY(moveMarker.gameObject, 1.35f + MoveOrderMarkerExpectedYOffset);
+        }
+        finally
+        {
+            Object.DestroyImmediate(movePrefab);
+            Object.DestroyImmediate(attackPrefab);
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void TryShowCommandResultMarker_ConsumesMoveAttackScanAndBoardResults()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_ResultMarkers");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+
+        GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
+        GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
+
+            Assert.IsTrue(markers.TryShowCommandResultMarker(em, new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Move,
+                Accepted = 1,
+                TargetCell = new int2(4, 5),
+                WorldPosition = new float3(4f, 1f, 5f),
+                HasTargetCell = 1,
+                HasWorldPosition = 1,
+                MarkerFactionId = FactionIdentitySystem.PlayerFactionId
+            }));
+
+            Transform moveMarker = FindChildByNameForTest(runtimeRoot.transform, "MoveOrderMarkerRuntime");
+            Assert.IsNotNull(moveMarker);
+            Assert.IsTrue(moveMarker.gameObject.activeSelf);
+            Assert.AreEqual(4f, moveMarker.position.x, 0.001f);
+            Assert.AreEqual(5f, moveMarker.position.z, 0.001f);
+
+            Assert.IsTrue(markers.TryShowCommandResultMarker(em, new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.BoardTransport,
+                Accepted = 1,
+                TargetCell = new int2(7, 8),
+                WorldPosition = new float3(7f, 1f, 8f),
+                HasTargetCell = 1,
+                HasWorldPosition = 1,
+                MarkerFactionId = FactionIdentitySystem.PlayerFactionId
+            }));
+            Assert.AreEqual(7f, moveMarker.position.x, 0.001f);
+            Assert.AreEqual(8f, moveMarker.position.z, 0.001f);
+
+            Assert.IsTrue(markers.TryShowCommandResultMarker(em, new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Attack,
+                Accepted = 1,
+                WorldPosition = new float3(10f, 1f, 11f),
+                HasWorldPosition = 1
+            }));
+
+            Transform attackMarker = FindChildByNameForTest(runtimeRoot.transform, "AttackOrderMarkerRuntime");
+            Assert.IsNotNull(attackMarker);
+            Assert.IsTrue(attackMarker.gameObject.activeSelf);
+            Assert.AreEqual(10f, attackMarker.position.x, 0.001f);
+            Assert.AreEqual(11f, attackMarker.position.z, 0.001f);
+
+            Assert.IsTrue(markers.TryShowCommandResultMarker(em, new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Scan,
+                Accepted = 1,
+                TargetCell = new int2(12, 13),
+                WorldPosition = new float3(12f, 0f, 13f),
+                HasTargetCell = 1,
+                HasWorldPosition = 1,
+                RadiusCells = 4
+            }));
+
+            Transform scanMarker = FindChildByNameForTest(runtimeRoot.transform, "ScanOrderMarkerRuntime");
+            Assert.IsNotNull(scanMarker);
+            Assert.IsTrue(scanMarker.gameObject.activeSelf);
         }
         finally
         {

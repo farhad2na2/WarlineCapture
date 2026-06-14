@@ -83,18 +83,18 @@ public sealed class MatchHudCommandFeedbackPanelTests
         SetPrivateField(view, "warningIcon", warning);
         SetPrivateField(view, "errorIcon", error);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Attack);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Attack);
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Tap hostile target.", text.text);
         Assert.AreSame(ready, icon.sprite);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
             TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotEnemy));
         Assert.AreEqual("Target is not hostile.", text.text);
         Assert.AreSame(error, icon.sprite);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
             TacticalCommandResult.Success("Destroyed selected unit."));
         Assert.AreEqual("Destroyed selected unit.", text.text);
@@ -175,7 +175,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         SetPrivateField(view, "cancelButton", cancel);
         SetPrivateField(view, "cancelButtonLabel", cancelLabel);
 
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
             view,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
@@ -190,7 +190,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.IsTrue(cancel.interactable);
         Assert.AreEqual("CANCEL", cancelLabel.text);
 
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
             view,
             UiBoardCommandModeDirection.PassengerToTransport,
             boardAllInteractable: false);
@@ -200,7 +200,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.IsFalse(boardAll.gameObject.activeSelf);
         Assert.IsTrue(cancel.gameObject.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(view);
         Assert.IsFalse(actions.activeSelf);
     }
 
@@ -209,8 +209,8 @@ public sealed class MatchHudCommandFeedbackPanelTests
     {
         BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Move);
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, Time.unscaledTime + 20f);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Move);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, Time.unscaledTime + 20f);
 
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Choose destination.", text.text);
@@ -222,14 +222,14 @@ public sealed class MatchHudCommandFeedbackPanelTests
         BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
         float now = Time.unscaledTime;
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Boarding 3 units.", text.text);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds * 0.5f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.SuccessFeedbackDurationSeconds * 0.5f);
         Assert.IsTrue(panel.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds + 1f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.SuccessFeedbackDurationSeconds + 1f);
         Assert.IsFalse(panel.activeSelf);
     }
 
@@ -239,14 +239,14 @@ public sealed class MatchHudCommandFeedbackPanelTests
         BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
         float now = Time.unscaledTime;
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Select units or a building first.", text.text);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds * 0.5f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds * 0.5f);
         Assert.IsTrue(panel.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds + 1f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds + 1f);
         Assert.IsFalse(panel.activeSelf);
     }
 
@@ -260,19 +260,19 @@ public sealed class MatchHudCommandFeedbackPanelTests
             out Button cancel);
         float now = Time.unscaledTime;
 
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
             view,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
         Assert.IsTrue(actions.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
             TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "No nearby soldiers can board this transport."));
         Assert.AreEqual("No nearby soldiers can board this transport.", text.text);
         Assert.IsFalse(actions.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.ErrorFeedbackDurationSeconds + 1f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds + 1f);
 
         Assert.AreEqual("Tap soldiers or board all.", text.text);
         Assert.IsTrue(actions.activeSelf);
@@ -290,17 +290,17 @@ public sealed class MatchHudCommandFeedbackPanelTests
             out _);
         float now = Time.unscaledTime;
 
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
             view,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
-        BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(view);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, TacticalCommandResult.Success("Boarding 3 units."));
 
         Assert.AreEqual("Boarding 3 units.", text.text);
         Assert.IsFalse(actions.activeSelf);
 
-        BattleHudRuntimeFeedbackSystem.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackSystem.SuccessFeedbackDurationSeconds + 1f);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.SuccessFeedbackDurationSeconds + 1f);
         Assert.IsFalse(view.FeedbackPanel.activeSelf);
         Assert.IsFalse(actions.activeSelf);
     }
@@ -341,7 +341,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         SetPrivateField(feedbackView, "boardAllButton", boardAll);
         SetPrivateField(feedbackView, "cancelButton", cancel);
 
-        BattleHudRuntimeFeedbackSystem.ApplyBoardCommandMode(
+        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
             feedbackView,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
@@ -356,7 +356,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.AreEqual(1, commandSink.EnterSelectionModeRequests);
         Assert.IsTrue(actions.activeSelf, "Input click must queue an ECS request without directly clearing Board presentation.");
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(feedbackView, TacticalCommandMode.Select);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(feedbackView, TacticalCommandMode.Select);
 
         Assert.IsFalse(actions.activeSelf, "Command-mode feedback must clear stale Board feedback actions.");
     }
@@ -385,15 +385,15 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.NotNull(error);
         Assert.NotNull(warning);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Move);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Move);
         Assert.AreSame(ready, icon.sprite);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
             TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         Assert.AreSame(error, icon.sprite);
 
-        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
             TacticalCommandResult.Success("PLACEMENT CANCELLED"));
         Assert.AreSame(warning, icon.sprite);

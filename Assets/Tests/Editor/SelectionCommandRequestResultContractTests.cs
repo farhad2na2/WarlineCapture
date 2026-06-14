@@ -239,7 +239,6 @@ public sealed class SelectionCommandRequestResultContractTests
             emptyMapSurfaceQuery,
             null,
             new UnitMoveOrderSystem(),
-            new SelectionOrderMarkerSystem(),
             null,
             null);
 
@@ -262,7 +261,6 @@ public sealed class SelectionCommandRequestResultContractTests
             emptyMapSurfaceQuery,
             null,
             new UnitMoveOrderSystem(),
-            new SelectionOrderMarkerSystem(),
             null,
             null);
 
@@ -330,7 +328,6 @@ public sealed class SelectionCommandRequestResultContractTests
                 emptyMapSurfaceQuery,
                 null,
                 new UnitMoveOrderSystem(),
-                new SelectionOrderMarkerSystem(),
                 TryGetNoClickedUnit,
                 ResolveClickedCell(new int2(3, 3), new UnityEngine.Vector3(3.5f, 0f, 3.5f)));
 
@@ -395,7 +392,6 @@ public sealed class SelectionCommandRequestResultContractTests
                 emptyMapSurfaceQuery,
                 null,
                 new UnitMoveOrderSystem(),
-                new SelectionOrderMarkerSystem(),
                 null,
                 null);
         });
@@ -1044,7 +1040,7 @@ public sealed class SelectionCommandRequestResultContractTests
     {
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
-            new SelectionHudFeedbackSystem(),
+            new SelectionHudFeedbackBoundary(),
             orderMarkerSystem ?? new SelectionOrderMarkerSystem(),
             new SelectedMoveOrderCommandSystem(),
             new AttackOrderCommandSystem(),

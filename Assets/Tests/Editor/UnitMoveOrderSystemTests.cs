@@ -436,7 +436,6 @@ public sealed class UnitMoveOrderSystemTests
             gridQuery,
             mapSurfaceQuery,
             new UnitMoveOrderSystem(),
-            new SelectionOrderMarkerSystem(),
             tryGetClickedUnit: (Vector2 screenPosition, EntityManager em, out Entity clicked) =>
             {
                 clicked = Entity.Null;
@@ -523,7 +522,6 @@ public sealed class UnitMoveOrderSystemTests
             mapSurfaceQuery,
             null,
             new UnitMoveOrderSystem(),
-            null,
             tryGetClickedUnit: (Vector2 screenPosition, EntityManager em, out Entity clicked) =>
             {
                 clicked = Entity.Null;

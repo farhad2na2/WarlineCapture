@@ -191,7 +191,7 @@ public sealed class UIShellCurrentContentLoadTests
         Transform selectedPanel = matchLeft.transform.Find("SelectedSquadPanel");
         Assert.NotNull(selectedPanel, "Installed Match HUD must contain SelectedSquadPanel under LeftContent.");
 
-        var feedback = new SelectionHudFeedbackSystem();
+        var feedback = new SelectionHudFeedbackBoundary();
         content.BindGameplayRuntimeDependencies(
             new SelectionUiCommandSystem(),
             null,
@@ -224,7 +224,7 @@ public sealed class UIShellCurrentContentLoadTests
         BattleHudRuntimeFeedbackView runtimeFeedback = AssertMatchHudFooterView(matchFooter).RuntimeFeedback;
         Assert.NotNull(runtimeFeedback);
 
-        var feedback = new SelectionHudFeedbackSystem();
+        var feedback = new SelectionHudFeedbackBoundary();
         var mainMenuPlayUi = new MainMenuPlayUI();
         mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackBinding(feedback.BindBattleHudRuntimeFeedback);
         content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenuPlayUi);
@@ -273,7 +273,7 @@ public sealed class UIShellCurrentContentLoadTests
             "Right quick rail Build button must not start in Unity selected state after Match HUD binding.");
         Assert.AreNotEqual(
             TacticalCommandMode.Build,
-            BattleHudRuntimeFeedbackSystem.GetState(runtimeFeedback).CurrentCommandMode,
+            BattleHudRuntimeFeedbackBoundary.GetState(runtimeFeedback).CurrentCommandMode,
             "Build command mode must not be active by default when the Match HUD loads.");
 
         Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);

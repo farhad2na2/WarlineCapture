@@ -6,8 +6,8 @@ public sealed class RtsSelectionCommandResultContextSystem
 {
     public RtsSelectionCommandResultFlushSystem.Context Create(
         RtsSelectionInputSystem inputSystem,
-        SelectionHudFeedbackSystem hudFeedbackSystem,
-        SelectionHudFeedbackSystem.Context hudFeedbackContext,
+        SelectionHudFeedbackBoundary hudFeedbackSystem,
+        SelectionHudFeedbackBoundary.Context hudFeedbackContext,
         SelectionOrderMarkerSystem orderMarkerSystem,
         SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
         AttackOrderCommandSystem attackOrderCommandSystem,

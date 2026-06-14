@@ -1538,11 +1538,12 @@ public sealed class BaseBreachValidationTests
             byte? ownerFactionId = null,
             bool rotateVertical = false)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                _buildingGameplay.RuntimeSpawnCommandContext,
+            return TrySpawnRuntimeBuilding(
                 prefab,
                 preferredOrigin,
                 out buildingId,
+                out _,
+                out _,
                 ownerFactionId: ownerFactionId,
                 rotateVertical: rotateVertical);
         }
@@ -1556,25 +1557,44 @@ public sealed class BaseBreachValidationTests
             byte? ownerFactionId = null,
             bool rotateVertical = false)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
-                _buildingGameplay.RuntimeSpawnCommandContext,
-                prefab,
-                preferredOrigin,
-                out buildingId,
-                out actualOrigin,
-                out actualFootprint,
-                ownerFactionId: ownerFactionId,
-                rotateVertical: rotateVertical);
+            buildingId = 0;
+            actualOrigin = default;
+            actualFootprint = default;
+            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            if (commandContext.RuntimeSpawnSystem == null ||
+                !commandContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
+                    commandContext.SpawnContext,
+                    prefab,
+                    preferredOrigin,
+                    "Building",
+                    "Operational building.",
+                    null,
+                    500,
+                    isCityGenerated: false,
+                    ownerFactionId: ownerFactionId,
+                    rotateVertical: rotateVertical,
+                    out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+            {
+                return false;
+            }
+
+            buildingId = result.BuildingId;
+            actualOrigin = result.ActualOrigin;
+            actualFootprint = result.ActualFootprint;
+            return true;
         }
 
         public int TrySpawnRuntimeWallRun(GameObject prefab, Vector2Int startOrigin, Vector2Int endOrigin, byte? ownerFactionId)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallRun(
-                _buildingGameplay.RuntimeSpawnCommandContext,
-                prefab,
-                startOrigin,
-                endOrigin,
-                ownerFactionId);
+            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            return commandContext.RuntimeSpawnSystem != null
+                ? commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallRun(
+                    commandContext.SpawnContext,
+                    prefab,
+                    startOrigin,
+                    endOrigin,
+                    ownerFactionId)
+                : 0;
         }
 
         public bool TrySpawnRuntimeWallSegment(
@@ -1584,31 +1604,39 @@ public sealed class BaseBreachValidationTests
             byte? ownerFactionId,
             bool allowExistingWallOverlap = false)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallSegment(
-                _buildingGameplay.RuntimeSpawnCommandContext,
-                prefab,
-                origin,
-                rotateVertical,
-                ownerFactionId,
-                allowExistingWallOverlap);
+            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            return commandContext.RuntimeSpawnSystem != null &&
+                   commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
+                       commandContext.SpawnContext,
+                       prefab,
+                       origin,
+                       rotateVertical,
+                       ownerFactionId,
+                       allowExistingWallOverlap);
         }
 
         public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(
-                _buildingGameplay.RuntimeSpawnCommandContext,
-                prefab,
-                rotateVertical,
-                out footprint);
+            footprint = default;
+            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            return commandContext.RuntimeSpawnSystem != null &&
+                   commandContext.RuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
+                       commandContext.SpawnContext,
+                       prefab,
+                       rotateVertical,
+                       out footprint);
         }
 
         public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
         {
-            return _buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(
-                _buildingGameplay.RuntimeSpawnCommandContext,
-                prefab,
-                rotateVertical,
-                out footprint);
+            footprint = default;
+            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            return commandContext.RuntimeSpawnSystem != null &&
+                   commandContext.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
+                       commandContext.SpawnContext,
+                       prefab,
+                       rotateVertical,
+                       out footprint);
         }
 
         private bool TryGetRuntimeBuilding(int buildingId, out RuntimeBuildingEntity building)

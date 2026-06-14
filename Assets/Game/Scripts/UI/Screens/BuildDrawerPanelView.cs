@@ -63,7 +63,7 @@ public sealed class BuildDrawerPanelView : MonoBehaviour
 
     private void ApplyBuildMode()
     {
-        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Build);
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Build);
         _appliedBuildMode = runtimeFeedbackView != null;
     }
 
@@ -72,7 +72,7 @@ public sealed class BuildDrawerPanelView : MonoBehaviour
         if (!_appliedBuildMode)
             return;
 
-        BattleHudRuntimeFeedbackSystem.ClearCommandMode(runtimeFeedbackView);
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(runtimeFeedbackView);
         _appliedBuildMode = false;
     }
 }

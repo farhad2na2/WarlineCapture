@@ -388,7 +388,7 @@ internal sealed class BuildingGameplayCompositionSystem
             _citizenPopulationCompositionSystem.Create();
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
-        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext =
+        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
             childSystems.BuildingRuntimeContextSystem.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnSystem);
@@ -529,12 +529,12 @@ internal sealed class BuildingGameplayCompositionSystem
             childSystems.BuildingRuntimeCitySpawnSystem,
             childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
-                childSystems.BuildingRuntimeSpawnCommandSystem,
+                childSystems.BuildingRuntimeSpawnCommandBoundary,
                 runtimeSpawnCommandContext,
                 childSystems.BuildingRuntimeBoundarySystem),
             childSystems.BuildingRuntimeQuerySystem,
             childSystems.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
-            childSystems.BuildingRuntimeSpawnCommandSystem,
+            childSystems.BuildingRuntimeSpawnCommandBoundary,
             runtimeSpawnCommandContext,
             childSystems.BuildingSpawnSystem,
             createSpawnContext(),

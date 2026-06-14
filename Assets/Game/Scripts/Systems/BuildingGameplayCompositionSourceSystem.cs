@@ -52,7 +52,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementGridSystem BuildingPlacementGridSystem = new();
     internal readonly BuildingPlacementVisualSystem BuildingPlacementVisualSystem = new();
     internal readonly BuildingRuntimeSpawnSystem BuildingRuntimeSpawnSystem = new();
-    internal readonly BuildingRuntimeSpawnCommandSystem BuildingRuntimeSpawnCommandSystem = new();
+    internal readonly BuildingRuntimeSpawnCommandBoundary BuildingRuntimeSpawnCommandBoundary = new();
     internal readonly BuildingRuntimeContextSystem BuildingRuntimeContextSystem = new();
     internal readonly BuildingRuntimeCompositionSystem BuildingRuntimeCompositionSystem = new();
     internal readonly BuildingRuntimeCompositionQuerySystem BuildingRuntimeCompositionQuerySystem = new();

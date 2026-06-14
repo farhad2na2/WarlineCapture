@@ -265,11 +265,11 @@ internal sealed class BuildingRuntimeContextSystem
             source.SetRuntimeBuildingOwnerFaction);
     }
 
-    public BuildingRuntimeSpawnCommandSystem.Context CreateSpawnCommandContext(
+    public BuildingRuntimeSpawnCommandBoundary.Context CreateSpawnCommandContext(
         Source source,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem)
     {
-        return new BuildingRuntimeSpawnCommandSystem.Context(
+        return new BuildingRuntimeSpawnCommandBoundary.Context(
             runtimeSpawnSystem,
             CreateSpawnContext(source));
     }
@@ -311,12 +311,12 @@ internal sealed class BuildingRuntimeContextSystem
 
     public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(
         Source source,
-        BuildingRuntimeSpawnCommandSystem runtimeSpawnCommandSystem,
-        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
+        BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
+        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
         BuildingRuntimeBoundarySystem runtimeBoundarySystem)
     {
         return new BuildingRuntimeCitySpawnSystem.Context(
-            runtimeSpawnCommandSystem,
+            runtimeSpawnCommandBoundary,
             runtimeSpawnCommandContext,
             source.DefinitionSystem,
             runtimeBoundarySystem,

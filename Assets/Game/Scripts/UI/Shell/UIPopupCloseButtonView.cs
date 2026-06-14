@@ -37,7 +37,7 @@ public sealed class UIPopupCloseButtonView : MonoBehaviour
     public void ClosePopup()
     {
         if (closeView != null && closeView.CommandModeToClear != TacticalCommandMode.None)
-            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(runtimeFeedbackView, closeView.CommandModeToClear);
+            BattleHudRuntimeFeedbackBoundary.ClearStickyCommandMode(runtimeFeedbackView, closeView.CommandModeToClear);
 
         GameObject target = closeView != null && closeView.PopupRoot != null ? closeView.PopupRoot : gameObject;
         UIPopupMotionView motionView = target != null ? target.GetComponent<UIPopupMotionView>() : null;

@@ -80,7 +80,7 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     {
         BindUnityEvents();
         ResetRuntimeFeedbackState();
-        BattleHudRuntimeFeedbackSystem.ClearCommandMode(this);
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(this);
     }
 
     private void OnDestroy()

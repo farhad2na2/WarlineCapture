@@ -17,7 +17,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     public readonly struct Context
     {
         public readonly RtsSelectionInputSystem InputSystem;
-        public readonly SelectionHudFeedbackSystem HudFeedbackSystem;
+        public readonly SelectionHudFeedbackBoundary HudFeedbackSystem;
         public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
         public readonly AttackOrderCommandSystem AttackOrderCommandSystem;
@@ -56,7 +56,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         public Context(
             RtsSelectionInputSystem inputSystem,
-            SelectionHudFeedbackSystem hudFeedbackSystem,
+            SelectionHudFeedbackBoundary hudFeedbackSystem,
             SelectionOrderMarkerSystem orderMarkerSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
             AttackOrderCommandSystem attackOrderCommandSystem,
@@ -176,7 +176,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.MapSurfaceQuery,
             context.SelectionStateSystem?.CachedSelectedMoveEntities,
             context.UnitMoveOrderSystem,
-            context.OrderMarkerSystem,
             context.TryGetMoveClickedUnitEntity,
             context.TryGetMoveClickedCell);
 
@@ -204,14 +203,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 context.InputSystem.ClearActiveCommandMode();
             if (result.Accepted != 0)
             {
-                if (result.HasTargetCell != 0 && result.HasWorldPosition != 0)
-                {
-                    context.OrderMarkerSystem.ShowMoveOrderMarker(
-                        em,
-                        result.TargetCell,
-                        result.WorldPosition,
-                        result.MarkerFactionId);
-                }
+                context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
                 context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                 if (clearCommandMode)
                     context.ClearHudCommandMode?.Invoke();
@@ -373,13 +365,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             bool clearHudCommandMode = clearInputCommandMode || explicitAttackTargetModeActive;
             if (clearInputCommandMode)
                 context.InputSystem.ClearActiveCommandMode();
-            if (result.HasWorldPosition != 0)
-            {
-                if (result.HasTargetEntity != 0)
-                    context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.TargetEntity, result.WorldPosition, 6f);
-                else
-                    context.OrderMarkerSystem.ShowAttackOrderMarker(em, result.WorldPosition, 6f);
-            }
+            context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
             if (result.EmitScreenMarker != 0)
                 context.RequestAttackOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
             context.SetCameraDragging?.Invoke(false);
@@ -435,8 +421,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
             if (clearInputCommandMode)
                 context.InputSystem.ClearActiveCommandMode();
-            if (result.HasWorldPosition != 0)
-                context.OrderMarkerSystem.ShowScanOrderMarker(em, result.TargetCell, result.WorldPosition, result.RadiusCells);
+            context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
             context.SetCameraDragging?.Invoke(false);
             if (clearInputCommandMode)
                 context.ClearHudCommandMode?.Invoke();
@@ -530,14 +515,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Board);
             if (clearInputCommandMode)
                 context.InputSystem.ClearActiveCommandMode();
-            if (result.HasTargetCell != 0 && result.HasWorldPosition != 0)
-            {
-                context.OrderMarkerSystem.ShowMoveOrderMarker(
-                    em,
-                    result.TargetCell,
-                    result.WorldPosition,
-                    result.MarkerFactionId);
-            }
+            context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
             if (result.EmitScreenMarker != 0)
                 context.RequestMoveOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
             context.SetCameraDragging?.Invoke(false);

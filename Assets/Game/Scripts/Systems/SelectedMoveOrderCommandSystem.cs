@@ -94,7 +94,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         EntityQuery gridConfigQuery,
         EntityQuery mapSurfaceQuery,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionOrderMarkerSystem orderMarkerSystem,
         ClickedUnitResolver tryGetClickedUnit,
         ClickedCellResolver tryGetClickedCell,
         int currentFrame,
@@ -374,7 +373,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         EntityQuery mapSurfaceQuery,
         IReadOnlyList<Entity> cachedSelectedMoveEntities,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionOrderMarkerSystem orderMarkerSystem,
         ClickedUnitResolver tryGetClickedUnit,
         ClickedCellResolver tryGetClickedCell)
     {
@@ -393,7 +391,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                    mapSurfaceQuery,
                    cachedSelectedMoveEntities,
                    moveOrderSystem,
-                   orderMarkerSystem,
                    tryGetClickedUnit,
                    tryGetClickedCell);
     }
@@ -408,7 +405,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         EntityQuery mapSurfaceQuery,
         IReadOnlyList<Entity> cachedSelectedMoveEntities,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionOrderMarkerSystem orderMarkerSystem,
         ClickedUnitResolver tryGetClickedUnit,
         ClickedCellResolver tryGetClickedCell)
     {
@@ -441,7 +437,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 gridConfigQuery,
                 mapSurfaceQuery,
                 moveOrderSystem,
-                orderMarkerSystem,
                 tryGetClickedUnit,
                 tryGetClickedCell,
                 request.Frame,

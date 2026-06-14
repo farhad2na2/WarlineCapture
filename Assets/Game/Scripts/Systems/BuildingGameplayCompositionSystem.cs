@@ -535,7 +535,8 @@ internal sealed class BuildingGameplayCompositionSystem
             childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnCommandSystem,
-                runtimeSpawnCommandContext),
+                runtimeSpawnCommandContext,
+                childSystems.BuildingRuntimeBoundarySystem),
             childSystems.BuildingRuntimeQuerySystem,
             childSystems.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
             childSystems.BuildingRuntimeSpawnCommandSystem,

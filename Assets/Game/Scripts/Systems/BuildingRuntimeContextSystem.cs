@@ -318,11 +318,15 @@ internal sealed class BuildingRuntimeContextSystem
     public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(
         Source source,
         BuildingRuntimeSpawnCommandSystem runtimeSpawnCommandSystem,
-        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext)
+        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
+        BuildingRuntimeBoundarySystem runtimeBoundarySystem)
     {
         return new BuildingRuntimeCitySpawnSystem.Context(
             runtimeSpawnCommandSystem,
             runtimeSpawnCommandContext,
+            source.DefinitionSystem,
+            runtimeBoundarySystem,
+            source.TryGetEntityManager,
             source.DeleteBuildingById,
             source.BeginDeferredRuntimeBuildingSideEffects,
             source.EndDeferredRuntimeBuildingSideEffects);

@@ -82,6 +82,7 @@ public readonly struct InitialConfiguredBuildingRequestSystem
             RequestId = requests.Length + 1,
             RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
             FactionId = factionId,
+            HasOwnerFaction = 1,
             BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
             PreferredOrigin = origin,
             EndOrigin = default,

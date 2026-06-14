@@ -284,6 +284,7 @@ public struct BuildingRuntimeSpawnRequest : IBufferElementData
     public int RequestId;
     public byte RequestKind;
     public byte FactionId;
+    public byte HasOwnerFaction;
     public FixedString128Bytes BuildingId;
     public int2 PreferredOrigin;
     public int2 EndOrigin;

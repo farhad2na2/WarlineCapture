@@ -33,8 +33,8 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `72 / 113 complete (63.7%)`.
-- In progress: `4`.
+- Checklist progress: `73 / 113 complete (64.6%)`.
+- In progress: `3`.
 - Remaining open: `37`.
 - Phase progress: `7 / 13 phases complete; 1 in progress; 5 not started`.
 - Authoritative non-ECS runtime `*System` inventory: `390` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
@@ -46,7 +46,7 @@ Always update this section when implementation begins or a phase completes.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 advanced the `BuildingPlacementCommandSystem` split by removing direct confirm/rotate/cancel/exit helpers from the command processor and isolating no-EntityManager fallbacks at managed composition boundaries.
+- Last implementation update: 2026-06-14 completed the `BuildingPlacementCommandSystem` split by routing begin, confirm, rotate, cancel, and exit placement commands through ECS request/result buffers.
 
 ## Architecture Rules
 
@@ -448,7 +448,7 @@ Implementation steps:
 
 - [~] Split `BuildingUiCommandSystem` into passive UI request creation plus ECS command processors.
 - [~] Split `BuildingProductionRequestSystem` into ECS production validation/request processing and managed prefab/config boundary.
-- [~] Split `BuildingPlacementCommandSystem` into ECS placement command state plus managed placement visual/session boundary.
+- [x] Split `BuildingPlacementCommandSystem` into ECS placement command state plus managed placement visual/session boundary.
 - [x] Split `RoadBuildCommandSystem` into ECS road-build command state plus managed road-build visual/session boundary.
 - [~] Split `BuildingRuntimeSpawnCommandSystem` into ECS spawn request data and managed prefab spawn boundary.
 - [x] Add stable result codes for not enough money, missing producer, invalid placement, blocked placement, unavailable prefab, and queue full.
@@ -477,6 +477,7 @@ Progress notes:
 - 2026-06-14: Advanced the `BuildingProductionRequestSystem` split by adding non-creating ECS queue drain helpers and wiring `BuildingRuntimeBoundarySystem` to process queued `BuildingUiProductionCommand*` and `BuildingUiCampItemCommand*` requests during the runtime boundary tick with the current frame count. This keeps prefab/config/session work in the managed boundary but makes queued production ECS requests tick-owned instead of only same-frame helper-owned. Focused Unity validation passed with `[BuildingProductionRequestValidation] result=Passed tests=9`.
 - 2026-06-14: Advanced the `BuildingPlacementCommandSystem` split by adding a non-creating ECS placement queue drain helper and wiring `BuildingPlacementInputRuntimeTickSystem` to process queued placement confirm/cancel/rotate/exit requests before camera-dependent pointer work. This keeps placement visual/session work in the managed boundary while giving queued placement requests a runtime tick owner. Focused Unity validation passed with `[BuildingPlacementCommandRequestValidation] result=Passed tests=10`.
 - 2026-06-14: Advanced the `BuildingPlacementCommandSystem` split by removing direct confirm/rotate/cancel/exit command helpers from the command processor. UI and placement interaction composition now keep no-`EntityManager` fallbacks as explicit managed boundary calls, while the command system public surface for those actions is enqueue/process/result based. Focused Unity validation passed with `[BuildingPlacementCommandRequestValidation] result=Passed tests=10` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Completed the `BuildingPlacementCommandSystem` split by adding ECS begin-configured-placement request data keyed by normalized spawnable id and routing Soldier Base/build-drawer placement starts through the same enqueue/process/result path when an `EntityManager` exists. No-`EntityManager` placement-start fallbacks remain isolated in managed composition boundaries, and direct begin/confirm/rotate/cancel/exit command helpers have been removed from the command processor. Focused Unity validation passed with `[BuildingPlacementCommandRequestValidation] result=Passed tests=11` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-14: Started the `BuildingRuntimeSpawnCommandSystem` split by adding command-level enqueue/result helpers over existing ECS `BuildingRuntimeSpawnRequest` data on the runtime boundary entity. The managed prefab/GameObject spawn remains inside `BuildingRuntimeBoundarySystem`, and focused validation now proves command-enqueued spawn requests complete through that boundary. Focused Unity validation passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=2`.
 - 2026-06-14: Extended the `BuildingRuntimeSpawnCommandSystem` ECS request API to wall-run and wall-segment request kinds. `BuildingRuntimeBoundarySystem` now records wall-segment actual origin/footprint metadata from the managed runtime spawn boundary while prefab/GameObject work remains outside unmanaged ECS, and focused coverage now validates building, wall-run, and wall-segment command-enqueued requests. Focused Unity validation passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=4` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-14: Completed the `RoadBuildCommandSystem` split by removing unused public direct command helpers from the command system. External road-build command execution now uses enqueue/process/result APIs, runtime ticks drain queued ECS road-build commands, and the remaining no-`EntityManager` disposal path is isolated in `RoadBuildCompositionLifecycleSystem` as managed teardown. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.

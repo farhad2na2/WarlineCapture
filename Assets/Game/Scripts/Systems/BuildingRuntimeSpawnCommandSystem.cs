@@ -269,7 +269,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
                context.RuntimeSpawnSystem.TryResolveInitialPlacementOrigin(context.SpawnContext, definition, preferredOrigin, out resolvedOrigin);
     }
 
-    private static bool TryGetRuntimeBoundaryEntity(EntityManager em, out Entity boundaryEntity)
+    internal static bool TryGetRuntimeBoundaryEntity(EntityManager em, out Entity boundaryEntity)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
         if (!query.IsEmptyIgnoreFilter)
@@ -310,6 +310,7 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
             RequestId = requestId,
             RequestKind = requestKind,
             FactionId = factionId,
+            HasOwnerFaction = 1,
             BuildingId = new FixedString128Bytes(normalizedBuildingId),
             PreferredOrigin = new int2(preferredOrigin.x, preferredOrigin.y),
             EndOrigin = new int2(endOrigin.x, endOrigin.y),

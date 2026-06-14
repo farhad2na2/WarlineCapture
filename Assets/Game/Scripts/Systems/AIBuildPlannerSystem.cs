@@ -468,6 +468,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         {
             RequestId = ++_nextBuildSpawnRequestId,
             FactionId = factionId,
+            HasOwnerFaction = 1,
             BuildingId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
             PreferredOrigin = preferredOrigin,
             Status = BuildingRuntimeSpawnRequest.Pending,

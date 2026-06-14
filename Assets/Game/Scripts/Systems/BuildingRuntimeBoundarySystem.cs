@@ -93,6 +93,24 @@ public sealed class BuildingRuntimeBoundarySystem
         ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
     }
 
+    internal void ProcessRuntimeSpawnRequestsForBoundary(
+        BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
+        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        EntityManager em,
+        Entity boundaryEntity)
+    {
+        if (definitionSystem == null ||
+            runtimeSpawnSystem == null ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity))
+        {
+            return;
+        }
+
+        ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+    }
+
     private static void ProcessUiProductionRequests(
         BuildingProductionRequestSystem productionRequestSystem,
         BuildingProductionRequestSystem.Context productionRequestContext,
@@ -245,7 +263,7 @@ public sealed class BuildingRuntimeBoundarySystem
                     spawnable.Prefab,
                     new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
                     new Vector2Int(request.EndOrigin.x, request.EndOrigin.y),
-                    request.FactionId);
+                    ResolveOwnerFaction(request));
                 placed = spawned > 0;
                 request.SpawnedCount = spawned;
             }
@@ -263,7 +281,7 @@ public sealed class BuildingRuntimeBoundarySystem
                     spawnable.Prefab,
                     requestedOrigin,
                     request.RotateVertical != 0,
-                    request.FactionId,
+                    ResolveOwnerFaction(request),
                     request.AllowExistingWallOverlap != 0);
                 request.SpawnedCount = placed ? 1 : 0;
                 if (placed && resolvedFootprint)
@@ -280,7 +298,7 @@ public sealed class BuildingRuntimeBoundarySystem
                     null,
                     500,
                     false,
-                    request.FactionId,
+                    ResolveOwnerFaction(request),
                     request.RotateVertical != 0,
                     out result);
                 request.SpawnedCount = placed ? 1 : 0;
@@ -297,6 +315,11 @@ public sealed class BuildingRuntimeBoundarySystem
             request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
             WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
         }
+    }
+
+    private static byte? ResolveOwnerFaction(BuildingRuntimeSpawnRequest request)
+    {
+        return request.HasOwnerFaction != 0 ? request.FactionId : null;
     }
 
     private static void WriteRuntimeSpawnRequest(

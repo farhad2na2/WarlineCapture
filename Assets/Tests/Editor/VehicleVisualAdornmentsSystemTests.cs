@@ -25,6 +25,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
             tests.UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
+            tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
             tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
             tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
@@ -35,7 +36,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=15");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=16");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -199,6 +200,41 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.AreEqual(1.35f, em.GetComponentData<SelectionMarkerVisualChild>(marker).VisibleScale, 0.001f);
         Assert.IsTrue(em.HasComponent<PostTransformMatrix>(marker));
         AssertPostTransformScale(em, marker, 1.35f, 1f, 1.35f);
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateReferenceSelectionMarkerPrefab(em);
+        Entity vehicle = CreateVehicle(em, health: 100);
+        Entity infantry = CreateCharacter(em, health: 100);
+        em.AddComponentData(vehicle, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponentData(infantry, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(vehicle);
+        em.AddComponent<SelectedUnitTag>(infantry);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        Entity vehicleMarker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(vehicle).Instance;
+        Entity vehicleModel = FindLinkedEntityByName(em, vehicleMarker, "Model");
+        Entity vehicleInfantryRing = FindLinkedEntityByName(em, vehicleMarker, "InfantryGroundRing");
+        Entity vehicleFrame = FindLinkedEntityByName(em, vehicleMarker, "VehicleBoundsFrame");
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(vehicleModel));
+        AssertPostTransformScale(em, vehicleModel, 4.05f, 1f, 4.05f);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleInfantryRing).Scale, 0.001f);
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(vehicleFrame).Scale, 0.001f);
+
+        Entity infantryMarker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(infantry).Instance;
+        Entity infantryModel = FindLinkedEntityByName(em, infantryMarker, "Model");
+        Entity infantryRing = FindLinkedEntityByName(em, infantryMarker, "InfantryGroundRing");
+        Entity infantryVehicleFrame = FindLinkedEntityByName(em, infantryMarker, "VehicleBoundsFrame");
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(infantryModel));
+        AssertPostTransformScale(em, infantryModel, 1.35f, 1f, 1.35f);
+        Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(infantryRing).Scale, 0.001f);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(infantryVehicleFrame).Scale, 0.001f);
     }
 
     [Test]
@@ -856,6 +892,53 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Entity entity = CreateVisualPrefab(em);
         em.AddComponentData(entity, new HealthBarFill { Value = 1f });
         return entity;
+    }
+
+    private static Entity CreateReferenceSelectionMarkerPrefab(EntityManager em)
+    {
+        Entity root = em.CreateEntity(typeof(Prefab), typeof(LocalTransform), typeof(SelectionMarkerTag));
+        Entity model = em.CreateEntity(typeof(Prefab), typeof(Parent), typeof(LocalTransform));
+        Entity infantryRing = em.CreateEntity(typeof(Prefab), typeof(Parent), typeof(LocalTransform));
+        Entity vehicleFrame = em.CreateEntity(typeof(Prefab), typeof(Parent), typeof(LocalTransform));
+
+        em.SetName(root, "VehicleSelectionMarker");
+        em.SetName(model, "Model");
+        em.SetName(infantryRing, "InfantryGroundRing");
+        em.SetName(vehicleFrame, "VehicleBoundsFrame");
+        em.SetComponentData(root, LocalTransform.Identity);
+        em.SetComponentData(model, LocalTransform.Identity);
+        em.SetComponentData(infantryRing, LocalTransform.Identity);
+        em.SetComponentData(vehicleFrame, LocalTransform.Identity);
+        em.SetComponentData(model, new Parent { Value = root });
+        em.SetComponentData(infantryRing, new Parent { Value = model });
+        em.SetComponentData(vehicleFrame, new Parent { Value = model });
+        em.AddComponentData(root, new SelectionMarkerVisualChild
+        {
+            Value = model,
+            VisibleScale = 1f
+        });
+
+        DynamicBuffer<LinkedEntityGroup> linked = em.AddBuffer<LinkedEntityGroup>(root);
+        linked.Add(new LinkedEntityGroup { Value = root });
+        linked.Add(new LinkedEntityGroup { Value = model });
+        linked.Add(new LinkedEntityGroup { Value = infantryRing });
+        linked.Add(new LinkedEntityGroup { Value = vehicleFrame });
+        return root;
+    }
+
+    private static Entity FindLinkedEntityByName(EntityManager em, Entity root, string name)
+    {
+        Assert.IsTrue(em.HasBuffer<LinkedEntityGroup>(root), $"{root} must have a linked entity group.");
+        DynamicBuffer<LinkedEntityGroup> linked = em.GetBuffer<LinkedEntityGroup>(root);
+        for (int i = 0; i < linked.Length; i++)
+        {
+            Entity entity = linked[i].Value;
+            if (entity != Entity.Null && em.Exists(entity) && em.GetName(entity) == name)
+                return entity;
+        }
+
+        Assert.Fail($"Could not find linked entity named {name}.");
+        return Entity.Null;
     }
 
     private static Entity CreateVisualPrefab(EntityManager em)

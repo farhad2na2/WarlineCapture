@@ -287,17 +287,39 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         for (int i = 0; i < linked.Length; i++)
         {
             Entity entity = linked[i].Value;
-            if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<LocalTransform>(entity))
+            if (entity == marker ||
+                entity == Entity.Null ||
+                !em.Exists(entity) ||
+                !em.HasComponent<LocalTransform>(entity))
+            {
                 continue;
+            }
 
             string name = em.GetName(entity);
-            if (string.IsNullOrEmpty(name) || !name.Contains("Vehicle", System.StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(name))
+                continue;
+
+            bool vehicleVisual = IsVehicleSelectionMarkerVisualName(name);
+            bool infantryVisual = IsInfantrySelectionMarkerVisualName(name);
+            if (!vehicleVisual && !infantryVisual)
                 continue;
 
             LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-            transform.Scale = usesVehicleMarker ? 1f : 0f;
+            transform.Scale = vehicleVisual == usesVehicleMarker ? 1f : 0f;
             em.SetComponentData(entity, transform);
         }
+    }
+
+    private static bool IsVehicleSelectionMarkerVisualName(string name)
+    {
+        return name.Contains("Vehicle", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsInfantrySelectionMarkerVisualName(string name)
+    {
+        return name.Contains("Infantry", System.StringComparison.OrdinalIgnoreCase) ||
+               name.Contains("CapsuleAura", System.StringComparison.OrdinalIgnoreCase) ||
+               name.Contains("OuterReadabilityArcs", System.StringComparison.OrdinalIgnoreCase);
     }
 
     private static void DestroyMarker(EntityManager em, Entity unit)
@@ -817,12 +839,17 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         List<Vector2> uvs = new(segments * 8 + 64);
         List<Color> colors = new(segments * 8 + 64);
         List<int> triangles = new(segments * 12 + 96);
-        AddFlatRing(vertices, uvs, colors, triangles, 0.04f, 0.76f, 1.0f, segments);
-        AddFlatRing(vertices, uvs, colors, triangles, 0.55f, 0.70f, 0.80f, segments);
-        AddFlatRing(vertices, uvs, colors, triangles, 0.98f, 0.50f, 0.62f, segments);
+        Color bright = Color.white;
+        Color subtle = new(1f, 1f, 1f, 0.38f);
+        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.78f, 1.0f, segments, -34f, 34f, bright);
+        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.78f, 1.0f, segments, 146f, 214f, bright);
+        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.82f, 0.98f, segments, 64f, 116f, bright);
+        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.82f, 0.98f, segments, 244f, 296f, bright);
 
-        for (int i = 0; i < 8; i++)
-            AddVerticalRibbon(vertices, uvs, colors, triangles, math.radians(22.5f + 45f * i), 0.08f, 0.96f, 0.84f, i % 2 == 0 ? 0.048f : 0.032f);
+        AddVerticalRibbon(vertices, uvs, colors, triangles, 0f, 0.34f, 0.82f, 0.78f, 0.042f, bright);
+        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI, 0.34f, 0.82f, 0.78f, 0.042f, bright);
+        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI * 0.5f, 0.16f, 0.92f, 0.62f, 0.026f, subtle);
+        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI * 1.5f, 0.16f, 0.92f, 0.62f, 0.026f, subtle);
 
         _characterSelectionVolumeMesh = new Mesh
         {
@@ -836,6 +863,50 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         _characterSelectionVolumeMesh.RecalculateNormals();
         _characterSelectionVolumeMesh.RecalculateBounds();
         return _characterSelectionVolumeMesh;
+    }
+
+    private static void AddFlatArc(
+        List<Vector3> vertices,
+        List<Vector2> uvs,
+        List<Color> colors,
+        List<int> triangles,
+        float y,
+        float innerRadius,
+        float outerRadius,
+        int segments,
+        float startDegrees,
+        float endDegrees,
+        Color color)
+    {
+        int segmentCount = math.max(2, (int)math.round(segments * math.abs(endDegrees - startDegrees) / 360f));
+        int start = vertices.Count;
+        for (int i = 0; i <= segmentCount; i++)
+        {
+            float t = i / (float)segmentCount;
+            float angle = math.radians(math.lerp(startDegrees, endDegrees, t));
+            float sin = math.sin(angle);
+            float cos = math.cos(angle);
+            vertices.Add(new Vector3(cos * outerRadius, y, sin * outerRadius));
+            uvs.Add(new Vector2(0.02f, t));
+            colors.Add(color);
+            vertices.Add(new Vector3(cos * innerRadius, y, sin * innerRadius));
+            uvs.Add(new Vector2(0.98f, t));
+            colors.Add(color);
+        }
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            int outerA = start + i * 2;
+            int innerA = outerA + 1;
+            int outerB = outerA + 2;
+            int innerB = outerB + 1;
+            triangles.Add(outerA);
+            triangles.Add(outerB);
+            triangles.Add(innerA);
+            triangles.Add(innerA);
+            triangles.Add(outerB);
+            triangles.Add(innerB);
+        }
     }
 
     private static void AddFlatRing(
@@ -888,7 +959,8 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         float yMin,
         float yMax,
         float radius,
-        float width)
+        float width,
+        Color color)
     {
         float3 radial = new(math.cos(angle), 0f, math.sin(angle));
         float3 tangent = new(-radial.z, 0f, radial.x);
@@ -897,16 +969,16 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         int start = vertices.Count;
         vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMin, 0f)));
         uvs.Add(new Vector2(0.02f, 0.02f));
-        colors.Add(Color.white);
+        colors.Add(color);
         vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMin, 0f)));
         uvs.Add(new Vector2(0.98f, 0.02f));
-        colors.Add(Color.white);
+        colors.Add(color);
         vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMax, 0f)));
         uvs.Add(new Vector2(0.02f, 0.98f));
-        colors.Add(Color.white);
+        colors.Add(color);
         vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMax, 0f)));
         uvs.Add(new Vector2(0.98f, 0.98f));
-        colors.Add(Color.white);
+        colors.Add(color);
         triangles.Add(start);
         triangles.Add(start + 2);
         triangles.Add(start + 1);

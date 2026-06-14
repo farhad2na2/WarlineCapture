@@ -62,10 +62,20 @@ public static class PremiumWorldMarkerPrefabBuilder
             VehicleSelectionColor,
             VehicleSelectionColor * 1.28f,
             SelectionAccentColor,
-            alpha: 0.88f,
-            pulse: 0.24f,
-            scan: 0.3f,
+            alpha: 0.76f,
+            pulse: 0.2f,
+            scan: 0.26f,
             edgeSoftness: 0.025f);
+        Material vehicleFillMaterial = EnsureMaterial(
+            $"{MaterialDirectory}/Mat_Selection_Vehicle_Fill_Hologram.mat",
+            shader,
+            new Color(0.05f, 0.78f, 1f, 0.13f),
+            new Color(0.02f, 0.2f, 0.24f, 1f),
+            SelectionAccentColor,
+            alpha: 0.12f,
+            pulse: 0.06f,
+            scan: 0.18f,
+            edgeSoftness: 0.5f);
         Material moveMaterial = EnsureMaterial(
             $"{MaterialDirectory}/Mat_Command_Move_Hologram.mat",
             shader,
@@ -110,10 +120,11 @@ public static class PremiumWorldMarkerPrefabBuilder
         Mesh rectFrame = SaveMesh("Premium_Rect_FootprintFrame", CreateRectFrameMesh(1f, 1f, 0.018f));
         Mesh rectFill = SaveMesh("Premium_Rect_FootprintFill", CreateRectFillMesh(1f, 1f));
         Mesh rectBrackets = SaveMesh("Premium_Rect_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.22f, 0.026f, 0.34f));
-        Mesh unitAura = SaveMesh("Premium_Unit_CapsuleAura", CreateEllipseRingMesh(0.56f, 0.36f, 0.055f, 96, 360f));
-        Mesh unitArcs = SaveMesh("Premium_Unit_OuterArcs", CreateSegmentedEllipseArcMesh(0.72f, 0.45f, 0.035f, 96));
-        Mesh vehiclePlate = SaveMesh("Premium_Vehicle_FootprintPlate", CreateRectFrameMesh(1.15f, 0.72f, 0.05f));
-        Mesh vehicleBrackets = SaveMesh("Premium_Vehicle_BoundsBrackets", CreateRectCornerBracketMesh(1.16f, 0.72f, 0.2f, 0.052f, 0.32f));
+        Mesh unitAura = SaveMesh("Premium_Unit_CapsuleAura", CreateSegmentedEllipseArcMesh(0.55f, 0.55f, 0.055f, 128));
+        Mesh unitArcs = SaveMesh("Premium_Unit_OuterArcs", CreateInfantrySideBracketMesh(0.62f, 0.62f, 0.24f, 0.035f, 0.58f));
+        Mesh vehicleFill = SaveMesh("Premium_Vehicle_FootprintFill", CreateRectFillMesh(1.18f, 0.76f));
+        Mesh vehiclePlate = SaveMesh("Premium_Vehicle_FootprintPlate", CreateRectFrameMesh(1.18f, 0.76f, 0.026f));
+        Mesh vehicleBrackets = SaveMesh("Premium_Vehicle_BoundsBrackets", CreateRectCornerBracketMesh(1.2f, 0.78f, 0.3f, 0.04f, 0.42f));
         Mesh moveRings = SaveMesh("Premium_Move_WaypointRings", CreateConcentricRingsMesh(0.34f, 0.58f, 0.82f, 0.035f, 96));
         Mesh moveArrow = SaveMesh("Premium_Move_WaypointArrow", CreateArrowMesh(0.36f, 0.64f, 0.04f));
         Mesh attackCrosshair = SaveMesh("Premium_Attack_StrikeCrosshair", CreateSegmentedEllipseArcMesh(0.74f, 0.74f, 0.045f, 112));
@@ -122,7 +133,7 @@ public static class PremiumWorldMarkerPrefabBuilder
         Mesh targetBrackets = SaveMesh("Premium_TargetLock_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.24f, 0.046f, 0.38f));
 
         BuildBuildingSelectionPrefab(selectionMaterial, selectionFillMaterial, rectFrame, rectFill, rectBrackets);
-        BuildVehicleSelectionPrefab(vehicleMaterial, unitAura, unitArcs, vehiclePlate, vehicleBrackets);
+        BuildVehicleSelectionPrefab(vehicleMaterial, vehicleFillMaterial, unitAura, unitArcs, vehicleFill, vehiclePlate, vehicleBrackets);
         BuildMoveMarkerPrefab(moveMaterial, moveRings, moveArrow);
         BuildAttackMarkerPrefab(attackMaterial, attackCrosshair, attackChevrons);
         BuildAttackTargetPrefab(targetLockMaterial, targetLockFillMaterial, targetFrame, rectFill, targetBrackets);
@@ -157,8 +168,10 @@ public static class PremiumWorldMarkerPrefabBuilder
 
     private static void BuildVehicleSelectionPrefab(
         Material material,
+        Material fillMaterial,
         Mesh unitAura,
         Mesh unitArcs,
+        Mesh vehicleFill,
         Mesh vehiclePlate,
         Mesh vehicleBrackets)
     {
@@ -171,10 +184,11 @@ public static class PremiumWorldMarkerPrefabBuilder
             model.localPosition = new Vector3(0f, 0.12f, 0f);
             model.localRotation = Quaternion.identity;
             model.localScale = Vector3.one;
-            AddMeshChild(model, "CapsuleAura", unitAura, material, Vector3.zero, Vector3.one, sortingOrder: 0);
-            AddMeshChild(model, "OuterReadabilityArcs", unitArcs, material, new Vector3(0f, 0.022f, 0f), Vector3.one, sortingOrder: 1);
-            AddMeshChild(model, "VehicleFootprintPlate", vehiclePlate, material, new Vector3(0f, 0.035f, 0f), Vector3.one, sortingOrder: 2);
-            AddMeshChild(model, "VehicleBoundsBrackets", vehicleBrackets, material, new Vector3(0f, 0.06f, 0f), Vector3.one, sortingOrder: 3);
+            AddMeshChild(model, "InfantryGroundRing", unitAura, material, Vector3.zero, Vector3.one, sortingOrder: 0);
+            AddMeshChild(model, "InfantrySideBrackets", unitArcs, material, new Vector3(0f, 0.035f, 0f), Vector3.one, sortingOrder: 1);
+            AddMeshChild(model, "VehicleFootprintFill", vehicleFill, fillMaterial, new Vector3(0f, 0.02f, 0f), Vector3.one, sortingOrder: -1);
+            AddMeshChild(model, "VehicleBoundsFrame", vehiclePlate, material, new Vector3(0f, 0.04f, 0f), Vector3.one, sortingOrder: 2);
+            AddMeshChild(model, "VehicleCornerBrackets", vehicleBrackets, material, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: 3);
             SavePrefabRoot(root, VehicleSelectionPrefabPath);
         }
         finally
@@ -404,6 +418,51 @@ public static class PremiumWorldMarkerPrefabBuilder
         builder.AddQuad(new Vector3(x - half * sx, 0f, z), new Vector3(x + half * sx, 0f, z), new Vector3(x + half * sx, 0f, z - length * sz), new Vector3(x - half * sx, 0f, z - length * sz));
         builder.AddQuad(new Vector3(x - half, 0f, z), new Vector3(x + half, 0f, z), new Vector3(x + half, postHeight, z), new Vector3(x - half, postHeight, z));
         builder.AddQuad(new Vector3(x, 0f, z - half), new Vector3(x, 0f, z + half), new Vector3(x, postHeight, z + half), new Vector3(x, postHeight, z - half));
+    }
+
+    private static Mesh CreateInfantrySideBracketMesh(float radius, float depth, float height, float stripWidth, float centerHeight)
+    {
+        MeshBuilder builder = new();
+        AddInfantrySideBracket(builder, -radius, -1f, depth, height, stripWidth, centerHeight);
+        AddInfantrySideBracket(builder, radius, 1f, depth, height, stripWidth, centerHeight);
+        return builder.ToMesh();
+    }
+
+    private static void AddInfantrySideBracket(MeshBuilder builder, float x, float side, float depth, float height, float stripWidth, float centerHeight)
+    {
+        float yMin = centerHeight - height * 0.5f;
+        float yMax = centerHeight + height * 0.5f;
+        float zMin = -depth * 0.5f;
+        float zMax = depth * 0.5f;
+        float zInnerMin = -depth * 0.18f;
+        float zInnerMax = depth * 0.18f;
+        float half = stripWidth * 0.5f;
+
+        builder.AddQuad(
+            new Vector3(x, yMin, zInnerMin),
+            new Vector3(x, yMin, zInnerMax),
+            new Vector3(x, yMax, zInnerMax),
+            new Vector3(x, yMax, zInnerMin));
+        builder.AddQuad(
+            new Vector3(x, yMax - half, zInnerMin),
+            new Vector3(x, yMax + half, zInnerMin),
+            new Vector3(x - side * stripWidth, yMax + half, zMin),
+            new Vector3(x - side * stripWidth, yMax - half, zMin));
+        builder.AddQuad(
+            new Vector3(x, yMin - half, zInnerMin),
+            new Vector3(x - side * stripWidth, yMin - half, zMin),
+            new Vector3(x - side * stripWidth, yMin + half, zMin),
+            new Vector3(x, yMin + half, zInnerMin));
+        builder.AddQuad(
+            new Vector3(x, yMax - half, zInnerMax),
+            new Vector3(x - side * stripWidth, yMax - half, zMax),
+            new Vector3(x - side * stripWidth, yMax + half, zMax),
+            new Vector3(x, yMax + half, zInnerMax));
+        builder.AddQuad(
+            new Vector3(x, yMin - half, zInnerMax),
+            new Vector3(x, yMin + half, zInnerMax),
+            new Vector3(x - side * stripWidth, yMin + half, zMax),
+            new Vector3(x - side * stripWidth, yMin - half, zMax));
     }
 
     private static Mesh CreateEllipseRingMesh(float radiusX, float radiusZ, float width, int segments, float degrees)

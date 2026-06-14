@@ -52,12 +52,19 @@ internal partial struct CitizenMovementCommandSystem : ISystem
         if (requests.Length == 0)
             return;
 
+        using NativeList<CitizenMoveCommandRequestElement> pendingRequests = new(requests.Length, Allocator.Temp);
+        for (int i = 0; i < requests.Length; i++)
+            pendingRequests.Add(requests[i]);
+        requests.Clear();
+
         DynamicBuffer<CitizenMoveCommandResultElement> results = em.GetBuffer<CitizenMoveCommandResultElement>(queueEntity);
         results.Clear();
-        for (int i = 0; i < requests.Length; i++)
+        NativeArray<CitizenMoveCommandRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingRequestArray.Length; i++)
         {
-            CitizenMoveCommandRequestElement request = requests[i];
+            CitizenMoveCommandRequestElement request = pendingRequestArray[i];
             bool accepted = TryApplyMoveCommand(em, request.UnitEntity, request.Goal);
+            results = em.GetBuffer<CitizenMoveCommandResultElement>(queueEntity);
             results.Add(new CitizenMoveCommandResultElement
             {
                 RequestId = request.RequestId,
@@ -66,8 +73,6 @@ internal partial struct CitizenMovementCommandSystem : ISystem
                 Accepted = accepted ? (byte)1 : (byte)0
             });
         }
-
-        requests.Clear();
     }
 
     private static Entity EnsureCommandEntity(EntityManager em)
@@ -105,39 +110,6 @@ internal partial struct CitizenMovementCommandSystem : ISystem
         if (entity == Entity.Null || !em.Exists(entity))
             return false;
 
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-
-        if (em.HasComponent<EngageTarget>(entity))
-            ecb.RemoveComponent<EngageTarget>(entity);
-        if (em.HasComponent<UnitPathFollow>(entity))
-            ecb.RemoveComponent<UnitPathFollow>(entity);
-        if (em.HasComponent<UnitPathRange>(entity))
-            ecb.RemoveComponent<UnitPathRange>(entity);
-        if (em.HasComponent<AutoWanderMoveTag>(entity))
-            ecb.RemoveComponent<AutoWanderMoveTag>(entity);
-
-        if (em.HasComponent<UnitTarget>(entity))
-            ecb.SetComponent(entity, new UnitTarget { Cell = goal });
-        else
-            ecb.AddComponent(entity, new UnitTarget { Cell = goal });
-
-        if (!em.HasComponent<UnitAirMovement>(entity))
-        {
-            if (em.HasComponent<UnitPathRequest>(entity))
-                ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
-            else
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
-        }
-        else if (em.HasComponent<UnitPathRequest>(entity))
-        {
-            ecb.RemoveComponent<UnitPathRequest>(entity);
-        }
-
-        if (!em.HasComponent<ManualMoveOrderTag>(entity))
-            ecb.AddComponent<ManualMoveOrderTag>(entity);
-
-        ecb.Playback(em);
-        ecb.Dispose();
-        return true;
+        return UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
     }
 }

@@ -365,40 +365,8 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
             }
         }
 
-        IssueImmediateMoveCommand(em, entity, goal);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
         return true;
-    }
-
-    private static void IssueImmediateMoveCommand(EntityManager em, Entity entity, int2 goal)
-    {
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-        try
-        {
-            RemoveComponentIfPresent<EngageTarget>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitPathFollow>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitPathRange>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitPathRetryCooldown>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitLongDistanceMove>(em, ecb, entity);
-            RemoveComponentIfPresent<AutoWanderMoveTag>(em, ecb, entity);
-            RemoveComponentIfPresent<HoldPositionOrderTag>(em, ecb, entity);
-            RemoveComponentIfPresent<BaseBreachOrder>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitTransportBoardingTarget>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(em, ecb, entity);
-            RemoveComponentIfPresent<UnitResourceHaulOrder>(em, ecb, entity);
-            SetOrAdd(em, ecb, entity, new UnitTarget { Cell = goal });
-            if (!em.HasComponent<UnitAirMovement>(entity))
-                SetOrAdd(em, ecb, entity, new UnitPathRequest { Goal = goal });
-            else
-                RemoveComponentIfPresent<UnitPathRequest>(em, ecb, entity);
-            if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                ecb.AddComponent<ManualMoveOrderTag>(entity);
-
-            ecb.Playback(em);
-        }
-        finally
-        {
-            ecb.Dispose();
-        }
     }
 
     private static bool RemoveImmediateRequests(
@@ -429,19 +397,7 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
 
     private static void ClearImmediateOrderComponents(EntityManager em, EntityCommandBuffer ecb, Entity entity)
     {
-        RemoveComponentIfPresent<UnitTarget>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitPathRequest>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitPathFollow>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitPathRange>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitPathRetryCooldown>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitLongDistanceMove>(em, ecb, entity);
-        RemoveComponentIfPresent<ManualMoveGroupMemberTag>(em, ecb, entity);
-        RemoveComponentIfPresent<AutoWanderMoveTag>(em, ecb, entity);
-        RemoveComponentIfPresent<BaseBreachOrder>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitTransportBoardingTarget>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(em, ecb, entity);
-        RemoveComponentIfPresent<UnitResourceHaulOrder>(em, ecb, entity);
-        RemoveComponentIfPresent<EngageTarget>(em, ecb, entity);
+        UnitMoveOrderRequestSystem.ClearMovementOrderComponents(em, ecb, entity);
         StopRuntimeMotion(em, ecb, entity);
     }
 
@@ -535,15 +491,6 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         }
 
         em.DestroyEntity(entity);
-    }
-
-    private static void SetOrAdd<T>(EntityManager em, EntityCommandBuffer ecb, Entity entity, T component)
-        where T : unmanaged, IComponentData
-    {
-        if (em.HasComponent<T>(entity))
-            ecb.SetComponent(entity, component);
-        else
-            ecb.AddComponent(entity, component);
     }
 
     private static bool IsPlayerControlled(EntityManager em, Entity entity)

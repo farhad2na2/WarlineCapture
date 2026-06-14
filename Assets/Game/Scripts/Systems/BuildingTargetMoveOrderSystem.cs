@@ -196,8 +196,6 @@ public partial struct BuildingTargetMoveOrderSystem : ISystem
         if (!TryFindBuildingApproachCell(grid, walkable, blocked, occupied, originCell, footprintCells, referenceCell, out goal))
             return false;
 
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-        bool hasCommands = false;
         for (int i = 0; i < entities.Length; i++)
         {
             Entity entity = entities[i];
@@ -205,64 +203,10 @@ public partial struct BuildingTargetMoveOrderSystem : ISystem
             if (IsAlreadyMovingToGoal(em, entity, goal))
                 continue;
 
-            if (em.HasComponent<EngageTarget>(entity))
-            {
-                ecb.RemoveComponent<EngageTarget>(entity);
-                hasCommands = true;
-            }
-            if (em.HasComponent<UnitPathFollow>(entity))
-            {
-                ecb.RemoveComponent<UnitPathFollow>(entity);
-                hasCommands = true;
-            }
-            if (em.HasComponent<UnitPathRange>(entity))
-            {
-                ecb.RemoveComponent<UnitPathRange>(entity);
-                hasCommands = true;
-            }
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
-            {
-                ecb.RemoveComponent<AutoWanderMoveTag>(entity);
-                hasCommands = true;
-            }
-
-            if (em.HasComponent<UnitTarget>(entity))
-            {
-                ecb.SetComponent(entity, new UnitTarget { Cell = goal });
-                hasCommands = true;
-            }
-            else
-            {
-                ecb.AddComponent(entity, new UnitTarget { Cell = goal });
-                hasCommands = true;
-            }
-
-            if (!em.HasComponent<UnitAirMovement>(entity))
-            {
-                if (em.HasComponent<UnitPathRequest>(entity))
-                    ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
-                else
-                    ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
-                hasCommands = true;
-            }
-            else if (em.HasComponent<UnitPathRequest>(entity))
-            {
-                ecb.RemoveComponent<UnitPathRequest>(entity);
-                hasCommands = true;
-            }
-
-            if (!em.HasComponent<ManualMoveOrderTag>(entity))
-            {
-                ecb.AddComponent<ManualMoveOrderTag>(entity);
-                hasCommands = true;
-            }
-
-            issuedUnitCount++;
+            if (UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal))
+                issuedUnitCount++;
         }
 
-        if (hasCommands)
-            ecb.Playback(em);
-        ecb.Dispose();
         return true;
     }
 

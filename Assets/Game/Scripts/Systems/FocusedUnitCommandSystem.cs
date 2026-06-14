@@ -46,7 +46,7 @@ public sealed class FocusedUnitCommandSystem
             }
         }
 
-        moveOrderSystem.IssueImmediateMoveCommand(em, entity, goal);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
         return true;
     }
 

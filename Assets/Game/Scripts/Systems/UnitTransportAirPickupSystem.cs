@@ -119,7 +119,7 @@ public readonly struct UnitTransportAirPickupSystem
         int2 pickupCell,
         UnitMoveOrderSystem moveOrderSystem)
     {
-        moveOrderSystem.ClearMovementOrderComponents(em, transport);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, transport);
 
         UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
@@ -139,6 +139,6 @@ public readonly struct UnitTransportAirPickupSystem
             airState.Airborne = 1;
         em.SetComponentData(transport, airState);
 
-        moveOrderSystem.IssueTargetOnlyMoveCommand(em, transport, pickupCell);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessTargetOnlyMoveOrder(em, transport, pickupCell);
     }
 }

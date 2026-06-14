@@ -1868,8 +1868,8 @@ internal sealed class SelectionGameplayStartupSystem
                     if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                         continue;
 
-                    unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
-                    unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, order.Goal);
+                    UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
+                    UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, passenger, order.Goal);
                     unitTransportPassengerStateSystem.ApplyBoardingOrderState(
                         em,
                         ref boardingStateEcb,

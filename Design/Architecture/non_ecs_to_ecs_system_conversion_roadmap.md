@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `59 / 113 complete (52.2%)`.
-- In progress: `0`.
-- Remaining open: `54`.
+- Checklist progress: `61 / 113 complete (54.0%)`.
+- In progress: `1`.
+- Remaining open: `51`.
 - Phase progress: `6 / 13 phases complete; 1 in progress; 6 not started`.
 - Authoritative non-ECS runtime `*System` inventory: `390` after excluding `101` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `15`.
+- Converted to `ISystem`: `16`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `5`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 inventoried direct `UnitMoveOrderSystem` callers for Phase 6.
+- Last implementation update: 2026-06-14 continued replacing direct path-request mutation through ECS move-order application.
 
 ## Architecture Rules
 
@@ -383,9 +383,9 @@ Recommended disposition:
 Implementation steps:
 
 - [x] Inventory all callers of `UnitMoveOrderSystem`.
-- [ ] Replace direct move order calls with `UnitMoveOrderRequest` data.
-- [ ] Convert order clearing into ECS requests or command-buffered ECS helpers.
-- [ ] Replace direct path-request mutation with ECS order application.
+- [x] Replace direct move order calls with `UnitMoveOrderRequest` data.
+- [x] Convert order clearing into ECS requests or command-buffered ECS helpers.
+- [~] Replace direct path-request mutation with ECS order application.
 - [ ] Inventory all callers of `UnitTargetOrderSystem`.
 - [ ] Replace direct attack target calls with `UnitAttackOrderRequest` data.
 - [ ] Replace radar target direct issuing with ECS automatic targeting requests.
@@ -408,6 +408,9 @@ Progress notes:
   - `FocusedUnitCommandSystem`: still contains public move-order mutation helpers, but current runtime startup no longer calls those helpers; remaining references are tests and the startup construction site. Treat this as a fold/remove cleanup after the equivalent ECS processors and tests own the behavior.
   - `RtsSelectionCommandResultContextSystem` and `RtsSelectionCommandResultFlushSystem`: pass the shared dependency into move/transport processing and should shrink as those processors become ECS request systems.
   Test-only and performance-validation references are not runtime conversion blockers.
+- 2026-06-14: Added `UnitMoveOrderRequestSystem` plus `UnitMoveOrderRequestElement`/`UnitMoveOrderResultElement` request data. `SelectedMoveOrderCommandSystem` now enqueues grouped manual move requests and synchronously flushes the ECS request processor to preserve same-frame command result, marker, and diagnostics behavior. Board All, transport boarding, air-pickup, and the legacy focused-unit helper now route immediate/target-only move issuing through the same request processor. Direct public `UnitMoveOrderSystem.Issue*MoveCommand` runtime calls are now isolated inside `UnitMoveOrderRequestSystem`; direct order-clearing calls remain open for the next Phase 6 checklist item.
+- 2026-06-14: Extended `UnitMoveOrderRequestSystem` with `ClearMovement` requests and an ECB-backed clear helper. Standalone clear callers in Board All, transport boarding, rope disembark setup, and air-pickup now enqueue and synchronously flush clear requests. Existing disembark loops that already batch `Disabled`, passenger state, grid, and transform mutations now use `UnitMoveOrderRequestSystem.ClearMovementOrderComponents` with their local ECB. Runtime direct calls to public `UnitMoveOrderSystem.ClearMovementOrderComponents` are now isolated inside `UnitMoveOrderRequestSystem`; test-only direct coverage remains for the legacy helper until it is folded. Focused Unity validation passed with `[UnitMoveOrderFocusedValidation] result=Passed tests=12`, `[RtsSelectionInputSystemValidation] result=Passed tests=45`, `[UnitTransportValidation] result=Passed tests=19`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Continued direct path-request mutation replacement by routing `RtsSelectionImmediateSelectedUnitCommandSystem` Return To Base movement through `UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder` and folding Hold/Stop movement clearing through `UnitMoveOrderRequestSystem.ClearMovementOrderComponents`. The local duplicate immediate-move writer and its `UnitPathRequest` add/set/remove branches were removed from the selection immediate command processor. `CitizenMovementCommandSystem` and `BuildingTargetMoveOrderSystem` now also delegate immediate movement to `UnitMoveOrderRequestSystem`; citizen request buffers are copied before structural changes and result buffers are reacquired after movement application to avoid invalidated `DynamicBuffer` safety handles. Broader direct `UnitPathRequest` writers remain in other gameplay owners and need classification before this checklist item is complete. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=45`, `[UnitMoveOrderFocusedValidation] result=Passed tests=12`, `[CitizenMovementCommandFocusedValidation] result=Passed tests=2`, and `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
 
 ## Phase 7: Building, Production, And Road Commands
 

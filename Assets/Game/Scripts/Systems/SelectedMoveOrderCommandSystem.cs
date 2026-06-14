@@ -280,7 +280,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 ? currentFrame + 1 + (staggeredPathRequestCount / GroupMovePathRequestsPerFrame)
                 : 0;
 
-            UnitMoveOrderSystem.MoveOrderCommandResult commandResult = moveOrderSystem.IssueGroupedManualMoveOrder(
+            int moveRequestId = UnitMoveOrderRequestSystem.EnqueueGroupedManualMoveOrder(
                 em,
                 entity,
                 issuedGoal,
@@ -288,6 +288,11 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 groundUnit && !issuePathNow,
                 resumeFrame,
                 currentFrame);
+            UnitMoveOrderRequestSystem.ProcessPendingRequests(em);
+            UnitMoveOrderSystem.MoveOrderCommandResult commandResult =
+                UnitMoveOrderRequestSystem.TryGetResult(em, moveRequestId, out UnitMoveOrderResultElement moveOrderResult)
+                    ? ToMoveOrderCommandResult(moveOrderResult)
+                    : default;
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace && i < 12)
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
@@ -345,6 +350,20 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         }
 
         return Result.Success(goal, clickWorldPoint, factionId);
+    }
+
+    private static UnitMoveOrderSystem.MoveOrderCommandResult ToMoveOrderCommandResult(UnitMoveOrderResultElement result)
+    {
+        return new UnitMoveOrderSystem.MoveOrderCommandResult
+        {
+            Issued = result.Issued != 0,
+            StructuralAdds = result.StructuralAdds,
+            StructuralRemoves = result.StructuralRemoves,
+            PathRequests = result.PathRequests,
+            StaggeredPathRequests = result.StaggeredPathRequests,
+            MaxStaggerDelayFrames = result.MaxStaggerDelayFrames,
+            AirUnits = result.AirUnits
+        };
     }
 
     public bool ProcessCommandIntentRequests(

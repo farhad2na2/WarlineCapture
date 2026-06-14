@@ -747,8 +747,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
-                moveOrderSystem.ClearMovementOrderComponents(em, passenger);
-                moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
+                UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
+                UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, passenger, goal);
                 passengerStateSystem.ApplyBoardingOrderState(
                     em,
                     ref boardingStateEcb,
@@ -978,8 +978,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
         }
 
-        moveOrderSystem.ClearMovementOrderComponents(em, passenger);
-        moveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, passenger, goal);
         var passengerStateSystem = new UnitTransportPassengerStateSystem();
         EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
         try
@@ -1264,7 +1264,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         if (passengers.Length <= 0)
             return false;
 
-        moveOrderSystem.ClearMovementOrderComponents(em, transport);
+        UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, transport);
         if (em.HasComponent<UnitAirMovement>(transport) &&
             em.HasComponent<UnitAirComponent>(transport) &&
             em.HasComponent<LocalTransform>(transport))
@@ -1384,7 +1384,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
             moveOrderSystem.RemoveComponentIfPresent<Disabled>(em, ecb, passenger);
             moveOrderSystem.RemoveComponentIfPresent<UnitTransportPassenger>(em, ecb, passenger);
-            moveOrderSystem.ClearMovementOrderComponents(em, ecb, passenger);
+            UnitMoveOrderRequestSystem.ClearMovementOrderComponents(em, ecb, passenger);
 
             if (em.HasComponent<UnitGrid>(passenger))
                 ecb.SetComponent(passenger, new UnitGrid { Cell = cell });
@@ -1500,7 +1500,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityCommandBuffer ecb = new(Allocator.Temp);
         moveOrderSystem.RemoveComponentIfPresent<Disabled>(em, ecb, passenger);
         moveOrderSystem.RemoveComponentIfPresent<UnitTransportPassenger>(em, ecb, passenger);
-        moveOrderSystem.ClearMovementOrderComponents(em, ecb, passenger);
+        UnitMoveOrderRequestSystem.ClearMovementOrderComponents(em, ecb, passenger);
 
         if (em.HasComponent<UnitGrid>(passenger))
             ecb.SetComponent(passenger, new UnitGrid { Cell = cell });

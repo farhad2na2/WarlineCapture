@@ -2010,7 +2010,7 @@ public sealed class RtsSelectionInputSystemTests
         string boarding = ExtractBlockAfter(startup, "bool TryIssueFocusedTransportBoarding");
 
         int planningIndex = boarding.IndexOf("plannedOrders.Add(new TransportBoardingOrder", StringComparison.Ordinal);
-        int mutationIndex = boarding.IndexOf("unitMoveOrderSystem.ClearMovementOrderComponents", StringComparison.Ordinal);
+        int mutationIndex = boarding.IndexOf("UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder", StringComparison.Ordinal);
         Assert.GreaterOrEqual(planningIndex, 0, "Board All transport boarding must collect planned orders before mutating ECS components.");
         Assert.GreaterOrEqual(mutationIndex, 0, "Board All transport boarding must still issue movement orders after planning.");
         Assert.Less(

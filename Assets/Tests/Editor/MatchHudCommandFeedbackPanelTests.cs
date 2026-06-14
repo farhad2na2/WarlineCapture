@@ -22,7 +22,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration), tests => tests.RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
-            RunValidationStep(nameof(SelectButtonClick_HidesBoardFeedbackActionsImmediately), tests => tests.SelectButtonClick_HidesBoardFeedbackActionsImmediately());
+            RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
             Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=10");
             EditorApplication.Exit(0);
@@ -306,7 +306,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
-    public void SelectButtonClick_HidesBoardFeedbackActionsImmediately()
+    public void SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions()
     {
         _root = new GameObject("SelectButtonFeedbackBoundary");
         var controlsObject = new GameObject("Controls");
@@ -347,12 +347,18 @@ public sealed class MatchHudCommandFeedbackPanelTests
             boardAllInteractable: true);
         Assert.IsTrue(actions.activeSelf, "Test setup must start with Board feedback actions visible.");
 
+        var commandSink = new RecordingSelectionUiCommand();
         var inputSystem = new MatchOverlayCommandInputSystem();
-        inputSystem.Bind(controls, new SelectionUiCommandSystem(), feedbackView);
+        inputSystem.Bind(controls, commandSink, feedbackView);
 
         selectButton.onClick.Invoke();
 
-        Assert.IsFalse(actions.activeSelf, "Clicking Select must immediately hide stale Board feedback actions.");
+        Assert.AreEqual(1, commandSink.EnterSelectionModeRequests);
+        Assert.IsTrue(actions.activeSelf, "Input click must queue an ECS request without directly clearing Board presentation.");
+
+        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(feedbackView, TacticalCommandMode.Select);
+
+        Assert.IsFalse(actions.activeSelf, "Command-mode feedback must clear stale Board feedback actions.");
     }
 
     [Test]
@@ -473,5 +479,38 @@ public sealed class MatchHudCommandFeedbackPanelTests
         SerializedProperty property = serializedObject.FindProperty(propertyName);
         Assert.NotNull(property, $"Missing serialized property {propertyName}.");
         Assert.NotNull(property.objectReferenceValue, $"Missing serialized reference {propertyName}.");
+    }
+
+    private sealed class RecordingSelectionUiCommand : ISelectionUiCommand
+    {
+        public int EnterSelectionModeRequests { get; private set; }
+
+        public void CaptureUiClickSequence()
+        {
+        }
+
+        public bool RequestDeselectAll() => true;
+
+        public bool RequestEnterSelectionMode()
+        {
+            EnterSelectionModeRequests++;
+            return true;
+        }
+
+        public bool RequestExitSelectionMode() => true;
+
+        public bool RequestMoveCommandMode() => true;
+
+        public bool RequestAttackCommandMode() => true;
+
+        public bool RequestScanCommandMode() => true;
+
+        public bool RequestHoldPosition() => true;
+
+        public bool RequestStop() => true;
+
+        public bool RequestBoardAllSelectedTransport() => true;
+
+        public bool RequestCancelActiveCommandMode() => true;
     }
 }

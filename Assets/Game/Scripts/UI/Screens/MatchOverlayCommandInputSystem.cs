@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public sealed class MatchOverlayCommandInputSystem
@@ -67,11 +66,6 @@ public sealed class MatchOverlayCommandInputSystem
         private readonly Action _showBuildDrawer;
         private readonly Action _closeBuildDrawer;
         private readonly ISelectionDiagnosticsSink _diagnosticsSink;
-        private readonly List<TabButtonBinding> _tabButtonBindings = new();
-        private MatchOverlayCommandTabVisualSystem _tabVisualSystem;
-        private MatchOverlayCommandTabView _selectCommandTab;
-        private MatchOverlayCommandTabView _buildCommandTab;
-        private MatchOverlayCommandTabView _scanCommandTab;
         private bool _buildDrawerOpen;
 
         public Binding(
@@ -97,7 +91,6 @@ public sealed class MatchOverlayCommandInputSystem
                 $"select={DescribeButton(_view.SelectButton)} move={DescribeButton(_view.MoveButton)} " +
                 $"attack={DescribeButton(_view.AttackButton)} scan={DescribeButton(_view.ScanButton)} " +
                 $"build={DescribeButton(_view.BuildButton)} tabs={CountTabs(_view.CommandTabGroup)}");
-            BindCommandTabs();
             _runtimeFeedbackView?.BindFeedbackActionCallbacks(OnBoardAllFeedbackClicked, OnCancelFeedbackClicked);
 
             _view.SelectButton?.onClick.AddListener(OnSelectButtonClicked);
@@ -126,7 +119,6 @@ public sealed class MatchOverlayCommandInputSystem
 
         public void Unbind()
         {
-            UnbindCommandTabs();
             _runtimeFeedbackView?.ClearFeedbackActionCallbacks();
 
             _view.SelectButton?.onClick.RemoveListener(OnSelectButtonClicked);
@@ -139,71 +131,11 @@ public sealed class MatchOverlayCommandInputSystem
             _view.CommandWheelStopButton?.onClick.RemoveListener(OnCommandWheelStopButtonClicked);
         }
 
-        private void BindCommandTabs()
-        {
-            MatchOverlayCommandTabGroupView tabGroup = _view.CommandTabGroup;
-            if (tabGroup == null)
-                return;
-
-            _tabVisualSystem = new MatchOverlayCommandTabVisualSystem(tabGroup);
-
-            MatchOverlayCommandTabView[] tabs = tabGroup.Tabs;
-            if (tabs != null)
-            {
-                foreach (MatchOverlayCommandTabView tab in tabs)
-                {
-                    Button button = tab?.Button;
-                    if (button == null)
-                        continue;
-
-                    if (button == _view.SelectButton)
-                        _selectCommandTab = tab;
-                    if (button == _view.BuildButton)
-                        _buildCommandTab = tab;
-                    if (button == _view.ScanButton)
-                        _scanCommandTab = tab;
-
-                    MatchOverlayCommandTabView capturedTab = tab;
-                    UnityAction listener = () => OnCommandTabClicked(capturedTab);
-                    button.onClick.AddListener(listener);
-                    _tabButtonBindings.Add(new TabButtonBinding(button, listener));
-                }
-            }
-
-            _tabVisualSystem.ApplyDefaultSelection();
-        }
-
-        private void UnbindCommandTabs()
-        {
-            foreach (TabButtonBinding binding in _tabButtonBindings)
-                binding.Button.onClick.RemoveListener(binding.Listener);
-
-            _tabButtonBindings.Clear();
-            _tabVisualSystem = null;
-        }
-
-        private void OnCommandTabClicked(MatchOverlayCommandTabView tab)
-        {
-            if (ReferenceEquals(tab, _buildCommandTab))
-            {
-                _tabVisualSystem?.Select(_buildCommandTab);
-                return;
-            }
-
-            CloseBuildDrawerIfOpen();
-            _tabVisualSystem?.Toggle(tab);
-        }
-
         private void OnSelectButtonClicked()
         {
-            bool selected = _tabVisualSystem == null || _tabVisualSystem.IsSelected(_selectCommandTab);
-            if (selected)
-                BattleHudRuntimeFeedbackSystem.ApplyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Select);
-            else
-                BattleHudRuntimeFeedbackSystem.ClearCommandMode(_runtimeFeedbackView);
-
+            bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
             bool queued = _selectionUiCommandSystem != null &&
-                (selected
+                (enterSelectionMode
                     ? _selectionUiCommandSystem.RequestEnterSelectionMode()
                     : _selectionUiCommandSystem.RequestExitSelectionMode());
 
@@ -218,7 +150,6 @@ public sealed class MatchOverlayCommandInputSystem
             if (_showBuildDrawer != null)
             {
                 _showBuildDrawer.Invoke();
-                _tabVisualSystem?.Select(_buildCommandTab);
                 _buildDrawerOpen = true;
                 BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
                 return;
@@ -257,7 +188,6 @@ public sealed class MatchOverlayCommandInputSystem
         private void OnScanButtonClicked()
         {
             CloseBuildDrawerIfOpen();
-            _tabVisualSystem?.Select(_scanCommandTab);
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestScanCommandMode();
 
@@ -277,6 +207,13 @@ public sealed class MatchOverlayCommandInputSystem
 
             _buildDrawerOpen = false;
             BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+        }
+
+        private bool IsCommandModePresented(TacticalCommandMode mode)
+        {
+            BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackSystem.GetState(_runtimeFeedbackView);
+            return state.CurrentCommandMode == mode ||
+                state.StickyCommandMode == mode;
         }
 
         private void OnHoldButtonClicked()
@@ -320,18 +257,6 @@ public sealed class MatchOverlayCommandInputSystem
         private void LogMoveCommandTrace(string message)
         {
             _diagnosticsSink?.LogMoveCommandTrace(message);
-        }
-
-        private readonly struct TabButtonBinding
-        {
-            public readonly Button Button;
-            public readonly UnityAction Listener;
-
-            public TabButtonBinding(Button button, UnityAction listener)
-            {
-                Button = button;
-                Listener = listener;
-            }
         }
     }
 }

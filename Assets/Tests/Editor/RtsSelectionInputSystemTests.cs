@@ -46,8 +46,9 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
+            RunCase(test => test.MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=30");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=31");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -1729,6 +1730,22 @@ public sealed class RtsSelectionInputSystemTests
 
         string clickedCellWrapper = ExtractMethodBodyByName(pointerTarget, "TryGetClickedCell(Context context");
         StringAssert.Contains("return CreatePointerTargetBoundaryPass(context).TryGetClickedCell", clickedCellWrapper);
+    }
+
+    [Test]
+    public void MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback()
+    {
+        string commandInput = File.ReadAllText("Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputSystem.cs");
+
+        Assert.IsFalse(commandInput.Contains("MatchOverlayCommandTabVisualSystem", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("ApplyDefaultSelection", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains(".Toggle(", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains(".Select(", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackSystem.ApplyCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackSystem.ClearCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
+        StringAssert.Contains("RequestEnterSelectionMode", commandInput);
+        StringAssert.Contains("RequestExitSelectionMode", commandInput);
+        StringAssert.Contains("BattleHudRuntimeFeedbackSystem.GetState(_runtimeFeedbackView)", commandInput);
     }
 
     [Test]

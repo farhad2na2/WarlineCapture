@@ -33,10 +33,10 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `48 / 113 complete (42.5%)`.
+- Checklist progress: `49 / 113 complete (43.4%)`.
 - In progress: `0`.
-- Remaining open: `65`.
-- Phase progress: `4 / 13 phases complete; 1 in progress; 8 not started`.
+- Remaining open: `64`.
+- Phase progress: `5 / 13 phases complete; 0 in progress; 8 not started`.
 - Authoritative non-ECS runtime `*System` inventory: `390` after excluding `100` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
@@ -46,7 +46,7 @@ Always update this section when implementation begins or a phase completes.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 kept HUD tab state as presentation of ECS command-mode feedback.
+- Last implementation update: 2026-06-14 completed Phase 4 selection command request and command-mode transition tests.
 
 ## Architecture Rules
 
@@ -283,7 +283,7 @@ Progress notes:
 
 ## Phase 4: Focus Command Split
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Split `RtsSelectionFocusCommandSystem` into ECS command-mode and selection request processors.
@@ -308,7 +308,7 @@ Implementation steps:
 - [x] Convert Enter Board Target Mode into an ECS request processor.
 - [x] Convert Cancel Active Command Mode into an ECS request processor.
 - [x] Keep HUD tab state as presentation of ECS command-mode state.
-- [ ] Add tests for selection command requests and command-mode transitions.
+- [x] Add tests for selection command requests and command-mode transitions.
 
 Acceptance checks:
 
@@ -328,6 +328,7 @@ Progress notes:
 - 2026-06-14: Added `RtsSelectionBoardTargetModeCommandSystem` as an explicit `ISystem` request processor for `EnterBoardTargetMode` command-intent requests. The ECS processor consumes Enter Board Target Mode requests, clears stale pending Move requests and queued move orders, toggles off active Board mode, resolves selected board sources from ECS data with transport-first priority, arms `TacticalCommandMode.Board` with `TransportToPassenger` or `PassengerToTransport`, and reports `NoSelection` or `CommandUnavailable` for the managed HUD boundary on rejection. The transport source check is read-only and does not add capacity/passenger components while deciding command mode, avoiding structural-change invalidation during selection command processing. `SelectionGameplayStartupSystem` keeps selected-building cleanup, explicit attack state, HUD board-mode presentation, world-marker visibility, camera-drag state, and diagnostics in the managed boundary, and `RtsSelectionFocusCommandSystem` no longer owns the Enter Board Target Mode branch. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: total runtime `*System` declarations are now `498`, Unity ECS exclusions are now `99`, and the runtime non-ECS denominator remains `390`. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=29` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
 - 2026-06-14: Added `RtsSelectionCancelActiveCommandModeSystem` as an explicit `ISystem` request processor for `CancelActiveCommandMode` command-intent requests. The ECS processor consumes cancel requests, clears active command-mode state including Board direction/transport data, exits selection mode, and suppresses the next world click without creating a persistent cancel feedback message. `SelectionGameplayStartupSystem` keeps explicit attack presentation state, camera-drag state, world-marker visibility, and HUD command-mode clearing in the managed boundary, and `RtsSelectionFocusCommandSystem` no longer owns the Cancel Active Command Mode branch. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: total runtime `*System` declarations are now `499`, Unity ECS exclusions are now `100`, and the runtime non-ECS denominator remains `390`. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=30` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
 - 2026-06-14: Removed direct command-tab visual ownership from `MatchOverlayCommandInputSystem`. Command button clicks now enqueue ECS command-intent requests only; Select enter/exit is derived from the current HUD feedback state, and tab selection/clearing is driven by `BattleHudRuntimeFeedbackSystem` command-mode feedback. Updated HUD feedback tests so Select clicks record the ECS request while stale Board actions are cleared only when command-mode feedback is applied. Added a selection input guard that fails if command input starts constructing `MatchOverlayCommandTabVisualSystem`, toggling/selecting tabs, or directly applying HUD command modes again. Focused Unity validation passed with `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, `[RtsSelectionInputSystemValidation] result=Passed tests=31`, and `[MatchHudCommandFeedbackValidation] result=Passed tests=10`.
+- 2026-06-14: Completed Phase 4 test coverage with `SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions`. The test starts from `SelectionUiCommandSystem` UI request methods, verifies the queued ECS command-intent kind, then runs the owning ECS processors for Enter Selection, Exit Selection, Enter Move Target, Enter Scan Target, and Cancel Active Command Mode. It asserts each request is consumed once and that runtime command-mode state transitions through selection active, selection inactive, Move target mode, Scan target mode, and finally no active command mode. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=32`.
 
 ## Phase 5: Focused Unit Commands
 

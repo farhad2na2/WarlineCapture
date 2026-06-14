@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class AirMissileTrailVfxView : MonoBehaviour
+public sealed class MissileTrailVfxView : MonoBehaviour
 {
     private const float SmokeTrailSeconds = 0.62f;
     private const float CoreTrailSeconds = 0.18f;
@@ -20,7 +20,7 @@ public sealed class AirMissileTrailVfxView : MonoBehaviour
         public bool Releasing;
     }
 
-    private static AirMissileTrailVfxView _instance;
+    private static MissileTrailVfxView _instance;
     private static Material _smokeMaterial;
     private static Material _coreMaterial;
 
@@ -39,10 +39,10 @@ public sealed class AirMissileTrailVfxView : MonoBehaviour
         if (_instance != null)
             return;
 
-        GameObject root = new("AirMissileTrailVfxView");
+        GameObject root = new("MissileTrailVfxView");
         if (Application.isPlaying)
             DontDestroyOnLoad(root);
-        _instance = root.AddComponent<AirMissileTrailVfxView>();
+        _instance = root.AddComponent<MissileTrailVfxView>();
     }
 
     private void SyncInternal(Entity projectile, Vector3 position, Vector3 direction)
@@ -100,7 +100,7 @@ public sealed class AirMissileTrailVfxView : MonoBehaviour
         if (_pool.Count > 0)
             return _pool.Pop();
 
-        GameObject root = new("AirMissileTrail");
+        GameObject root = new("MissileTrail");
         root.transform.SetParent(transform, worldPositionStays: false);
 
         TrailRenderer smokeTrail = CreateTrailRenderer(

@@ -506,6 +506,28 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 }
 
 [UpdateAfter(typeof(GroundMissileFlyingRocketVisualSystem))]
+[UpdateBefore(typeof(GroundMissileProjectileFlightSystem))]
+public partial struct GroundMissileRocketTrailSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        foreach (var (transform, entity) in SystemAPI
+                     .Query<RefRO<LocalTransform>>()
+                     .WithAll<GroundMissileFlyingRocketVisualComponent>()
+                     .WithEntityAccess())
+        {
+            float3 direction = math.rotate(transform.ValueRO.Rotation, new float3(0f, 0f, 1f));
+            MissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
+        }
+    }
+}
+
+[UpdateAfter(typeof(GroundMissileRocketTrailSystem))]
 [BurstCompile]
 public partial struct GroundMissileProjectileFlightSystem : ISystem
 {

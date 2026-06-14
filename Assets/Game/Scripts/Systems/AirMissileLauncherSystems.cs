@@ -597,7 +597,7 @@ public partial struct AirMissileProjectileTrailSystem : ISystem
                      .WithEntityAccess())
         {
             float3 direction = math.normalizesafe(projectile.ValueRO.Velocity, math.rotate(transform.ValueRO.Rotation, new float3(0f, 0f, 1f)));
-            AirMissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
+            MissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
         }
     }
 }

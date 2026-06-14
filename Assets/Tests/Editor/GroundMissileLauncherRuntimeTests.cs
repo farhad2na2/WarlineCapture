@@ -402,6 +402,7 @@ public sealed class GroundMissileLauncherRuntimeTests
     [Test]
     public void MissileFire_DetachesAndRestoresSelectedRocketVisual()
     {
+        DestroyMissileTrailVfxView();
         using var world = new World("GroundMissileLauncherRuntimeTests_RocketVisual");
         EntityManager em = world.EntityManager;
 
@@ -435,6 +436,7 @@ public sealed class GroundMissileLauncherRuntimeTests
 
         SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
         SystemHandle rocketVisualSystem = world.CreateSystem<GroundMissileFlyingRocketVisualSystem>();
+        SystemHandle rocketTrailSystem = world.CreateSystem<GroundMissileRocketTrailSystem>();
 
         world.SetTime(new TimeData(0.1d, 0.1f));
         fireSystem.Update(world.Unmanaged);
@@ -449,6 +451,10 @@ public sealed class GroundMissileLauncherRuntimeTests
 
         world.SetTime(new TimeData(0.12d, 0.02f));
         rocketVisualSystem.Update(world.Unmanaged);
+        rocketTrailSystem.Update(world.Unmanaged);
+        Assert.IsNotNull(
+            GameObject.Find("MissileTrailVfxView"),
+            "The visible ground rocket should create a continuous missile trail view.");
         Assert.Greater(
             em.GetComponentData<LocalTransform>(rocket).Position.y,
             0.15f,
@@ -460,6 +466,7 @@ public sealed class GroundMissileLauncherRuntimeTests
         Assert.IsFalse(em.HasComponent<GroundMissileFlyingRocketVisualComponent>(rocket));
         Assert.IsTrue(em.HasComponent<Parent>(rocket));
         Assert.AreEqual(rocketParent, em.GetComponentData<Parent>(rocket).Value);
+        DestroyMissileTrailVfxView();
     }
 
 
@@ -793,6 +800,13 @@ public sealed class GroundMissileLauncherRuntimeTests
         float3 forward = math.rotate(rotation, new float3(0f, 0f, 1f));
         Assert.Greater(forward.x, 0.7f, "Battery should keep yawing toward the target during post-launch hold.");
         Assert.Greater(forward.y, 0.35f, "Battery should remain elevated during post-launch hold instead of closing immediately.");
+    }
+
+    private static void DestroyMissileTrailVfxView()
+    {
+        GameObject trailRoot = GameObject.Find("MissileTrailVfxView");
+        if (trailRoot != null)
+            UnityEngine.Object.DestroyImmediate(trailRoot);
     }
 
     private static Entity CreateTarget(EntityManager em, float3 position, int health)

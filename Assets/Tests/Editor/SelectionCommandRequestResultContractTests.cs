@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 
 public sealed class SelectionCommandRequestResultContractTests
@@ -19,9 +20,10 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.ScanCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.MoveCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
+            tests.AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=8");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=9");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -319,6 +321,69 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.IsFalse(handled);
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(1, results.Length);
+    }
+
+    [Test]
+    public void AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest()
+    {
+        using World world = new("SelectionCommandAttackSystemOnUpdateTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+
+        Entity attacker = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitGrid),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(attacker, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attacker, new UnitGrid { Cell = new int2(1, 1) });
+        em.SetComponentData(attacker, new UnitCombat { CanAttack = 1 });
+        em.SetComponentData(attacker, new UnitAttack { Range = 20f, Damage = 10, CooldownSeconds = 1f });
+        em.SetComponentData(attacker, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
+
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new UnitGrid { Cell = new int2(7, 8) });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(7.5f, 0f, 8.5f)));
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Attack,
+            RequestId = 66,
+            Frame = 44,
+            TargetEntity = target,
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
+            HasTargetEntity = 1
+        });
+
+        SystemHandle system = world.CreateSystem<AttackOrderCommandSystem>();
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Attack, results[0].Kind);
+        Assert.AreEqual(66, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasCommandResult);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Entity, results[0].TargetKind);
+        Assert.AreEqual(target, results[0].TargetEntity);
+        Assert.IsTrue(em.HasComponent<EngageTarget>(attacker));
+        EngageTarget engageTarget = em.GetComponentData<EngageTarget>(attacker);
+        Assert.AreEqual(target, engageTarget.Target);
+        Assert.AreEqual(new int2(7, 8), engageTarget.Cell);
+        Assert.AreEqual(1, engageTarget.IsCommanded);
     }
 
     [Test]

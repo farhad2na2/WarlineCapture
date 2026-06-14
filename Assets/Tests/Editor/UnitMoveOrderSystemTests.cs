@@ -26,8 +26,9 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown());
             RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
             RunCase(test => test.SelectedMoveOrderCommand_IssuesMoveOrderForSelectedUnit());
+            RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=9");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=10");
         }
         catch (System.Exception ex)
         {
@@ -320,6 +321,98 @@ public sealed class UnitMoveOrderSystemTests
         Assert.AreEqual(goal, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
+    }
+
+    [Test]
+    public void SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder()
+    {
+        CreateGrid(width: 16, height: 16);
+        Entity unit = _entityManager.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitGrid),
+            typeof(UnitFootprint));
+        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(unit, new UnitMove
+        {
+            Speed = 5f,
+            WalkSpeed = 5f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
+        _entityManager.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        _entityManager.SetComponentData(unit, new UnitFootprint { Size = new int2(1, 1) });
+
+        Entity commandEntity = _entityManager.CreateEntity();
+        _entityManager.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        _entityManager.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 101,
+            Frame = 20,
+            ScreenPosition = new float2(1f, 0f),
+            HasScreenPosition = 1
+        });
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 102,
+            Frame = 21,
+            ScreenPosition = new float2(2f, 0f),
+            HasScreenPosition = 1
+        });
+
+        EntityQuery selectedMoveQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitMove>(),
+            ComponentType.ReadOnly<UnitGrid>());
+        EntityQuery gridQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<GridWalkable>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        EntityQuery mapSurfaceQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        int2 firstGoal = new(7, 8);
+        int2 secondGoal = new(8, 8);
+
+        bool handled = new SelectedMoveOrderCommandSystem().ProcessCommandIntentRequests(
+            _entityManager,
+            commandEntity,
+            requests,
+            _entityManager.GetBuffer<RtsSelectionCommandResultElement>(commandEntity),
+            selectedMoveQuery,
+            gridQuery,
+            mapSurfaceQuery,
+            null,
+            new UnitMoveOrderSystem(),
+            null,
+            tryGetClickedUnit: (Vector2 screenPosition, EntityManager em, out Entity clicked) =>
+            {
+                clicked = Entity.Null;
+                return false;
+            },
+            tryGetClickedCell: (Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint) =>
+            {
+                cell = screenPosition.x < 1.5f ? firstGoal : secondGoal;
+                worldPoint = new Vector3(cell.x, 0f, cell.y);
+                return true;
+            });
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            _entityManager.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(2, results.Length);
+        Assert.AreEqual(101, results[0].RequestId);
+        Assert.AreEqual(102, results[1].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[1].Accepted);
+        Assert.AreEqual(secondGoal, _entityManager.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(secondGoal, _entityManager.GetComponentData<UnitPathRequest>(unit).Goal);
     }
 
     [Test]

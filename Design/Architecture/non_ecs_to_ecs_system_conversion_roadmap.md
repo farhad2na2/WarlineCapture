@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `24 / 113 complete (21.2%)`.
+- Checklist progress: `25 / 113 complete (22.1%)`.
 - In progress: `0`.
-- Remaining open: `89`.
+- Remaining open: `88`.
 - Phase progress: `2 / 13 phases complete; 1 in progress; 10 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `393` after excluding `90` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `392` after excluding `91` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `9` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `4`.
+- Proposed inventory dispositions: `8` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+- Converted to `ISystem`: `5`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `4`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
-- Remaining plain runtime gameplay `*System` classes: `393`.
+- Remaining plain runtime gameplay `*System` classes: `392`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 converted `SelectedMoveOrderCommandSystem` into an `ISystem` move command owner and regenerated the inventory.
+- Last implementation update: 2026-06-14 converted `AttackOrderCommandSystem` into an `ISystem` attack command owner and regenerated the inventory.
 
 ## Architecture Rules
 
@@ -202,7 +202,7 @@ Implementation steps:
 - [x] Convert `SelectionMoveCommandRequestSystem` into an ECS system or fold it into the new move command ECS owner.
 - [x] Convert `SelectedMoveOrderCommandSystem` into the move command ECS owner.
 - [x] Convert `SelectionAttackCommandRequestSystem` into an ECS system or fold it into the new attack command ECS owner.
-- [ ] Convert `AttackOrderCommandSystem` into the attack command ECS owner.
+- [x] Convert `AttackOrderCommandSystem` into the attack command ECS owner.
 - [x] Convert `SelectionScanCommandRequestSystem` into an ECS system or fold it into the new scan command ECS owner.
 - [x] Convert `ScanIntelCommandSystem` into the scan command ECS owner.
 - [x] Convert `SelectionTransportCommandRequestSystem` into an ECS system or fold it into the new transport command ECS owner.
@@ -232,6 +232,7 @@ Progress notes:
 - 2026-06-14: Folded `SelectionAttackCommandRequestSystem` into `AttackOrderCommandSystem`. The attack command owner now drains attack command-intent requests, maps attack results into `RtsSelectionCommandResultElement`, and keeps clicked-target/source collection and base-breach resolution as existing transition delegates. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `395`, first-wave ConvertToISystem candidates are now `11`, and folded count is now `3`.
 - 2026-06-14: Folded `SelectionTransportCommandRequestSystem` into `TransportBoardingCommandSystem`. The transport command owner now drains board/disembark command-intent requests, maps transport results into `RtsSelectionCommandResultElement`, owns disembark helper state, and refreshes command buffers after structural disembark/boarding changes. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `394`, first-wave ConvertToISystem candidates are now `10`, and folded count is now `4`.
 - 2026-06-14: Converted `SelectedMoveOrderCommandSystem` into an `ISystem` move command owner. It now owns an ECS `OnUpdate` path for pre-resolved Move command requests carrying target cell/world data, while the existing managed transition method continues to resolve screen clicks and leaves screen-only requests untouched. Removed managed selection scratch state from the owner by collecting selected units into caller-owned `NativeList<Entity>` storage. Also fixed `BuildingTargetMoveOrderSystem` request/result buffer lifetime so structural move-order changes do not invalidate result writes during focused move validation. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `393`, Unity ECS excluded count is now `90`, and converted-to-`ISystem` count is now `4`.
+- 2026-06-14: Converted `AttackOrderCommandSystem` into an `ISystem` attack command owner. It now owns an ECS `OnUpdate` path for pre-resolved Attack command requests carrying a target entity, while the existing managed transition method continues to resolve screen clicks, focused attack sources, and base-breach targets for current UI behavior. Removed managed instance state from the owner by using cached ECS queries/type handles for the ECS path and caller-owned scratch storage for the managed transition path. Also refreshed command buffers after attack-order structural changes so result emission does not leave invalidated request buffers in the transition loop. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `392`, Unity ECS excluded count is now `91`, and converted-to-`ISystem` count is now `5`.
 
 ## Phase 3: Pointer Target Boundary Split
 

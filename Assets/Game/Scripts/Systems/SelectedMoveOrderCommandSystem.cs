@@ -406,6 +406,13 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             }
 
             AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+            if (em.Exists(commandEntity))
+            {
+                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            }
         }
 
         return handledCount > 0;

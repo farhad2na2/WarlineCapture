@@ -12,6 +12,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     private readonly List<RtsSelectionCommandResultElement> _attackCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _scanCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _transportCommandResultScratch = new();
+    private readonly List<Entity> _selectedAttackSourceScratch = new();
 
     public readonly struct Context
     {
@@ -272,7 +273,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.TryGetAttackClickedUnitEntity,
             context.CollectSelectedAttackSources,
             context.BuildingPlacementInteractionSystem,
-            context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionContext,
+            _selectedAttackSourceScratch);
 
         commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Attack, _attackCommandResultScratch);

@@ -88,6 +88,13 @@ public struct UnitTransportBoardingTarget : IComponentData
     public int2 Goal;
 }
 
+public static class TransportBoardingData
+{
+    public const int BoardingClearanceCells = 4;
+    public const int AirBoardingClearanceCells = 1;
+    public const float AirBoardingGroundedHeightTolerance = 3f;
+}
+
 public readonly struct TransportBoardingReachState
 {
     public readonly int2 TransportCell;

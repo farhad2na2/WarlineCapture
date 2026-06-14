@@ -6,7 +6,7 @@ using Unity.Transforms;
 
 public readonly struct UnitTransportAirPickupSystem
 {
-    private const float AirBoardingGroundedHeightTolerance = UnitTransportBoardingRuleSystem.AirBoardingGroundedHeightTolerance;
+    private const float AirBoardingGroundedHeightTolerance = TransportBoardingData.AirBoardingGroundedHeightTolerance;
 
     public bool TryPrepareAirTransportPickupForBoarding(
         EntityManager em,

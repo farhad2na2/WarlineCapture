@@ -4,9 +4,9 @@ using Unity.Transforms;
 
 public readonly struct UnitTransportBoardingRuleSystem
 {
-    public const int BoardingClearanceCells = 4;
-    public const int AirBoardingClearanceCells = 1;
-    public const float AirBoardingGroundedHeightTolerance = 3f;
+    public const int BoardingClearanceCells = TransportBoardingData.BoardingClearanceCells;
+    public const int AirBoardingClearanceCells = TransportBoardingData.AirBoardingClearanceCells;
+    public const float AirBoardingGroundedHeightTolerance = TransportBoardingData.AirBoardingGroundedHeightTolerance;
 
     public bool IsTransportLandedForBoarding(EntityManager em, Entity transport)
     {

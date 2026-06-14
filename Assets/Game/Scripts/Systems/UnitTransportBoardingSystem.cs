@@ -320,7 +320,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
             UnitAirComponent airState = AirComponentLookup[transport];
             LocalTransform transform = LocalTransformLookup[transport];
             float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
-            bool physicallyGrounded = transform.Position.y <= groundY + UnitTransportBoardingRuleSystem.AirBoardingGroundedHeightTolerance;
+            bool physicallyGrounded = transform.Position.y <= groundY + TransportBoardingData.AirBoardingGroundedHeightTolerance;
             return airState.Airborne == 0 &&
                    airState.TakeoffRolling == 0 &&
                    airState.LandingRolling == 0 &&
@@ -341,8 +341,8 @@ public partial struct UnitTransportBoardingSystem : ISystem
             passengerPosition.y = transportPosition.y;
             bool airTransport = AirMovementLookup.HasComponent(transport);
             int boardingClearance = airTransport
-                ? UnitTransportBoardingRuleSystem.AirBoardingClearanceCells
-                : UnitTransportBoardingRuleSystem.BoardingClearanceCells;
+                ? TransportBoardingData.AirBoardingClearanceCells
+                : TransportBoardingData.BoardingClearanceCells;
             bool movementFinished =
                 !UnitTargetLookup.HasComponent(passenger) &&
                 !PathRequestLookup.HasComponent(passenger) &&

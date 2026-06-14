@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 public readonly struct UnitTransportApproachCellSystem
 {
-    private const int BoardingClearanceCells = UnitTransportBoardingRuleSystem.BoardingClearanceCells;
+    private const int BoardingClearanceCells = TransportBoardingData.BoardingClearanceCells;
 
     public bool TryFindAirTransportPickupCellNearPassenger(
         in GridConfig grid,

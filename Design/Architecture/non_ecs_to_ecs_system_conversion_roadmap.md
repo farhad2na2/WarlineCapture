@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `76 / 113 complete (67.3%)`.
-- In progress: `2`.
-- Remaining open: `35`.
-- Phase progress: `7 / 13 phases complete; 2 in progress; 4 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `388` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Checklist progress: `84 / 113 complete (74.3%)`.
+- In progress: `1`.
+- Remaining open: `28`.
+- Phase progress: `9 / 13 phases complete; 1 in progress; 3 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `385` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `287` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `285` ConvertToSystemBase, `73` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `5`.
-- Kept as passive view/config/authoring/editor boundary: `2`.
-- Remaining plain runtime gameplay `*System` classes: `388`.
+- Kept as passive view/config/authoring/editor boundary: `5`.
+- Remaining plain runtime gameplay `*System` classes: `385`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 started Phase 9 helper cleanup by moving the transport boarding reach-state payload out of the standalone rule helper and into neutral ECS transport boarding data.
+- Last implementation update: 2026-06-14 moved shared transport boarding clearance/grounding constants into neutral transport boarding data while keeping the remaining transport helper fold in progress.
 
 ## Architecture Rules
 
@@ -434,7 +434,7 @@ Progress notes:
 
 ## Phase 7: Building, Production, And Road Commands
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Split command-shaped building and road code that currently mixes UI, GameObjects, placement sessions, resources, and camera focus.
@@ -450,7 +450,7 @@ Implementation steps:
 - [x] Split `BuildingProductionRequestBoundary` into ECS production validation/request processing and managed prefab/config boundary.
 - [x] Split `BuildingPlacementCommandSystem` into ECS placement command state plus managed placement visual/session boundary.
 - [x] Split `RoadBuildCommandSystem` into ECS road-build command state plus managed road-build visual/session boundary.
-- [~] Split `BuildingRuntimeSpawnCommandSystem` into ECS spawn request data and managed prefab spawn boundary.
+- [x] Split `BuildingRuntimeSpawnCommandSystem` into ECS spawn request data and managed prefab spawn boundary.
 - [x] Add stable result codes for not enough money, missing producer, invalid placement, blocked placement, unavailable prefab, and queue full.
 - [x] Add tests for production request results.
 - [x] Add tests for placement confirm/cancel/rotate results.
@@ -492,10 +492,11 @@ Progress notes:
 - 2026-06-14: Advanced the `BuildingUiCommandSystem` split by removing the now-unused direct unit-production delegates and wrapper methods from `BuildingUiCommandSystem.Context`. Unit production from UI and placement interaction now routes through `BuildingProductionRequestBoundary` request/result helpers, while the remaining UI command contract surface is limited to camp requests, production cancellation, placement confirmation/cancel/rotate, and passive UI state.
 - 2026-06-14: Advanced the `BuildingUiCommandSystem` split by removing stale delete/clear/exit/focus/arm delegates and wrapper methods from the UI command context. Delete and clear selection remain routed through `BuildingSelectionSystem` request/result owners from placement interaction, placement confirm/cancel/rotate stay on `BuildingPlacementCommandSystem` request/result paths, and production focus/arm state stays inside `BuildingProductionRequestBoundary` instead of being exposed as UI command methods. `BuildingUiCompositionSystem` also dropped the now-dead runtime-entity dependency that only existed for the removed delete delegate. Focused Unity validation passed with `[BuildDrawerCatalogQueryValidation] result=Passed tests=21` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-14: Completed the `BuildingUiCommandSystem` split by renaming the remaining pass-through UI command shell to `BuildingUiCommandBoundary`. The type no longer appears in the runtime non-ECS `*System` inventory; it only exposes the managed UI boundary contract over ECS request/result owners for camp items, production cancellation, placement confirmation/cancel/rotate, and passive UI state. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `389`, ConvertToSystemBase candidates are now `288`, and passive boundary completions are now `1`.
+- 2026-06-14: Synced the completed runtime spawn-command split with the current code. `BuildingRuntimeSpawnCommandSystem` is no longer present in runtime sources or the generated non-ECS inventory; `BuildingRuntimeSpawnCommandBoundary` owns enqueue/result helpers over ECS `BuildingRuntimeSpawnRequest` data, and `BuildingRuntimeBoundarySystem` remains the managed prefab/GameObject spawn boundary. Current focused validation for the boundary remains `[BuildingRuntimeBoundaryValidation] result=Passed tests=5`.
 
 ## Phase 8: HUD Feedback, Markers, And Presentation Boundaries
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Make feedback and marker systems consume ECS read models/results instead of owning gameplay decisions.
@@ -507,13 +508,13 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Convert command feedback queue consumption into a managed ECS presentation boundary.
-- [ ] Ensure `BattleHudRuntimeFeedbackSystem` only maps/display results and lifetimes.
-- [ ] Ensure `SelectionHudFeedbackSystem` does not execute gameplay commands.
-- [ ] Ensure `SelectionOrderMarkerSystem` consumes marker result data instead of being called from command execution.
-- [ ] Convert marker requests/results to ECS data where practical.
-- [ ] Add tests for persistent command prompts and transient result feedback.
-- [ ] Add tests for move/attack/scan/board marker output.
+- [x] Convert command feedback queue consumption into a managed ECS presentation boundary.
+- [x] Ensure `BattleHudRuntimeFeedbackSystem` only maps/display results and lifetimes.
+- [x] Ensure `SelectionHudFeedbackSystem` does not execute gameplay commands.
+- [x] Ensure `SelectionOrderMarkerSystem` consumes marker result data instead of being called from command execution.
+- [x] Convert marker requests/results to ECS data where practical.
+- [x] Add tests for persistent command prompts and transient result feedback.
+- [x] Add tests for move/attack/scan/board marker output.
 
 Acceptance checks:
 
@@ -521,9 +522,15 @@ Acceptance checks:
 - Marker visuals are presentation of marker request data.
 - UI does not need command-specific gameplay logic.
 
+Progress notes:
+
+- 2026-06-14: Synced Phase 8 with the current HUD feedback boundary state. `SelectionHudFeedbackBoundary` owns `SelectionHudFeedbackQueueComponent`/`SelectionHudFeedbackElement` queue creation, drain, and mapping to the battle HUD view; `BattleHudRuntimeFeedbackBoundary` maps command modes, command results, sticky modes, actions, and result lifetimes without gameplay mutation. The retired `SelectionHudFeedbackSystem` and `BattleHudRuntimeFeedbackSystem` sources are no longer present.
+- 2026-06-14: Confirmed persistent command prompts and transient result feedback are covered by `MatchHudCommandFeedbackPanelTests` through command-mode prompt lifetime, success auto-hide, rejected auto-hide, board error prompt restoration, and board success prompt clearing cases.
+- 2026-06-14: Confirmed marker presentation now consumes accepted `RtsSelectionCommandResultElement` data through `SelectionOrderMarkerSystem.TryShowCommandResultMarker`. `RtsSelectionCommandResultFlushSystem` owns the managed marker presentation boundary for Move, Attack, Scan, and Board results, and `SelectedMoveOrderCommandSystem` no longer carries an order-marker dependency. The practical ECS marker data source remains the command-result buffer because it already carries accepted state, target entity/cell/world position, faction, radius, and marker flags. Focused Unity validation passed with `[SelectionOrderMarkerFocusedValidation] result=Passed tests=13`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=15`, `[UnitMoveOrderFocusedValidation] result=Passed tests=13`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+
 ## Phase 9: Query, Rule, Cell, And Helper Cleanup
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Remove misleading standalone non-ECS helper `*System` types.
@@ -553,6 +560,7 @@ Acceptance checks:
 Progress notes:
 
 - 2026-06-14: Started Phase 9 helper cleanup with the transport boarding helper cluster. `UnitTransportBoardingQuerySystem`, `UnitTransportBoardingRuleSystem`, and `UnitTransportApproachCellSystem` are pure/helper-style `*System` types that should be folded into `TransportBoardingCommandSystem`, `UnitTransportBoardingSystem`, or private helper structs as their owning call sites are narrowed. First slice moved the shared boarding reach-state payload out of `UnitTransportBoardingRuleSystem` and into neutral ECS transport boarding data as `TransportBoardingReachState`; `UnitTransportBoardingSystem` and `UnitTransportBoardingDiagnosticSystem` now share that payload without depending on a nested type on the standalone rule helper. Command-side rule-helper calls remain open for the next transport fold slice. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Continued the transport helper fold by moving shared boarding clearance constants and air-grounding tolerance from `UnitTransportBoardingRuleSystem` into neutral `TransportBoardingData`. `UnitTransportBoardingSystem`, `UnitTransportAirPickupSystem`, and `UnitTransportApproachCellSystem` now read those values from transport boarding data instead of the standalone rule helper; the rule helper keeps compatibility aliases until command-side calls are folded. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 

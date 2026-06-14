@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -15,7 +14,7 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
 
     private int lastPercent = -1;
     private bool hasLastStatus;
-    private FixedString64Bytes lastStatus;
+    private string lastStatus;
 
     public void Configure(RectTransform fill, TMP_Text percent, TMP_Text status, float maxFillWidth)
     {
@@ -24,24 +23,24 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
         statusText = status;
         fillWidth = Mathf.Max(1f, maxFillWidth);
         ResetPresentationCache();
-        ApplyProgress(0f, new FixedString64Bytes(DefaultStatus));
+        ApplyProgress(0f, DefaultStatus);
     }
 
     private void OnEnable()
     {
         ResetPresentationCache();
-        ApplyProgress(0f, new FixedString64Bytes(DefaultStatus));
+        ApplyProgress(0f, DefaultStatus);
     }
 
     private void Update()
     {
-        if (!TryGetLoading(out UiShellLoadingProgressComponent loading))
+        if (!TryGetLoading(out UiShellLoadingProgressModel loading))
             return;
 
         ApplyProgress(loading.Progress01, loading.Status);
     }
 
-    private void ApplyProgress(float progress01, FixedString64Bytes status)
+    private void ApplyProgress(float progress01, string status)
     {
         float clamped = Mathf.Clamp01(progress01);
         int percent = Mathf.RoundToInt(clamped * 100f);
@@ -57,12 +56,13 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
 
         lastPercent = percent;
 
-        if (!hasLastStatus || !status.Equals(lastStatus))
+        string resolvedStatus = string.IsNullOrEmpty(status) ? DefaultStatus : status;
+        if (!hasLastStatus || resolvedStatus != lastStatus)
         {
             if (statusText != null)
-                statusText.text = status.Length == 0 ? DefaultStatus : status.ToString();
+                statusText.text = resolvedStatus;
 
-            lastStatus = status;
+            lastStatus = resolvedStatus;
             hasLastStatus = true;
         }
     }
@@ -82,7 +82,7 @@ public sealed class UIShellLoadingProgressView : MonoBehaviour
         return labels;
     }
 
-    private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
+    private bool TryGetLoading(out UiShellLoadingProgressModel loading)
     {
         return UiShellRuntimeGateway.TryReadLoadingProgress(out loading);
     }

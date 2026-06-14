@@ -196,6 +196,7 @@ public sealed class RtsCameraSystemTests
                 null,
                 default,
                 TryGetDefaultEntityManager,
+                NullMatchIntroStateQuery.Instance,
                 null,
                 null,
                 null,
@@ -247,14 +248,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            Entity introEntity = world.EntityManager.CreateEntity(
-                typeof(UiShellBoundaryComponent),
-                typeof(MatchIntroTransitionComponent));
-            world.EntityManager.SetComponentData(introEntity, new MatchIntroTransitionComponent
-            {
-                State = MatchIntroTransitionStateKind.EnteringHud,
-                InputLocked = 1
-            });
+            var matchIntro = new FakeMatchIntroStateQuery(isGameplayInputLocked: true, isIntroComplete: false);
 
             var runtime = new RuntimeGameplayStateSystem();
             runtime.PlayRequested = true;
@@ -276,6 +270,7 @@ public sealed class RtsCameraSystemTests
                 null,
                 default,
                 TryGetDefaultEntityManager,
+                matchIntro,
                 null,
                 null,
                 null,
@@ -303,11 +298,7 @@ public sealed class RtsCameraSystemTests
             Assert.Greater(camera.transform.position.y, 24f);
             Assert.Greater(camera.fieldOfView, 36f);
 
-            world.EntityManager.SetComponentData(introEntity, new MatchIntroTransitionComponent
-            {
-                State = MatchIntroTransitionStateKind.Complete,
-                InputLocked = 0
-            });
+            matchIntro.Set(isGameplayInputLocked: false, isIntroComplete: true);
 
             Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
             Assert.IsTrue(cameraSystem.IsZoomTransitionActive, "Camera should begin settling only after the shell intro completes.");
@@ -334,6 +325,33 @@ public sealed class RtsCameraSystemTests
         camera.transform.position = position;
         camera.transform.rotation = rotation;
         return camera;
+    }
+
+    private sealed class FakeMatchIntroStateQuery : IMatchIntroStateQuery
+    {
+        private bool isGameplayInputLocked;
+        private bool isIntroComplete;
+
+        public FakeMatchIntroStateQuery(bool isGameplayInputLocked, bool isIntroComplete)
+        {
+            Set(isGameplayInputLocked, isIntroComplete);
+        }
+
+        public void Set(bool isGameplayInputLocked, bool isIntroComplete)
+        {
+            this.isGameplayInputLocked = isGameplayInputLocked;
+            this.isIntroComplete = isIntroComplete;
+        }
+
+        public bool IsGameplayInputLocked()
+        {
+            return isGameplayInputLocked;
+        }
+
+        public bool IsIntroComplete()
+        {
+            return isIntroComplete;
+        }
     }
 }
 #endif

@@ -24,6 +24,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
+        public readonly IMatchIntroStateQuery MatchIntroStateQuery;
         public readonly IsPointerOverGameplayUiAction IsPointerOverGameplayUi;
         public readonly Action<Vector2> UpdateLastKnownPointerPosition;
         public readonly Action HideOrderScreenMarkers;
@@ -56,6 +57,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             TryGetEntityManagerAction tryGetDefaultEntityManager,
+            IMatchIntroStateQuery matchIntroStateQuery,
             IsPointerOverGameplayUiAction isPointerOverGameplayUi,
             Action<Vector2> updateLastKnownPointerPosition,
             Action hideOrderScreenMarkers,
@@ -87,6 +89,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
+            MatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
             IsPointerOverGameplayUi = isPointerOverGameplayUi;
             UpdateLastKnownPointerPosition = updateLastKnownPointerPosition;
             HideOrderScreenMarkers = hideOrderScreenMarkers;
@@ -629,19 +632,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
 
     private static bool IsMatchIntroComplete(Context context)
     {
-        if (!context.TryGetDefaultEntityManager(out EntityManager em))
-            return true;
-
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
-            ComponentType.ReadOnly<MatchIntroTransitionComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return true;
-
-        MatchIntroTransitionComponent matchIntro =
-            em.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
-        return matchIntro.State == MatchIntroTransitionStateKind.Complete &&
-               matchIntro.InputLocked == 0;
+        return context.MatchIntroStateQuery == null || context.MatchIntroStateQuery.IsIntroComplete();
     }
 
     private void UpdateSmoothCameraFocus(Context context)

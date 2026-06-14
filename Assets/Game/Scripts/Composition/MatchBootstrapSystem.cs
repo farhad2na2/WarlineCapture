@@ -35,6 +35,7 @@ internal sealed class MatchBootstrapSystem
     private readonly CustomGameStartupSystem _customGameStartupSystem = new();
     private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
+    private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
     private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
     private readonly GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem = new();
@@ -274,6 +275,7 @@ internal sealed class MatchBootstrapSystem
             _performanceDiagnosticsSystem);
         gameplayRuntimeUpdateSystem.Dispose();
         _visualQualitySettingsSystem.Dispose();
+        matchIntroStateQuery.Reset();
 
         MainMenu = null;
         _mainMenuBaseBindingsApplied = false;
@@ -352,6 +354,7 @@ internal sealed class MatchBootstrapSystem
     public void Shutdown()
     {
         _matchSceneReferenceSystem.Clear(sceneView);
+        matchIntroStateQuery.Reset();
         sceneView = null;
     }
 
@@ -399,7 +402,8 @@ internal sealed class MatchBootstrapSystem
         Transform runtimeUiRoot,
         Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         Transform mapBuildingAuthoringRoot,
-        Transform mapVehicleAuthoringRoot)
+        Transform mapVehicleAuthoringRoot,
+        IMatchIntroStateQuery matchIntroStateQuery)
     {
         return managedGameplayStartupSystem.Initialize(
             dayNightConfig,
@@ -425,7 +429,8 @@ internal sealed class MatchBootstrapSystem
             BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
             BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata,
             mapBuildingAuthoringRoot,
-            mapVehicleAuthoringRoot);
+            mapVehicleAuthoringRoot,
+            matchIntroStateQuery);
     }
 
     public void ProjectFactionVisualConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
@@ -916,7 +921,8 @@ internal sealed class MatchBootstrapSystem
             _runtimeUiRoot,
             EnsureSelectionRectangleView,
             MapBuildingAuthoringRoot,
-            MapVehicleAuthoringRoot);
+            MapVehicleAuthoringRoot,
+            matchIntroStateQuery);
 
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;

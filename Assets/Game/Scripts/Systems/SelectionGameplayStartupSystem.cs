@@ -100,8 +100,10 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
         SelectionOrderMarkerSystem.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
-        FactionVisualSettings factionVisuals)
+        FactionVisualSettings factionVisuals,
+        IMatchIntroStateQuery matchIntroStateQuery)
     {
+        IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
         var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
         var selectionRuntimeConfigSystem = new SelectionRuntimeConfigSystem();
         var selectionRuntimeQuerySystem = new SelectionRuntimeQuerySystem();
@@ -120,9 +122,6 @@ internal sealed class SelectionGameplayStartupSystem
         var rtsSelectionPointerTargetCommandContextSystem = new RtsSelectionPointerTargetCommandContextSystem();
         var rtsCameraSystem = new RtsCameraSystem();
         var rtsCameraRequestSystem = new RtsCameraRequestSystem();
-        World cachedMatchIntroWorld = null;
-        EntityQuery matchIntroLockQuery = default;
-        bool hasMatchIntroLockQuery = false;
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
@@ -376,6 +375,7 @@ internal sealed class SelectionGameplayStartupSystem
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
                 TryGetDefaultEntityManager,
+                resolvedMatchIntroStateQuery,
                 IsPointerOverGameplayUi,
                 UpdateLastKnownPointerPosition,
                 HideOrderScreenMarkers);
@@ -615,25 +615,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         bool IsMatchIntroGameplayInputLocked()
         {
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
-                return false;
-
-            if (cachedMatchIntroWorld != world || !hasMatchIntroLockQuery)
-            {
-                cachedMatchIntroWorld = world;
-                matchIntroLockQuery = world.EntityManager.CreateEntityQuery(
-                    ComponentType.ReadOnly<UiShellBoundaryComponent>(),
-                    ComponentType.ReadOnly<MatchIntroTransitionComponent>());
-                hasMatchIntroLockQuery = true;
-            }
-
-            if (matchIntroLockQuery.IsEmptyIgnoreFilter)
-                return false;
-
-            MatchIntroTransitionComponent matchIntro =
-                world.EntityManager.GetComponentData<MatchIntroTransitionComponent>(matchIntroLockQuery.GetSingletonEntity());
-            return matchIntro.InputLocked != 0;
+            return resolvedMatchIntroStateQuery.IsGameplayInputLocked();
         }
 
         void EnsureRuntimeSelectionDependencies(EntityManager em)

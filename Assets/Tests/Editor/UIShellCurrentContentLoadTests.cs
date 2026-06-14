@@ -99,7 +99,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, default, default, default, 0)
         });
 
         AssertRegionHasChild(content.ShellView, UIShellRegionId.MenuBackgroundRegion);
@@ -119,7 +119,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchLeft = AssertRegionHasChild(content.ShellView, UIShellRegionId.LeftRegion);
@@ -153,7 +153,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
@@ -181,7 +181,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchLeft = AssertRegionHasChild(content.ShellView, UIShellRegionId.LeftRegion);
@@ -217,7 +217,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
@@ -244,7 +244,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchRight = AssertRegionHasChild(content.ShellView, UIShellRegionId.RightRegion);
@@ -326,7 +326,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         Assert.Greater(content.ContentVersion, beforeInstallVersion, "Installing Match HUD content must advance the shell content version.");
@@ -354,7 +354,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
         GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);

@@ -1,9 +1,8 @@
 {
-    "name": "Game.UI.Shell.Ecs",
+    "name": "Game.UI.Shell.Contracts.Ecs",
     "rootNamespace": "",
     "references": [
         "Game.UI.Contracts",
-        "Game.UI.Shell.Contracts.Ecs",
         "Unity.Collections",
         "Unity.Entities"
     ],

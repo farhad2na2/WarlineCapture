@@ -4,7 +4,6 @@
     "references": [
         "Game.Catalog.Contracts",
         "Game.UI.Contracts",
-        "Unity.Collections",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.TextMeshPro",
         "UnityEngine.UI"

@@ -11,11 +11,11 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
 
     [SerializeField] private UIShellView shellView;
 
-    private readonly List<UiShellPresentationCommandComponent> commandScratch = new();
+    private readonly List<UiShellPresentationCommandModel> commandScratch = new();
     private bool isExecuting;
     private int activeSequenceId = -1;
     private bool hasPendingCompletion;
-    private UiShellTransitionCompleteComponent pendingCompletion;
+    private UiShellTransitionCompleteModel pendingCompletion;
 
 #if UNITY_EDITOR
     private static long editorAllocationBytes;
@@ -70,7 +70,7 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
                 return;
         }
 
-        UiShellPresentationCommandComponent finalCommand = commandScratch[commandScratch.Count - 1];
+        UiShellPresentationCommandModel finalCommand = commandScratch[commandScratch.Count - 1];
         activeSequenceId = finalCommand.SequenceId;
         isExecuting = true;
 
@@ -79,12 +79,10 @@ public sealed class UIShellEcsPresentationSystem : MonoBehaviour
             if (completedSequenceId != activeSequenceId)
                 return;
 
-            pendingCompletion = new UiShellTransitionCompleteComponent
-            {
-                Kind = finalCommand.Kind,
-                Region = finalCommand.Region,
-                SequenceId = completedSequenceId
-            };
+            pendingCompletion = new UiShellTransitionCompleteModel(
+                finalCommand.Kind,
+                finalCommand.Region,
+                completedSequenceId);
             hasPendingCompletion = true;
             isExecuting = false;
         });

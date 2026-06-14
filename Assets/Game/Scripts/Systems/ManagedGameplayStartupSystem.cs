@@ -151,7 +151,8 @@ internal sealed class ManagedGameplayStartupSystem
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
         Transform mapBuildingAuthoringRoot,
-        Transform mapVehicleAuthoringRoot)
+        Transform mapVehicleAuthoringRoot,
+        IMatchIntroStateQuery matchIntroStateQuery)
     {
         var dayNight = new DayNightSystem();
         dayNight.Init(dayNightConfig, directionalLight, globalVolume);
@@ -260,7 +261,8 @@ internal sealed class ManagedGameplayStartupSystem
             ResolveSelectionCardPortraitSprite,
             ResolveSelectedBuildingPortraitSprite,
             TryResolveRuntimeBuildingInstance,
-            factionVisuals);
+            factionVisuals,
+            matchIntroStateQuery);
 
         _roadBuildCompositionSystem.BindBuildingInteraction(
             road,

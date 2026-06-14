@@ -14,6 +14,7 @@ public sealed class RtsSelectionRuntimeCameraContextSystem
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         RtsSelectionRuntimeCameraSystem.TryGetEntityManagerAction tryGetDefaultEntityManager,
+        IMatchIntroStateQuery matchIntroStateQuery,
         RtsSelectionRuntimeCameraSystem.IsPointerOverGameplayUiAction isPointerOverGameplayUi,
         Action<Vector2> updateLastKnownPointerPosition,
         Action hideOrderScreenMarkers)
@@ -29,6 +30,7 @@ public sealed class RtsSelectionRuntimeCameraContextSystem
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,
             tryGetDefaultEntityManager,
+            matchIntroStateQuery,
             isPointerOverGameplayUi,
             updateLastKnownPointerPosition,
             hideOrderScreenMarkers,

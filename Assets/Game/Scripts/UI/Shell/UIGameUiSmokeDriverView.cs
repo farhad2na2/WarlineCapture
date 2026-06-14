@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -45,11 +44,11 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
         while (isActiveAndEnabled)
         {
             if (!isCompletingLoading &&
-                TryGetState(out UiShellStateComponent state) &&
+                TryGetState(out UiShellStateModel state) &&
                 state.CurrentMode == UiShellMode.Loading &&
-                state.IsTransitionRunning == 0 &&
-                TryGetLoading(out UiShellLoadingProgressComponent loading) &&
-                loading.IsComplete == 0)
+                !state.IsTransitionRunning &&
+                TryGetLoading(out UiShellLoadingProgressModel loading) &&
+                !loading.IsComplete)
             {
                 yield return AnimateLoadingToComplete();
             }
@@ -82,7 +81,7 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
 
     private void SetLoading(float progress01, string status, bool complete)
     {
-        UiShellRuntimeGateway.TrySetLoadingProgress(progress01, new FixedString64Bytes(status), complete);
+        UiShellRuntimeGateway.TrySetLoadingProgress(progress01, status, complete);
     }
 
     private void EnqueueRoute(UiShellRouteIntent intent, UIRoute route)
@@ -90,12 +89,12 @@ public sealed class UIGameUiSmokeDriverView : MonoBehaviour
         UiShellRuntimeGateway.TryEnqueueRouteRequest(intent, route, pushHistory: false);
     }
 
-    private bool TryGetState(out UiShellStateComponent state)
+    private bool TryGetState(out UiShellStateModel state)
     {
         return UiShellRuntimeGateway.TryReadShellState(out state);
     }
 
-    private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
+    private bool TryGetLoading(out UiShellLoadingProgressModel loading)
     {
         return UiShellRuntimeGateway.TryReadLoadingProgress(out loading);
     }

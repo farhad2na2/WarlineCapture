@@ -1,6 +1,3 @@
-using Unity.Collections;
-using Unity.Entities;
-
 public enum UiShellMode
 {
     None,
@@ -93,76 +90,79 @@ public enum UiShellRegionId
     PopupLayer
 }
 
-public struct UiShellBoundaryComponent : IComponentData
+public readonly struct UiShellStateModel
 {
+    public readonly UiShellMode CurrentMode;
+    public readonly UIRoute ActiveRoute;
+    public readonly UiShellTransitionPhase Phase;
+    public readonly int TransitionSequenceId;
+    public readonly bool IsTransitionRunning;
+
+    public UiShellStateModel(
+        UiShellMode currentMode,
+        UIRoute activeRoute,
+        UiShellTransitionPhase phase,
+        int transitionSequenceId,
+        bool isTransitionRunning)
+    {
+        CurrentMode = currentMode;
+        ActiveRoute = activeRoute;
+        Phase = phase;
+        TransitionSequenceId = transitionSequenceId;
+        IsTransitionRunning = isTransitionRunning;
+    }
 }
 
-public struct UiShellStateComponent : IComponentData
+public readonly struct UiShellLoadingProgressModel
 {
-    public UiShellMode CurrentMode;
-    public UIRoute ActiveRoute;
-    public UiShellTransitionPhase Phase;
-    public int TransitionSequenceId;
-    public byte IsTransitionRunning;
+    public readonly float Progress01;
+    public readonly string Status;
+    public readonly bool IsComplete;
+
+    public UiShellLoadingProgressModel(float progress01, string status, bool isComplete)
+    {
+        Progress01 = progress01;
+        Status = status;
+        IsComplete = isComplete;
+    }
 }
 
-public struct UiShellLoadingProgressComponent : IComponentData
+public readonly struct UiShellPresentationCommandModel
 {
-    public float Progress01;
-    public FixedString64Bytes Status;
-    public byte IsComplete;
+    public readonly UiShellCommandKind Kind;
+    public readonly UiShellRegionId Region;
+    public readonly UIRoute Route;
+    public readonly UiShellMode TargetMode;
+    public readonly int SequenceId;
+
+    public UiShellPresentationCommandModel(
+        UiShellCommandKind kind,
+        UiShellRegionId region,
+        UIRoute route,
+        UiShellMode targetMode,
+        int sequenceId)
+    {
+        Kind = kind;
+        Region = region;
+        Route = route;
+        TargetMode = targetMode;
+        SequenceId = sequenceId;
+    }
 }
 
-public struct MatchIntroTransitionComponent : IComponentData
+public readonly struct UiShellTransitionCompleteModel
 {
-    public MatchIntroTransitionStateKind State;
-    public float Progress01;
-    public byte InputLocked;
-    public int SequenceId;
-    public FixedString64Bytes Status;
-}
+    public readonly UiShellCommandKind Kind;
+    public readonly UiShellRegionId Region;
+    public readonly int SequenceId;
 
-public struct UiShellArmoryCategoryComponent : IComponentData
-{
-    public ArmoryCatalogCategory Category;
-}
-
-public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
-{
-    public ArmoryCatalogCategory Category;
-}
-
-public struct UiShellRouteRequestComponent : IBufferElementData
-{
-    public UIRoute Route;
-    public UiShellRouteIntent Intent;
-    public byte PushHistory;
-}
-
-public struct UiShellRouteHistoryComponent : IBufferElementData
-{
-    public UIRoute Route;
-}
-
-public struct UiShellPopupRequestComponent : IBufferElementData
-{
-    public UiShellPopupKind PopupKind;
-    public UiShellPopupIntent Intent;
-    public int PayloadId;
-}
-
-public struct UiShellPresentationCommandComponent : IBufferElementData
-{
-    public UiShellCommandKind Kind;
-    public UiShellRegionId Region;
-    public UIRoute Route;
-    public UiShellMode TargetMode;
-    public int SequenceId;
-}
-
-public struct UiShellTransitionCompleteComponent : IBufferElementData
-{
-    public UiShellCommandKind Kind;
-    public UiShellRegionId Region;
-    public int SequenceId;
+    public UiShellTransitionCompleteModel(
+        UiShellCommandKind kind,
+        UiShellRegionId region,
+        int sequenceId)
+    {
+        Kind = kind;
+        Region = region;
+        SequenceId = sequenceId;
+    }
 }

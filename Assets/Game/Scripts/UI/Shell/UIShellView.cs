@@ -59,7 +59,7 @@ public sealed class UIShellView : MonoBehaviour
     }
 
     public void ExecuteCommandSequence(
-        IReadOnlyList<UiShellPresentationCommandComponent> commands,
+        IReadOnlyList<UiShellPresentationCommandModel> commands,
         int sequenceId,
         Action<int> completed)
     {
@@ -83,7 +83,7 @@ public sealed class UIShellView : MonoBehaviour
     }
 
     private void AddStepsForCommand(
-        UiShellPresentationCommandComponent command,
+        UiShellPresentationCommandModel command,
         int transitionId,
         List<UIMotionStep> steps)
     {

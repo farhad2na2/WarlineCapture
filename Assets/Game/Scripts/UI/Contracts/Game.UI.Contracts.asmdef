@@ -1,10 +1,7 @@
 {
     "name": "Game.UI.Contracts",
     "rootNamespace": "",
-    "references": [
-        "Unity.Collections",
-        "Unity.Entities"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

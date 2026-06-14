@@ -1,23 +1,22 @@
 using System.Collections.Generic;
-using Unity.Collections;
 
 public interface IUiShellRuntimeGateway
 {
     bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory);
 
-    bool TryReadLoadingProgress(out UiShellLoadingProgressComponent loading);
+    bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading);
 
-    bool TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete);
+    bool TrySetLoadingProgress(float progress01, string status, bool complete);
 
-    bool TryReadShellState(out UiShellStateComponent state);
+    bool TryReadShellState(out UiShellStateModel state);
 
     bool TryReadArmoryCategory(out ArmoryCatalogCategory category);
 
     bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category);
 
-    bool TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands);
+    bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands);
 
-    bool TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion);
+    bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion);
 }
 
 public static class UiShellRuntimeGateway
@@ -34,17 +33,17 @@ public static class UiShellRuntimeGateway
         return current.TryEnqueueRouteRequest(intent, route, pushHistory);
     }
 
-    public static bool TryReadLoadingProgress(out UiShellLoadingProgressComponent loading)
+    public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
     {
         return current.TryReadLoadingProgress(out loading);
     }
 
-    public static bool TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete)
+    public static bool TrySetLoadingProgress(float progress01, string status, bool complete)
     {
         return current.TrySetLoadingProgress(progress01, status, complete);
     }
 
-    public static bool TryReadShellState(out UiShellStateComponent state)
+    public static bool TryReadShellState(out UiShellStateModel state)
     {
         return current.TryReadShellState(out state);
     }
@@ -59,12 +58,12 @@ public static class UiShellRuntimeGateway
         return current.TryEnqueueArmoryCategory(category);
     }
 
-    public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands)
+    public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
     {
         return current.TryConsumePresentationCommands(commands);
     }
 
-    public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion)
+    public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
     {
         return current.TryEnqueueTransitionComplete(completion);
     }
@@ -78,18 +77,18 @@ public static class UiShellRuntimeGateway
             return false;
         }
 
-        public bool TryReadLoadingProgress(out UiShellLoadingProgressComponent loading)
+        public bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
         {
             loading = default;
             return false;
         }
 
-        public bool TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete)
+        public bool TrySetLoadingProgress(float progress01, string status, bool complete)
         {
             return false;
         }
 
-        public bool TryReadShellState(out UiShellStateComponent state)
+        public bool TryReadShellState(out UiShellStateModel state)
         {
             state = default;
             return false;
@@ -106,13 +105,13 @@ public static class UiShellRuntimeGateway
             return false;
         }
 
-        public bool TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands)
+        public bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
         {
             commands?.Clear();
             return false;
         }
 
-        public bool TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion)
+        public bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
         {
             return false;
         }

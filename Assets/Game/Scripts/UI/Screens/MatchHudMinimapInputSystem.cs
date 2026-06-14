@@ -1,4 +1,3 @@
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -499,8 +498,8 @@ public sealed class MatchHudMinimapInputSystem
     {
         ReadRenderTextureInto(_readbackTexture);
 
-        NativeArray<Color32> pixels = _readbackTexture.GetRawTextureData<Color32>();
-        if (!pixels.IsCreated || pixels.Length == 0)
+        Color32[] pixels = _readbackTexture.GetPixels32();
+        if (pixels == null || pixels.Length == 0)
             return true;
 
         int step = Mathf.Max(1, pixels.Length / 4096);

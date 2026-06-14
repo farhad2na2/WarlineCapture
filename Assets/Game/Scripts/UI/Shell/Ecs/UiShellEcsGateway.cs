@@ -39,7 +39,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return true;
     }
 
-    public static bool TryReadLoadingProgress(out UiShellLoadingProgressComponent loading)
+    public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
     {
         loading = default;
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
@@ -48,11 +48,16 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         if (!entityManager.HasComponent<UiShellLoadingProgressComponent>(boundary))
             return false;
 
-        loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        UiShellLoadingProgressComponent component =
+            entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        loading = new UiShellLoadingProgressModel(
+            component.Progress01,
+            component.Status.ToString(),
+            component.IsComplete != 0);
         return true;
     }
 
-    public static bool TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete)
+    public static bool TrySetLoadingProgress(float progress01, string status, bool complete)
     {
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
             return false;
@@ -60,13 +65,13 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
         {
             Progress01 = Mathf.Clamp01(progress01),
-            Status = status,
+            Status = new FixedString64Bytes(status ?? string.Empty),
             IsComplete = complete ? (byte)1 : (byte)0
         });
         return true;
     }
 
-    public static bool TryReadShellState(out UiShellStateComponent state)
+    public static bool TryReadShellState(out UiShellStateModel state)
     {
         state = default;
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
@@ -75,7 +80,13 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         if (!entityManager.HasComponent<UiShellStateComponent>(boundary))
             return false;
 
-        state = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        UiShellStateComponent component = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        state = new UiShellStateModel(
+            component.CurrentMode,
+            component.ActiveRoute,
+            component.Phase,
+            component.TransitionSequenceId,
+            component.IsTransitionRunning != 0);
         return true;
     }
 
@@ -105,7 +116,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return true;
     }
 
-    public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands)
+    public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
     {
         if (commands == null)
             return false;
@@ -123,12 +134,21 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             return false;
 
         for (int i = 0; i < buffer.Length; i++)
-            commands.Add(buffer[i]);
+        {
+            UiShellPresentationCommandComponent command = buffer[i];
+            commands.Add(new UiShellPresentationCommandModel(
+                command.Kind,
+                command.Region,
+                command.Route,
+                command.TargetMode,
+                command.SequenceId));
+        }
+
         buffer.Clear();
         return commands.Count > 0;
     }
 
-    public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion)
+    public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
     {
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
             return false;
@@ -138,7 +158,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
 
         DynamicBuffer<UiShellTransitionCompleteComponent> completions =
             entityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary);
-        completions.Add(completion);
+        completions.Add(new UiShellTransitionCompleteComponent
+        {
+            Kind = completion.Kind,
+            Region = completion.Region,
+            SequenceId = completion.SequenceId
+        });
         return true;
     }
 
@@ -185,17 +210,17 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return TryEnqueueRouteRequest(intent, route, pushHistory);
     }
 
-    bool IUiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressComponent loading)
+    bool IUiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
     {
         return TryReadLoadingProgress(out loading);
     }
 
-    bool IUiShellRuntimeGateway.TrySetLoadingProgress(float progress01, FixedString64Bytes status, bool complete)
+    bool IUiShellRuntimeGateway.TrySetLoadingProgress(float progress01, string status, bool complete)
     {
         return TrySetLoadingProgress(progress01, status, complete);
     }
 
-    bool IUiShellRuntimeGateway.TryReadShellState(out UiShellStateComponent state)
+    bool IUiShellRuntimeGateway.TryReadShellState(out UiShellStateModel state)
     {
         return TryReadShellState(out state);
     }
@@ -210,12 +235,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return TryEnqueueArmoryCategory(category);
     }
 
-    bool IUiShellRuntimeGateway.TryConsumePresentationCommands(List<UiShellPresentationCommandComponent> commands)
+    bool IUiShellRuntimeGateway.TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
     {
         return TryConsumePresentationCommands(commands);
     }
 
-    bool IUiShellRuntimeGateway.TryEnqueueTransitionComplete(UiShellTransitionCompleteComponent completion)
+    bool IUiShellRuntimeGateway.TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
     {
         return TryEnqueueTransitionComplete(completion);
     }

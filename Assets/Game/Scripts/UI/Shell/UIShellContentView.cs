@@ -64,7 +64,7 @@ public sealed class UIShellContentView : MonoBehaviour
             buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
     }
 
-    public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandComponent> commands)
+    public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandModel> commands)
     {
         if (commands == null)
             return;

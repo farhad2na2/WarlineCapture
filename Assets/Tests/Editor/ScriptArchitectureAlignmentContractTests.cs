@@ -106,6 +106,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.SceneAndMapAuthoringBootstrapMustStayInComposition();
             tests.RuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly();
+            tests.RuntimeAssemblyMustNotReferenceUiShellEcsContractsAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly();
             tests.RenderingAssemblyMustNotReferenceAuthoringAssembly();
             tests.RenderingAssemblyMustNotReadAuthoringComponents();
@@ -114,14 +115,16 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly();
             tests.UiRuntimeAssemblyMustNotReferenceEntitiesPackage();
+            tests.UiRuntimeAssemblyMustNotReferenceCollectionsPackage();
             tests.UiRuntimeAssemblyMustNotReferenceUiShellEcsAssembly();
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
+            tests.UiContractsAssemblyMustNotReferenceEcsPackages();
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=25");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=28");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -257,6 +260,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void UiRuntimeAssemblyMustNotReferenceCollectionsPackage()
+    {
+        string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
+        string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.Collections\"", StringComparison.Ordinal),
+            "`Game.UI.Runtime` must not reference `Unity.Collections`. Keep native ECS/buffer data in ECS-facing assemblies and expose UI DTOs through contracts.");
+    }
+
+    [Test]
     public void UiRuntimeAssemblyMustNotReferenceUiShellEcsAssembly()
     {
         string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
@@ -288,6 +302,18 @@ public sealed class ScriptArchitectureAlignmentContractTests
             asmdef.Contains("\"Game.Components\"", StringComparison.Ordinal) ||
             asmdef.Contains("\"Game.Configs\"", StringComparison.Ordinal),
             "`Game.UI.Contracts` must define UI-facing contracts and DTOs without depending on gameplay components or gameplay config assemblies. Composition owns mapping.");
+    }
+
+    [Test]
+    public void UiContractsAssemblyMustNotReferenceEcsPackages()
+    {
+        string uiContractsAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Contracts/Game.UI.Contracts.asmdef");
+        string asmdef = File.ReadAllText(uiContractsAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Unity.Entities\"", StringComparison.Ordinal) ||
+            asmdef.Contains("\"Unity.Collections\"", StringComparison.Ordinal),
+            "`Game.UI.Contracts` must stay pure UI-facing contracts/DTOs. ECS shell components belong in `Game.UI.Shell.Contracts.Ecs`.");
     }
 
     [Test]
@@ -376,6 +402,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.UI.Shell.Ecs\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Game.UI.Shell.Ecs`. Shared shell route/state data belongs in `Game.UI.Contracts`; shell systems stay UI-owned.");
+    }
+
+    [Test]
+    public void RuntimeAssemblyMustNotReferenceUiShellEcsContractsAssembly()
+    {
+        string runtimeAsmdefPath = Path.Combine(GameScriptsRoot, "Game.Runtime.asmdef");
+        string asmdef = File.ReadAllText(runtimeAsmdefPath);
+
+        Assert.IsFalse(
+            asmdef.Contains("\"Game.UI.Shell.Contracts.Ecs\"", StringComparison.Ordinal),
+            "`Game.Runtime` must not reference ECS shell contracts. Runtime code should depend on `Game.UI.Contracts`; composition adapts shell ECS state.");
     }
 
     [Test]

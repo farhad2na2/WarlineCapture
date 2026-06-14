@@ -21,13 +21,19 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.AttackCommandRequest_StoresResolvedTargetEntity());
             RunCase(test => test.ScanCommandRequest_StoresResolvedTargetCellAndWorldPosition());
             RunCase(test => test.BoardTransportCommandRequest_StoresResolvedTargetEntity());
+            RunCase(test => test.SelectAllCommandRequest_StoresScreenRect());
+            RunCase(test => test.SelectAllCommandSystem_QueuesSelectionRectangleAndClearsCommandMode());
+            RunCase(test => test.SelectAllCommandSystem_MapsVariantRequestsToSelectionFilters());
+            RunCase(test => test.DeselectAllCommandSystem_RemovesSelectedTagsAndClearsCommandMode());
             RunCase(test => test.HasPendingAttackCommandRequestsOrResults_DetectsAttackResults());
             RunCase(test => test.HasPendingMoveCommandRequestsOrResults_DetectsMoveResults());
             RunCase(test => test.HasPendingScanCommandRequestsOrResults_DetectsScanResults());
             RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
+            RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
+            RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=10");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=16");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -285,6 +291,124 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(1, requests[0].HasTargetEntity);
         Assert.AreEqual(1, requests[0].HasScreenPosition);
         Assert.IsTrue(inputSystem.HasPendingTransportCommandRequests());
+    }
+
+    [Test]
+    public void SelectAllCommandRequest_StoresScreenRect()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Rect screenRect = Rect.MinMaxRect(0f, 0f, 1920f, 1080f);
+
+        Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(screenRect, Time.frameCount));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.SelectAll, requests[0].Kind);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.ScreenRect, requests[0].TargetKind);
+        Assert.AreEqual(new float2(screenRect.center.x, screenRect.center.y), requests[0].ScreenPosition);
+        Assert.AreEqual(new float2(screenRect.min.x, screenRect.min.y), requests[0].DragStart);
+        Assert.AreEqual(new float2(screenRect.max.x, screenRect.max.y), requests[0].DragCurrent);
+        Assert.AreEqual(1, requests[0].HasScreenPosition);
+        Assert.AreEqual(1, requests[0].HasScreenRect);
+        Assert.IsTrue(inputSystem.HasPendingExternalSelectionCommandRequests());
+    }
+
+    [Test]
+    public void SelectAllCommandSystem_QueuesSelectionRectangleAndClearsCommandMode()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Rect screenRect = Rect.MinMaxRect(10f, 20f, 300f, 420f);
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            _testWorld.EntityManager.CreateEntity(),
+            Time.frameCount,
+            oneShot: true);
+        inputSystem.IgnoreNextLeftMouseRelease = true;
+        inputSystem.SkipNextWorldReleaseAfterSelection = true;
+
+        Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(screenRect, frame: 81));
+        SystemHandle selectAllCommandSystem = _testWorld.CreateSystem<RtsSelectionSelectAllCommandSystem>();
+
+        selectAllCommandSystem.Update(_testWorld.Unmanaged);
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out EntityManager em,
+            out Entity commandEntity,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+        DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests =
+            em.GetBuffer<RtsSelectionPointerRequestElement>(commandEntity);
+        Assert.AreEqual(1, pointerRequests.Length);
+        Assert.AreEqual(RtsSelectionPointerRequestKind.SelectionRectCommitted, pointerRequests[0].Kind);
+        Assert.AreEqual(new float2(screenRect.min.x, screenRect.min.y), pointerRequests[0].DragStart);
+        Assert.AreEqual(new float2(screenRect.max.x, screenRect.max.y), pointerRequests[0].DragCurrent);
+        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.All, pointerRequests[0].SelectionFilter);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.IsFalse(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsFalse(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.IsTrue(inputSystem.HasPendingSelectionRectangleRequests());
+    }
+
+    [Test]
+    public void SelectAllCommandSystem_MapsVariantRequestsToSelectionFilters()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Rect screenRect = Rect.MinMaxRect(0f, 0f, 1280f, 720f);
+        Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAll, screenRect, frame: 90));
+        Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAllSoldiers, screenRect, frame: 91));
+        Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAllVehicles, screenRect, frame: 92));
+        SystemHandle selectAllCommandSystem = _testWorld.CreateSystem<RtsSelectionSelectAllCommandSystem>();
+
+        selectAllCommandSystem.Update(_testWorld.Unmanaged);
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out EntityManager em,
+            out Entity commandEntity,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+        DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests =
+            em.GetBuffer<RtsSelectionPointerRequestElement>(commandEntity);
+        Assert.AreEqual(3, pointerRequests.Length);
+        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.All, pointerRequests[0].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.Soldiers, pointerRequests[1].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.Vehicles, pointerRequests[2].SelectionFilter);
+    }
+
+    [Test]
+    public void DeselectAllCommandSystem_RemovesSelectedTagsAndClearsCommandMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity first = em.CreateEntity(typeof(SelectedUnitTag));
+        Entity second = em.CreateEntity(typeof(SelectedUnitTag));
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+        inputSystem.IgnoreNextLeftMouseRelease = true;
+        inputSystem.SkipNextWorldReleaseAfterSelection = true;
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.DeselectAll, frame: 101));
+        SystemHandle deselectAllCommandSystem = _testWorld.CreateSystem<RtsSelectionDeselectAllCommandSystem>();
+
+        deselectAllCommandSystem.Update(_testWorld.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<SelectedUnitTag>(first));
+        Assert.IsFalse(em.HasComponent<SelectedUnitTag>(second));
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.IsFalse(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsFalse(inputSystem.SkipNextWorldReleaseAfterSelection);
     }
 
     [Test]
@@ -1189,6 +1313,108 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pressPosition = new(16f, 24f);
+        Vector2 heldPosition = new(22f, 31f);
+        bool cameraDragging = false;
+        int panCalls = 0;
+        Vector2 panDelta = default;
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            panCamera: delta =>
+            {
+                panCalls++;
+                panDelta = delta;
+            });
+
+        InvokeRuntimePointerPressed(context, pressPosition);
+        Assert.IsTrue(cameraDragging);
+
+        InvokeRuntimePointerHeld(context, heldPosition);
+
+        Assert.AreEqual(1, panCalls);
+        Assert.AreEqual(heldPosition - pressPosition, panDelta);
+    }
+
+    [Test]
+    public void RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Entity transport = _testWorld.EntityManager.CreateEntity();
+        Vector2 pressPosition = new(48f, 96f);
+        Vector2 heldPosition = new(58f, 105f);
+        bool cameraDragging = false;
+        int panCalls = 0;
+
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            transport,
+            Time.frameCount,
+            oneShot: true);
+        RtsSelectionRuntimeInputSystem.Context nonPassengerContext = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            panCamera: _ => panCalls++,
+            isBoardSelectedTransportPassengerTarget: (_, _) => false);
+
+        InvokeRuntimePointerPressed(nonPassengerContext, pressPosition);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.IsTrue(cameraDragging);
+        InvokeRuntimePointerHeld(nonPassengerContext, heldPosition);
+        Assert.AreEqual(1, panCalls);
+
+        cameraDragging = false;
+        panCalls = 0;
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            transport,
+            Time.frameCount,
+            oneShot: true);
+        RtsSelectionRuntimeInputSystem.Context passengerContext = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            panCamera: _ => panCalls++,
+            isBoardSelectedTransportPassengerTarget: (_, _) => true);
+
+        InvokeRuntimePointerPressed(passengerContext, pressPosition);
+        Assert.IsTrue(inputSystem.BoardPassengerDragArmed);
+        Assert.IsFalse(cameraDragging);
+        InvokeRuntimePointerHeld(passengerContext, heldPosition);
+        Assert.AreEqual(0, panCalls);
+        Assert.IsTrue(inputSystem.IsDraggingSelection);
+        Assert.IsTrue(inputSystem.HasLiveSelectionRect);
+    }
+
+    [Test]
     public void PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets()
     {
         string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
@@ -1446,12 +1672,74 @@ public sealed class RtsSelectionInputSystemTests
         return string.Empty;
     }
 
+    private static RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext(
+        RuntimeGameplayStateSystem runtimeState,
+        RtsSelectionInputSystem inputSystem,
+        Func<bool> getCameraDragging = null,
+        Action<bool> setCameraDragging = null,
+        Action<Vector2> panCamera = null,
+        Func<Entity, Vector2, bool> isBoardSelectedTransportPassengerTarget = null)
+    {
+        return new RtsSelectionRuntimeInputSystem.Context(
+            runtimeGameplayStateSystem: runtimeState,
+            inputSystem: inputSystem,
+            mainMenuPlayUi: null,
+            dragThresholdPixels: 8f,
+            selectionModeHoldSeconds: 0.35f,
+            getExplicitAttackTargetModeActive: null,
+            setExplicitAttackTargetModeActive: null,
+            getCameraDragging: getCameraDragging,
+            setCameraDragging: setCameraDragging,
+            isPointerOverAnyUi: _ => false,
+            isPointerOverGameplayUi: _ => false,
+            tryIssueAttackOrderToClickedUnit: null,
+            tryIssueScanOrder: null,
+            orderMarkerSystem: null,
+            tryGetDefaultEntityManager: null,
+            tryGetScanClickedCell: null,
+            setHudWorldMarkersVisible: null,
+            tryIssueBoardTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToPassengerRect: null,
+            isBoardSelectedTransportPassengerTarget: isBoardSelectedTransportPassengerTarget,
+            tryFocusUnit: null,
+            panCamera: panCamera,
+            issueMoveOrder: null,
+            processSelectionRectangleRequests: null,
+            clearCommandMode: null,
+            logClickDiagnostic: null,
+            buildClickDebugSummary: _ => "summary=test",
+            isGameplayInputLocked: null);
+    }
+
+    private static void InvokeRuntimePointerPressed(
+        RtsSelectionRuntimeInputSystem.Context context,
+        Vector2 pointerPosition)
+    {
+        InvokeRuntimePointerMethod("HandlePointerPressed", context, pointerPosition);
+    }
+
+    private static void InvokeRuntimePointerHeld(
+        RtsSelectionRuntimeInputSystem.Context context,
+        Vector2 pointerPosition)
+    {
+        InvokeRuntimePointerMethod("HandlePointerHeld", context, pointerPosition);
+    }
+
     private static void InvokeRuntimePointerRelease(
         RtsSelectionRuntimeInputSystem.Context context,
         Vector2 pointerPosition)
     {
+        InvokeRuntimePointerMethod("HandlePointerReleased", context, pointerPosition);
+    }
+
+    private static void InvokeRuntimePointerMethod(
+        string methodName,
+        RtsSelectionRuntimeInputSystem.Context context,
+        Vector2 pointerPosition)
+    {
         System.Reflection.MethodInfo method = typeof(RtsSelectionRuntimeInputSystem).GetMethod(
-            "HandlePointerReleased",
+            methodName,
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
         Assert.NotNull(method);
 

@@ -282,6 +282,8 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessAttackCommandRequests();
             if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
                 ProcessScanCommandRequests();
+            ProcessSelectAllCommandRequests();
+            ProcessDeselectAllCommandRequests();
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
             RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
@@ -295,6 +297,40 @@ internal sealed class SelectionGameplayStartupSystem
             RtsSelectionRuntimeCameraSystem.Context cameraContext = GetRuntimeCameraContext();
             if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
                 rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
+        }
+
+        void ProcessSelectAllCommandRequests()
+        {
+            if (runtimeConfig.WorldCamera == null ||
+                !TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionSelectAllCommandSystem.ProcessPendingRequests(em))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            if (rtsSelectionInputSystem.HasPendingSelectionRectangleRequests())
+                ProcessSelectionRectangleRequests();
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+        }
+
+        void ProcessDeselectAllCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(em))
+            {
+                return;
+            }
+
+            selectionStateSystem.ClearSelectedMoveCache();
+            focusedUnitLifecycleSystem.ClearFocusedUnit(selectionStateSystem);
+            SetExplicitAttackTargetModeActive(false);
+            selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
         }
 
         RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()

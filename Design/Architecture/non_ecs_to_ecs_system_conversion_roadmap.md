@@ -33,11 +33,11 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `33 / 113 complete (29.2%)`.
+- Checklist progress: `39 / 113 complete (34.5%)`.
 - In progress: `0`.
-- Remaining open: `80`.
-- Phase progress: `3 / 13 phases complete; 1 in progress; 9 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `92` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `74`.
+- Phase progress: `4 / 13 phases complete; 1 in progress; 8 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `93` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `6`.
@@ -46,7 +46,7 @@ Always update this section when implementation begins or a phase completes.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 made camera/screen target resolution flow through a boundary-only pass inside the pointer target command owner.
+- Last implementation update: 2026-06-14 converted Select All, Select All Soldiers, and Select All Vehicles into explicit ECS command request processing while keeping camera selection projection in the managed boundary.
 
 ## Architecture Rules
 
@@ -240,7 +240,7 @@ Progress notes:
 
 ## Phase 3: Pointer Target Boundary Split
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Split `RtsSelectionPointerTargetCommandSystem` so it no longer executes gameplay commands.
@@ -259,9 +259,9 @@ Implementation steps:
 - [x] Write resolved Attack target requests instead of calling attack command execution.
 - [x] Write resolved Scan target requests instead of calling scan command execution.
 - [x] Write resolved Board target requests instead of calling transport command execution.
-- [ ] Preserve command-mode UX: active command taps do not select hostile units/buildings.
-- [ ] Preserve mobile pan behavior during long-range Attack and transport-first Board mode.
-- [ ] Add tests for command-mode click priority over selection.
+- [x] Preserve command-mode UX: active command taps do not select hostile units/buildings.
+- [x] Preserve mobile pan behavior during long-range Attack and transport-first Board mode.
+- [x] Add tests for command-mode click priority over selection.
 
 Acceptance checks:
 
@@ -278,10 +278,12 @@ Progress notes:
 - 2026-06-14: `RtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit` now resolves boardable transport targets at the pointer boundary and writes `BoardTransport` command-intent requests carrying the transport entity. `TransportBoardingCommandSystem.OnUpdate` consumes those resolved transport requests directly, shares the existing passenger-first boarding mutation through a target-entity overload, and emits transport command results for the HUD/marker boundary to drain. Screen-only Board requests remain as fallback for unresolved clicks. Added pending transport result detection, input coverage for resolved Board request data, and transport validation coverage for ECS Board OnUpdate consumption.
 - 2026-06-14: `RtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit` now resolves direct non-building attackable unit/entity targets at the pointer boundary and writes Attack command-intent requests carrying `TargetEntity`. `AttackOrderCommandSystem.OnUpdate` owns those resolved requests and emits Attack command results for the HUD/marker boundary to drain. Runtime-building/base-breach candidates and unresolved taps intentionally remain on the existing screen-resolved managed fallback path until breach-target data is represented explicitly in ECS request data.
 - 2026-06-14: Added an explicit `PointerTargetBoundaryPass` inside `RtsSelectionPointerTargetCommandSystem`. Move, Attack, Scan, Board, and Focus command paths now ask that boundary pass for clicked cells/entities instead of directly calling camera/grid target lookup helpers. Public target lookup methods remain as transition wrappers for startup delegates. Added focused source validation so resolved command target paths continue to use the boundary pass.
+- 2026-06-14: Made active world-target command releases return immediately after the active command path cleans release-scoped pointer state, so Attack/Move/Scan/Board clicks cannot fall through to normal focus selection. Building selection was already gated by `ShouldBlockBuildingSelectionClick` while command mode is active. Added `RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection`; focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=10`.
+- 2026-06-14: Added behavioral coverage for command-mode pan. Attack target mode now has focused validation proving held pointer movement still pans the camera while targeting, and transport-first Board mode has focused validation proving non-passenger presses pan while passenger presses arm the passenger drag rectangle instead. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=12`.
 
 ## Phase 4: Focus Command Split
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Split `RtsSelectionFocusCommandSystem` into ECS command-mode and selection request processors.
@@ -294,9 +296,9 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Convert Select All into an ECS request processor.
-- [ ] Convert Select All Soldiers into an ECS request processor.
-- [ ] Convert Select All Vehicles into an ECS request processor.
+- [x] Convert Select All into an ECS request processor.
+- [x] Convert Select All Soldiers into an ECS request processor.
+- [x] Convert Select All Vehicles into an ECS request processor.
 - [ ] Convert Deselect All into an ECS request processor.
 - [ ] Convert Enter Selection Mode into an ECS request processor.
 - [ ] Convert Exit Selection Mode into an ECS request processor.
@@ -313,6 +315,10 @@ Acceptance checks:
 - UI buttons only enqueue command intent.
 - ECS owns command-mode state.
 - HUD displays command-mode state but does not own gameplay state.
+
+Progress notes:
+
+- 2026-06-14: Added `RtsSelectionSelectAllCommandSystem` as an explicit `ISystem` request processor for `SelectAll`, `SelectAllSoldiers`, and `SelectAllVehicles` command-intent requests carrying a screen rectangle. `SelectionUiCommandSystem` now queues screen-rect command data for all three select-all commands instead of bare intents. The ECS processor consumes the requests, clears active command-mode state, maps each variant to the correct selection filter, and writes `SelectionRectCommitted` pointer requests; `SelectionGameplayStartupSystem` then performs managed HUD cleanup and drains the existing camera-aware rectangle selection boundary. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=15`.
 
 ## Phase 5: Focused Unit Commands
 

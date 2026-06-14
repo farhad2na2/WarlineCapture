@@ -19,13 +19,14 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.TacticalCommandReasonCodes_IncludeTransportFailureCodes();
             tests.ScanCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.MoveCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
+            tests.MoveCommandProcessor_ReacquiresResultBufferAfterMoveOrderStructuralWrites();
             tests.AttackCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest();
             tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
             tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=11");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=12");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -264,6 +265,93 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.IsFalse(handled);
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(1, results.Length);
+    }
+
+    [Test]
+    public void MoveCommandProcessor_ReacquiresResultBufferAfterMoveOrderStructuralWrites()
+    {
+        using World world = new("SelectionCommandMoveProcessorStructuralWriteTests");
+        EntityManager em = world.EntityManager;
+        NativeArray<int> blockerCounts = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            Entity commandEntity = em.CreateEntity();
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+                em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            DynamicBuffer<RtsSelectionCommandResultElement> results =
+                em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            requests.Add(new RtsSelectionCommandIntentRequestElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Move,
+                RequestId = 44,
+                Frame = 120,
+                ScreenPosition = new float2(15f, 25f),
+                HasScreenPosition = 1
+            });
+
+            Entity selectedUnit = em.CreateEntity(
+                typeof(SelectedUnitTag),
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(Faction));
+            em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(selectedUnit, new UnitMove { Speed = 4f, WalkSpeed = 4f, ArriveDistance = 0.1f });
+            em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            CreateWalkableGrid(em, 8, 8, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
+
+            using EntityQuery selectedMoveQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SelectedUnitTag>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridWalkable>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            var processor = new SelectedMoveOrderCommandSystem();
+
+            bool handled = processor.ProcessCommandIntentRequests(
+                em,
+                commandEntity,
+                requests,
+                results,
+                selectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                null,
+                new UnitMoveOrderSystem(),
+                new SelectionOrderMarkerSystem(),
+                TryGetNoClickedUnit,
+                ResolveClickedCell(new int2(3, 3), new UnityEngine.Vector3(3.5f, 0f, 3.5f)));
+
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            Assert.IsTrue(handled);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(1, results.Length);
+            Assert.AreEqual(1, results[0].Accepted);
+            Assert.AreEqual(44, results[0].RequestId);
+            Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(selectedUnit));
+            Assert.IsTrue(em.HasComponent<UnitTarget>(selectedUnit));
+            Assert.IsTrue(em.HasComponent<UnitPathRequest>(selectedUnit));
+        }
+        finally
+        {
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+        }
     }
 
     [Test]
@@ -617,6 +705,72 @@ public sealed class SelectionCommandRequestResultContractTests
     {
         entity = Entity.Null;
         return false;
+    }
+
+    private static SelectedMoveOrderCommandSystem.ClickedCellResolver ResolveClickedCell(
+        int2 cell,
+        UnityEngine.Vector3 worldPoint)
+    {
+        return (
+            UnityEngine.Vector2 _,
+            EntityManager _,
+            out int2 resolvedCell,
+            out UnityEngine.Vector3 resolvedWorldPoint) =>
+        {
+            resolvedCell = cell;
+            resolvedWorldPoint = worldPoint;
+            return true;
+        };
+    }
+
+    private static Entity CreateWalkableGrid(
+        EntityManager em,
+        int width,
+        int height,
+        out NativeArray<int> blockerCounts,
+        out NativeArray<byte> friendlyPassFactionIds,
+        out NativeBitArray blocked,
+        out NativeBitArray occupied)
+    {
+        int gridSize = width * height;
+        blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+        friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+            friendlyPassFactionIds[i] = byte.MaxValue;
+
+        Entity gridEntity = em.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(GridWalkable));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = width,
+            Height = height,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Counts = blockerCounts,
+            Blocked = blocked,
+            FriendlyPassFactionIds = friendlyPassFactionIds
+        });
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = occupied
+        });
+
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+            walkable[i] = new GridWalkable { Value = 1 };
+
+        return gridEntity;
     }
 
     private static RtsSelectionCommandResultFlushSystem.Context CreateFlushContext(

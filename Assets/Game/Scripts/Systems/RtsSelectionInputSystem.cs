@@ -425,6 +425,33 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueSelectAllCommandRequest(Rect screenRect, int frame)
+    {
+        return QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAll, screenRect, frame);
+    }
+
+    public bool QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind kind, Rect screenRect, int frame)
+    {
+        if (kind != RtsSelectionCommandIntentKind.SelectAll &&
+            kind != RtsSelectionCommandIntentKind.SelectAllSoldiers &&
+            kind != RtsSelectionCommandIntentKind.SelectAllVehicles)
+        {
+            return false;
+        }
+
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = kind,
+            Frame = frame,
+            ScreenPosition = ToFloat2(screenRect.center),
+            DragStart = ToFloat2(screenRect.min),
+            DragCurrent = ToFloat2(screenRect.max),
+            TargetKind = RtsSelectionCommandTargetKind.ScreenRect,
+            HasScreenPosition = 1,
+            HasScreenRect = 1
+        });
+    }
+
     public bool QueueMoveCommandRequest(Vector2 screenPosition, int frame)
     {
         bool queued = _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -673,6 +700,23 @@ public sealed class RtsSelectionInputSystem
                 case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
                     return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool HasPendingSelectionRectangleRequests()
+    {
+        if (!_inputStateSystem.TryGetPointerRequests(out _, out DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests))
+            return false;
+
+        for (int i = 0; i < pointerRequests.Length; i++)
+        {
+            if (pointerRequests[i].Kind == RtsSelectionPointerRequestKind.SelectionRectUpdated ||
+                pointerRequests[i].Kind == RtsSelectionPointerRequestKind.SelectionRectCommitted)
+            {
+                return true;
             }
         }
 

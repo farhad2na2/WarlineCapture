@@ -24,17 +24,17 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
 
     public bool RequestSelectAll()
     {
-        return Queue(RtsSelectionCommandIntentKind.SelectAll);
+        return QueueSelectAll(RtsSelectionCommandIntentKind.SelectAll);
     }
 
     public bool RequestSelectAllSoldiers()
     {
-        return Queue(RtsSelectionCommandIntentKind.SelectAllSoldiers);
+        return QueueSelectAll(RtsSelectionCommandIntentKind.SelectAllSoldiers);
     }
 
     public bool RequestSelectAllVehicles()
     {
-        return Queue(RtsSelectionCommandIntentKind.SelectAllVehicles);
+        return QueueSelectAll(RtsSelectionCommandIntentKind.SelectAllVehicles);
     }
 
     public bool RequestEnterSelectionMode()
@@ -162,6 +162,21 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         }
 
         return queued;
+    }
+
+    private bool QueueSelectAll(RtsSelectionCommandIntentKind kind)
+    {
+        if (IsGameplayInputLocked())
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={Time.frameCount}");
+            return false;
+        }
+
+        return _inputSystem.QueueSelectAllCommandRequest(
+            kind,
+            new Rect(0f, 0f, Screen.width, Screen.height),
+            Time.frameCount);
     }
 
     private bool IsGameplayInputLocked()

@@ -361,11 +361,12 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         ClickedUnitResolver tryGetClickedUnit,
         ClickedCellResolver tryGetClickedCell)
     {
-        int handledCount = 0;
+        _ = commandResults;
         int pendingMoveRequestCount = SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace
             ? CountMoveRequests(commandRequests)
             : 0;
 
+        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(commandRequests.Length, Allocator.Temp);
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
@@ -377,7 +378,13 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             }
 
             commandRequests.RemoveAt(i);
-            handledCount++;
+            pendingRequests.Add(request);
+        }
+
+        NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingRequestArray.Length; i++)
+        {
+            RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             {
@@ -406,17 +413,10 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                     $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
             }
 
-            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
-            if (em.Exists(commandEntity))
-            {
-                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
-                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
-                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-            }
+            AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
         }
 
-        return handledCount > 0;
+        return pendingRequestArray.Length > 0;
     }
 
     private static bool ProcessPreResolvedMoveRequests(
@@ -433,10 +433,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         Entity commandEntity = commandQueueQuery.GetSingletonEntity();
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
             em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-        DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
-            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-        bool handledAny = false;
-        var moveOrderSystem = new UnitMoveOrderSystem();
+        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(commandRequests.Length, Allocator.Temp);
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
@@ -449,7 +446,14 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             }
 
             commandRequests.RemoveAt(i);
-            handledAny = true;
+            pendingRequests.Add(request);
+        }
+
+        NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        var moveOrderSystem = new UnitMoveOrderSystem();
+        for (int i = 0; i < pendingRequestArray.Length; i++)
+        {
+            RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
             using NativeList<Entity> selectedEntities = new(Allocator.Temp);
             CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, null, selectedEntities);
             NativeArray<Entity> entities = selectedEntities.AsArray();
@@ -466,17 +470,10 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                     worldPoint,
                     request.Frame,
                     ResolveMarkerFaction(em, entities));
-            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
-            if (em.Exists(commandEntity))
-            {
-                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
-                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
-                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-            }
+            AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
         }
 
-        return handledAny;
+        return pendingRequestArray.Length > 0;
     }
 
     private static bool IsPreResolvedMoveRequest(RtsSelectionCommandIntentRequestElement request)
@@ -509,16 +506,12 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
     private static void AddCommandResult(
         EntityManager em,
         Entity commandEntity,
-        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
         RtsSelectionCommandResultElement result)
     {
         if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
         {
             em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
-            return;
         }
-
-        fallbackResults.Add(result);
     }
 
     private static RtsSelectionCommandResultElement ToCommandResultElement(

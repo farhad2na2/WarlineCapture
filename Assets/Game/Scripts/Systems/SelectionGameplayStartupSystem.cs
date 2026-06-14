@@ -282,6 +282,12 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessAttackCommandRequests();
             if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
                 ProcessScanCommandRequests();
+            ProcessSelectionModeCommandRequests();
+            ProcessMoveTargetModeCommandRequests();
+            ProcessAttackTargetModeCommandRequests();
+            ProcessScanTargetModeCommandRequests();
+            ProcessBoardTargetModeCommandRequests();
+            ProcessCancelActiveCommandModeRequests();
             ProcessSelectAllCommandRequests();
             ProcessDeselectAllCommandRequests();
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
@@ -314,6 +320,221 @@ internal sealed class SelectionGameplayStartupSystem
             if (rtsSelectionInputSystem.HasPendingSelectionRectangleRequests())
                 ProcessSelectionRectangleRequests();
             rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+        }
+
+        void ProcessSelectionModeCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionModeCommandSystem.ProcessPendingRequests(
+                    em,
+                    Time.frameCount,
+                    out bool enteredSelectionMode,
+                    out bool exitedSelectionMode,
+                    out RtsSelectionCommandIntentKind lastProcessedKind))
+            {
+                return;
+            }
+
+            if (enteredSelectionMode)
+            {
+                SetExplicitAttackTargetModeActive(false);
+                buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                    buildingPlacementInteractionContext,
+                    "SelectionUiCommandSystem.EnterSelectionMode");
+            }
+
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            if (lastProcessedKind == RtsSelectionCommandIntentKind.EnterSelectionMode)
+                selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Select);
+            else if (lastProcessedKind == RtsSelectionCommandIntentKind.ExitSelectionMode)
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+
+            if (enteredSelectionMode)
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"selectionModeEntered source=ui frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            if (exitedSelectionMode)
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"selectionModeExited source=ui frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+        }
+
+        void ProcessMoveTargetModeCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
+                    em,
+                    Time.frameCount,
+                    out bool accepted,
+                    out TacticalCommandReasonCode rejectionReason))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                buildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterMoveTargetMode");
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+            if (!accepted)
+            {
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(rejectionReason));
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"moveModeEntered result=False reason={rejectionReason} frame={Time.frameCount}");
+                return;
+            }
+
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Move);
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True " +
+                $"ignoreWorldUntil={rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame} frame={Time.frameCount}");
+            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                $"moveModeEntered result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+        }
+
+        void ProcessAttackTargetModeCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+                    em,
+                    Time.frameCount,
+                    out bool accepted,
+                    out bool airDefenseAutoEngageOnly,
+                    out TacticalCommandReasonCode rejectionReason))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                buildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterAttackTargetMode");
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+
+            if (airDefenseAutoEngageOnly)
+            {
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Success("Air defense auto-engages aircraft and incoming missiles."));
+                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"attackModeEntered result=False reason=AirDefenseAutoEngage frame={Time.frameCount}");
+                return;
+            }
+
+            if (!accepted)
+            {
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(rejectionReason));
+                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"attackModeEntered result=False reason={rejectionReason} frame={Time.frameCount}");
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(true);
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
+            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Attack);
+            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                $"attackModeEntered result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+        }
+
+        void ProcessScanTargetModeCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(em, Time.frameCount))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            buildingPlacementInteractionSystem?.ExitBuildMode(buildingPlacementInteractionContext);
+            buildingPlacementInteractionSystem?.CancelBuildingPlacement(buildingPlacementInteractionContext);
+            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                buildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterScanTargetMode");
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Scan);
+            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                $"scanModeEntered result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+        }
+
+        void ProcessBoardTargetModeCommandRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+                    em,
+                    Time.frameCount,
+                    out bool accepted,
+                    out bool toggledOff,
+                    out BoardCommandModeDirection direction,
+                    out Entity transport,
+                    out TacticalCommandReasonCode rejectionReason))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                buildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterBoardTargetMode");
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+
+            if (toggledOff)
+            {
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"boardModeToggledOff frame={Time.frameCount}");
+                return;
+            }
+
+            if (!accepted)
+            {
+                string message = rejectionReason == TacticalCommandReasonCode.CommandUnavailable
+                    ? "Selected unit cannot board."
+                    : "Select units to board.";
+                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    CreateHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(rejectionReason, message));
+                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                    $"boardModeEntered result=False reason={rejectionReason} message=\"{message}\" frame={Time.frameCount}");
+                return;
+            }
+
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
+            bool boardAllInteractable = direction == BoardCommandModeDirection.TransportToPassenger &&
+                                        transport != Entity.Null;
+            selectionHudFeedbackSystem.ApplyBoardCommandMode(
+                CreateHudFeedbackContext(),
+                direction,
+                boardAllInteractable);
+            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
+                $"boardModeEntered result=True direction={direction} transport={transport} frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+        }
+
+        void ProcessCancelActiveCommandModeRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em) ||
+                !RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(em))
+            {
+                return;
+            }
+
+            SetExplicitAttackTargetModeActive(false);
+            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
         }
 
         void ProcessDeselectAllCommandRequests()

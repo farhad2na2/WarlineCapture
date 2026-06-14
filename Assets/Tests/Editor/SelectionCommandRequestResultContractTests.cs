@@ -20,13 +20,14 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.ScanCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.MoveCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.MoveCommandProcessor_ReacquiresResultBufferAfterMoveOrderStructuralWrites();
+            tests.MoveCommandProcessor_ReacquiresCommandBuffersAfterCallerStructuralChange();
             tests.AttackCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest();
             tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
             tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=12");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=13");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -352,6 +353,58 @@ public sealed class SelectionCommandRequestResultContractTests
             if (occupied.IsCreated)
                 occupied.Dispose();
         }
+    }
+
+    [Test]
+    public void MoveCommandProcessor_ReacquiresCommandBuffersAfterCallerStructuralChange()
+    {
+        using World world = new("SelectionCommandMoveProcessorBufferRefreshTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity();
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 45,
+            Frame = 121,
+            ScreenPosition = new float2(15f, 25f),
+            HasScreenPosition = 1
+        });
+
+        em.CreateEntity(typeof(RtsSelectionInputRequestQueueComponent));
+
+        using EntityQuery emptySelectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        using EntityQuery emptyGridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        var processor = new SelectedMoveOrderCommandSystem();
+        bool handled = false;
+
+        Assert.DoesNotThrow(() =>
+        {
+            handled = processor.ProcessCommandIntentRequests(
+                em,
+                commandEntity,
+                emptySelectedMoveQuery,
+                emptyGridConfigQuery,
+                emptyMapSurfaceQuery,
+                null,
+                new UnitMoveOrderSystem(),
+                new SelectionOrderMarkerSystem(),
+                null,
+                null);
+        });
+
+        requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Move, results[0].Kind);
+        Assert.AreEqual((int)TacticalCommandReasonCode.NoSelection, results[0].ReasonCode);
     }
 
     [Test]

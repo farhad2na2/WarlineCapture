@@ -350,6 +350,38 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
     public bool ProcessCommandIntentRequests(
         EntityManager em,
         Entity commandEntity,
+        EntityQuery selectedMoveQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery mapSurfaceQuery,
+        IReadOnlyList<Entity> cachedSelectedMoveEntities,
+        UnitMoveOrderSystem moveOrderSystem,
+        SelectionOrderMarkerSystem orderMarkerSystem,
+        ClickedUnitResolver tryGetClickedUnit,
+        ClickedCellResolver tryGetClickedCell)
+    {
+        return TryGetCommandBuffers(
+                   em,
+                   commandEntity,
+                   out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                   out DynamicBuffer<RtsSelectionCommandResultElement> commandResults) &&
+               ProcessCommandIntentRequests(
+                   em,
+                   commandEntity,
+                   commandRequests,
+                   commandResults,
+                   selectedMoveQuery,
+                   gridConfigQuery,
+                   mapSurfaceQuery,
+                   cachedSelectedMoveEntities,
+                   moveOrderSystem,
+                   orderMarkerSystem,
+                   tryGetClickedUnit,
+                   tryGetClickedCell);
+    }
+
+    public bool ProcessCommandIntentRequests(
+        EntityManager em,
+        Entity commandEntity,
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         EntityQuery selectedMoveQuery,
@@ -417,6 +449,27 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         }
 
         return pendingRequestArray.Length > 0;
+    }
+
+    private static bool TryGetCommandBuffers(
+        EntityManager em,
+        Entity commandEntity,
+        out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+    {
+        commandRequests = default;
+        commandResults = default;
+        if (commandEntity == Entity.Null ||
+            !em.Exists(commandEntity) ||
+            !em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity) ||
+            !em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            return false;
+        }
+
+        commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        return true;
     }
 
     private static bool ProcessPreResolvedMoveRequests(

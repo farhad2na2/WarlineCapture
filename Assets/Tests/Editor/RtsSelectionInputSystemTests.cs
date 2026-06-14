@@ -25,6 +25,20 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.SelectAllCommandSystem_QueuesSelectionRectangleAndClearsCommandMode());
             RunCase(test => test.SelectAllCommandSystem_MapsVariantRequestsToSelectionFilters());
             RunCase(test => test.DeselectAllCommandSystem_RemovesSelectedTagsAndClearsCommandMode());
+            RunCase(test => test.SelectionModeCommandSystem_EnterSelectionModeMutatesEcsStateAndClearsMoveRequests());
+            RunCase(test => test.SelectionModeCommandSystem_ExitSelectionModeMutatesEcsState());
+            RunCase(test => test.MoveTargetModeCommandSystem_ArmsMoveModeWhenSelectionCanMove());
+            RunCase(test => test.MoveTargetModeCommandSystem_RejectsWithoutSelectedMoveUnit());
+            RunCase(test => test.AttackTargetModeCommandSystem_ArmsAttackModeWhenSelectionCanAttack());
+            RunCase(test => test.AttackTargetModeCommandSystem_AirDefenseLauncherReportsAutoEngageOnly());
+            RunCase(test => test.AttackTargetModeCommandSystem_RejectsSelectedNonAttackUnit());
+            RunCase(test => test.AttackTargetModeCommandSystem_MixedAirDefenseAndAttackUnitEntersTargetMode());
+            RunCase(test => test.ScanTargetModeCommandSystem_ArmsScanModeAndClearsMoveRequests());
+            RunCase(test => test.BoardTargetModeCommandSystem_SelectedTransportAndPassengerUsesTransportFirstMode());
+            RunCase(test => test.BoardTargetModeCommandSystem_SelectedPassengerUsesPassengerToTransportMode());
+            RunCase(test => test.BoardTargetModeCommandSystem_ActiveBoardModeTogglesOff());
+            RunCase(test => test.BoardTargetModeCommandSystem_RejectsSelectedNonBoardableUnit());
+            RunCase(test => test.CancelActiveCommandModeSystem_ClearsCommandAndSelectionMode());
             RunCase(test => test.HasPendingAttackCommandRequestsOrResults_DetectsAttackResults());
             RunCase(test => test.HasPendingMoveCommandRequestsOrResults_DetectsMoveResults());
             RunCase(test => test.HasPendingScanCommandRequestsOrResults_DetectsScanResults());
@@ -33,7 +47,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=16");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=30");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -412,6 +426,183 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void SelectionModeCommandSystem_EnterSelectionModeMutatesEcsStateAndClearsMoveRequests()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: false);
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 pointer = new(12f, 34f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            frame: 99,
+            oneShot: true,
+            requiresWorldTarget: true);
+        inputSystem.QueueMoveOrder(new Vector2(88f, 99f), executeFrame: 120);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(10f, 20f), frame: 121));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterSelectionMode, frame: 122));
+
+        bool processed = RtsSelectionModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 200,
+            out bool enteredSelectionMode,
+            out bool exitedSelectionMode,
+            out RtsSelectionCommandIntentKind lastProcessedKind);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(enteredSelectionMode);
+        Assert.IsFalse(exitedSelectionMode);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterSelectionMode, lastProcessedKind);
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsFalse(inputSystem.TryConsumeQueuedMoveOrder(200, out _));
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(201, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(pointer, inputSystem.LastPointerPosition);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
+    public void SelectionModeCommandSystem_ExitSelectionModeMutatesEcsState()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 pointer = new(56f, 78f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.IsDraggingSelection = true;
+        inputSystem.HasLiveSelectionRect = true;
+        inputSystem.SkipNextWorldReleaseAfterSelection = true;
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(10f, 20f), frame: 129));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ExitSelectionMode, frame: 130));
+
+        bool processed = RtsSelectionModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 240,
+            out bool enteredSelectionMode,
+            out bool exitedSelectionMode,
+            out RtsSelectionCommandIntentKind lastProcessedKind);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(enteredSelectionMode);
+        Assert.IsTrue(exitedSelectionMode);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.ExitSelectionMode, lastProcessedKind);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsFalse(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(241, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Move, requests[0].Kind);
+    }
+
+    [Test]
+    public void MoveTargetModeCommandSystem_ArmsMoveModeWhenSelectionCanMove()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity selectedUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove));
+        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(2, 3) });
+        em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 pointer = new(72f, 96f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 130);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 131));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterMoveTargetMode, frame: 132));
+
+        bool processed = RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 260,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode mode));
+        Assert.AreEqual(TacticalCommandMode.Move, mode);
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsFalse(inputSystem.TryConsumeQueuedMoveOrder(260, out _));
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(261, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(pointer, inputSystem.LastPointerPosition);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
+    public void MoveTargetModeCommandSystem_RejectsWithoutSelectedMoveUnit()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            frame: 150,
+            oneShot: true,
+            requiresWorldTarget: true);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 170);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 171));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterMoveTargetMode, frame: 172));
+
+        bool processed = RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 300,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.NoSelection, rejectionReason);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsFalse(inputSystem.TryConsumeQueuedMoveOrder(300, out _));
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
     public void HasPendingMoveCommandRequestsOrResults_DetectsMoveResults()
     {
         var inputSystem = new RtsSelectionInputSystem();
@@ -481,6 +672,17 @@ public sealed class RtsSelectionInputSystemTests
         });
 
         Assert.IsTrue(inputSystem.HasPendingTransportCommandRequests());
+    }
+
+    private static Entity CreateRuntimeGameplayState(EntityManager em, bool selectionModeActive)
+    {
+        Entity entity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(entity, new RuntimeGameplayStateComponent
+        {
+            PlayRequested = 1,
+            SelectionModeActive = selectionModeActive ? (byte)1 : (byte)0
+        });
+        return entity;
     }
 
     [Test]
@@ -604,101 +806,168 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void AttackTargetMode_ArmsFromFocusedAttackUnitWithoutSelectedTag()
+    public void AttackTargetModeCommandSystem_ArmsAttackModeWhenSelectionCanAttack()
     {
         EntityManager em = _testWorld.EntityManager;
-        Entity launcher = em.CreateEntity(
-            typeof(Faction),
-            typeof(UnitMove),
-            typeof(UnitCombat),
-            typeof(UnitAttack),
-            typeof(LocalTransform));
-        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
-        em.SetComponentData(launcher, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-        em.SetComponentData(launcher, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
-        em.SetComponentData(launcher, LocalTransform.FromPosition(float3.zero));
-
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedAttackUnit(em);
         var inputSystem = new RtsSelectionInputSystem();
-        var selectionState = new SelectionStateSystem();
-        selectionState.SetFocusedUnit(launcher);
-        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+        Vector2 pointer = new(21f, 43f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 150);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 151));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 152));
 
-        TacticalCommandMode appliedMode = TacticalCommandMode.None;
-        TacticalCommandResult rejectedResult = default;
-        bool explicitAttackMode = false;
-        bool worldMarkersVisible = false;
+        bool processed = RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 310,
+            out bool accepted,
+            out bool airDefenseAutoEngageOnly,
+            out TacticalCommandReasonCode rejectionReason);
 
-        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
-        var context = new RtsSelectionFocusCommandSystem.Context(
-            new RuntimeGameplayStateSystem(),
-            inputSystem,
-            selectionState,
-            new FocusedUnitLifecycleSystem(),
-            new UnitTargetOrderSystem(),
-            null,
-            default,
-            null,
-            (out EntityManager entityManager) =>
-            {
-                entityManager = em;
-                return true;
-            },
-            _ => { },
-            null,
-            null,
-            null,
-            null,
-            result => rejectedResult = result,
-            mode => appliedMode = mode,
-            null,
-            null,
-            null,
-            visible => worldMarkersVisible = visible,
-            _ => { },
-            value => explicitAttackMode = value,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
-
-        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
-
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.IsFalse(airDefenseAutoEngageOnly);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
         Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
         Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
-        Assert.AreEqual(TacticalCommandMode.Attack, appliedMode);
-        Assert.IsTrue(explicitAttackMode);
-        Assert.IsTrue(worldMarkersVisible);
-        Assert.AreEqual(TacticalCommandReasonCode.None, rejectedResult.ReasonCode);
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(311, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
     }
 
     [Test]
-    public void AttackTargetMode_AirDefenseLauncherShowsAutoEngageFeedbackInsteadOfTargetMode()
+    public void AttackTargetModeCommandSystem_AirDefenseLauncherReportsAutoEngageOnly()
     {
         EntityManager em = _testWorld.EntityManager;
-        Entity launcher = em.CreateEntity(
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedAirDefenseLauncher(em);
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 99, oneShot: true, requiresWorldTarget: true);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 160);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 161));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        bool processed = RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 320,
+            out bool accepted,
+            out bool airDefenseAutoEngageOnly,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(accepted);
+        Assert.IsTrue(airDefenseAutoEngageOnly);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
+    public void AttackTargetModeCommandSystem_RejectsSelectedNonAttackUnit()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity nonAttackUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove));
+        em.SetComponentData(nonAttackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(nonAttackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 99, oneShot: true, requiresWorldTarget: true);
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        bool processed = RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 330,
+            out bool accepted,
+            out bool airDefenseAutoEngageOnly,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(accepted);
+        Assert.IsFalse(airDefenseAutoEngageOnly);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, rejectionReason);
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+    }
+
+    [Test]
+    public void AttackTargetModeCommandSystem_MixedAirDefenseAndAttackUnitEntersTargetMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedAirDefenseLauncher(em);
+        CreateSelectedAttackUnit(em);
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+
+        bool processed = RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 340,
+            out bool accepted,
+            out bool airDefenseAutoEngageOnly,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.IsFalse(airDefenseAutoEngageOnly);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+    }
+
+    private static Entity CreateSelectedAttackUnit(EntityManager em)
+    {
+        Entity attackUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
             typeof(Faction),
             typeof(UnitMove),
             typeof(UnitCombat),
             typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(attackUnit, LocalTransform.FromPosition(float3.zero));
+        return attackUnit;
+    }
+
+    private static Entity CreateSelectedAirDefenseLauncher(EntityManager em)
+    {
+        Entity launcher = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
             typeof(UnitHealth),
             typeof(AirMissileLauncherComponent),
-            typeof(AirMissileLauncherStateComponent),
-            typeof(LocalTransform));
+            typeof(AirMissileLauncherStateComponent));
         em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
-        em.SetComponentData(launcher, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-        em.SetComponentData(launcher, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
         em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(launcher, new AirMissileLauncherComponent
         {
@@ -717,171 +986,86 @@ public sealed class RtsSelectionInputSystemTests
             TrackingQuality = 0.75f
         });
         em.SetComponentData(launcher, new AirMissileLauncherStateComponent { Phase = (byte)AirMissileLauncherPhase.Idle });
-        em.SetComponentData(launcher, LocalTransform.FromPosition(float3.zero));
+        return launcher;
+    }
 
-        var inputSystem = new RtsSelectionInputSystem();
-        var selectionState = new SelectionStateSystem();
-        selectionState.SetFocusedUnit(launcher);
-        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+    private static Entity CreateSelectedBoardPassenger(EntityManager em)
+    {
+        Entity passenger = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitFootprint),
+            typeof(UnitMovementBehavior));
+        em.SetComponentData(passenger, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(passenger, new UnitGrid { Cell = new int2(3, 4) });
+        em.SetComponentData(passenger, new UnitMove
+        {
+            Speed = 1f,
+            WalkSpeed = 1f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.1f
+        });
+        em.SetComponentData(passenger, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(passenger, new UnitMovementBehavior { UsesVehicleMotion = 0 });
+        return passenger;
+    }
 
-        TacticalCommandMode appliedMode = TacticalCommandMode.None;
-        TacticalCommandResult commandResult = default;
-        bool explicitAttackMode = false;
-        bool worldMarkersVisible = true;
+    private static Entity CreateSelectedBoardTransport(EntityManager em, int capacity = 4, int passengerCount = 0)
+    {
+        Entity transport = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(LocalTransform),
+            typeof(UnitTransportCapacity));
+        em.SetComponentData(transport, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(transport, new UnitGrid { Cell = new int2(10, 10) });
+        em.SetComponentData(transport, new UnitFootprint { Size = new int2(2, 2) });
+        em.SetComponentData(transport, LocalTransform.FromPosition(float3.zero));
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = capacity });
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.AddBuffer<UnitTransportPassengerElement>(transport);
+        for (int i = 0; i < passengerCount; i++)
+        {
+            passengers.Add(new UnitTransportPassengerElement { Passenger = em.CreateEntity() });
+        }
 
-        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
-        var context = new RtsSelectionFocusCommandSystem.Context(
-            new RuntimeGameplayStateSystem(),
-            inputSystem,
-            selectionState,
-            new FocusedUnitLifecycleSystem(),
-            new UnitTargetOrderSystem(),
-            null,
-            default,
-            null,
-            (out EntityManager entityManager) =>
-            {
-                entityManager = em;
-                return true;
-            },
-            _ => { },
-            null,
-            null,
-            null,
-            null,
-            result => commandResult = result,
-            mode => appliedMode = mode,
-            null,
-            null,
-            null,
-            visible => worldMarkersVisible = visible,
-            _ => { },
-            value => explicitAttackMode = value,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
-
-        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
-
-        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
-        Assert.AreEqual(TacticalCommandMode.None, appliedMode);
-        Assert.IsFalse(explicitAttackMode);
-        Assert.IsFalse(worldMarkersVisible);
-        Assert.IsTrue(commandResult.Accepted);
-        Assert.AreEqual("Air defense auto-engages aircraft and incoming missiles.", commandResult.Message);
+        return transport;
     }
 
     [Test]
-    public void AttackTargetMode_MixedAirDefenseAndAttackUnitEntersTargetMode()
+    public void ScanTargetModeCommandSystem_ArmsScanModeAndClearsMoveRequests()
     {
         EntityManager em = _testWorld.EntityManager;
-        Entity airDefense = em.CreateEntity(
-            typeof(SelectedUnitTag),
-            typeof(Faction),
-            typeof(UnitHealth),
-            typeof(AirMissileLauncherComponent));
-        Entity attackUnit = em.CreateEntity(
-            typeof(SelectedUnitTag),
-            typeof(Faction),
-            typeof(UnitMove),
-            typeof(UnitCombat),
-            typeof(UnitAttack),
-            typeof(LocalTransform));
-        em.SetComponentData(airDefense, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(airDefense, new UnitHealth { Current = 100, Max = 100 });
-        em.SetComponentData(airDefense, new AirMissileLauncherComponent
-        {
-            MinRange = 8f,
-            BaseDetectionRange = 220f,
-            MaxDetectionRange = 420f,
-            LockSeconds = 0.35f,
-            LaunchDelaySeconds = 0.12f,
-            ReloadSeconds = 1.8f,
-            MissileSpeed = 95f,
-            MissileTurnRateDegreesPerSecond = 220f,
-            MissileLifetimeSeconds = 7f,
-            ProximityFuseRadius = 4f,
-            AirTargetDamage = 120,
-            IncomingMissileDamage = 9999,
-            TrackingQuality = 0.75f
-        });
-        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
-        em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-        em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
-        em.SetComponentData(attackUnit, LocalTransform.FromPosition(float3.zero));
-
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         var inputSystem = new RtsSelectionInputSystem();
-        var selectionState = new SelectionStateSystem();
-        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
+        Vector2 pointer = new(64f, 128f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 170);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 171));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterScanTargetMode, frame: 172));
 
-        TacticalCommandMode appliedMode = TacticalCommandMode.None;
-        TacticalCommandResult commandResult = default;
-        bool explicitAttackMode = false;
-        bool worldMarkersVisible = false;
+        bool processed = RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(em, currentFrame: 350);
 
-        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
-        var context = new RtsSelectionFocusCommandSystem.Context(
-            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
-            inputSystem: inputSystem,
-            selectionStateSystem: selectionState,
-            focusedUnitLifecycleSystem: new FocusedUnitLifecycleSystem(),
-            unitTargetOrderSystem: new UnitTargetOrderSystem(),
-            buildingPlacementInteractionSystem: null,
-            buildingPlacementInteractionContext: default,
-            worldCamera: null,
-            tryGetEntityManager: (out EntityManager entityManager) =>
-            {
-                entityManager = em;
-                return true;
-            },
-            ensureEntityQueries: _ => { },
-            clearCurrentSelection: null,
-            queueSelectionRectangleRequest: null,
-            processSelectionRectangleRequests: null,
-            applyHudSelection: null,
-            applyHudCommandResult: result => commandResult = result,
-            applyHudCommandMode: mode => appliedMode = mode,
-            applyHudBoardCommandMode: null,
-            clearHudSelection: null,
-            clearHudCommandMode: null,
-            setHudWorldMarkersVisible: visible => worldMarkersVisible = visible,
-            setCameraDragging: _ => { },
-            setExplicitAttackTargetModeActive: value => explicitAttackMode = value,
-            logSelectionDiagnostic: null,
-            describeEntity: null,
-            validateControllableEntity: null,
-            isBoardPassengerCandidate: null,
-            isBoardTransportCandidate: null,
-            issueHoldPositionOrder: null,
-            issueStopOrder: null,
-            destroyFocusedUnit: null,
-            returnFocusedSelectionToBase: null,
-            boardFocusedTransport: null,
-            tryFocusScreenPosition: null,
-            issueFocusedMissileLauncherRadarAttack: null,
-            armFocusedAttackTargetMode: null,
-            cancelExplicitAttackTargetMode: null);
-
-        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
-
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
         Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
-        Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
-        Assert.AreEqual(TacticalCommandMode.Attack, appliedMode);
-        Assert.IsTrue(explicitAttackMode);
-        Assert.IsTrue(worldMarkersVisible);
-        Assert.AreEqual(TacticalCommandReasonCode.None, commandResult.ReasonCode);
+        Assert.AreEqual(TacticalCommandMode.Scan, activeMode);
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(351, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
     }
 
     [Test]
@@ -903,76 +1087,180 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void BoardTargetMode_SelectedTransportAndPassengerUsesTransportFirstMode()
+    public void BoardTargetModeCommandSystem_SelectedTransportAndPassengerUsesTransportFirstMode()
     {
         EntityManager em = _testWorld.EntityManager;
-        Entity passenger = em.CreateEntity(typeof(SelectedUnitTag));
-        Entity transport = em.CreateEntity(typeof(SelectedUnitTag));
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedBoardPassenger(em);
+        Entity transport = CreateSelectedBoardTransport(em);
         var inputSystem = new RtsSelectionInputSystem();
-        var selectionState = new SelectionStateSystem();
+        Vector2 pointer = new(32f, 48f);
+        inputSystem.UpdateLastKnownPointerPosition(pointer);
+        inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 10);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 10));
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
 
-        BoardCommandModeDirection appliedDirection = BoardCommandModeDirection.None;
-        bool boardAllInteractable = false;
-        bool worldMarkersVisible = false;
-        TacticalCommandResult commandResult = default;
+        bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 360,
+            out bool accepted,
+            out bool toggledOff,
+            out BoardCommandModeDirection direction,
+            out Entity lockedTransport,
+            out TacticalCommandReasonCode rejectionReason);
 
-        var focusCommandSystem = new RtsSelectionFocusCommandSystem();
-        var context = new RtsSelectionFocusCommandSystem.Context(
-            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
-            inputSystem: inputSystem,
-            selectionStateSystem: selectionState,
-            focusedUnitLifecycleSystem: new FocusedUnitLifecycleSystem(),
-            unitTargetOrderSystem: new UnitTargetOrderSystem(),
-            buildingPlacementInteractionSystem: null,
-            buildingPlacementInteractionContext: default,
-            worldCamera: null,
-            tryGetEntityManager: (out EntityManager entityManager) =>
-            {
-                entityManager = em;
-                return true;
-            },
-            ensureEntityQueries: _ => { },
-            clearCurrentSelection: null,
-            queueSelectionRectangleRequest: null,
-            processSelectionRectangleRequests: null,
-            applyHudSelection: null,
-            applyHudCommandResult: result => commandResult = result,
-            applyHudCommandMode: null,
-            applyHudBoardCommandMode: (direction, interactable) =>
-            {
-                appliedDirection = direction;
-                boardAllInteractable = interactable;
-            },
-            clearHudSelection: null,
-            clearHudCommandMode: null,
-            setHudWorldMarkersVisible: visible => worldMarkersVisible = visible,
-            setCameraDragging: _ => { },
-            setExplicitAttackTargetModeActive: null,
-            logSelectionDiagnostic: null,
-            describeEntity: null,
-            validateControllableEntity: null,
-            isBoardPassengerCandidate: (_, entity) => entity == passenger,
-            isBoardTransportCandidate: (_, entity) => entity == transport,
-            issueHoldPositionOrder: null,
-            issueStopOrder: null,
-            destroyFocusedUnit: null,
-            returnFocusedSelectionToBase: null,
-            boardFocusedTransport: null,
-            tryFocusScreenPosition: null,
-            issueFocusedMissileLauncherRadarAttack: null,
-            armFocusedAttackTargetMode: null,
-            cancelExplicitAttackTargetMode: null);
-
-        Assert.IsTrue(focusCommandSystem.ProcessExternalSelectionCommandRequests(context));
-
-        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection activeDirection, out Entity lockedTransport));
-        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, activeDirection);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.IsFalse(toggledOff);
+        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, direction);
         Assert.AreEqual(transport, lockedTransport);
-        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, appliedDirection);
-        Assert.IsTrue(boardAllInteractable);
-        Assert.IsTrue(worldMarkersVisible);
-        Assert.AreEqual(TacticalCommandReasonCode.None, commandResult.ReasonCode);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection activeDirection, out Entity activeLockedTransport));
+        Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, activeDirection);
+        Assert.AreEqual(transport, activeLockedTransport);
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.AreEqual(361, inputSystem.IgnoreWorldCommandsUntilFrame);
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
+    public void BoardTargetModeCommandSystem_SelectedPassengerUsesPassengerToTransportMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedBoardPassenger(em);
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
+
+        bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 370,
+            out bool accepted,
+            out bool toggledOff,
+            out BoardCommandModeDirection direction,
+            out Entity transport,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.IsFalse(toggledOff);
+        Assert.AreEqual(BoardCommandModeDirection.PassengerToTransport, direction);
+        Assert.AreEqual(Entity.Null, transport);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection activeDirection, out Entity activeLockedTransport));
+        Assert.AreEqual(BoardCommandModeDirection.PassengerToTransport, activeDirection);
+        Assert.AreEqual(Entity.Null, activeLockedTransport);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+    }
+
+    [Test]
+    public void BoardTargetModeCommandSystem_ActiveBoardModeTogglesOff()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        var inputSystem = new RtsSelectionInputSystem();
+        Entity transport = CreateSelectedBoardTransport(em);
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            transport,
+            frame: 12,
+            oneShot: true);
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 13));
+
+        bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 380,
+            out bool accepted,
+            out bool toggledOff,
+            out BoardCommandModeDirection direction,
+            out Entity lockedTransport,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(accepted);
+        Assert.IsTrue(toggledOff);
+        Assert.AreEqual(BoardCommandModeDirection.None, direction);
+        Assert.AreEqual(Entity.Null, lockedTransport);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsFalse(inputSystem.TryGetActiveBoardCommandMode(out _, out _));
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+    }
+
+    [Test]
+    public void BoardTargetModeCommandSystem_RejectsSelectedNonBoardableUnit()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity selected = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
+        em.SetComponentData(selected, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
+
+        bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 390,
+            out bool accepted,
+            out bool toggledOff,
+            out BoardCommandModeDirection direction,
+            out Entity transport,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(accepted);
+        Assert.IsFalse(toggledOff);
+        Assert.AreEqual(BoardCommandModeDirection.None, direction);
+        Assert.AreEqual(Entity.Null, transport);
+        Assert.AreEqual(TacticalCommandReasonCode.CommandUnavailable, rejectionReason);
+        Assert.IsFalse(inputSystem.TryGetActiveBoardCommandMode(out _, out _));
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+    }
+
+    [Test]
+    public void CancelActiveCommandModeSystem_ClearsCommandAndSelectionMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity transport = CreateSelectedBoardTransport(em);
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmBoardCommandMode(
+            BoardCommandModeDirection.TransportToPassenger,
+            transport,
+            frame: 42,
+            oneShot: true);
+        inputSystem.BoardPassengerDragArmed = true;
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame: 43));
+
+        bool processed = RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(em);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+        Assert.IsFalse(inputSystem.TryGetActiveBoardCommandMode(out _, out _));
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(0, requests.Length);
     }
 
     [Test]
@@ -1113,15 +1401,13 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CancelActiveCommandMode_ClearsModeWithoutPersistentCancelMessage()
     {
-        string focusCommands = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs");
-        string cancelCase = ExtractSpan(
-            focusCommands,
-            "case RtsSelectionCommandIntentKind.CancelActiveCommandMode:",
-            "case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:");
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string cancelProcessor = ExtractBlockAfter(startup, "void ProcessCancelActiveCommandModeRequests");
 
-        StringAssert.Contains("context.ClearHudCommandMode?.Invoke()", cancelCase);
+        StringAssert.Contains("RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests", cancelProcessor);
+        StringAssert.Contains("selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext())", cancelProcessor);
         Assert.IsFalse(
-            cancelCase.Contains("Command cancelled", StringComparison.Ordinal),
+            cancelProcessor.Contains("Command cancelled", StringComparison.Ordinal),
             "Cancel should clear mode/buttons without leaving a feedback message on screen.");
     }
 
@@ -1777,13 +2063,5 @@ public sealed class RtsSelectionInputSystemTests
         return string.Empty;
     }
 
-    private static string ExtractSpan(string source, string startMarker, string endMarker)
-    {
-        int start = source.IndexOf(startMarker, StringComparison.Ordinal);
-        Assert.GreaterOrEqual(start, 0, $"{startMarker} was not found.");
-        int end = source.IndexOf(endMarker, start + startMarker.Length, StringComparison.Ordinal);
-        Assert.GreaterOrEqual(end, 0, $"{endMarker} was not found after {startMarker}.");
-        return source.Substring(start, end - start);
-    }
 }
 #endif

@@ -174,8 +174,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
         context.SelectedMoveOrderCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
-            commandRequests,
-            commandResults,
             context.SelectedMoveQuery,
             context.GridConfigQuery,
             context.MapSurfaceQuery,
@@ -269,13 +267,23 @@ public sealed class RtsSelectionCommandResultFlushSystem
         commandRequests = default;
         commandResults = default;
 
+        bool ensuredBeforeBufferRead = false;
+        if (context.TryGetDefaultEntityManager != null &&
+            context.TryGetDefaultEntityManager(out EntityManager resolvedEntityManager))
+        {
+            context.EnsureEntityQueries?.Invoke(resolvedEntityManager);
+            ensuredBeforeBufferRead = true;
+        }
+
         if (context.InputSystem == null ||
             !context.InputSystem.TryGetCommandBuffers(out em, out commandEntity, out commandRequests, out commandResults))
         {
             return false;
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
+        if (!ensuredBeforeBufferRead)
+            context.EnsureEntityQueries?.Invoke(em);
+
         return TryRefreshCommandBuffers(em, commandEntity, out commandRequests, out commandResults);
     }
 

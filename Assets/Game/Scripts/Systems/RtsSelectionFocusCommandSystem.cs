@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionFocusCommandSystem
@@ -130,18 +128,6 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
 
-    private struct AttackModeSelectionState
-    {
-        public bool HasSelected;
-        public bool HasAirDefenseLauncher;
-        public bool HasNonAirDefenseAttackSource;
-
-        public readonly bool HasOnlyAirDefenseLauncher =>
-            HasSelected &&
-            HasAirDefenseLauncher &&
-            !HasNonAirDefenseAttackSource;
-    }
-
     public bool ProcessExternalSelectionCommandRequests(Context context)
     {
         if (!context.InputSystem.TryGetCommandBuffers(
@@ -152,13 +138,6 @@ public sealed class RtsSelectionFocusCommandSystem
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                 $"externalSelectionCommandsNoBuffers frame={Time.frameCount}");
             return false;
-        }
-
-        int moveModeRequests = CountExternalCommandRequests(commandRequests, RtsSelectionCommandIntentKind.EnterMoveTargetMode);
-        if (moveModeRequests > 0)
-        {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"externalSelectionCommandsEnter totalRequests={commandRequests.Length} moveModeRequests={moveModeRequests} frame={Time.frameCount}");
         }
 
         _externalSelectionCommandScratch.Clear();
@@ -178,12 +157,6 @@ public sealed class RtsSelectionFocusCommandSystem
         bool processedAny = false;
         for (int i = 0; i < _externalSelectionCommandScratch.Count; i++)
         {
-            if (_externalSelectionCommandScratch[i].Kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode)
-            {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"externalSelectionCommandProcess kind={_externalSelectionCommandScratch[i].Kind} frame={Time.frameCount}");
-            }
-
             processedAny |= ProcessExternalSelectionCommand(context, _externalSelectionCommandScratch[i]);
         }
 
@@ -306,33 +279,14 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
                kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
-               kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode ||
-               kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode ||
-               kind == RtsSelectionCommandIntentKind.EnterScanTargetMode ||
-               kind == RtsSelectionCommandIntentKind.EnterBoardTargetMode ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
                kind == RtsSelectionCommandIntentKind.ReturnToBase ||
                kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
-               kind == RtsSelectionCommandIntentKind.CancelActiveCommandMode ||
                kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode ||
                kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
-    }
-
-    private static int CountExternalCommandRequests(
-        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-        RtsSelectionCommandIntentKind kind)
-    {
-        int count = 0;
-        for (int i = 0; i < commandRequests.Length; i++)
-        {
-            if (commandRequests[i].Kind == kind)
-                count++;
-        }
-
-        return count;
     }
 
     private bool ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentRequestElement request)
@@ -360,18 +314,6 @@ public sealed class RtsSelectionFocusCommandSystem
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
                 return true;
-            case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
-                EnterMoveTargetMode(context);
-                return true;
-            case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
-                EnterAttackTargetMode(context);
-                return true;
-            case RtsSelectionCommandIntentKind.EnterScanTargetMode:
-                EnterScanTargetMode(context);
-                return true;
-            case RtsSelectionCommandIntentKind.EnterBoardTargetMode:
-                EnterBoardTargetMode(context);
-                return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
                 context.InputSystem.ClearActiveCommandMode();
                 context.IssueHoldPositionOrder?.Invoke();
@@ -393,15 +335,6 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
                 context.BoardFocusedTransport?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.CancelActiveCommandMode:
-                context.SetExplicitAttackTargetModeActive?.Invoke(false);
-                context.InputSystem.ClearActiveCommandMode();
-                context.RuntimeGameplayStateSystem.SelectionModeActive = false;
-                context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-                context.SetCameraDragging?.Invoke(false);
-                context.SetHudWorldMarkersVisible?.Invoke(false);
-                context.ClearHudCommandMode?.Invoke();
                 return true;
             case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 if (context.IssueFocusedMissileLauncherRadarAttack == null ||
@@ -460,480 +393,4 @@ public sealed class RtsSelectionFocusCommandSystem
         context.LogSelectionDiagnostic?.Invoke($"selectionModeExited source=ui frame={Time.frameCount} dragReset={pointerPosition}");
     }
 
-    private static void EnterMoveTargetMode(Context context)
-    {
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"enterMoveTargetModeStart frame={Time.frameCount}");
-        context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
-            context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterMoveTargetMode");
-        context.InputSystem.ClearQueuedMoveOrder();
-        context.InputSystem.ClearPendingMoveCommandRequests();
-
-        bool hasSelectedMovableUnit = TryHasSelectedMovableUnit(context);
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"enterMoveTargetModeSelectionCheck hasSelectedMovableUnit={hasSelectedMovableUnit} frame={Time.frameCount}");
-        if (!hasSelectedMovableUnit)
-        {
-            context.InputSystem.ClearActiveCommandMode();
-            context.ClearHudCommandMode?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            context.SetCameraDragging?.Invoke(false);
-            context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=False reason=NoSelection frame={Time.frameCount}");
-            return;
-        }
-
-        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
-            ? context.InputSystem.LastKnownPointerPosition
-            : Vector2.zero;
-        context.InputSystem.ResetSelectionDragState(pointerPosition);
-        context.InputSystem.IgnoreNextLeftMouseRelease = true;
-        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.InputSystem.ArmCommandMode(
-            TacticalCommandMode.Move,
-            Time.frameCount,
-            oneShot: true,
-            requiresWorldTarget: true);
-        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-        context.SetCameraDragging?.Invoke(false);
-        context.SetHudWorldMarkersVisible?.Invoke(false);
-        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} frame={Time.frameCount}");
-        context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
-    }
-
-    private static void EnterAttackTargetMode(Context context)
-    {
-        context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
-            context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterAttackTargetMode");
-        context.InputSystem.ClearQueuedMoveOrder();
-        context.InputSystem.ClearPendingMoveCommandRequests();
-
-        AttackModeSelectionState attackSelection = ResolveSelectedAttackModeState(context);
-        if (attackSelection.HasOnlyAirDefenseLauncher)
-        {
-            context.InputSystem.ClearActiveCommandMode();
-            context.ClearHudCommandMode?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
-                "Air defense auto-engages aircraft and incoming missiles."));
-            context.SetCameraDragging?.Invoke(false);
-            context.SetHudWorldMarkersVisible?.Invoke(false);
-            context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=False reason=AirDefenseAutoEngage frame={Time.frameCount}");
-            return;
-        }
-
-        if (!attackSelection.HasNonAirDefenseAttackSource)
-        {
-            TacticalCommandReasonCode rejectionReason = attackSelection.HasSelected
-                ? TacticalCommandReasonCode.TargetNotAttackable
-                : TacticalCommandReasonCode.NoSelection;
-            context.InputSystem.ClearActiveCommandMode();
-            context.ClearHudCommandMode?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
-            context.SetCameraDragging?.Invoke(false);
-            context.SetHudWorldMarkersVisible?.Invoke(false);
-            context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=False reason={rejectionReason} frame={Time.frameCount}");
-            return;
-        }
-
-        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
-            ? context.InputSystem.LastKnownPointerPosition
-            : Vector2.zero;
-        context.InputSystem.ResetSelectionDragState(pointerPosition);
-        context.InputSystem.IgnoreNextLeftMouseRelease = true;
-        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.InputSystem.ArmCommandMode(
-            TacticalCommandMode.Attack,
-            Time.frameCount,
-            oneShot: true,
-            requiresWorldTarget: true);
-        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-        context.SetExplicitAttackTargetModeActive?.Invoke(true);
-        context.SetCameraDragging?.Invoke(false);
-        context.SetHudWorldMarkersVisible?.Invoke(true);
-        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Attack);
-        context.LogSelectionDiagnostic?.Invoke($"attackModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
-    }
-
-    private static void EnterScanTargetMode(Context context)
-    {
-        context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
-            context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterScanTargetMode");
-        context.InputSystem.ClearQueuedMoveOrder();
-        context.InputSystem.ClearPendingMoveCommandRequests();
-
-        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
-            ? context.InputSystem.LastKnownPointerPosition
-            : Vector2.zero;
-        context.InputSystem.ResetSelectionDragState(pointerPosition);
-        context.InputSystem.IgnoreNextLeftMouseRelease = true;
-        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.InputSystem.ArmCommandMode(
-            TacticalCommandMode.Scan,
-            Time.frameCount,
-            oneShot: true,
-            requiresWorldTarget: true);
-        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-        context.SetCameraDragging?.Invoke(false);
-        context.SetHudWorldMarkersVisible?.Invoke(false);
-        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
-        context.LogSelectionDiagnostic?.Invoke($"scanModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
-    }
-
-    private static void EnterBoardTargetMode(Context context)
-    {
-        context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
-            context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterBoardTargetMode");
-        context.InputSystem.ClearQueuedMoveOrder();
-        context.InputSystem.ClearPendingMoveCommandRequests();
-
-        if (context.InputSystem.TryGetActiveCommandMode(out TacticalCommandMode activeMode) &&
-            activeMode == TacticalCommandMode.Board)
-        {
-            context.InputSystem.ClearActiveCommandMode();
-            context.ClearHudCommandMode?.Invoke();
-            context.SetHudWorldMarkersVisible?.Invoke(false);
-            context.LogSelectionDiagnostic?.Invoke($"boardModeToggledOff frame={Time.frameCount}");
-            return;
-        }
-
-        if (!TryResolveBoardModeSource(context, out BoardCommandModeDirection direction, out Entity transport, out TacticalCommandReasonCode rejectionReason, out string message))
-        {
-            context.InputSystem.ClearActiveCommandMode();
-            context.ClearHudCommandMode?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason, message));
-            context.SetCameraDragging?.Invoke(false);
-            context.SetHudWorldMarkersVisible?.Invoke(false);
-            context.LogSelectionDiagnostic?.Invoke($"boardModeEntered result=False reason={rejectionReason} message=\"{message}\" frame={Time.frameCount}");
-            return;
-        }
-
-        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
-            ? context.InputSystem.LastKnownPointerPosition
-            : Vector2.zero;
-        context.InputSystem.ResetSelectionDragState(pointerPosition);
-        context.InputSystem.IgnoreNextLeftMouseRelease = true;
-        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.InputSystem.ArmBoardCommandMode(
-            direction,
-            transport,
-            Time.frameCount,
-            oneShot: true);
-        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-        context.SetCameraDragging?.Invoke(false);
-        context.SetHudWorldMarkersVisible?.Invoke(true);
-        bool boardAllInteractable = direction == BoardCommandModeDirection.TransportToPassenger &&
-                                    transport != Entity.Null;
-        if (context.ApplyHudBoardCommandMode != null)
-            context.ApplyHudBoardCommandMode.Invoke(direction, boardAllInteractable);
-        else
-            context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Board);
-        context.LogSelectionDiagnostic?.Invoke($"boardModeEntered result=True direction={direction} transport={transport} frame={Time.frameCount} dragReset={pointerPosition}");
-    }
-
-    private static bool TryHasSelectedMovableUnit(Context context)
-    {
-        if (!context.TryGetEntityManager(out EntityManager em))
-        {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"tryHasSelectedMovableUnit result=False reason=NoEntityManager frame={Time.frameCount}");
-            return false;
-        }
-
-        context.EnsureEntityQueries?.Invoke(em);
-        Entity focused = context.SelectionStateSystem.FocusedUnit;
-        int selectedQueryCount = CountSelectedMoveQuery(em);
-        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"tryHasSelectedMovableUnit enter focused={DescribeMoveEligibility(em, focused)} " +
-            $"cacheCount={cached.Count} selectedMoveQueryCount={selectedQueryCount} frame={Time.frameCount}");
-        for (int i = 0; i < cached.Count; i++)
-        {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"tryHasSelectedMovableUnit cache[{i}]={DescribeMoveEligibility(em, cached[i])}");
-            if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, cached[i]))
-            {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"tryHasSelectedMovableUnit result=True source=Cache index={i} frame={Time.frameCount}");
-                return true;
-            }
-        }
-
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<SelectedUnitTag>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>());
-        if (query.IsEmptyIgnoreFilter)
-        {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"tryHasSelectedMovableUnit result=False reason=SelectedMoveQueryEmpty focused={DescribeMoveEligibility(em, focused)} frame={Time.frameCount}");
-            return false;
-        }
-
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-        {
-            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
-            for (int i = 0; i < selectedEntities.Length; i++)
-            {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"tryHasSelectedMovableUnit selected[{chunkIndex}:{i}]={DescribeMoveEligibility(em, selectedEntities[i])}");
-                if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, selectedEntities[i]))
-                {
-                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                        $"tryHasSelectedMovableUnit result=True source=SelectedQuery chunk={chunkIndex} index={i} frame={Time.frameCount}");
-                    return true;
-                }
-            }
-        }
-
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"tryHasSelectedMovableUnit result=False reason=NoCacheableSelected focused={DescribeMoveEligibility(em, focused)} " +
-            $"cacheCount={cached.Count} selectedMoveQueryCount={selectedQueryCount} frame={Time.frameCount}");
-        return false;
-    }
-
-    private static int CountSelectedMoveQuery(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<SelectedUnitTag>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>());
-        return query.CalculateEntityCount();
-    }
-
-    private static string DescribeMoveEligibility(EntityManager em, Entity entity)
-    {
-        if (entity == Entity.Null)
-            return "null";
-        if (!em.Exists(entity))
-            return $"{entity}/missing";
-
-        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
-            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
-            : em.GetName(entity);
-        byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-        bool player = em.HasComponent<Faction>(entity) && FactionIdentitySystem.IsPlayerControlled(faction);
-        string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
-        string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
-        string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
-        string footprint = em.HasComponent<UnitFootprint>(entity) ? em.GetComponentData<UnitFootprint>(entity).Size.ToString() : "none";
-        bool selected = em.HasComponent<SelectedUnitTag>(entity);
-        bool hasMove = em.HasComponent<UnitMove>(entity);
-        bool hasGrid = em.HasComponent<UnitGrid>(entity);
-        bool disabled = em.HasComponent<Disabled>(entity);
-        bool passenger = em.HasComponent<UnitTransportPassenger>(entity);
-        bool transit = em.HasComponent<UnitSpawnTransitTag>(entity);
-        bool cacheable = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
-        return $"{entity}/{source}/faction={faction}/player={player}/selected={selected}/cacheable={cacheable}/move={hasMove}/grid={hasGrid}:{grid}/footprint={footprint}/target={target}/pathRequest={pathRequest}/disabled={disabled}/passenger={passenger}/transit={transit}";
-    }
-
-    private static AttackModeSelectionState ResolveSelectedAttackModeState(Context context)
-    {
-        if (!context.TryGetEntityManager(out EntityManager em))
-            return default;
-
-        context.EnsureEntityQueries?.Invoke(em);
-        AttackModeSelectionState selection = default;
-
-        Entity focused = context.SelectionStateSystem.FocusedUnit;
-        if (focused != Entity.Null && em.Exists(focused))
-            IncludeSelectedAttackModeCandidate(em, focused, ref selection);
-
-        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
-        for (int i = 0; i < cached.Count; i++)
-        {
-            Entity entity = cached[i];
-            if (em.Exists(entity))
-                IncludeSelectedAttackModeCandidate(em, entity, ref selection);
-        }
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        if (!query.IsEmptyIgnoreFilter)
-        {
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < selectedEntities.Length; i++)
-                {
-                    Entity entity = selectedEntities[i];
-                    if (em.Exists(entity))
-                        IncludeSelectedAttackModeCandidate(em, entity, ref selection);
-                }
-            }
-        }
-
-        return selection;
-    }
-
-    private static void IncludeSelectedAttackModeCandidate(
-        EntityManager em,
-        Entity entity,
-        ref AttackModeSelectionState selection)
-    {
-        selection.HasSelected = true;
-        if (IsAirDefenseLauncher(em, entity))
-        {
-            selection.HasAirDefenseLauncher = true;
-            return;
-        }
-
-        if (IsSelectedAttackCapableUnit(em, entity))
-            selection.HasNonAirDefenseAttackSource = true;
-    }
-
-    private static bool TryResolveBoardModeSource(
-        Context context,
-        out BoardCommandModeDirection direction,
-        out Entity transport,
-        out TacticalCommandReasonCode rejectionReason,
-        out string message)
-    {
-        direction = BoardCommandModeDirection.None;
-        transport = Entity.Null;
-        rejectionReason = TacticalCommandReasonCode.NoSelection;
-        message = "Select units to board.";
-
-        if (!context.TryGetEntityManager(out EntityManager em))
-            return false;
-
-        context.EnsureEntityQueries?.Invoke(em);
-        if (TryFindFocusedBoardTransport(context, em, out transport))
-        {
-            direction = BoardCommandModeDirection.TransportToPassenger;
-            return true;
-        }
-
-        ResolveSelectedBoardModeSource(
-            context,
-            em,
-            out transport,
-            out bool hasSelectedBoardPassenger,
-            out bool hasSelected);
-        if (transport != Entity.Null)
-        {
-            direction = BoardCommandModeDirection.TransportToPassenger;
-            return true;
-        }
-
-        if (hasSelectedBoardPassenger)
-        {
-            direction = BoardCommandModeDirection.PassengerToTransport;
-            return true;
-        }
-
-        rejectionReason = hasSelected
-            ? TacticalCommandReasonCode.CommandUnavailable
-            : TacticalCommandReasonCode.NoSelection;
-        message = hasSelected ? "Selected unit cannot board." : "Select units to board.";
-        return false;
-    }
-
-    private static bool TryFindFocusedBoardTransport(Context context, EntityManager em, out Entity transport)
-    {
-        transport = Entity.Null;
-        if (context.SelectionStateSystem.FocusedUnit != Entity.Null &&
-            em.Exists(context.SelectionStateSystem.FocusedUnit) &&
-            context.IsBoardTransportCandidate?.Invoke(em, context.SelectionStateSystem.FocusedUnit) == true)
-        {
-            transport = context.SelectionStateSystem.FocusedUnit;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static void ResolveSelectedBoardModeSource(
-        Context context,
-        EntityManager em,
-        out Entity transport,
-        out bool hasSelectedBoardPassenger,
-        out bool hasSelected)
-    {
-        transport = Entity.Null;
-        hasSelectedBoardPassenger = false;
-        hasSelected = false;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        if (query.IsEmptyIgnoreFilter)
-            return;
-
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-        {
-            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
-            for (int i = 0; i < selectedEntities.Length; i++)
-            {
-                Entity entity = selectedEntities[i];
-                if (!em.Exists(entity))
-                    continue;
-
-                hasSelected = true;
-                if (context.IsBoardPassengerCandidate?.Invoke(em, entity) == true)
-                    hasSelectedBoardPassenger = true;
-
-                if (context.IsBoardTransportCandidate?.Invoke(em, entity) == true)
-                {
-                    transport = entity;
-                    return;
-                }
-            }
-        }
-    }
-
-    private static bool IsSelectedAttackCapableUnit(EntityManager em, Entity entity)
-    {
-        if (IsAirDefenseLauncher(em, entity))
-            return false;
-
-        if (!em.HasComponent<Faction>(entity) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
-            !em.HasComponent<UnitMove>(entity) ||
-            !em.HasComponent<UnitCombat>(entity) ||
-            !em.HasComponent<UnitAttack>(entity) ||
-            !em.HasComponent<LocalTransform>(entity) ||
-            em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-        {
-            return false;
-        }
-
-        return !em.HasComponent<UnitHealth>(entity) ||
-               em.GetComponentData<UnitHealth>(entity).Current > 0;
-    }
-
-    private static bool IsAirDefenseLauncher(EntityManager em, Entity entity)
-    {
-        if (!em.HasComponent<AirMissileLauncherComponent>(entity))
-            return false;
-
-        if (em.HasComponent<Faction>(entity) &&
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
-        {
-            return false;
-        }
-
-        return !em.HasComponent<UnitHealth>(entity) ||
-               em.GetComponentData<UnitHealth>(entity).Current > 0;
-    }
 }

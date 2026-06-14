@@ -50,9 +50,9 @@ public sealed class FocusedUnitCommandSystem
         return true;
     }
 
-    public void EnableFocusedUnitAutoAttack(EntityManager em, Entity entity, UnitTargetOrderSystem targetOrderSystem)
+    public void EnableFocusedUnitAutoAttack(EntityManager em, Entity entity)
     {
-        targetOrderSystem.ClearCommandedAttackOrderComponents(em, entity);
+        UnitAttackOrderRequestSystem.EnqueueAndProcessClearCommandedAttackOrder(em, entity);
     }
 
     public bool IssueImmediateSelectedUnitOrder(

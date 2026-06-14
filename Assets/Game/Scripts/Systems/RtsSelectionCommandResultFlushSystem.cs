@@ -24,7 +24,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly ScanIntelCommandSystem ScanIntelCommandSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitMoveOrderSystem UnitMoveOrderSystem;
-        public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportBoardingQuerySystem UnitTransportBoardingQuerySystem;
         public readonly UnitTransportBoardingRuleSystem UnitTransportBoardingRuleSystem;
@@ -64,7 +63,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ScanIntelCommandSystem scanIntelCommandSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitMoveOrderSystem unitMoveOrderSystem,
-            UnitTargetOrderSystem unitTargetOrderSystem,
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportBoardingQuerySystem unitTransportBoardingQuerySystem,
             UnitTransportBoardingRuleSystem unitTransportBoardingRuleSystem,
@@ -103,7 +101,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ScanIntelCommandSystem = scanIntelCommandSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitMoveOrderSystem = unitMoveOrderSystem;
-            UnitTargetOrderSystem = unitTargetOrderSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportBoardingQuerySystem = unitTransportBoardingQuerySystem;
             UnitTransportBoardingRuleSystem = unitTransportBoardingRuleSystem;
@@ -343,7 +340,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             commandEntity,
             commandRequests,
             commandResults,
-            context.UnitTargetOrderSystem,
             context.TryGetAttackClickedUnitEntity,
             context.CollectSelectedAttackSources,
             context.BuildingPlacementInteractionSystem,

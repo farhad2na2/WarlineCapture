@@ -55,22 +55,16 @@ public partial struct RtsSelectionMissileLauncherRadarAttackCommandSystem : ISys
         if (!IsPlayerMissileLauncher(em, launcher, out byte factionId, out MissileLauncherTargetMode mode))
             return false;
 
-        var targetOrderSystem = new UnitTargetOrderSystem();
-        if (!targetOrderSystem.TryFindRadarTargetForMissileLauncher(
-                em,
-                factionId,
-                mode == MissileLauncherTargetMode.Air,
-                launcher,
-                out Entity target,
-                out int2 targetCell,
-                out targetPosition))
-        {
-            return false;
-        }
-
         RemoveToggleAttackTargetModeRequests(commandRequests);
-        targetOrderSystem.IssueDirectAttackTarget(em, launcher, target, targetCell, targetPosition);
-        return true;
+        bool issued = UnitAttackOrderRequestSystem.EnqueueAndProcessRadarAttackTarget(
+            em,
+            launcher,
+            factionId,
+            mode == MissileLauncherTargetMode.Air,
+            out UnitAttackOrderResultElement result);
+        if (issued)
+            targetPosition = result.TargetPosition;
+        return issued;
     }
 
     private static bool IsPlayerMissileLauncher(

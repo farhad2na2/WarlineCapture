@@ -70,6 +70,72 @@ public struct BuildingRuntimeSurfaceOverlay : IBufferElementData
     public MapSurfaceMovementMask MovementMask;
 }
 
+public struct BuildingUiProductionCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct BuildingUiProductionCommandRequestElement : IBufferElementData
+{
+    public const byte KindSelectedBuildingUnit = 0;
+    public const byte KindBuildingUnit = 1;
+    public const byte KindCancelProduction = 2;
+
+    public int RequestId;
+    public int BuildingId;
+    public int ProductionIndex;
+    public byte RequestKind;
+}
+
+public struct BuildingUiProductionCommandResultElement : IBufferElementData
+{
+    public const byte Queued = 0;
+    public const byte MissingActiveBuilding = 1;
+    public const byte MissingProducerBuilding = 2;
+    public const byte MissingUnitConfig = 3;
+    public const byte NotArmed = 4;
+    public const byte QueueRejected = 5;
+    public const byte MissingPendingProduction = 6;
+    public const byte CancelRejected = 7;
+    public const byte Cancelled = 8;
+
+    public int RequestId;
+    public int BuildingId;
+    public int ProductionIndex;
+    public byte RequestKind;
+    public byte Accepted;
+    public byte ResultCode;
+}
+
+public struct BuildingUiPlacementCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct BuildingUiPlacementCommandRequestElement : IBufferElementData
+{
+    public const byte KindConfirmPlacement = 0;
+    public const byte KindCancelPlacement = 1;
+    public const byte KindRotatePlacement = 2;
+    public const byte KindExitBuildMode = 3;
+
+    public int RequestId;
+    public byte RequestKind;
+    public byte ClearBuildingSelection;
+}
+
+public struct BuildingUiPlacementCommandResultElement : IBufferElementData
+{
+    public const byte Completed = 0;
+    public const byte MissingSession = 1;
+    public const byte Rejected = 2;
+
+    public int RequestId;
+    public byte RequestKind;
+    public byte Accepted;
+    public byte ResultCode;
+}
+
 public struct BuildingFactionUnitProductionRequest : IBufferElementData
 {
     public const byte Pending = 0;

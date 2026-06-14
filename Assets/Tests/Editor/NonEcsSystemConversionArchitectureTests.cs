@@ -25,6 +25,23 @@ public sealed class NonEcsSystemConversionArchitectureTests
         @"\b(MonoBehaviour|UnityEngine\.MonoBehaviour)\b",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex UnitPathRequestCreationRegex = new(
+        @"\bnew\s+UnitPathRequest\b",
+        RegexOptions.CultureInvariant);
+
+    private static readonly HashSet<string> ApprovedUnitPathRequestWriterPaths = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitIdleWanderSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitManualMoveRetrySystem.cs",
+        "Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
+    };
+
     public static void RunFocusedValidation()
     {
         try
@@ -32,7 +49,8 @@ public sealed class NonEcsSystemConversionArchitectureTests
             var tests = new NonEcsSystemConversionArchitectureTests();
             tests.RuntimeSystemInventoryCanBeEnumerated();
             tests.GeneratedInventoryContainsEveryRuntimeNonEcsSystem();
-            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2");
+            tests.DirectUnitPathRequestWritesStayInApprovedOrderOwners();
+            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -102,6 +120,23 @@ public sealed class NonEcsSystemConversionArchitectureTests
             stale,
             "The generated conversion inventory contains stale rows that no longer match runtime non-ECS `*System` declarations:\n" +
             string.Join(Environment.NewLine, stale));
+    }
+
+    [Test]
+    public void DirectUnitPathRequestWritesStayInApprovedOrderOwners()
+    {
+        string[] violations = EnumerateSourceFiles(GameScriptsRoot)
+            .Select(NormalizePath)
+            .Where(path => UnitPathRequestCreationRegex.IsMatch(File.ReadAllText(path)))
+            .Where(path => !ApprovedUnitPathRequestWriterPaths.Contains(path))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Direct `new UnitPathRequest` writes must stay inside centralized move-order, pathing, AI, or internal recovery owners. " +
+            "Command/UI/boundary code should use `UnitMoveOrderRequestSystem` request APIs instead. Violations:\n" +
+            string.Join(Environment.NewLine, violations));
     }
 
     private static IEnumerable<SystemDeclaration> EnumerateSystemDeclarations()

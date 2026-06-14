@@ -70,13 +70,37 @@ public sealed class FocusedUnitCommandSystemTests
         Assert.AreEqual(0, _entityManager.GetComponentData<UnitCombat>(unit).AutoEngage);
     }
 
+    [Test]
+    public void EnableFocusedUnitAutoAttack_ClearsCommandedAttackOrderThroughRequest()
+    {
+        Entity unit = CreateSelectedMoveUnit();
+        _entityManager.AddComponentData(unit, new EngageTarget { Target = Entity.Null, Cell = new int2(2, 3), IsCommanded = 1 });
+        _entityManager.AddComponentData(unit, new BaseBreachOrder { FinalTarget = Entity.Null, FinalCell = new int2(4, 5) });
+        _entityManager.AddComponentData(unit, new UnitTarget { Cell = new int2(6, 7) });
+        _entityManager.AddComponentData(unit, new UnitPathRequest { Goal = new int2(6, 7) });
+        _entityManager.AddComponentData(unit, new UnitPathFollow { PathIndex = 1 });
+        _entityManager.AddComponentData(unit, new UnitPathRange { Start = 0, Length = 2 });
+
+        new FocusedUnitCommandSystem().EnableFocusedUnitAutoAttack(
+            _entityManager,
+            unit);
+
+        Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<BaseBreachOrder>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathFollow>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(unit));
+    }
+
     public static void RunFocusedValidation()
     {
         try
         {
             RunCase(test => test.IssueImmediateSelectedUnitOrder_HoldStopsMovementAndEnablesAutoEngage());
             RunCase(test => test.IssueImmediateSelectedUnitOrder_StopClearsHoldAndDisablesAutoEngage());
-            Debug.Log("[FocusedUnitCommandFocusedValidation] result=Passed tests=2");
+            RunCase(test => test.EnableFocusedUnitAutoAttack_ClearsCommandedAttackOrderThroughRequest());
+            Debug.Log("[FocusedUnitCommandFocusedValidation] result=Passed tests=3");
         }
         catch (System.Exception ex)
         {

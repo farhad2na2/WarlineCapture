@@ -16,7 +16,6 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
-        public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly Camera WorldCamera;
@@ -47,7 +46,6 @@ public sealed class RtsSelectionFocusCommandSystem
             RtsSelectionInputSystem inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
-            UnitTargetOrderSystem unitTargetOrderSystem,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             Camera worldCamera,
@@ -77,7 +75,6 @@ public sealed class RtsSelectionFocusCommandSystem
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
-            UnitTargetOrderSystem = unitTargetOrderSystem;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             WorldCamera = worldCamera;
@@ -207,7 +204,6 @@ public sealed class RtsSelectionFocusCommandSystem
                 em,
                 entity,
                 context.SelectionStateSystem,
-                context.UnitTargetOrderSystem,
                 "FocusUnitEntity",
                 "FocusUnitEntity",
                 context.LogSelectionDiagnostic,

@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `61 / 113 complete (54.0%)`.
+- Checklist progress: `67 / 113 complete (59.3%)`.
 - In progress: `1`.
-- Remaining open: `51`.
-- Phase progress: `6 / 13 phases complete; 1 in progress; 6 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `101` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `45`.
+- Phase progress: `7 / 13 phases complete; 1 in progress; 5 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `16`.
+- Converted to `ISystem`: `17`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `5`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 centralized bridge/base-breach path writes through ECS move-order requests.
+- Last implementation update: 2026-06-14 extended Phase 7 building UI placement commands to ECS request/result buffers.
 
 ## Architecture Rules
 
@@ -369,7 +369,7 @@ Acceptance checks:
 
 ## Phase 6: Movement And Target Order Primitives
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Remove shared direct-call mutation helpers as public non-ECS systems.
@@ -385,12 +385,12 @@ Implementation steps:
 - [x] Inventory all callers of `UnitMoveOrderSystem`.
 - [x] Replace direct move order calls with `UnitMoveOrderRequest` data.
 - [x] Convert order clearing into ECS requests or command-buffered ECS helpers.
-- [~] Replace direct path-request mutation with ECS order application.
-- [ ] Inventory all callers of `UnitTargetOrderSystem`.
-- [ ] Replace direct attack target calls with `UnitAttackOrderRequest` data.
-- [ ] Replace radar target direct issuing with ECS automatic targeting requests.
-- [ ] Batch structural changes through ECBs.
-- [ ] Add tests for move order, attack order, clear order, and path request output.
+- [x] Replace direct path-request mutation with ECS order application.
+- [x] Inventory all callers of `UnitTargetOrderSystem`.
+- [x] Replace direct attack target calls with `UnitAttackOrderRequest` data.
+- [x] Replace radar target direct issuing with ECS automatic targeting requests.
+- [x] Batch structural changes through ECBs.
+- [x] Add tests for move order, attack order, clear order, and path request output.
 
 Acceptance checks:
 
@@ -412,10 +412,29 @@ Progress notes:
 - 2026-06-14: Extended `UnitMoveOrderRequestSystem` with `ClearMovement` requests and an ECB-backed clear helper. Standalone clear callers in Board All, transport boarding, rope disembark setup, and air-pickup now enqueue and synchronously flush clear requests. Existing disembark loops that already batch `Disabled`, passenger state, grid, and transform mutations now use `UnitMoveOrderRequestSystem.ClearMovementOrderComponents` with their local ECB. Runtime direct calls to public `UnitMoveOrderSystem.ClearMovementOrderComponents` are now isolated inside `UnitMoveOrderRequestSystem`; test-only direct coverage remains for the legacy helper until it is folded. Focused Unity validation passed with `[UnitMoveOrderFocusedValidation] result=Passed tests=12`, `[RtsSelectionInputSystemValidation] result=Passed tests=45`, `[UnitTransportValidation] result=Passed tests=19`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
 - 2026-06-14: Continued direct path-request mutation replacement by routing `RtsSelectionImmediateSelectedUnitCommandSystem` Return To Base movement through `UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder` and folding Hold/Stop movement clearing through `UnitMoveOrderRequestSystem.ClearMovementOrderComponents`. The local duplicate immediate-move writer and its `UnitPathRequest` add/set/remove branches were removed from the selection immediate command processor. `CitizenMovementCommandSystem` and `BuildingTargetMoveOrderSystem` now also delegate immediate movement to `UnitMoveOrderRequestSystem`; citizen request buffers are copied before structural changes and result buffers are reacquired after movement application to avoid invalidated `DynamicBuffer` safety handles. Broader direct `UnitPathRequest` writers remain in other gameplay owners and need classification before this checklist item is complete. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=45`, `[UnitMoveOrderFocusedValidation] result=Passed tests=12`, `[CitizenMovementCommandFocusedValidation] result=Passed tests=2`, and `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
 - 2026-06-14: Added `UnitMoveOrderRequestKind.TargetPathOnly` for systems that must write only `UnitTarget` plus `UnitPathRequest` without converting the operation into a generic manual move order. `BuildingProductionTransportBridgeSystem`, `BuildingResourceHaulerBridgeSystem`, and `BuildingPlacementRedirectSystem` now use that centralized ECS move-order request path for target/path writes while preserving their existing tag and cleanup behavior. `UnitTargetOrderSystem` base-breach attack movement now uses `UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder` before adding `BaseBreachOrder`. Remaining direct writers are now central move-order application (`UnitMoveOrderSystem`, `UnitMoveOrderRequestSystem`) plus pathing/AI/internal recovery owners (`UnitManualMoveRetrySystem`, `UnitGridMovementSystem`, `UnitIdleWanderSystem`, `BaseBreachOrderSystem`, `AICombatOrderSystem`, `UnitAttackSystem`, `EngageTargetValidateSystem`) that need explicit classification or later target-order conversion. Focused Unity validation passed with `[UnitMoveOrderFocusedValidation] result=Passed tests=13` and `[UnitTargetOrderFocusedValidation] result=Passed tests=6`.
+- 2026-06-14: Completed the command/boundary direct path-request replacement by adding `NonEcsSystemConversionArchitectureTests.DirectUnitPathRequestWritesStayInApprovedOrderOwners`. New direct `UnitPathRequest` creation is now guarded to stay inside centralized move-order application, pathing, AI, or internal recovery owners; command/UI/boundary code must use `UnitMoveOrderRequestSystem`.
+- 2026-06-14: Inventoried runtime `UnitTargetOrderSystem` callers. Direct mutation paths are:
+  - `AttackOrderCommandSystem`: calls `IssueAttackTarget` for pre-resolved attack requests and fallback selected-source attack queries; this is the primary candidate for `UnitAttackOrderRequest` data.
+  - `RtsSelectionMissileLauncherRadarAttackCommandSystem`: calls `TryFindRadarTargetForMissileLauncher` and `IssueDirectAttackTarget` for radar-driven missile attack; split into automatic targeting/result requests instead of keeping direct mutation.
+  - `FocusedUnitCommandSystem`: calls `ClearCommandedAttackOrderComponents` when enabling focused-unit auto attack; convert to an attack-clear request or fold into the future target-order ECS owner.
+  - `FocusedUnitLifecycleSystem`: calls `ClearAccidentalAirSelectionMove` and `IsBuildingEntity`; classify as lifecycle/read-policy helper use and fold narrow logic into ECS owners when attack requests are converted.
+  - `SelectionGameplayStartupSystem`: constructs/passes `UnitTargetOrderSystem` and uses `ValidateAttackSource` for debug-fire startup flow; replace with ECS validation/result data when debug-fire attack issuing moves.
+  - `RtsSelectionPointerTargetCommandSystem`, `RtsSelectionFocusCommandSystem`, `RtsSelectionCommandResultFlushSystem`, and their context builders pass `UnitTargetOrderSystem` through command contexts; these should shrink once attack requests/results own target mutation.
+  Test-only and performance-validation references are not runtime conversion blockers.
+- 2026-06-14: Started replacing direct attack target mutation with ECS request data. Added `UnitAttackOrderRequestSystem` plus `UnitAttackOrderRequestElement`/`UnitAttackOrderResultElement`; `AttackOrderCommandSystem` now creates the attack request queue in `OnCreate`, keeps its entity type handle cached/updated, and routes pre-resolved Attack command-intent requests through the request/result processor before mapping the result back to `RtsSelectionCommandResultElement`. The managed click-resolution fallback and radar/focused-unit target-order paths remain direct callers for follow-up slices, so this checklist item stays in progress. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=7` and `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`.
+- 2026-06-14: Routed `AttackOrderCommandSystem.IssueAttackTarget` through `UnitAttackOrderRequestSystem` for the pure selected-source fallback path when no managed base-breach resolver or custom source collector is required. Managed click fallback with base-breach resolution, radar missile launcher direct issuing, focused-unit attack clearing, and lifecycle/read-policy helper calls remain as the open direct `UnitTargetOrderSystem` follow-up paths. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=7` and `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`.
+- 2026-06-14: Completed radar direct issuing replacement by adding `UnitAttackOrderRequestKind.RadarAttackTarget`. `RtsSelectionMissileLauncherRadarAttackCommandSystem` now removes the pending attack-toggle request and writes a radar attack request; `UnitAttackOrderRequestSystem` owns radar target acquisition through the existing target-order policy helper and applies the direct commanded attack mutation. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=8`, `[MissileLauncherRadarAttackRuntimeValidation] result=Passed tests=4`, and `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`.
+- 2026-06-14: Added `UnitAttackOrderRequestKind.ClearCommandedAttackOrder` and routed `FocusedUnitCommandSystem.EnableFocusedUnitAutoAttack` through `UnitAttackOrderRequestSystem` instead of directly calling `UnitTargetOrderSystem.ClearCommandedAttackOrderComponents`. Remaining open direct target-order follow-ups are the managed click/base-breach attack fallback, lifecycle read-policy helpers, and debug-fire validation flow. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=9`, `[FocusedUnitCommandFocusedValidation] result=Passed tests=3`, and `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`.
+- 2026-06-14: Added `UnitAttackOrderRequestKind.ClearAccidentalAirSelectionMove` and routed `FocusedUnitLifecycleSystem` air-unit focus cleanup through `UnitAttackOrderRequestSystem` instead of directly calling `UnitTargetOrderSystem.ClearAccidentalAirSelectionMove`. Folded the focused-unit building classification check into `FocusedUnitLifecycleSystem`, removed the stale target-order dependency from `RtsSelectionFocusCommandSystem`, and removed the unused target-order parameter from `FocusedUnitCommandSystem.EnableFocusedUnitAutoAttack`. Remaining open direct target-order follow-ups are the managed click/base-breach attack fallback, pointer attack-target validation, command-result flush context, and debug-fire validation flow. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=10`, `[SelectionStateFocusedValidation] result=Passed tests=7`, `[FocusedUnitCommandFocusedValidation] result=Passed tests=3`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Folded read-only pointer attack-target eligibility into `RtsSelectionPointerTargetCommandSystem` and removed `UnitTargetOrderSystem` from the pointer-target context. This keeps the managed camera/pointer boundary responsible only for resolved target request data and removes another target-order pass-through from selection input. Remaining open direct target-order follow-ups are the managed click/base-breach attack fallback, command-result flush context, and debug-fire validation flow. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=45`.
+- 2026-06-14: Removed `UnitTargetOrderSystem` from `RtsSelectionCommandResultFlushSystem` and `RtsSelectionCommandResultContextSystem`; attack command flushing now calls `AttackOrderCommandSystem` without a target-order dependency. Folded debug-fire attack-source validation into `SelectionGameplayStartupSystem` so startup no longer constructs or calls `UnitTargetOrderSystem`. Remaining open runtime target-order calls are isolated inside `AttackOrderCommandSystem` for the managed click/base-breach/custom-source transition path and inside `UnitAttackOrderRequestSystem` as the current ECS request owner. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=10`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, `[GroundMissileAttackFocusedValidation] result=Passed tests=5`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Completed direct attack target request conversion by adding per-source `UnitAttackOrderRequestKind.SourceAttackTarget` and `SourceBaseBreachAttackTarget` requests. `AttackOrderCommandSystem` now enqueues selected-source, custom-source, and pre-resolved base-breach attack requests, then aggregates request results for HUD feedback and marker data; `UnitTargetOrderSystem` target mutation is isolated inside `UnitAttackOrderRequestSystem`, the current ECS request owner. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=10`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, `[GroundMissileAttackFocusedValidation] result=Passed tests=5`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Batched remaining `UnitTargetOrderSystem` structural writes through local `EntityCommandBuffer` playback. Attack issue, direct attack issue, commanded attack clear, and accidental air-selection move cleanup now queue component add/set/remove operations through ECBs while preserving the same-frame base-breach clear -> move-order -> breach-order sequence. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=10`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, `[GroundMissileAttackFocusedValidation] result=Passed tests=5`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Completed Phase 6 focused output coverage by adding source/base-breach attack request coverage and an ECB clear/re-add regression for replacing an existing `BaseBreachOrder`. Existing move-order focused coverage already asserts grouped move, target/path-only, clear, selected move, and building-target output. Focused Unity validation passed with `[UnitTargetOrderFocusedValidation] result=Passed tests=12`, `[UnitMoveOrderFocusedValidation] result=Passed tests=13`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 7: Building, Production, And Road Commands
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Split command-shaped building and road code that currently mixes UI, GameObjects, placement sessions, resources, and camera focus.
@@ -427,7 +446,7 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Split `BuildingUiCommandSystem` into passive UI request creation plus ECS command processors.
+- [~] Split `BuildingUiCommandSystem` into passive UI request creation plus ECS command processors.
 - [ ] Split `BuildingProductionRequestSystem` into ECS production validation/request processing and managed prefab/config boundary.
 - [ ] Split `BuildingPlacementCommandSystem` into ECS placement command state plus managed placement visual/session boundary.
 - [ ] Split `RoadBuildCommandSystem` into ECS road-build command state plus managed road-build visual/session boundary.
@@ -443,6 +462,11 @@ Acceptance checks:
 - Production/placement failures are represented as ECS results.
 - Camera focus and prefab instantiation remain managed boundaries.
 - No building command code owns direct UI text or button state.
+
+Progress notes:
+
+- 2026-06-14: Started the `BuildingUiCommandSystem` split by adding ECS `BuildingUiProductionCommand*` request/result buffers for selected-building, explicit-building, and cancel-production commands. `BuildingUiContextSystem` now routes building UI production actions and production cancel actions through those buffers and immediately flushes them through the managed production boundary to preserve same-frame UI responsiveness and the existing production-arm guard. `BuildingProductionRequestSystem` now records accepted/rejected result codes for queued, cancelled, missing active building, missing pending production, missing producer, missing unit config, not armed, queue rejected, and cancel rejected. Focused Unity validation passed with `[BuildingProductionRequestValidation] result=Passed tests=3`, `[BuildDrawerCatalogQueryValidation] result=Passed tests=21`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Extended the Phase 7 UI command split to placement confirm, cancel, rotate, and exit actions. Added ECS `BuildingUiPlacementCommand*` queue/request/result buffers and `BuildingPlacementCommandSystem` enqueue/process helpers that copy pending requests before invoking the managed placement session boundary, preserving same-frame UI responsiveness while keeping GameObject/session work out of unmanaged ECS/Burst. `BuildingUiCompositionSystem` and `BuildingPlacementInteractionCompositionSystem` now route placement UI actions through the request buffer when an ECS world is available, with no-world fallback for editor/teardown paths. Focused Unity validation passed with `[BuildingPlacementCommandRequestValidation] result=Passed tests=3`, `[BuildDrawerCatalogQueryValidation] result=Passed tests=21`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 8: HUD Feedback, Markers, And Presentation Boundaries
 

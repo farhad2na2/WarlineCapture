@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class BuildingUiContextSystem
@@ -214,16 +215,8 @@ internal sealed class BuildingUiContextSystem
             source.GetPlacementStatusText,
             source.GetActivePlacementCost,
             source.GetActivePlacementDurationSeconds,
-            productionIndex => source.ProductionRequestSystem?.CreateUnitFromSelectedBuilding(
-                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
-                source.GetActiveBuildingId?.Invoke(),
-                productionIndex,
-                source.GetFrameCount?.Invoke() ?? 0),
-            (buildingId, productionIndex) => source.ProductionRequestSystem?.CreateUnitFromBuilding(
-                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
-                buildingId,
-                productionIndex,
-                source.GetFrameCount?.Invoke() ?? 0),
+            productionIndex => EnqueueAndProcessCreateUnitFromSelectedBuilding(source, productionIndex),
+            (buildingId, productionIndex) => EnqueueAndProcessCreateUnitFromBuilding(source, buildingId, productionIndex),
             source.DeleteSelectedBuilding,
             source.ConfirmBuildingPlacement,
             source.CancelBuildingPlacement,
@@ -238,25 +231,57 @@ internal sealed class BuildingUiContextSystem
 
     private static bool CancelProduction(Source source, int buildingId, int pendingProductionIndex)
     {
-        if (source.RuntimeBuildingSystem == null ||
-            source.ProductionSystem == null ||
-            !source.RuntimeBuildingSystem.Buildings.TryGetValue(buildingId, out RuntimeBuildingEntity building) ||
-            building == null ||
-            building.PendingProductions == null ||
-            pendingProductionIndex < 0 ||
-            pendingProductionIndex >= building.PendingProductions.Count)
+        if (source.ProductionRequestSystem == null ||
+            !TryGetEntityManager(source, out EntityManager entityManager))
         {
             return false;
         }
 
-        if (!source.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex))
-            return false;
+        return source.ProductionRequestSystem.EnqueueAndProcessCancelProduction(
+            entityManager,
+            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+            buildingId,
+            pendingProductionIndex,
+            source.GetNow?.Invoke() ?? Time.time);
+    }
 
-        source.ProductionSystem.RebuildPendingProductionTimeline(
-            building.PendingProductions,
-            source.GetNow?.Invoke() ?? Time.time,
-            preserveActiveProgress: pendingProductionIndex > 0);
-        return true;
+    private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(Source source, int productionIndex)
+    {
+        if (source.ProductionRequestSystem == null ||
+            !TryGetEntityManager(source, out EntityManager entityManager))
+        {
+            return;
+        }
+
+        source.ProductionRequestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
+            entityManager,
+            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+            source.GetActiveBuildingId?.Invoke(),
+            productionIndex,
+            source.GetFrameCount?.Invoke() ?? 0);
+    }
+
+    private static void EnqueueAndProcessCreateUnitFromBuilding(Source source, int buildingId, int productionIndex)
+    {
+        if (source.ProductionRequestSystem == null ||
+            !TryGetEntityManager(source, out EntityManager entityManager))
+        {
+            return;
+        }
+
+        source.ProductionRequestSystem.EnqueueAndProcessCreateUnitFromBuilding(
+            entityManager,
+            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+            buildingId,
+            productionIndex,
+            source.GetFrameCount?.Invoke() ?? 0);
+    }
+
+    private static bool TryGetEntityManager(Source source, out EntityManager entityManager)
+    {
+        entityManager = default;
+        return source.TryGetEntityManager != null &&
+               source.TryGetEntityManager(out entityManager);
     }
 
     public BuildingUiQuerySystem.Context CreateQueryContext(Source source)

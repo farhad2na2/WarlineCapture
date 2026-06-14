@@ -73,6 +73,25 @@ public sealed class BuildingProductionSystemTests
         }
     }
 
+    public static void RunProductionRequestValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionSystemTests();
+            tests.BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult();
+            tests.BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding();
+            tests.BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult();
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=3");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingProductionRequestValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void InitializePendingProduction_SetsReadyTimeAndTransportFields()
     {
@@ -336,6 +355,140 @@ public sealed class BuildingProductionSystemTests
             Assert.AreEqual(neutralProducer.Id, buildingId);
             Assert.AreEqual(0, productionIndex);
             Assert.AreEqual("Neutral Helipad", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult()
+    {
+        using World world = new("BuildingUiProductionCommandRequestTest");
+        var requestSystem = new BuildingProductionRequestSystem();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Requestable Unit");
+        try
+        {
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 20,
+                displayName: "Player Factory",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                world.EntityManager);
+
+            requestSystem.ArmNextProductionFromUi(42);
+            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(world.EntityManager, producer.Id, productionIndex: 0);
+            requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
+
+            Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiProductionCommandResultElement result));
+            Assert.AreEqual(1, result.Accepted);
+            Assert.AreEqual(BuildingUiProductionCommandResultElement.Queued, result.ResultCode);
+            Assert.AreEqual(producer.Id, result.BuildingId);
+            Assert.AreEqual(0, result.ProductionIndex);
+            Assert.AreEqual(1, producer.PendingProductions.Count);
+            Assert.AreSame(unitPrefab, producer.PendingProductions[0].Prefab);
+
+            using EntityQuery queueQuery = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingUiProductionCommandQueueComponent>());
+            Entity queueEntity = queueQuery.GetSingletonEntity();
+            Assert.AreEqual(0, world.EntityManager.GetBuffer<BuildingUiProductionCommandRequestElement>(queueEntity).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding()
+    {
+        using World world = new("BuildingUiProductionCommandMissingActiveBuildingTest");
+        var requestSystem = new BuildingProductionRequestSystem();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Requestable Unit");
+        try
+        {
+            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                productionSystem,
+                unitPrefab,
+                world.EntityManager);
+
+            requestSystem.ArmNextProductionFromUi(42);
+            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(world.EntityManager, null, productionIndex: 0);
+            requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
+
+            Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiProductionCommandResultElement result));
+            Assert.AreEqual(0, result.Accepted);
+            Assert.AreEqual(BuildingUiProductionCommandResultElement.MissingActiveBuilding, result.ResultCode);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult()
+    {
+        using World world = new("BuildingUiProductionCommandCancelProductionTest");
+        var requestSystem = new BuildingProductionRequestSystem();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Requestable Unit");
+        try
+        {
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 20,
+                displayName: "Player Factory",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                world.EntityManager);
+
+            requestSystem.ArmNextProductionFromUi(42);
+            Assert.IsTrue(requestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
+                world.EntityManager,
+                context,
+                producer.Id,
+                productionIndex: 0,
+                frameCount: 42));
+            Assert.AreEqual(1, producer.PendingProductions.Count);
+
+            int requestId = requestSystem.EnqueueCancelProduction(world.EntityManager, producer.Id, pendingProductionIndex: 0);
+            requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 0, now: 20f);
+
+            Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiProductionCommandResultElement result));
+            Assert.AreEqual(1, result.Accepted);
+            Assert.AreEqual(BuildingUiProductionCommandResultElement.Cancelled, result.ResultCode);
+            Assert.AreEqual(0, producer.PendingProductions.Count);
         }
         finally
         {
@@ -831,7 +984,8 @@ public sealed class BuildingProductionSystemTests
     private static BuildingProductionRequestSystem.Context CreateProducerSelectionContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionSystem productionSystem,
-        GameObject unitPrefab)
+        GameObject unitPrefab,
+        EntityManager entityManager = default)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         BuildingProductionSystem.QueueContext queueContext = new(
@@ -857,7 +1011,13 @@ public sealed class BuildingProductionSystemTests
             _ => true,
             _ => { },
             _ => { },
-            null,
+            (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
+                queueContext,
+                building,
+                productionIndex,
+                spawnUnitPrefab,
+                entityManager,
+                10f),
             _ => { },
             () => { },
             () => { },

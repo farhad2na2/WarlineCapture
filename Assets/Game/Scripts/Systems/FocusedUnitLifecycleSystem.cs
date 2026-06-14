@@ -150,7 +150,6 @@ public sealed class FocusedUnitLifecycleSystem
         EntityManager em,
         Entity entity,
         SelectionStateSystem selectionStateSystem,
-        UnitTargetOrderSystem targetOrderSystem,
         string clearReason,
         string diagnosticSource,
         System.Action<string> logSelectionDiagnostic,
@@ -191,7 +190,7 @@ public sealed class FocusedUnitLifecycleSystem
 
         selectionStateSystem.SetFocusedUnit(entity);
         if (em.HasComponent<UnitAirMovement>(entity))
-            targetOrderSystem.ClearAccidentalAirSelectionMove(em, entity);
+            UnitAttackOrderRequestSystem.EnqueueAndProcessClearAccidentalAirSelectionMove(em, entity);
 
         applyHudSelection?.Invoke(em, entity);
         return true;
@@ -201,7 +200,6 @@ public sealed class FocusedUnitLifecycleSystem
         EntityManager em,
         Vector2 screenPosition,
         SelectionStateSystem selectionStateSystem,
-        UnitTargetOrderSystem targetOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         string clearReason,
         string diagnosticSource,
@@ -219,7 +217,7 @@ public sealed class FocusedUnitLifecycleSystem
                 $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={Time.frameCount}");
             return false;
         }
-        if (targetOrderSystem.IsBuildingEntity(em, bestEntity))
+        if (IsBuildingEntity(em, bestEntity))
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                 $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={Time.frameCount}");
@@ -229,7 +227,6 @@ public sealed class FocusedUnitLifecycleSystem
                 em,
                 bestEntity,
                 selectionStateSystem,
-                targetOrderSystem,
                 clearReason,
                 diagnosticSource,
                 logSelectionDiagnostic,
@@ -262,6 +259,18 @@ public sealed class FocusedUnitLifecycleSystem
         }
 
         return selectedEntities;
+    }
+
+    private static bool IsBuildingEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return false;
+        if (em.HasComponent<UnitMove>(entity))
+            return false;
+        if (!em.HasComponent<UnitHealth>(entity) || !em.HasComponent<UnitRespawnPrefab>(entity))
+            return false;
+
+        return em.GetComponentData<UnitRespawnPrefab>(entity).Prefab == Entity.Null;
     }
 
     private static string DescribeSelectionEntity(EntityManager em, Entity entity)

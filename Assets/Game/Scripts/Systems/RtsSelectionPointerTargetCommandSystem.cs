@@ -18,7 +18,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
-        public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
         public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
@@ -54,7 +53,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             RtsSelectionInputSystem inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
-            UnitTargetOrderSystem unitTargetOrderSystem,
             FocusableUnitLookupSystem focusableUnitLookupSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitTransportCapacitySystem unitTransportCapacitySystem,
@@ -89,7 +87,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
-            UnitTargetOrderSystem = unitTargetOrderSystem;
             FocusableUnitLookupSystem = focusableUnitLookupSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
@@ -261,7 +258,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         if (!targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out Entity targetEntity) ||
-            !IsDirectResolvedAttackTarget(em, targetEntity, context.UnitTargetOrderSystem))
+            !IsDirectResolvedAttackTarget(em, targetEntity))
         {
             return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
         }
@@ -276,20 +273,24 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     private static bool IsDirectResolvedAttackTarget(
         EntityManager em,
-        Entity targetEntity,
-        UnitTargetOrderSystem targetOrderSystem)
+        Entity targetEntity)
     {
         if (targetEntity == Entity.Null ||
             !em.Exists(targetEntity) ||
             em.HasComponent<RuntimeBuildingCombatTag>(targetEntity) ||
             em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) ||
-            em.HasComponent<StaticGridBlocker>(targetEntity))
+            em.HasComponent<StaticGridBlocker>(targetEntity) ||
+            !em.HasComponent<Faction>(targetEntity) ||
+            !em.HasComponent<LocalTransform>(targetEntity))
         {
             return false;
         }
 
-        targetOrderSystem ??= new UnitTargetOrderSystem();
-        return targetOrderSystem.ValidateAttackTarget(em, targetEntity).Accepted;
+        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
+            return false;
+
+        return !em.HasComponent<UnitHealth>(targetEntity) ||
+               em.GetComponentData<UnitHealth>(targetEntity).Current > 0;
     }
 
     public bool TryIssueScanOrder(Context context, Vector2 screenPosition)
@@ -416,7 +417,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
                 em,
                 screenPosition,
                 context.SelectionStateSystem,
-                context.UnitTargetOrderSystem,
                 (Vector2 position, EntityManager entityManager, out Entity entity) => targetBoundary.TryGetClickedUnitEntity(position, entityManager, out entity),
                 "TryFocusUnit",
                 "TryFocusUnit",

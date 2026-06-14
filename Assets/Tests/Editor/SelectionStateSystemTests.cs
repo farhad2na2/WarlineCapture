@@ -20,7 +20,8 @@ public sealed class SelectionStateSystemTests
             RunCase(test => test.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=6");
+            RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=7");
         }
         catch (System.Exception ex)
         {
@@ -242,6 +243,40 @@ public sealed class SelectionStateSystemTests
         Assert.IsTrue(result);
         Assert.AreEqual(unit, selectionState.FocusedUnit);
         Assert.AreEqual(unit, applied);
+    }
+
+    [Test]
+    public void FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest()
+    {
+        var selectionState = new SelectionStateSystem();
+        var lifecycle = new FocusedUnitLifecycleSystem();
+        Entity unit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        _entityManager.AddComponent<UnitAirMovement>(unit);
+        _entityManager.AddComponent<ManualMoveOrderTag>(unit);
+        _entityManager.AddComponentData(unit, new UnitTarget { Cell = new int2(1, 0) });
+        _entityManager.AddComponentData(unit, new UnitPathRequest { Goal = new int2(1, 0) });
+        _entityManager.AddComponentData(unit, new UnitPathFollow { PathIndex = 1 });
+        _entityManager.AddComponentData(unit, new UnitPathRange { Start = 0, Length = 2 });
+
+        Entity applied = Entity.Null;
+        bool focused = lifecycle.FocusUnitEntity(
+            _entityManager,
+            unit,
+            selectionState,
+            "UnitTest",
+            "UnitTest",
+            _ => { },
+            null,
+            () => { },
+            (_, entity) => applied = entity);
+
+        Assert.IsTrue(focused);
+        Assert.AreEqual(unit, selectionState.FocusedUnit);
+        Assert.AreEqual(unit, applied);
+        Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathFollow>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRange>(unit));
     }
 
     private Entity CreateMoveUnit(byte factionId)

@@ -649,7 +649,6 @@ public sealed class GroundMissileLauncherRuntimeTests
             commandEntity,
             requests,
             results,
-            new UnitTargetOrderSystem(),
             (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
             {
                 clicked = target;
@@ -700,7 +699,6 @@ public sealed class GroundMissileLauncherRuntimeTests
             commandEntity,
             requests,
             results,
-            new UnitTargetOrderSystem(),
             (Vector2 screenPosition, EntityManager entityManager, out Entity clicked) =>
             {
                 clicked = targetBuilding;

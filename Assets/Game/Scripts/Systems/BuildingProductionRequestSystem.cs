@@ -166,24 +166,238 @@ internal sealed class BuildingProductionRequestSystem
 
     public void CreateUnitFromBuilding(Context context, int buildingId, int productionIndex, int frameCount)
     {
-        if (!ConsumeUiProductionArm(frameCount))
+        TryCreateUnitFromBuilding(context, buildingId, productionIndex, frameCount, out _);
+    }
+
+    public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex)
+    {
+        return EnqueueUiProductionCommand(
+            em,
+            BuildingUiProductionCommandRequestElement.KindSelectedBuildingUnit,
+            activeBuildingId ?? 0,
+            productionIndex);
+    }
+
+    public int EnqueueCreateUnitFromBuilding(EntityManager em, int buildingId, int productionIndex)
+    {
+        return EnqueueUiProductionCommand(
+            em,
+            BuildingUiProductionCommandRequestElement.KindBuildingUnit,
+            buildingId,
+            productionIndex);
+    }
+
+    public int EnqueueCancelProduction(EntityManager em, int buildingId, int pendingProductionIndex)
+    {
+        return EnqueueUiProductionCommand(
+            em,
+            BuildingUiProductionCommandRequestElement.KindCancelProduction,
+            buildingId,
+            pendingProductionIndex);
+    }
+
+    public bool EnqueueAndProcessCreateUnitFromSelectedBuilding(
+        EntityManager em,
+        Context context,
+        int? activeBuildingId,
+        int productionIndex,
+        int frameCount)
+    {
+        int requestId = EnqueueCreateUnitFromSelectedBuilding(em, activeBuildingId, productionIndex);
+        ProcessPendingUiProductionCommands(em, context, frameCount);
+        return TryGetUiProductionCommandResult(em, requestId, out BuildingUiProductionCommandResultElement result) &&
+               result.Accepted != 0;
+    }
+
+    public bool EnqueueAndProcessCreateUnitFromBuilding(
+        EntityManager em,
+        Context context,
+        int buildingId,
+        int productionIndex,
+        int frameCount)
+    {
+        int requestId = EnqueueCreateUnitFromBuilding(em, buildingId, productionIndex);
+        ProcessPendingUiProductionCommands(em, context, frameCount);
+        return TryGetUiProductionCommandResult(em, requestId, out BuildingUiProductionCommandResultElement result) &&
+               result.Accepted != 0;
+    }
+
+    public bool EnqueueAndProcessCancelProduction(
+        EntityManager em,
+        Context context,
+        int buildingId,
+        int pendingProductionIndex,
+        float now)
+    {
+        int requestId = EnqueueCancelProduction(em, buildingId, pendingProductionIndex);
+        ProcessPendingUiProductionCommands(em, context, frameCount: 0, now: now);
+        return TryGetUiProductionCommandResult(em, requestId, out BuildingUiProductionCommandResultElement result) &&
+               result.Accepted != 0;
+    }
+
+    public bool TryGetUiProductionCommandResult(
+        EntityManager em,
+        int requestId,
+        out BuildingUiProductionCommandResultElement result)
+    {
+        result = default;
+        Entity queueEntity = EnsureUiProductionCommandEntity(em);
+        DynamicBuffer<BuildingUiProductionCommandResultElement> results =
+            em.GetBuffer<BuildingUiProductionCommandResultElement>(queueEntity);
+        for (int i = 0; i < results.Length; i++)
+        {
+            if (results[i].RequestId == requestId)
+            {
+                result = results[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ProcessPendingUiProductionCommands(EntityManager em, Context context, int frameCount, float now = 0f)
+    {
+        Entity queueEntity = EnsureUiProductionCommandEntity(em);
+        DynamicBuffer<BuildingUiProductionCommandRequestElement> requests =
+            em.GetBuffer<BuildingUiProductionCommandRequestElement>(queueEntity);
+        if (requests.Length == 0)
             return;
+
+        using NativeList<BuildingUiProductionCommandRequestElement> pendingRequests = new(requests.Length, Allocator.Temp);
+        for (int i = 0; i < requests.Length; i++)
+            pendingRequests.Add(requests[i]);
+        requests.Clear();
+
+        DynamicBuffer<BuildingUiProductionCommandResultElement> results =
+            em.GetBuffer<BuildingUiProductionCommandResultElement>(queueEntity);
+        results.Clear();
+
+        NativeArray<BuildingUiProductionCommandRequestElement> pendingArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingArray.Length; i++)
+        {
+            BuildingUiProductionCommandRequestElement request = pendingArray[i];
+            bool queued = ProcessUiProductionCommand(context, request, frameCount, now, out byte resultCode);
+            results = em.GetBuffer<BuildingUiProductionCommandResultElement>(queueEntity);
+            results.Add(new BuildingUiProductionCommandResultElement
+            {
+                RequestId = request.RequestId,
+                BuildingId = request.BuildingId,
+                ProductionIndex = request.ProductionIndex,
+                RequestKind = request.RequestKind,
+                Accepted = queued ? (byte)1 : (byte)0,
+                ResultCode = resultCode
+            });
+        }
+    }
+
+    private bool ProcessUiProductionCommand(
+        Context context,
+        BuildingUiProductionCommandRequestElement request,
+        int frameCount,
+        float now,
+        out byte resultCode)
+    {
+        if (request.RequestKind == BuildingUiProductionCommandRequestElement.KindCancelProduction)
+        {
+            return TryCancelProduction(
+                context,
+                request.BuildingId,
+                request.ProductionIndex,
+                now,
+                out resultCode);
+        }
+
+        if (request.RequestKind == BuildingUiProductionCommandRequestElement.KindSelectedBuildingUnit &&
+            request.BuildingId == 0)
+        {
+            resultCode = BuildingUiProductionCommandResultElement.MissingActiveBuilding;
+            return false;
+        }
+
+        return TryCreateUnitFromBuilding(
+            context,
+            request.BuildingId,
+            request.ProductionIndex,
+            frameCount,
+            out resultCode);
+    }
+
+    private bool TryCreateUnitFromBuilding(
+        Context context,
+        int buildingId,
+        int productionIndex,
+        int frameCount,
+        out byte resultCode)
+    {
+        if (!ConsumeUiProductionArm(frameCount))
+        {
+            resultCode = BuildingUiProductionCommandResultElement.NotArmed;
+            return false;
+        }
 
         if (context.RuntimeBuildings == null ||
             !context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building) ||
             building?.Definition == null)
-            return;
+        {
+            resultCode = BuildingUiProductionCommandResultElement.MissingProducerBuilding;
+            return false;
+        }
 
         GameObject spawnUnitPrefab = context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
         if (spawnUnitPrefab == null)
-            return;
+        {
+            resultCode = BuildingUiProductionCommandResultElement.MissingUnitConfig;
+            return false;
+        }
 
         if (!CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, true))
-            return;
+        {
+            resultCode = BuildingUiProductionCommandResultElement.QueueRejected;
+            return false;
+        }
 
         bool queued = context.TryQueuePlayerUnit != null && context.TryQueuePlayerUnit(building, productionIndex, spawnUnitPrefab);
+        resultCode = queued
+            ? BuildingUiProductionCommandResultElement.Queued
+            : BuildingUiProductionCommandResultElement.QueueRejected;
         if (!queued)
             context.LogWarning?.Invoke($"Unable to create a unit for the selected building '{building.Definition.DisplayName}'.");
+
+        return queued;
+    }
+
+    private static bool TryCancelProduction(
+        Context context,
+        int buildingId,
+        int pendingProductionIndex,
+        float now,
+        out byte resultCode)
+    {
+        if (context.RuntimeBuildings == null ||
+            context.ProductionSystem == null ||
+            !context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building) ||
+            building == null ||
+            building.PendingProductions == null ||
+            pendingProductionIndex < 0 ||
+            pendingProductionIndex >= building.PendingProductions.Count)
+        {
+            resultCode = BuildingUiProductionCommandResultElement.MissingPendingProduction;
+            return false;
+        }
+
+        if (!context.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex))
+        {
+            resultCode = BuildingUiProductionCommandResultElement.CancelRejected;
+            return false;
+        }
+
+        context.ProductionSystem.RebuildPendingProductionTimeline(
+            building.PendingProductions,
+            now,
+            preserveActiveProgress: pendingProductionIndex > 0);
+        resultCode = BuildingUiProductionCommandResultElement.Cancelled;
+        return true;
     }
 
     public CampRequestFailure GetCampRequestFailure(Context context, GameObject prefab, int price, out string requiredBuildingDisplayName)
@@ -569,6 +783,51 @@ internal sealed class BuildingProductionRequestSystem
         }
 
         return false;
+    }
+
+    private static int EnqueueUiProductionCommand(
+        EntityManager em,
+        byte requestKind,
+        int buildingId,
+        int productionIndex)
+    {
+        Entity queueEntity = EnsureUiProductionCommandEntity(em);
+        BuildingUiProductionCommandQueueComponent queue =
+            em.GetComponentData<BuildingUiProductionCommandQueueComponent>(queueEntity);
+        queue.LastRequestId++;
+        em.SetComponentData(queueEntity, queue);
+        em.GetBuffer<BuildingUiProductionCommandRequestElement>(queueEntity).Add(new BuildingUiProductionCommandRequestElement
+        {
+            RequestId = queue.LastRequestId,
+            BuildingId = buildingId,
+            ProductionIndex = productionIndex,
+            RequestKind = requestKind
+        });
+        return queue.LastRequestId;
+    }
+
+    private static Entity EnsureUiProductionCommandEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiProductionCommandQueueComponent>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            Entity existing = query.GetSingletonEntity();
+            EnsureUiProductionCommandBuffers(em, existing);
+            return existing;
+        }
+
+        Entity entity = em.CreateEntity(typeof(BuildingUiProductionCommandQueueComponent));
+        em.SetName(entity, "BuildingUiProductionCommands");
+        EnsureUiProductionCommandBuffers(em, entity);
+        return entity;
+    }
+
+    private static void EnsureUiProductionCommandBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasBuffer<BuildingUiProductionCommandRequestElement>(entity))
+            em.AddBuffer<BuildingUiProductionCommandRequestElement>(entity);
+        if (!em.HasBuffer<BuildingUiProductionCommandResultElement>(entity))
+            em.AddBuffer<BuildingUiProductionCommandResultElement>(entity);
     }
 
     private static bool IsFriendlyProducerBuildingForPass(RuntimeBuildingEntity building, int pass)

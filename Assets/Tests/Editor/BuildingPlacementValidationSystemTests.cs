@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -8,11 +9,114 @@ public sealed class BuildingPlacementValidationSystemTests
 {
     private World _world;
 
+    public static void RunPlacementCommandRequestValidation()
+    {
+        try
+        {
+            var tests = new BuildingPlacementValidationSystemTests();
+            tests.BuildingUiPlacementCommandRequest_RejectsMissingSession();
+            tests.BuildingUiPlacementCommandRequest_CancelWritesAcceptedResult();
+            tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=3");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingPlacementCommandRequestValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {
         _world?.Dispose();
         _world = null;
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_RejectsMissingSession()
+    {
+        using World world = new("BuildingUiPlacementCommandMissingSessionTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = default;
+
+        int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+            world.EntityManager,
+            requestId,
+            out BuildingUiPlacementCommandResultElement result));
+        Assert.AreEqual(0, result.Accepted);
+        Assert.AreEqual(BuildingUiPlacementCommandRequestElement.KindConfirmPlacement, result.RequestKind);
+        Assert.AreEqual(BuildingUiPlacementCommandResultElement.MissingSession, result.ResultCode);
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_CancelWritesAcceptedResult()
+    {
+        using World world = new("BuildingUiPlacementCommandCancelTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        bool commandModeCleared = false;
+        BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
+            new BuildingPlacementSessionSystem(),
+            clearCommandMode: () => commandModeCleared = true);
+
+        int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+            world.EntityManager,
+            requestId,
+            out BuildingUiPlacementCommandResultElement result));
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(BuildingUiPlacementCommandRequestElement.KindCancelPlacement, result.RequestKind);
+        Assert.AreEqual(BuildingUiPlacementCommandResultElement.Completed, result.ResultCode);
+        Assert.IsTrue(commandModeCleared);
+
+        using EntityQuery queueQuery = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
+        Entity queueEntity = queueQuery.GetSingletonEntity();
+        Assert.AreEqual(0, world.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Length);
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag()
+    {
+        using World world = new("BuildingUiPlacementCommandExitBuildModeTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        int clearSelectionCount = 0;
+        BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
+            new BuildingPlacementSessionSystem(),
+            clearSelectedBuilding: _ => clearSelectionCount++);
+
+        int preservedSelectionRequestId = commandSystem.EnqueueExitBuildMode(
+            world.EntityManager,
+            clearBuildingSelection: false);
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+            world.EntityManager,
+            preservedSelectionRequestId,
+            out BuildingUiPlacementCommandResultElement preservedSelectionResult));
+        Assert.AreEqual(1, preservedSelectionResult.Accepted);
+        Assert.AreEqual(BuildingUiPlacementCommandResultElement.Completed, preservedSelectionResult.ResultCode);
+        Assert.AreEqual(0, clearSelectionCount);
+
+        int clearSelectionRequestId = commandSystem.EnqueueExitBuildMode(
+            world.EntityManager,
+            clearBuildingSelection: true);
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+            world.EntityManager,
+            clearSelectionRequestId,
+            out BuildingUiPlacementCommandResultElement clearSelectionResult));
+        Assert.AreEqual(1, clearSelectionResult.Accepted);
+        Assert.AreEqual(BuildingUiPlacementCommandResultElement.Completed, clearSelectionResult.ResultCode);
+        Assert.AreEqual(1, clearSelectionCount);
     }
 
     [Test]
@@ -144,6 +248,35 @@ public sealed class BuildingPlacementValidationSystemTests
             new Vector2Int(3, 1),
             new Vector2Int(1, 4),
             true));
+    }
+
+    private static BuildingPlacementCommandSystem.Context CreatePlacementCommandContext(
+        BuildingPlacementSessionSystem sessionSystem,
+        Action<string> clearSelectedBuilding = null,
+        Action clearCommandMode = null)
+    {
+        var runtimeStateSystem = new RuntimeGameplayStateSystem();
+        var lifecycleSystem = new BuildingPlacementLifecycleSystem();
+        BuildingPlacementSessionSystem.Context sessionContext = new(
+            runtimeStateSystem,
+            lifecycleSystem,
+            null,
+            null,
+            () => new BuildingPlacementLifecycleSystem.CancelContext(null, null, null),
+            () => default,
+            () => default,
+            () => default,
+            null,
+            null,
+            clearSelectedBuilding,
+            clearCommandMode);
+
+        return new BuildingPlacementCommandSystem.Context(
+            null,
+            null,
+            sessionSystem,
+            sessionContext,
+            null);
     }
 
     private void CreateRoadBuffer(int width, int height, out GridConfig grid, out DynamicBuffer<GridRoad> roads)

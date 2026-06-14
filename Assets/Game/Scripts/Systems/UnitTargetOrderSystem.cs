@@ -141,78 +141,89 @@ public sealed class UnitTargetOrderSystem
         int issuedCount = 0;
         bool issuedGroundMissileOrder = false;
         TacticalCommandResult missileRangeRejection = default;
-        for (int i = 0; i < selectedEntities.Length; i++)
+        EntityCommandBuffer orderEcb = new(Allocator.Temp);
+        try
         {
-            Entity entity = selectedEntities[i];
-            if (!ValidateAttackSource(entityManager, entity).Accepted)
-                continue;
-            bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
-            if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
+            for (int i = 0; i < selectedEntities.Length; i++)
             {
-                missileRangeRejection = missileRangeResult;
-                continue;
-            }
-
-            Entity engageTarget = targetEntity;
-            int2 engageCell = targetCell;
-            float3 engagePosition = targetTransform.Position;
-            bool issuedBreachOrder = false;
-            bool canResolveBaseBreach = !entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
-            if (canResolveBaseBreach &&
-                tryResolveBaseBreachTarget != null &&
-                entityManager.HasComponent<Faction>(entity) &&
-                entityManager.HasComponent<UnitGrid>(entity) &&
-                tryResolveBaseBreachTarget(
-                    entityManager.GetComponentData<Faction>(entity).Id,
-                    targetEntity,
-                    targetCell,
-                    entityManager.GetComponentData<UnitGrid>(entity).Cell,
-                    out Entity breachTarget,
-                    out int2 breachCell,
-                    out float3 breachPosition))
-            {
-                engageTarget = breachTarget;
-                engageCell = breachCell;
-                engagePosition = breachPosition;
-                issuedBreachOrder = true;
-            }
-
-            ClearInterruptedOrderComponents(entityManager, entity, removeEngageTarget: issuedBreachOrder);
-            if (issuedBreachOrder)
-            {
-                UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(entityManager, entity, engageCell);
-            }
-            else
-            {
-                SetOrAdd(
-                    entityManager,
-                    entity,
-                    new EngageTarget
-                    {
-                        Target = engageTarget,
-                        Cell = engageCell,
-                        Position = engagePosition,
-                        IsCommanded = 1
-                    });
-            }
-
-            if (issuedBreachOrder)
-            {
-                BaseBreachOrder breachOrder = new()
+                Entity entity = selectedEntities[i];
+                if (!ValidateAttackSource(entityManager, entity).Accepted)
+                    continue;
+                bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
+                if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
                 {
-                    FinalTarget = targetEntity,
-                    FinalCell = targetCell,
-                    FinalPosition = targetTransform.Position,
-                    BreachTarget = engageTarget,
-                    BreachCell = engageCell,
-                    BreachPosition = engagePosition,
-                    Stage = BaseBreachOrder.StageMovingToEnemyBreach,
-                    IsCommanded = 1
-                };
-                SetOrAdd(entityManager, entity, breachOrder);
+                    missileRangeRejection = missileRangeResult;
+                    continue;
+                }
+
+                Entity engageTarget = targetEntity;
+                int2 engageCell = targetCell;
+                float3 engagePosition = targetTransform.Position;
+                bool issuedBreachOrder = false;
+                bool canResolveBaseBreach = !entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
+                if (canResolveBaseBreach &&
+                    tryResolveBaseBreachTarget != null &&
+                    entityManager.HasComponent<Faction>(entity) &&
+                    entityManager.HasComponent<UnitGrid>(entity) &&
+                    tryResolveBaseBreachTarget(
+                        entityManager.GetComponentData<Faction>(entity).Id,
+                        targetEntity,
+                        targetCell,
+                        entityManager.GetComponentData<UnitGrid>(entity).Cell,
+                        out Entity breachTarget,
+                        out int2 breachCell,
+                        out float3 breachPosition))
+                {
+                    engageTarget = breachTarget;
+                    engageCell = breachCell;
+                    engagePosition = breachPosition;
+                    issuedBreachOrder = true;
+                }
+
+                PlaybackInterruptedOrderClear(entityManager, entity, removeEngageTarget: issuedBreachOrder);
+                if (issuedBreachOrder)
+                {
+                    UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(entityManager, entity, engageCell);
+                }
+                else
+                {
+                    SetOrAdd(
+                        entityManager,
+                        orderEcb,
+                        entity,
+                        new EngageTarget
+                        {
+                            Target = engageTarget,
+                            Cell = engageCell,
+                            Position = engagePosition,
+                            IsCommanded = 1
+                        });
+                }
+
+                if (issuedBreachOrder)
+                {
+                    BaseBreachOrder breachOrder = new()
+                    {
+                        FinalTarget = targetEntity,
+                        FinalCell = targetCell,
+                        FinalPosition = targetTransform.Position,
+                        BreachTarget = engageTarget,
+                        BreachCell = engageCell,
+                        BreachPosition = engagePosition,
+                        Stage = BaseBreachOrder.StageMovingToEnemyBreach,
+                        IsCommanded = 1
+                    };
+                    SetOrAdd(entityManager, orderEcb, entity, breachOrder);
+                }
+                issuedCount++;
+                issuedGroundMissileOrder |= isGroundMissileLauncher;
             }
-            issuedCount++;
-            issuedGroundMissileOrder |= isGroundMissileLauncher;
+
+            orderEcb.Playback(entityManager);
+        }
+        finally
+        {
+            orderEcb.Dispose();
         }
 
         TacticalCommandResult result = issuedCount > 0
@@ -230,23 +241,33 @@ public sealed class UnitTargetOrderSystem
         int2 targetCell,
         float3 targetPosition)
     {
-        ClearInterruptedOrderComponents(entityManager, sourceEntity, removeEngageTarget: false);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            ClearInterruptedOrderComponents(entityManager, ecb, sourceEntity, removeEngageTarget: false);
+            SetOrAdd(
+                entityManager,
+                ecb,
+                sourceEntity,
+                new EngageTarget
+                {
+                    Target = targetEntity,
+                    Cell = targetCell,
+                    Position = targetPosition,
+                    IsCommanded = 1
+                });
 
-        SetOrAdd(
-            entityManager,
-            sourceEntity,
-            new EngageTarget
-            {
-                Target = targetEntity,
-                Cell = targetCell,
-                Position = targetPosition,
-                IsCommanded = 1
-            });
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 
     public void ClearCommandedAttackOrderComponents(EntityManager entityManager, Entity entity)
     {
-        ClearInterruptedOrderComponents(entityManager, entity, removeEngageTarget: true);
+        PlaybackInterruptedOrderClear(entityManager, entity, removeEngageTarget: true);
     }
 
     public TacticalCommandResult ValidateAttackSource(EntityManager entityManager, Entity entity)
@@ -441,53 +462,76 @@ public sealed class UnitTargetOrderSystem
         if (math.abs(delta.x) > 1 || math.abs(delta.y) > 1)
             return;
 
-        entityManager.RemoveComponent<UnitTarget>(entity);
-        if (entityManager.HasComponent<UnitPathRequest>(entity))
-            entityManager.RemoveComponent<UnitPathRequest>(entity);
-        if (entityManager.HasComponent<UnitPathFollow>(entity))
-            entityManager.RemoveComponent<UnitPathFollow>(entity);
-        if (entityManager.HasComponent<UnitPathRange>(entity))
-            entityManager.RemoveComponent<UnitPathRange>(entity);
-        if (entityManager.HasComponent<ManualMoveOrderTag>(entity))
-            entityManager.RemoveComponent<ManualMoveOrderTag>(entity);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            RemoveIfPresent<UnitTarget>(entityManager, ecb, entity);
+            RemoveIfPresent<UnitPathRequest>(entityManager, ecb, entity);
+            RemoveIfPresent<UnitPathFollow>(entityManager, ecb, entity);
+            RemoveIfPresent<UnitPathRange>(entityManager, ecb, entity);
+            RemoveIfPresent<ManualMoveOrderTag>(entityManager, ecb, entity);
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 
-    private static void SetOrAdd<T>(EntityManager entityManager, Entity entity, T value)
+    private static void SetOrAdd<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity, T value)
         where T : unmanaged, IComponentData
     {
         if (entityManager.HasComponent<T>(entity))
-            entityManager.SetComponentData(entity, value);
+            ecb.SetComponent(entity, value);
         else
-            entityManager.AddComponentData(entity, value);
+            ecb.AddComponent(entity, value);
     }
 
-    private static void RemoveIfPresent<T>(EntityManager entityManager, Entity entity)
+    private static void RemoveIfPresent<T>(EntityManager entityManager, EntityCommandBuffer ecb, Entity entity)
         where T : unmanaged, IComponentData
     {
         if (entityManager.HasComponent<T>(entity))
-            entityManager.RemoveComponent<T>(entity);
+            ecb.RemoveComponent<T>(entity);
     }
 
-    private static void ClearInterruptedOrderComponents(
+    private static void PlaybackInterruptedOrderClear(
         EntityManager entityManager,
         Entity entity,
         bool removeEngageTarget)
     {
-        RemoveIfPresent<ManualMoveOrderTag>(entityManager, entity);
-        RemoveIfPresent<ManualMoveGroupMemberTag>(entityManager, entity);
-        RemoveIfPresent<AutoWanderMoveTag>(entityManager, entity);
-        RemoveIfPresent<HoldPositionOrderTag>(entityManager, entity);
-        RemoveIfPresent<UnitPathFollow>(entityManager, entity);
-        RemoveIfPresent<UnitPathRange>(entityManager, entity);
-        RemoveIfPresent<UnitPathRequest>(entityManager, entity);
-        RemoveIfPresent<UnitPathRetryCooldown>(entityManager, entity);
-        RemoveIfPresent<UnitLongDistanceMove>(entityManager, entity);
-        RemoveIfPresent<UnitTarget>(entityManager, entity);
-        RemoveIfPresent<BaseBreachOrder>(entityManager, entity);
-        RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, entity);
-        RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, entity);
-        RemoveIfPresent<UnitResourceHaulOrder>(entityManager, entity);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            ClearInterruptedOrderComponents(entityManager, ecb, entity, removeEngageTarget);
+            ecb.Playback(entityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+    }
+
+    private static void ClearInterruptedOrderComponents(
+        EntityManager entityManager,
+        EntityCommandBuffer ecb,
+        Entity entity,
+        bool removeEngageTarget)
+    {
+        RemoveIfPresent<ManualMoveOrderTag>(entityManager, ecb, entity);
+        RemoveIfPresent<ManualMoveGroupMemberTag>(entityManager, ecb, entity);
+        RemoveIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity);
+        RemoveIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitPathFollow>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitPathRange>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitPathRequest>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitPathRetryCooldown>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitLongDistanceMove>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitTarget>(entityManager, ecb, entity);
+        RemoveIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
         if (removeEngageTarget)
-            RemoveIfPresent<EngageTarget>(entityManager, entity);
+            RemoveIfPresent<EngageTarget>(entityManager, ecb, entity);
     }
 }

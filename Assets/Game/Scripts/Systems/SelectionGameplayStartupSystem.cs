@@ -134,7 +134,6 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
         var unitMoveOrderSystem = new UnitMoveOrderSystem();
         var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
-        var unitTargetOrderSystem = new UnitTargetOrderSystem();
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
         var scanIntelCommandSystem = new ScanIntelCommandSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
@@ -755,7 +754,6 @@ internal sealed class SelectionGameplayStartupSystem
                 scanIntelCommandSystem,
                 transportBoardingCommandSystem,
                 unitMoveOrderSystem,
-                unitTargetOrderSystem,
                 unitTransportCapacitySystem,
                 unitTransportBoardingQuerySystem,
                 unitTransportBoardingRuleSystem,
@@ -788,7 +786,6 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsSelectionInputSystem,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
-                unitTargetOrderSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
                 runtimeConfig.WorldCamera,
@@ -817,7 +814,6 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsSelectionInputSystem,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
-                unitTargetOrderSystem,
                 focusableUnitLookupSystem,
                 transportBoardingCommandSystem,
                 unitTransportCapacitySystem,
@@ -1646,11 +1642,26 @@ internal sealed class SelectionGameplayStartupSystem
                 return false;
             }
 
-            if (!unitTargetOrderSystem.ValidateAttackSource(em, entity).Accepted)
+            if (!IsAttackSourceEntity(em, entity))
                 return false;
 
             sources.Add(entity);
             return true;
+        }
+
+        static bool IsAttackSourceEntity(EntityManager em, Entity entity)
+        {
+            if (!em.HasComponent<Faction>(entity) ||
+                !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+                !em.HasComponent<UnitMove>(entity) ||
+                !em.HasComponent<UnitCombat>(entity) ||
+                em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
+            {
+                return false;
+            }
+
+            return !em.HasComponent<UnitHealth>(entity) ||
+                   em.GetComponentData<UnitHealth>(entity).Current > 0;
         }
 
         string BuildClickDebugSummary(Vector2 screenPosition)

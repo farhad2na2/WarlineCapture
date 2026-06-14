@@ -9,6 +9,14 @@ public partial struct AttackOrderCommandSystem : ISystem
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate void CollectSelectedAttackSourcesDelegate(EntityManager em, List<Entity> sources);
+    public delegate bool TryResolveBaseBreachTargetDelegate(
+        byte factionId,
+        Entity targetEntity,
+        int2 targetCell,
+        int2 attackerCell,
+        out Entity breachTarget,
+        out int2 breachCell,
+        out float3 breachPosition);
 
     private EntityQuery _commandQueueQuery;
     private EntityQuery _selectedAttackQuery;
@@ -41,9 +49,9 @@ public partial struct AttackOrderCommandSystem : ISystem
             return new Result(false, true, commandResult, Entity.Null, default);
         }
 
-        public static Result Accepted(UnitTargetOrderSystem.AttackOrderIssueResult issueResult)
+        public static Result Accepted(TacticalCommandResult commandResult, Entity targetEntity, float3 targetPosition)
         {
-            return new Result(true, true, issueResult.CommandResult, issueResult.TargetEntity, issueResult.TargetPosition);
+            return new Result(true, true, commandResult, targetEntity, targetPosition);
         }
     }
 
@@ -60,6 +68,7 @@ public partial struct AttackOrderCommandSystem : ISystem
             ComponentType.ReadOnly<UnitAttack>(),
             ComponentType.ReadOnly<LocalTransform>());
         _entityType = state.GetEntityTypeHandle();
+        UnitAttackOrderRequestSystem.EnsureCommandEntity(state.EntityManager);
     }
 
     public void OnUpdate(ref SystemState state)
@@ -80,7 +89,6 @@ public partial struct AttackOrderCommandSystem : ISystem
     public Result TryIssueAttackOrderToClickedUnit(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTargetOrderSystem targetOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
@@ -95,11 +103,11 @@ public partial struct AttackOrderCommandSystem : ISystem
                 : Result.NoCommand();
         }
 
-        TacticalCommandResult targetValidation = targetOrderSystem.ValidateAttackTarget(em, targetEntity);
+        TacticalCommandResult targetValidation = ValidateAttackTarget(em, targetEntity);
         if (!targetValidation.Accepted)
             return explicitAttackTargetModeActive ? Result.Rejected(targetValidation) : Result.NoCommand();
 
-        UnitTargetOrderSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null;
+        TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null;
         if (buildingPlacementInteractionSystem != null)
         {
             tryResolveBaseBreachTarget = (
@@ -125,7 +133,6 @@ public partial struct AttackOrderCommandSystem : ISystem
         return IssueAttackTarget(
             em,
             targetEntity,
-            targetOrderSystem,
             tryResolveBaseBreachTarget,
             collectSelectedAttackSources,
             selectedAttackSourceScratch);
@@ -136,7 +143,6 @@ public partial struct AttackOrderCommandSystem : ISystem
         Entity commandEntity,
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
-        UnitTargetOrderSystem targetOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
@@ -165,7 +171,6 @@ public partial struct AttackOrderCommandSystem : ISystem
             Result result = TryIssueAttackOrderToClickedUnit(
                 em,
                 screenPosition,
-                targetOrderSystem,
                 tryGetClickedUnitEntity,
                 collectSelectedAttackSources,
                 buildingPlacementInteractionSystem,
@@ -189,12 +194,24 @@ public partial struct AttackOrderCommandSystem : ISystem
     public Result IssueAttackTarget(
         EntityManager em,
         Entity targetEntity,
-        UnitTargetOrderSystem targetOrderSystem,
-        UnitTargetOrderSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null,
+        TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget = null,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources = null,
         List<Entity> selectedAttackSourceScratch = null)
     {
+        if (tryResolveBaseBreachTarget == null && collectSelectedAttackSources == null)
+        {
+            int attackRequestId = UnitAttackOrderRequestSystem.EnqueueSelectedAttackTarget(em, targetEntity);
+            UnitAttackOrderRequestSystem.ProcessPendingRequests(em);
+            return UnitAttackOrderRequestSystem.TryGetResult(
+                em,
+                attackRequestId,
+                out UnitAttackOrderResultElement attackResult)
+                ? ToAttackResult(attackResult)
+                : Result.Rejected(TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable));
+        }
+
         using NativeList<Entity> selectedEntities = new(Allocator.Temp);
+        using NativeList<int> attackRequestIds = new(Allocator.Temp);
         using EntityQuery selectedAttackQuery = CreateSelectedAttackQuery(em);
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         CollectSelectedAttackSources(
@@ -204,11 +221,45 @@ public partial struct AttackOrderCommandSystem : ISystem
             collectSelectedAttackSources,
             selectedAttackSourceScratch,
             selectedEntities);
-        UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
-            targetOrderSystem.IssueAttackTarget(em, selectedEntities.AsArray(), targetEntity, tryResolveBaseBreachTarget);
-        return issueResult.CommandResult.Accepted
-            ? Result.Accepted(issueResult)
-            : Result.Rejected(issueResult.CommandResult);
+        if (selectedEntities.Length == 0)
+            return Result.Rejected(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+
+        TacticalCommandResult targetValidation = ValidateAttackTarget(em, targetEntity);
+        if (!targetValidation.Accepted)
+            return Result.Rejected(targetValidation);
+
+        int2 targetCell = em.HasComponent<UnitGrid>(targetEntity)
+            ? em.GetComponentData<UnitGrid>(targetEntity).Cell
+            : default;
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity sourceEntity = selectedEntities[i];
+            if (TryResolveBaseBreachRequest(
+                    em,
+                    sourceEntity,
+                    targetEntity,
+                    targetCell,
+                    tryResolveBaseBreachTarget,
+                    out Entity breachTarget,
+                    out int2 breachCell,
+                    out float3 breachPosition))
+            {
+                attackRequestIds.Add(UnitAttackOrderRequestSystem.EnqueueSourceBaseBreachAttackTarget(
+                    em,
+                    sourceEntity,
+                    targetEntity,
+                    breachTarget,
+                    breachCell,
+                    breachPosition));
+            }
+            else
+            {
+                attackRequestIds.Add(UnitAttackOrderRequestSystem.EnqueueSourceAttackTarget(em, sourceEntity, targetEntity));
+            }
+        }
+
+        UnitAttackOrderRequestSystem.ProcessPendingRequests(em);
+        return CombineSourceAttackResults(em, attackRequestIds.AsArray());
     }
 
     private static bool ProcessPreResolvedAttackRequests(
@@ -226,7 +277,6 @@ public partial struct AttackOrderCommandSystem : ISystem
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
             em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         bool handledAny = false;
-        var targetOrderSystem = new UnitTargetOrderSystem();
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
@@ -239,22 +289,14 @@ public partial struct AttackOrderCommandSystem : ISystem
 
             commandRequests.RemoveAt(i);
             handledAny = true;
-            Result result;
-            TacticalCommandResult targetValidation = targetOrderSystem.ValidateAttackTarget(em, request.TargetEntity);
-            if (!targetValidation.Accepted)
-            {
-                result = Result.Rejected(targetValidation);
-            }
-            else
-            {
-                using NativeList<Entity> selectedEntities = new(Allocator.Temp);
-                CollectSelectedAttackSourceEntities(em, selectedAttackQuery, entityType, selectedEntities);
-                UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
-                    targetOrderSystem.IssueAttackTarget(em, selectedEntities.AsArray(), request.TargetEntity);
-                result = issueResult.CommandResult.Accepted
-                    ? Result.Accepted(issueResult)
-                    : Result.Rejected(issueResult.CommandResult);
-            }
+            int attackRequestId = UnitAttackOrderRequestSystem.EnqueueSelectedAttackTarget(em, request.TargetEntity);
+            UnitAttackOrderRequestSystem.ProcessPendingRequests(em, selectedAttackQuery, entityType);
+            Result result = UnitAttackOrderRequestSystem.TryGetResult(
+                em,
+                attackRequestId,
+                out UnitAttackOrderResultElement attackResult)
+                ? ToAttackResult(attackResult)
+                : Result.Rejected(TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable));
 
             AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
             if (em.Exists(commandEntity))
@@ -267,6 +309,102 @@ public partial struct AttackOrderCommandSystem : ISystem
         }
 
         return handledAny;
+    }
+
+    private static Result ToAttackResult(UnitAttackOrderResultElement result)
+    {
+        TacticalCommandResult commandResult = result.Accepted != 0
+            ? TacticalCommandResult.Success(result.Message.ToString())
+            : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode, result.Message.ToString());
+        return result.Issued != 0
+            ? Result.Accepted(commandResult, result.TargetEntity, result.TargetPosition)
+            : Result.Rejected(commandResult);
+    }
+
+    private static Result CombineSourceAttackResults(EntityManager em, NativeArray<int> attackRequestIds)
+    {
+        int issuedCount = 0;
+        Entity targetEntity = Entity.Null;
+        float3 targetPosition = default;
+        string acceptedMessage = string.Empty;
+        TacticalCommandResult rejection = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        for (int i = 0; i < attackRequestIds.Length; i++)
+        {
+            if (!UnitAttackOrderRequestSystem.TryGetResult(em, attackRequestIds[i], out UnitAttackOrderResultElement result))
+            {
+                rejection = TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable);
+                continue;
+            }
+
+            if (result.Issued != 0)
+            {
+                issuedCount += result.IssuedCount;
+                targetEntity = result.TargetEntity;
+                targetPosition = result.TargetPosition;
+                string message = result.Message.ToString();
+                if (!string.IsNullOrEmpty(message))
+                    acceptedMessage = message;
+                continue;
+            }
+
+            rejection = TacticalCommandResult.Rejected(
+                (TacticalCommandReasonCode)result.ReasonCode,
+                result.Message.ToString());
+        }
+
+        return issuedCount > 0
+            ? Result.Accepted(TacticalCommandResult.Success(acceptedMessage), targetEntity, targetPosition)
+            : Result.Rejected(rejection);
+    }
+
+    private static TacticalCommandResult ValidateAttackTarget(EntityManager em, Entity targetEntity)
+    {
+        if (targetEntity == Entity.Null ||
+            !em.Exists(targetEntity) ||
+            !em.HasComponent<Faction>(targetEntity) ||
+            !em.HasComponent<LocalTransform>(targetEntity))
+        {
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
+
+        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        if (em.HasComponent<UnitHealth>(targetEntity) &&
+            em.GetComponentData<UnitHealth>(targetEntity).Current <= 0)
+        {
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
+
+        return TacticalCommandResult.Success();
+    }
+
+    private static bool TryResolveBaseBreachRequest(
+        EntityManager em,
+        Entity sourceEntity,
+        Entity targetEntity,
+        int2 targetCell,
+        TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
+        out Entity breachTarget,
+        out int2 breachCell,
+        out float3 breachPosition)
+    {
+        breachTarget = Entity.Null;
+        breachCell = default;
+        breachPosition = default;
+        return tryResolveBaseBreachTarget != null &&
+               sourceEntity != Entity.Null &&
+               em.Exists(sourceEntity) &&
+               !em.HasComponent<GroundMissileLauncherComponent>(sourceEntity) &&
+               em.HasComponent<Faction>(sourceEntity) &&
+               em.HasComponent<UnitGrid>(sourceEntity) &&
+               tryResolveBaseBreachTarget(
+                   em.GetComponentData<Faction>(sourceEntity).Id,
+                   targetEntity,
+                   targetCell,
+                   em.GetComponentData<UnitGrid>(sourceEntity).Cell,
+                   out breachTarget,
+                   out breachCell,
+                   out breachPosition);
     }
 
     private static void AddCommandResult(

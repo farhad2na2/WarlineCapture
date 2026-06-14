@@ -90,7 +90,6 @@ public sealed class GroundMissileAttackPerformanceValidation
         em.AddComponent<SelectedUnitTag>(launcher);
 
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
-        var targetOrderSystem = new UnitTargetOrderSystem();
         attackOrderCommandSystem.EnsureEntityQueries(em);
 
         SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
@@ -102,7 +101,7 @@ public sealed class GroundMissileAttackPerformanceValidation
         long allocationStart = GC.GetAllocatedBytesForCurrentThread();
         long orderStartTicks = Stopwatch.GetTimestamp();
         AttackOrderCommandSystem.Result orderResult =
-            attackOrderCommandSystem.IssueAttackTarget(em, target, targetOrderSystem);
+            attackOrderCommandSystem.IssueAttackTarget(em, target);
         long orderStopTicks = Stopwatch.GetTimestamp();
 
         Assert.IsTrue(orderResult.Issued, "Attack command should issue a ground missile order.");

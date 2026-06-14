@@ -70,11 +70,19 @@ internal sealed class BuildingUiCompositionSystem
             () => source.BuildingSelectionSystem.DeleteSelectedBuilding(
                 createBuildingSelectionContext(source),
                 buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(createBuildingRuntimeEntityContext(source), buildingId)),
-            () => source.BuildingPlacementCommandSystem.ConfirmBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            () => source.BuildingPlacementCommandSystem.CancelBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+            () => EnqueueAndProcessConfirmBuildingPlacement(
+                source,
+                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+            () => EnqueueAndProcessCancelBuildingPlacement(
+                source,
+                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
             _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
-            () => source.BuildingPlacementCommandSystem.ExitBuildMode(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            () => source.BuildingPlacementCommandSystem.RotateBuildingPlacement(createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
+            () => EnqueueAndProcessExitBuildMode(
+                source,
+                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+            () => EnqueueAndProcessRotateBuildingPlacement(
+                source,
+                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
     }
 
     public BuildingUiCommandSystem.Context CreateCommandContext(
@@ -119,5 +127,43 @@ internal sealed class BuildingUiCompositionSystem
                 createBuildingPlacementQueryContext,
                 createBuildingSelectionContext,
                 createBuildingRuntimeEntityContext));
+    }
+
+    private static bool EnqueueAndProcessConfirmBuildingPlacement(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementCommandSystem.Context context)
+    {
+        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
+            : source.BuildingPlacementCommandSystem.ConfirmBuildingPlacement(context);
+    }
+
+    private static void EnqueueAndProcessCancelBuildingPlacement(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementCommandSystem.Context context)
+    {
+        if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
+            source.BuildingPlacementCommandSystem.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
+        else
+            source.BuildingPlacementCommandSystem.CancelBuildingPlacement(context);
+    }
+
+    private static void EnqueueAndProcessExitBuildMode(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementCommandSystem.Context context)
+    {
+        if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
+            source.BuildingPlacementCommandSystem.EnqueueAndProcessExitBuildMode(entityManager, context);
+        else
+            source.BuildingPlacementCommandSystem.ExitBuildMode(context);
+    }
+
+    private static bool EnqueueAndProcessRotateBuildingPlacement(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementCommandSystem.Context context)
+    {
+        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
+            : source.BuildingPlacementCommandSystem.RotateBuildingPlacement(context);
     }
 }

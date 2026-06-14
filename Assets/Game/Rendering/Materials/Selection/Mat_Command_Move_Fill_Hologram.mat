@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mat_Command_Move_Hologram
+  m_Name: Mat_Command_Move_Fill_Hologram
   m_Shader: {fileID: 4800000, guid: a91f0d16d3764b3f9ad0f7f50d5a7e11, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -25,16 +25,16 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.9
-    - _EdgeSoftness: 0.025
-    - _PulseSpeed: 3.5879998
-    - _PulseStrength: 0.38
-    - _ScanSpeed: 0.794
-    - _ScanStrength: 0.36
+    - _Alpha: 0.14
+    - _EdgeSoftness: 0.48
+    - _PulseSpeed: 2.8079998
+    - _PulseStrength: 0.08
+    - _ScanSpeed: 0.587
+    - _ScanStrength: 0.18
     m_Colors:
     - _AccentColor: {r: 0.74, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.03, g: 0.78, b: 1, a: 0.94}
-    - _Color: {r: 0.03, g: 0.78, b: 1, a: 0.94}
-    - _EmissionColor: {r: 0.02, g: 0.26, b: 0.38, a: 1}
+    - _BaseColor: {r: 0.03, g: 0.78, b: 1, a: 0.14}
+    - _Color: {r: 0.03, g: 0.78, b: 1, a: 0.14}
+    - _EmissionColor: {r: 0.01, g: 0.11, b: 0.16, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

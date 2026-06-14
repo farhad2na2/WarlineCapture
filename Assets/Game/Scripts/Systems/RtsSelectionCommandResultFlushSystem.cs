@@ -204,6 +204,14 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 context.InputSystem.ClearActiveCommandMode();
             if (result.Accepted != 0)
             {
+                if (result.HasTargetCell != 0 && result.HasWorldPosition != 0)
+                {
+                    context.OrderMarkerSystem.ShowMoveOrderMarker(
+                        em,
+                        result.TargetCell,
+                        result.WorldPosition,
+                        result.MarkerFactionId);
+                }
                 context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                 if (clearCommandMode)
                     context.ClearHudCommandMode?.Invoke();

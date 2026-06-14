@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEditor;
+using UnityEngine;
 
 public sealed class SelectionCommandRequestResultContractTests
 {
@@ -26,8 +27,10 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
+            tests.MoveCommandFlush_ShowsAcceptedWorldMarkerFromResult();
+            tests.AttackCommandFlush_ShowsAcceptedTargetMarkerFromResult();
             tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=13");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=15");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -706,6 +709,198 @@ public sealed class SelectionCommandRequestResultContractTests
     }
 
     [Test]
+    public void MoveCommandFlush_ShowsAcceptedWorldMarkerFromResult()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandMoveFlushMarkerTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        NativeArray<int> blockerCounts = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        GameObject movePrefab = CreatePrimitiveMarkerPrefab("MoveFlushMarkerPrefab", PrimitiveType.Quad);
+        GameObject attackPrefab = CreatePrimitiveMarkerPrefab("AttackFlushMarkerPrefab", PrimitiveType.Quad);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var orderMarkers = new SelectionOrderMarkerSystem();
+        try
+        {
+            EntityManager em = world.EntityManager;
+            CreateWalkableGrid(em, 8, 8, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out _,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            results.Add(new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Move,
+                RequestId = 501,
+                Frame = 90,
+                TargetCell = new int2(3, 4),
+                WorldPosition = new float3(3.5f, 0f, 4.5f),
+                ScreenPosition = new float2(300f, 220f),
+                TargetKind = RtsSelectionCommandTargetKind.Cell,
+                CommandMode = (int)TacticalCommandMode.Move,
+                HasCommandResult = 1,
+                Accepted = 1,
+                EmitScreenMarker = 1,
+                MarkerFactionId = FactionIdentitySystem.PlayerFactionId,
+                HasTargetCell = 1,
+                HasWorldPosition = 1,
+                ShowWorldMarkers = 1
+            });
+
+            using EntityQuery emptySelectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridWalkable>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            orderMarkers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
+            int feedbackCount = 0;
+            bool hudWorldMarkersVisible = false;
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                emptySelectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                _ => feedbackCount++,
+                em,
+                orderMarkerSystem: orderMarkers,
+                setHudWorldMarkersVisible: value => hudWorldMarkersVisible = value);
+
+            flushSystem.ProcessMoveCommandRequests(context);
+
+            Transform moveMarker = runtimeRoot.transform.Find("MoveOrderMarkerRuntime");
+            Assert.IsNotNull(moveMarker);
+            Assert.IsTrue(moveMarker.gameObject.activeSelf);
+            Assert.AreEqual(3.5f, moveMarker.position.x, 0.001f);
+            Assert.AreEqual(4.5f, moveMarker.position.z, 0.001f);
+            Assert.AreEqual(1, feedbackCount);
+            Assert.IsTrue(hudWorldMarkersVisible);
+            Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(movePrefab);
+            UnityEngine.Object.DestroyImmediate(attackPrefab);
+            UnityEngine.Object.DestroyImmediate(runtimeRoot);
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void AttackCommandFlush_ShowsAcceptedTargetMarkerFromResult()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandAttackFlushMarkerTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        NativeArray<int> blockerCounts = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        GameObject movePrefab = CreatePrimitiveMarkerPrefab("MoveFlushMarkerPrefab", PrimitiveType.Quad);
+        GameObject attackPrefab = CreatePrimitiveMarkerPrefab("AttackFlushMarkerPrefab", PrimitiveType.Quad);
+        GameObject targetPrefab = CreatePrimitiveMarkerPrefab("AttackTargetFlushMarkerPrefab", PrimitiveType.Cube);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var orderMarkers = new SelectionOrderMarkerSystem();
+        try
+        {
+            EntityManager em = world.EntityManager;
+            CreateWalkableGrid(em, 8, 8, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
+            Entity target = em.CreateEntity(typeof(LocalTransform), typeof(UnitFootprint), typeof(Faction), typeof(UnitHealth));
+            em.SetComponentData(target, LocalTransform.FromPosition(new float3(5.5f, 0f, 6.5f)));
+            em.SetComponentData(target, new UnitFootprint { Size = new int2(2, 3) });
+            em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+            em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out _,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            results.Add(new RtsSelectionCommandResultElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Attack,
+                RequestId = 601,
+                Frame = 91,
+                TargetEntity = target,
+                WorldPosition = new float3(5.5f, 0f, 6.5f),
+                ScreenPosition = new float2(400f, 260f),
+                TargetKind = RtsSelectionCommandTargetKind.Entity,
+                CommandMode = (int)TacticalCommandMode.Attack,
+                HasCommandResult = 1,
+                Accepted = 1,
+                EmitScreenMarker = 1,
+                HasTargetEntity = 1,
+                HasWorldPosition = 1,
+                ShowWorldMarkers = 1
+            });
+
+            using EntityQuery emptySelectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridWalkable>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            orderMarkers.Initialize(movePrefab, attackPrefab, targetPrefab, null, 1f, runtimeRoot.transform);
+            int feedbackCount = 0;
+            bool hudWorldMarkersVisible = false;
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                emptySelectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                _ => feedbackCount++,
+                em,
+                orderMarkerSystem: orderMarkers,
+                setHudWorldMarkersVisible: value => hudWorldMarkersVisible = value);
+
+            bool issued = flushSystem.ProcessAttackCommandRequests(context, explicitAttackTargetModeActive: false);
+
+            Transform attackMarker = runtimeRoot.transform.Find("AttackTargetSelectionMarkerRuntime");
+            Assert.IsTrue(issued);
+            Assert.IsNotNull(attackMarker);
+            Assert.IsTrue(attackMarker.gameObject.activeSelf);
+            Assert.AreEqual(5.5f, attackMarker.position.x, 0.001f);
+            Assert.AreEqual(6.5f, attackMarker.position.z, 0.001f);
+            Assert.AreEqual(1, feedbackCount);
+            Assert.IsTrue(hudWorldMarkersVisible);
+            Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(movePrefab);
+            UnityEngine.Object.DestroyImmediate(attackPrefab);
+            UnityEngine.Object.DestroyImmediate(targetPrefab);
+            UnityEngine.Object.DestroyImmediate(runtimeRoot);
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
     public void MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
@@ -750,6 +945,16 @@ public sealed class SelectionCommandRequestResultContractTests
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    private static GameObject CreatePrimitiveMarkerPrefab(string name, PrimitiveType primitiveType)
+    {
+        GameObject marker = GameObject.CreatePrimitive(primitiveType);
+        marker.name = name;
+        Collider collider = marker.GetComponent<Collider>();
+        if (collider != null)
+            UnityEngine.Object.DestroyImmediate(collider);
+        return marker;
     }
 
     private static bool TryGetNoClickedUnit(UnityEngine.Vector2 screenPosition, EntityManager em, out Entity entity)
@@ -831,12 +1036,16 @@ public sealed class SelectionCommandRequestResultContractTests
         EntityQuery mapSurfaceQuery,
         System.Action<TacticalCommandResult> applyHudCommandResult,
         EntityManager em,
-        System.Action<EntityManager> ensureEntityQueries = null)
+        System.Action<EntityManager> ensureEntityQueries = null,
+        SelectionOrderMarkerSystem orderMarkerSystem = null,
+        System.Action<bool> setHudWorldMarkersVisible = null,
+        System.Action<UnityEngine.Vector2> requestMoveOrderScreenMarker = null,
+        System.Action<UnityEngine.Vector2> requestAttackOrderScreenMarker = null)
     {
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
             new SelectionHudFeedbackSystem(),
-            new SelectionOrderMarkerSystem(),
+            orderMarkerSystem ?? new SelectionOrderMarkerSystem(),
             new SelectedMoveOrderCommandSystem(),
             new AttackOrderCommandSystem(),
             new ScanIntelCommandSystem(),
@@ -859,9 +1068,9 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             applyHudCommandResult,
             null,
-            null,
-            null,
-            null,
+            setHudWorldMarkersVisible,
+            requestMoveOrderScreenMarker,
+            requestAttackOrderScreenMarker,
             null,
             null,
             null,

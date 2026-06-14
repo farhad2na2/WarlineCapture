@@ -21,7 +21,8 @@ public static class PremiumWorldMarkerPrefabBuilder
     private static readonly Color SelectionAccentColor = new(0.86f, 1f, 1f, 1f);
     private static readonly Color VehicleSelectionColor = new(0.02f, 0.88f, 1f, 0.92f);
     private static readonly Color VehicleSelectionAccentColor = new(0.56f, 0.98f, 1f, 0.92f);
-    private static readonly Color MoveColor = new(0.12f, 0.95f, 0.74f, 0.92f);
+    private static readonly Color MoveColor = new(0.03f, 0.78f, 1f, 0.94f);
+    private static readonly Color MoveAccentColor = new(0.74f, 1f, 1f, 1f);
     private static readonly Color AttackColor = new(1f, 0.08f, 0.04f, 0.96f);
     private static readonly Color AttackAccentColor = new(1f, 0.82f, 0.42f, 1f);
 
@@ -81,22 +82,42 @@ public static class PremiumWorldMarkerPrefabBuilder
             $"{MaterialDirectory}/Mat_Command_Move_Hologram.mat",
             shader,
             MoveColor,
-            MoveColor * 1.25f,
-            SelectionAccentColor,
-            alpha: 0.86f,
-            pulse: 0.34f,
-            scan: 0.32f,
+            new Color(0.02f, 0.26f, 0.38f, 1f),
+            MoveAccentColor,
+            alpha: 0.9f,
+            pulse: 0.38f,
+            scan: 0.36f,
             edgeSoftness: 0.025f);
+        Material moveFillMaterial = EnsureMaterial(
+            $"{MaterialDirectory}/Mat_Command_Move_Fill_Hologram.mat",
+            shader,
+            new Color(0.03f, 0.78f, 1f, 0.14f),
+            new Color(0.01f, 0.11f, 0.16f, 1f),
+            MoveAccentColor,
+            alpha: 0.14f,
+            pulse: 0.08f,
+            scan: 0.18f,
+            edgeSoftness: 0.48f);
         Material attackMaterial = EnsureMaterial(
             $"{MaterialDirectory}/Mat_Command_Attack_Hologram.mat",
             shader,
             AttackColor,
-            AttackColor * 1.22f,
+            new Color(0.4f, 0.035f, 0.02f, 1f),
             AttackAccentColor,
             alpha: 0.9f,
             pulse: 0.44f,
             scan: 0.42f,
             edgeSoftness: 0.025f);
+        Material attackFillMaterial = EnsureMaterial(
+            $"{MaterialDirectory}/Mat_Command_Attack_Fill_Hologram.mat",
+            shader,
+            new Color(1f, 0.12f, 0.035f, 0.13f),
+            new Color(0.18f, 0.02f, 0.01f, 1f),
+            AttackAccentColor,
+            alpha: 0.13f,
+            pulse: 0.08f,
+            scan: 0.16f,
+            edgeSoftness: 0.5f);
         Material targetLockMaterial = EnsureMaterial(
             $"{MaterialDirectory}/Mat_TargetLock_Attack_Hologram.mat",
             shader,
@@ -126,17 +147,22 @@ public static class PremiumWorldMarkerPrefabBuilder
         Mesh vehicleFill = SaveMesh("Premium_Vehicle_FootprintFill", CreateRectFillMesh(1.18f, 0.76f));
         Mesh vehiclePlate = SaveMesh("Premium_Vehicle_FootprintPlate", CreateRectFrameMesh(1.18f, 0.76f, 0.026f));
         Mesh vehicleBrackets = SaveMesh("Premium_Vehicle_BoundsBrackets", CreateRectCornerBracketMesh(1.2f, 0.78f, 0.3f, 0.04f, 0.42f));
-        Mesh moveRings = SaveMesh("Premium_Move_WaypointRings", CreateConcentricRingsMesh(0.34f, 0.58f, 0.82f, 0.035f, 96));
-        Mesh moveArrow = SaveMesh("Premium_Move_WaypointArrow", CreateArrowMesh(0.36f, 0.64f, 0.04f));
+        Mesh movePad = SaveMesh("Premium_Move_DestinationPad", CreateWaypointGridMesh(1.38f, 0.88f, 0.012f, 5, 3));
+        Mesh moveRings = SaveMesh("Premium_Move_WaypointRings", CreateConcentricRingsMesh(0.36f, 0.62f, 0.88f, 0.035f, 128));
+        Mesh moveChevrons = SaveMesh("Premium_Move_DirectionChevrons", CreateMoveChevronStackMesh(0.86f, 0.23f, 0.035f, 0.2f));
+        Mesh moveBeacon = SaveMesh("Premium_Move_BeaconPin", CreateBeaconPinMesh(0.92f, 0.026f));
+        Mesh attackFill = SaveMesh("Premium_Attack_StrikeScanFill", CreateEllipseFillMesh(0.78f, 0.54f, 96));
         Mesh attackCrosshair = SaveMesh("Premium_Attack_StrikeCrosshair", CreateSegmentedEllipseArcMesh(0.74f, 0.74f, 0.045f, 112));
         Mesh attackChevrons = SaveMesh("Premium_Attack_StrikeChevrons", CreateTargetChevronMesh(0.86f, 0.14f, 0.13f));
+        Mesh attackBrackets = SaveMesh("Premium_Attack_HostileBrackets", CreateRectCornerBracketMesh(1.32f, 1.02f, 0.24f, 0.034f, 0.26f));
+        Mesh attackBeacon = SaveMesh("Premium_Attack_LockBeacon", CreateBeaconPinMesh(0.72f, 0.024f));
         Mesh targetFrame = SaveMesh("Premium_TargetLock_BoundsFrame", CreateRectFrameMesh(1f, 1f, 0.034f));
         Mesh targetBrackets = SaveMesh("Premium_TargetLock_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.24f, 0.046f, 0.38f));
 
         BuildBuildingSelectionPrefab(selectionMaterial, selectionFillMaterial, rectFrame, rectFill, rectBrackets);
         BuildVehicleSelectionPrefab(vehicleMaterial, vehicleFillMaterial, vehicleFill, vehiclePlate, vehicleBrackets);
-        BuildMoveMarkerPrefab(moveMaterial, moveRings, moveArrow);
-        BuildAttackMarkerPrefab(attackMaterial, attackCrosshair, attackChevrons);
+        BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, movePad, moveRings, moveChevrons, moveBeacon);
+        BuildAttackMarkerPrefab(attackMaterial, attackFillMaterial, attackFill, attackCrosshair, attackChevrons, attackBrackets, attackBeacon);
         BuildAttackTargetPrefab(targetLockMaterial, targetLockFillMaterial, targetFrame, rectFill, targetBrackets);
 
         AssetDatabase.SaveAssets();
@@ -194,14 +220,22 @@ public static class PremiumWorldMarkerPrefabBuilder
         }
     }
 
-    private static void BuildMoveMarkerPrefab(Material material, Mesh rings, Mesh arrow)
+    private static void BuildMoveMarkerPrefab(
+        Material material,
+        Material fillMaterial,
+        Mesh pad,
+        Mesh rings,
+        Mesh chevrons,
+        Mesh beacon)
     {
         GameObject root = LoadOrCreatePrefabRoot(MoveMarkerPrefabPath, "Target_Move");
         try
         {
             ClearChildren(root.transform);
-            AddMeshChild(root.transform, "WaypointRippleRings", rings, material, new Vector3(0f, 0.1f, 0f), Vector3.one, sortingOrder: 0);
-            AddMeshChild(root.transform, "WaypointArrow", arrow, material, new Vector3(0f, 0.14f, 0.28f), Vector3.one, sortingOrder: 2);
+            AddMeshChild(root.transform, "WaypointDestinationPad_Subtle", pad, fillMaterial, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: -2);
+            AddMeshChild(root.transform, "WaypointRippleRings", rings, material, new Vector3(0f, 0.105f, 0f), Vector3.one, sortingOrder: 0);
+            AddMeshChild(root.transform, "WaypointDirectionChevrons", chevrons, material, new Vector3(0f, 0.145f, 0f), Vector3.one, sortingOrder: 2);
+            AddMeshChild(root.transform, "WaypointBeaconPin", beacon, material, new Vector3(0f, 0.12f, 0f), Vector3.one, sortingOrder: 3);
             SavePrefabRoot(root, MoveMarkerPrefabPath);
         }
         finally
@@ -210,14 +244,24 @@ public static class PremiumWorldMarkerPrefabBuilder
         }
     }
 
-    private static void BuildAttackMarkerPrefab(Material material, Mesh crosshair, Mesh chevrons)
+    private static void BuildAttackMarkerPrefab(
+        Material material,
+        Material fillMaterial,
+        Mesh fill,
+        Mesh crosshair,
+        Mesh chevrons,
+        Mesh brackets,
+        Mesh beacon)
     {
         GameObject root = LoadOrCreatePrefabRoot(AttackMarkerPrefabPath, "Target_Attack");
         try
         {
             ClearChildren(root.transform);
-            AddMeshChild(root.transform, "StrikeReticleArcs", crosshair, material, new Vector3(0f, 0.1f, 0f), Vector3.one, sortingOrder: 0);
-            AddMeshChild(root.transform, "StrikeLockChevrons", chevrons, material, new Vector3(0f, 0.14f, 0f), Vector3.one, sortingOrder: 2);
+            AddMeshChild(root.transform, "StrikeScanFill_Subtle", fill, fillMaterial, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: -2);
+            AddMeshChild(root.transform, "StrikeReticleArcs", crosshair, material, new Vector3(0f, 0.105f, 0f), Vector3.one, sortingOrder: 0);
+            AddMeshChild(root.transform, "StrikeHostileBrackets", brackets, material, new Vector3(0f, 0.14f, 0f), Vector3.one, sortingOrder: 1);
+            AddMeshChild(root.transform, "StrikeLockChevrons", chevrons, material, new Vector3(0f, 0.17f, 0f), Vector3.one, sortingOrder: 2);
+            AddMeshChild(root.transform, "StrikeLockBeacon", beacon, material, new Vector3(0f, 0.13f, 0f), Vector3.one, sortingOrder: 3);
             SavePrefabRoot(root, AttackMarkerPrefabPath);
         }
         finally
@@ -381,6 +425,58 @@ public static class PremiumWorldMarkerPrefabBuilder
         return mesh;
     }
 
+    private static Mesh CreateEllipseFillMesh(float radiusX, float radiusZ, int segments)
+    {
+        Mesh mesh = new();
+        var vertices = new Vector3[segments + 1];
+        var uvs = new Vector2[segments + 1];
+        var triangles = new int[segments * 3];
+        vertices[0] = Vector3.zero;
+        uvs[0] = new Vector2(0.5f, 0.5f);
+        for (int i = 0; i < segments; i++)
+        {
+            float angle = Mathf.PI * 2f * i / segments;
+            float x = Mathf.Cos(angle) * radiusX;
+            float z = Mathf.Sin(angle) * radiusZ;
+            vertices[i + 1] = new Vector3(x, 0f, z);
+            uvs[i + 1] = new Vector2(0.5f + x / (radiusX * 2f), 0.5f + z / (radiusZ * 2f));
+            int triangleIndex = i * 3;
+            triangles[triangleIndex] = 0;
+            triangles[triangleIndex + 1] = i + 1;
+            triangles[triangleIndex + 2] = i == segments - 1 ? 1 : i + 2;
+        }
+
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.triangles = triangles;
+        return mesh;
+    }
+
+    private static Mesh CreateWaypointGridMesh(float width, float depth, float lineWidth, int columns, int rows)
+    {
+        MeshBuilder builder = new();
+        float hx = width * 0.5f;
+        float hz = depth * 0.5f;
+        AddGroundLine(builder, new Vector3(-hx, 0f, -hz), new Vector3(hx, 0f, -hz), lineWidth);
+        AddGroundLine(builder, new Vector3(hx, 0f, -hz), new Vector3(hx, 0f, hz), lineWidth);
+        AddGroundLine(builder, new Vector3(hx, 0f, hz), new Vector3(-hx, 0f, hz), lineWidth);
+        AddGroundLine(builder, new Vector3(-hx, 0f, hz), new Vector3(-hx, 0f, -hz), lineWidth);
+
+        for (int i = 1; i < columns; i++)
+        {
+            float x = Mathf.Lerp(-hx, hx, i / (float)columns);
+            AddGroundLine(builder, new Vector3(x, 0f, -hz * 0.86f), new Vector3(x, 0f, hz * 0.86f), lineWidth * 0.55f);
+        }
+
+        for (int i = 1; i < rows; i++)
+        {
+            float z = Mathf.Lerp(-hz, hz, i / (float)rows);
+            AddGroundLine(builder, new Vector3(-hx * 0.86f, 0f, z), new Vector3(hx * 0.86f, 0f, z), lineWidth * 0.55f);
+        }
+
+        return builder.ToMesh();
+    }
+
     private static Mesh CreateRectFrameMesh(float width, float depth, float stripWidth)
     {
         MeshBuilder builder = new();
@@ -460,6 +556,41 @@ public static class PremiumWorldMarkerPrefabBuilder
         return builder.ToMesh();
     }
 
+    private static Mesh CreateMoveChevronStackMesh(float forwardOffset, float length, float width, float spacing)
+    {
+        MeshBuilder builder = new();
+        AddMoveChevron(builder, new Vector3(0f, 0f, forwardOffset), length, width);
+        AddMoveChevron(builder, new Vector3(0f, 0f, forwardOffset - spacing), length * 0.82f, width * 0.8f);
+        AddMoveChevron(builder, new Vector3(0f, 0f, -forwardOffset), length, width);
+        AddMoveChevron(builder, new Vector3(0f, 0f, -forwardOffset + spacing), length * 0.82f, width * 0.8f, inverted: true);
+        return builder.ToMesh();
+    }
+
+    private static Mesh CreateBeaconPinMesh(float height, float width)
+    {
+        MeshBuilder builder = new();
+        float half = width * 0.5f;
+        builder.AddQuad(
+            new Vector3(-half, 0f, 0f),
+            new Vector3(half, 0f, 0f),
+            new Vector3(half, height, 0f),
+            new Vector3(-half, height, 0f));
+        builder.AddQuad(
+            new Vector3(0f, 0f, -half),
+            new Vector3(0f, 0f, half),
+            new Vector3(0f, height, half),
+            new Vector3(0f, height, -half));
+        builder.AddTriangle(
+            new Vector3(0f, height + width * 3f, 0f),
+            new Vector3(-width * 2f, height - width * 1.5f, 0f),
+            new Vector3(width * 2f, height - width * 1.5f, 0f));
+        builder.AddTriangle(
+            new Vector3(0f, height + width * 3f, 0f),
+            new Vector3(0f, height - width * 1.5f, -width * 2f),
+            new Vector3(0f, height - width * 1.5f, width * 2f));
+        return builder.ToMesh();
+    }
+
     private static Mesh CreateTargetChevronMesh(float radius, float length, float width)
     {
         MeshBuilder builder = new();
@@ -475,6 +606,25 @@ public static class PremiumWorldMarkerPrefabBuilder
         Vector3 side = Vector3.Cross(Vector3.up, inward).normalized;
         Vector3 baseCenter = tip + inward.normalized * length;
         builder.AddTriangle(tip, baseCenter + side * width, baseCenter - side * width);
+    }
+
+    private static void AddMoveChevron(MeshBuilder builder, Vector3 tip, float length, float width, bool inverted = false)
+    {
+        float direction = inverted ? -1f : 1f;
+        Vector3 leftBase = tip + new Vector3(-length * 0.8f, 0f, -length * direction);
+        Vector3 rightBase = tip + new Vector3(length * 0.8f, 0f, -length * direction);
+        AddGroundLine(builder, tip, leftBase, width);
+        AddGroundLine(builder, tip, rightBase, width);
+    }
+
+    private static void AddGroundLine(MeshBuilder builder, Vector3 start, Vector3 end, float width)
+    {
+        Vector3 direction = end - start;
+        if (direction.sqrMagnitude <= 0.000001f)
+            return;
+
+        Vector3 side = Vector3.Cross(Vector3.up, direction.normalized) * (width * 0.5f);
+        builder.AddQuad(start - side, end - side, end + side, start + side);
     }
 
     private static void AddArc(MeshBuilder builder, float radiusX, float radiusZ, float width, int segments, float startDegrees, float endDegrees)

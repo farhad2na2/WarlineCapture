@@ -137,8 +137,8 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         byte factionId = 0;
         if (em.HasComponent<Faction>(entities[0]))
             factionId = em.GetComponentData<Faction>(entities[0]).Id;
-        orderMarkerSystem?.ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
 
+        // Command marker projection is owned by command-result flushing after move validation accepts.
         return TryIssueMoveOrderToCell(
             em,
             entities,

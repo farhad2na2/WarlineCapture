@@ -35,6 +35,6 @@ Material:
     - _AccentColor: {r: 1, g: 0.82, b: 0.42, a: 1}
     - _BaseColor: {r: 1, g: 0.08, b: 0.04, a: 0.96}
     - _Color: {r: 1, g: 0.08, b: 0.04, a: 0.96}
-    - _EmissionColor: {r: 1.22, g: 0.0976, b: 0.0488, a: 1.1712}
+    - _EmissionColor: {r: 0.4, g: 0.035, b: 0.02, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

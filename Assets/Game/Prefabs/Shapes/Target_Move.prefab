@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7685635446339891432}
   - component: {fileID: 9175068327338636654}
   m_Layer: 0
-  m_Name: WaypointBeaconPin
+  m_Name: WaypointCenterDot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 350698893198475912}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.12, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.17, z: 0}
+  m_LocalScale: {x: 0.14, y: 1, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1988412605609664112}
@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350698893198475912}
-  m_Mesh: {fileID: 4300000, guid: acf73f13290564ba8ac525d984968081, type: 2}
+  m_Mesh: {fileID: 4300000, guid: feeaa4d561c814a418e406b97c4de4ad, type: 2}
 --- !u!23 &9175068327338636654
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
+  m_SmallMeshCulling: 0
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
@@ -87,7 +87,7 @@ MeshRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2207375116140437253
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2124894794658496083}
   - component: {fileID: 6409834402722253862}
   m_Layer: 0
-  m_Name: WaypointDestinationPad_Subtle
+  m_Name: WaypointConnectedFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,7 +118,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.075, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.92, y: 1, z: 0.93}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1988412605609664112}
@@ -130,7 +130,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2207375116140437253}
-  m_Mesh: {fileID: 4300000, guid: 44cb4eece935348ba96a1fc5f606be2a, type: 2}
+  m_Mesh: {fileID: 4300000, guid: feeaa4d561c814a418e406b97c4de4ad, type: 2}
 --- !u!23 &6409834402722253862
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
+  m_SmallMeshCulling: 0
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 866729935832939725}
   - component: {fileID: 1949315391725221946}
   m_Layer: 0
-  m_Name: WaypointRippleRings
+  m_Name: WaypointConnectedOuterRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -242,8 +242,8 @@ Transform:
   m_GameObject: {fileID: 5186906068136393116}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.105, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.115, z: 0}
+  m_LocalScale: {x: 1.31, y: 1, z: 0.91}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1988412605609664112}
@@ -255,7 +255,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5186906068136393116}
-  m_Mesh: {fileID: 4300000, guid: 4d98e906d7518471d8eba1c2ae43a1fb, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 2cc6ca22c1ddb4a8aac9e7707ad4b13d, type: 2}
 --- !u!23 &1949315391725221946
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -275,7 +275,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
+  m_SmallMeshCulling: 0
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
@@ -317,7 +317,7 @@ GameObject:
   - component: {fileID: 5893347136727308928}
   - component: {fileID: 4943311915736661119}
   m_Layer: 0
-  m_Name: WaypointDirectionChevrons
+  m_Name: WaypointConnectedInnerRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -333,7 +333,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.145, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.65, y: 1, z: 0.45}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1988412605609664112}
@@ -345,7 +345,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7150372414225630189}
-  m_Mesh: {fileID: 4300000, guid: ca65ff3e409cd4a5793d2fec53a61cea, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 2cc6ca22c1ddb4a8aac9e7707ad4b13d, type: 2}
 --- !u!23 &4943311915736661119
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -365,7 +365,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
+  m_SmallMeshCulling: 0
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
@@ -392,6 +392,6 @@ MeshRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

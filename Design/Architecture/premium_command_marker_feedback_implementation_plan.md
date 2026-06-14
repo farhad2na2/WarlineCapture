@@ -125,7 +125,7 @@ Rejected commands must publish feedback only through the existing command-result
 
 ### Phase 0: Document And Reference Setup
 
-Status: Complete
+Status: Complete / Live Match retest required
 Validation: Documentation-only; no Unity run required.
 
 - [x] Create this progress-tracking implementation document.
@@ -190,7 +190,7 @@ Validation: `/private/tmp/warline-premium-command-marker-result-contract.log` pr
 ### Phase 4: Move Marker Visual Asset
 
 Status: Complete
-Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` produced `[PremiumWorldMarkerPrefabBuilder] rebuilt premium world marker prefabs`; `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; visual proof screenshot `/private/tmp/warline_premium_world_marker_visual_qa/move_command_marker.png`.
+Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` produced `[PremiumWorldMarkerPrefabBuilder] rebuilt premium world marker prefabs`; `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; visual proof screenshot `/private/tmp/warline_premium_world_marker_visual_qa/move_command_marker.png`.
 
 - [x] Update or replace the move command marker prefab with the approved cyan waypoint design.
 - [x] Add segmented ring or destination pad geometry.
@@ -200,6 +200,10 @@ Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` pro
 - [x] Use hologram-compatible material properties: base color, emission color, alpha, pulse, scan.
 - [x] Disable shadows, probes, motion vectors, and unnecessary renderer features.
 - [x] Ensure marker is lifted above terrain and not hidden under ground.
+- [x] Correct accepted move marker placement to use the accepted world hit height instead of always forcing `grid.Origin.y`.
+- [x] Increase accepted move marker X/Z runtime scale for gameplay-camera readability without scaling vertical beacon height.
+- [x] Replace fragmented waypoint grid, chevrons, segmented rings, and beacon with a connected fill, continuous outer ring, continuous inner ring, and flat center dot.
+- [x] Lower move marker scan/pulse material settings so it reads as one stable marker at gameplay distance.
 
 Preferred existing asset path:
 
@@ -208,7 +212,7 @@ Preferred existing asset path:
 ### Phase 5: Attack Marker Visual Asset
 
 Status: Complete
-Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` produced `[PremiumWorldMarkerPrefabBuilder] rebuilt premium world marker prefabs`; `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; visual proof screenshot `/private/tmp/warline_premium_world_marker_visual_qa/attack_command_marker.png`.
+Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` produced `[PremiumWorldMarkerPrefabBuilder] rebuilt premium world marker prefabs`; `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; visual proof screenshot `/private/tmp/warline_premium_world_marker_visual_qa/attack_command_marker.png`.
 
 - [x] Update or replace the attack command marker prefab with the approved red/orange target-lock design.
 - [x] Add hostile lock brackets.
@@ -219,6 +223,8 @@ Validation: `/private/tmp/warline-premium-command-marker-prefab-builder.log` pro
 - [x] Use hologram-compatible material properties: base color, emission color, alpha, pulse, scan.
 - [x] Disable shadows, probes, motion vectors, and unnecessary renderer features.
 - [x] Ensure marker is lifted above terrain and not hidden under ground.
+- [x] Correct untargeted attack-ground marker placement to use the accepted world hit height instead of always forcing `grid.Origin.y`.
+- [x] Increase untargeted attack-ground marker X/Z runtime scale for gameplay-camera readability.
 
 Preferred existing asset path:
 
@@ -227,7 +233,7 @@ Preferred existing asset path:
 ### Phase 6: Target-Bounds Scaling
 
 Status: In Progress
-Validation: `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`.
+Validation: `/private/tmp/warline-premium-command-marker-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log` produced `[SelectionOrderMarkerFocusedValidation] result=Passed tests=11`.
 
 - [ ] Move marker scales from selected command context with min/max clamps.
 - [x] Attack marker scales from target bounds, not a hardcoded radius.
@@ -236,7 +242,7 @@ Validation: `/private/tmp/warline-premium-command-marker-selection-order.log` pr
 - [x] Building target markers match building footprint/bounds.
 - [x] Aircraft target markers do not reintroduce unwanted ground rectangles unless explicitly approved.
 
-Note: first implementation keeps move command marker scale fixed because accepted move command results currently do not carry selected unit class/footprint context. Add that payload later only if live QA shows the fixed waypoint is not readable across infantry, vehicle, and aircraft orders.
+Note: accepted move command marker scale is currently a deliberately larger fixed waypoint because accepted move command results do not carry selected unit class/footprint context yet. A 2026-06-14 live screenshot showed the marker was mostly clipped below terrain and only beacon dots were visible. The runtime now uses the accepted world hit height and a larger X/Z scale. A later 2026-06-14 live screenshot showed the previous grid/ring/chevron/beacon design still read as fragmented dashes, so `Target_Move.prefab` was changed to connected continuous pieces and calmer material settings. Add selected-unit footprint payload later only if live QA shows the larger fixed waypoint is still not readable across infantry, vehicle, and aircraft orders.
 
 ### Phase 7: Material Property Block Compatibility
 
@@ -276,6 +282,7 @@ Validation: `/private/tmp/warline-premium-command-marker-visual-proof.log` produ
 - [ ] Capture attack marker on enemy vehicle.
 - [ ] Capture attack marker on enemy building if supported.
 - [x] Inspect screenshots for scale, color, readability, and ground clipping.
+- [ ] Retest accepted move marker in the live Match scene after the 2026-06-14 terrain-height correction.
 
 Captured proof screenshots:
 
@@ -292,7 +299,7 @@ Suggested proof log path:
 Status: Pending
 Validation: Manual checklist with screenshots or notes.
 
-- [ ] Select soldier, enter Move mode, tap terrain: cyan move marker appears immediately.
+- [ ] Select soldier, enter Move mode, tap terrain: cyan move marker appears immediately and is not reduced to tiny beacon dots.
 - [ ] Select vehicle, enter Move mode, tap terrain: cyan move marker appears and is readable.
 - [ ] Select aircraft, enter Move mode, tap terrain: marker does not show an unwanted aircraft-size rectangle.
 - [ ] Select soldier/vehicle, enter Attack mode, tap hostile soldier: red/orange attack marker appears.
@@ -309,13 +316,13 @@ Validation: Manual checklist with screenshots or notes.
 | Phase 1: Runtime flow audit | Complete | Missing move marker was a result-flush routing gap. Attack accepted-result routing already existed. | Static audit |
 | Phase 2: Accepted move command marker routing | Complete | Accepted move results now call `SelectionOrderMarkerSystem.ShowMoveOrderMarker` from `RtsSelectionCommandResultFlushSystem`. | `/private/tmp/warline-premium-command-marker-result-contract.log` |
 | Phase 3: Accepted attack command marker routing | Complete | Added focused coverage for accepted attack result marker projection and kept validation outside marker code. | `/private/tmp/warline-premium-command-marker-result-contract.log` |
-| Phase 4: Move marker visual asset | Complete | `Target_Move.prefab` rebuilt as cyan waypoint with destination pad, segmented rings, chevrons, and beacon pin. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline_premium_world_marker_visual_qa/move_command_marker.png` |
-| Phase 5: Attack marker visual asset | Complete | `Target_Attack.prefab` rebuilt as red/orange strike marker with scan fill, reticle arcs, hostile brackets, chevrons, and beacon. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline_premium_world_marker_visual_qa/attack_command_marker.png` |
-| Phase 6: Target-bounds scaling | In Progress | Attack target markers use target bounds/footprints. Move command marker remains fixed-size pending live QA because accepted move results do not carry unit class/footprint context yet. | `/private/tmp/warline-premium-command-marker-selection-order.log` |
+| Phase 4: Move marker visual asset | Complete / Live Match retest required | `Target_Move.prefab` now uses connected cyan fill, continuous outer ring, continuous inner ring, and flat center dot. Runtime uses accepted world hit height and larger X/Z scale after live terrain clipping report. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log`; pending live screenshot |
+| Phase 5: Attack marker visual asset | Complete | `Target_Attack.prefab` rebuilt as red/orange strike marker with scan fill, reticle arcs, hostile brackets, chevrons, and beacon. Untargeted attack-ground markers now use accepted world hit height. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log`; `/private/tmp/warline_premium_world_marker_visual_qa/attack_command_marker.png` |
+| Phase 6: Target-bounds scaling | In Progress | Attack target markers use target bounds/footprints. Move command marker remains fixed-size but now uses accepted world hit height and larger X/Z runtime scale after live screenshot showed terrain clipping. | `/private/tmp/warline-premium-command-marker-selection-order.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log` |
 | Phase 7: Material property block compatibility | Complete | Reused existing marker property-block path; new command materials use hologram shader/material properties. | `/private/tmp/warline-premium-command-marker-selection-order.log`; `git diff --check` |
-| Phase 8: Architecture validation | Complete | No new manager/controller/facade/singleton/static state; no runtime source/asmdef moves; validation passed. | `/private/tmp/warline-premium-command-marker-result-contract.log`; `/private/tmp/warline-premium-command-marker-selection-order.log`; `/private/tmp/warline-premium-command-marker-input.log` |
-| Phase 9: Visual proof capture | Complete | Graphics-enabled proof passed for command markers and target lock. | `/private/tmp/warline-premium-command-marker-visual-proof.log` |
-| Phase 10: Manual gameplay QA | Pending | Verify in Match scene after implementation. | Pending |
+| Phase 8: Architecture validation | Complete | No new manager/controller/facade/singleton/static state; no runtime source/asmdef moves; validation passed after terrain-height correction. | `/private/tmp/warline-premium-command-marker-result-contract.log`; `/private/tmp/warline-premium-command-marker-selection-order.log`; `/private/tmp/warline-premium-command-marker-input.log`; `/private/tmp/warline-command-marker-terrain-lift-result-contract.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log`; `git diff --check` |
+| Phase 9: Visual proof capture | Complete / Live Match retest required | Graphics-enabled proof passed for the earlier asset, but the proof scene missed the live terrain-height mismatch and the move marker has since been simplified. Retest in Match scene after connected-marker correction. | `/private/tmp/warline-premium-command-marker-visual-proof.log`; pending live screenshot |
+| Phase 10: Manual gameplay QA | Pending | Verify in Match scene after implementation and terrain-height correction. | Pending |
 
 ## Validation Commands To Record As Work Completes
 

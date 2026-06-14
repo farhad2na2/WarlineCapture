@@ -22,6 +22,10 @@ public sealed class SelectionOrderMarkerSystemTests
     private const string TargetLockMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_TargetLock_Attack_Hologram.mat";
     private const string HologramShaderPath = "Assets/Game/Rendering/Shaders/SelectionHologram.shader";
     private const string HologramShaderName = "WarlineCapture/Markers/SelectionHologram";
+    private const float MoveOrderMarkerExpectedYOffset = 0.18f;
+    private const float MoveOrderMarkerExpectedHorizontalScale = 2.4f;
+    private const float AttackOrderMarkerExpectedYOffset = 0.45f;
+    private const float AttackOrderMarkerExpectedHorizontalScale = 2.1f;
 
     public static void RunFocusedValidation()
     {
@@ -36,9 +40,10 @@ public sealed class SelectionOrderMarkerSystemTests
             RunCase(test => test.UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets());
             RunCase(test => test.MarkerAssetConfiguration_UsesDedicatedTargetLockPrefab());
             RunCase(test => test.MarkerPrefabs_UseHologramMaterialsAndDisableExpensiveRendering());
+            RunCase(test => test.MoveMarkerPrefab_UsesCleanConnectedWaypointPieces());
             RunCase(test => test.SelectionHologramShader_DefinesDotsInstancingVariant());
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=11");
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=12");
         }
         catch (System.Exception ex)
         {
@@ -67,18 +72,22 @@ public sealed class SelectionOrderMarkerSystemTests
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
-            markers.ShowMoveOrderMarker(em, new int2(4, 5), new Vector3(4f, 0f, 5f), FactionIdentitySystem.PlayerFactionId);
+            markers.ShowMoveOrderMarker(em, new int2(4, 5), new Vector3(4f, 1.35f, 5f), FactionIdentitySystem.PlayerFactionId);
 
             Transform moveMarker = FindChildByNameForTest(runtimeRoot.transform, "MoveOrderMarkerRuntime");
             Assert.IsNotNull(moveMarker);
             Assert.IsTrue(moveMarker.gameObject.activeSelf);
             Assert.AreEqual(4f, moveMarker.position.x, 0.001f);
+            Assert.That(moveMarker.position.y, Is.GreaterThanOrEqualTo(1.35f + MoveOrderMarkerExpectedYOffset - 0.001f));
             Assert.AreEqual(5f, moveMarker.position.z, 0.001f);
+            Assert.AreEqual(MoveOrderMarkerExpectedHorizontalScale, moveMarker.localScale.x, 0.001f);
+            Assert.AreEqual(1f, moveMarker.localScale.y, 0.001f);
+            Assert.AreEqual(MoveOrderMarkerExpectedHorizontalScale, moveMarker.localScale.z, 0.001f);
 
             Renderer renderer = moveMarker.GetComponent<Renderer>();
             Assert.IsNotNull(renderer);
             AssertRuntimeMarkerRendererConfigured(renderer, MoveMarkerMaterialPath);
-            AssertMarkerRenderableMinY(moveMarker.gameObject, 0.1f);
+            AssertMarkerRenderableMinY(moveMarker.gameObject, 1.35f + MoveOrderMarkerExpectedYOffset);
         }
         finally
         {
@@ -288,14 +297,17 @@ public sealed class SelectionOrderMarkerSystemTests
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
-            markers.ShowAttackOrderMarker(em, new Vector3(4f, 0f, 5f), 6f);
+            markers.ShowAttackOrderMarker(em, new Vector3(4f, 1.2f, 5f), 6f);
 
             Transform attackMarker = FindChildByNameForTest(runtimeRoot.transform, "AttackOrderMarkerRuntime");
             Assert.IsNotNull(attackMarker);
             Assert.AreEqual("AttackOrderMarkerRuntime", attackMarker.name);
             Assert.AreEqual(4f, attackMarker.position.x, 0.001f);
-            Assert.AreEqual(0.45f, attackMarker.position.y, 0.001f);
+            Assert.That(attackMarker.position.y, Is.GreaterThanOrEqualTo(1.2f + AttackOrderMarkerExpectedYOffset - 0.001f));
             Assert.AreEqual(5f, attackMarker.position.z, 0.001f);
+            Assert.AreEqual(AttackOrderMarkerExpectedHorizontalScale, attackMarker.localScale.x, 0.001f);
+            Assert.AreEqual(1f, attackMarker.localScale.y, 0.001f);
+            Assert.AreEqual(AttackOrderMarkerExpectedHorizontalScale, attackMarker.localScale.z, 0.001f);
             Assert.IsTrue(attackMarker.gameObject.activeSelf);
 
             Renderer renderer = attackMarker.GetComponent<Renderer>();
@@ -424,6 +436,23 @@ public sealed class SelectionOrderMarkerSystemTests
 
         for (int i = 0; i < markerPrefabPaths.Length; i++)
             AssertPremiumMarkerPrefab(markerPrefabPaths[i]);
+    }
+
+    [Test]
+    public void MoveMarkerPrefab_UsesCleanConnectedWaypointPieces()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MoveMarkerPrefabPath);
+        Assert.IsNotNull(prefab, $"Missing move marker prefab at {MoveMarkerPrefabPath}");
+
+        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedFill"));
+        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedOuterRing"));
+        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedInnerRing"));
+        Assert.IsNotNull(prefab.transform.Find("WaypointCenterDot"));
+
+        Assert.IsNull(prefab.transform.Find("WaypointDestinationPad_Subtle"));
+        Assert.IsNull(prefab.transform.Find("WaypointRippleRings"));
+        Assert.IsNull(prefab.transform.Find("WaypointDirectionChevrons"));
+        Assert.IsNull(prefab.transform.Find("WaypointBeaconPin"));
     }
 
     [Test]

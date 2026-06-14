@@ -82,21 +82,21 @@ public static class PremiumWorldMarkerPrefabBuilder
             $"{MaterialDirectory}/Mat_Command_Move_Hologram.mat",
             shader,
             MoveColor,
-            new Color(0.02f, 0.26f, 0.38f, 1f),
+            new Color(0.0375f, 0.975f, 1.25f, 1f),
             MoveAccentColor,
-            alpha: 0.9f,
-            pulse: 0.38f,
-            scan: 0.36f,
+            alpha: 0.96f,
+            pulse: 0.12f,
+            scan: 0.04f,
             edgeSoftness: 0.025f);
         Material moveFillMaterial = EnsureMaterial(
             $"{MaterialDirectory}/Mat_Command_Move_Fill_Hologram.mat",
             shader,
-            new Color(0.03f, 0.78f, 1f, 0.14f),
-            new Color(0.01f, 0.11f, 0.16f, 1f),
+            new Color(0.03f, 0.78f, 1f, 0.2f),
+            new Color(0.02f, 0.18f, 0.24f, 1f),
             MoveAccentColor,
-            alpha: 0.14f,
-            pulse: 0.08f,
-            scan: 0.18f,
+            alpha: 0.2f,
+            pulse: 0.04f,
+            scan: 0.04f,
             edgeSoftness: 0.48f);
         Material attackMaterial = EnsureMaterial(
             $"{MaterialDirectory}/Mat_Command_Attack_Hologram.mat",
@@ -147,10 +147,10 @@ public static class PremiumWorldMarkerPrefabBuilder
         Mesh vehicleFill = SaveMesh("Premium_Vehicle_FootprintFill", CreateRectFillMesh(1.18f, 0.76f));
         Mesh vehiclePlate = SaveMesh("Premium_Vehicle_FootprintPlate", CreateRectFrameMesh(1.18f, 0.76f, 0.026f));
         Mesh vehicleBrackets = SaveMesh("Premium_Vehicle_BoundsBrackets", CreateRectCornerBracketMesh(1.2f, 0.78f, 0.3f, 0.04f, 0.42f));
-        Mesh movePad = SaveMesh("Premium_Move_DestinationPad", CreateWaypointGridMesh(1.38f, 0.88f, 0.012f, 5, 3));
-        Mesh moveRings = SaveMesh("Premium_Move_WaypointRings", CreateConcentricRingsMesh(0.36f, 0.62f, 0.88f, 0.035f, 128));
-        Mesh moveChevrons = SaveMesh("Premium_Move_DirectionChevrons", CreateMoveChevronStackMesh(0.86f, 0.23f, 0.035f, 0.2f));
-        Mesh moveBeacon = SaveMesh("Premium_Move_BeaconPin", CreateBeaconPinMesh(0.92f, 0.026f));
+        Mesh moveFill = SaveMesh("Premium_Move_CleanDestinationFill", CreateEllipseFillMesh(0.72f, 0.5f, 128));
+        Mesh moveOuterRing = SaveMesh("Premium_Move_CleanConnectedOuterRing", CreateEllipseRingMesh(0.72f, 0.5f, 0.055f, 192, 360f));
+        Mesh moveInnerRing = SaveMesh("Premium_Move_CleanConnectedInnerRing", CreateEllipseRingMesh(0.36f, 0.25f, 0.028f, 160, 360f));
+        Mesh moveCenterDot = SaveMesh("Premium_Move_CleanCenterDot", CreateEllipseFillMesh(0.085f, 0.085f, 48));
         Mesh attackFill = SaveMesh("Premium_Attack_StrikeScanFill", CreateEllipseFillMesh(0.78f, 0.54f, 96));
         Mesh attackCrosshair = SaveMesh("Premium_Attack_StrikeCrosshair", CreateSegmentedEllipseArcMesh(0.74f, 0.74f, 0.045f, 112));
         Mesh attackChevrons = SaveMesh("Premium_Attack_StrikeChevrons", CreateTargetChevronMesh(0.86f, 0.14f, 0.13f));
@@ -161,7 +161,7 @@ public static class PremiumWorldMarkerPrefabBuilder
 
         BuildBuildingSelectionPrefab(selectionMaterial, selectionFillMaterial, rectFrame, rectFill, rectBrackets);
         BuildVehicleSelectionPrefab(vehicleMaterial, vehicleFillMaterial, vehicleFill, vehiclePlate, vehicleBrackets);
-        BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, movePad, moveRings, moveChevrons, moveBeacon);
+        BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, moveFill, moveOuterRing, moveInnerRing, moveCenterDot);
         BuildAttackMarkerPrefab(attackMaterial, attackFillMaterial, attackFill, attackCrosshair, attackChevrons, attackBrackets, attackBeacon);
         BuildAttackTargetPrefab(targetLockMaterial, targetLockFillMaterial, targetFrame, rectFill, targetBrackets);
 
@@ -223,19 +223,19 @@ public static class PremiumWorldMarkerPrefabBuilder
     private static void BuildMoveMarkerPrefab(
         Material material,
         Material fillMaterial,
-        Mesh pad,
-        Mesh rings,
-        Mesh chevrons,
-        Mesh beacon)
+        Mesh fill,
+        Mesh outerRing,
+        Mesh innerRing,
+        Mesh centerDot)
     {
         GameObject root = LoadOrCreatePrefabRoot(MoveMarkerPrefabPath, "Target_Move");
         try
         {
             ClearChildren(root.transform);
-            AddMeshChild(root.transform, "WaypointDestinationPad_Subtle", pad, fillMaterial, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: -2);
-            AddMeshChild(root.transform, "WaypointRippleRings", rings, material, new Vector3(0f, 0.105f, 0f), Vector3.one, sortingOrder: 0);
-            AddMeshChild(root.transform, "WaypointDirectionChevrons", chevrons, material, new Vector3(0f, 0.145f, 0f), Vector3.one, sortingOrder: 2);
-            AddMeshChild(root.transform, "WaypointBeaconPin", beacon, material, new Vector3(0f, 0.12f, 0f), Vector3.one, sortingOrder: 3);
+            AddMeshChild(root.transform, "WaypointConnectedFill", fill, fillMaterial, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: -2);
+            AddMeshChild(root.transform, "WaypointConnectedOuterRing", outerRing, material, new Vector3(0f, 0.115f, 0f), Vector3.one, sortingOrder: 0);
+            AddMeshChild(root.transform, "WaypointConnectedInnerRing", innerRing, material, new Vector3(0f, 0.145f, 0f), Vector3.one, sortingOrder: 1);
+            AddMeshChild(root.transform, "WaypointCenterDot", centerDot, material, new Vector3(0f, 0.17f, 0f), Vector3.one, sortingOrder: 2);
             SavePrefabRoot(root, MoveMarkerPrefabPath);
         }
         finally
@@ -381,7 +381,22 @@ public static class PremiumWorldMarkerPrefabBuilder
         renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
         renderer.allowOcclusionWhenDynamic = false;
         renderer.sortingOrder = sortingOrder;
+        DisableSmallMeshCulling(renderer);
         return child;
+    }
+
+    private static void DisableSmallMeshCulling(Renderer renderer)
+    {
+        if (renderer == null)
+            return;
+
+        SerializedObject serializedRenderer = new(renderer);
+        SerializedProperty smallMeshCulling = serializedRenderer.FindProperty("m_SmallMeshCulling");
+        if (smallMeshCulling == null)
+            return;
+
+        smallMeshCulling.intValue = 0;
+        serializedRenderer.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static Mesh SaveMesh(string name, Mesh mesh)

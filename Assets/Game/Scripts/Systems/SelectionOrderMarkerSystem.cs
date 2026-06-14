@@ -46,8 +46,10 @@ public sealed class SelectionOrderMarkerSystem
     private float _nextAttackTargetPreviewUpdateTime;
     private const int MaxAttackTargetPreviewMarkers = 64;
     private const float AttackTargetPreviewUpdateSeconds = 0.15f;
-    private const float MoveOrderMarkerVerticalOffset = 0.1f;
+    private const float MoveOrderMarkerVerticalOffset = 0.18f;
+    private const float MoveOrderMarkerHorizontalScale = 2.4f;
     private const float AttackOrderMarkerVerticalOffset = 0.45f;
+    private const float AttackOrderMarkerHorizontalScale = 2.1f;
     private const float AttackTargetSelectionMarkerVerticalOffset = 0.12f;
     private const float AttackTargetSelectionMarkerScaleMultiplier = 1.25f;
     private const float AttackTargetRingMinimumRadius = 0.95f;
@@ -218,13 +220,18 @@ public sealed class SelectionOrderMarkerSystem
             return;
         }
 
+        float markerSurfaceY = ResolveCommandMarkerSurfaceY(grid, worldPoint);
         Vector3 worldPosition = worldPoint;
-        worldPosition.y = grid.Origin.y + MoveOrderMarkerVerticalOffset;
+        worldPosition.y = markerSurfaceY + MoveOrderMarkerVerticalOffset;
 
         _moveOrderMarker.transform.position = worldPosition;
         _moveOrderMarker.transform.rotation = Quaternion.identity;
+        _moveOrderMarker.transform.localScale = new Vector3(
+            MoveOrderMarkerHorizontalScale,
+            1f,
+            MoveOrderMarkerHorizontalScale);
         _moveOrderMarker.SetActive(true);
-        LiftMarkerRendererBoundsAbove(_moveOrderMarker, _moveOrderMarkerRenderers, grid.Origin.y + MoveOrderMarkerVerticalOffset);
+        LiftMarkerRendererBoundsAbove(_moveOrderMarker, _moveOrderMarkerRenderers, markerSurfaceY + MoveOrderMarkerVerticalOffset);
 
         for (int i = 0; i < _moveOrderMarkerRenderers.Length; i++)
         {
@@ -272,11 +279,17 @@ public sealed class SelectionOrderMarkerSystem
         if (!hasPrefabMarker)
             return;
 
-        worldPosition.y = grid.Origin.y + AttackOrderMarkerVerticalOffset;
+        float markerSurfaceY = ResolveCommandMarkerSurfaceY(grid, worldPoint);
+        worldPosition.y = markerSurfaceY + AttackOrderMarkerVerticalOffset;
 
         _attackOrderMarker.transform.position = worldPosition;
         _attackOrderMarker.transform.rotation = Quaternion.identity;
+        _attackOrderMarker.transform.localScale = new Vector3(
+            AttackOrderMarkerHorizontalScale,
+            1f,
+            AttackOrderMarkerHorizontalScale);
         _attackOrderMarker.SetActive(true);
+        LiftMarkerRendererBoundsAbove(_attackOrderMarker, _attackOrderMarkerRenderers, markerSurfaceY + AttackOrderMarkerVerticalOffset);
 
         for (int i = 0; i < _attackOrderMarkerRenderers.Length; i++)
         {
@@ -1104,6 +1117,11 @@ public sealed class SelectionOrderMarkerSystem
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         y = grid.Origin.y + MoveOrderMarkerVerticalOffset;
         return true;
+    }
+
+    private static float ResolveCommandMarkerSurfaceY(GridConfig grid, Vector3 worldPoint)
+    {
+        return Mathf.Max(grid.Origin.y, worldPoint.y);
     }
 
     private static bool IsValidAttackPreviewTarget(Faction faction, bool hasHealth, UnitHealth health)

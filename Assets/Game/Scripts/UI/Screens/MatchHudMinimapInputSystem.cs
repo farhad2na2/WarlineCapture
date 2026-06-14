@@ -18,7 +18,7 @@ public sealed class MatchHudMinimapInputSystem
     private static readonly Color PlayerMarkerColor = new(0.2f, 0.95f, 0.62f, 0.95f);
     private static readonly Color EnemyMarkerColor = new(1f, 0.22f, 0.18f, 0.95f);
     private static readonly Color NeutralMarkerColor = new(1f, 0.78f, 0.25f, 0.95f);
-    private const int MaxMarkers = 256;
+    private const int MaxMarkers = 1024;
     private const int WarmupStaticMapRefreshCount = 1;
     private const float WarmupStaticMapRefreshSeconds = 1f;
     private const float CameraCenteredMapRefreshSeconds = 0.75f;

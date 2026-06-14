@@ -6,7 +6,9 @@ using Unity.Transforms;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct MatchHudMinimapMarkerSystem : ISystem
 {
-    private const int MaxMarkers = 256;
+    private const int MaxMarkers = 1024;
+    private const byte CollectPlayerMarkers = 1;
+    private const byte CollectEnemyMarkers = 2;
 
     private Entity _markerBoundaryEntity;
 
@@ -24,6 +26,13 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
         new CollectMarkersJob
         {
             MaxMarkers = MaxMarkers,
+            CollectMode = CollectPlayerMarkers,
+            Markers = markerScratch
+        }.Run();
+        new CollectMarkersJob
+        {
+            MaxMarkers = MaxMarkers,
+            CollectMode = CollectEnemyMarkers,
             Markers = markerScratch
         }.Run();
 
@@ -53,11 +62,12 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
     private partial struct CollectMarkersJob : IJobEntity
     {
         public int MaxMarkers;
+        public byte CollectMode;
         public NativeList<MatchHudMinimapMarkerElement> Markers;
 
         private void Execute(in UnitHealth health, in LocalTransform transform, in Faction faction)
         {
-            if (health.Current <= 0 || Markers.Length >= MaxMarkers)
+            if (health.Current <= 0 || Markers.Length >= MaxMarkers || !ShouldCollectFaction(faction.Id))
                 return;
 
             Markers.Add(new MatchHudMinimapMarkerElement
@@ -65,6 +75,17 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
                 Position = transform.Position,
                 FactionId = faction.Id
             });
+        }
+
+        private bool ShouldCollectFaction(byte factionId)
+        {
+            return CollectMode switch
+            {
+                CollectPlayerMarkers => factionId == FactionIdentitySystem.PlayerFactionId,
+                CollectEnemyMarkers => factionId != FactionIdentitySystem.NeutralFactionId &&
+                                       factionId != FactionIdentitySystem.PlayerFactionId,
+                _ => false
+            };
         }
     }
 }

@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class TransportBoardingCommandSystem
+public partial struct TransportBoardingCommandSystem : ISystem
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate bool TryGetClickedCellDelegate(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint);
@@ -44,31 +44,35 @@ public sealed class TransportBoardingCommandSystem
         public bool DirectBoarding;
     }
 
-    private World _queryWorld;
+    private bool _queriesInitialized;
+    private EntityQuery _commandQueueQuery;
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _selectedTagQuery;
     private EntityQuery _gridPathingQuery;
     private EntityQuery _allSelectableQuery;
     private EntityQuery _transportBoardingTargetQuery;
     private EntityQuery _pathingLiveUnitsQuery;
-    private readonly List<Entity> _selectedBoardingSourceEntities = new();
-    private readonly List<Entity> _targetedBoardingSourceEntities = new();
-    private readonly List<PendingTransportBoardingOrder> _boardingOrders = new(32);
-    private readonly HashSet<int> _reservedBoardingCells = new();
-    private readonly HashSet<int> _targetedReservedBoardingCells = new();
-    private readonly List<Entity> _passengerSnapshot = new();
-    private readonly List<Entity> _remainingPassengers = new();
-    private readonly List<Entity> _disembarkingPassengers = new();
-    private readonly List<int2> _disembarkCells = new();
-    private readonly HashSet<int> _reservedDisembarkCells = new();
+
+    public void OnCreate(ref SystemState state)
+    {
+        _commandQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
+            ComponentType.ReadWrite<RtsSelectionCommandResultElement>());
+        EnsureEntityQueries(state.EntityManager);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        ProcessPreResolvedTransportRequests(state.EntityManager);
+    }
 
     public void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
-        if (_queryWorld == world && world != null && world.IsCreated)
+        if (_queriesInitialized)
             return;
 
-        _queryWorld = world;
+        _queriesInitialized = true;
         _selectedMoveQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -109,7 +113,6 @@ public sealed class TransportBoardingCommandSystem
         UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
         UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
-        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
@@ -121,6 +124,12 @@ public sealed class TransportBoardingCommandSystem
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
             if (!IsTransportCommandIntent(request.Kind))
+            {
+                i++;
+                continue;
+            }
+
+            if (IsPreResolvedTransportCommandIntent(request))
             {
                 i++;
                 continue;
@@ -163,18 +172,92 @@ public sealed class TransportBoardingCommandSystem
                     request,
                     transportCapacitySystem,
                     transportApproachCellSystem,
-                    ropeDisembarkCommandSystem,
                     moveOrderSystem),
                 _ => ProcessDisembarkTransportRequest(
                     em,
                     request,
                     transportCapacitySystem,
                     transportApproachCellSystem,
-                    ropeDisembarkCommandSystem,
                     moveOrderSystem)
             };
             AddCommandResult(em, commandEntity, commandResults, result);
             if (commandEntity != Entity.Null && em.Exists(commandEntity))
+            {
+                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            }
+        }
+
+        return handledAny;
+    }
+
+    private bool ProcessPreResolvedTransportRequests(EntityManager em)
+    {
+        if (_commandQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity commandEntity = _commandQueueQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        bool handledAny = false;
+        var transportCapacitySystem = new UnitTransportCapacitySystem();
+        var transportBoardingQuerySystem = new UnitTransportBoardingQuerySystem();
+        var transportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
+        var transportApproachCellSystem = new UnitTransportApproachCellSystem();
+        var transportAirPickupSystem = new UnitTransportAirPickupSystem();
+        var moveOrderSystem = new UnitMoveOrderSystem();
+        var selectionStateSystem = new SelectionStateSystem();
+
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (!IsPreResolvedTransportCommandIntent(request))
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            handledAny = true;
+            RtsSelectionCommandResultElement result = request.Kind switch
+            {
+                RtsSelectionCommandIntentKind.BoardTransport => ProcessBoardTransportTargetRequest(
+                    em,
+                    request,
+                    transportBoardingQuerySystem,
+                    transportBoardingRuleSystem,
+                    transportApproachCellSystem,
+                    transportAirPickupSystem,
+                    moveOrderSystem,
+                    selectionStateSystem),
+                RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger => ProcessBoardSelectedTransportPassengerRequest(
+                    em,
+                    request,
+                    transportBoardingQuerySystem,
+                    transportBoardingRuleSystem,
+                    transportApproachCellSystem,
+                    transportAirPickupSystem,
+                    moveOrderSystem),
+                RtsSelectionCommandIntentKind.DisembarkTransportPassenger => ProcessDisembarkTransportPassengerRequest(
+                    em,
+                    request,
+                    transportCapacitySystem,
+                    transportApproachCellSystem,
+                    moveOrderSystem),
+                _ => ProcessDisembarkTransportRequest(
+                    em,
+                    request,
+                    transportCapacitySystem,
+                    transportApproachCellSystem,
+                    moveOrderSystem)
+            };
+
+            AddCommandResult(em, commandEntity, commandResults, result);
+            if (em.Exists(commandEntity))
             {
                 if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
                     commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
@@ -193,6 +276,20 @@ public sealed class TransportBoardingCommandSystem
                kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger;
+    }
+
+    private static bool IsPreResolvedTransportCommandIntent(RtsSelectionCommandIntentRequestElement request)
+    {
+        return (request.Kind == RtsSelectionCommandIntentKind.BoardTransport &&
+                request.HasTargetEntity != 0) ||
+               (request.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
+                request.HasTargetEntity != 0 &&
+                request.HasSecondaryTargetEntity != 0) ||
+               (request.Kind == RtsSelectionCommandIntentKind.DisembarkTransport &&
+                request.HasTargetEntity != 0) ||
+               (request.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger &&
+                request.HasTargetEntity != 0 &&
+                request.HasSecondaryTargetEntity != 0);
     }
 
     private static void AddCommandResult(
@@ -234,6 +331,31 @@ public sealed class TransportBoardingCommandSystem
             selectionStateSystem,
             tryGetClickedUnitEntity,
             tryGetClickedCell);
+
+        return ToBoardingCommandResultElement(request, result);
+    }
+
+    private RtsSelectionCommandResultElement ProcessBoardTransportTargetRequest(
+        EntityManager em,
+        RtsSelectionCommandIntentRequestElement request,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportAirPickupSystem transportAirPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem,
+        SelectionStateSystem selectionStateSystem)
+    {
+        Result result = request.HasTargetEntity != 0
+            ? TryIssueBoardTransportOrderToTransport(
+                em,
+                request.TargetEntity,
+                transportBoardingQuerySystem,
+                transportBoardingRuleSystem,
+                transportApproachCellSystem,
+                transportAirPickupSystem,
+                moveOrderSystem,
+                selectionStateSystem)
+            : Result.Rejected();
 
         return ToBoardingCommandResultElement(request, result);
     }
@@ -319,11 +441,10 @@ public sealed class TransportBoardingCommandSystem
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportCapacitySystem transportCapacitySystem,
         UnitTransportApproachCellSystem transportApproachCellSystem,
-        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         bool accepted = request.HasTargetEntity != 0 &&
-                        TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem);
+                        TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, transportApproachCellSystem, moveOrderSystem, _gridPathingQuery);
         return new RtsSelectionCommandResultElement
         {
             Kind = request.Kind,
@@ -346,7 +467,6 @@ public sealed class TransportBoardingCommandSystem
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportCapacitySystem transportCapacitySystem,
         UnitTransportApproachCellSystem transportApproachCellSystem,
-        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         bool accepted = request.HasTargetEntity != 0 &&
@@ -357,8 +477,8 @@ public sealed class TransportBoardingCommandSystem
                             request.SecondaryTargetEntity,
                             transportCapacitySystem,
                             transportApproachCellSystem,
-                            ropeDisembarkCommandSystem,
-                            moveOrderSystem);
+                            moveOrderSystem,
+                            _gridPathingQuery);
 
         return new RtsSelectionCommandResultElement
         {
@@ -402,6 +522,29 @@ public sealed class TransportBoardingCommandSystem
             return Result.Rejected();
         }
 
+        return TryIssueBoardTransportOrderToTransport(
+            em,
+            transport,
+            transportBoardingQuerySystem,
+            transportBoardingRuleSystem,
+            approachCellSystem,
+            airPickupSystem,
+            moveOrderSystem,
+            selectionStateSystem);
+    }
+
+    public Result TryIssueBoardTransportOrderToTransport(
+        EntityManager em,
+        Entity transport,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem approachCellSystem,
+        UnitTransportAirPickupSystem airPickupSystem,
+        UnitMoveOrderSystem moveOrderSystem,
+        SelectionStateSystem selectionStateSystem)
+    {
+        EnsureEntityQueries(em);
+        selectionStateSystem ??= new SelectionStateSystem();
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
         if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
         {
@@ -436,7 +579,8 @@ public sealed class TransportBoardingCommandSystem
             return Result.Rejected();
         }
 
-        int selectedCount = CollectSelectedBoardingSourceEntities(em, selectionStateSystem, _selectedBoardingSourceEntities, out int selectedTagCount, out int selectedMoveCount, out bool usedCachedSelection);
+        List<Entity> selectedBoardingSourceEntities = new();
+        int selectedCount = CollectSelectedBoardingSourceEntities(em, selectionStateSystem, selectedBoardingSourceEntities, out int selectedTagCount, out int selectedMoveCount, out bool usedCachedSelection);
         if (selectedCount == 0)
         {
             if (shouldLogTransportBoarding)
@@ -490,7 +634,7 @@ public sealed class TransportBoardingCommandSystem
                     occupied,
                     transportCell,
                     transportSize,
-                    _selectedBoardingSourceEntities,
+                    selectedBoardingSourceEntities,
                     selectedCount,
                     liveUnitEntityArray,
                     liveUnitGridArray,
@@ -506,11 +650,11 @@ public sealed class TransportBoardingCommandSystem
             hasPendingAirPickupLanding = true;
         }
 
-        _boardingOrders.Clear();
-        _reservedBoardingCells.Clear();
-        for (int i = 0; i < selectedCount && _boardingOrders.Count < availableSeats; i++)
+        List<PendingTransportBoardingOrder> boardingOrders = new(32);
+        HashSet<int> reservedBoardingCells = new();
+        for (int i = 0; i < selectedCount && boardingOrders.Count < availableSeats; i++)
         {
-            Entity passenger = _selectedBoardingSourceEntities[i];
+            Entity passenger = selectedBoardingSourceEntities[i];
             if (passenger == transport)
             {
                 if (shouldLogTransportBoarding)
@@ -546,7 +690,7 @@ public sealed class TransportBoardingCommandSystem
                     transport,
                     em.GetComponentData<UnitGrid>(transport).Cell,
                     transportSize,
-                    _reservedBoardingCells,
+                    reservedBoardingCells,
                     directBoardingCells,
                     passengerFaction,
                     out int2 goal))
@@ -562,17 +706,17 @@ public sealed class TransportBoardingCommandSystem
                 continue;
             }
 
-            _boardingOrders.Add(new PendingTransportBoardingOrder
+            boardingOrders.Add(new PendingTransportBoardingOrder
             {
                 Passenger = passenger,
                 PassengerCell = referenceCell,
                 Goal = goal,
                 DirectBoarding = goal.Equals(referenceCell)
             });
-            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, _reservedBoardingCells);
+            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
         }
 
-        if (_boardingOrders.Count <= 0)
+        if (boardingOrders.Count <= 0)
         {
             if (shouldLogTransportBoarding)
             {
@@ -596,10 +740,10 @@ public sealed class TransportBoardingCommandSystem
         EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
         try
         {
-            for (int i = 0; i < _boardingOrders.Count; i++)
+            for (int i = 0; i < boardingOrders.Count; i++)
             {
-                Entity passenger = _boardingOrders[i].Passenger;
-                int2 goal = _boardingOrders[i].Goal;
+                Entity passenger = boardingOrders[i].Passenger;
+                int2 goal = boardingOrders[i].Goal;
                 if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
@@ -617,7 +761,7 @@ public sealed class TransportBoardingCommandSystem
                     EnqueueTransportBoardingDiagnostic(
                         em,
                         $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                        $"from={_boardingOrders[i].PassengerCell} goal={goal} direct={(_boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+                        $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
                 }
             }
 
@@ -760,8 +904,7 @@ public sealed class TransportBoardingCommandSystem
 
         bool hasPendingAirPickupLanding = false;
         int2 pendingAirPickupCell = default;
-        _targetedBoardingSourceEntities.Clear();
-        _targetedBoardingSourceEntities.Add(passenger);
+        List<Entity> targetedBoardingSourceEntities = new(1) { passenger };
         if (airTransport && !transportLanded)
         {
             if (!airPickupSystem.TryFindAirTransportPickupForBoarding(
@@ -774,7 +917,7 @@ public sealed class TransportBoardingCommandSystem
                     occupied,
                     transportCell,
                     transportSize,
-                    _targetedBoardingSourceEntities,
+                    targetedBoardingSourceEntities,
                     1,
                     liveUnitEntityArray,
                     liveUnitGridArray,
@@ -794,7 +937,7 @@ public sealed class TransportBoardingCommandSystem
         byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
         int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
         int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
-        _targetedReservedBoardingCells.Clear();
+        HashSet<int> targetedReservedBoardingCells = new();
         if (!approachCellSystem.TryFindTransportApproachCell(
                 grid,
                 walkable,
@@ -812,7 +955,7 @@ public sealed class TransportBoardingCommandSystem
                 transport,
                 em.GetComponentData<UnitGrid>(transport).Cell,
                 transportSize,
-                _targetedReservedBoardingCells,
+                targetedReservedBoardingCells,
                 directBoardingCells,
                 passengerFaction,
                 out int2 goal))
@@ -883,6 +1026,27 @@ public sealed class TransportBoardingCommandSystem
             tryGetClickedUnitEntity,
             tryGetClickedCell,
             out _,
+            false);
+    }
+
+    public bool TryResolveBoardablePlayerTransportClick(
+        EntityManager em,
+        Vector2 screenPosition,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
+        TryGetClickedCellDelegate tryGetClickedCell,
+        out Entity transport)
+    {
+        EnsureEntityQueries(em);
+        return TryGetClickedOrNearbyBoardableTransport(
+            screenPosition,
+            em,
+            transportBoardingRuleSystem,
+            transportBoardingQuerySystem,
+            tryGetClickedUnitEntity,
+            tryGetClickedCell,
+            out transport,
             false);
     }
 
@@ -1078,24 +1242,85 @@ public sealed class TransportBoardingCommandSystem
         return transport != Entity.Null;
     }
 
-    private bool TryDisembarkTransport(
+    private static bool IsRopeDisembarkTransport(EntityManager em, Entity transport)
+    {
+        if (!em.Exists(transport) || !em.HasComponent<UnitAirMovement>(transport))
+            return false;
+
+        string sourceName = ResolveUnitSourceName(em, transport);
+        return sourceName.IndexOf("Unit_Veh_Helicopter_Transport", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private static bool StartRopeDisembarkTransport(
+        EntityManager em,
+        Entity transport,
+        int2 referenceCell,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        if (!em.Exists(transport) || !em.HasBuffer<UnitTransportPassengerElement>(transport))
+            return false;
+
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        if (passengers.Length <= 0)
+            return false;
+
+        moveOrderSystem.ClearMovementOrderComponents(em, transport);
+        if (em.HasComponent<UnitAirMovement>(transport) &&
+            em.HasComponent<UnitAirComponent>(transport) &&
+            em.HasComponent<LocalTransform>(transport))
+        {
+            UnitAirMovement airMovement = em.GetComponentData<UnitAirMovement>(transport);
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
+            LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
+            float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
+            if (airState.Airborne == 0)
+            {
+                transform.Position.y = groundY + math.max(3f, airMovement.CruiseHeight);
+                em.SetComponentData(transport, transform);
+            }
+
+            airState.ReturningHome = 0;
+            airState.Airborne = 1;
+            airState.TakeoffRolling = 0;
+            airState.LandingRolling = 0;
+            airState.AttackRunActive = 0;
+            airState.ReturnApproachInitialized = 0;
+            em.SetComponentData(transport, airState);
+        }
+
+        UnitTransportRopeDisembarkRequest request = new()
+        {
+            ReferenceCell = referenceCell,
+            NextDropAt = 0f,
+            DropIntervalSeconds = 0.8f
+        };
+
+        if (em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
+            em.SetComponentData(transport, request);
+        else
+            em.AddComponentData(transport, request);
+
+        return true;
+    }
+
+    private static bool TryDisembarkTransport(
         EntityManager em,
         Entity transport,
         UnitTransportCapacitySystem transportCapacitySystem,
         UnitTransportApproachCellSystem transportApproachCellSystem,
-        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
-        UnitMoveOrderSystem moveOrderSystem)
+        UnitMoveOrderSystem moveOrderSystem,
+        EntityQuery gridPathingQuery)
     {
         if (!em.Exists(transport) ||
             !transportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
             !em.HasComponent<UnitGrid>(transport) ||
             !em.HasComponent<UnitFootprint>(transport) ||
-            _gridPathingQuery.IsEmptyIgnoreFilter)
+            gridPathingQuery.IsEmptyIgnoreFilter)
         {
             return false;
         }
 
-        Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
+        Entity gridEntity = gridPathingQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
         NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
@@ -1108,23 +1333,23 @@ public sealed class TransportBoardingCommandSystem
         if (em.HasComponent<LocalTransform>(transport))
             referenceCell = GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
 
-        if (ropeDisembarkCommandSystem.IsRopeDisembarkTransport(em, transport))
-            return ropeDisembarkCommandSystem.StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem);
+        if (IsRopeDisembarkTransport(em, transport))
+            return StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem);
 
-        _passengerSnapshot.Clear();
+        List<Entity> passengerSnapshot = new(passengers.Length);
         for (int i = 0; i < passengers.Length; i++)
-            _passengerSnapshot.Add(passengers[i].Passenger);
-        if (_passengerSnapshot.Count == 0)
+            passengerSnapshot.Add(passengers[i].Passenger);
+        if (passengerSnapshot.Count == 0)
             return false;
 
         passengers.Clear();
-        _reservedDisembarkCells.Clear();
-        _remainingPassengers.Clear();
-        _disembarkingPassengers.Clear();
-        _disembarkCells.Clear();
-        for (int i = 0; i < _passengerSnapshot.Count; i++)
+        HashSet<int> reservedDisembarkCells = new();
+        List<Entity> remainingPassengers = new();
+        List<Entity> disembarkingPassengers = new();
+        List<int2> disembarkCells = new();
+        for (int i = 0; i < passengerSnapshot.Count; i++)
         {
-            Entity passenger = _passengerSnapshot[i];
+            Entity passenger = passengerSnapshot[i];
             if (!em.Exists(passenger))
                 continue;
 
@@ -1133,27 +1358,27 @@ public sealed class TransportBoardingCommandSystem
                     walkable,
                     blocked,
                     occupied,
-                    _reservedDisembarkCells,
+                    reservedDisembarkCells,
                     transportCell,
                     transportSize,
                     referenceCell,
                     out int2 cell))
             {
-                _remainingPassengers.Add(passenger);
+                remainingPassengers.Add(passenger);
                 continue;
             }
 
             int cellIndex = GridUtils.CellToIndex(cell, grid.Width);
-            _reservedDisembarkCells.Add(cellIndex);
-            _disembarkingPassengers.Add(passenger);
-            _disembarkCells.Add(cell);
+            reservedDisembarkCells.Add(cellIndex);
+            disembarkingPassengers.Add(passenger);
+            disembarkCells.Add(cell);
         }
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
-        for (int i = 0; i < _disembarkingPassengers.Count; i++)
+        for (int i = 0; i < disembarkingPassengers.Count; i++)
         {
-            Entity passenger = _disembarkingPassengers[i];
-            int2 cell = _disembarkCells[i];
+            Entity passenger = disembarkingPassengers[i];
+            int2 cell = disembarkCells[i];
             if (!em.Exists(passenger))
                 continue;
 
@@ -1173,35 +1398,35 @@ public sealed class TransportBoardingCommandSystem
         ecb.Playback(em);
         ecb.Dispose();
 
-        for (int i = 0; i < _disembarkingPassengers.Count; i++)
+        for (int i = 0; i < disembarkingPassengers.Count; i++)
         {
-            Entity passenger = _disembarkingPassengers[i];
+            Entity passenger = disembarkingPassengers[i];
             if (em.Exists(passenger))
                 UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
         }
 
-        if (_remainingPassengers.Count > 0 && em.Exists(transport) && em.HasBuffer<UnitTransportPassengerElement>(transport))
+        if (remainingPassengers.Count > 0 && em.Exists(transport) && em.HasBuffer<UnitTransportPassengerElement>(transport))
         {
             DynamicBuffer<UnitTransportPassengerElement> remainingBuffer = em.GetBuffer<UnitTransportPassengerElement>(transport);
-            for (int i = 0; i < _remainingPassengers.Count; i++)
+            for (int i = 0; i < remainingPassengers.Count; i++)
             {
-                Entity passenger = _remainingPassengers[i];
+                Entity passenger = remainingPassengers[i];
                 if (em.Exists(passenger))
                     remainingBuffer.Add(new UnitTransportPassengerElement { Passenger = passenger });
             }
         }
 
-        return _disembarkingPassengers.Count > 0 || _remainingPassengers.Count != _passengerSnapshot.Count;
+        return disembarkingPassengers.Count > 0 || remainingPassengers.Count != passengerSnapshot.Count;
     }
 
-    private bool TryDisembarkTransportPassenger(
+    private static bool TryDisembarkTransportPassenger(
         EntityManager em,
         Entity transport,
         Entity passenger,
         UnitTransportCapacitySystem transportCapacitySystem,
         UnitTransportApproachCellSystem transportApproachCellSystem,
-        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
-        UnitMoveOrderSystem moveOrderSystem)
+        UnitMoveOrderSystem moveOrderSystem,
+        EntityQuery gridPathingQuery)
     {
         if (!em.Exists(transport) ||
             !em.Exists(passenger) ||
@@ -1216,7 +1441,7 @@ public sealed class TransportBoardingCommandSystem
         if (passengerIndex < 0)
             return false;
 
-        if (ropeDisembarkCommandSystem.IsRopeDisembarkTransport(em, transport))
+        if (IsRopeDisembarkTransport(em, transport))
         {
             if (passengerIndex > 0)
             {
@@ -1228,24 +1453,24 @@ public sealed class TransportBoardingCommandSystem
             int2 ropeReferenceCell = em.HasComponent<UnitGrid>(transport)
                 ? em.GetComponentData<UnitGrid>(transport).Cell
                 : default;
-            if (em.HasComponent<LocalTransform>(transport) && !_gridPathingQuery.IsEmptyIgnoreFilter)
+            if (em.HasComponent<LocalTransform>(transport) && !gridPathingQuery.IsEmptyIgnoreFilter)
             {
-                Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
+                Entity gridEntity = gridPathingQuery.GetSingletonEntity();
                 GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
                 ropeReferenceCell = GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
             }
 
-            return ropeDisembarkCommandSystem.StartRopeDisembarkTransport(em, transport, ropeReferenceCell, moveOrderSystem);
+            return StartRopeDisembarkTransport(em, transport, ropeReferenceCell, moveOrderSystem);
         }
 
         if (!em.HasComponent<UnitGrid>(transport) ||
             !em.HasComponent<UnitFootprint>(transport) ||
-            _gridPathingQuery.IsEmptyIgnoreFilter)
+            gridPathingQuery.IsEmptyIgnoreFilter)
         {
             return false;
         }
 
-        Entity pathingGridEntity = _gridPathingQuery.GetSingletonEntity();
+        Entity pathingGridEntity = gridPathingQuery.GetSingletonEntity();
         GridConfig pathingGrid = em.GetComponentData<GridConfig>(pathingGridEntity);
         NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(pathingGridEntity).AsNativeArray();
         NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(pathingGridEntity).Blocked;
@@ -1256,13 +1481,13 @@ public sealed class TransportBoardingCommandSystem
         if (em.HasComponent<LocalTransform>(transport))
             groundReferenceCell = GridUtils.WorldToCell(pathingGrid, em.GetComponentData<LocalTransform>(transport).Position);
 
-        _reservedDisembarkCells.Clear();
+        HashSet<int> reservedDisembarkCells = new();
         if (!transportApproachCellSystem.TryFindTransportDisembarkCell(
                 pathingGrid,
                 walkable,
                 blocked,
                 occupied,
-                _reservedDisembarkCells,
+                reservedDisembarkCells,
                 transportCell,
                 transportSize,
                 groundReferenceCell,

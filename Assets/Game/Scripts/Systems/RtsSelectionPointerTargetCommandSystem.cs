@@ -26,7 +26,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly UnitTransportBoardingRuleSystem UnitTransportBoardingRuleSystem;
         public readonly UnitTransportApproachCellSystem UnitTransportApproachCellSystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
-        public readonly UnitTransportRopeDisembarkCommandSystem UnitTransportRopeDisembarkCommandSystem;
         public readonly BuildingTargetMoveOrderSystem BuildingTargetMoveOrderSystem;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
@@ -63,7 +62,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTransportBoardingRuleSystem unitTransportBoardingRuleSystem,
             UnitTransportApproachCellSystem unitTransportApproachCellSystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
-            UnitTransportRopeDisembarkCommandSystem unitTransportRopeDisembarkCommandSystem,
             BuildingTargetMoveOrderSystem buildingTargetMoveOrderSystem,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
@@ -99,7 +97,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTransportBoardingRuleSystem = unitTransportBoardingRuleSystem;
             UnitTransportApproachCellSystem = unitTransportApproachCellSystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
-            UnitTransportRopeDisembarkCommandSystem = unitTransportRopeDisembarkCommandSystem;
             BuildingTargetMoveOrderSystem = buildingTargetMoveOrderSystem;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
@@ -131,6 +128,38 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private EntityQuery _runtimeBuildingCombatQuery;
     private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();
 
+    private readonly struct PointerTargetBoundaryPass
+    {
+        private readonly RtsSelectionPointerTargetCommandSystem _owner;
+        private readonly Context _context;
+
+        public PointerTargetBoundaryPass(RtsSelectionPointerTargetCommandSystem owner, Context context)
+        {
+            _owner = owner;
+            _context = context;
+        }
+
+        public bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+        {
+            return _owner.TryGetClickedUnitEntityFromBoundary(_context, screenPosition, em, out bestEntity);
+        }
+
+        public bool TryGetClickedAttackTargetEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+        {
+            return _owner.TryGetClickedAttackTargetEntityFromBoundary(_context, screenPosition, em, out bestEntity);
+        }
+
+        public bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+        {
+            return _owner.TryGetClickedCellFromBoundary(_context, screenPosition, em, out cell, out worldPoint);
+        }
+    }
+
+    private PointerTargetBoundaryPass CreatePointerTargetBoundaryPass(Context context)
+    {
+        return new PointerTargetBoundaryPass(this, context);
+    }
+
     public void IssueMoveOrder(Context context, Vector2 screenPosition)
     {
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
@@ -144,7 +173,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
         context.LogSelectionDiagnostic?.Invoke($"moveAttempt pos={screenPosition} frame={Time.frameCount}");
 
-        if (!context.InputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
+        bool queued = TryQueueResolvedMoveCommand(context, screenPosition, out bool queuedResolvedTarget);
+        if (!queued)
         {
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             {
@@ -161,25 +191,100 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={Time.frameCount}");
-        context.ProcessMoveCommandRequests?.Invoke();
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={Time.frameCount}");
+        if (!queuedResolvedTarget)
+        {
+            context.ProcessMoveCommandRequests?.Invoke();
+            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={Time.frameCount}");
+        }
+    }
+
+    private bool TryQueueResolvedMoveCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
+    {
+        queuedResolvedTarget = false;
+        int frame = Time.frameCount;
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
+        }
+
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        if (targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out _))
+            return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
+
+        if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
+            return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
+
+        queuedResolvedTarget = context.InputSystem.QueueMoveCommandRequest(screenPosition, targetCell, worldPoint, frame);
+        return queuedResolvedTarget;
     }
 
     public bool TryIssueAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
     {
         bool explicitAttackTargetModeActive = context.GetExplicitAttackTargetModeActive?.Invoke() == true;
-        if (!context.InputSystem.QueueAttackCommandRequest(
+        if (!TryQueueResolvedAttackCommand(
+                context,
                 screenPosition,
                 explicitAttackTargetModeActive,
-                Time.frameCount))
+                out bool queuedResolvedTarget))
         {
             if (explicitAttackTargetModeActive)
                 context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return false;
         }
 
+        if (queuedResolvedTarget)
+            return true;
+
         return context.ProcessAttackCommandRequests?.Invoke() == true;
+    }
+
+    private bool TryQueueResolvedAttackCommand(
+        Context context,
+        Vector2 screenPosition,
+        bool explicitAttackTargetModeActive,
+        out bool queuedResolvedTarget)
+    {
+        queuedResolvedTarget = false;
+        int frame = Time.frameCount;
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
+        }
+
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        if (!targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out Entity targetEntity) ||
+            !IsDirectResolvedAttackTarget(em, targetEntity, context.UnitTargetOrderSystem))
+        {
+            return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
+        }
+
+        queuedResolvedTarget = context.InputSystem.QueueAttackCommandRequest(
+            screenPosition,
+            targetEntity,
+            explicitAttackTargetModeActive,
+            frame);
+        return queuedResolvedTarget;
+    }
+
+    private static bool IsDirectResolvedAttackTarget(
+        EntityManager em,
+        Entity targetEntity,
+        UnitTargetOrderSystem targetOrderSystem)
+    {
+        if (targetEntity == Entity.Null ||
+            !em.Exists(targetEntity) ||
+            em.HasComponent<RuntimeBuildingCombatTag>(targetEntity) ||
+            em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) ||
+            em.HasComponent<StaticGridBlocker>(targetEntity))
+        {
+            return false;
+        }
+
+        targetOrderSystem ??= new UnitTargetOrderSystem();
+        return targetOrderSystem.ValidateAttackTarget(em, targetEntity).Accepted;
     }
 
     public bool TryIssueScanOrder(Context context, Vector2 screenPosition)
@@ -188,22 +293,74 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
         context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={Time.frameCount}");
 
-        if (!context.InputSystem.QueueScanCommandRequest(screenPosition, Time.frameCount))
+        bool queued = TryQueueResolvedScanCommand(context, screenPosition, out bool queuedResolvedTarget);
+        if (!queued)
         {
             context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
             return false;
         }
 
-        return context.ProcessScanCommandRequests?.Invoke() == true;
+        if (!queuedResolvedTarget)
+            return context.ProcessScanCommandRequests?.Invoke() == true;
+
+        return true;
+    }
+
+    private bool TryQueueResolvedScanCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
+    {
+        queuedResolvedTarget = false;
+        int frame = Time.frameCount;
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
+        }
+
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
+            return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
+
+        queuedResolvedTarget = context.InputSystem.QueueScanCommandRequest(screenPosition, targetCell, worldPoint, frame);
+        return queuedResolvedTarget;
     }
 
     public bool TryIssueBoardTransportOrderToClickedUnit(Context context, Vector2 screenPosition)
     {
-        if (!context.InputSystem.QueueBoardTransportCommandRequest(screenPosition, Time.frameCount))
+        if (!TryQueueResolvedBoardTransportCommand(context, screenPosition, out bool queuedResolvedTarget))
             return false;
 
-        return context.ProcessTransportCommandRequests?.Invoke() == true;
+        if (!queuedResolvedTarget)
+            return context.ProcessTransportCommandRequests?.Invoke() == true;
+
+        return true;
+    }
+
+    private bool TryQueueResolvedBoardTransportCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
+    {
+        queuedResolvedTarget = false;
+        int frame = Time.frameCount;
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return context.InputSystem.QueueBoardTransportCommandRequest(screenPosition, frame);
+        }
+
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        if (!context.TransportBoardingCommandSystem.TryResolveBoardablePlayerTransportClick(
+                em,
+                screenPosition,
+                context.UnitTransportBoardingRuleSystem,
+                context.UnitTransportBoardingQuerySystem,
+                (Vector2 position, EntityManager entityManager, out Entity entity) => targetBoundary.TryGetClickedUnitEntity(position, entityManager, out entity),
+                (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => targetBoundary.TryGetClickedCell(position, entityManager, out cell, out worldPoint),
+                out Entity transport))
+        {
+            return context.InputSystem.QueueBoardTransportCommandRequest(screenPosition, frame);
+        }
+
+        queuedResolvedTarget = context.InputSystem.QueueBoardTransportCommandRequest(transport, screenPosition, frame);
+        return queuedResolvedTarget;
     }
 
     public bool IsBoardablePlayerTransportClick(Context context, Vector2 screenPosition)
@@ -211,13 +368,14 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (!context.TryGetEntityManager(out EntityManager em))
             return false;
 
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         return context.TransportBoardingCommandSystem.IsBoardablePlayerTransportClick(
             em,
             screenPosition,
             context.UnitTransportBoardingRuleSystem,
             context.UnitTransportBoardingQuerySystem,
-            (Vector2 position, EntityManager entityManager, out Entity entity) => TryGetClickedUnitEntity(context, position, entityManager, out entity),
-            (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => TryGetClickedCell(context, position, entityManager, out cell, out worldPoint));
+            (Vector2 position, EntityManager entityManager, out Entity entity) => targetBoundary.TryGetClickedUnitEntity(position, entityManager, out entity),
+            (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => targetBoundary.TryGetClickedCell(position, entityManager, out cell, out worldPoint));
     }
 
     public bool TryIssueMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)
@@ -248,12 +406,13 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         }
 
         context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={Time.frameCount}");
+        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         if (!context.FocusedUnitLifecycleSystem.TryFocusUnit(
                 em,
                 screenPosition,
                 context.SelectionStateSystem,
                 context.UnitTargetOrderSystem,
-                (Vector2 position, EntityManager entityManager, out Entity entity) => TryGetClickedUnitEntity(context, position, entityManager, out entity),
+                (Vector2 position, EntityManager entityManager, out Entity entity) => targetBoundary.TryGetClickedUnitEntity(position, entityManager, out entity),
                 "TryFocusUnit",
                 "TryFocusUnit",
                 context.LogSelectionDiagnostic,
@@ -277,6 +436,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     public bool TryGetClickedUnitEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
+        return CreatePointerTargetBoundaryPass(context).TryGetClickedUnitEntity(screenPosition, em, out bestEntity);
+    }
+
+    private bool TryGetClickedUnitEntityFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+    {
         bestEntity = Entity.Null;
         bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
         if (hasFlatClickedCell &&
@@ -291,7 +455,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return true;
         }
 
-        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _) ||
+        if (!TryGetClickedCellFromBoundary(context, screenPosition, em, out int2 clickedCell, out _) ||
             (hasFlatClickedCell && clickedCell.Equals(flatClickedCell)))
         {
             bool fallbackHit = context.FocusableUnitLookupSystem.TryGetClickedUnitEntityByScreenDistance(
@@ -327,7 +491,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     public bool TryGetClickedAttackTargetEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
-        if (TryGetClickedUnitEntity(context, screenPosition, em, out bestEntity))
+        return CreatePointerTargetBoundaryPass(context).TryGetClickedAttackTargetEntity(screenPosition, em, out bestEntity);
+    }
+
+    private bool TryGetClickedAttackTargetEntityFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+    {
+        if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
             return true;
 
         bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
@@ -338,7 +507,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return true;
         }
 
-        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _) ||
+        if (!TryGetClickedCellFromBoundary(context, screenPosition, em, out int2 clickedCell, out _) ||
             (hasFlatClickedCell && clickedCell.Equals(flatClickedCell)))
         {
             context.LogSelectionDiagnostic?.Invoke($"attackTargetLookup result=False route=RuntimeBuilding pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell}");
@@ -468,6 +637,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     }
 
     public bool TryGetClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        return CreatePointerTargetBoundaryPass(context).TryGetClickedCell(screenPosition, em, out cell, out worldPoint);
+    }
+
+    private bool TryGetClickedCellFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
         cell = default;
         worldPoint = default;

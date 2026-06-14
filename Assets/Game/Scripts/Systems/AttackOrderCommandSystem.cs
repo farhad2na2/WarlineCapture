@@ -153,6 +153,12 @@ public partial struct AttackOrderCommandSystem : ISystem
                 continue;
             }
 
+            if (request.HasTargetEntity != 0)
+            {
+                i++;
+                continue;
+            }
+
             commandRequests.RemoveAt(i);
             handledAny = true;
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);

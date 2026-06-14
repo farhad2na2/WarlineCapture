@@ -156,7 +156,6 @@ public sealed class NonEcsSystemConversionArchitectureTests
             "SelectionScanCommandRequestSystem",
             "ScanIntelCommandSystem",
             "TransportBoardingCommandSystem",
-            "UnitTransportRopeDisembarkCommandSystem",
             "BuildingTargetMoveOrderSystem",
             "CitizenMovementCommandSystem"
         };

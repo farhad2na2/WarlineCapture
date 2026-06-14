@@ -5,12 +5,52 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class RtsSelectionInputSystemTests
 {
     private World _previousWorld;
     private World _testWorld;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.MoveCommandRequest_StoresResolvedTargetCellAndWorldPosition());
+            RunCase(test => test.AttackCommandRequest_StoresResolvedTargetEntity());
+            RunCase(test => test.ScanCommandRequest_StoresResolvedTargetCellAndWorldPosition());
+            RunCase(test => test.BoardTransportCommandRequest_StoresResolvedTargetEntity());
+            RunCase(test => test.HasPendingAttackCommandRequestsOrResults_DetectsAttackResults());
+            RunCase(test => test.HasPendingMoveCommandRequestsOrResults_DetectsMoveResults());
+            RunCase(test => test.HasPendingScanCommandRequestsOrResults_DetectsScanResults());
+            RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
+            RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
+            RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=10");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+            UnityEngine.Debug.LogError("[RtsSelectionInputSystemValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(Action<RtsSelectionInputSystemTests> action)
+    {
+        var test = new RtsSelectionInputSystemTests();
+        test.SetUp();
+        try
+        {
+            action(test);
+        }
+        finally
+        {
+            test.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -146,6 +186,177 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(inputSystem.TryConsumeQueuedMoveOrder(Time.frameCount + 10, out _));
         Assert.AreEqual(0, inputSystem.ClearPendingMoveCommandRequests());
         Assert.GreaterOrEqual(inputSystem.IgnoreWorldCommandsUntilFrame, Time.frameCount + 1);
+    }
+
+    [Test]
+    public void MoveCommandRequest_StoresResolvedTargetCellAndWorldPosition()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 screenPosition = new(123f, 456f);
+        int2 targetCell = new(17, 23);
+        Vector3 worldPosition = new(17.5f, 0f, 23.5f);
+
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(screenPosition, targetCell, worldPosition, Time.frameCount));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Move, requests[0].Kind);
+        Assert.AreEqual(targetCell, requests[0].TargetCell);
+        Assert.AreEqual(new float3(worldPosition.x, worldPosition.y, worldPosition.z), requests[0].WorldPosition);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Cell, requests[0].TargetKind);
+        Assert.AreEqual(1, requests[0].HasTargetCell);
+        Assert.AreEqual(1, requests[0].HasWorldPosition);
+        Assert.AreEqual(1, requests[0].HasScreenPosition);
+        Assert.IsTrue(inputSystem.HasPendingMoveCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void ScanCommandRequest_StoresResolvedTargetCellAndWorldPosition()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 screenPosition = new(321f, 654f);
+        int2 targetCell = new(9, 14);
+        Vector3 worldPosition = new(9.5f, 0f, 14.5f);
+
+        Assert.IsTrue(inputSystem.QueueScanCommandRequest(screenPosition, targetCell, worldPosition, Time.frameCount));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Scan, requests[0].Kind);
+        Assert.AreEqual(targetCell, requests[0].TargetCell);
+        Assert.AreEqual(new float3(worldPosition.x, worldPosition.y, worldPosition.z), requests[0].WorldPosition);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Cell, requests[0].TargetKind);
+        Assert.AreEqual(1, requests[0].HasTargetCell);
+        Assert.AreEqual(1, requests[0].HasWorldPosition);
+        Assert.AreEqual(1, requests[0].HasScreenPosition);
+        Assert.IsTrue(inputSystem.HasPendingScanCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void AttackCommandRequest_StoresResolvedTargetEntity()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Entity target = new() { Index = 64, Version = 2 };
+        Vector2 screenPosition = new(444f, 555f);
+
+        Assert.IsTrue(inputSystem.QueueAttackCommandRequest(
+            screenPosition,
+            target,
+            explicitAttackTargetModeActive: true,
+            frame: Time.frameCount));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Attack, requests[0].Kind);
+        Assert.AreEqual(target, requests[0].TargetEntity);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Entity, requests[0].TargetKind);
+        Assert.AreEqual(1, requests[0].ExplicitAttackTargetMode);
+        Assert.AreEqual(1, requests[0].HasTargetEntity);
+        Assert.AreEqual(1, requests[0].HasScreenPosition);
+        Assert.IsTrue(inputSystem.HasPendingAttackCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void BoardTransportCommandRequest_StoresResolvedTargetEntity()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Entity transport = new() { Index = 42, Version = 7 };
+        Vector2 screenPosition = new(222f, 333f);
+
+        Assert.IsTrue(inputSystem.QueueBoardTransportCommandRequest(transport, screenPosition, Time.frameCount));
+
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardTransport, requests[0].Kind);
+        Assert.AreEqual(transport, requests[0].TargetEntity);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Entity, requests[0].TargetKind);
+        Assert.AreEqual(1, requests[0].HasTargetEntity);
+        Assert.AreEqual(1, requests[0].HasScreenPosition);
+        Assert.IsTrue(inputSystem.HasPendingTransportCommandRequests());
+    }
+
+    [Test]
+    public void HasPendingMoveCommandRequestsOrResults_DetectsMoveResults()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out _,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results));
+
+        results.Add(new RtsSelectionCommandResultElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            HasCommandResult = 1
+        });
+
+        Assert.IsTrue(inputSystem.HasPendingMoveCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void HasPendingAttackCommandRequestsOrResults_DetectsAttackResults()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out _,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results));
+
+        results.Add(new RtsSelectionCommandResultElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Attack,
+            HasCommandResult = 1
+        });
+
+        Assert.IsTrue(inputSystem.HasPendingAttackCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void HasPendingScanCommandRequestsOrResults_DetectsScanResults()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out _,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results));
+
+        results.Add(new RtsSelectionCommandResultElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            HasCommandResult = 1
+        });
+
+        Assert.IsTrue(inputSystem.HasPendingScanCommandRequestsOrResults());
+    }
+
+    [Test]
+    public void HasPendingTransportCommandRequests_DetectsTransportResults()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out _,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results));
+
+        results.Add(new RtsSelectionCommandResultElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            HasCommandResult = 1
+        });
+
+        Assert.IsTrue(inputSystem.HasPendingTransportCommandRequests());
     }
 
     [Test]
@@ -900,6 +1111,115 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pointer = new(220f, 140f);
+        inputSystem.BeginPointerPress(pointer, pointerPressedOverUi: false);
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        int attackTargetCalls = 0;
+        int focusCalls = 0;
+        int clearCommandCalls = 0;
+        bool cameraDragging = true;
+
+        var context = new RtsSelectionRuntimeInputSystem.Context(
+            runtimeGameplayStateSystem: runtimeState,
+            inputSystem: inputSystem,
+            mainMenuPlayUi: null,
+            dragThresholdPixels: 8f,
+            selectionModeHoldSeconds: 0.35f,
+            getExplicitAttackTargetModeActive: null,
+            setExplicitAttackTargetModeActive: null,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            isPointerOverAnyUi: _ => false,
+            isPointerOverGameplayUi: _ => false,
+            tryIssueAttackOrderToClickedUnit: _ =>
+            {
+                attackTargetCalls++;
+                return false;
+            },
+            tryIssueScanOrder: null,
+            orderMarkerSystem: null,
+            tryGetDefaultEntityManager: null,
+            tryGetScanClickedCell: null,
+            setHudWorldMarkersVisible: null,
+            tryIssueBoardTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToPassengerRect: null,
+            isBoardSelectedTransportPassengerTarget: null,
+            tryFocusUnit: _ =>
+            {
+                focusCalls++;
+                return true;
+            },
+            panCamera: null,
+            issueMoveOrder: null,
+            processSelectionRectangleRequests: null,
+            clearCommandMode: () => clearCommandCalls++,
+            logClickDiagnostic: null,
+            buildClickDebugSummary: _ => "summary=test",
+            isGameplayInputLocked: null);
+
+        InvokeRuntimePointerRelease(context, pointer);
+
+        Assert.AreEqual(1, attackTargetCalls);
+        Assert.AreEqual(0, focusCalls);
+        Assert.AreEqual(0, clearCommandCalls);
+        Assert.IsFalse(cameraDragging);
+        Assert.IsFalse(inputSystem.PointerPressedOverUi);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+    }
+
+    [Test]
+    public void PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets()
+    {
+        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
+        StringAssert.Contains("private readonly struct PointerTargetBoundaryPass", pointerTarget);
+
+        string move = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedMoveCommand");
+        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", move);
+        StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", move);
+        StringAssert.Contains("targetBoundary.TryGetClickedCell", move);
+        Assert.IsFalse(move.Contains("TryGetClickedCell(context", StringComparison.Ordinal));
+
+        string attack = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedAttackCommand");
+        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", attack);
+        StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", attack);
+        Assert.IsFalse(attack.Contains("TryGetClickedUnitEntity(context", StringComparison.Ordinal));
+
+        string scan = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedScanCommand");
+        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", scan);
+        StringAssert.Contains("targetBoundary.TryGetClickedCell", scan);
+        Assert.IsFalse(scan.Contains("TryGetClickedCell(context", StringComparison.Ordinal));
+
+        string board = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedBoardTransportCommand");
+        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", board);
+        StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", board);
+        StringAssert.Contains("targetBoundary.TryGetClickedCell", board);
+
+        string clickedCellWrapper = ExtractMethodBodyByName(pointerTarget, "TryGetClickedCell(Context context");
+        StringAssert.Contains("return CreatePointerTargetBoundaryPass(context).TryGetClickedCell", clickedCellWrapper);
+    }
+
+    [Test]
     public void BuildingSelectionInteraction_ClearFocusedUnitClearsSelectedUnitTags()
     {
         EntityManager em = _testWorld.EntityManager;
@@ -1017,13 +1337,12 @@ public sealed class RtsSelectionInputSystemTests
                 focusedUnitLifecycleSystem: null,
                 unitTargetOrderSystem: null,
                 focusableUnitLookupSystem: new FocusableUnitLookupSystem(),
-                transportBoardingCommandSystem: null,
+                transportBoardingCommandSystem: default,
                 unitTransportCapacitySystem: default,
                 unitTransportBoardingQuerySystem: default,
                 unitTransportBoardingRuleSystem: default,
                 unitTransportApproachCellSystem: default,
                 unitTransportAirPickupSystem: default,
-                unitTransportRopeDisembarkCommandSystem: default,
                 buildingTargetMoveOrderSystem: default,
                 buildingPlacementInteractionSystem: null,
                 buildingPlacementInteractionContext: default,
@@ -1125,6 +1444,26 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.Fail($"{methodName} body was not closed.");
         return string.Empty;
+    }
+
+    private static void InvokeRuntimePointerRelease(
+        RtsSelectionRuntimeInputSystem.Context context,
+        Vector2 pointerPosition)
+    {
+        System.Reflection.MethodInfo method = typeof(RtsSelectionRuntimeInputSystem).GetMethod(
+            "HandlePointerReleased",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        Assert.NotNull(method);
+
+        try
+        {
+            method.Invoke(null, new object[] { context, pointerPosition });
+        }
+        catch (System.Reflection.TargetInvocationException exception) when (exception.InnerException != null)
+        {
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+            throw;
+        }
     }
 
     private static string ExtractBlockAfter(string source, string marker)

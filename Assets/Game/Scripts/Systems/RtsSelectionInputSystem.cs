@@ -443,6 +443,29 @@ public sealed class RtsSelectionInputSystem
         return queued;
     }
 
+    public bool QueueMoveCommandRequest(Vector2 screenPosition, int2 targetCell, Vector3 worldPosition, int frame)
+    {
+        bool queued = _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            Frame = frame,
+            TargetCell = targetCell,
+            WorldPosition = ToFloat3(worldPosition),
+            ScreenPosition = ToFloat2(screenPosition),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1,
+            HasScreenPosition = 1
+        });
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"queueResolvedMoveCommandRequest queued={queued} screen={screenPosition} cell={targetCell} world={worldPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+        }
+
+        return queued;
+    }
+
     public bool QueueFocusUnitCommandRequest(Vector2 screenPosition, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -466,6 +489,21 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueAttackCommandRequest(Vector2 screenPosition, Entity target, bool explicitAttackTargetModeActive, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Attack,
+            Frame = frame,
+            TargetEntity = target,
+            ScreenPosition = ToFloat2(screenPosition),
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
+            ExplicitAttackTargetMode = explicitAttackTargetModeActive ? (byte)1 : (byte)0,
+            HasTargetEntity = target != Entity.Null ? (byte)1 : (byte)0,
+            HasScreenPosition = 1
+        });
+    }
+
     public bool QueueScanCommandRequest(Vector2 screenPosition, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -473,6 +511,22 @@ public sealed class RtsSelectionInputSystem
             Kind = RtsSelectionCommandIntentKind.Scan,
             Frame = frame,
             ScreenPosition = ToFloat2(screenPosition),
+            HasScreenPosition = 1
+        });
+    }
+
+    public bool QueueScanCommandRequest(Vector2 screenPosition, int2 targetCell, Vector3 worldPosition, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            Frame = frame,
+            TargetCell = targetCell,
+            WorldPosition = ToFloat3(worldPosition),
+            ScreenPosition = ToFloat2(screenPosition),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1,
             HasScreenPosition = 1
         });
     }
@@ -488,6 +542,20 @@ public sealed class RtsSelectionInputSystem
         });
     }
 
+    public bool QueueBoardTransportCommandRequest(Entity transport, Vector2 screenPosition, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            Frame = frame,
+            TargetEntity = transport,
+            HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0,
+            ScreenPosition = ToFloat2(screenPosition),
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
+            HasScreenPosition = 1
+        });
+    }
+
     public bool QueueBoardSelectedTransportCommandRequest(Entity transport, Vector2 screenPosition, int frame)
     {
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
@@ -497,6 +565,7 @@ public sealed class RtsSelectionInputSystem
             TargetEntity = transport,
             HasTargetEntity = transport != Entity.Null ? (byte)1 : (byte)0,
             ScreenPosition = ToFloat2(screenPosition),
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
             HasScreenPosition = 1
         });
     }
@@ -612,20 +681,108 @@ public sealed class RtsSelectionInputSystem
 
     public bool HasPendingTransportCommandRequests()
     {
-        if (!TryGetCommandBuffers(out _, out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests, out _))
+        if (!TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
+        {
             return false;
+        }
 
         for (int i = 0; i < commandRequests.Length; i++)
         {
-            RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
-            if (kind == RtsSelectionCommandIntentKind.BoardTransport ||
-                kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
-                kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
-                kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
-                kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
-            {
+            if (IsTransportCommandIntent(commandRequests[i].Kind))
                 return true;
-            }
+        }
+
+        for (int i = 0; i < commandResults.Length; i++)
+        {
+            if (IsTransportCommandIntent(commandResults[i].Kind))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsTransportCommandIntent(RtsSelectionCommandIntentKind kind)
+    {
+        return kind == RtsSelectionCommandIntentKind.BoardTransport ||
+               kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
+               kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
+               kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
+               kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger;
+    }
+
+    public bool HasPendingAttackCommandRequestsOrResults()
+    {
+        if (!TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Attack)
+                return true;
+        }
+
+        for (int i = 0; i < commandResults.Length; i++)
+        {
+            if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Attack)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool HasPendingMoveCommandRequestsOrResults()
+    {
+        if (!TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Move)
+                return true;
+        }
+
+        for (int i = 0; i < commandResults.Length; i++)
+        {
+            if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Move)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool HasPendingScanCommandRequestsOrResults()
+    {
+        if (!TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Scan)
+                return true;
+        }
+
+        for (int i = 0; i < commandResults.Length; i++)
+        {
+            if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Scan)
+                return true;
         }
 
         return false;
@@ -668,6 +825,11 @@ public sealed class RtsSelectionInputSystem
     private static float2 ToFloat2(Vector2 value)
     {
         return new float2(value.x, value.y);
+    }
+
+    private static float3 ToFloat3(Vector3 value)
+    {
+        return new float3(value.x, value.y, value.z);
     }
 
     private static Rect ToRect(float4 value)

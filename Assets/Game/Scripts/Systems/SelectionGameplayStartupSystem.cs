@@ -151,7 +151,6 @@ internal sealed class SelectionGameplayStartupSystem
         var unitTransportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
         var unitTransportApproachCellSystem = new UnitTransportApproachCellSystem();
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
-        var unitTransportRopeDisembarkCommandSystem = new UnitTransportRopeDisembarkCommandSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
         var selectedAttackSourceScratch = new List<Entity>();
@@ -277,6 +276,12 @@ internal sealed class SelectionGameplayStartupSystem
         {
             if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
                 ProcessTransportCommandRequests();
+            if (rtsSelectionInputSystem.HasPendingMoveCommandRequestsOrResults())
+                ProcessMoveCommandRequests();
+            if (rtsSelectionInputSystem.HasPendingAttackCommandRequestsOrResults())
+                ProcessAttackCommandRequests();
+            if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
+                ProcessScanCommandRequests();
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
             RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
@@ -395,7 +400,6 @@ internal sealed class SelectionGameplayStartupSystem
                 unitTransportBoardingRuleSystem,
                 unitTransportApproachCellSystem,
                 unitTransportAirPickupSystem,
-                unitTransportRopeDisembarkCommandSystem,
                 selectionStateSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
@@ -467,7 +471,6 @@ internal sealed class SelectionGameplayStartupSystem
                 unitTransportBoardingRuleSystem,
                 unitTransportApproachCellSystem,
                 unitTransportAirPickupSystem,
-                unitTransportRopeDisembarkCommandSystem,
                 buildingTargetMoveOrderSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,

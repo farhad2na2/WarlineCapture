@@ -369,7 +369,8 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-            if (request.Kind != RtsSelectionCommandIntentKind.Move)
+            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
+                IsPreResolvedMoveRequest(request))
             {
                 i++;
                 continue;
@@ -476,6 +477,11 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         }
 
         return handledAny;
+    }
+
+    private static bool IsPreResolvedMoveRequest(RtsSelectionCommandIntentRequestElement request)
+    {
+        return request.HasTargetCell != 0 && request.HasWorldPosition != 0;
     }
 
     private static byte ResolveMarkerFaction(EntityManager em, NativeArray<Entity> entities)

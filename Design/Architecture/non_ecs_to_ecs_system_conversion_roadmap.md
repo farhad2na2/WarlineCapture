@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `25 / 113 complete (22.1%)`.
+- Checklist progress: `33 / 113 complete (29.2%)`.
 - In progress: `0`.
-- Remaining open: `88`.
-- Phase progress: `2 / 13 phases complete; 1 in progress; 10 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `392` after excluding `91` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `80`.
+- Phase progress: `3 / 13 phases complete; 1 in progress; 9 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `92` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `8` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `5`.
+- Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
+- Converted to `ISystem`: `6`.
 - Converted to `SystemBase`: `0`.
-- Folded into ECS owners/jobs: `4`.
+- Folded into ECS owners/jobs: `5`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
-- Remaining plain runtime gameplay `*System` classes: `392`.
+- Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 converted `AttackOrderCommandSystem` into an `ISystem` attack command owner and regenerated the inventory.
+- Last implementation update: 2026-06-14 made camera/screen target resolution flow through a boundary-only pass inside the pointer target command owner.
 
 ## Architecture Rules
 
@@ -192,7 +192,7 @@ Progress notes:
 
 ## Phase 2: Straightforward Selection Command Processors
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Convert the command processors that already follow the request/result shape.
@@ -206,8 +206,8 @@ Implementation steps:
 - [x] Convert `SelectionScanCommandRequestSystem` into an ECS system or fold it into the new scan command ECS owner.
 - [x] Convert `ScanIntelCommandSystem` into the scan command ECS owner.
 - [x] Convert `SelectionTransportCommandRequestSystem` into an ECS system or fold it into the new transport command ECS owner.
-- [ ] Convert `TransportBoardingCommandSystem` into the transport boarding command ECS owner.
-- [ ] Fold `UnitTransportRopeDisembarkCommandSystem` into the transport command ECS owner or make it a narrow disembark request processor.
+- [x] Convert `TransportBoardingCommandSystem` into the transport boarding command ECS owner.
+- [x] Fold `UnitTransportRopeDisembarkCommandSystem` into the transport command ECS owner or make it a narrow disembark request processor.
 - [x] Convert `BuildingTargetMoveOrderSystem` into a request/result ECS command processor.
 - [x] Convert `CitizenMovementCommandSystem` into a request/result ECS command processor.
 
@@ -233,10 +233,14 @@ Progress notes:
 - 2026-06-14: Folded `SelectionTransportCommandRequestSystem` into `TransportBoardingCommandSystem`. The transport command owner now drains board/disembark command-intent requests, maps transport results into `RtsSelectionCommandResultElement`, owns disembark helper state, and refreshes command buffers after structural disembark/boarding changes. Removed the obsolete wrapper script and meta. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `394`, first-wave ConvertToISystem candidates are now `10`, and folded count is now `4`.
 - 2026-06-14: Converted `SelectedMoveOrderCommandSystem` into an `ISystem` move command owner. It now owns an ECS `OnUpdate` path for pre-resolved Move command requests carrying target cell/world data, while the existing managed transition method continues to resolve screen clicks and leaves screen-only requests untouched. Removed managed selection scratch state from the owner by collecting selected units into caller-owned `NativeList<Entity>` storage. Also fixed `BuildingTargetMoveOrderSystem` request/result buffer lifetime so structural move-order changes do not invalidate result writes during focused move validation. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `393`, Unity ECS excluded count is now `90`, and converted-to-`ISystem` count is now `4`.
 - 2026-06-14: Converted `AttackOrderCommandSystem` into an `ISystem` attack command owner. It now owns an ECS `OnUpdate` path for pre-resolved Attack command requests carrying a target entity, while the existing managed transition method continues to resolve screen clicks, focused attack sources, and base-breach targets for current UI behavior. Removed managed instance state from the owner by using cached ECS queries/type handles for the ECS path and caller-owned scratch storage for the managed transition path. Also refreshed command buffers after attack-order structural changes so result emission does not leave invalidated request buffers in the transition loop. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `392`, Unity ECS excluded count is now `91`, and converted-to-`ISystem` count is now `5`.
+- 2026-06-14: Fixed `SelectedMoveOrderCommandSystem.ProcessCommandIntentRequests` command-buffer lifetime after structural move-order changes and added a focused regression test with two move requests in the same buffer.
+- 2026-06-14: Folded `UnitTransportRopeDisembarkCommandSystem` into `TransportBoardingCommandSystem`. The transport command owner now owns helicopter rope-disembark detection and request creation directly, while the removed helper's behavior is preserved through the existing disembark command paths. Removed the obsolete script and meta, trimmed unused context plumbing, and regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `391`, first-wave ConvertToISystem candidates are now `7`, and folded count is now `5`.
+- 2026-06-14: Started the `TransportBoardingCommandSystem` ECS-owner conversion by removing disembark-path instance scratch fields and making the disembark command helpers static with explicit grid-query input. This keeps board-click behavior managed for now, but removes another managed-state blocker before adding an ECS-owned resolved-disembark request pass.
+- 2026-06-14: Converted `TransportBoardingCommandSystem` into an `ISystem`. Its ECS `OnUpdate` now consumes pre-resolved `BoardSelectedTransportPassenger`, `DisembarkTransport`, and `DisembarkTransportPassenger` command-intent requests and emits transport command results; screen-click board target resolution remains in the managed transition boundary. Removed remaining managed instance scratch fields from the owner and regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `390`, Unity ECS excluded count is now `92`, and converted-to-`ISystem` count is now `6`.
 
 ## Phase 3: Pointer Target Boundary Split
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Split `RtsSelectionPointerTargetCommandSystem` so it no longer executes gameplay commands.
@@ -249,12 +253,12 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Identify every direct command execution call currently routed through `RtsSelectionPointerTargetCommandSystem`.
-- [ ] Move camera/screen-to-world resolution into a boundary-only target resolution pass.
-- [ ] Write resolved Move target requests instead of calling move command execution.
-- [ ] Write resolved Attack target requests instead of calling attack command execution.
-- [ ] Write resolved Scan target requests instead of calling scan command execution.
-- [ ] Write resolved Board target requests instead of calling transport command execution.
+- [x] Identify every direct command execution call currently routed through `RtsSelectionPointerTargetCommandSystem`.
+- [x] Move camera/screen-to-world resolution into a boundary-only target resolution pass.
+- [x] Write resolved Move target requests instead of calling move command execution.
+- [x] Write resolved Attack target requests instead of calling attack command execution.
+- [x] Write resolved Scan target requests instead of calling scan command execution.
+- [x] Write resolved Board target requests instead of calling transport command execution.
 - [ ] Preserve command-mode UX: active command taps do not select hostile units/buildings.
 - [ ] Preserve mobile pan behavior during long-range Attack and transport-first Board mode.
 - [ ] Add tests for command-mode click priority over selection.
@@ -264,6 +268,16 @@ Acceptance checks:
 - Pointer boundary has no gameplay order mutation.
 - Gameplay command execution happens only in ECS command systems.
 - Failed target taps stay in the intended command mode unless the mode is invalid.
+
+Progress notes:
+
+- 2026-06-14: Audited direct command execution routes in `RtsSelectionPointerTargetCommandSystem`. The routes to split are: `IssueMoveOrder` queues Move and immediately invokes `ProcessMoveCommandRequests`; `TryIssueAttackOrderToClickedUnit` queues Attack and immediately invokes `ProcessAttackCommandRequests`; `TryIssueScanOrder` queues Scan and immediately invokes `ProcessScanCommandRequests`; `TryIssueBoardTransportOrderToClickedUnit` queues Board and immediately invokes `ProcessTransportCommandRequests`; `TryIssueMoveOrderToBuilding` directly calls `BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding`, clears selection/focus, and emits the screen marker. Adjacent selection mutation remains in `TryFocusUnit`, which calls `FocusedUnitLifecycleSystem.TryFocusUnit`, clears pending move requests, and updates pointer/camera state; this belongs to the Phase 4 focus split rather than the command execution split.
+- 2026-06-14: `RtsSelectionPointerTargetCommandSystem.IssueMoveOrder` now resolves non-unit Move targets at the managed pointer boundary and writes command-intent requests carrying `TargetCell` and `WorldPosition`. Resolved Move requests are left for `SelectedMoveOrderCommandSystem.OnUpdate`; only unresolved/clicked-unit fallback requests still enter the managed transition drain. `SelectionGameplayStartupSystem` drains pending Move results during the runtime tick so HUD feedback remains responsive. Also fixed the attached runtime `ObjectDisposedException` by making `RtsSelectionCommandResultFlushSystem` reacquire command buffers after `EnsureEntityQueries` or other structural setup changes, with regression coverage in `SelectionCommandRequestResultContractTests`.
+- 2026-06-14: Checked the next Phase 3 splits. Attack cannot be routed through the current pre-resolved ECS path blindly because the managed transition path can resolve base-breach orders through `BuildingPlacementInteractionSystem`, while `AttackOrderCommandSystem.OnUpdate` currently issues direct target orders only. Scan also needs a command-intent bridge first: `ScanIntelCommandSystem.OnUpdate` owns the scan queue, but RTS command-intent result mapping still happens synchronously in `ProcessCommandIntentRequests`.
+- 2026-06-14: `RtsSelectionPointerTargetCommandSystem.TryIssueScanOrder` now resolves valid clicked cells at the pointer boundary and writes Scan command-intent requests carrying `TargetCell` and `WorldPosition`. `ScanIntelCommandSystem.OnUpdate` now consumes those pre-resolved RTS command-intent Scan requests directly, applies scan reveal/feed work, and emits `RtsSelectionCommandResultElement` output for the managed HUD/marker boundary to drain. Screen-only Scan requests remain as fallback for unresolved clicks. Added pending Scan result draining in `SelectionGameplayStartupSystem`, input coverage for resolved Scan request data, and command contract coverage for ECS Scan OnUpdate consumption.
+- 2026-06-14: `RtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit` now resolves boardable transport targets at the pointer boundary and writes `BoardTransport` command-intent requests carrying the transport entity. `TransportBoardingCommandSystem.OnUpdate` consumes those resolved transport requests directly, shares the existing passenger-first boarding mutation through a target-entity overload, and emits transport command results for the HUD/marker boundary to drain. Screen-only Board requests remain as fallback for unresolved clicks. Added pending transport result detection, input coverage for resolved Board request data, and transport validation coverage for ECS Board OnUpdate consumption.
+- 2026-06-14: `RtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit` now resolves direct non-building attackable unit/entity targets at the pointer boundary and writes Attack command-intent requests carrying `TargetEntity`. `AttackOrderCommandSystem.OnUpdate` owns those resolved requests and emits Attack command results for the HUD/marker boundary to drain. Runtime-building/base-breach candidates and unresolved taps intentionally remain on the existing screen-resolved managed fallback path until breach-target data is represented explicitly in ECS request data.
+- 2026-06-14: Added an explicit `PointerTargetBoundaryPass` inside `RtsSelectionPointerTargetCommandSystem`. Move, Attack, Scan, Board, and Focus command paths now ask that boundary pass for clicked cells/entities instead of directly calling camera/grid target lookup helpers. Public target lookup methods remain as transition wrappers for startup delegates. Added focused source validation so resolved command target paths continue to use the boundary pass.
 
 ## Phase 4: Focus Command Split
 
@@ -562,8 +576,6 @@ This order keeps behavior stable by converting command execution before removing
 - `AttackOrderCommandSystem`
 - `SelectionScanCommandRequestSystem`
 - `ScanIntelCommandSystem`
-- `TransportBoardingCommandSystem`
-- `UnitTransportRopeDisembarkCommandSystem`
 - `BuildingTargetMoveOrderSystem`
 - `CitizenMovementCommandSystem`
 

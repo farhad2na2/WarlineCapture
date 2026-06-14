@@ -21,9 +21,11 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest();
+            tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=9");
+            tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=11");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -387,6 +389,67 @@ public sealed class SelectionCommandRequestResultContractTests
     }
 
     [Test]
+    public void ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest()
+    {
+        using World world = new("SelectionCommandScanSystemOnUpdateTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 32,
+            Height = 32,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new UnitGrid { Cell = new int2(6, 5) });
+        em.SetComponentData(target, new UnitHealth { Current = 10, Max = 10 });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(6.5f, 0f, 5.5f)));
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            RequestId = 77,
+            Frame = 88,
+            TargetCell = new int2(5, 5),
+            WorldPosition = new float3(5.5f, 0f, 5.5f),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1
+        });
+
+        SystemHandle system = world.CreateSystem<ScanIntelCommandSystem>();
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Scan, results[0].Kind);
+        Assert.AreEqual(77, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasCommandResult);
+        Assert.AreEqual(new int2(5, 5), results[0].TargetCell);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Cell, results[0].TargetKind);
+        Assert.AreEqual(1, results[0].HasWorldPosition);
+        Assert.AreEqual(1, results[0].RevealedCount);
+        Assert.IsTrue(em.HasComponent<ScanIntelRevealedTag>(target));
+        Assert.IsTrue(em.HasComponent<ScanIntelLastSeen>(target));
+    }
+
+    [Test]
     public void TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds()
     {
         using World world = new("SelectionCommandTransportProcessorTests");
@@ -412,7 +475,6 @@ public sealed class SelectionCommandRequestResultContractTests
             new UnitTransportBoardingRuleSystem(),
             new UnitTransportApproachCellSystem(),
             new UnitTransportAirPickupSystem(),
-            new UnitTransportRopeDisembarkCommandSystem(),
             new UnitMoveOrderSystem(),
             null,
             null,
@@ -437,7 +499,6 @@ public sealed class SelectionCommandRequestResultContractTests
             new UnitTransportBoardingRuleSystem(),
             new UnitTransportApproachCellSystem(),
             new UnitTransportAirPickupSystem(),
-            new UnitTransportRopeDisembarkCommandSystem(),
             new UnitMoveOrderSystem(),
             null,
             null,
@@ -505,6 +566,53 @@ public sealed class SelectionCommandRequestResultContractTests
         }
     }
 
+    [Test]
+    public void MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandMoveFlushBufferRefreshTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new UnityEngine.Vector2(10f, 20f), 70));
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(0, results.Length);
+
+            using EntityQuery emptySelectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery emptyGridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            int feedbackCount = 0;
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                emptySelectedMoveQuery,
+                emptyGridConfigQuery,
+                emptyMapSurfaceQuery,
+                _ => feedbackCount++,
+                em,
+                manager => manager.CreateEntity(typeof(RtsSelectionInputRequestQueueComponent)));
+
+            Assert.DoesNotThrow(() => flushSystem.ProcessMoveCommandRequests(context));
+
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(0, results.Length);
+            Assert.AreEqual(1, feedbackCount);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
     private static bool TryGetNoClickedUnit(UnityEngine.Vector2 screenPosition, EntityManager em, out Entity entity)
     {
         entity = Entity.Null;
@@ -517,7 +625,8 @@ public sealed class SelectionCommandRequestResultContractTests
         EntityQuery gridConfigQuery,
         EntityQuery mapSurfaceQuery,
         System.Action<TacticalCommandResult> applyHudCommandResult,
-        EntityManager em)
+        EntityManager em,
+        System.Action<EntityManager> ensureEntityQueries = null)
     {
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
@@ -534,7 +643,6 @@ public sealed class SelectionCommandRequestResultContractTests
             new UnitTransportBoardingRuleSystem(),
             new UnitTransportApproachCellSystem(),
             new UnitTransportAirPickupSystem(),
-            new UnitTransportRopeDisembarkCommandSystem(),
             new SelectionStateSystem(),
             null,
             default,
@@ -542,7 +650,7 @@ public sealed class SelectionCommandRequestResultContractTests
             gridConfigQuery,
             mapSurfaceQuery,
             TryGetEntityManager,
-            null,
+            ensureEntityQueries,
             null,
             null,
             applyHudCommandResult,

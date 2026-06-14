@@ -102,7 +102,6 @@ public sealed class TransportBoardingPerformanceValidation
             var boardingRuleSystem = new UnitTransportBoardingRuleSystem();
             var approachCellSystem = new UnitTransportApproachCellSystem();
             var airPickupSystem = new UnitTransportAirPickupSystem();
-            var ropeDisembarkCommandSystem = new UnitTransportRopeDisembarkCommandSystem();
             var moveOrderSystem = new UnitMoveOrderSystem();
             var selectionStateSystem = new SelectionStateSystem();
             SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
@@ -172,7 +171,6 @@ public sealed class TransportBoardingPerformanceValidation
                 boardingRuleSystem,
                 approachCellSystem,
                 airPickupSystem,
-                ropeDisembarkCommandSystem,
                 moveOrderSystem,
                 selectionStateSystem,
                 TryGetNoClickedUnit,

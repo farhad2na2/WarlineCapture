@@ -42,9 +42,21 @@ public partial struct ScanIntelCommandSystem : ISystem
         {
             return new Result(TacticalCommandResult.Rejected(reasonCode), default, default, DefaultScanRadiusCells, 0, false);
         }
+
+        public static Result FromCommandResult(
+            TacticalCommandResult commandResult,
+            int2 centerCell,
+            float3 centerWorld,
+            int radiusCells,
+            int revealedCount,
+            bool hasWorldPosition)
+        {
+            return new Result(commandResult, centerCell, centerWorld, radiusCells, revealedCount, hasWorldPosition);
+        }
     }
 
     private EntityQuery _queueQuery;
+    private EntityQuery _commandIntentQueueQuery;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _unitScanTargetQuery;
     private EntityQuery _buildingScanTargetQuery;
@@ -62,6 +74,10 @@ public partial struct ScanIntelCommandSystem : ISystem
             ComponentType.ReadWrite<ScanIntelCommandQueueComponent>(),
             ComponentType.ReadWrite<ScanIntelCommandRequestElement>(),
             ComponentType.ReadWrite<ScanIntelCommandResultElement>());
+        _commandIntentQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
+            ComponentType.ReadWrite<RtsSelectionCommandResultElement>());
         _gridConfigQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _unitScanTargetQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<Faction>(),
@@ -93,6 +109,19 @@ public partial struct ScanIntelCommandSystem : ISystem
         ProcessPendingRequests(
             state.EntityManager,
             _queueQuery,
+            _gridConfigQuery,
+            _unitScanTargetQuery,
+            _buildingScanTargetQuery,
+            _feedQueueQuery,
+            _entityType,
+            _factionType,
+            _unitGridType,
+            _healthType,
+            _transformType,
+            _buildingInfoType);
+        ProcessPreResolvedCommandIntentRequests(
+            state.EntityManager,
+            _commandIntentQueueQuery,
             _gridConfigQuery,
             _unitScanTargetQuery,
             _buildingScanTargetQuery,
@@ -145,7 +174,8 @@ public partial struct ScanIntelCommandSystem : ISystem
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-            if (request.Kind != RtsSelectionCommandIntentKind.Scan)
+            if (request.Kind != RtsSelectionCommandIntentKind.Scan ||
+                IsPreResolvedScanRequest(request))
             {
                 i++;
                 continue;
@@ -163,9 +193,103 @@ public partial struct ScanIntelCommandSystem : ISystem
                 tryGetClickedCell);
 
             AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+            if (em.Exists(commandEntity))
+            {
+                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            }
         }
 
         return handledAny;
+    }
+
+    private static bool ProcessPreResolvedCommandIntentRequests(
+        EntityManager em,
+        EntityQuery commandIntentQueueQuery,
+        EntityQuery gridConfigQuery,
+        EntityQuery unitScanTargetQuery,
+        EntityQuery buildingScanTargetQuery,
+        EntityQuery feedQueueQuery,
+        EntityTypeHandle entityType,
+        ComponentTypeHandle<Faction> factionType,
+        ComponentTypeHandle<UnitGrid> unitGridType,
+        ComponentTypeHandle<UnitHealth> healthType,
+        ComponentTypeHandle<LocalTransform> transformType,
+        ComponentTypeHandle<RuntimeBuildingCombatInfo> buildingInfoType)
+    {
+        if (commandIntentQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity commandEntity = commandIntentQueueQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        bool handledAny = false;
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Scan ||
+                !IsPreResolvedScanRequest(request))
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            handledAny = true;
+            ScanIntelCommandRequestElement scanRequest = new()
+            {
+                RequestId = request.RequestId,
+                Frame = request.Frame,
+                CenterCell = request.TargetCell,
+                CenterWorld = request.WorldPosition,
+                HasWorldPosition = request.HasWorldPosition
+            };
+            TacticalCommandResult commandResult = TryApplyScan(
+                em,
+                gridConfigQuery,
+                unitScanTargetQuery,
+                buildingScanTargetQuery,
+                feedQueueQuery,
+                entityType,
+                factionType,
+                unitGridType,
+                healthType,
+                transformType,
+                buildingInfoType,
+                scanRequest,
+                out int2 centerCell,
+                out float3 centerWorld,
+                out int radiusCells,
+                out int revealedCount,
+                out bool hasWorldPosition);
+
+            Result result = Result.FromCommandResult(
+                commandResult,
+                centerCell,
+                centerWorld,
+                radiusCells,
+                revealedCount,
+                hasWorldPosition);
+            AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
+            if (em.Exists(commandEntity))
+            {
+                if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                    commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+                if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                    commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            }
+        }
+
+        return handledAny;
+    }
+
+    private static bool IsPreResolvedScanRequest(RtsSelectionCommandIntentRequestElement request)
+    {
+        return request.HasTargetCell != 0 && request.HasWorldPosition != 0;
     }
 
     public static int EnqueueScan(

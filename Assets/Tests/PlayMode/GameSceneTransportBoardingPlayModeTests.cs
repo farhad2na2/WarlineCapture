@@ -264,7 +264,6 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             new UnitTransportBoardingRuleSystem(),
             new UnitTransportApproachCellSystem(),
             new UnitTransportAirPickupSystem(),
-            new UnitTransportRopeDisembarkCommandSystem(),
             new UnitMoveOrderSystem(),
             new SelectionStateSystem(),
             TryGetNoClickedUnit,

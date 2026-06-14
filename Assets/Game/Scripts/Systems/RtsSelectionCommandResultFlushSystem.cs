@@ -30,7 +30,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly UnitTransportBoardingRuleSystem UnitTransportBoardingRuleSystem;
         public readonly UnitTransportApproachCellSystem UnitTransportApproachCellSystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
-        public readonly UnitTransportRopeDisembarkCommandSystem UnitTransportRopeDisembarkCommandSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
@@ -71,7 +70,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             UnitTransportBoardingRuleSystem unitTransportBoardingRuleSystem,
             UnitTransportApproachCellSystem unitTransportApproachCellSystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
-            UnitTransportRopeDisembarkCommandSystem unitTransportRopeDisembarkCommandSystem,
             SelectionStateSystem selectionStateSystem,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
@@ -111,7 +109,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             UnitTransportBoardingRuleSystem = unitTransportBoardingRuleSystem;
             UnitTransportApproachCellSystem = unitTransportApproachCellSystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
-            UnitTransportRopeDisembarkCommandSystem = unitTransportRopeDisembarkCommandSystem;
             SelectionStateSystem = selectionStateSystem;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
@@ -152,7 +149,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsEnter frame={Time.frameCount}");
 
-        if (!context.InputSystem.TryGetCommandBuffers(
+        if (!TryGetFreshCommandBuffers(
+                context,
                 out EntityManager em,
                 out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
@@ -173,7 +171,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 $"moveRequests={CountRequests(commandRequests, RtsSelectionCommandIntentKind.Move)} resultBuffer={commandResults.Length} frame={Time.frameCount}");
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
         context.SelectedMoveOrderCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
@@ -188,7 +185,14 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.TryGetMoveClickedUnitEntity,
             context.TryGetMoveClickedCell);
 
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        if (!TryRefreshCommandBuffers(em, commandEntity, out commandRequests, out commandResults))
+        {
+            context.ClearHudCommandMode?.Invoke();
+            context.InputSystem.ClearActiveCommandMode();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            return;
+        }
+
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Move, _moveCommandResultScratch);
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
@@ -226,12 +230,74 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         if (!handled)
         {
+            if (HasPendingPreResolvedMoveRequest(commandRequests))
+                return;
+
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsUnhandled frame={Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         }
+    }
+
+    private static bool HasPendingPreResolvedMoveRequest(DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests)
+    {
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind == RtsSelectionCommandIntentKind.Move &&
+                request.HasTargetCell != 0 &&
+                request.HasWorldPosition != 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryGetFreshCommandBuffers(
+        Context context,
+        out EntityManager em,
+        out Entity commandEntity,
+        out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+    {
+        em = default;
+        commandEntity = Entity.Null;
+        commandRequests = default;
+        commandResults = default;
+
+        if (context.InputSystem == null ||
+            !context.InputSystem.TryGetCommandBuffers(out em, out commandEntity, out commandRequests, out commandResults))
+        {
+            return false;
+        }
+
+        context.EnsureEntityQueries?.Invoke(em);
+        return TryRefreshCommandBuffers(em, commandEntity, out commandRequests, out commandResults);
+    }
+
+    private static bool TryRefreshCommandBuffers(
+        EntityManager em,
+        Entity commandEntity,
+        out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+    {
+        commandRequests = default;
+        commandResults = default;
+        if (commandEntity == Entity.Null ||
+            !em.Exists(commandEntity) ||
+            !em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity) ||
+            !em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            return false;
+        }
+
+        commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        return true;
     }
 
     private static int CountRequests(
@@ -252,7 +318,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
     {
         EnsureFeedbackQueue(context);
 
-        if (!context.InputSystem.TryGetCommandBuffers(
+        if (!TryGetFreshCommandBuffers(
+                context,
                 out EntityManager em,
                 out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
@@ -263,7 +330,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             return false;
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
         context.AttackOrderCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
@@ -276,7 +342,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.BuildingPlacementInteractionContext,
             _selectedAttackSourceScratch);
 
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        if (!TryRefreshCommandBuffers(em, commandEntity, out _, out commandResults))
+            return false;
+
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Attack, _attackCommandResultScratch);
 
         bool issued = false;
@@ -317,7 +385,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
     {
         EnsureFeedbackQueue(context);
 
-        if (!context.InputSystem.TryGetCommandBuffers(
+        if (!TryGetFreshCommandBuffers(
+                context,
                 out EntityManager em,
                 out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
@@ -327,7 +396,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             return false;
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
         context.ScanIntelCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
@@ -336,7 +404,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.GridConfigQuery,
             context.TryGetScanClickedCell);
 
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        if (!TryRefreshCommandBuffers(em, commandEntity, out _, out commandResults))
+            return false;
+
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Scan, _scanCommandResultScratch);
 
         bool issued = false;
@@ -372,7 +442,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
     {
         EnsureFeedbackQueue(context);
 
-        if (!context.InputSystem.TryGetCommandBuffers(
+        if (!TryGetFreshCommandBuffers(
+                context,
                 out EntityManager em,
                 out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
@@ -381,7 +452,6 @@ public sealed class RtsSelectionCommandResultFlushSystem
             return false;
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
         context.TransportBoardingCommandSystem.ProcessCommandIntentRequests(
             em,
             commandEntity,
@@ -392,13 +462,14 @@ public sealed class RtsSelectionCommandResultFlushSystem
             context.UnitTransportBoardingRuleSystem,
             context.UnitTransportApproachCellSystem,
             context.UnitTransportAirPickupSystem,
-            context.UnitTransportRopeDisembarkCommandSystem,
             context.UnitMoveOrderSystem,
             context.SelectionStateSystem,
             context.TryGetTransportClickedUnitEntity,
             context.TryGetTransportClickedCell);
 
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        if (!TryRefreshCommandBuffers(em, commandEntity, out _, out commandResults))
+            return false;
+
         _transportCommandResultScratch.Clear();
         for (int i = 0; i < commandResults.Length;)
         {

@@ -456,6 +456,13 @@ public sealed class RtsSelectionRuntimeInputSystem
                     bool handledCommandTarget = HandleWorldTargetCommand(context, input, activeMode, pointerPosition);
                     context.LogClickDiagnostic?.Invoke($"clickWorldTargetCommand mode={activeMode} result={handledCommandTarget} pos={pointerPosition}");
                     LogOneClickDebug(context, pointerPosition, handledCommandTarget ? $"{activeMode}Target" : $"{activeMode}TargetUnhandled");
+                    input.IsDraggingSelection = false;
+                    context.SetCameraDragging?.Invoke(false);
+                    input.PointerPressedOverUi = false;
+                    input.SelectionModeHoldArmed = false;
+                    input.HasLiveSelectionRect = false;
+                    input.BoardPassengerDragArmed = false;
+                    return;
                 }
                 else if (input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime))
                 {

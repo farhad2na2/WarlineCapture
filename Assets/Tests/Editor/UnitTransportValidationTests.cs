@@ -22,6 +22,7 @@ public sealed class UnitTransportValidationTests
         {
             RunTest(test => test.GroundPersonnelTransport_BoardsSoldierLikeApc());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
+            RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
             RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
@@ -38,7 +39,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=18");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=19");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -132,6 +133,42 @@ public sealed class UnitTransportValidationTests
         Assert.IsTrue(result.Accepted);
         Assert.AreEqual(1, CountBoardingTargets(em, passengerA, passengerB, passengerC), "Only one free seat remains, so only one selected passenger may receive a boarding order.");
         Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length, "Existing passengers stay loaded while new passengers are ordered.");
+    }
+
+    [Test]
+    public void BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest()
+    {
+        using var world = new World("BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        Entity transport = CreateTransport(em, new int2(10, 10), air: false, airborne: false);
+        Entity passenger = CreateSelectablePassenger(em, new int2(6, 10));
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            TargetEntity = transport,
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
+            HasTargetEntity = 1,
+            HasScreenPosition = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardTransport, results[0].Kind);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasCommandResult);
+        Assert.AreEqual(1, CountBoardingTargets(em, passenger), "The resolved board request should produce the same passenger boarding target as the old screen-click command path.");
     }
 
     [Test]
@@ -680,11 +717,10 @@ public sealed class UnitTransportValidationTests
 
         try
         {
-            Entity queue = em.CreateEntity();
+            Entity queue = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
             em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue);
             em.AddBuffer<RtsSelectionCommandResultElement>(queue);
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue);
-            DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(queue);
             requests.Add(new RtsSelectionCommandIntentRequestElement
             {
                 Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
@@ -692,23 +728,15 @@ public sealed class UnitTransportValidationTests
                 HasTargetEntity = 1
             });
 
-            var transportRequestSystem = new TransportBoardingCommandSystem();
-            transportRequestSystem.ProcessCommandIntentRequests(
-                em,
-                queue,
-                requests,
-                results,
-                new UnitTransportCapacitySystem(),
-                new UnitTransportBoardingQuerySystem(),
-                new UnitTransportBoardingRuleSystem(),
-                new UnitTransportApproachCellSystem(),
-                new UnitTransportAirPickupSystem(),
-                new UnitTransportRopeDisembarkCommandSystem(),
-                new UnitMoveOrderSystem(),
-                new SelectionStateSystem(),
-                TryGetNoClickedUnit,
-                TryGetNoClickedCell);
+            SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+            world.SetTime(new TimeData(1d, 0.1f));
+            transportCommandSystem.Update(world.Unmanaged);
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue);
+            DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(queue);
 
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(1, results.Length);
+            Assert.AreEqual(1, results[0].Accepted);
             Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "Exit button should start the rope disembark flow for transport helicopters.");
             Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length, "Passenger must remain in the helicopter buffer until the rope system drops it.");
 

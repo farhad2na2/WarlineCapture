@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -16,11 +17,21 @@ public partial struct UnitSelectionMarkerSystem : ISystem
     private const float MarkerFootprintScaleMultiplier = 1.35f;
     private const float MarkerMinimumVehicleScale = 2.5f;
     private const float MarkerMinimumCharacterScale = 1f;
+    private const float CharacterSelectionVolumeDefaultRadius = 0.46f;
+    private const float CharacterSelectionVolumeMinRadius = 0.34f;
+    private const float CharacterSelectionVolumeMaxRadius = 0.78f;
+    private const float CharacterSelectionVolumeDefaultHeight = 1.5f;
+    private const float CharacterSelectionVolumeMinHeight = 1.2f;
+    private const float CharacterSelectionVolumeMaxHeight = 2.05f;
     private const int MaxSelectionObjectOutlineRenderers = 48;
     private const int MaxSelectionObjectOutlineParentDepth = 64;
     private const string SelectionObjectOutlineShaderName = "WarlineCapture/Markers/SelectionObjectOutline";
+    private const string SelectionHologramShaderName = "WarlineCapture/Markers/SelectionHologram";
     private const string BaseColorProperty = "_BaseColor";
+    private const string LegacyColorProperty = "_Color";
     private const string EmissionColorProperty = "_EmissionColor";
+    private const string AccentColorProperty = "_AccentColor";
+    private const string AlphaProperty = "_Alpha";
     private const string OutlineWidthProperty = "_OutlineWidth";
     private const string OutlineAlphaProperty = "_OutlineAlpha";
     private const string RimAlphaProperty = "_RimAlpha";
@@ -31,6 +42,8 @@ public partial struct UnitSelectionMarkerSystem : ISystem
     private static readonly Color SelectionObjectOutlineEmissionColor = new(0.05f, 1f, 1f, 1f);
     private static Material _characterSelectionObjectOutlineMaterial;
     private static Material _vehicleSelectionObjectOutlineMaterial;
+    private static Material _characterSelectionVolumeMaterial;
+    private static Mesh _characterSelectionVolumeMesh;
     private EntityStorageInfoLookup _entityStorageInfoLookup;
     private EntityQuery _unitRenderEntityQuery;
 
@@ -312,17 +325,29 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         if (GetSelectionObjectOutlineCount(em, marker) > 0)
             return;
 
-        Material material = GetSelectionObjectOutlineMaterial(usesVehicleMarker);
-        if (material == null)
-            return;
-
         using NativeList<Entity> sources = new(MaxSelectionObjectOutlineRenderers, Allocator.Temp);
         CollectRenderableDescendants(em, unit, sources);
         if (sources.Length == 0)
             CollectRenderableDescendantsByAncestryScan(em, unit, renderEntityQuery, sources);
 
+        bool createdGpuAnimatedCharacterVolume = false;
         for (int i = 0; i < sources.Length && GetSelectionObjectOutlineCount(em, marker) < MaxSelectionObjectOutlineRenderers; i++)
-            CreateSelectionObjectOutlineForSource(em, unit, marker, sources[i], material, usesVehicleMarker);
+        {
+            Entity source = sources[i];
+            bool isGpuAnimatedCharacter = !usesVehicleMarker && IsGpuAnimatedSelectionObjectOutlineSource(em, source, unit);
+            if (isGpuAnimatedCharacter)
+            {
+                if (!createdGpuAnimatedCharacterVolume)
+                {
+                    CreateGpuAnimatedCharacterSelectionVolume(em, unit, marker, source);
+                    createdGpuAnimatedCharacterVolume = true;
+                }
+
+                continue;
+            }
+
+            CreateSelectionObjectOutlineForSource(em, unit, marker, source, usesVehicleMarker);
+        }
     }
 
     private static void CollectRenderableDescendants(EntityManager em, Entity unit, NativeList<Entity> sources)
@@ -396,7 +421,6 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             if (em.HasComponent<SelectionMarkerTag>(current) ||
                 em.HasComponent<SelectionObjectOutlineTag>(current) ||
                 em.HasComponent<HealthBarFill>(current) ||
-                HasGpuAnimationComponent(em, current) ||
                 em.HasComponent<DisableRendering>(current))
             {
                 return false;
@@ -416,14 +440,61 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         return false;
     }
 
-    private static bool HasGpuAnimationComponent(EntityManager em, Entity entity)
+    private static bool IsGpuAnimatedSelectionObjectOutlineSource(EntityManager em, Entity source, Entity owner)
+    {
+        if (em.HasComponent<MaterialPropertyRenderPixel>(source) ||
+            em.HasComponent<MaterialPropertyShowModel>(source) ||
+            em.HasComponent<MaterialPropertyAlphaEnabled>(source))
+        {
+            return true;
+        }
+
+        return TryResolveGpuAnimationGroup(em, source, owner, out _);
+    }
+
+    private static bool TryResolveGpuAnimationGroup(EntityManager em, Entity source, Entity owner, out Entity group)
+    {
+        group = Entity.Null;
+        if (source == Entity.Null || !em.Exists(source))
+            return false;
+
+        if (em.HasComponent<MeshLODComponent>(source))
+        {
+            Entity meshGroup = em.GetComponentData<MeshLODComponent>(source).Group;
+            if (meshGroup != Entity.Null &&
+                em.Exists(meshGroup) &&
+                HasGpuAnimationRootComponent(em, meshGroup))
+            {
+                group = meshGroup;
+                return true;
+            }
+        }
+
+        Entity current = source;
+        for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
+        {
+            if (HasGpuAnimationRootComponent(em, current))
+            {
+                group = current;
+                return true;
+            }
+
+            if (current == owner || !em.HasComponent<Parent>(current))
+                return false;
+
+            current = em.GetComponentData<Parent>(current).Value;
+            if (current == Entity.Null || !em.Exists(current))
+                return false;
+        }
+
+        return false;
+    }
+
+    private static bool HasGpuAnimationRootComponent(EntityManager em, Entity entity)
     {
         return em.HasComponent<MaterialAnimationIndex>(entity) ||
                em.HasComponent<MaterialAnimationData>(entity) ||
-               em.HasComponent<MaterialAnimatorLink>(entity) ||
-               em.HasComponent<MaterialPropertyRenderPixel>(entity) ||
-               em.HasComponent<MaterialPropertyShowModel>(entity) ||
-               em.HasComponent<MaterialPropertyAlphaEnabled>(entity);
+               em.HasComponent<MaterialAnimatorLink>(entity);
     }
 
     private static bool IsDescendantOf(EntityManager em, Entity entity, Entity owner)
@@ -450,7 +521,6 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         Entity unit,
         Entity marker,
         Entity source,
-        Material material,
         bool usesVehicleMarker)
     {
         RenderMeshArray sourceRenderMeshArray = em.GetSharedComponentManaged<RenderMeshArray>(source);
@@ -467,6 +537,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             {
                 MaterialMeshIndex index = materialMeshIndices[i];
                 Mesh mesh = ResolveRenderMeshArrayMesh(sourceRenderMeshArray, index.MeshIndex);
+                Material material = GetSelectionObjectOutlineMaterial(usesVehicleMarker);
                 ushort subMesh = ResolveSubMesh(mesh, index.SubMeshIndex);
                 CreateSelectionObjectOutlineEntity(em, unit, marker, source, material, mesh, subMesh, usesVehicleMarker);
             }
@@ -475,8 +546,9 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         }
 
         Mesh singleMesh = sourceRenderMeshArray.GetMesh(sourceInfo);
+        Material singleMaterial = GetSelectionObjectOutlineMaterial(usesVehicleMarker);
         ushort singleSubMesh = ResolveSubMesh(singleMesh, sourceInfo.SubMesh);
-        CreateSelectionObjectOutlineEntity(em, unit, marker, source, material, singleMesh, singleSubMesh, usesVehicleMarker);
+        CreateSelectionObjectOutlineEntity(em, unit, marker, source, singleMaterial, singleMesh, singleSubMesh, usesVehicleMarker);
     }
 
     private static Mesh ResolveRenderMeshArrayMesh(RenderMeshArray renderMeshArray, int meshIndex)
@@ -505,7 +577,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         ushort subMesh,
         bool usesVehicleMarker)
     {
-        if (mesh == null || GetSelectionObjectOutlineCount(em, marker) >= MaxSelectionObjectOutlineRenderers)
+        if (mesh == null || material == null || GetSelectionObjectOutlineCount(em, marker) >= MaxSelectionObjectOutlineRenderers)
             return;
 
         Entity outline = em.CreateEntity();
@@ -549,6 +621,76 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         }
 
         em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Add(new SelectionObjectOutlineInstanceElement { Value = outline });
+    }
+
+    private static void CreateGpuAnimatedCharacterSelectionVolume(EntityManager em, Entity unit, Entity marker, Entity source)
+    {
+        Material material = GetCharacterSelectionVolumeMaterial();
+        Mesh mesh = GetCharacterSelectionVolumeMesh();
+        if (material == null || mesh == null || GetSelectionObjectOutlineCount(em, marker) >= MaxSelectionObjectOutlineRenderers)
+            return;
+
+        Entity volume = em.CreateEntity();
+        em.SetName(volume, "UnitSelectionCharacterSelectionVolume");
+        em.AddComponent<SelectionObjectOutlineTag>(volume);
+        em.AddComponentData(volume, new SelectionMarkerOwner { Value = unit });
+        em.AddComponentData(volume, new Parent { Value = unit });
+        em.AddComponentData(volume, LocalTransform.Identity);
+        em.AddComponentData(volume, new SelectionObjectOutlineVisibleScale { Value = 1f });
+
+        float3 volumeScale = ResolveGpuAnimatedCharacterSelectionVolumeScale(em, unit, source);
+        em.AddComponentData(volume, new PostTransformMatrix
+        {
+            Value = float4x4.Scale(volumeScale)
+        });
+
+        RenderMeshDescription description = CreateSelectionObjectOutlineRenderDescription(em, source);
+        RenderMeshArray renderMeshArray = new(new[] { material }, new[] { mesh });
+        RenderMeshUtility.AddComponents(
+            volume,
+            em,
+            description,
+            renderMeshArray,
+            MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
+
+        if (em.HasComponent<Unity.Rendering.RenderBounds>(volume))
+        {
+            em.SetComponentData(volume, new Unity.Rendering.RenderBounds
+            {
+                Value = new AABB
+                {
+                    Center = new float3(0f, 0.55f, 0f),
+                    Extents = new float3(1.1f, 0.65f, 1.1f)
+                }
+            });
+        }
+
+        em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Add(new SelectionObjectOutlineInstanceElement { Value = volume });
+    }
+
+    private static float3 ResolveGpuAnimatedCharacterSelectionVolumeScale(EntityManager em, Entity unit, Entity source)
+    {
+        float radius = CharacterSelectionVolumeDefaultRadius;
+        float height = CharacterSelectionVolumeDefaultHeight;
+        if (em.HasComponent<UnitFootprint>(unit))
+        {
+            int2 footprint = em.GetComponentData<UnitFootprint>(unit).Size;
+            radius = math.max(radius, math.max(footprint.x, footprint.y) * 0.36f);
+        }
+
+        if (source != Entity.Null && em.Exists(source) && em.HasComponent<Unity.Rendering.RenderBounds>(source))
+        {
+            AABB bounds = em.GetComponentData<Unity.Rendering.RenderBounds>(source).Value;
+            float sourceScale = em.HasComponent<LocalTransform>(source)
+                ? math.max(0.0001f, em.GetComponentData<LocalTransform>(source).Scale)
+                : 1f;
+            radius = math.max(radius, math.cmax(new float2(bounds.Extents.x, bounds.Extents.z)) * sourceScale * 0.72f);
+            height = math.max(height, bounds.Extents.y * sourceScale * 1.7f);
+        }
+
+        radius = math.clamp(radius, CharacterSelectionVolumeMinRadius, CharacterSelectionVolumeMaxRadius);
+        height = math.clamp(height, CharacterSelectionVolumeMinHeight, CharacterSelectionVolumeMaxHeight);
+        return new float3(radius, height, radius);
     }
 
     private static int GetSelectionObjectOutlineCount(EntityManager em, Entity marker)
@@ -595,6 +737,40 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         return _characterSelectionObjectOutlineMaterial;
     }
 
+    private static Material GetCharacterSelectionVolumeMaterial()
+    {
+        if (_characterSelectionVolumeMaterial != null)
+            return _characterSelectionVolumeMaterial;
+
+        Shader shader = Shader.Find(SelectionHologramShaderName);
+        if (shader == null)
+            shader = Shader.Find(SelectionObjectOutlineShaderName);
+        if (shader == null)
+            return null;
+
+        Material material = new(shader)
+        {
+            name = "Mat_Selection_ECS_Character_SafeVolume",
+            hideFlags = HideFlags.HideAndDontSave,
+            enableInstancing = true,
+            renderQueue = (int)RenderQueue.Transparent + 6
+        };
+
+        SetMaterialColorIfPresent(material, BaseColorProperty, new Color(0.02f, 0.9f, 1f, 0.42f));
+        SetMaterialColorIfPresent(material, LegacyColorProperty, new Color(0.02f, 0.9f, 1f, 0.42f));
+        SetMaterialColorIfPresent(material, EmissionColorProperty, SelectionObjectOutlineEmissionColor);
+        SetMaterialColorIfPresent(material, AccentColorProperty, new Color(0.6f, 1f, 1f, 0.72f));
+        SetMaterialFloatIfPresent(material, AlphaProperty, 0.38f);
+        SetMaterialFloatIfPresent(material, "_PulseStrength", 0.16f);
+        SetMaterialFloatIfPresent(material, "_PulseSpeed", 0.42f);
+        SetMaterialFloatIfPresent(material, ScanStrengthProperty, 0.18f);
+        SetMaterialFloatIfPresent(material, ScanSpeedProperty, 0.24f);
+        SetMaterialFloatIfPresent(material, "_EdgeSoftness", 0.44f);
+
+        _characterSelectionVolumeMaterial = material;
+        return _characterSelectionVolumeMaterial;
+    }
+
     private static Material CreateSelectionObjectOutlineMaterial(string name, float outlineWidth, float outlineAlpha, float rimAlpha)
     {
         Shader shader = Shader.Find(SelectionObjectOutlineShaderName);
@@ -617,6 +793,131 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         material.SetFloat(ScanStrengthProperty, ResolveSelectionObjectOutlineScanStrength(outlineWidth));
         material.SetFloat(ScanSpeedProperty, 0.22f);
         return material;
+    }
+
+    private static void SetMaterialColorIfPresent(Material material, string property, Color value)
+    {
+        if (material.HasProperty(property))
+            material.SetColor(property, value);
+    }
+
+    private static void SetMaterialFloatIfPresent(Material material, string property, float value)
+    {
+        if (material.HasProperty(property))
+            material.SetFloat(property, value);
+    }
+
+    private static Mesh GetCharacterSelectionVolumeMesh()
+    {
+        if (_characterSelectionVolumeMesh != null)
+            return _characterSelectionVolumeMesh;
+
+        const int segments = 40;
+        List<Vector3> vertices = new(segments * 8 + 64);
+        List<Vector2> uvs = new(segments * 8 + 64);
+        List<Color> colors = new(segments * 8 + 64);
+        List<int> triangles = new(segments * 12 + 96);
+        AddFlatRing(vertices, uvs, colors, triangles, 0.04f, 0.76f, 1.0f, segments);
+        AddFlatRing(vertices, uvs, colors, triangles, 0.55f, 0.70f, 0.80f, segments);
+        AddFlatRing(vertices, uvs, colors, triangles, 0.98f, 0.50f, 0.62f, segments);
+
+        for (int i = 0; i < 8; i++)
+            AddVerticalRibbon(vertices, uvs, colors, triangles, math.radians(22.5f + 45f * i), 0.08f, 0.96f, 0.84f, i % 2 == 0 ? 0.048f : 0.032f);
+
+        _characterSelectionVolumeMesh = new Mesh
+        {
+            name = "Selection_Character_SafeVolume",
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        _characterSelectionVolumeMesh.SetVertices(vertices);
+        _characterSelectionVolumeMesh.SetUVs(0, uvs);
+        _characterSelectionVolumeMesh.SetColors(colors);
+        _characterSelectionVolumeMesh.SetTriangles(triangles, 0);
+        _characterSelectionVolumeMesh.RecalculateNormals();
+        _characterSelectionVolumeMesh.RecalculateBounds();
+        return _characterSelectionVolumeMesh;
+    }
+
+    private static void AddFlatRing(
+        List<Vector3> vertices,
+        List<Vector2> uvs,
+        List<Color> colors,
+        List<int> triangles,
+        float y,
+        float innerRadius,
+        float outerRadius,
+        int segments)
+    {
+        int start = vertices.Count;
+        for (int i = 0; i < segments; i++)
+        {
+            float angle = math.PI * 2f * i / segments;
+            float sin = math.sin(angle);
+            float cos = math.cos(angle);
+            float ringU = (float)i / segments;
+            vertices.Add(new Vector3(cos * outerRadius, y, sin * outerRadius));
+            uvs.Add(new Vector2(0.02f, ringU));
+            colors.Add(Color.white);
+            vertices.Add(new Vector3(cos * innerRadius, y, sin * innerRadius));
+            uvs.Add(new Vector2(0.98f, ringU));
+            colors.Add(Color.white);
+        }
+
+        for (int i = 0; i < segments; i++)
+        {
+            int next = (i + 1) % segments;
+            int outerA = start + i * 2;
+            int innerA = outerA + 1;
+            int outerB = start + next * 2;
+            int innerB = outerB + 1;
+            triangles.Add(outerA);
+            triangles.Add(outerB);
+            triangles.Add(innerA);
+            triangles.Add(innerA);
+            triangles.Add(outerB);
+            triangles.Add(innerB);
+        }
+    }
+
+    private static void AddVerticalRibbon(
+        List<Vector3> vertices,
+        List<Vector2> uvs,
+        List<Color> colors,
+        List<int> triangles,
+        float angle,
+        float yMin,
+        float yMax,
+        float radius,
+        float width)
+    {
+        float3 radial = new(math.cos(angle), 0f, math.sin(angle));
+        float3 tangent = new(-radial.z, 0f, radial.x);
+        float3 center = radial * radius;
+        float3 halfWidth = tangent * width;
+        int start = vertices.Count;
+        vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMin, 0f)));
+        uvs.Add(new Vector2(0.02f, 0.02f));
+        colors.Add(Color.white);
+        vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMin, 0f)));
+        uvs.Add(new Vector2(0.98f, 0.02f));
+        colors.Add(Color.white);
+        vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMax, 0f)));
+        uvs.Add(new Vector2(0.02f, 0.98f));
+        colors.Add(Color.white);
+        vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMax, 0f)));
+        uvs.Add(new Vector2(0.98f, 0.98f));
+        colors.Add(Color.white);
+        triangles.Add(start);
+        triangles.Add(start + 2);
+        triangles.Add(start + 1);
+        triangles.Add(start + 1);
+        triangles.Add(start + 2);
+        triangles.Add(start + 3);
+    }
+
+    private static Vector3 ToVector3(float3 value)
+    {
+        return new Vector3(value.x, value.y, value.z);
     }
 
     private static float ResolveSelectionObjectOutlineScanStrength(float outlineWidth)

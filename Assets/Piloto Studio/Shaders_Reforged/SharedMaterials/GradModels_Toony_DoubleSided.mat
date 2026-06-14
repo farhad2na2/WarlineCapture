@@ -40,7 +40,8 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 5e579b9670f45f0468f178faaee98c05, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHATEST_ON
   m_InvalidKeywords:
   - _ADD_PRECOMPUTED_VELOCITY
   - _DISABLE_SSR
@@ -53,6 +54,7 @@ Material:
   stringTagMap:
     IgnoreProjection: False
     MotionVector: User
+    RenderType: TransparentCutout
   disabledShaderPasses:
   - TransparentBackface
   - TransparentDepthPostpass
@@ -369,6 +371,7 @@ Material:
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EMISSIVE: 0
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
@@ -460,7 +463,7 @@ Material:
     - _PPDMinSamples: 5
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
-    - _QueueControl: -1
+    - _QueueControl: 1
     - _QueueOffset: 0
     - _RayTracing: 0
     - _ReceivesSSR: 0
@@ -499,6 +502,7 @@ Material:
     - _SpecularAAThreshold: 0.2
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _StencilComp: 0
     - _StencilMode: 0
     - _StencilNo: 1
@@ -551,6 +555,7 @@ Material:
     - _UseShadowThreshold: 0
     - _Use_1stAs2nd: 1
     - _Use_BaseAs1st: 1
+    - _XRMotionVectorsPass: 1
     - _ZOverDrawMode: 0
     - _ZTest: 4
     - _ZTestDepthEqualForOpaque: 3

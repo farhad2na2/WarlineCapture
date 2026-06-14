@@ -26,7 +26,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
-            tests.UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay();
+            tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
             tests.UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines();
@@ -240,13 +240,13 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay()
+    public void UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay()
     {
-        using var world = new World(nameof(UnitSelectionMarkerSystemSkipsGpuAnimatedCharacterObjectOutlineToAvoidBindPoseOverlay));
+        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay));
         EntityManager em = world.EntityManager;
         Entity markerPrefab = CreateVisualPrefab(em);
         Entity character = CreateCharacter(em, health: 100);
-        CreateRenderableChild(em, character, "GpuAnimatedCharacterBody", 1f);
+        Entity renderer = CreateRenderableChild(em, character, "GpuAnimatedCharacterBody", 1f);
         em.AddComponentData(character, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
         em.AddComponent<SelectedUnitTag>(character);
         em.AddComponentData(character, new MaterialAnimationIndex { Value = 1 });
@@ -259,6 +259,24 @@ public sealed class VehicleVisualAdornmentsSystemTests
             RenderConfig = new float3(1f, 2f, 0.5f)
         });
         em.AddComponentData(character, new MaterialAnimatorLink { Value = Entity.Null });
+        em.AddComponentData(renderer, new MeshLODComponent
+        {
+            Group = character,
+            ParentGroup = character,
+            LODMask = 1
+        });
+        em.AddComponentData(renderer, new MaterialPropertyShowModel { Value = 1f });
+        em.AddComponentData(renderer, new MaterialPropertyRenderPixel { Value = new float3(1f, 2f, 0.5f) });
+        em.AddComponentData(renderer, new MaterialPropertyAlphaEnabled { Value = 1f });
+        em.AddComponent<MaterialAlphaCompleteTag>(renderer);
+        em.SetComponentData(renderer, new Unity.Rendering.RenderBounds
+        {
+            Value = new AABB
+            {
+                Center = float3.zero,
+                Extents = new float3(24f, 16f, 30f)
+            }
+        });
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
         system.Update(world.Unmanaged);
@@ -267,7 +285,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
         Assert.IsTrue(em.Exists(marker));
         Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker));
-        Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Length, "GPU-animated character meshes must not be duplicated by the non-animation outline shader, or the selection renders a bind-pose/T-pose overlay.");
+        AssertSafeGpuAnimatedSelectionVolume(em, character, renderer);
     }
 
     [Test]
@@ -654,6 +672,56 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, LocalTransform.Identity);
         return entity;
+    }
+
+    private static Entity AssertSafeGpuAnimatedSelectionVolume(EntityManager em, Entity unit, Entity sourceRenderer)
+    {
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(unit));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit).Instance;
+        Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker), "GPU-animated selected units must own a safe selection volume from their marker instance.");
+        DynamicBuffer<SelectionObjectOutlineInstanceElement> outlines = em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker);
+        Assert.Greater(outlines.Length, 0);
+
+        Entity volume = outlines[0].Value;
+        Assert.IsTrue(em.Exists(volume));
+        Assert.IsTrue(em.HasComponent<SelectionObjectOutlineTag>(volume));
+        Assert.AreEqual(unit, em.GetComponentData<SelectionMarkerOwner>(volume).Value);
+        Assert.AreEqual(unit, em.GetComponentData<Parent>(volume).Value);
+        Assert.AreEqual(LocalTransform.Identity.Position, em.GetComponentData<LocalTransform>(volume).Position);
+        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(volume));
+        float4x4 volumeScale = em.GetComponentData<PostTransformMatrix>(volume).Value;
+        Assert.LessOrEqual(volumeScale.c0.x, 0.78f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
+        Assert.LessOrEqual(volumeScale.c1.y, 2.05f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
+        Assert.LessOrEqual(volumeScale.c2.z, 0.78f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
+        Assert.GreaterOrEqual(volumeScale.c0.x, 0.34f);
+        Assert.GreaterOrEqual(volumeScale.c1.y, 1.2f);
+        Assert.GreaterOrEqual(volumeScale.c2.z, 0.34f);
+        Assert.IsFalse(em.HasComponent<MeshLODComponent>(volume), "GPU-animated soldiers must not use duplicated render mesh outlines by default.");
+        Assert.IsFalse(em.HasComponent<MaterialPropertyRenderPixel>(volume));
+        Assert.IsFalse(em.HasComponent<MaterialPropertyShowModel>(volume));
+        Assert.IsFalse(em.HasComponent<MaterialPropertyAlphaEnabled>(volume));
+
+        RenderMeshArray renderMeshArray = em.GetSharedComponentManaged<RenderMeshArray>(volume);
+        MaterialMeshInfo materialMeshInfo = em.GetComponentData<MaterialMeshInfo>(volume);
+        Mesh mesh = renderMeshArray.GetMesh(materialMeshInfo);
+        Assert.IsNotNull(mesh);
+        Assert.Greater(mesh.vertexCount, 0);
+        Assert.IsTrue(mesh.HasVertexAttribute(VertexAttribute.TexCoord0), "Safe soldier selection volume must provide UVs because SelectionHologram uses UVs for visibility.");
+        Assert.IsTrue(mesh.HasVertexAttribute(VertexAttribute.Color), "Safe soldier selection volume must provide vertex color for SelectionHologram modulation.");
+        Material material = renderMeshArray.GetMaterial(materialMeshInfo);
+        Assert.IsNotNull(material);
+        Assert.IsTrue(material.enableInstancing);
+        Assert.AreEqual("WarlineCapture/Markers/SelectionHologram", material.shader.name);
+        StringAssert.Contains("CharacterSelectionVolume", em.GetName(volume));
+        Assert.IsTrue(em.HasComponent<RenderFilterSettings>(volume));
+        RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(volume);
+        Assert.AreEqual(ShadowCastingMode.Off, settings.ShadowCastingMode);
+        Assert.IsFalse(settings.ReceiveShadows);
+        Assert.AreEqual(MotionVectorGenerationMode.ForceNoMotion, settings.MotionMode);
+        Assert.AreEqual(7, settings.Layer);
+        Assert.AreEqual(0x00000004u, settings.RenderingLayerMask);
+        Assert.IsTrue(em.HasComponent<Unity.Rendering.RenderBounds>(sourceRenderer));
+        return volume;
     }
 
     private static Entity AssertSelectionObjectOutline(EntityManager em, Entity unit, Entity sourceRenderer, string expectedKind)

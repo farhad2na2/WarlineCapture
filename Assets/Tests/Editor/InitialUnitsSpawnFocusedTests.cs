@@ -14,7 +14,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
             nameof(InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel),
             nameof(InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
-            nameof(InitialUnitSourceKeySystem_SkipsUnresolvedSourceKeyWithoutFallback),
+            nameof(InitialUnitsSpawnSystem_SkipsUnresolvedSourceKeyWithoutFallback),
             nameof(InitialUnitSpawnApplySystem_InstantiatesConvertedPrefabBackedUnit)
         };
 
@@ -48,10 +48,10 @@ public sealed class InitialUnitsSpawnFocusedTests
         string[] methodNames =
         {
             nameof(InitialUnitsSpawnSystem_InitializesProgressAndUnitEntries),
-            nameof(InitialUnitSpawnBatchSystem_ClampsEntryToInitialSpawnBatchSize),
+            nameof(InitialUnitsSpawnSystem_ClampsEntryToInitialSpawnBatchSize),
             nameof(InitialUnitsSpawnSystem_RejectsReservedFootprint),
-            nameof(InitialAirPlatformSpawnSystem_ResolvesConfiguredHelipadSlot),
-            nameof(InitialBlockerSpawnSystem_PreservesPlannedProgressIncrement),
+            nameof(InitialUnitsSpawnSystem_ResolvesConfiguredHelipadSlot),
+            nameof(InitialUnitsSpawnSystem_PreservesBlockerProgressIncrement),
             nameof(InitialUnitsSpawnSystem_WaitsThenFailOpens)
         };
 
@@ -228,9 +228,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialUnitSourceKeySystem_SkipsUnresolvedSourceKeyWithoutFallback()
+    public void InitialUnitsSpawnSystem_SkipsUnresolvedSourceKeyWithoutFallback()
     {
-        using var world = new World("InitialUnitSourceKeySystemTest");
+        using var world = new World("InitialUnitsSpawnSourceKeyTest");
         EntityManager em = world.EntityManager;
         var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
         diagnosticLogSystem.EnsureQueue(em);
@@ -253,11 +253,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             SpawnOffset = new int2(2, 5)
         };
         InitialUnitsFactionUnitSpawnProgress progress = default;
-        var sourceKeySystem = new InitialUnitSourceKeySystem();
-
-        Assert.IsTrue(sourceKeySystem.TryGetCustomGameUnitSourceKey(sourceSpawns, true, 0, unitSpawn, out FixedString64Bytes sourceKey));
+        Assert.IsTrue(InitialUnitsSpawnSystem.TryGetCustomGameUnitSourceKey(sourceSpawns, true, 0, unitSpawn, out FixedString64Bytes sourceKey));
         Assert.AreEqual("rifleman", sourceKey.ToString());
-        Assert.IsTrue(sourceKeySystem.TrySkipMissingPrefabUnit(
+        Assert.IsTrue(InitialUnitsSpawnSystem.TrySkipMissingPrefabUnit(
             em,
             unitSpawn,
             hasPrefab: false,
@@ -333,7 +331,6 @@ public sealed class InitialUnitsSpawnFocusedTests
         unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry { FactionId = 0, Count = 2 });
         unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry { FactionId = 1, Count = 3 });
 
-        using EntityQuery dummyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
         using EntityQuery pendingInitQuery = em.CreateEntityQuery(new EntityQueryDesc
         {
             All = new[]
@@ -346,15 +343,8 @@ public sealed class InitialUnitsSpawnFocusedTests
                 ComponentType.ReadOnly<InitialUnitsSpawnProgress>()
             }
         });
-        var context = new InitialUnitsSpawnQuerySystem.Context(
-            dummyQuery,
-            dummyQuery,
-            dummyQuery,
-            pendingInitQuery,
-            pendingInitQuery,
-            dummyQuery);
 
-        InitialUnitsSpawnSystem.InitializeInitialSpawnProgress(em, context);
+        InitialUnitsSpawnSystem.InitializeInitialSpawnProgress(em, pendingInitQuery);
 
         Assert.IsTrue(em.HasComponent<InitialUnitsSpawnProgress>(configEntity));
         InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(configEntity);
@@ -370,9 +360,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialUnitSpawnBatchSystem_ClampsEntryToInitialSpawnBatchSize()
+    public void InitialUnitsSpawnSystem_ClampsEntryToInitialSpawnBatchSize()
     {
-        using var world = new World("InitialUnitSpawnBatchSystemTest");
+        using var world = new World("InitialUnitsSpawnBatchTest");
         EntityManager em = world.EntityManager;
         Entity configEntity = em.CreateEntity();
         Entity prefab = em.CreateEntity();
@@ -389,12 +379,12 @@ public sealed class InitialUnitsSpawnFocusedTests
         unitProgress.Add(new InitialUnitsFactionUnitSpawnProgress { Spawned = 3 });
         unitSpawns = em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(configEntity);
 
-        bool created = new InitialUnitSpawnBatchSystem().TryCreateEntryBatch(
+        bool created = InitialUnitsSpawnSystem.TryCreateInitialUnitSpawnEntryBatch(
             unitSpawns,
             unitProgress,
             unitIndex: 0,
             remainingBatch: 24,
-            out InitialUnitSpawnBatchSystem.EntryBatch batch);
+            out InitialUnitsSpawnSystem.InitialUnitSpawnEntryBatch batch);
 
         Assert.IsTrue(created);
         Assert.AreEqual(0, batch.UnitIndex);
@@ -449,9 +439,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialAirPlatformSpawnSystem_ResolvesConfiguredHelipadSlot()
+    public void InitialUnitsSpawnSystem_ResolvesConfiguredHelipadSlot()
     {
-        using var world = new World("InitialAirPlatformSpawnSystemTest");
+        using var world = new World("InitialUnitsSpawnAirPlatformTest");
         EntityManager em = world.EntityManager;
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
@@ -473,7 +463,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             Origin = float3.zero
         };
 
-        bool found = new InitialAirPlatformSpawnSystem().TryGetInitialAirPlatformSpawn(
+        bool found = InitialUnitsSpawnSystem.TryGetInitialAirPlatformSpawn(
             em,
             boundary,
             factionId: 1,
@@ -488,9 +478,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialBlockerSpawnSystem_PreservesPlannedProgressIncrement()
+    public void InitialUnitsSpawnSystem_PreservesBlockerProgressIncrement()
     {
-        using var world = new World("InitialBlockerSpawnSystemTest");
+        using var world = new World("InitialUnitsSpawnBlockerTest");
         EntityManager em = world.EntityManager;
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
@@ -511,7 +501,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             walkable[0] = new GridWalkable { Value = 1 };
             Unity.Mathematics.Random rng = new(1);
 
-            InitialBlockerSpawnSystem.Result result = new InitialBlockerSpawnSystem().SpawnBatch(
+            InitialUnitsSpawnSystem.InitialBlockerSpawnResult result = InitialUnitsSpawnSystem.SpawnInitialBlockerBatch(
                 ref rng,
                 em,
                 ecb,

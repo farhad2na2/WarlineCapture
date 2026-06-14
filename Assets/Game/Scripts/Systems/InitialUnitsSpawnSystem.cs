@@ -2,6 +2,8 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
 
 [UpdateBefore(typeof(StaticGridBlockerUpdateSystem))]
 [UpdateBefore(typeof(DynamicOccupancyRebuildSystem))]
@@ -14,59 +16,108 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private const int DiagnosticIntervalFrames = 120;
     private const int InitialBaseCoreRequestEntryIndex = -100;
     private const int MaxInitialBuildingCompletionWaitFrames = 300;
+    private static readonly bool EnableInitialSpawnFreezeLogs = false;
+    private const double FreezeLogThresholdSeconds = 0.05d;
 
-    private InitialUnitsSpawnQuerySystem.Context _queryContext;
-    private InitialUnitsSpawnStartupGateSystem _startupGateSystem;
-    private InitialFactionSpawnSnapshotSystem _factionSpawnSnapshotSystem;
-    private InitialRespawnQueueProjectionSystem _respawnQueueProjectionSystem;
+    private EntityQuery _buildingRuntimeBoundaryQuery;
+    private EntityQuery _runtimeGameplayStateQuery;
+    private EntityQuery _gridContextQuery;
+    private EntityQuery _activeConfigQuery;
+    private EntityQuery _pendingInitQuery;
+    private EntityQuery _progressQuery;
     private InitialFactionBaseRequestSystem _factionBaseRequestSystem;
     private InitialConfiguredBuildingRequestSystem _configuredBuildingRequestSystem;
     private InitialBuildingCompletionSystem _buildingCompletionSystem;
-    private InitialAirPlatformSpawnSystem _airPlatformSpawnSystem;
-    private InitialUnitSourceKeySystem _sourceKeySystem;
-    private InitialUnitSpawnBatchSystem _unitSpawnBatchSystem;
     private InitialUnitSpawnApplySystem _unitSpawnApplySystem;
     private InitialUnitSpawnResetSystem _unitSpawnResetSystem;
-    private InitialBlockerSpawnSystem _blockerSpawnSystem;
-    private InitialSpawnStructuralApplySystem _structuralApplySystem;
-    private InitialSpawnDiagnosticStateSystem _diagnosticStateSystem;
     private InitialSpawnDiagnosticLogSystem _diagnosticLogSystem;
-    private InitialSpawnDuplicateCellDiagnosticSystem _duplicateCellDiagnosticSystem;
-    private InitialSpawnFreezeDiagnosticSystem _freezeDiagnosticSystem;
     private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
     private EntityTypeHandle _progressEntityType;
+    private int _nextDiagnosticFrame;
 
     public void OnCreate(ref SystemState state)
     {
-        _queryContext = new InitialUnitsSpawnQuerySystem().Create(ref state);
+        _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>(),
+            ComponentType.ReadOnly<BuildingFactionProductionSpawnPointReadModel>(),
+            ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
+
+        _runtimeGameplayStateQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+
+        _gridContextQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<GridWalkable>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+
+        _activeConfigQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnConfig>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnInitialized>()
+            }
+        });
+
+        _pendingInitQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnConfig>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnInitialized>(),
+                ComponentType.ReadOnly<InitialUnitsSpawnProgress>()
+            }
+        });
+
+        _progressQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+                ComponentType.ReadOnly<InitialUnitsSpawnProgress>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<InitialUnitsSpawnInitialized>()
+            }
+        });
+
         _diagnosticLogSystem.EnsureQueue(state.EntityManager);
         _progressEntityType = state.GetEntityTypeHandle();
-        state.RequireForUpdate(_queryContext.BuildingRuntimeBoundaryQuery);
-        state.RequireForUpdate(_queryContext.GridContextQuery);
-        state.RequireForUpdate(_queryContext.ActiveConfigQuery);
+        state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
+        state.RequireForUpdate(_gridContextQuery);
+        state.RequireForUpdate(_activeConfigQuery);
         state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        double startTime = _freezeDiagnosticSystem.BeginFrame();
+        double startTime = BeginInitialSpawnFrame();
         int spawnedUnitsForLog = 0;
         int spawnedBlockersForLog = 0;
         bool completedForLog = false;
-        var startupGate = _startupGateSystem.Evaluate(state.EntityManager, _queryContext);
+        var startupGate = EvaluateInitialSpawnStartupGate(state.EntityManager, _runtimeGameplayStateQuery, _buildingRuntimeBoundaryQuery);
         if (!startupGate.IsActionable)
             return;
 
-        var queueEntity = _respawnQueueProjectionSystem.GetOrCreateQueue(ref state);
+        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
         var em = state.EntityManager;
         Entity boundaryEntity = startupGate.BoundaryEntity;
 
-        InitializeInitialSpawnProgress(em, _queryContext);
+        InitializeInitialSpawnProgress(em, _pendingInitQuery);
 
         _progressEntityType.Update(ref state);
-        using NativeArray<ArchetypeChunk> progressChunks = _queryContext.ProgressQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using var progressEntities = new NativeList<Entity>(_queryContext.ProgressQuery.CalculateEntityCount(), Allocator.Temp);
+        using NativeArray<ArchetypeChunk> progressChunks = _progressQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var progressEntities = new NativeList<Entity>(_progressQuery.CalculateEntityCount(), Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < progressChunks.Length; chunkIndex++)
         {
             NativeArray<Entity> entities = progressChunks[chunkIndex].GetNativeArray(_progressEntityType);
@@ -88,18 +139,17 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             }
 
             bool completedInitialSpawn = false;
-            NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns = _factionSpawnSnapshotSystem.Create(em, entity, Allocator.Temp);
-            RespawnQueueComponent queueState = _respawnQueueProjectionSystem.ProjectInitialConfig(em, queueEntity, config, factionSpawns);
+            NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns = CreateInitialFactionSpawnSnapshot(em, entity, Allocator.Temp);
+            RespawnQueueComponent queueState = ProjectInitialRespawnQueueConfig(em, queueEntity, config, factionSpawns);
 
-            InitialSpawnStructuralApplySystem.Context structuralContext = _structuralApplySystem.Create(Allocator.Temp);
-            ref EntityCommandBuffer ecb = ref structuralContext.Ecb;
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
 
             if (progress.InitialBuildingsSpawned == 0)
             {
                 bool allInitialBuildingsSpawned = false;
                 if (boundaryEntity != Entity.Null)
                 {
-                    if (!TryGetInitialSpawnGridConfig(state.EntityManager, _queryContext.GridContextQuery, out GridConfig baseGrid))
+                    if (!TryGetInitialSpawnGridConfig(state.EntityManager, _gridContextQuery, out GridConfig baseGrid))
                     {
                         allInitialBuildingsSpawned = false;
                     }
@@ -150,9 +200,9 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 em.SetComponentData(entity, progress);
             }
 
-            if (!TryCreateInitialSpawnGridContext(em, _queryContext.GridContextQuery, Allocator.Temp, out InitialSpawnGridContext gridContext))
+            if (!TryCreateInitialSpawnGridContext(em, _gridContextQuery, Allocator.Temp, out InitialSpawnGridContext gridContext))
             {
-                _structuralApplySystem.PlaybackAndDispose(em, ref structuralContext);
+                PlaybackAndDisposeInitialSpawnStructuralChanges(em, ref ecb);
                 completedForLog = completedInitialSpawn;
                 factionSpawns.Dispose();
                 continue;
@@ -171,19 +221,19 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             int remainingBatch = InitialSpawnBatchSize;
             for (int unitIndex = 0; unitIndex < unitSpawns.Length && remainingBatch > 0; unitIndex++)
             {
-                if (!_unitSpawnBatchSystem.TryCreateEntryBatch(unitSpawns, unitProgress, unitIndex, remainingBatch, out InitialUnitSpawnBatchSystem.EntryBatch batch))
+                if (!TryCreateInitialUnitSpawnEntryBatch(unitSpawns, unitProgress, unitIndex, remainingBatch, out InitialUnitSpawnEntryBatch batch))
                     continue;
 
                 InitialUnitsFactionUnitSpawnEntry unitSpawn = batch.UnitSpawn;
                 InitialUnitsFactionUnitSpawnProgress entryProgress = batch.EntryProgress;
-                bool hasSourceKey = _sourceKeySystem.TryGetCustomGameUnitSourceKey(customGameSourceSpawns, hasCustomGameSourceSpawns, unitIndex, unitSpawn, out FixedString64Bytes sourceKey);
-                if (_sourceKeySystem.TrySkipMissingPrefabUnit(em, unitSpawn, batch.HasPrefab, hasSourceKey, sourceKey, ref entryProgress, ref _diagnosticLogSystem))
+                bool hasSourceKey = TryGetCustomGameUnitSourceKey(customGameSourceSpawns, hasCustomGameSourceSpawns, unitIndex, unitSpawn, out FixedString64Bytes sourceKey);
+                if (TrySkipMissingPrefabUnit(em, unitSpawn, batch.HasPrefab, hasSourceKey, sourceKey, ref entryProgress, ref _diagnosticLogSystem))
                 {
                     unitProgress[unitIndex] = entryProgress;
                     continue;
                 }
 
-                if (!_unitSpawnBatchSystem.TryCreateSpawnPlan(state.EntityManager, factionSpawns, batch, out InitialUnitSpawnBatchSystem.SpawnPlan spawnPlan))
+                if (!TryCreateInitialUnitSpawnPlan(state.EntityManager, factionSpawns, batch, out InitialUnitSpawnPlan spawnPlan))
                     continue;
 
                 int spawnedThisEntry = 0;
@@ -192,7 +242,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     int2 cell = default;
                     float3 pos = default;
                     bool foundPlatformSpawn = spawnPlan.IsAirUnit &&
-                        _airPlatformSpawnSystem.TryGetInitialAirPlatformSpawn(
+                        TryGetInitialAirPlatformSpawn(
                             state.EntityManager,
                             boundaryEntity,
                             unitSpawn.FactionId,
@@ -239,10 +289,10 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     spawnedUnitsForLog++;
                 }
 
-                _unitSpawnBatchSystem.ApplySpawnedCount(unitProgress, batch, spawnedThisEntry, ref remainingBatch);
+                ApplyInitialUnitSpawnedCount(unitProgress, batch, spawnedThisEntry, ref remainingBatch);
             }
 
-            InitialBlockerSpawnSystem.Result blockerSpawnResult = _blockerSpawnSystem.SpawnBatch(
+            InitialBlockerSpawnResult blockerSpawnResult = SpawnInitialBlockerBatch(
                 ref rng,
                 em,
                 ecb,
@@ -259,7 +309,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             spawnedBlockersForLog += blockerSpawnResult.SpawnedForLog;
             progress.BlockersSpawned += blockerSpawnResult.ProgressIncrement;
 
-            _respawnQueueProjectionSystem.WriteRandomState(em, queueEntity, queueState, rng.state);
+            WriteInitialRespawnQueueRandomState(em, queueEntity, queueState, rng.state);
 
             progress.RandomState = math.max(1u, rng.state);
             em.SetComponentData(entity, progress);
@@ -289,23 +339,382 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             if (completionProgressChanged)
                 em.SetComponentData(entity, progress);
 
-            _structuralApplySystem.PlaybackAndDispose(em, ref structuralContext);
+            PlaybackAndDisposeInitialSpawnStructuralChanges(em, ref ecb);
             if (EnableInitialSpawnDiagnostics)
-                _diagnosticStateSystem.LogSpawnState(ref state, completedInitialSpawn ? "completed" : "progress", DiagnosticIntervalFrames, ref _diagnosticLogSystem);
+                LogInitialSpawnState(ref state, completedInitialSpawn ? "completed" : "progress", DiagnosticIntervalFrames, ref _diagnosticLogSystem);
             if (EnableInitialSpawnDiagnostics && completedInitialSpawn)
-                _duplicateCellDiagnosticSystem.LogInitialSpawnCellDuplicates(ref state, grid, ref _diagnosticLogSystem);
+                LogInitialSpawnCellDuplicates(ref state, grid, ref _diagnosticLogSystem);
             completedForLog = completedInitialSpawn;
             factionSpawns.Dispose();
             gridContext.Dispose();
         }
 
-        _freezeDiagnosticSystem.LogIfExceeded(
+        LogInitialSpawnFreezeIfExceeded(
             state.EntityManager,
             startTime,
             spawnedUnitsForLog,
             spawnedBlockersForLog,
             completedForLog,
             ref _diagnosticLogSystem);
+    }
+
+    private readonly struct InitialSpawnStartupGateResult
+    {
+        public readonly bool IsActionable;
+        public readonly Entity BoundaryEntity;
+
+        private InitialSpawnStartupGateResult(bool isActionable, Entity boundaryEntity)
+        {
+            IsActionable = isActionable;
+            BoundaryEntity = boundaryEntity;
+        }
+
+        public static InitialSpawnStartupGateResult NotActionable()
+        {
+            return new InitialSpawnStartupGateResult(false, Entity.Null);
+        }
+
+        public static InitialSpawnStartupGateResult Actionable(Entity boundaryEntity)
+        {
+            return new InitialSpawnStartupGateResult(true, boundaryEntity);
+        }
+    }
+
+    private static InitialSpawnStartupGateResult EvaluateInitialSpawnStartupGate(
+        EntityManager em,
+        EntityQuery runtimeGameplayStateQuery,
+        EntityQuery buildingRuntimeBoundaryQuery)
+    {
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(
+            runtimeGameplayStateQuery.GetSingletonEntity());
+        if (runtimeState.PlayRequested == 0)
+            return InitialSpawnStartupGateResult.NotActionable();
+
+        Entity boundaryEntity = TryGetBuildingRuntimeBoundaryEntity(em, buildingRuntimeBoundaryQuery, out Entity foundBoundaryEntity)
+            ? foundBoundaryEntity
+            : Entity.Null;
+
+        return InitialSpawnStartupGateResult.Actionable(boundaryEntity);
+    }
+
+    private static bool TryGetBuildingRuntimeBoundaryEntity(
+        EntityManager em,
+        EntityQuery buildingRuntimeBoundaryQuery,
+        out Entity entity)
+    {
+        entity = Entity.Null;
+        if (buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        entity = buildingRuntimeBoundaryQuery.GetSingletonEntity();
+        return entity != Entity.Null && em.Exists(entity);
+    }
+
+    private static NativeArray<InitialUnitsFactionSpawnEntry> CreateInitialFactionSpawnSnapshot(
+        EntityManager em,
+        Entity configEntity,
+        Allocator allocator)
+    {
+        DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawnsBuffer = em.GetBuffer<InitialUnitsFactionSpawnEntry>(configEntity);
+        var factionSpawns = new NativeArray<InitialUnitsFactionSpawnEntry>(factionSpawnsBuffer.Length, allocator);
+        for (int factionIndex = 0; factionIndex < factionSpawnsBuffer.Length; factionIndex++)
+            factionSpawns[factionIndex] = factionSpawnsBuffer[factionIndex];
+
+        return factionSpawns;
+    }
+
+    private static RespawnQueueComponent ProjectInitialRespawnQueueConfig(
+        EntityManager em,
+        Entity queueEntity,
+        InitialUnitsSpawnConfig config,
+        NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns)
+    {
+        RespawnQueueComponent queueState = em.GetComponentData<RespawnQueueComponent>(queueEntity);
+        queueState.SpawnRadiusCells = math.max(0, config.SpawnRadiusCells);
+        queueState.RespawnDelaySeconds = math.max(0.01f, config.RespawnDelaySeconds);
+
+        DynamicBuffer<RespawnFactionSpawnPoint> respawnSpawnPoints = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
+        respawnSpawnPoints.Clear();
+        for (int factionIndex = 0; factionIndex < factionSpawns.Length; factionIndex++)
+        {
+            respawnSpawnPoints.Add(new RespawnFactionSpawnPoint
+            {
+                FactionId = factionSpawns[factionIndex].FactionId,
+                SpawnCell = factionSpawns[factionIndex].SpawnCell
+            });
+        }
+
+        return queueState;
+    }
+
+    private static void WriteInitialRespawnQueueRandomState(
+        EntityManager em,
+        Entity queueEntity,
+        RespawnQueueComponent queueState,
+        uint randomState)
+    {
+        queueState.RandomState = randomState;
+        em.SetComponentData(queueEntity, queueState);
+    }
+
+    internal static bool TryGetInitialAirPlatformSpawn(
+        EntityManager em,
+        Entity boundaryEntity,
+        byte factionId,
+        int2 configuredSpawnOffset,
+        GridConfig grid,
+        out int2 cell,
+        out float3 position)
+    {
+        cell = default;
+        position = default;
+        if (!new InitialBuildingBoundarySystem().TryGetFactionProductionSpawnPoints(
+                em,
+                boundaryEntity,
+                out DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints))
+            return false;
+
+        bool useHelipad = configuredSpawnOffset.y <= -45;
+        string buildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(useHelipad ? "Building_Helipad" : "Building_Airport");
+        int remainingSlotIndex = ResolveInitialAirPlatformSlotIndex(configuredSpawnOffset, useHelipad);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.FactionId != factionId ||
+                spawnPoint.BuildingId.ToString() != buildingId)
+            {
+                continue;
+            }
+
+            if (remainingSlotIndex > 0)
+            {
+                remainingSlotIndex--;
+                continue;
+            }
+
+            if (!GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height))
+                return false;
+
+            cell = spawnPoint.Cell;
+            position = spawnPoint.WorldPosition;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static int ResolveInitialAirPlatformSlotIndex(int2 configuredSpawnOffset, bool useHelipad)
+    {
+        int x = configuredSpawnOffset.x;
+        if (useHelipad)
+        {
+            if (x < 80)
+                return 0;
+            if (x < 100)
+                return 1;
+            return 2;
+        }
+
+        if (x < 56)
+            return 0;
+        if (x < 70)
+            return 1;
+        return 2;
+    }
+
+    internal readonly struct InitialBlockerSpawnResult
+    {
+        public readonly int TargetCount;
+        public readonly int ProgressIncrement;
+        public readonly int SpawnedForLog;
+
+        public InitialBlockerSpawnResult(int targetCount, int progressIncrement, int spawnedForLog)
+        {
+            TargetCount = targetCount;
+            ProgressIncrement = progressIncrement;
+            SpawnedForLog = spawnedForLog;
+        }
+    }
+
+    internal static InitialBlockerSpawnResult SpawnInitialBlockerBatch(
+        ref Unity.Mathematics.Random rng,
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        InitialUnitsSpawnConfig config,
+        int initialBlockerBatchSize,
+        int blockersSpawned,
+        GridConfig grid,
+        NativeArray<GridWalkable> walkable,
+        NativeBitArray dynamicBlocked,
+        NativeBitArray occupied,
+        ref NativeBitArray reserved,
+        bool enableDiagnostics,
+        ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
+    {
+        int blockerTargetCount = config.BlockerCount;
+        int blockersToSpawn = math.min(initialBlockerBatchSize, math.max(0, blockerTargetCount - blockersSpawned));
+        int spawnedForLog = 0;
+
+        for (int i = 0; i < blockersToSpawn; i++)
+        {
+            if (config.BlockerPrefab == Entity.Null)
+                break;
+
+            int2 center = new int2(grid.Width / 2, grid.Height / 2);
+            int radius = math.max(0, config.SpawnRadiusCells) + 20;
+            if (!SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, center, radius, new int2(1, 1), out int2 cell))
+            {
+                if (enableDiagnostics)
+                    diagnosticLogSystem.EnqueueWarning(em, $"[InitialSpawn] no-free-blocker-cell center={center} radius={radius}");
+                break;
+            }
+
+            Entity instance = ecb.Instantiate(config.BlockerPrefab);
+            ecb.SetComponent(instance, new UnitGrid { Cell = cell });
+            ecb.SetComponent(instance, LocalTransform.FromPosition(GridUtils.CellToWorldCenter(grid, cell)));
+            spawnedForLog++;
+        }
+
+        return new InitialBlockerSpawnResult(blockerTargetCount, blockersToSpawn, spawnedForLog);
+    }
+
+    private static double BeginInitialSpawnFrame()
+    {
+        return Time.realtimeSinceStartupAsDouble;
+    }
+
+    private static void PlaybackAndDisposeInitialSpawnStructuralChanges(EntityManager em, ref EntityCommandBuffer ecb)
+    {
+        ecb.Playback(em);
+        ecb.Dispose();
+    }
+
+    private void LogInitialSpawnState(
+        ref SystemState state,
+        string reason,
+        int diagnosticIntervalFrames,
+        ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
+    {
+        if (Time.frameCount < _nextDiagnosticFrame)
+            return;
+
+        _nextDiagnosticFrame = Time.frameCount + diagnosticIntervalFrames;
+        EntityManager em = state.EntityManager;
+        EntityQuery configQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        EntityQuery progressQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnProgress>());
+        EntityQuery initializedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
+        EntityQuery unitGridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>());
+        EntityQuery blockerDependencyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGridBlockerDependencyComponent>());
+        byte depsReady = 1;
+        string blockerDependencyStatus = "no-blocker-state";
+        if (!blockerDependencyQuery.IsEmptyIgnoreFilter)
+        {
+            RuntimeGridBlockerDependencyComponent blockerState = em.GetComponentData<RuntimeGridBlockerDependencyComponent>(blockerDependencyQuery.GetSingletonEntity());
+            depsReady = blockerState.ReadyForDependents;
+            blockerDependencyStatus = $"ready={blockerState.ReadyForDependents} spawnOnStart={blockerState.SpawnOnStart} spawned={blockerState.Spawned} finalizing={blockerState.SpawnFinalizing} finalizeAfter={blockerState.FinalizeAfterFrames} pendingCity={blockerState.PendingCity} cityHasSpawned={blockerState.CityHasSpawned} cityGenerating={blockerState.CityGenerating}";
+        }
+
+        diagnosticLogSystem.EnqueueLog(em, $"[InitialSpawnState] frame={Time.frameCount} reason={reason} configs={configQuery.CalculateEntityCount()} progress={progressQuery.CalculateEntityCount()} initialized={initializedQuery.CalculateEntityCount()} unitGrid={unitGridQuery.CalculateEntityCount()} depsReady={depsReady} {blockerDependencyStatus}");
+
+        configQuery.Dispose();
+        progressQuery.Dispose();
+        initializedQuery.Dispose();
+        unitGridQuery.Dispose();
+        blockerDependencyQuery.Dispose();
+    }
+
+    private static void LogInitialSpawnCellDuplicates(
+        ref SystemState state,
+        in GridConfig grid,
+        ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
+    {
+        using var query = state.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitFootprint>());
+        EntityManager em = state.EntityManager;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
+        ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
+        ComponentLookup<StaticGridBlocker> staticGridBlockers = state.GetComponentLookup<StaticGridBlocker>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        int entityCount = query.CalculateEntityCount();
+        using var occupiedCells = new NativeHashSet<int>(math.max(1024, entityCount * 32), Allocator.Temp);
+        using var centers = new NativeHashSet<int>(math.max(1, entityCount), Allocator.Temp);
+        int duplicateCells = 0;
+        int duplicateCenters = 0;
+        int occupiedFootprintCells = 0;
+        int countedEntities = 0;
+        string samples = string.Empty;
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            ArchetypeChunk chunk = chunks[chunkIndex];
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+            NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                if (staticGridBlockers.HasComponent(unit))
+                    continue;
+
+                countedEntities++;
+                int2 cell = unitGrids[i].Cell;
+                int2 size = footprints[i].Size;
+                int centerKey = (uint)cell.x < (uint)grid.Width && (uint)cell.y < (uint)grid.Height
+                    ? cell.y * grid.Width + cell.x
+                    : int.MinValue + countedEntities;
+                if (!centers.Add(centerKey))
+                {
+                    duplicateCenters++;
+                    if (samples.Length < 430)
+                        samples += $" center={cell}";
+                }
+
+                int2 min = UnitFootprintUtility.GetMinCell(cell, UnitFootprintUtility.ClampSize(size));
+                int2 max = min + UnitFootprintUtility.ClampSize(size);
+                for (int y = min.y; y < max.y; y++)
+                {
+                    if (y < 0 || y >= grid.Height)
+                        continue;
+
+                    int row = y * grid.Width;
+                    for (int x = min.x; x < max.x; x++)
+                    {
+                        if (x < 0 || x >= grid.Width)
+                            continue;
+
+                        occupiedFootprintCells++;
+                        if (!occupiedCells.Add(row + x))
+                        {
+                            duplicateCells++;
+                            if (samples.Length < 430)
+                                samples += $" footprint={new int2(x, y)}";
+                        }
+                    }
+                }
+            }
+        }
+
+        diagnosticLogSystem.EnqueueLog(em, $"[InitialSpawnDiag] entities={countedEntities} occupiedCells={occupiedFootprintCells} duplicateCenters={duplicateCenters} duplicateFootprintCells={duplicateCells} samples={samples}");
+    }
+
+    private static void LogInitialSpawnFreezeIfExceeded(
+        EntityManager em,
+        double startTime,
+        int spawnedUnitsForLog,
+        int spawnedBlockersForLog,
+        bool completedForLog,
+        ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
+    {
+        double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
+        if (!EnableInitialSpawnFreezeLogs || elapsed < FreezeLogThresholdSeconds)
+            return;
+
+        diagnosticLogSystem.EnqueueLog(em, $"[FreezeDetect:ECS] InitialUnitsSpawnSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms units={spawnedUnitsForLog} blockers={spawnedBlockersForLog} completed={(completedForLog ? 1 : 0)}");
     }
 
     internal static bool TryFindInitialUnitSpawnCell(
@@ -376,11 +785,11 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         });
     }
 
-    internal static void InitializeInitialSpawnProgress(EntityManager em, InitialUnitsSpawnQuerySystem.Context queryContext)
+    internal static void InitializeInitialSpawnProgress(EntityManager em, EntityQuery pendingInitQuery)
     {
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        using NativeArray<ArchetypeChunk> chunks = queryContext.PendingInitQuery.ToArchetypeChunkArray(Allocator.Temp);
-        using var initEntities = new NativeList<Entity>(queryContext.PendingInitQuery.CalculateEntityCount(), Allocator.Temp);
+        using NativeArray<ArchetypeChunk> chunks = pendingInitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        using var initEntities = new NativeList<Entity>(pendingInitQuery.CalculateEntityCount(), Allocator.Temp);
         for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
             NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
@@ -407,6 +816,153 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             for (int unitIndex = 0; unitIndex < unitSpawnCount; unitIndex++)
                 progressBuffer[unitIndex] = new InitialUnitsFactionUnitSpawnProgress { Spawned = 0 };
         }
+    }
+
+    internal readonly struct InitialUnitSpawnEntryBatch
+    {
+        public readonly int UnitIndex;
+        public readonly InitialUnitsFactionUnitSpawnEntry UnitSpawn;
+        public readonly InitialUnitsFactionUnitSpawnProgress EntryProgress;
+        public readonly int ToSpawn;
+        public readonly bool HasPrefab;
+
+        public InitialUnitSpawnEntryBatch(
+            int unitIndex,
+            InitialUnitsFactionUnitSpawnEntry unitSpawn,
+            InitialUnitsFactionUnitSpawnProgress entryProgress,
+            int toSpawn,
+            bool hasPrefab)
+        {
+            UnitIndex = unitIndex;
+            UnitSpawn = unitSpawn;
+            EntryProgress = entryProgress;
+            ToSpawn = toSpawn;
+            HasPrefab = hasPrefab;
+        }
+    }
+
+    private readonly struct InitialUnitSpawnPlan
+    {
+        public readonly int2 UnitSpawnCenter;
+        public readonly int2 FootprintSize;
+        public readonly bool IsAirUnit;
+
+        public InitialUnitSpawnPlan(int2 unitSpawnCenter, int2 footprintSize, bool isAirUnit)
+        {
+            UnitSpawnCenter = unitSpawnCenter;
+            FootprintSize = footprintSize;
+            IsAirUnit = isAirUnit;
+        }
+    }
+
+    internal static bool TryGetCustomGameUnitSourceKey(
+        DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> sourceSpawns,
+        bool hasSourceSpawns,
+        int unitIndex,
+        InitialUnitsFactionUnitSpawnEntry unitSpawn,
+        out FixedString64Bytes sourceKey)
+    {
+        sourceKey = default;
+        if (!hasSourceSpawns || unitIndex < 0 || unitIndex >= sourceSpawns.Length)
+            return false;
+
+        CustomGameFactionUnitSourceSpawnEntry sourceSpawn = sourceSpawns[unitIndex];
+        if (sourceSpawn.FactionId != unitSpawn.FactionId ||
+            sourceSpawn.Count != unitSpawn.Count ||
+            !math.all(sourceSpawn.SpawnOffset == unitSpawn.SpawnOffset) ||
+            sourceSpawn.SourceKey.Length == 0)
+        {
+            return false;
+        }
+
+        sourceKey = sourceSpawn.SourceKey;
+        return true;
+    }
+
+    internal static bool TrySkipMissingPrefabUnit(
+        EntityManager em,
+        InitialUnitsFactionUnitSpawnEntry unitSpawn,
+        bool hasPrefab,
+        bool hasSourceKey,
+        FixedString64Bytes sourceKey,
+        ref InitialUnitsFactionUnitSpawnProgress entryProgress,
+        ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem)
+    {
+        if (hasPrefab)
+            return false;
+
+        if (hasSourceKey)
+            diagnosticLogSystem.EnqueueWarning(em, $"[InitialSpawn] skipped source-key unit because no ECS prefab entity was resolved. sourceKey={sourceKey.ToString()} faction={unitSpawn.FactionId} count={unitSpawn.Count}");
+
+        entryProgress.Spawned = unitSpawn.Count;
+        return true;
+    }
+
+    internal static bool TryCreateInitialUnitSpawnEntryBatch(
+        DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns,
+        DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> unitProgress,
+        int unitIndex,
+        int remainingBatch,
+        out InitialUnitSpawnEntryBatch batch)
+    {
+        InitialUnitsFactionUnitSpawnEntry unitSpawn = unitSpawns[unitIndex];
+        InitialUnitsFactionUnitSpawnProgress entryProgress = unitProgress[unitIndex];
+        int remaining = math.max(0, unitSpawn.Count - entryProgress.Spawned);
+        int toSpawn = math.min(remainingBatch, remaining);
+        bool hasPrefab = unitSpawn.Prefab != Entity.Null;
+        batch = new InitialUnitSpawnEntryBatch(unitIndex, unitSpawn, entryProgress, toSpawn, hasPrefab);
+        return toSpawn > 0;
+    }
+
+    private static bool TryCreateInitialUnitSpawnPlan(
+        EntityManager em,
+        NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+        in InitialUnitSpawnEntryBatch batch,
+        out InitialUnitSpawnPlan plan)
+    {
+        if (!TryGetFactionSpawnCell(factionSpawns, batch.UnitSpawn.FactionId, out int2 factionSpawnCell))
+        {
+            plan = default;
+            return false;
+        }
+
+        int2 unitSpawnCenter = factionSpawnCell + batch.UnitSpawn.SpawnOffset;
+        int2 footprintSize = batch.HasPrefab && em.HasComponent<UnitFootprint>(batch.UnitSpawn.Prefab)
+            ? em.GetComponentData<UnitFootprint>(batch.UnitSpawn.Prefab).Size
+            : new int2(1, 1);
+        bool isAirUnit = batch.HasPrefab && em.HasComponent<UnitAirMovement>(batch.UnitSpawn.Prefab);
+        plan = new InitialUnitSpawnPlan(unitSpawnCenter, footprintSize, isAirUnit);
+        return true;
+    }
+
+    internal static void ApplyInitialUnitSpawnedCount(
+        DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> unitProgress,
+        in InitialUnitSpawnEntryBatch batch,
+        int spawnedThisEntry,
+        ref int remainingBatch)
+    {
+        InitialUnitsFactionUnitSpawnProgress entryProgress = batch.EntryProgress;
+        entryProgress.Spawned += spawnedThisEntry;
+        unitProgress[batch.UnitIndex] = entryProgress;
+        remainingBatch -= spawnedThisEntry;
+    }
+
+    private static bool TryGetFactionSpawnCell(
+        NativeArray<InitialUnitsFactionSpawnEntry> spawns,
+        byte factionId,
+        out int2 spawnCell)
+    {
+        for (int i = 0; i < spawns.Length; i++)
+        {
+            if (spawns[i].FactionId != factionId)
+                continue;
+
+            spawnCell = spawns[i].SpawnCell;
+            return true;
+        }
+
+        spawnCell = default;
+        return false;
     }
 
     internal static bool UpdateInitialSpawnCompletion(

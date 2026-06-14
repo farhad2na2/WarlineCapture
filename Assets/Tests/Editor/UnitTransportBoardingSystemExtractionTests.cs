@@ -35,23 +35,21 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     public void IsSoldierBoardingCandidate_AcceptsPlayerCharactersAndRejectsVehicles()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");
-        var querySystem = new UnitTransportBoardingQuerySystem();
         EntityManager entityManager = world.EntityManager;
         Entity soldier = CreateBoardingCandidate(entityManager, "Unit_Chr_Rifleman");
         Entity vehicle = CreateBoardingCandidate(entityManager, "Unit_Veh_APC_01");
 
-        Assert.IsTrue(querySystem.IsSoldierBoardingCandidate(entityManager, soldier));
-        Assert.IsFalse(querySystem.IsSoldierBoardingCandidate(entityManager, vehicle));
+        Assert.IsTrue(TransportBoardingCommandSystem.IsSoldierBoardingCandidate(entityManager, soldier));
+        Assert.IsFalse(TransportBoardingCommandSystem.IsSoldierBoardingCandidate(entityManager, vehicle));
     }
 
     [Test]
     public void ReserveFootprintCells_ReservesAllFootprintCellsWithinGrid()
     {
-        var approachCellSystem = new UnitTransportApproachCellSystem();
         GridConfig grid = new() { Width = 8, Height = 8 };
         HashSet<int> reserved = new();
 
-        approachCellSystem.ReserveFootprintCells(grid, new int2(2, 2), new int2(2, 1), reserved);
+        TransportBoardingCommandSystem.ReserveFootprintCells(grid, new int2(2, 2), new int2(2, 1), reserved);
 
         CollectionAssert.AreEquivalent(new[] { 18, 19 }, reserved);
     }

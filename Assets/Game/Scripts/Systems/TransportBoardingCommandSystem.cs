@@ -109,9 +109,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         UnitTransportCapacitySystem transportCapacitySystem,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
@@ -142,9 +139,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 RtsSelectionCommandIntentKind.BoardTransport => ProcessBoardTransportRequest(
                     em,
                     request,
-                    transportBoardingQuerySystem,
-                    transportBoardingRuleSystem,
-                    transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem,
                     selectionStateSystem,
@@ -153,31 +147,23 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 RtsSelectionCommandIntentKind.BoardSelectedTransport => ProcessBoardSelectedTransportRequest(
                     em,
                     request,
-                    transportBoardingQuerySystem,
-                    transportBoardingRuleSystem,
-                    transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem,
                     tryGetClickedUnitEntity),
                 RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger => ProcessBoardSelectedTransportPassengerRequest(
                     em,
                     request,
-                    transportBoardingQuerySystem,
-                    transportBoardingRuleSystem,
-                    transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem),
                 RtsSelectionCommandIntentKind.DisembarkTransportPassenger => ProcessDisembarkTransportPassengerRequest(
                     em,
                     request,
                     transportCapacitySystem,
-                    transportApproachCellSystem,
                     moveOrderSystem),
                 _ => ProcessDisembarkTransportRequest(
                     em,
                     request,
                     transportCapacitySystem,
-                    transportApproachCellSystem,
                     moveOrderSystem)
             };
             AddCommandResult(em, commandEntity, commandResults, result);
@@ -205,9 +191,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
             em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         bool handledAny = false;
         var transportCapacitySystem = new UnitTransportCapacitySystem();
-        var transportBoardingQuerySystem = new UnitTransportBoardingQuerySystem();
-        var transportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
-        var transportApproachCellSystem = new UnitTransportApproachCellSystem();
         var transportAirPickupSystem = new UnitTransportAirPickupSystem();
         var moveOrderSystem = new UnitMoveOrderSystem();
         var selectionStateSystem = new SelectionStateSystem();
@@ -228,31 +211,23 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 RtsSelectionCommandIntentKind.BoardTransport => ProcessBoardTransportTargetRequest(
                     em,
                     request,
-                    transportBoardingQuerySystem,
-                    transportBoardingRuleSystem,
-                    transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem,
                     selectionStateSystem),
                 RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger => ProcessBoardSelectedTransportPassengerRequest(
                     em,
                     request,
-                    transportBoardingQuerySystem,
-                    transportBoardingRuleSystem,
-                    transportApproachCellSystem,
                     transportAirPickupSystem,
                     moveOrderSystem),
                 RtsSelectionCommandIntentKind.DisembarkTransportPassenger => ProcessDisembarkTransportPassengerRequest(
                     em,
                     request,
                     transportCapacitySystem,
-                    transportApproachCellSystem,
                     moveOrderSystem),
                 _ => ProcessDisembarkTransportRequest(
                     em,
                     request,
                     transportCapacitySystem,
-                    transportApproachCellSystem,
                     moveOrderSystem)
             };
 
@@ -310,9 +285,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private RtsSelectionCommandResultElement ProcessBoardTransportRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
@@ -323,9 +295,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         Result result = TryIssueBoardTransportOrderToClickedUnit(
             em,
             screenPosition,
-            transportBoardingQuerySystem,
-            transportBoardingRuleSystem,
-            transportApproachCellSystem,
             transportAirPickupSystem,
             moveOrderSystem,
             selectionStateSystem,
@@ -338,9 +307,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private RtsSelectionCommandResultElement ProcessBoardTransportTargetRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem)
@@ -349,9 +315,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
             ? TryIssueBoardTransportOrderToTransport(
                 em,
                 request.TargetEntity,
-                transportBoardingQuerySystem,
-                transportBoardingRuleSystem,
-                transportApproachCellSystem,
                 transportAirPickupSystem,
                 moveOrderSystem,
                 selectionStateSystem)
@@ -363,9 +326,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private RtsSelectionCommandResultElement ProcessBoardSelectedTransportRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity)
@@ -375,9 +335,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
             em,
             request.TargetEntity,
             screenPosition,
-            transportBoardingQuerySystem,
-            transportBoardingRuleSystem,
-            transportApproachCellSystem,
             transportAirPickupSystem,
             moveOrderSystem,
             tryGetClickedUnitEntity);
@@ -388,9 +345,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private RtsSelectionCommandResultElement ProcessBoardSelectedTransportPassengerRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
@@ -400,9 +354,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 em,
                 request.TargetEntity,
                 request.SecondaryTargetEntity,
-                transportBoardingQuerySystem,
-                transportBoardingRuleSystem,
-                transportApproachCellSystem,
                 transportAirPickupSystem,
                 moveOrderSystem)
             : Result.Rejected();
@@ -440,11 +391,10 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportCapacitySystem transportCapacitySystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         bool accepted = request.HasTargetEntity != 0 &&
-                        TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, transportApproachCellSystem, moveOrderSystem, _gridPathingQuery);
+                        TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, moveOrderSystem, _gridPathingQuery);
         return new RtsSelectionCommandResultElement
         {
             Kind = request.Kind,
@@ -466,7 +416,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportCapacitySystem transportCapacitySystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         bool accepted = request.HasTargetEntity != 0 &&
@@ -476,7 +425,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
                             request.TargetEntity,
                             request.SecondaryTargetEntity,
                             transportCapacitySystem,
-                            transportApproachCellSystem,
                             moveOrderSystem,
                             _gridPathingQuery);
 
@@ -500,9 +448,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     public Result TryIssueBoardTransportOrderToClickedUnit(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem approachCellSystem,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
@@ -513,8 +458,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         if (!TryGetClickedOrNearbyBoardableTransport(
                 screenPosition,
                 em,
-                transportBoardingRuleSystem,
-                transportBoardingQuerySystem,
                 tryGetClickedUnitEntity,
                 tryGetClickedCell,
                 out Entity transport))
@@ -525,9 +468,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return TryIssueBoardTransportOrderToTransport(
             em,
             transport,
-            transportBoardingQuerySystem,
-            transportBoardingRuleSystem,
-            approachCellSystem,
             airPickupSystem,
             moveOrderSystem,
             selectionStateSystem);
@@ -536,9 +476,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     public Result TryIssueBoardTransportOrderToTransport(
         EntityManager em,
         Entity transport,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem approachCellSystem,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem)
@@ -546,7 +483,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EnsureEntityQueries(em);
         selectionStateSystem ??= new SelectionStateSystem();
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
-        if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+        if (!IsBoardablePlayerTransport(em, transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
@@ -554,7 +491,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         }
 
         bool airTransport = em.HasComponent<UnitAirMovement>(transport);
-        bool transportLanded = transportBoardingRuleSystem.IsTransportLandedForBoarding(em, transport);
+        bool transportLanded = IsTransportLandedForBoarding(em, transport);
         if (!transportLanded && !airTransport)
         {
             if (shouldLogTransportBoarding)
@@ -662,7 +599,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 continue;
             }
 
-            if (!transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+            if (!IsSoldierBoardingCandidate(em, passenger))
             {
                 if (shouldLogTransportBoarding)
                     EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
@@ -672,8 +609,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
             int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
             byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
             int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
-            int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
-            if (!approachCellSystem.TryFindTransportApproachCell(
+            int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
+            if (!TryFindTransportApproachCell(
                     grid,
                     walkable,
                     blocked,
@@ -713,7 +650,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 Goal = goal,
                 DirectBoarding = goal.Equals(referenceCell)
             });
-            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+            ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
         }
 
         if (boardingOrders.Count <= 0)
@@ -744,7 +681,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             {
                 Entity passenger = boardingOrders[i].Passenger;
                 int2 goal = boardingOrders[i].Goal;
-                if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                if (!em.Exists(passenger) || !IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
                 UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
@@ -780,9 +717,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         Entity transport,
         Vector2 screenPosition,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem approachCellSystem,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity)
@@ -791,7 +725,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
         if (transport == Entity.Null ||
             !em.Exists(transport) ||
-            !transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+            !IsBoardablePlayerTransport(em, transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SelectedTransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)}");
@@ -812,9 +746,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
             em,
             transport,
             passenger,
-            transportBoardingQuerySystem,
-            transportBoardingRuleSystem,
-            approachCellSystem,
             airPickupSystem,
             moveOrderSystem);
     }
@@ -823,9 +754,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         Entity transport,
         Entity passenger,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportApproachCellSystem approachCellSystem,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
@@ -833,7 +761,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
         if (transport == Entity.Null ||
             !em.Exists(transport) ||
-            !transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+            !IsBoardablePlayerTransport(em, transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SelectedTransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)}");
@@ -842,7 +770,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
         if (passenger == Entity.Null ||
             !em.Exists(passenger) ||
-            !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger) ||
+            !IsSoldierBoardingCandidate(em, passenger) ||
             passenger == transport)
         {
             if (shouldLogTransportBoarding)
@@ -851,7 +779,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         }
 
         bool airTransport = em.HasComponent<UnitAirMovement>(transport);
-        bool transportLanded = transportBoardingRuleSystem.IsTransportLandedForBoarding(em, transport);
+        bool transportLanded = IsTransportLandedForBoarding(em, transport);
         if (!transportLanded && !airTransport)
         {
             if (shouldLogTransportBoarding)
@@ -936,9 +864,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
         int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
         byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
         int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
-        int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
+        int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
         HashSet<int> targetedReservedBoardingCells = new();
-        if (!approachCellSystem.TryFindTransportApproachCell(
+        if (!TryFindTransportApproachCell(
                 grid,
                 walkable,
                 blocked,
@@ -1012,8 +940,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     public bool IsBoardablePlayerTransportClick(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell)
     {
@@ -1021,8 +947,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return TryGetClickedOrNearbyBoardableTransport(
             screenPosition,
             em,
-            transportBoardingRuleSystem,
-            transportBoardingQuerySystem,
             tryGetClickedUnitEntity,
             tryGetClickedCell,
             out _,
@@ -1032,8 +956,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     public bool TryResolveBoardablePlayerTransportClick(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell,
         out Entity transport)
@@ -1042,8 +964,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return TryGetClickedOrNearbyBoardableTransport(
             screenPosition,
             em,
-            transportBoardingRuleSystem,
-            transportBoardingQuerySystem,
             tryGetClickedUnitEntity,
             tryGetClickedCell,
             out transport,
@@ -1150,8 +1070,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private bool TryGetClickedOrNearbyBoardableTransport(
         Vector2 screenPosition,
         EntityManager em,
-        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell,
         out Entity transport,
@@ -1161,7 +1079,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         bool shouldLogTransportBoarding = logDiagnostics && ShouldQueueTransportBoardingDiagnostics(em);
         Entity clickedEntity = Entity.Null;
         bool hasClickedEntity = tryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
-        if (hasClickedEntity && transportBoardingQuerySystem.IsBoardablePlayerTransport(em, clickedEntity))
+        if (hasClickedEntity && IsBoardablePlayerTransport(em, clickedEntity))
         {
             transport = clickedEntity;
             if (shouldLogTransportBoarding)
@@ -1176,7 +1094,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             return false;
         }
 
-        if (TryFindNearbyBoardableTransport(em, clickedCell, transportBoardingQuerySystem, out transport))
+        if (TryFindNearbyBoardableTransport(em, clickedCell, out transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
@@ -1188,7 +1106,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             EnqueueTransportBoardingDiagnostic(
                 em,
                 $"[TransportBoard] result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
-                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(transportBoardingRuleSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
+                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
         }
 
         if (hasClickedEntity &&
@@ -1206,7 +1124,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private bool TryFindNearbyBoardableTransport(
         EntityManager em,
         int2 clickedCell,
-        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         out Entity transport)
     {
         transport = Entity.Null;
@@ -1220,12 +1137,12 @@ public partial struct TransportBoardingCommandSystem : ISystem
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity candidate = entities[i];
-                if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, candidate))
+                if (!IsBoardablePlayerTransport(em, candidate))
                     continue;
 
                 int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
                 int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
-                int clickPaddingCells = transportBoardingQuerySystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
+                int clickPaddingCells = GetTransportBoardingClickPaddingCells(em, candidate, footprint);
                 if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
                     continue;
 
@@ -1240,6 +1157,517 @@ public partial struct TransportBoardingCommandSystem : ISystem
         }
 
         return transport != Entity.Null;
+    }
+
+    internal static bool IsTransportLandedForBoarding(EntityManager em, Entity transport)
+    {
+        if (!em.HasComponent<UnitAirMovement>(transport))
+            return true;
+
+        if (!em.HasComponent<UnitAirComponent>(transport) || !em.HasComponent<LocalTransform>(transport))
+            return false;
+
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
+        float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
+        bool physicallyGrounded = transform.Position.y <= groundY + TransportBoardingData.AirBoardingGroundedHeightTolerance;
+        return airState.Airborne == 0 &&
+               airState.TakeoffRolling == 0 &&
+               airState.LandingRolling == 0 &&
+               physicallyGrounded &&
+               !em.HasComponent<UnitTransportRopeDisembarkRequest>(transport);
+    }
+
+    internal static int GetTransportBoardingDirectCells(EntityManager em, Entity transport)
+    {
+        return em.HasComponent<UnitAirMovement>(transport)
+            ? TransportBoardingData.AirBoardingClearanceCells
+            : TransportBoardingData.BoardingClearanceCells;
+    }
+
+    private static int GetTransportBoardingClickPaddingCells(EntityManager em, Entity transport, int2 footprint)
+    {
+        int footprintMax = math.max(footprint.x, footprint.y);
+        if (em.Exists(transport) && em.HasComponent<UnitAirMovement>(transport))
+            return math.max(24, footprintMax + 24);
+
+        return math.max(6, footprintMax + 4);
+    }
+
+    public static bool IsBoardablePlayerTransport(EntityManager em, Entity transport)
+    {
+        return em.Exists(transport) &&
+               new UnitTransportCapacitySystem().TryEnsureTransportCapacity(em, transport) &&
+               em.HasComponent<Faction>(transport) &&
+               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
+               em.HasComponent<UnitGrid>(transport) &&
+               em.HasComponent<UnitFootprint>(transport) &&
+               em.HasComponent<LocalTransform>(transport);
+    }
+
+    public static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
+    {
+        if (!em.Exists(entity) ||
+            !em.HasComponent<Faction>(entity) ||
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !em.HasComponent<UnitGrid>(entity) ||
+            !em.HasComponent<UnitMove>(entity) ||
+            !em.HasComponent<UnitFootprint>(entity) ||
+            !em.HasComponent<UnitMovementBehavior>(entity) ||
+            em.HasComponent<UnitAirMovement>(entity) ||
+            em.HasComponent<UnitTransportPassenger>(entity))
+        {
+            return false;
+        }
+
+        string sourceName = ResolveSourceName(em, entity);
+        if (sourceName.IndexOf("_Chr_", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            sourceName.StartsWith("Unit_Chr", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (sourceName.IndexOf("_Veh_", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            sourceName.StartsWith("Unit_Veh", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return !UnitVehicleMovementUtility.IsVehicle(
+            em.GetComponentData<UnitFootprint>(entity),
+            em.GetComponentData<UnitMovementBehavior>(entity));
+    }
+
+    public static bool TryFindAirTransportPickupCellNearPassenger(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeArray<byte> friendlyPassFactionIds,
+        in NativeBitArray occupied,
+        int2 transportCell,
+        int2 transportSize,
+        int2 passengerCell,
+        Entity transport,
+        in NativeArray<Entity> liveUnitEntities,
+        in NativeArray<UnitGrid> liveUnitGrids,
+        in NativeArray<UnitFootprint> liveUnitFootprints,
+        byte factionId,
+        out int2 pickupCell)
+    {
+        pickupCell = default;
+        for (int radius = 2; radius <= 10; radius++)
+        {
+            int bestScore = int.MaxValue;
+            bool found = false;
+            int minX = passengerCell.x - radius;
+            int minY = passengerCell.y - radius;
+            int maxX = passengerCell.x + radius;
+            int maxY = passengerCell.y + radius;
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    if (x != minX && x != maxX && y != minY && y != maxY)
+                        continue;
+
+                    int2 candidate = new int2(x, y);
+                    if (!IsTransportApproachPassable(
+                            grid,
+                            walkable,
+                            blocked,
+                            friendlyPassFactionIds,
+                            occupied,
+                            candidate,
+                            transportSize,
+                            transportCell,
+                            transport,
+                            liveUnitEntities,
+                            liveUnitGrids,
+                            liveUnitFootprints,
+                            Entity.Null,
+                            default,
+                            default,
+                            null,
+                            candidate,
+                            factionId,
+                            false))
+                    {
+                        continue;
+                    }
+
+                    int2 delta = candidate - passengerCell;
+                    int score = math.abs(delta.x) + math.abs(delta.y);
+                    if (score >= bestScore)
+                        continue;
+
+                    bestScore = score;
+                    pickupCell = candidate;
+                    found = true;
+                }
+            }
+
+            if (found)
+                return true;
+        }
+
+        return false;
+    }
+
+    public static bool TryFindTransportApproachCell(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeArray<byte> friendlyPassFactionIds,
+        in NativeBitArray occupied,
+        int2 transportCell,
+        int2 transportSize,
+        int2 referenceCell,
+        int2 passengerFootprint,
+        Entity passenger,
+        in NativeArray<Entity> liveUnitEntities,
+        in NativeArray<UnitGrid> liveUnitGrids,
+        in NativeArray<UnitFootprint> liveUnitFootprints,
+        Entity ignoredOccupancyEntity,
+        int2 ignoredOccupancyCell,
+        int2 ignoredOccupancySize,
+        HashSet<int> reservedCells,
+        int directBoardingCells,
+        byte factionId,
+        out int2 goal)
+    {
+        return TryFindNearbyTransportApproachCell(
+            grid,
+            walkable,
+            blocked,
+            friendlyPassFactionIds,
+            occupied,
+            transportCell,
+            transportSize,
+            referenceCell,
+            passengerFootprint,
+            passenger,
+            liveUnitEntities,
+            liveUnitGrids,
+            liveUnitFootprints,
+            ignoredOccupancyEntity,
+            ignoredOccupancyCell,
+            ignoredOccupancySize,
+            reservedCells,
+            directBoardingCells,
+            factionId,
+            out goal);
+    }
+
+    public static void ReserveFootprintCells(GridConfig grid, int2 cell, int2 footprintSize, HashSet<int> reservedCells)
+    {
+        if (reservedCells == null)
+            return;
+
+        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
+        int2 max = min + clamped;
+        for (int y = min.y; y < max.y; y++)
+        {
+            for (int x = min.x; x < max.x; x++)
+            {
+                int2 reservedCell = new int2(x, y);
+                if (GridUtils.InBounds(reservedCell, grid.Width, grid.Height))
+                    reservedCells.Add(GridUtils.CellToIndex(reservedCell, grid.Width));
+            }
+        }
+    }
+
+    public static bool TryFindTransportDisembarkCell(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
+        HashSet<int> reservedCells,
+        int2 transportCell,
+        int2 transportSize,
+        int2 referenceCell,
+        out int2 goal)
+    {
+        return TryFindTransportRingCell(
+            grid,
+            walkable,
+            blocked,
+            occupied,
+            reservedCells,
+            transportCell,
+            transportSize,
+            referenceCell,
+            TransportBoardingData.BoardingClearanceCells,
+            false,
+            out goal);
+    }
+
+    private static bool TryFindNearbyTransportApproachCell(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeArray<byte> friendlyPassFactionIds,
+        in NativeBitArray occupied,
+        int2 transportCell,
+        int2 transportSize,
+        int2 referenceCell,
+        int2 passengerFootprint,
+        Entity passenger,
+        in NativeArray<Entity> liveUnitEntities,
+        in NativeArray<UnitGrid> liveUnitGrids,
+        in NativeArray<UnitFootprint> liveUnitFootprints,
+        Entity ignoredOccupancyEntity,
+        int2 ignoredOccupancyCell,
+        int2 ignoredOccupancySize,
+        HashSet<int> reservedCells,
+        int directBoardingCells,
+        byte factionId,
+        out int2 goal)
+    {
+        goal = default;
+        if (!GridUtils.InBounds(referenceCell, grid.Width, grid.Height))
+            return false;
+
+        int gridSize = grid.Width * grid.Height;
+        if (gridSize <= 0 || walkable.Length < gridSize)
+            return false;
+
+        int2 size = UnitFootprintUtility.ClampSize(transportSize);
+        int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
+        int2 max = min + size;
+        if (directBoardingCells > TransportBoardingData.BoardingClearanceCells &&
+            UnitFootprintUtility.ContainsCellWithPadding(transportCell, size, referenceCell, directBoardingCells))
+        {
+            goal = referenceCell;
+            return true;
+        }
+
+        int maxRadius = math.max(1, directBoardingCells);
+        int bestScore = int.MaxValue;
+        bool found = false;
+        for (int radius = 1; radius <= maxRadius; radius++)
+        {
+            int minX = min.x - radius;
+            int minY = min.y - radius;
+            int maxX = max.x - 1 + radius;
+            int maxY = max.y - 1 + radius;
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    bool onRing = x == minX || x == maxX || y == minY || y == maxY;
+                    if (!onRing)
+                        continue;
+
+                    int2 candidate = new int2(x, y);
+                    if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
+                        continue;
+
+                    if (!IsTransportApproachPassable(
+                            grid,
+                            walkable,
+                            blocked,
+                            friendlyPassFactionIds,
+                            occupied,
+                            candidate,
+                            passengerFootprint,
+                            referenceCell,
+                            passenger,
+                            liveUnitEntities,
+                            liveUnitGrids,
+                            liveUnitFootprints,
+                            ignoredOccupancyEntity,
+                            ignoredOccupancyCell,
+                            ignoredOccupancySize,
+                            reservedCells,
+                            referenceCell,
+                            factionId,
+                            candidate.Equals(referenceCell)))
+                    {
+                        continue;
+                    }
+
+                    int2 delta = candidate - referenceCell;
+                    int score = math.abs(delta.x) + math.abs(delta.y);
+                    if (score >= bestScore)
+                        continue;
+
+                    bestScore = score;
+                    goal = candidate;
+                    found = true;
+                }
+            }
+
+            if (found)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsTransportApproachPassable(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeArray<byte> friendlyPassFactionIds,
+        in NativeBitArray occupied,
+        int2 cell,
+        int2 footprintSize,
+        int2 currentCell,
+        Entity movingEntity,
+        in NativeArray<Entity> liveUnitEntities,
+        in NativeArray<UnitGrid> liveUnitGrids,
+        in NativeArray<UnitFootprint> liveUnitFootprints,
+        Entity ignoredOccupancyEntity,
+        int2 ignoredOccupancyCell,
+        int2 ignoredOccupancySize,
+        HashSet<int> reservedCells,
+        int2 referenceCell,
+        byte factionId,
+        bool allowReferenceCellOccupied)
+    {
+        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
+        int2 max = min + clamped;
+        if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
+            return false;
+
+        for (int y = min.y; y < max.y; y++)
+        {
+            int row = y * grid.Width;
+            for (int x = min.x; x < max.x; x++)
+            {
+                int index = row + x;
+                if ((uint)index >= (uint)walkable.Length || walkable[index].Value == 0)
+                    return false;
+                if (reservedCells != null && reservedCells.Contains(index))
+                    return false;
+
+                if (blocked.IsCreated && blocked.IsSet(index) &&
+                    (!friendlyPassFactionIds.IsCreated || (uint)index >= (uint)friendlyPassFactionIds.Length || friendlyPassFactionIds[index] != factionId))
+                {
+                    return false;
+                }
+
+                bool isReferenceCell = x == referenceCell.x && y == referenceCell.y;
+                bool isCurrentFootprintCell = UnitFootprintUtility.ContainsCell(currentCell, clamped, new int2(x, y));
+                bool isIgnoredOccupancyCell =
+                    ignoredOccupancyEntity != Entity.Null &&
+                    UnitFootprintUtility.ContainsCell(ignoredOccupancyCell, ignoredOccupancySize, new int2(x, y));
+                if (!isCurrentFootprintCell &&
+                    occupied.IsCreated &&
+                    occupied.IsSet(index) &&
+                    (!allowReferenceCellOccupied || !isReferenceCell) &&
+                    !isIgnoredOccupancyCell)
+                {
+                    return false;
+                }
+            }
+        }
+
+        for (int i = 0; i < liveUnitEntities.Length; i++)
+        {
+            Entity other = liveUnitEntities[i];
+            if (other == movingEntity || other == ignoredOccupancyEntity)
+                continue;
+
+            int2 otherCell = liveUnitGrids[i].Cell;
+            int2 otherSize = liveUnitFootprints[i].Size;
+            if (UnitFootprintUtility.Overlaps(cell, clamped, otherCell, otherSize) &&
+                !UnitFootprintUtility.Overlaps(currentCell, clamped, otherCell, otherSize))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool TryFindTransportRingCell(
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
+        HashSet<int> reservedCells,
+        int2 transportCell,
+        int2 transportSize,
+        int2 referenceCell,
+        int minRadius,
+        bool allowReferenceCellOccupied,
+        out int2 goal)
+    {
+        goal = default;
+        int2 size = UnitFootprintUtility.ClampSize(transportSize);
+        int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
+        int2 max = min + size;
+        int bestScore = int.MaxValue;
+        bool found = false;
+        int startRadius = math.max(1, minRadius);
+        int maxRadius = math.max(8, math.max(size.x, size.y) + 6);
+
+        for (int radius = startRadius; radius <= maxRadius; radius++)
+        {
+            int minX = min.x - radius;
+            int minY = min.y - radius;
+            int maxX = max.x - 1 + radius;
+            int maxY = max.y - 1 + radius;
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    bool onRing = x == minX || x == maxX || y == minY || y == maxY;
+                    if (!onRing)
+                        continue;
+
+                    int2 candidate = new int2(x, y);
+                    if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
+                        continue;
+
+                    int index = GridUtils.CellToIndex(candidate, grid.Width);
+                    if (reservedCells != null && reservedCells.Contains(index))
+                        continue;
+                    if (walkable[index].Value == 0)
+                        continue;
+                    if (blocked.IsCreated && blocked.IsSet(index))
+                        continue;
+
+                    bool isReferenceCell = candidate.Equals(referenceCell);
+                    if (occupied.IsCreated && occupied.IsSet(index) && (!allowReferenceCellOccupied || !isReferenceCell))
+                        continue;
+
+                    int2 delta = candidate - referenceCell;
+                    int score = math.abs(delta.x) + math.abs(delta.y);
+                    if (score >= bestScore)
+                        continue;
+
+                    bestScore = score;
+                    goal = candidate;
+                    found = true;
+                }
+            }
+
+            if (found)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static string ResolveSourceName(EntityManager em, Entity entity)
+    {
+        if (!em.Exists(entity))
+            return string.Empty;
+
+        if (em.HasComponent<UnitSourcePrefabKey>(entity))
+        {
+            string sourceName = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.IsNullOrWhiteSpace(sourceName))
+                return sourceName;
+        }
+
+        return em.GetName(entity);
     }
 
     private static bool IsRopeDisembarkTransport(EntityManager em, Entity transport)
@@ -1307,7 +1735,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         Entity transport,
         UnitTransportCapacitySystem transportCapacitySystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitMoveOrderSystem moveOrderSystem,
         EntityQuery gridPathingQuery)
     {
@@ -1353,7 +1780,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             if (!em.Exists(passenger))
                 continue;
 
-            if (!transportApproachCellSystem.TryFindTransportDisembarkCell(
+            if (!TryFindTransportDisembarkCell(
                     grid,
                     walkable,
                     blocked,
@@ -1424,7 +1851,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
         Entity transport,
         Entity passenger,
         UnitTransportCapacitySystem transportCapacitySystem,
-        UnitTransportApproachCellSystem transportApproachCellSystem,
         UnitMoveOrderSystem moveOrderSystem,
         EntityQuery gridPathingQuery)
     {
@@ -1482,7 +1908,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             groundReferenceCell = GridUtils.WorldToCell(pathingGrid, em.GetComponentData<LocalTransform>(transport).Position);
 
         HashSet<int> reservedDisembarkCells = new();
-        if (!transportApproachCellSystem.TryFindTransportDisembarkCell(
+        if (!TryFindTransportDisembarkCell(
                 pathingGrid,
                 walkable,
                 blocked,

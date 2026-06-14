@@ -146,9 +146,6 @@ internal sealed class SelectionGameplayStartupSystem
         var focusableUnitLookupSystem = new FocusableUnitLookupSystem();
         var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionSystem();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
-        var unitTransportBoardingQuerySystem = new UnitTransportBoardingQuerySystem();
-        var unitTransportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
-        var unitTransportApproachCellSystem = new UnitTransportApproachCellSystem();
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
@@ -755,9 +752,6 @@ internal sealed class SelectionGameplayStartupSystem
                 transportBoardingCommandSystem,
                 unitMoveOrderSystem,
                 unitTransportCapacitySystem,
-                unitTransportBoardingQuerySystem,
-                unitTransportBoardingRuleSystem,
-                unitTransportApproachCellSystem,
                 unitTransportAirPickupSystem,
                 selectionStateSystem,
                 buildingPlacementInteractionSystem,
@@ -801,8 +795,8 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 ValidateControllableEntity,
-                (em, entity) => em.Exists(entity) && unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity),
-                (em, entity) => em.Exists(entity) && IsBoardCommandAvailable(em, entity) && unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity),
+                (em, entity) => em.Exists(entity) && TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity),
+                (em, entity) => em.Exists(entity) && IsBoardCommandAvailable(em, entity) && TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity),
                 BoardFocusedTransport,
                 TryFocusUnitDirect);
         }
@@ -817,9 +811,6 @@ internal sealed class SelectionGameplayStartupSystem
                 focusableUnitLookupSystem,
                 transportBoardingCommandSystem,
                 unitTransportCapacitySystem,
-                unitTransportBoardingQuerySystem,
-                unitTransportBoardingRuleSystem,
-                unitTransportApproachCellSystem,
                 unitTransportAirPickupSystem,
                 buildingTargetMoveOrderSystem,
                 buildingPlacementInteractionSystem,
@@ -944,7 +935,7 @@ internal sealed class SelectionGameplayStartupSystem
                 return false;
             }
 
-            return unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger);
+            return TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger);
         }
 
         bool TryGetDefaultEntityManager(out EntityManager em)
@@ -1309,7 +1300,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (!selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
                 return false;
 
-            if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
+            if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
                 return true;
 
             return IsBoardTransportWithAvailableSeats(em, entity);
@@ -1320,7 +1311,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (!selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
                 return false;
 
-            if (!unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity))
+            if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity))
                 return false;
 
             int capacity = em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity;
@@ -1334,7 +1325,7 @@ internal sealed class SelectionGameplayStartupSystem
         {
             if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
                 em.Exists(focusedUnit) &&
-                unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, focusedUnit) &&
+                TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, focusedUnit) &&
                 IsBoardCommandAvailable(em, focusedUnit))
             {
                 return true;
@@ -1355,10 +1346,10 @@ internal sealed class SelectionGameplayStartupSystem
                     if (!em.Exists(entity))
                         continue;
 
-                    if (unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, entity))
+                    if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
                         return true;
 
-                    if (unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, entity) &&
+                    if (TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity) &&
                         IsBoardCommandAvailable(em, entity))
                     {
                         return true;
@@ -1778,10 +1769,10 @@ internal sealed class SelectionGameplayStartupSystem
         bool TryIssueFocusedTransportBoarding(EntityManager em, Entity transport, out int orderedCount)
         {
             orderedCount = 0;
-            if (!unitTransportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
+            if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, transport))
                 return false;
 
-            bool transportLanded = unitTransportBoardingRuleSystem.IsTransportLandedForBoarding(em, transport);
+            bool transportLanded = TransportBoardingCommandSystem.IsTransportLandedForBoarding(em, transport);
             if (!transportLanded || !unitTransportCapacitySystem.TryEnsureTransportCapacity(em, transport))
                 return false;
 
@@ -1836,20 +1827,20 @@ internal sealed class SelectionGameplayStartupSystem
             int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
             int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
             int2 boardingTransportSize = em.HasComponent<UnitAirMovement>(transport) ? new int2(1, 1) : transportSize;
-            int directBoardingCells = unitTransportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
+            int directBoardingCells = TransportBoardingCommandSystem.GetTransportBoardingDirectCells(em, transport);
             var reservedBoardingCells = new HashSet<int>();
             using NativeList<TransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats), Allocator.Temp);
 
             for (int i = 0; i < candidates.Count && plannedOrders.Length < availableSeats; i++)
             {
                 Entity passenger = candidates[i].Entity;
-                if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                if (!em.Exists(passenger) || !TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger))
                     continue;
 
                 int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
                 int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
                 byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
-                if (!unitTransportApproachCellSystem.TryFindTransportApproachCell(
+                if (!TransportBoardingCommandSystem.TryFindTransportApproachCell(
                         grid,
                         walkable,
                         blocked,
@@ -1874,7 +1865,7 @@ internal sealed class SelectionGameplayStartupSystem
                     continue;
                 }
 
-                unitTransportApproachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+                TransportBoardingCommandSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
                 plannedOrders.Add(new TransportBoardingOrder(passenger, goal));
             }
 
@@ -1886,7 +1877,7 @@ internal sealed class SelectionGameplayStartupSystem
                 {
                     TransportBoardingOrder order = plannedOrders[i];
                     Entity passenger = order.Passenger;
-                    if (!em.Exists(passenger) || !unitTransportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
+                    if (!em.Exists(passenger) || !TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger))
                         continue;
 
                     UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);

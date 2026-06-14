@@ -8,10 +8,8 @@ public sealed class SelectionBuildingInteractionSystem
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();
     private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
-    private readonly UnitTransportBoardingRuleSystem _unitTransportBoardingRuleSystem = new();
-    private readonly UnitTransportBoardingQuerySystem _unitTransportBoardingQuerySystem = new();
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
-    private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();
+    private readonly RtsSelectionPointerTargetCommandSystem _pointerTargetCommandSystem = new();
 
     private SelectionStateSystem _selectionStateSystem;
     private SelectionScreenMarkerSystem _screenMarkerSystem;
@@ -70,8 +68,6 @@ public sealed class SelectionBuildingInteractionSystem
         return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
             em,
             screenPosition,
-            _unitTransportBoardingRuleSystem,
-            _unitTransportBoardingQuerySystem,
             TryGetClickedUnitEntity,
             TryGetClickedCell);
     }
@@ -130,14 +126,14 @@ public sealed class SelectionBuildingInteractionSystem
             return false;
 
         GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        if (!_mapSurfaceCommandTargetSystem.TryResolveCommandTarget(
+        if (!_pointerTargetCommandSystem.TryResolveMapSurfaceCommandTarget(
                 em,
                 _mapSurfaceQuery,
                 grid,
                 _worldCamera,
                 screenPosition,
                 SelectionState,
-                out MapSurfaceCommandTargetSystem.Result target))
+                out RtsSelectionPointerTargetCommandSystem.MapSurfaceCommandTargetResult target))
         {
             return false;
         }

@@ -76,18 +76,16 @@ public readonly struct UnitTransportAirPickupSystem
             return false;
         }
 
-        var querySystem = new UnitTransportBoardingQuerySystem();
-        var approachCellSystem = new UnitTransportApproachCellSystem();
         byte factionId = em.HasComponent<Faction>(transport) ? em.GetComponentData<Faction>(transport).Id : (byte)0;
         int count = math.min(selectedCount, selectedPassengers.Count);
         for (int i = 0; i < count; i++)
         {
             Entity passenger = selectedPassengers[i];
-            if (!querySystem.IsSoldierBoardingCandidate(em, passenger) || !em.HasComponent<UnitGrid>(passenger))
+            if (!TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger) || !em.HasComponent<UnitGrid>(passenger))
                 continue;
 
             int2 passengerCell = em.GetComponentData<UnitGrid>(passenger).Cell;
-            if (!approachCellSystem.TryFindAirTransportPickupCellNearPassenger(
+            if (!TransportBoardingCommandSystem.TryFindAirTransportPickupCellNearPassenger(
                     grid,
                     walkable,
                     blocked,

@@ -117,9 +117,6 @@ public sealed class UnitTransportValidationTests
         TransportBoardingCommandSystem.Result result = boardingSystem.TryIssueBoardTransportOrderToClickedUnit(
             em,
             Vector2.zero,
-            new UnitTransportBoardingQuerySystem(),
-            new UnitTransportBoardingRuleSystem(),
-            new UnitTransportApproachCellSystem(),
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
             new SelectionStateSystem(),
@@ -778,8 +775,6 @@ public sealed class UnitTransportValidationTests
             bool found = transportCommandSystem.IsBoardablePlayerTransportClick(
                 em,
                 Vector2.zero,
-                new UnitTransportBoardingRuleSystem(),
-                new UnitTransportBoardingQuerySystem(),
                 TryGetNoClickedUnit,
                 TryGetNearbyHelipadCell);
 

@@ -638,8 +638,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             selectionState.SetFocusedUnit(vehicle);
             selectionState.CacheSelectedMoveEntity(em, vehicle);
 
-            var previewSystem = new MapSurfaceCommandTargetSystem();
-            Assert.IsTrue(previewSystem.TryResolveSelectedMoveFootprintTarget(
+            var pointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
+            Assert.IsTrue(pointerTargetCommandSystem.TryResolveSelectedMoveFootprintTarget(
                 em,
                 surfaceQuery,
                 gridEntity,
@@ -647,7 +647,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
                 selectionState,
                 desiredGoal,
                 out int2 resolvedCell,
-                out MapSurfaceCommandTargetSystem.Result result));
+                out RtsSelectionPointerTargetCommandSystem.MapSurfaceCommandTargetResult result));
 
             var validationSystem = new MapSurfacePathingValidationSystem();
             Assert.AreNotEqual(desiredGoal, resolvedCell);

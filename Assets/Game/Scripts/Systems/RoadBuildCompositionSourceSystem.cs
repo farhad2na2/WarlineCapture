@@ -9,7 +9,6 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildRuntimeActionSystem RoadBuildRuntimeActionSystem = new();
     public readonly RoadBuildRuntimeActionSystem.State RoadBuildRuntimeActionState;
     public readonly RoadBuildDisposalSystem RoadBuildDisposalSystem = new();
-    public readonly RoadGridContextSystem RoadGridContextSystem = new();
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
     public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem = new();
     public readonly RoadNetworkSystem RoadNetworkSystem = new();
@@ -35,7 +34,6 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem = new();
     public readonly RoadBuildBuildingPlacementSystem RoadBuildBuildingPlacementSystem = new();
     public readonly RoadBuildInteractionSystem RoadBuildInteractionSystem = new();
-    public readonly RoadBuildGridQuerySystem RoadBuildGridQuerySystem = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
     public readonly RoadBuildEcsBoundarySystem RoadBuildEcsBoundarySystem = new();
     public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem = new();
@@ -48,7 +46,6 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildDependencySystem.State RoadBuildDependencyState;
     public readonly RoadBuildPlacementVisualSystem.State RoadBuildPlacementVisualState;
     public readonly RoadBuildBuildingPlacementSystem.State RoadBuildPlacementState;
-    public readonly RoadBuildGridQuerySystem.State RoadBuildGridState;
     public uint BuildingSpawnRandomState = 0x12345678u;
 
     public RoadBuildCompositionSourceSystem()
@@ -57,6 +54,5 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
         RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem.CreateState();
         RoadBuildPlacementState = RoadBuildBuildingPlacementSystem.CreateState();
-        RoadBuildGridState = RoadBuildGridQuerySystem.CreateState();
     }
 }

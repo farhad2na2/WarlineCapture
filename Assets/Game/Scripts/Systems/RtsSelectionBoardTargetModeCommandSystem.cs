@@ -210,7 +210,7 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
     private static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
     {
         return IsPlayerFaction(em, entity) &&
-               new UnitTransportBoardingQuerySystem().IsSoldierBoardingCandidate(em, entity);
+               TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity);
     }
 
     private static bool IsPlayerFaction(EntityManager em, Entity entity)

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
@@ -8,7 +10,13 @@ internal sealed class RoadBuildCompositionContextSystem
 {
     public RoadFootprintQuerySystem.Context CreateRoadFootprintQueryContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadGridContextSystem.CreateFootprintQueryContext(CreateRoadGridContext(source));
+        return new RoadFootprintQuerySystem.Context(
+            source.RoadNetworkSystem.RoadTiles,
+            source.RoadSpecialVisualSystem.SpecialRoadObjects,
+            source.RoadVisualVariantSystem.VisualData,
+            source.RoadBuildStartupState.GridOrigin,
+            source.RoadBuildStartupState.BuildPlaneY,
+            source.RoadBuildStartupState.RoadGridSize);
     }
 
     public RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
@@ -106,19 +114,13 @@ internal sealed class RoadBuildCompositionContextSystem
             source.RoadNetworkSystem.RoadTiles);
     }
 
-    private RoadGridContextSystem.Context CreateRoadGridContext(RoadBuildCompositionSourceSystem source)
-    {
-        return new RoadGridContextSystem.Context(
-            source.RoadNetworkSystem,
-            source.RoadSpecialVisualSystem,
-            source.RoadVisualVariantSystem,
-            source.RoadFootprintQuerySystem,
-            source.RoadBuildStartupState);
-    }
-
     private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadGridContextSystem.CreateGridProjectionContext(CreateRoadGridContext(source));
+        return new RoadGridProjectionSystem.Context(
+            source.RoadNetworkSystem.RoadTiles,
+            source.RoadFootprintQuerySystem,
+            CreateRoadFootprintQueryContext(source),
+            source.RoadBuildStartupState.RoadGridSize);
     }
 
     private RoadBuildVisualContextSystem.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceSystem source)
@@ -185,11 +187,11 @@ internal sealed class RoadBuildCompositionContextSystem
 
     private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)
     {
-        RoadBuildGridQuerySystem.State gridState = ConfigureRoadBuildGridState(source);
         return new RoadBuildContextSystem.Context(
             source.RoadBuildEcsBoundarySystem.TryGetEntityManager,
-            gridState.TryGetGridData,
-            gridState.GetFootprintCenter,
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
+                TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
+            (originCell, footprintCells, grid) => GetRoadBuildFootprintCenter(source, originCell, footprintCells, grid),
             source.RoadBuildDependencyState.BuildingPlacementInteractionSystem,
             source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
             source.BuildingSpawnRandomState);
@@ -200,24 +202,9 @@ internal sealed class RoadBuildCompositionContextSystem
         return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
     }
 
-    private RoadBuildGridQuerySystem.Context CreateRoadBuildGridContext(RoadBuildCompositionSourceSystem source)
-    {
-        return new RoadBuildGridQuerySystem.Context(
-            source.RoadGridProjectionSystem,
-            source.RoadBuildStartupState.WorldCamera,
-            source.RoadBuildStartupState.BuildPlaneY);
-    }
-
-    private RoadBuildGridQuerySystem.State ConfigureRoadBuildGridState(RoadBuildCompositionSourceSystem source)
-    {
-        source.RoadBuildGridState.Configure(CreateRoadBuildGridContext(source));
-        return source.RoadBuildGridState;
-    }
-
     private RoadBuildBuildingPlacementSystem.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceSystem source)
     {
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
-        RoadBuildGridQuerySystem.State gridState = ConfigureRoadBuildGridState(source);
         return new RoadBuildBuildingPlacementSystem.Context(
             source.RoadBuildPlacementStorageSystem,
             source.RoadBuildPlacementState,
@@ -229,8 +216,9 @@ internal sealed class RoadBuildCompositionContextSystem
             startupState.PlacementOutlineHeight,
             startupState.PlacementValidColor,
             startupState.PlacementInvalidColor,
-            gridState.TryGetGridData,
-            gridState.TryGetGridCell,
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
+                TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
+            (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => TryGetRoadBuildGridCell(source, screenPosition, grid, out cell),
             (int x, int y, int width, int height) => IsRuntimeBlockerCell(source, x, y, width, height));
     }
 
@@ -257,14 +245,72 @@ internal sealed class RoadBuildCompositionContextSystem
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
         if (startupState.RoadGridSize <= 0f)
             return false;
-        if (!source.RoadBuildGridQuerySystem.TryGetGridConfig(
-                CreateRoadBuildGridContext(source),
-                out GridConfig grid))
+        if (!TryGetRoadBuildGridConfig(source, out GridConfig grid))
             return false;
         if (grid.CellSize <= 0f)
             return false;
 
         roadCellSizeInGridCells = Mathf.Max(1, Mathf.RoundToInt(startupState.RoadGridSize / grid.CellSize));
+        return true;
+    }
+
+    private static bool TryGetRoadBuildGridData(
+        RoadBuildCompositionSourceSystem source,
+        out Entity gridEntity,
+        out GridConfig grid,
+        out DynamicBuffer<GridRoad> roads,
+        out DynamicBlockerComponent blockerData)
+    {
+        gridEntity = Entity.Null;
+        grid = default;
+        roads = default;
+        blockerData = default;
+        return source.RoadGridProjectionSystem != null &&
+               source.RoadGridProjectionSystem.TryGetGridData(out gridEntity, out grid, out roads, out blockerData);
+    }
+
+    private static bool TryGetRoadBuildGridConfig(RoadBuildCompositionSourceSystem source, out GridConfig grid)
+    {
+        grid = default;
+        return source.RoadGridProjectionSystem != null &&
+               source.RoadGridProjectionSystem.TryGetGridConfig(out grid);
+    }
+
+    private static Vector3 GetRoadBuildFootprintCenter(
+        RoadBuildCompositionSourceSystem source,
+        Vector2Int originCell,
+        Vector2Int footprintCells,
+        GridConfig grid)
+    {
+        return new Vector3(
+            grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
+            source.RoadBuildStartupState.BuildPlaneY,
+            grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+    }
+
+    private static bool TryGetRoadBuildGridCell(
+        RoadBuildCompositionSourceSystem source,
+        Vector2 screenPosition,
+        GridConfig grid,
+        out Vector2Int cell)
+    {
+        cell = default;
+        RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
+        Camera worldCamera = startupState.WorldCamera;
+        if (worldCamera == null)
+            return false;
+
+        Ray ray = worldCamera.ScreenPointToRay(screenPosition);
+        Plane plane = new(Vector3.up, new Vector3(0f, startupState.BuildPlaneY, 0f));
+        if (!plane.Raycast(ray, out float distance))
+            return false;
+
+        Vector3 worldPoint = ray.GetPoint(distance);
+        int2 gridCell = GridUtils.WorldToCell(grid, worldPoint);
+        if (!GridUtils.InBounds(gridCell, grid.Width, grid.Height))
+            return false;
+
+        cell = new Vector2Int(gridCell.x, gridCell.y);
         return true;
     }
 

@@ -97,17 +97,14 @@ public sealed class TransportBoardingPerformanceValidation
             Entity[] passengers = CreateSelectedPassengers(em);
 
             var boardingCommandSystem = new TransportBoardingCommandSystem();
-            var capacitySystem = new UnitTransportCapacitySystem();
-            var boardingQuerySystem = new UnitTransportBoardingQuerySystem();
-            var boardingRuleSystem = new UnitTransportBoardingRuleSystem();
-            var approachCellSystem = new UnitTransportApproachCellSystem();
             var airPickupSystem = new UnitTransportAirPickupSystem();
             var moveOrderSystem = new UnitMoveOrderSystem();
             var selectionStateSystem = new SelectionStateSystem();
+            SystemHandle boardingCommandEcsSystem = world.CreateSystem<TransportBoardingCommandSystem>();
             SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
             boardingCommandSystem.EnsureEntityQueries(em);
 
-            Entity queue = em.CreateEntity();
+            Entity queue = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
             em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue);
             em.AddBuffer<RtsSelectionCommandResultElement>(queue);
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue);
@@ -118,9 +115,6 @@ public sealed class TransportBoardingPerformanceValidation
             TransportBoardingCommandSystem.Result boardResult = boardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
                 em,
                 Vector2.zero,
-                boardingQuerySystem,
-                boardingRuleSystem,
-                approachCellSystem,
                 airPickupSystem,
                 moveOrderSystem,
                 selectionStateSystem,
@@ -161,25 +155,14 @@ public sealed class TransportBoardingPerformanceValidation
             });
 
             long disembarkStartTicks = Stopwatch.GetTimestamp();
-            bool processed = boardingCommandSystem.ProcessCommandIntentRequests(
-                em,
-                queue,
-                requests,
-                results,
-                capacitySystem,
-                boardingQuerySystem,
-                boardingRuleSystem,
-                approachCellSystem,
-                airPickupSystem,
-                moveOrderSystem,
-                selectionStateSystem,
-                TryGetNoClickedUnit,
-                TryGetNoClickedCell);
+            boardingCommandEcsSystem.Update(world.Unmanaged);
             em.CompleteAllTrackedJobs();
             long disembarkStopTicks = Stopwatch.GetTimestamp();
             long allocationStop = GC.GetAllocatedBytesForCurrentThread();
 
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue);
             results = em.GetBuffer<RtsSelectionCommandResultElement>(queue);
+            bool processed = requests.Length == 0;
             Assert.IsTrue(processed, "Disembark transport request should be processed.");
             Assert.AreEqual(1, results.Length);
             Assert.AreEqual(1, results[0].Accepted, "Disembark-all request should be accepted.");

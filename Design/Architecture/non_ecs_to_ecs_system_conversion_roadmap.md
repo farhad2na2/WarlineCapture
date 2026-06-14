@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `84 / 113 complete (74.3%)`.
+- Checklist progress: `86 / 113 complete (76.1%)`.
 - In progress: `1`.
-- Remaining open: `28`.
+- Remaining open: `26`.
 - Phase progress: `9 / 13 phases complete; 1 in progress; 3 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `385` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `379` after excluding `105` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `285` ConvertToSystemBase, `73` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `283` ConvertToSystemBase, `69` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
 - Converted to `SystemBase`: `0`.
-- Folded into ECS owners/jobs: `5`.
+- Folded into ECS owners/jobs: `11`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `385`.
+- Remaining plain runtime gameplay `*System` classes: `379`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 moved shared transport boarding clearance/grounding constants into neutral transport boarding data while keeping the remaining transport helper fold in progress.
+- Last implementation update: 2026-06-15 folded `RoadBuildGridQuerySystem` into `RoadBuildCompositionContextSystem`, removed the standalone helper asset, and regenerated the authoritative inventory.
 
 ## Architecture Rules
 
@@ -544,9 +544,9 @@ Recommended disposition:
 Implementation steps:
 
 - [x] Inventory pure helper `*System` types such as transport boarding rule/query/approach helpers.
-- [~] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
-- [ ] Fold map-surface command target logic into the pointer target boundary or map-surface ECS owner.
-- [ ] Fold road footprint/grid helper logic into road/building ECS owners.
+- [x] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
+- [x] Fold map-surface command target logic into the pointer target boundary or map-surface ECS owner.
+- [~] Fold road footprint/grid helper logic into road/building ECS owners.
 - [ ] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
 - [ ] Remove or rename files only when Unity `.meta` preservation is planned.
 - [ ] Add tests around helper behavior before folding risky algorithms.
@@ -561,6 +561,12 @@ Progress notes:
 
 - 2026-06-14: Started Phase 9 helper cleanup with the transport boarding helper cluster. `UnitTransportBoardingQuerySystem`, `UnitTransportBoardingRuleSystem`, and `UnitTransportApproachCellSystem` are pure/helper-style `*System` types that should be folded into `TransportBoardingCommandSystem`, `UnitTransportBoardingSystem`, or private helper structs as their owning call sites are narrowed. First slice moved the shared boarding reach-state payload out of `UnitTransportBoardingRuleSystem` and into neutral ECS transport boarding data as `TransportBoardingReachState`; `UnitTransportBoardingSystem` and `UnitTransportBoardingDiagnosticSystem` now share that payload without depending on a nested type on the standalone rule helper. Command-side rule-helper calls remain open for the next transport fold slice. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-14: Continued the transport helper fold by moving shared boarding clearance constants and air-grounding tolerance from `UnitTransportBoardingRuleSystem` into neutral `TransportBoardingData`. `UnitTransportBoardingSystem`, `UnitTransportAirPickupSystem`, and `UnitTransportApproachCellSystem` now read those values from transport boarding data instead of the standalone rule helper; the rule helper keeps compatibility aliases until command-side calls are folded. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-14: Folded `UnitTransportBoardingRuleSystem` into the transport command owner. `TransportBoardingCommandSystem` now owns the landed-for-boarding and direct-boarding-cell checks; command processing, command-result flushing, pointer target forwarding, building interaction forwarding, and focused transport boarding no longer create or pass the standalone rule helper. Removed `UnitTransportBoardingRuleSystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `385` to `384`. Remaining transport helper fold work is `UnitTransportBoardingQuerySystem` and `UnitTransportApproachCellSystem`. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=15`, `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[TransportBoardingPerformanceValidation] result=Passed`.
+- 2026-06-15: Folded `UnitTransportBoardingQuerySystem` into the transport command owner. `TransportBoardingCommandSystem` now owns boardable-transport checks, soldier boarding candidate checks, and transport click-padding calculation; command processing, command-result flushing, pointer target forwarding, building interaction forwarding, board target mode, air pickup, startup predicates, and focused transport boarding no longer create or pass the standalone query helper. Removed `UnitTransportBoardingQuerySystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `384` to `383`. Remaining transport helper fold work is `UnitTransportApproachCellSystem`. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=15`, `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[TransportBoardingPerformanceValidation] result=Passed`.
+- 2026-06-15: Folded `UnitTransportApproachCellSystem` into the transport command owner. `TransportBoardingCommandSystem` now owns boarding approach search, footprint reservation, air pickup landing-cell search, and disembark-cell search; command processing, command-result flushing, pointer target forwarding, startup batching, air pickup, and focused tests no longer create or pass the standalone approach helper. Removed `UnitTransportApproachCellSystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `383` to `382`. Focused Unity validation passed with `[UnitTransportValidation] result=Passed tests=19`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=15`, `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[TransportBoardingPerformanceValidation] result=Passed`.
+- 2026-06-15: Folded `MapSurfaceCommandTargetSystem` into the pointer-target boundary owner. `RtsSelectionPointerTargetCommandSystem` now owns map-surface command target resolution, move-footprint target adjustment, and layered-surface fallback result data; building interaction and focused map-surface tests call the owner API instead of constructing a standalone command-target helper. Removed `MapSurfaceCommandTargetSystem.cs` and its `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `382` to `381`. Focused Unity validation passed with `[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=15`, `[RtsSelectionInputSystemValidation] result=Passed tests=46`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Started the road footprint/grid helper fold by folding `RoadGridContextSystem` into the road composition owner. `RoadBuildCompositionContextSystem` now builds `RoadFootprintQuerySystem.Context` and `RoadGridProjectionSystem.Context` directly from `RoadBuildCompositionSourceSystem`; the standalone road-grid context helper and `.meta` were removed, and `Design/Architecture/non_ecs_to_ecs_system_inventory.md` was regenerated with the authoritative runtime non-ECS denominator reduced from `381` to `380`. Remaining road footprint/grid fold work still includes the larger `RoadFootprintQuerySystem` / `RoadGridProjectionSystem` helper boundary. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the road footprint/grid helper fold by folding `RoadBuildGridQuerySystem` into the road composition owner. `RoadBuildCompositionContextSystem` now supplies road-build grid data, footprint-center, and camera-to-grid-cell delegates directly from `RoadGridProjectionSystem` and `RoadBuildStartupSystem.State`; the standalone road-build grid helper and `.meta` were removed, and `Design/Architecture/non_ecs_to_ecs_system_inventory.md` was regenerated with the authoritative runtime non-ECS denominator reduced from `380` to `379`. Remaining road footprint/grid fold work still includes the larger `RoadFootprintQuerySystem` / `RoadGridProjectionSystem` helper boundary. Focused Unity validation passed with `[RoadBuildCommandRequestValidation] result=Passed tests=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 

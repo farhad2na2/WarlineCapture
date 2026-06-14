@@ -835,6 +835,8 @@ public partial struct UnitAttackSystem : ISystem
 [UpdateBefore(typeof(UnitDeathSystem))]
 public partial struct UnitAttackVfxRequestSystem : ISystem
 {
+    private const int MaxMuzzleFlashOriginCount = 4;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitAttackVfxRequest>();
@@ -898,7 +900,17 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
         if (forwardOffset > 0f)
             muzzlePosition += (float3)(rotation * Vector3.forward) * forwardOffset;
 
-        UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, muzzlePosition, rotation);
+        UnitAttackTraceOriginPattern originPattern = em.HasComponent<UnitAttackTraceOriginPattern>(request.Source)
+            ? em.GetComponentData<UnitAttackTraceOriginPattern>(request.Source)
+            : default;
+        int originCount = ResolveMuzzleFlashOriginCount(originPattern);
+        Vector3 sideRight = ResolveMuzzleFlashSideRight(sourceTransform.Rotation, request.TargetPosition - sourceTransform.Position);
+        for (int originIndex = 0; originIndex < originCount; originIndex++)
+        {
+            float sideSign = ResolveMuzzleFlashSideSign(originIndex, originCount);
+            float3 sideOffset = (float3)sideRight * (sideSign * math.max(0f, originPattern.LateralOffset));
+            UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, (Vector3)(muzzlePosition + sideOffset), rotation);
+        }
     }
 
     private static void PlayImpact(EntityManager em, UnitAttackVfxRequest request)
@@ -954,5 +966,39 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
                 fallbackRotation.value.y,
                 fallbackRotation.value.z,
                 fallbackRotation.value.w);
+    }
+
+    private static int ResolveMuzzleFlashOriginCount(UnitAttackTraceOriginPattern pattern)
+    {
+        if (pattern.OriginCount <= 1 || pattern.LateralOffset <= 0f)
+            return 1;
+
+        return math.clamp(pattern.OriginCount, 1, MaxMuzzleFlashOriginCount);
+    }
+
+    private static float ResolveMuzzleFlashSideSign(int index, int count)
+    {
+        if (count <= 1)
+            return 0f;
+        if (count == 2)
+            return index == 0 ? -1f : 1f;
+
+        return math.lerp(-1f, 1f, index / (float)(count - 1));
+    }
+
+    private static Vector3 ResolveMuzzleFlashSideRight(quaternion sourceRotation, float3 aim)
+    {
+        Quaternion rotation = new(sourceRotation.value.x, sourceRotation.value.y, sourceRotation.value.z, sourceRotation.value.w);
+        Vector3 right = rotation * Vector3.right;
+        right.y = 0f;
+        if (right.sqrMagnitude > 1e-5f)
+            return right.normalized;
+
+        Vector3 flatAim = (Vector3)aim;
+        flatAim.y = 0f;
+        if (flatAim.sqrMagnitude <= 1e-5f)
+            return Vector3.right;
+
+        return Vector3.Cross(Vector3.up, flatAim).normalized;
     }
 }

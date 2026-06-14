@@ -163,6 +163,13 @@ public struct UnitAttack : IComponentData
     public int TracerEveryNthShot; // 0/1 = tracer on every shot
 }
 
+public struct UnitAttackTraceOriginPattern : IComponentData
+{
+    public byte OriginCount;
+    public float LateralOffset;
+    public float TargetLateralOffset;
+}
+
 public sealed class UnitAttackImpactVfxReference : IComponentData
 {
     public GameObject Prefab;

@@ -359,6 +359,16 @@ public class UnitGridAuthoring : MonoBehaviour
                     ? authoring.config.AttackTracerEveryNthShot
                     : authoring.attackTracerEveryNthShot)
             });
+            if (ShouldUseDualSideAttackTrace(authoring))
+            {
+                float lateralOffset = ResolveDualSideAttackTraceLateralOffset(authoring);
+                AddComponent(entity, new UnitAttackTraceOriginPattern
+                {
+                    OriginCount = 2,
+                    LateralOffset = lateralOffset,
+                    TargetLateralOffset = lateralOffset * 0.25f
+                });
+            }
             if (authoring.config != null)
                 DependsOn(authoring.config);
             GameObject impactPrefab = authoring.config != null && authoring.config.AttackImpactPrefab != null
@@ -745,6 +755,34 @@ public class UnitGridAuthoring : MonoBehaviour
             {
                 Entries = entries.ToArray()
             };
+        }
+
+        private static bool ShouldUseDualSideAttackTrace(UnitGridAuthoring authoring)
+        {
+            if (authoring == null || !authoring.isAirUnit)
+                return false;
+
+            string sourceName = authoring.config != null ? authoring.config.name : authoring.gameObject.name;
+            string display = authoring.ConfiguredDisplayName;
+            return ContainsIgnoreCase(sourceName, "Veh_Helicopter_Attack") ||
+                   ContainsIgnoreCase(display, "Attack Helicopter");
+        }
+
+        private static float ResolveDualSideAttackTraceLateralOffset(UnitGridAuthoring authoring)
+        {
+            string sourceName = authoring.config != null ? authoring.config.name : authoring.gameObject.name;
+            string display = authoring.ConfiguredDisplayName;
+            bool lightAttackHelicopter =
+                ContainsIgnoreCase(sourceName, "Small") ||
+                ContainsIgnoreCase(display, "Light Attack Helicopter");
+            return lightAttackHelicopter ? 0.62f : 0.88f;
+        }
+
+        private static bool ContainsIgnoreCase(string value, string token)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   !string.IsNullOrEmpty(token) &&
+                   value.IndexOf(token, System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static int2 ResolveFootprint(UnitGridAuthoring authoring, bool hasModelBounds, Bounds modelBounds)

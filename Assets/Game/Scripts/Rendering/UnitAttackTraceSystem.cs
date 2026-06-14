@@ -7,6 +7,7 @@ using UnityEngine;
 public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
+    private const int MaxTraceOriginCount = 4;
     private const float TraceEndJitter = 0.25f;
     private static readonly int TraceColorId = Shader.PropertyToID("_TraceColor");
     private static readonly int TraceParamsId = Shader.PropertyToID("_TraceParams");
@@ -105,60 +106,25 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
                     sourcePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
             }
 
-            Vector3 start = (Vector3)sourcePosition + new Vector3(0f, sourceHeightOffset, 0f);
-            Vector3 end = (Vector3)targetTransform.Position + new Vector3(0f, targetHeightOffset, 0f);
-
-            // Per-shot end-point jitter so consecutive shots aren't laser-locked
-            // onto the exact same line. Deterministic from the shot's phase.
-            Vector3 aim = end - start;
-            if (aim.sqrMagnitude > 1e-4f)
+            Vector3 baseStart = (Vector3)sourcePosition + new Vector3(0f, sourceHeightOffset, 0f);
+            Vector3 baseEnd = (Vector3)targetTransform.Position + new Vector3(0f, targetHeightOffset, 0f);
+            UnitAttackTraceOriginPattern originPattern = em.HasComponent<UnitAttackTraceOriginPattern>(entity)
+                ? em.GetComponentData<UnitAttackTraceOriginPattern>(entity)
+                : default;
+            int originCount = ResolveTraceOriginCount(originPattern);
+            Vector3 sideRight = ResolveTraceSideRight(sourceTransform.Rotation, baseEnd - baseStart);
+            for (int originIndex = 0; originIndex < originCount; originIndex++)
             {
-                Vector3 jitterRight = Vector3.Cross(Vector3.up, aim);
-                if (jitterRight.sqrMagnitude > 1e-6f)
-                {
-                    jitterRight.Normalize();
-                    float seedA = Mathf.Repeat(trace.Phase * 13.37f, 1f) * 2f - 1f;
-                    float seedB = Mathf.Repeat(trace.Phase * 7.91f, 1f) * 2f - 1f;
-                    end += jitterRight * (seedA * TraceEndJitter) + Vector3.up * (seedB * TraceEndJitter * 0.5f);
-                }
-            }
-
-            Vector3 direction = end - start;
-            float length = direction.magnitude;
-            if (length <= 0.01f)
-                continue;
-
-            direction /= length;
-
-            // Start the tracer at the gun muzzle instead of the body center.
-            float forwardOffset = Mathf.Min(sourceForwardOffset, length * 0.4f);
-            if (forwardOffset > 0f)
-            {
-                start += direction * forwardOffset;
-                length -= forwardOffset;
-            }
-
-            Vector3 cameraForward = worldCamera.transform.forward;
-            Vector3 right = Vector3.Cross(cameraForward, direction);
-            if (right.sqrMagnitude <= 0.0001f)
-                right = Vector3.Cross(Vector3.up, direction);
-            right.Normalize();
-            Vector3 up = Vector3.Cross(direction, right).normalized;
-
-            Quaternion rotation = Quaternion.LookRotation(direction, up);
-            _matrices[batchCount] = Matrix4x4.TRS(start, rotation, new Vector3(math.max(0.01f, attack.TraceWidth), 1f, length));
-            _colors[batchCount] = attack.TraceColor;
-            _traceParams[batchCount] = new Vector4(
-                math.max(1f, attack.TraceDashDensity),
-                trace.Phase + (Time.time * math.max(0.1f, attack.TraceScrollSpeed)),
-                0f,
-                0f);
-
-            batchCount++;
-            if (batchCount == MaxBatchSize)
-            {
-                DrawBatch(batchCount);
-                batchCount = 0;
+                float sideSign = ResolveTraceSideSign(originIndex, originCount);
+                Vector3 sourceSideOffset = sideRight * (sideSign * Mathf.Max(0f, originPattern.LateralOffset));
+                Vector3 targetSideOffset = sideRight * (sideSign * Mathf.Max(0f, originPattern.TargetLateralOffset));
+                QueueTraceInstance(
+                    ref batchCount,
+                    baseStart + sourceSideOffset,
+                    baseEnd + targetSideOffset,
+                    attack,
+                    trace,
+                    sideSign * 0.071f);
             }
         }
 
@@ -185,6 +151,104 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 
         entityManager = world.EntityManager;
         return true;
+    }
+
+    private void QueueTraceInstance(
+        ref int batchCount,
+        Vector3 start,
+        Vector3 end,
+        UnitAttack attack,
+        UnitAttackTraceComponent trace,
+        float phaseOffset)
+    {
+        float phase = Mathf.Repeat(trace.Phase + phaseOffset, 1f);
+
+        // Per-shot end-point jitter so consecutive shots aren't laser-locked
+        // onto the exact same line. Deterministic from the shot's phase.
+        Vector3 aim = end - start;
+        if (aim.sqrMagnitude > 1e-4f)
+        {
+            Vector3 jitterRight = Vector3.Cross(Vector3.up, aim);
+            if (jitterRight.sqrMagnitude > 1e-6f)
+            {
+                jitterRight.Normalize();
+                float seedA = Mathf.Repeat(phase * 13.37f, 1f) * 2f - 1f;
+                float seedB = Mathf.Repeat(phase * 7.91f, 1f) * 2f - 1f;
+                end += jitterRight * (seedA * TraceEndJitter) + Vector3.up * (seedB * TraceEndJitter * 0.5f);
+            }
+        }
+
+        Vector3 direction = end - start;
+        float length = direction.magnitude;
+        if (length <= 0.01f)
+            return;
+
+        direction /= length;
+
+        // Start the tracer at the gun muzzle instead of the body center.
+        float forwardOffset = Mathf.Min(sourceForwardOffset, length * 0.4f);
+        if (forwardOffset > 0f)
+        {
+            start += direction * forwardOffset;
+            length -= forwardOffset;
+        }
+
+        Vector3 cameraForward = worldCamera.transform.forward;
+        Vector3 right = Vector3.Cross(cameraForward, direction);
+        if (right.sqrMagnitude <= 0.0001f)
+            right = Vector3.Cross(Vector3.up, direction);
+        right.Normalize();
+        Vector3 up = Vector3.Cross(direction, right).normalized;
+
+        Quaternion rotation = Quaternion.LookRotation(direction, up);
+        _matrices[batchCount] = Matrix4x4.TRS(start, rotation, new Vector3(math.max(0.01f, attack.TraceWidth), 1f, length));
+        _colors[batchCount] = attack.TraceColor;
+        _traceParams[batchCount] = new Vector4(
+            math.max(1f, attack.TraceDashDensity),
+            phase + (Time.time * math.max(0.1f, attack.TraceScrollSpeed)),
+            0f,
+            0f);
+
+        batchCount++;
+        if (batchCount == MaxBatchSize)
+        {
+            DrawBatch(batchCount);
+            batchCount = 0;
+        }
+    }
+
+    private static int ResolveTraceOriginCount(UnitAttackTraceOriginPattern pattern)
+    {
+        if (pattern.OriginCount <= 1 || pattern.LateralOffset <= 0f)
+            return 1;
+
+        return Mathf.Clamp(pattern.OriginCount, 1, MaxTraceOriginCount);
+    }
+
+    private static float ResolveTraceSideSign(int index, int count)
+    {
+        if (count <= 1)
+            return 0f;
+        if (count == 2)
+            return index == 0 ? -1f : 1f;
+
+        return Mathf.Lerp(-1f, 1f, index / (float)(count - 1));
+    }
+
+    private static Vector3 ResolveTraceSideRight(quaternion sourceRotation, Vector3 aim)
+    {
+        Quaternion rotation = new(sourceRotation.value.x, sourceRotation.value.y, sourceRotation.value.z, sourceRotation.value.w);
+        Vector3 right = rotation * Vector3.right;
+        right.y = 0f;
+        if (right.sqrMagnitude > 1e-5f)
+            return right.normalized;
+
+        Vector3 flatAim = aim;
+        flatAim.y = 0f;
+        if (flatAim.sqrMagnitude <= 1e-5f)
+            return Vector3.right;
+
+        return Vector3.Cross(Vector3.up, flatAim).normalized;
     }
 
     private bool EnsureRenderResources()

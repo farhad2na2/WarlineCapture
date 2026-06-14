@@ -41,8 +41,6 @@ public static class AirMissileLauncherValidationRunner
         Require(config.MissileVisualPrefab != null, "Missile visual prefab is not assigned.");
         Require(config.LaunchFlashPrefab != null, "Launch flash prefab is not assigned.");
         Require(config.LaunchFlashPrefab.name == "Vfx_MuzzleFlash_Rocket", "Launch flash prefab must be a muzzle flash, not an explosion.");
-        Require(config.LaunchSmokePrefab != null, "Launch smoke prefab is not assigned.");
-        Require(config.MissileTrailPrefab != null, "Missile trail prefab is not assigned.");
         Require(config.AirburstExplosionPrefab != null, "Airburst explosion prefab is not assigned.");
         Require(config.AirTargetImpactPrefab != null, "Air target impact prefab is not assigned.");
         Require(config.InterceptExplosionPrefab != null, "Intercept explosion prefab is not assigned.");
@@ -114,7 +112,7 @@ public static class AirMissileLauncherValidationRunner
         using EntityQuery projectileQuery = em.CreateEntityQuery(typeof(AirMissileProjectileComponent));
         Require(projectileQuery.CalculateEntityCount() == 1, "Fire control did not create exactly one homing projectile.");
         Entity projectile = projectileQuery.GetSingletonEntity();
-        Require(em.HasComponent<AirMissileProjectileTrailComponent>(projectile), "Configured missile trail did not attach to the homing projectile.");
+        Require(em.HasComponent<AirMissileProjectileTrailComponent>(projectile), "Generated missile trail did not attach to the homing projectile.");
         AirMissileProjectileComponent projectileData = em.GetComponentData<AirMissileProjectileComponent>(projectile);
         projectileData.ProximityFuseRadius = 500f;
         projectileData.Damage = 60;

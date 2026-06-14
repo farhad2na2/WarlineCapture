@@ -118,7 +118,7 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
             if (launchSmokePrefab != null)
             {
                 float3 smokePosition = sourcePosition + math.up() * LaunchSmokeVerticalOffset;
-                UnitAttackImpactVfxRuntime.PlayTimedLoop(
+                UnitAttackImpactVfxView.PlayTimedLoop(
                     launchSmokePrefab,
                     smokePosition,
                     ToUnityQuaternion(quaternion.LookRotationSafe(-launchDirection, math.up())),
@@ -743,8 +743,8 @@ public partial struct GroundMissileImpactSystem : ISystem
 
         GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(request.Source);
         if (vfx?.ImpactExplosionPrefab != null)
-            UnitAttackImpactVfxRuntime.Play(vfx.ImpactExplosionPrefab, request.Position);
+            UnitAttackImpactVfxView.Play(vfx.ImpactExplosionPrefab, request.Position);
         if (vfx?.ImpactSmokePrefab != null)
-            UnitAttackImpactVfxRuntime.Play(vfx.ImpactSmokePrefab, request.Position);
+            UnitAttackImpactVfxView.Play(vfx.ImpactSmokePrefab, request.Position);
     }
 }

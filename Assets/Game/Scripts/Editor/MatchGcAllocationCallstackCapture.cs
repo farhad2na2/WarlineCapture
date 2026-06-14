@@ -850,7 +850,7 @@ public static class MatchGcAllocationCallstackCapture
 
         foreach (GameObject prefab in prefabs)
         {
-            UnitAttackImpactVfxRuntime.Prewarm(prefab, BattleVfxPrewarmCount);
+            UnitAttackImpactVfxView.Prewarm(prefab, BattleVfxPrewarmCount);
         }
 
         return prefabs.Count;

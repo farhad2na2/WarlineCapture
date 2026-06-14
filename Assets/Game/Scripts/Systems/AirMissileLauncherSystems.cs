@@ -300,10 +300,6 @@ public partial struct AirMissileLauncherTurretAimSystem : ISystem
 [UpdateAfter(typeof(AirMissileLauncherTurretAimSystem))]
 public partial struct AirMissileLauncherFireControlSystem : ISystem
 {
-    private const float TrailIntervalSeconds = 0.06f;
-    private const float TrailEmitSeconds = 0.08f;
-    private const float TrailActiveSeconds = 0.65f;
-
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<AirMissileLauncherComponent>();
@@ -472,22 +468,14 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
         if (em.HasComponent<AirMissileLauncherVfxReferenceComponent>(launcherEntity))
         {
             AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<AirMissileLauncherVfxReferenceComponent>(launcherEntity);
-            if (vfx?.LaunchSmokePrefab != null)
-                UnitAttackImpactVfxRuntime.Play(vfx.LaunchSmokePrefab, start);
             if (vfx?.LaunchFlashPrefab != null)
-                UnitAttackImpactVfxRuntime.Play(vfx.LaunchFlashPrefab, start);
-            if (vfx?.MissileTrailPrefab != null)
+                UnitAttackImpactVfxView.Play(vfx.LaunchFlashPrefab, start, ToUnityQuaternion(rotation));
+            if (!usesExistingMissileVisual || !em.HasComponent<AirMissileProjectileTrailComponent>(projectileEntity))
             {
-                UnitAttackImpactVfxRuntime.PlayTimedLoop(
-                    vfx.MissileTrailPrefab,
-                    start,
-                    ToUnityQuaternion(quaternion.LookRotationSafe(-direction, math.up())),
-                    TrailEmitSeconds,
-                    TrailActiveSeconds);
                 ecb.AddComponent(projectileEntity, new AirMissileProjectileTrailComponent
                 {
-                    TimeUntilNextTrail = TrailIntervalSeconds,
-                    TrailIntervalSeconds = TrailIntervalSeconds
+                    TimeUntilNextTrail = 0f,
+                    TrailIntervalSeconds = 0f
                 });
             }
         }
@@ -592,8 +580,8 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
     }
 }
 
-[UpdateAfter(typeof(AirMissileLauncherFireControlSystem))]
-[UpdateBefore(typeof(AirMissileHomingProjectileSystem))]
+[UpdateAfter(typeof(AirMissileHomingProjectileSystem))]
+[UpdateBefore(typeof(AirMissileImpactSystem))]
 public partial struct AirMissileProjectileTrailSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -603,41 +591,14 @@ public partial struct AirMissileProjectileTrailSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager em = state.EntityManager;
-        float dt = SystemAPI.Time.DeltaTime;
-
-        foreach (var (projectile, trail, transform) in SystemAPI
-                     .Query<RefRO<AirMissileProjectileComponent>, RefRW<AirMissileProjectileTrailComponent>, RefRO<LocalTransform>>())
+        foreach (var (projectile, transform, entity) in SystemAPI
+                     .Query<RefRO<AirMissileProjectileComponent>, RefRO<LocalTransform>>()
+                     .WithAll<AirMissileProjectileTrailComponent>()
+                     .WithEntityAccess())
         {
-            ref AirMissileProjectileTrailComponent trailRw = ref trail.ValueRW;
-            trailRw.TimeUntilNextTrail -= dt;
-            if (trailRw.TimeUntilNextTrail > 0f)
-                continue;
-
-            trailRw.TimeUntilNextTrail = math.max(0.02f, trailRw.TrailIntervalSeconds);
-            if (!em.Exists(projectile.ValueRO.Source) ||
-                !em.HasComponent<AirMissileLauncherVfxReferenceComponent>(projectile.ValueRO.Source))
-            {
-                continue;
-            }
-
-            AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<AirMissileLauncherVfxReferenceComponent>(projectile.ValueRO.Source);
-            if (vfx?.MissileTrailPrefab == null)
-                continue;
-
             float3 direction = math.normalizesafe(projectile.ValueRO.Velocity, math.rotate(transform.ValueRO.Rotation, new float3(0f, 0f, 1f)));
-            UnitAttackImpactVfxRuntime.PlayTimedLoop(
-                vfx.MissileTrailPrefab,
-                transform.ValueRO.Position,
-                ToUnityQuaternion(quaternion.LookRotationSafe(-direction, math.up())),
-                0.08f,
-                0.65f);
+            AirMissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
         }
-    }
-
-    private static Quaternion ToUnityQuaternion(quaternion rotation)
-    {
-        return new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
     }
 }
 
@@ -860,7 +821,7 @@ public partial struct AirMissileImpactSystem : ISystem
         if (prefab == null)
             prefab = vfx?.AirburstExplosionPrefab;
         if (prefab != null)
-            UnitAttackImpactVfxRuntime.Play(prefab, request.Position);
+            UnitAttackImpactVfxView.Play(prefab, request.Position);
     }
 }
 

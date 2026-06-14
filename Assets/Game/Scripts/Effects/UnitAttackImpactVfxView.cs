@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
+public sealed class UnitAttackImpactVfxView : MonoBehaviour
 {
     private const int InitialActiveCapacity = 128;
     private const int InitialPrefabPoolCapacity = 32;
@@ -17,7 +17,7 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         public GameObject Prefab;
     }
 
-    private static UnitAttackImpactVfxRuntime _instance;
+    private static UnitAttackImpactVfxView _instance;
     private readonly Dictionary<GameObject, Stack<PooledInstance>> _availableByPrefab = new();
     private readonly List<PooledInstance> _active = new(InitialActiveCapacity);
 
@@ -65,10 +65,10 @@ public sealed class UnitAttackImpactVfxRuntime : MonoBehaviour
         if (_instance != null)
             return;
 
-        GameObject root = new("UnitAttackImpactVfxRuntime");
+        GameObject root = new("UnitAttackImpactVfxView");
         if (Application.isPlaying)
             DontDestroyOnLoad(root);
-        _instance = root.AddComponent<UnitAttackImpactVfxRuntime>();
+        _instance = root.AddComponent<UnitAttackImpactVfxView>();
     }
 
     private void Update()

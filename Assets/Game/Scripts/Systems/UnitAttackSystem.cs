@@ -909,7 +909,7 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
         {
             float sideSign = ResolveMuzzleFlashSideSign(originIndex, originCount);
             float3 sideOffset = (float3)sideRight * (sideSign * math.max(0f, originPattern.LateralOffset));
-            UnitAttackImpactVfxRuntime.Play(muzzleVfx.Prefab, (Vector3)(muzzlePosition + sideOffset), rotation);
+            UnitAttackImpactVfxView.Play(muzzleVfx.Prefab, (Vector3)(muzzlePosition + sideOffset), rotation);
         }
     }
 
@@ -939,7 +939,7 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
         Quaternion impactRotation = math.lengthsq(toAttacker) > 1e-4f
             ? Quaternion.LookRotation((Vector3)toAttacker)
             : Quaternion.identity;
-        UnitAttackImpactVfxRuntime.Play(impactVfx.Prefab, targetPosition, impactRotation);
+        UnitAttackImpactVfxView.Play(impactVfx.Prefab, targetPosition, impactRotation);
     }
 
     private static Quaternion ResolveLookRotation(

@@ -30,8 +30,6 @@ public sealed class AirMissileLauncherAuthoringTests
         Assert.NotNull(config.MissileVisualPrefab);
         Assert.NotNull(config.LaunchFlashPrefab);
         Assert.AreEqual("Vfx_MuzzleFlash_Rocket", config.LaunchFlashPrefab.name);
-        Assert.NotNull(config.LaunchSmokePrefab);
-        Assert.NotNull(config.MissileTrailPrefab);
         Assert.NotNull(config.AirburstExplosionPrefab);
         Assert.NotNull(config.AirTargetImpactPrefab);
         Assert.NotNull(config.InterceptExplosionPrefab);

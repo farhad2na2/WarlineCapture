@@ -31,6 +31,15 @@ internal sealed class BuildingPlacementLifecycleSystem
     public delegate bool TrySpendCostDelegate(int cost);
     public delegate void CommitPlacementDelegate(PlacementState placement);
 
+    public enum ConfirmFailureReason
+    {
+        None,
+        MissingActivePlacement,
+        BlockedPlacement,
+        InvalidPlacement,
+        NotEnoughMoney
+    }
+
     public readonly struct CancelContext
     {
         public readonly BuildingPlacementInputSystem InputSystem;
@@ -183,20 +192,41 @@ internal sealed class BuildingPlacementLifecycleSystem
 
     public bool Confirm(ConfirmContext context)
     {
+        return Confirm(context, out _);
+    }
+
+    public bool Confirm(ConfirmContext context, out ConfirmFailureReason failureReason)
+    {
         PlacementState placement = ActivePlacement;
-        if (placement == null || !placement.IsValid)
+        if (placement == null)
+        {
+            failureReason = ConfirmFailureReason.MissingActivePlacement;
             return false;
+        }
+
+        if (!placement.IsValid)
+        {
+            failureReason = ConfirmFailureReason.BlockedPlacement;
+            return false;
+        }
 
         if (context.ValidateConfirm != null && !context.ValidateConfirm(placement))
+        {
+            failureReason = ConfirmFailureReason.InvalidPlacement;
             return false;
+        }
 
         int placementCost = Mathf.Max(0, ActivePlacementCost);
         if (placementCost > 0 && context.TrySpendCost != null && !context.TrySpendCost(placementCost))
+        {
+            failureReason = ConfirmFailureReason.NotEnoughMoney;
             return false;
+        }
 
         placement.OriginCell = placement.CommittedOriginCell;
         ActivePlacementCost = 0;
         context.CommitPlacement?.Invoke(placement);
+        failureReason = ConfirmFailureReason.None;
         return true;
     }
 

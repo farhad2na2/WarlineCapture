@@ -28,46 +28,39 @@ internal sealed class BuildingPlacementCommandSystem
         }
     }
 
-    public void BeginSoldierBasePlacement(Context context)
+    public int EnqueueBeginConfiguredPlacement(EntityManager em, string buildingId)
     {
-        BeginConfiguredPlacement(
-            context,
-            context.StartupSystem.SoldierBaseDefinition,
-            "BuildingPlacementCommandSystem is missing the Soldier Base spawnable prefab reference.");
+        return EnqueueUiPlacementCommand(
+            em,
+            BuildingUiPlacementCommandRequestElement.KindBeginConfiguredPlacement,
+            clearBuildingSelection: true,
+            BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
     }
 
-    public void BeginSoldierTentPlacement(Context context)
+    public bool EnqueueAndProcessBeginConfiguredPlacement(EntityManager em, Context context, string buildingId)
     {
-        BeginConfiguredPlacement(
-            context,
-            context.StartupSystem.SoldierTentDefinition,
-            "BuildingPlacementCommandSystem is missing the Soldier Tent spawnable prefab reference.");
+        int requestId = EnqueueBeginConfiguredPlacement(em, buildingId);
+        ProcessPendingUiPlacementCommands(em, context);
+        return TryGetUiPlacementCommandResult(em, requestId, out BuildingUiPlacementCommandResultElement result) &&
+               result.Accepted != 0;
     }
 
-    public void BeginFactoryPlacement(Context context)
+    public bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(EntityManager em, Context context, GameObject prefab)
     {
-        BeginConfiguredPlacement(
-            context,
-            context.StartupSystem.FactoryDefinition,
-            "BuildingPlacementCommandSystem is missing the Factory spawnable prefab reference.");
-    }
-
-    public bool BeginPlacementForConfiguredSpawnable(Context context, GameObject prefab)
-    {
-        if (context.DefinitionSystem == null ||
-            !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out BuildingDefinition definition))
-        {
+        string buildingId = BuildingDefinitionSystem.GetSpawnableLookupKey(prefab);
+        if (string.IsNullOrEmpty(buildingId))
             return false;
-        }
 
-        BeginPlacement(context, definition);
-        return true;
+        return EnqueueAndProcessBeginConfiguredPlacement(em, context, buildingId);
     }
 
-    public bool ConfirmBuildingPlacement(Context context)
+    public bool EnqueueAndProcessBeginSoldierBasePlacement(EntityManager em, Context context)
     {
-        return context.SessionSystem != null &&
-               context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
+        string buildingId = ResolveDefinitionLookupKey(context.StartupSystem?.SoldierBaseDefinition);
+        if (string.IsNullOrEmpty(buildingId))
+            return false;
+
+        return EnqueueAndProcessBeginConfiguredPlacement(em, context, buildingId);
     }
 
     public int EnqueueConfirmBuildingPlacement(EntityManager em)
@@ -86,12 +79,6 @@ internal sealed class BuildingPlacementCommandSystem
                result.Accepted != 0;
     }
 
-    public bool RotateBuildingPlacement(Context context)
-    {
-        return context.SessionSystem != null &&
-               context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
-    }
-
     public int EnqueueRotateBuildingPlacement(EntityManager em)
     {
         return EnqueueUiPlacementCommand(
@@ -108,11 +95,6 @@ internal sealed class BuildingPlacementCommandSystem
                result.Accepted != 0;
     }
 
-    public void CancelBuildingPlacement(Context context)
-    {
-        context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
-    }
-
     public int EnqueueCancelBuildingPlacement(EntityManager em)
     {
         return EnqueueUiPlacementCommand(
@@ -125,16 +107,6 @@ internal sealed class BuildingPlacementCommandSystem
     {
         EnqueueCancelBuildingPlacement(em);
         ProcessPendingUiPlacementCommands(em, context);
-    }
-
-    public void ExitBuildMode(Context context)
-    {
-        context.SessionSystem?.ExitBuildMode(context.SessionContext);
-    }
-
-    public void ExitBuildMode(Context context, bool clearBuildingSelection)
-    {
-        context.SessionSystem?.ExitBuildMode(context.SessionContext, clearBuildingSelection);
     }
 
     public int EnqueueExitBuildMode(EntityManager em, bool clearBuildingSelection = true)
@@ -175,6 +147,19 @@ internal sealed class BuildingPlacementCommandSystem
     public void ProcessPendingUiPlacementCommands(EntityManager em, Context context)
     {
         Entity queueEntity = EnsureUiPlacementCommandEntity(em);
+        ProcessPendingUiPlacementCommands(em, context, queueEntity);
+    }
+
+    public void ProcessPendingUiPlacementCommandsIfPresent(EntityManager em, Context context)
+    {
+        if (!TryGetUiPlacementCommandEntity(em, out Entity queueEntity))
+            return;
+
+        ProcessPendingUiPlacementCommands(em, context, queueEntity);
+    }
+
+    private void ProcessPendingUiPlacementCommands(EntityManager em, Context context, Entity queueEntity)
+    {
         DynamicBuffer<BuildingUiPlacementCommandRequestElement> requests =
             em.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity);
         if (requests.Length == 0)
@@ -215,17 +200,6 @@ internal sealed class BuildingPlacementCommandSystem
         context.SessionSystem?.SetActivePlacementCost(context.SessionContext, cost);
     }
 
-    private static void BeginConfiguredPlacement(Context context, BuildingDefinition definition, string missingPrefabWarning)
-    {
-        if (definition == null || definition.Prefab == null)
-        {
-            context.LogWarning?.Invoke(missingPrefabWarning);
-            return;
-        }
-
-        BeginPlacement(context, definition);
-    }
-
     private static void BeginPlacement(Context context, BuildingDefinition definition)
     {
         context.SessionSystem?.BeginPlacement(context.SessionContext, definition);
@@ -245,13 +219,15 @@ internal sealed class BuildingPlacementCommandSystem
         switch (request.RequestKind)
         {
             case BuildingUiPlacementCommandRequestElement.KindConfirmPlacement:
-                if (context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext))
+                if (context.SessionSystem.ConfirmBuildingPlacement(
+                        context.SessionContext,
+                        out BuildingPlacementLifecycleSystem.ConfirmFailureReason confirmFailureReason))
                 {
                     resultCode = BuildingUiPlacementCommandResultElement.Completed;
                     return true;
                 }
 
-                resultCode = BuildingUiPlacementCommandResultElement.Rejected;
+                resultCode = ToConfirmFailureResultCode(confirmFailureReason);
                 return false;
 
             case BuildingUiPlacementCommandRequestElement.KindCancelPlacement:
@@ -276,16 +252,65 @@ internal sealed class BuildingPlacementCommandSystem
                 resultCode = BuildingUiPlacementCommandResultElement.Completed;
                 return true;
 
+            case BuildingUiPlacementCommandRequestElement.KindBeginConfiguredPlacement:
+                if (TryResolveConfiguredPlacementDefinition(context, request.BuildingId, out BuildingDefinition definition))
+                {
+                    BeginPlacement(context, definition);
+                    resultCode = BuildingUiPlacementCommandResultElement.Completed;
+                    return true;
+                }
+
+                resultCode = BuildingUiPlacementCommandResultElement.MissingConfig;
+                return false;
+
             default:
                 resultCode = BuildingUiPlacementCommandResultElement.Rejected;
                 return false;
         }
     }
 
+    private static bool TryResolveConfiguredPlacementDefinition(
+        Context context,
+        FixedString128Bytes buildingId,
+        out BuildingDefinition definition)
+    {
+        definition = null;
+        if (context.DefinitionSystem == null)
+            return false;
+
+        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId.ToString());
+        if (string.IsNullOrEmpty(normalizedBuildingId) ||
+            !context.DefinitionSystem.TryGetConfiguredSpawnable(normalizedBuildingId, out var spawnable))
+        {
+            return false;
+        }
+
+        return context.DefinitionSystem.TryGetConfiguredDefinition(spawnable.Prefab, out definition) &&
+               definition != null &&
+               definition.Prefab != null;
+    }
+
+    private static byte ToConfirmFailureResultCode(BuildingPlacementLifecycleSystem.ConfirmFailureReason reason)
+    {
+        return reason switch
+        {
+            BuildingPlacementLifecycleSystem.ConfirmFailureReason.MissingActivePlacement =>
+                BuildingUiPlacementCommandResultElement.MissingActivePlacement,
+            BuildingPlacementLifecycleSystem.ConfirmFailureReason.BlockedPlacement =>
+                BuildingUiPlacementCommandResultElement.BlockedPlacement,
+            BuildingPlacementLifecycleSystem.ConfirmFailureReason.InvalidPlacement =>
+                BuildingUiPlacementCommandResultElement.InvalidPlacement,
+            BuildingPlacementLifecycleSystem.ConfirmFailureReason.NotEnoughMoney =>
+                BuildingUiPlacementCommandResultElement.NotEnoughMoney,
+            _ => BuildingUiPlacementCommandResultElement.Rejected
+        };
+    }
+
     private static int EnqueueUiPlacementCommand(
         EntityManager em,
         byte requestKind,
-        bool clearBuildingSelection)
+        bool clearBuildingSelection,
+        string buildingId = "")
     {
         Entity queueEntity = EnsureUiPlacementCommandEntity(em);
         BuildingUiPlacementCommandQueueComponent queue =
@@ -295,26 +320,50 @@ internal sealed class BuildingPlacementCommandSystem
         em.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Add(new BuildingUiPlacementCommandRequestElement
         {
             RequestId = queue.LastRequestId,
+            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
             RequestKind = requestKind,
             ClearBuildingSelection = clearBuildingSelection ? (byte)1 : (byte)0
         });
         return queue.LastRequestId;
     }
 
+    private static string ResolveDefinitionLookupKey(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return string.Empty;
+
+        string displayKey = BuildingDefinitionSystem.NormalizeSpawnableKey(definition.DisplayName);
+        if (!string.IsNullOrEmpty(displayKey))
+            return displayKey;
+
+        return definition.Prefab != null
+            ? BuildingDefinitionSystem.GetSpawnableLookupKey(definition.Prefab)
+            : string.Empty;
+    }
+
     private static Entity EnsureUiPlacementCommandEntity(EntityManager em)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
-        if (!query.IsEmptyIgnoreFilter)
-        {
-            Entity existing = query.GetSingletonEntity();
-            EnsureUiPlacementCommandBuffers(em, existing);
+        if (TryGetUiPlacementCommandEntity(em, out Entity existing))
             return existing;
-        }
 
         Entity entity = em.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
         em.SetName(entity, "BuildingUiPlacementCommands");
         EnsureUiPlacementCommandBuffers(em, entity);
         return entity;
+    }
+
+    private static bool TryGetUiPlacementCommandEntity(EntityManager em, out Entity entity)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            entity = query.GetSingletonEntity();
+            EnsureUiPlacementCommandBuffers(em, entity);
+            return true;
+        }
+
+        entity = Entity.Null;
+        return false;
     }
 
     private static void EnsureUiPlacementCommandBuffers(EntityManager em, Entity entity)

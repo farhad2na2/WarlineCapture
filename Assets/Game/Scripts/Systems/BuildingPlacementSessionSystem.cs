@@ -61,8 +61,18 @@ internal sealed class BuildingPlacementSessionSystem
 
     public bool ConfirmBuildingPlacement(Context context)
     {
-        if (context.LifecycleSystem == null ||
-            !context.LifecycleSystem.Confirm(context.CreateConfirmContext()))
+        return ConfirmBuildingPlacement(context, out _);
+    }
+
+    public bool ConfirmBuildingPlacement(
+        Context context,
+        out BuildingPlacementLifecycleSystem.ConfirmFailureReason failureReason)
+    {
+        failureReason = BuildingPlacementLifecycleSystem.ConfirmFailureReason.MissingActivePlacement;
+        if (context.LifecycleSystem == null)
+            return false;
+
+        if (!context.LifecycleSystem.Confirm(context.CreateConfirmContext(), out failureReason))
             return false;
 
         context.RecordBuildingBuilt?.Invoke();

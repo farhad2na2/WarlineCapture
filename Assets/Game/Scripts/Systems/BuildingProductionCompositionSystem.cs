@@ -29,7 +29,8 @@ internal sealed class BuildingProductionCompositionSystem
             source.BuildingSpawnSystem,
             spawnContext,
             source.RuntimeResourceSystem.CurrentDollars,
-            prefab => source.BuildingPlacementCommandSystem.BeginPlacementForConfiguredSpawnable(
+            prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
+                source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 prefab),
             source.RuntimeResourceSystem.TrySpendDollars,
@@ -67,5 +68,29 @@ internal sealed class BuildingProductionCompositionSystem
             runtimeSource.GetEffectivePlacementRect,
             source.PrepareTransportDropVisual);
         return productionSource;
+    }
+
+    private static bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementCommandSystem.Context context,
+        GameObject prefab)
+    {
+        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessBeginPlacementForConfiguredSpawnable(entityManager, context, prefab)
+            : BeginPlacementForConfiguredSpawnableWithoutEntityManager(context, prefab);
+    }
+
+    private static bool BeginPlacementForConfiguredSpawnableWithoutEntityManager(
+        BuildingPlacementCommandSystem.Context context,
+        GameObject prefab)
+    {
+        if (context.DefinitionSystem == null ||
+            !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out BuildingDefinition definition))
+        {
+            return false;
+        }
+
+        context.SessionSystem?.BeginPlacement(context.SessionContext, definition);
+        return true;
     }
 }

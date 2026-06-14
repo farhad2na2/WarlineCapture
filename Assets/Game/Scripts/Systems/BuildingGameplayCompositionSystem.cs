@@ -435,6 +435,7 @@ internal sealed class BuildingGameplayCompositionSystem
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
                         rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
+                        createPlacementCommandContext,
                         (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
                             _placementInteractionCompositionSystem.CreateActivePlacementPointerContext(
                                 pointerSource,

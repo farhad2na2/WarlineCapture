@@ -31,7 +31,8 @@ public sealed class BuildingRuntimeBoundarySystem
         EntityManager em,
         EntityQuery boundaryQuery,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-        float now)
+        float now,
+        int frameCount)
     {
         if (definitionSystem == null ||
             runtimeSpawnSystem == null ||
@@ -58,7 +59,8 @@ public sealed class BuildingRuntimeBoundarySystem
             runtimeBuildings,
             em,
             boundaryEntity,
-            now);
+            now,
+            frameCount);
         PublishReadModelIfDue(
             definitionSystem,
             runtimeQuerySystem,
@@ -82,11 +84,31 @@ public sealed class BuildingRuntimeBoundarySystem
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity,
-        float now)
+        float now,
+        int frameCount)
     {
         ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity);
+        ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
         ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
         ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+    }
+
+    private static void ProcessUiProductionRequests(
+        BuildingProductionRequestSystem productionRequestSystem,
+        BuildingProductionRequestSystem.Context productionRequestContext,
+        EntityManager em,
+        int frameCount,
+        float now)
+    {
+        productionRequestSystem.ProcessPendingUiProductionCommandsIfPresent(
+            em,
+            productionRequestContext,
+            frameCount,
+            now);
+        productionRequestSystem.ProcessPendingUiCampItemCommandsIfPresent(
+            em,
+            productionRequestContext,
+            frameCount);
     }
 
     private void ProcessResourceSellRequests(
@@ -229,14 +251,23 @@ public sealed class BuildingRuntimeBoundarySystem
             }
             else if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment)
             {
+                Vector2Int requestedOrigin = new(request.PreferredOrigin.x, request.PreferredOrigin.y);
+                Vector2Int wallFootprint = default;
+                bool resolvedFootprint = runtimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
+                    runtimeSpawnContext,
+                    spawnable.Prefab,
+                    request.RotateVertical != 0,
+                    out wallFootprint);
                 placed = runtimeSpawnSystem.TrySpawnRuntimeWallSegment(
                     runtimeSpawnContext,
                     spawnable.Prefab,
-                    new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                    requestedOrigin,
                     request.RotateVertical != 0,
                     request.FactionId,
                     request.AllowExistingWallOverlap != 0);
                 request.SpawnedCount = placed ? 1 : 0;
+                if (placed && resolvedFootprint)
+                    result = new BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult(0, requestedOrigin, wallFootprint);
             }
             else
             {

@@ -1,3 +1,4 @@
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class RoadBuildCompositionLifecycleSystem
@@ -28,6 +29,11 @@ internal sealed class RoadBuildCompositionLifecycleSystem
             source.RoadBuildInteractionContextSystem,
             contextSystem.CreateRoadBuildInteractionContext(source),
             source.RoadBuildStartupState.WorldCamera);
+        source.RoadBuildRuntimeActionSystem.ConfigureCommands(
+            source.RoadBuildRuntimeActionState,
+            source.RoadBuildCommandSystem,
+            contextSystem.CreateRoadBuildCommandContext(source),
+            source.RoadBuildEcsBoundarySystem.TryGetEntityManager);
         source.RoadBuildRuntimeActionSystem.ConfigureGui(
             source.RoadBuildRuntimeActionState,
             source.RoadDeletePromptSystem,
@@ -63,8 +69,18 @@ internal sealed class RoadBuildCompositionLifecycleSystem
         RoadBuildCompositionSourceSystem source,
         RoadBuildCompositionContextSystem contextSystem)
     {
-        source.RoadBuildCommandSystem.ExitBuildMode(contextSystem.CreateRoadBuildCommandContext(source));
+        RoadBuildCommandSystem.Context commandContext = contextSystem.CreateRoadBuildCommandContext(source);
+        if (source.RoadBuildEcsBoundarySystem.TryGetEntityManager(out EntityManager entityManager))
+            source.RoadBuildCommandSystem.EnqueueAndProcessExitBuildMode(entityManager, commandContext);
+        else
+            ExitBuildModeWithoutEntityManager(commandContext);
         source.RoadBuildSessionSystem.ResetSkipBuildClickFrames(source.RoadBuildSessionState);
         source.RoadBuildDisposalSystem.Dispose(contextSystem.CreateRoadBuildDisposalContext(source));
+    }
+
+    private static void ExitBuildModeWithoutEntityManager(RoadBuildCommandSystem.Context commandContext)
+    {
+        commandContext.ClearRoadBuildDragState?.Invoke();
+        commandContext.SessionSystem?.ExitBuildMode(commandContext.SessionContext);
     }
 }

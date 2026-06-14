@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class BuildingSelectionSystem
@@ -128,6 +130,102 @@ internal sealed class BuildingSelectionSystem
         deleteBuildingById?.Invoke(buildingId.Value);
     }
 
+    public int EnqueueDeleteSelectedBuilding(EntityManager em)
+    {
+        return EnqueueUiSelectionCommand(
+            em,
+            BuildingUiSelectionCommandRequestElement.KindDeleteSelectedBuilding);
+    }
+
+    public int EnqueueClearSelectedBuilding(EntityManager em)
+    {
+        return EnqueueUiSelectionCommand(
+            em,
+            BuildingUiSelectionCommandRequestElement.KindClearSelectedBuilding);
+    }
+
+    public bool EnqueueAndProcessDeleteSelectedBuilding(
+        EntityManager em,
+        Context context,
+        BuildingIdAction deleteBuildingById)
+    {
+        int requestId = EnqueueDeleteSelectedBuilding(em);
+        ProcessPendingUiSelectionCommands(em, context, deleteBuildingById);
+        return TryGetUiSelectionCommandResult(em, requestId, out BuildingUiSelectionCommandResultElement result) &&
+               result.Accepted != 0;
+    }
+
+    public bool EnqueueAndProcessClearSelectedBuilding(EntityManager em, Context context)
+    {
+        int requestId = EnqueueClearSelectedBuilding(em);
+        ProcessPendingUiSelectionCommands(em, context, null);
+        return TryGetUiSelectionCommandResult(em, requestId, out BuildingUiSelectionCommandResultElement result) &&
+               result.Accepted != 0;
+    }
+
+    public bool TryGetUiSelectionCommandResult(
+        EntityManager em,
+        int requestId,
+        out BuildingUiSelectionCommandResultElement result)
+    {
+        result = default;
+        Entity queueEntity = EnsureUiSelectionCommandEntity(em);
+        DynamicBuffer<BuildingUiSelectionCommandResultElement> results =
+            em.GetBuffer<BuildingUiSelectionCommandResultElement>(queueEntity);
+        for (int i = 0; i < results.Length; i++)
+        {
+            if (results[i].RequestId == requestId)
+            {
+                result = results[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ProcessPendingUiSelectionCommands(
+        EntityManager em,
+        Context context,
+        BuildingIdAction deleteBuildingById)
+    {
+        Entity queueEntity = EnsureUiSelectionCommandEntity(em);
+        DynamicBuffer<BuildingUiSelectionCommandRequestElement> requests =
+            em.GetBuffer<BuildingUiSelectionCommandRequestElement>(queueEntity);
+        if (requests.Length == 0)
+            return;
+
+        using NativeList<BuildingUiSelectionCommandRequestElement> pendingRequests = new(requests.Length, Allocator.Temp);
+        for (int i = 0; i < requests.Length; i++)
+            pendingRequests.Add(requests[i]);
+        requests.Clear();
+
+        DynamicBuffer<BuildingUiSelectionCommandResultElement> results =
+            em.GetBuffer<BuildingUiSelectionCommandResultElement>(queueEntity);
+        results.Clear();
+
+        NativeArray<BuildingUiSelectionCommandRequestElement> pendingArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingArray.Length; i++)
+        {
+            BuildingUiSelectionCommandRequestElement request = pendingArray[i];
+            bool accepted = ProcessUiSelectionCommand(
+                context,
+                request,
+                deleteBuildingById,
+                out int buildingId,
+                out byte resultCode);
+            results = em.GetBuffer<BuildingUiSelectionCommandResultElement>(queueEntity);
+            results.Add(new BuildingUiSelectionCommandResultElement
+            {
+                RequestId = request.RequestId,
+                BuildingId = buildingId,
+                RequestKind = request.RequestKind,
+                Accepted = accepted ? (byte)1 : (byte)0,
+                ResultCode = resultCode
+            });
+        }
+    }
+
     public Context CreateContext(Source source)
     {
         return new Context(
@@ -145,6 +243,91 @@ internal sealed class BuildingSelectionSystem
             source.TryAssignSelectedHaulerOrders,
             source.TryIssueMoveOrderToBuilding,
             source.ShouldUseExpandedSelectionArea);
+    }
+
+    private static bool ProcessUiSelectionCommand(
+        Context context,
+        BuildingUiSelectionCommandRequestElement request,
+        BuildingIdAction deleteBuildingById,
+        out int buildingId,
+        out byte resultCode)
+    {
+        buildingId = 0;
+        if (context.RuntimeBuildingSystem == null)
+        {
+            resultCode = BuildingUiSelectionCommandResultElement.MissingRuntimeSystem;
+            return false;
+        }
+
+        switch (request.RequestKind)
+        {
+            case BuildingUiSelectionCommandRequestElement.KindDeleteSelectedBuilding:
+                int? selectedBuildingId = context.RuntimeBuildingSystem.CurrentActiveBuildingId;
+                if (!selectedBuildingId.HasValue)
+                {
+                    resultCode = BuildingUiSelectionCommandResultElement.MissingSelection;
+                    return false;
+                }
+
+                buildingId = selectedBuildingId.Value;
+                if (deleteBuildingById == null || !deleteBuildingById(buildingId))
+                {
+                    resultCode = BuildingUiSelectionCommandResultElement.DeleteRejected;
+                    return false;
+                }
+
+                resultCode = BuildingUiSelectionCommandResultElement.Completed;
+                return true;
+
+            case BuildingUiSelectionCommandRequestElement.KindClearSelectedBuilding:
+                context.RuntimeBuildingSystem.ClearSelection();
+                context.RefreshMarkers?.Invoke();
+                resultCode = BuildingUiSelectionCommandResultElement.Completed;
+                return true;
+
+            default:
+                resultCode = BuildingUiSelectionCommandResultElement.DeleteRejected;
+                return false;
+        }
+    }
+
+    private static int EnqueueUiSelectionCommand(EntityManager em, byte requestKind)
+    {
+        Entity queueEntity = EnsureUiSelectionCommandEntity(em);
+        BuildingUiSelectionCommandQueueComponent queue =
+            em.GetComponentData<BuildingUiSelectionCommandQueueComponent>(queueEntity);
+        queue.LastRequestId++;
+        em.SetComponentData(queueEntity, queue);
+        em.GetBuffer<BuildingUiSelectionCommandRequestElement>(queueEntity).Add(new BuildingUiSelectionCommandRequestElement
+        {
+            RequestId = queue.LastRequestId,
+            RequestKind = requestKind
+        });
+        return queue.LastRequestId;
+    }
+
+    private static Entity EnsureUiSelectionCommandEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiSelectionCommandQueueComponent>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            Entity existing = query.GetSingletonEntity();
+            EnsureUiSelectionCommandBuffers(em, existing);
+            return existing;
+        }
+
+        Entity entity = em.CreateEntity(typeof(BuildingUiSelectionCommandQueueComponent));
+        em.SetName(entity, "BuildingUiSelectionCommands");
+        EnsureUiSelectionCommandBuffers(em, entity);
+        return entity;
+    }
+
+    private static void EnsureUiSelectionCommandBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasBuffer<BuildingUiSelectionCommandRequestElement>(entity))
+            em.AddBuffer<BuildingUiSelectionCommandRequestElement>(entity);
+        if (!em.HasBuffer<BuildingUiSelectionCommandResultElement>(entity))
+            em.AddBuffer<BuildingUiSelectionCommandResultElement>(entity);
     }
 
     public Context CreateContext(

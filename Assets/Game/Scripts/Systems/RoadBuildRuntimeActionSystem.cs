@@ -1,3 +1,4 @@
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class RoadBuildRuntimeActionSystem
@@ -6,6 +7,9 @@ internal sealed class RoadBuildRuntimeActionSystem
     {
         public RoadBuildInteractionContextSystem InteractionContextSystem;
         public RoadBuildInteractionContextSystem.Context InteractionContext;
+        public RoadBuildCommandSystem CommandSystem;
+        public RoadBuildCommandSystem.Context CommandContext;
+        public RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public RoadDeletePromptSystem DeletePromptSystem;
         public RoadDeletePromptSystem.Context DeletePromptContext;
         public Camera WorldCamera;
@@ -42,8 +46,24 @@ internal sealed class RoadBuildRuntimeActionSystem
         state.WorldCamera = worldCamera;
     }
 
+    public void ConfigureCommands(
+        State state,
+        RoadBuildCommandSystem commandSystem,
+        RoadBuildCommandSystem.Context commandContext,
+        RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager)
+    {
+        if (state == null)
+            return;
+
+        state.CommandSystem = commandSystem;
+        state.CommandContext = commandContext;
+        state.TryGetEntityManager = tryGetEntityManager;
+    }
+
     public void Update(State state)
     {
+        ProcessCommandQueue(state);
+
         if (state?.InteractionContextSystem == null)
             return;
 
@@ -55,5 +75,17 @@ internal sealed class RoadBuildRuntimeActionSystem
     public void OnGui(State state)
     {
         state?.DeletePromptSystem?.OnGui(state.DeletePromptContext);
+    }
+
+    private static void ProcessCommandQueue(State state)
+    {
+        if (state?.CommandSystem == null ||
+            state.TryGetEntityManager == null ||
+            !state.TryGetEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        state.CommandSystem.ProcessPendingRoadBuildCommands(em, state.CommandContext);
     }
 }

@@ -24,6 +24,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly Func<bool> ShouldBlockBuildingSelectionClick;
         public readonly float ClickDragThresholdPixels;
+        public readonly Action ProcessPendingPlacementCommands;
 
         public Context(
             Func<Camera> getWorldCamera,
@@ -39,7 +40,8 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             BuildingSelectionClickSystem selectionClickSystem,
             BuildingSelectionClickSystem.Context selectionClickContext,
             Func<bool> shouldBlockBuildingSelectionClick,
-            float clickDragThresholdPixels)
+            float clickDragThresholdPixels,
+            Action processPendingPlacementCommands = null)
         {
             GetWorldCamera = getWorldCamera;
             GetActivePlacement = getActivePlacement;
@@ -57,6 +59,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             ClickDragThresholdPixels = clickDragThresholdPixels > 0f
                 ? clickDragThresholdPixels
                 : DefaultClickDragThresholdPixels;
+            ProcessPendingPlacementCommands = processPendingPlacementCommands;
         }
     }
 
@@ -90,6 +93,8 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         double afterUi = 0d;
         double afterBuildingClick = 0d;
         double afterInput = 0d;
+
+        context.ProcessPendingPlacementCommands?.Invoke();
 
         if (context.GetWorldCamera?.Invoke() == null)
             return default;

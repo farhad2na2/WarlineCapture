@@ -27,7 +27,13 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         {
             tests.RuntimeSpawnRequestCompletionSurvivesSpawnStructuralChanges();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed");
+            tests.RuntimeSpawnCommandEnqueuesBoundarySpawnRequest();
+            tests.TearDown();
+            tests.RuntimeSpawnCommandEnqueuesWallRunSpawnRequest();
+            tests.TearDown();
+            tests.RuntimeSpawnCommandEnqueuesWallSegmentSpawnRequest();
+            tests.TearDown();
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=4");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (System.Exception ex)
@@ -63,10 +69,13 @@ public sealed class BuildingRuntimeBoundaryValidationTests
 
         if (_runtimeRoot != null)
             Object.DestroyImmediate(_runtimeRoot);
+        _runtimeRoot = null;
         if (_buildingPrefab != null)
             Object.DestroyImmediate(_buildingPrefab);
+        _buildingPrefab = null;
         if (_buildingConfig != null)
             Object.DestroyImmediate(_buildingConfig);
+        _buildingConfig = null;
     }
 
     [Test]
@@ -116,6 +125,160 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         Assert.AreNotEqual(0, requests[0].BuildingRuntimeId);
         Assert.AreEqual(new int2(10, 10), requests[0].ActualOrigin);
         Assert.AreEqual(new int2(2, 2), requests[0].ActualFootprint);
+    }
+
+    [Test]
+    public void RuntimeSpawnCommandEnqueuesBoundarySpawnRequest()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeSpawnCommandValidationTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 32, 32);
+        _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2);
+        _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
+
+        _runtimeRoot = new GameObject("BuildingRuntimeSpawnCommand_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeBuildingSpawnRequest(
+            em,
+            "Tent_Regular",
+            new Vector2Int(12, 11),
+            FactionIdentitySystem.PlayerFactionId,
+            out int requestId));
+        Assert.Greater(requestId, 0);
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeSpawnRequestResult(
+            em,
+            requestId,
+            out BuildingRuntimeSpawnRequest request));
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, request.Status);
+        Assert.AreNotEqual(0, request.BuildingRuntimeId);
+        Assert.AreEqual(new int2(12, 11), request.ActualOrigin);
+        Assert.AreEqual(new int2(2, 2), request.ActualFootprint);
+    }
+
+    [Test]
+    public void RuntimeSpawnCommandEnqueuesWallRunSpawnRequest()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeWallRunCommandValidationTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 32, 32);
+        _buildingPrefab = CreateBuildingPrefab("Wall_Regular", 4, 1);
+        _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
+
+        _runtimeRoot = new GameObject("BuildingRuntimeWallRunCommand_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeWallRunSpawnRequest(
+            em,
+            "Wall_Regular",
+            new Vector2Int(4, 6),
+            new Vector2Int(7, 6),
+            FactionIdentitySystem.PlayerFactionId,
+            out int requestId));
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeSpawnRequestResult(
+            em,
+            requestId,
+            out BuildingRuntimeSpawnRequest request));
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, request.Status);
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.KindWallRun, request.RequestKind);
+        Assert.AreEqual(4, request.SpawnedCount);
+    }
+
+    [Test]
+    public void RuntimeSpawnCommandEnqueuesWallSegmentSpawnRequest()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeWallSegmentCommandValidationTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 32, 32);
+        _buildingPrefab = CreateBuildingPrefab("Wall_Regular", 4, 1);
+        _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
+
+        _runtimeRoot = new GameObject("BuildingRuntimeWallSegmentCommand_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintQuerySystem: null,
+            roadFootprintQueryContext: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeWallSegmentSpawnRequest(
+            em,
+            "Wall_Regular",
+            new Vector2Int(4, 6),
+            false,
+            FactionIdentitySystem.PlayerFactionId,
+            false,
+            out int requestId));
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
+
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeSpawnRequestResult(
+            em,
+            requestId,
+            out BuildingRuntimeSpawnRequest request));
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, request.Status);
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.KindWallSegment, request.RequestKind);
+        Assert.AreEqual(1, request.SpawnedCount);
+        Assert.AreEqual(new int2(4, 6), request.ActualOrigin);
+        Assert.AreEqual(new int2(1, 1), request.ActualFootprint);
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

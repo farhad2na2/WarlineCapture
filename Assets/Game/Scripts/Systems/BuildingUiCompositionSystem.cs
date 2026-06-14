@@ -67,7 +67,8 @@ internal sealed class BuildingUiCompositionSystem
                 source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(source.BuildingRuntimeResourcePrefabCompositionSystem.Create(source)),
                 unitEntity,
                 out prefab),
-            () => source.BuildingSelectionSystem.DeleteSelectedBuilding(
+            () => EnqueueAndProcessDeleteSelectedBuilding(
+                source,
                 createBuildingSelectionContext(source),
                 buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(createBuildingRuntimeEntityContext(source), buildingId)),
             () => EnqueueAndProcessConfirmBuildingPlacement(
@@ -76,7 +77,9 @@ internal sealed class BuildingUiCompositionSystem
             () => EnqueueAndProcessCancelBuildingPlacement(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
+            _ => EnqueueAndProcessClearSelectedBuilding(
+                source,
+                createBuildingSelectionContext(source)),
             () => EnqueueAndProcessExitBuildMode(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
@@ -135,7 +138,7 @@ internal sealed class BuildingUiCompositionSystem
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
             ? source.BuildingPlacementCommandSystem.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
-            : source.BuildingPlacementCommandSystem.ConfirmBuildingPlacement(context);
+            : ConfirmBuildingPlacementWithoutEntityManager(context);
     }
 
     private static void EnqueueAndProcessCancelBuildingPlacement(
@@ -145,7 +148,7 @@ internal sealed class BuildingUiCompositionSystem
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
             source.BuildingPlacementCommandSystem.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
         else
-            source.BuildingPlacementCommandSystem.CancelBuildingPlacement(context);
+            CancelBuildingPlacementWithoutEntityManager(context);
     }
 
     private static void EnqueueAndProcessExitBuildMode(
@@ -155,7 +158,7 @@ internal sealed class BuildingUiCompositionSystem
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
             source.BuildingPlacementCommandSystem.EnqueueAndProcessExitBuildMode(entityManager, context);
         else
-            source.BuildingPlacementCommandSystem.ExitBuildMode(context);
+            ExitBuildModeWithoutEntityManager(context);
     }
 
     private static bool EnqueueAndProcessRotateBuildingPlacement(
@@ -164,6 +167,65 @@ internal sealed class BuildingUiCompositionSystem
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
             ? source.BuildingPlacementCommandSystem.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
-            : source.BuildingPlacementCommandSystem.RotateBuildingPlacement(context);
+            : RotateBuildingPlacementWithoutEntityManager(context);
+    }
+
+    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    {
+        return context.SessionSystem != null &&
+               context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
+    }
+
+    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    {
+        context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
+    }
+
+    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    {
+        context.SessionSystem?.ExitBuildMode(context.SessionContext);
+    }
+
+    private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    {
+        return context.SessionSystem != null &&
+               context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
+    }
+
+    private static bool EnqueueAndProcessDeleteSelectedBuilding(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingSelectionSystem.Context context,
+        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
+    {
+        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+            ? source.BuildingSelectionSystem.EnqueueAndProcessDeleteSelectedBuilding(entityManager, context, deleteBuildingById)
+            : DeleteSelectedBuilding(source, context, deleteBuildingById);
+    }
+
+    private static bool EnqueueAndProcessClearSelectedBuilding(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingSelectionSystem.Context context)
+    {
+        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+            ? source.BuildingSelectionSystem.EnqueueAndProcessClearSelectedBuilding(entityManager, context)
+            : ClearSelectedBuilding(source, context);
+    }
+
+    private static bool DeleteSelectedBuilding(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingSelectionSystem.Context context,
+        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
+    {
+        int? buildingId = source.RuntimeBuildingSystem.CurrentActiveBuildingId;
+        source.BuildingSelectionSystem.DeleteSelectedBuilding(context, deleteBuildingById);
+        return buildingId.HasValue && !source.RuntimeBuildingSystem.ContainsBuilding(buildingId.Value);
+    }
+
+    private static bool ClearSelectedBuilding(
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingSelectionSystem.Context context)
+    {
+        source.BuildingSelectionSystem.ClearSelectedBuilding(context);
+        return !source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue;
     }
 }

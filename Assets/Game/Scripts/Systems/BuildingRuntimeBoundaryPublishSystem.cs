@@ -73,6 +73,7 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
             em,
             boundaryQuery,
             context.RuntimeBuildings,
-            Time.time);
+            Time.time,
+            Time.frameCount);
     }
 }

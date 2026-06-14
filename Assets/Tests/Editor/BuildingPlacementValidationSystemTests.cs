@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -15,9 +16,17 @@ public sealed class BuildingPlacementValidationSystemTests
         {
             var tests = new BuildingPlacementValidationSystemTests();
             tests.BuildingUiPlacementCommandRequest_RejectsMissingSession();
+            tests.BuildingUiPlacementCommandRequest_ConfirmRejectsMissingActivePlacement();
+            tests.BuildingUiPlacementCommandRequest_ConfirmRejectsBlockedPlacement();
+            tests.BuildingUiPlacementCommandRequest_ConfirmRejectsInvalidPlacement();
+            tests.BuildingUiPlacementCommandRequest_ConfirmRejectsNotEnoughMoney();
+            tests.BuildingUiPlacementCommandRequest_ConfirmWritesAcceptedResult();
             tests.BuildingUiPlacementCommandRequest_CancelWritesAcceptedResult();
+            tests.BuildingUiPlacementCommandRequest_RotateWritesAcceptedResult();
             tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=3");
+            tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult();
+            tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=11");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -55,6 +64,186 @@ public sealed class BuildingPlacementValidationSystemTests
     }
 
     [Test]
+    public void BuildingUiPlacementCommandRequest_ConfirmRejectsMissingActivePlacement()
+    {
+        using World world = new("BuildingUiPlacementCommandMissingActivePlacementTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
+            new BuildingPlacementSessionSystem());
+
+        int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        AssertPlacementResult(
+            world.EntityManager,
+            commandSystem,
+            requestId,
+            BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+            accepted: false,
+            BuildingUiPlacementCommandResultElement.MissingActivePlacement);
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_ConfirmRejectsBlockedPlacement()
+    {
+        using World world = new("BuildingUiPlacementCommandBlockedPlacementTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out _,
+            out GameObject prefab,
+            out GameObject root,
+            placementIsValid: false);
+
+        try
+        {
+            context.SessionSystem.BeginPlacement(
+                context.SessionContext,
+                new BuildingDefinition
+                {
+                    Prefab = prefab,
+                    FootprintCells = new Vector2Int(1, 1)
+                });
+
+            int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            AssertPlacementResult(
+                world.EntityManager,
+                commandSystem,
+                requestId,
+                BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+                accepted: false,
+                BuildingUiPlacementCommandResultElement.BlockedPlacement);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_ConfirmRejectsInvalidPlacement()
+    {
+        using World world = new("BuildingUiPlacementCommandInvalidPlacementTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out _,
+            out GameObject prefab,
+            out GameObject root,
+            validateConfirm: _ => false);
+
+        try
+        {
+            context.SessionSystem.BeginPlacement(
+                context.SessionContext,
+                new BuildingDefinition
+                {
+                    Prefab = prefab,
+                    FootprintCells = new Vector2Int(1, 1)
+                });
+
+            int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            AssertPlacementResult(
+                world.EntityManager,
+                commandSystem,
+                requestId,
+                BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+                accepted: false,
+                BuildingUiPlacementCommandResultElement.InvalidPlacement);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_ConfirmRejectsNotEnoughMoney()
+    {
+        using World world = new("BuildingUiPlacementCommandNotEnoughMoneyTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out _,
+            out GameObject prefab,
+            out GameObject root,
+            trySpendCost: _ => false);
+
+        try
+        {
+            context.SessionSystem.BeginPlacement(
+                context.SessionContext,
+                new BuildingDefinition
+                {
+                    Prefab = prefab,
+                    FootprintCells = new Vector2Int(1, 1)
+                });
+            context.SessionSystem.SetActivePlacementCost(context.SessionContext, 50);
+
+            int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            AssertPlacementResult(
+                world.EntityManager,
+                commandSystem,
+                requestId,
+                BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+                accepted: false,
+                BuildingUiPlacementCommandResultElement.NotEnoughMoney);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_ConfirmWritesAcceptedResult()
+    {
+        using World world = new("BuildingUiPlacementCommandConfirmTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        int commitCount = 0;
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out GameObject prefab,
+            out GameObject root,
+            commitPlacement: _ => commitCount++);
+
+        try
+        {
+            context.SessionSystem.BeginPlacement(
+                context.SessionContext,
+                new BuildingDefinition
+                {
+                    Prefab = prefab,
+                    FootprintCells = new Vector2Int(1, 1)
+                });
+
+            int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            AssertPlacementResult(
+                world.EntityManager,
+                commandSystem,
+                requestId,
+                BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+                accepted: true,
+                BuildingUiPlacementCommandResultElement.Completed);
+            Assert.AreEqual(1, commitCount);
+            Assert.IsFalse(lifecycleSystem.HasPendingBuildingPlacement);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
     public void BuildingUiPlacementCommandRequest_CancelWritesAcceptedResult()
     {
         using World world = new("BuildingUiPlacementCommandCancelTest");
@@ -80,6 +269,52 @@ public sealed class BuildingPlacementValidationSystemTests
             ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
         Entity queueEntity = queueQuery.GetSingletonEntity();
         Assert.AreEqual(0, world.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Length);
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_RotateWritesAcceptedResult()
+    {
+        using World world = new("BuildingUiPlacementCommandRotateTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        int updateCount = 0;
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out GameObject prefab,
+            out GameObject root,
+            updatePlacement: _ => updateCount++);
+
+        try
+        {
+            context.SessionSystem.BeginPlacement(
+                context.SessionContext,
+                new BuildingDefinition
+                {
+                    Prefab = prefab,
+                    FootprintCells = new Vector2Int(1, 1)
+                });
+
+            Assert.IsNotNull(lifecycleSystem.ActivePlacement);
+            Assert.IsFalse(lifecycleSystem.ActivePlacement.AutoRotateVertical);
+
+            int requestId = commandSystem.EnqueueRotateBuildingPlacement(world.EntityManager);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiPlacementCommandResultElement result));
+            Assert.AreEqual(1, result.Accepted);
+            Assert.AreEqual(BuildingUiPlacementCommandRequestElement.KindRotatePlacement, result.RequestKind);
+            Assert.AreEqual(BuildingUiPlacementCommandResultElement.Completed, result.ResultCode);
+            Assert.IsNotNull(lifecycleSystem.ActivePlacement);
+            Assert.IsTrue(lifecycleSystem.ActivePlacement.AutoRotateVertical);
+            Assert.AreEqual(2, updateCount);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
     }
 
     [Test]
@@ -117,6 +352,84 @@ public sealed class BuildingPlacementValidationSystemTests
         Assert.AreEqual(1, clearSelectionResult.Accepted);
         Assert.AreEqual(BuildingUiPlacementCommandResultElement.Completed, clearSelectionResult.ResultCode);
         Assert.AreEqual(1, clearSelectionCount);
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult()
+    {
+        using World world = new("BuildingUiPlacementCommandBeginConfiguredTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        var definitionSystem = new BuildingDefinitionSystem();
+        BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
+            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out GameObject prefab,
+            out GameObject root,
+            definitionSystem: definitionSystem);
+
+        try
+        {
+            definitionSystem.RebuildSpawnablesLookup(new List<GameObject> { prefab }, null);
+            definitionSystem.RebuildConfiguredSpawnableDefinitions(null, UnityEngine.Object.DestroyImmediate);
+
+            int requestId = commandSystem.EnqueueBeginConfiguredPlacement(world.EntityManager, prefab.name);
+            commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+            AssertPlacementResult(
+                world.EntityManager,
+                commandSystem,
+                requestId,
+                BuildingUiPlacementCommandRequestElement.KindBeginConfiguredPlacement,
+                accepted: true,
+                BuildingUiPlacementCommandResultElement.Completed);
+            Assert.IsTrue(lifecycleSystem.HasPendingBuildingPlacement);
+            Assert.AreEqual(prefab, lifecycleSystem.ActivePlacement.Definition.Prefab);
+        }
+        finally
+        {
+            definitionSystem.ClearConfiguredSpawnableDefinitions(UnityEngine.Object.DestroyImmediate);
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate()
+    {
+        using World world = new("BuildingPlacementInputTickQueuedPlacementCommandTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context commandContext = CreatePlacementCommandContext(
+            new BuildingPlacementSessionSystem());
+        int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
+
+        var tickSystem = new BuildingPlacementInputRuntimeTickSystem();
+        BuildingPlacementInputRuntimeTickSystem.Context tickContext = new(
+            () => null,
+            () => null,
+            null,
+            default,
+            () => false,
+            () => false,
+            null,
+            () => false,
+            null,
+            () => null,
+            null,
+            default,
+            () => false,
+            8f,
+            () => commandSystem.ProcessPendingUiPlacementCommandsIfPresent(
+                world.EntityManager,
+                commandContext));
+
+        tickSystem.Update(tickContext);
+
+        AssertPlacementResult(
+            world.EntityManager,
+            commandSystem,
+            requestId,
+            BuildingUiPlacementCommandRequestElement.KindCancelPlacement,
+            accepted: true,
+            BuildingUiPlacementCommandResultElement.Completed);
     }
 
     [Test]
@@ -248,6 +561,86 @@ public sealed class BuildingPlacementValidationSystemTests
             new Vector2Int(3, 1),
             new Vector2Int(1, 4),
             true));
+    }
+
+    private static BuildingPlacementCommandSystem.Context CreateActivePlacementCommandContext(
+        out BuildingPlacementLifecycleSystem lifecycleSystem,
+        out GameObject prefab,
+        out GameObject root,
+        bool placementIsValid = true,
+        Action<BuildingPlacementLifecycleSystem.PlacementState> updatePlacement = null,
+        Action<BuildingPlacementLifecycleSystem.PlacementState> commitPlacement = null,
+        BuildingPlacementLifecycleSystem.ValidateConfirmDelegate validateConfirm = null,
+        BuildingPlacementLifecycleSystem.TrySpendCostDelegate trySpendCost = null,
+        BuildingDefinitionSystem definitionSystem = null)
+    {
+        var runtimeStateSystem = new RuntimeGameplayStateSystem();
+        lifecycleSystem = new BuildingPlacementLifecycleSystem();
+        var sessionSystem = new BuildingPlacementSessionSystem();
+        prefab = new GameObject("PlacementCommandTestPrefab");
+        root = new GameObject("PlacementCommandTestRoot");
+        Transform rootTransform = root.transform;
+        BuildingPlacementLifecycleSystem activeLifecycleSystem = lifecycleSystem;
+
+        BuildingPlacementLifecycleSystem.UpdatePlacementVisualDelegate updatePlacementVisual =
+            (placement, _, _) =>
+            {
+                placement.IsValid = placementIsValid;
+                updatePlacement?.Invoke(placement);
+            };
+
+        BuildingPlacementSessionSystem.Context sessionContext = new(
+            runtimeStateSystem,
+            activeLifecycleSystem,
+            null,
+            null,
+            () => new BuildingPlacementLifecycleSystem.CancelContext(null, null, UnityEngine.Object.DestroyImmediate),
+            () => new BuildingPlacementLifecycleSystem.BeginContext(
+                runtimeStateSystem,
+                null,
+                null,
+                rootTransform,
+                null,
+                UnityEngine.Object.DestroyImmediate,
+                _ => Vector2Int.zero,
+                null,
+                updatePlacementVisual,
+                null,
+                null,
+                null),
+            () => new BuildingPlacementLifecycleSystem.ConfirmContext(
+                validateConfirm ?? (placement => placement.IsValid),
+                trySpendCost ?? (_ => true),
+                placement => commitPlacement?.Invoke(placement)),
+            () => new BuildingPlacementLifecycleSystem.RotateContext(updatePlacementVisual),
+            null,
+            null,
+            null,
+            null);
+
+        return new BuildingPlacementCommandSystem.Context(
+            null,
+            definitionSystem,
+            sessionSystem,
+            sessionContext,
+            null);
+    }
+
+    private static void AssertPlacementResult(
+        EntityManager em,
+        BuildingPlacementCommandSystem commandSystem,
+        int requestId,
+        byte requestKind,
+        bool accepted,
+        byte resultCode)
+    {
+        Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+            em,
+            requestId,
+            out BuildingUiPlacementCommandResultElement result));
+        Assert.AreEqual(accepted ? 1 : 0, result.Accepted);
+        Assert.AreEqual(requestKind, result.RequestKind);
+        Assert.AreEqual(resultCode, result.ResultCode);
     }
 
     private static BuildingPlacementCommandSystem.Context CreatePlacementCommandContext(

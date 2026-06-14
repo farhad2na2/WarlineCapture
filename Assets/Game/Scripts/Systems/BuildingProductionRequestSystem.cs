@@ -259,6 +259,24 @@ internal sealed class BuildingProductionRequestSystem
     public void ProcessPendingUiProductionCommands(EntityManager em, Context context, int frameCount, float now = 0f)
     {
         Entity queueEntity = EnsureUiProductionCommandEntity(em);
+        ProcessPendingUiProductionCommands(em, context, frameCount, now, queueEntity);
+    }
+
+    public void ProcessPendingUiProductionCommandsIfPresent(EntityManager em, Context context, int frameCount, float now = 0f)
+    {
+        if (!TryGetUiProductionCommandEntity(em, out Entity queueEntity))
+            return;
+
+        ProcessPendingUiProductionCommands(em, context, frameCount, now, queueEntity);
+    }
+
+    private void ProcessPendingUiProductionCommands(
+        EntityManager em,
+        Context context,
+        int frameCount,
+        float now,
+        Entity queueEntity)
+    {
         DynamicBuffer<BuildingUiProductionCommandRequestElement> requests =
             em.GetBuffer<BuildingUiProductionCommandRequestElement>(queueEntity);
         if (requests.Length == 0)
@@ -347,20 +365,26 @@ internal sealed class BuildingProductionRequestSystem
         GameObject spawnUnitPrefab = context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
         if (spawnUnitPrefab == null)
         {
-            resultCode = BuildingUiProductionCommandResultElement.MissingUnitConfig;
+            resultCode = BuildingUiProductionCommandResultElement.UnavailablePrefab;
             return false;
         }
 
         if (!CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, true))
         {
+            resultCode = BuildingUiProductionCommandResultElement.QueueFull;
+            return false;
+        }
+
+        if (context.TryQueuePlayerUnit == null)
+        {
             resultCode = BuildingUiProductionCommandResultElement.QueueRejected;
             return false;
         }
 
-        bool queued = context.TryQueuePlayerUnit != null && context.TryQueuePlayerUnit(building, productionIndex, spawnUnitPrefab);
+        bool queued = context.TryQueuePlayerUnit(building, productionIndex, spawnUnitPrefab);
         resultCode = queued
             ? BuildingUiProductionCommandResultElement.Queued
-            : BuildingUiProductionCommandResultElement.QueueRejected;
+            : BuildingUiProductionCommandResultElement.QueueFull;
         if (!queued)
             context.LogWarning?.Invoke($"Unable to create a unit for the selected building '{building.Definition.DisplayName}'.");
 
@@ -467,6 +491,139 @@ internal sealed class BuildingProductionRequestSystem
         CreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount);
         context.RecordUnitOrdered?.Invoke(prefab);
         return CampRequestFailure.None;
+    }
+
+    public int EnqueueCampItemRequest(
+        EntityManager em,
+        GameObject prefab,
+        int price,
+        bool focusProducerOnSuccess)
+    {
+        return EnqueueCampItemRequest(
+            em,
+            ResolveCampItemRequestId(prefab),
+            price,
+            focusProducerOnSuccess);
+    }
+
+    public int EnqueueCampItemRequest(
+        EntityManager em,
+        string itemId,
+        int price,
+        bool focusProducerOnSuccess)
+    {
+        Entity queueEntity = EnsureUiCampItemCommandEntity(em);
+        BuildingUiCampItemCommandQueueComponent queue =
+            em.GetComponentData<BuildingUiCampItemCommandQueueComponent>(queueEntity);
+        queue.LastRequestId++;
+        em.SetComponentData(queueEntity, queue);
+        em.GetBuffer<BuildingUiCampItemCommandRequestElement>(queueEntity).Add(new BuildingUiCampItemCommandRequestElement
+        {
+            RequestId = queue.LastRequestId,
+            ItemId = ToFixedString128(itemId),
+            Price = Mathf.Max(0, price),
+            FocusProducerOnSuccess = focusProducerOnSuccess ? (byte)1 : (byte)0
+        });
+        return queue.LastRequestId;
+    }
+
+    public CampRequestFailure EnqueueAndProcessCampItemRequest(
+        EntityManager em,
+        Context context,
+        GameObject prefab,
+        int price,
+        bool focusProducerOnSuccess,
+        int frameCount,
+        out string requiredBuildingDisplayName)
+    {
+        int requestId = EnqueueCampItemRequest(em, prefab, price, focusProducerOnSuccess);
+        ProcessPendingUiCampItemCommands(em, context, frameCount);
+        if (TryGetUiCampItemCommandResult(em, requestId, out BuildingUiCampItemCommandResultElement result))
+        {
+            requiredBuildingDisplayName = result.RequiredBuildingDisplayName.ToString();
+            return ToCampRequestFailure(result.ResultCode);
+        }
+
+        requiredBuildingDisplayName = string.Empty;
+        return CampRequestFailure.InvalidSelection;
+    }
+
+    public bool TryGetUiCampItemCommandResult(
+        EntityManager em,
+        int requestId,
+        out BuildingUiCampItemCommandResultElement result)
+    {
+        result = default;
+        Entity queueEntity = EnsureUiCampItemCommandEntity(em);
+        DynamicBuffer<BuildingUiCampItemCommandResultElement> results =
+            em.GetBuffer<BuildingUiCampItemCommandResultElement>(queueEntity);
+        for (int i = 0; i < results.Length; i++)
+        {
+            if (results[i].RequestId == requestId)
+            {
+                result = results[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ProcessPendingUiCampItemCommands(EntityManager em, Context context, int frameCount)
+    {
+        Entity queueEntity = EnsureUiCampItemCommandEntity(em);
+        ProcessPendingUiCampItemCommands(em, context, frameCount, queueEntity);
+    }
+
+    public void ProcessPendingUiCampItemCommandsIfPresent(EntityManager em, Context context, int frameCount)
+    {
+        if (!TryGetUiCampItemCommandEntity(em, out Entity queueEntity))
+            return;
+
+        ProcessPendingUiCampItemCommands(em, context, frameCount, queueEntity);
+    }
+
+    private void ProcessPendingUiCampItemCommands(
+        EntityManager em,
+        Context context,
+        int frameCount,
+        Entity queueEntity)
+    {
+        DynamicBuffer<BuildingUiCampItemCommandRequestElement> requests =
+            em.GetBuffer<BuildingUiCampItemCommandRequestElement>(queueEntity);
+        if (requests.Length == 0)
+            return;
+
+        using NativeList<BuildingUiCampItemCommandRequestElement> pendingRequests = new(requests.Length, Allocator.Temp);
+        for (int i = 0; i < requests.Length; i++)
+            pendingRequests.Add(requests[i]);
+        requests.Clear();
+
+        DynamicBuffer<BuildingUiCampItemCommandResultElement> results =
+            em.GetBuffer<BuildingUiCampItemCommandResultElement>(queueEntity);
+        results.Clear();
+
+        NativeArray<BuildingUiCampItemCommandRequestElement> pendingArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingArray.Length; i++)
+        {
+            BuildingUiCampItemCommandRequestElement request = pendingArray[i];
+            bool accepted = ProcessUiCampItemCommand(
+                context,
+                request,
+                frameCount,
+                out byte resultCode,
+                out FixedString128Bytes requiredBuildingDisplayName);
+            results = em.GetBuffer<BuildingUiCampItemCommandResultElement>(queueEntity);
+            results.Add(new BuildingUiCampItemCommandResultElement
+            {
+                RequestId = request.RequestId,
+                ItemId = request.ItemId,
+                RequiredBuildingDisplayName = requiredBuildingDisplayName,
+                Price = request.Price,
+                Accepted = accepted ? (byte)1 : (byte)0,
+                ResultCode = resultCode
+            });
+        }
     }
 
     public void FocusLastCampProductionRequest(Context context)
@@ -806,20 +963,205 @@ internal sealed class BuildingProductionRequestSystem
         return queue.LastRequestId;
     }
 
-    private static Entity EnsureUiProductionCommandEntity(EntityManager em)
+    private bool ProcessUiCampItemCommand(
+        Context context,
+        BuildingUiCampItemCommandRequestElement request,
+        int frameCount,
+        out byte resultCode,
+        out FixedString128Bytes requiredBuildingDisplayName)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiProductionCommandQueueComponent>());
+        requiredBuildingDisplayName = default;
+        string normalizedItemId = request.ItemId.ToString();
+        if (!TryResolveCampItemPrefab(context, normalizedItemId, out GameObject prefab))
+        {
+            resultCode = BuildingUiCampItemCommandResultElement.InvalidSelection;
+            return false;
+        }
+
+        bool isConfiguredBuilding = IsConfiguredBuildingPrefab(context, prefab);
+        CampRequestFailure failure = TryRequestCampItem(
+            context,
+            prefab,
+            request.Price,
+            request.FocusProducerOnSuccess != 0,
+            frameCount,
+            out string requiredBuilding);
+        requiredBuildingDisplayName = ToFixedString128(requiredBuilding);
+        resultCode = ToCampItemResultCode(failure, isConfiguredBuilding);
+        return failure == CampRequestFailure.None;
+    }
+
+    private static bool TryResolveCampItemPrefab(Context context, string normalizedItemId, out GameObject prefab)
+    {
+        return TryResolveConfiguredBuildingPrefab(context, normalizedItemId, out prefab) ||
+               TryResolveConfiguredUnitPrefab(context, normalizedItemId, out prefab);
+    }
+
+    private static bool TryResolveConfiguredBuildingPrefab(Context context, string normalizedItemId, out GameObject prefab)
+    {
+        prefab = null;
+        if (string.IsNullOrEmpty(normalizedItemId))
+            return false;
+
+        if (context.ConfiguredDefinitionsByPrefab != null)
+        {
+            foreach (KeyValuePair<GameObject, BuildingDefinition> pair in context.ConfiguredDefinitionsByPrefab)
+            {
+                GameObject candidatePrefab = pair.Key != null ? pair.Key : pair.Value?.Prefab;
+                if (candidatePrefab == null)
+                    continue;
+
+                if (BuildingDefinitionSystem.NormalizeSpawnableKey(candidatePrefab.name) == normalizedItemId ||
+                    BuildingDefinitionSystem.RuntimeDefinitionMatchesId(pair.Value, normalizedItemId))
+                {
+                    prefab = candidatePrefab;
+                    return true;
+                }
+            }
+        }
+
+        if (context.ConfiguredSpawnableDefinitions != null)
+        {
+            for (int i = 0; i < context.ConfiguredSpawnableDefinitions.Count; i++)
+            {
+                BuildingDefinition definition = context.ConfiguredSpawnableDefinitions[i];
+                if (definition?.Prefab == null ||
+                    !BuildingDefinitionSystem.RuntimeDefinitionMatchesId(definition, normalizedItemId))
+                {
+                    continue;
+                }
+
+                prefab = definition.Prefab;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveConfiguredUnitPrefab(Context context, string normalizedItemId, out GameObject prefab)
+    {
+        return TryResolveConfiguredUnit(
+            context,
+            normalizedItemId,
+            unitIdIsNormalized: true,
+            out prefab,
+            out _,
+            out _,
+            out _);
+    }
+
+    private static bool IsConfiguredBuildingPrefab(Context context, GameObject prefab)
+    {
+        if (prefab == null)
+            return false;
+
+        if (context.ConfiguredDefinitionsByPrefab != null &&
+            context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
+        {
+            return true;
+        }
+
+        if (context.ConfiguredSpawnableDefinitions == null)
+            return false;
+
+        for (int i = 0; i < context.ConfiguredSpawnableDefinitions.Count; i++)
+        {
+            if (context.ConfiguredSpawnableDefinitions[i]?.Prefab == prefab)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static string ResolveCampItemRequestId(GameObject prefab)
+    {
+        return prefab != null
+            ? BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name)
+            : string.Empty;
+    }
+
+    private static byte ToCampItemResultCode(CampRequestFailure failure, bool isConfiguredBuilding)
+    {
+        return failure switch
+        {
+            CampRequestFailure.None => isConfiguredBuilding
+                ? BuildingUiCampItemCommandResultElement.PlacementStarted
+                : BuildingUiCampItemCommandResultElement.ProductionQueued,
+            CampRequestFailure.NotEnoughMoney => BuildingUiCampItemCommandResultElement.NotEnoughMoney,
+            CampRequestFailure.MissingProducerBuilding => BuildingUiCampItemCommandResultElement.MissingProducerBuilding,
+            _ => BuildingUiCampItemCommandResultElement.InvalidSelection
+        };
+    }
+
+    private static CampRequestFailure ToCampRequestFailure(byte resultCode)
+    {
+        return resultCode switch
+        {
+            BuildingUiCampItemCommandResultElement.PlacementStarted => CampRequestFailure.None,
+            BuildingUiCampItemCommandResultElement.ProductionQueued => CampRequestFailure.None,
+            BuildingUiCampItemCommandResultElement.NotEnoughMoney => CampRequestFailure.NotEnoughMoney,
+            BuildingUiCampItemCommandResultElement.MissingProducerBuilding => CampRequestFailure.MissingProducerBuilding,
+            _ => CampRequestFailure.InvalidSelection
+        };
+    }
+
+    private static Entity EnsureUiCampItemCommandEntity(EntityManager em)
+    {
+        if (TryGetUiCampItemCommandEntity(em, out Entity existing))
+            return existing;
+
+        Entity entity = em.CreateEntity(typeof(BuildingUiCampItemCommandQueueComponent));
+        em.SetName(entity, "BuildingUiCampItemCommands");
+        EnsureUiCampItemCommandBuffers(em, entity);
+        return entity;
+    }
+
+    private static bool TryGetUiCampItemCommandEntity(EntityManager em, out Entity entity)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiCampItemCommandQueueComponent>());
         if (!query.IsEmptyIgnoreFilter)
         {
-            Entity existing = query.GetSingletonEntity();
-            EnsureUiProductionCommandBuffers(em, existing);
-            return existing;
+            entity = query.GetSingletonEntity();
+            EnsureUiCampItemCommandBuffers(em, entity);
+            return true;
         }
+
+        entity = Entity.Null;
+        return false;
+    }
+
+    private static void EnsureUiCampItemCommandBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasBuffer<BuildingUiCampItemCommandRequestElement>(entity))
+            em.AddBuffer<BuildingUiCampItemCommandRequestElement>(entity);
+        if (!em.HasBuffer<BuildingUiCampItemCommandResultElement>(entity))
+            em.AddBuffer<BuildingUiCampItemCommandResultElement>(entity);
+    }
+
+    private static Entity EnsureUiProductionCommandEntity(EntityManager em)
+    {
+        if (TryGetUiProductionCommandEntity(em, out Entity existing))
+            return existing;
 
         Entity entity = em.CreateEntity(typeof(BuildingUiProductionCommandQueueComponent));
         em.SetName(entity, "BuildingUiProductionCommands");
         EnsureUiProductionCommandBuffers(em, entity);
         return entity;
+    }
+
+    private static bool TryGetUiProductionCommandEntity(EntityManager em, out Entity entity)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiProductionCommandQueueComponent>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            entity = query.GetSingletonEntity();
+            EnsureUiProductionCommandBuffers(em, entity);
+            return true;
+        }
+
+        entity = Entity.Null;
+        return false;
     }
 
     private static void EnsureUiProductionCommandBuffers(EntityManager em, Entity entity)

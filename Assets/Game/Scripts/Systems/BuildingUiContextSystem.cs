@@ -201,15 +201,12 @@ internal sealed class BuildingUiContextSystem
                         out requiredBuildingDisplayName)
                     : InvalidCampRequest(out requiredBuildingDisplayName),
             (GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess) =>
-                source.ProductionRequestSystem != null
-                    ? source.ProductionRequestSystem.TryRequestCampItem(
-                        source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
-                        prefab,
-                        price,
-                        focusProducerOnSuccess,
-                        source.GetFrameCount?.Invoke() ?? 0,
-                        out requiredBuildingDisplayName)
-                    : InvalidCampRequest(out requiredBuildingDisplayName),
+                RequestCampItem(
+                    source,
+                    prefab,
+                    price,
+                    focusProducerOnSuccess,
+                    out requiredBuildingDisplayName),
             source.HasPendingBuildingPlacement,
             source.CanConfirmBuildingPlacement,
             source.GetPlacementStatusText,
@@ -243,6 +240,41 @@ internal sealed class BuildingUiContextSystem
             buildingId,
             pendingProductionIndex,
             source.GetNow?.Invoke() ?? Time.time);
+    }
+
+    private static BuildingUiCommandSystem.CampRequestFailure RequestCampItem(
+        Source source,
+        GameObject prefab,
+        int price,
+        bool focusProducerOnSuccess,
+        out string requiredBuildingDisplayName)
+    {
+        requiredBuildingDisplayName = string.Empty;
+        if (source.ProductionRequestSystem == null)
+            return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
+
+        BuildingProductionRequestSystem.Context context =
+            source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default;
+        int frameCount = source.GetFrameCount?.Invoke() ?? 0;
+        if (TryGetEntityManager(source, out EntityManager entityManager))
+        {
+            return source.ProductionRequestSystem.EnqueueAndProcessCampItemRequest(
+                entityManager,
+                context,
+                prefab,
+                price,
+                focusProducerOnSuccess,
+                frameCount,
+                out requiredBuildingDisplayName);
+        }
+
+        return source.ProductionRequestSystem.TryRequestCampItem(
+            context,
+            prefab,
+            price,
+            focusProducerOnSuccess,
+            frameCount,
+            out requiredBuildingDisplayName);
     }
 
     private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(Source source, int productionIndex)

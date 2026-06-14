@@ -98,6 +98,8 @@ public struct BuildingUiProductionCommandResultElement : IBufferElementData
     public const byte MissingPendingProduction = 6;
     public const byte CancelRejected = 7;
     public const byte Cancelled = 8;
+    public const byte UnavailablePrefab = 9;
+    public const byte QueueFull = 10;
 
     public int RequestId;
     public int BuildingId;
@@ -118,8 +120,10 @@ public struct BuildingUiPlacementCommandRequestElement : IBufferElementData
     public const byte KindCancelPlacement = 1;
     public const byte KindRotatePlacement = 2;
     public const byte KindExitBuildMode = 3;
+    public const byte KindBeginConfiguredPlacement = 4;
 
     public int RequestId;
+    public FixedString128Bytes BuildingId;
     public byte RequestKind;
     public byte ClearBuildingSelection;
 }
@@ -129,6 +133,98 @@ public struct BuildingUiPlacementCommandResultElement : IBufferElementData
     public const byte Completed = 0;
     public const byte MissingSession = 1;
     public const byte Rejected = 2;
+    public const byte MissingActivePlacement = 3;
+    public const byte InvalidPlacement = 4;
+    public const byte BlockedPlacement = 5;
+    public const byte NotEnoughMoney = 6;
+    public const byte MissingConfig = 7;
+
+    public int RequestId;
+    public byte RequestKind;
+    public byte Accepted;
+    public byte ResultCode;
+}
+
+public struct BuildingUiCampItemCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct BuildingUiCampItemCommandRequestElement : IBufferElementData
+{
+    public int RequestId;
+    public FixedString128Bytes ItemId;
+    public int Price;
+    public byte FocusProducerOnSuccess;
+}
+
+public struct BuildingUiCampItemCommandResultElement : IBufferElementData
+{
+    public const byte PlacementStarted = 0;
+    public const byte ProductionQueued = 1;
+    public const byte NotEnoughMoney = 2;
+    public const byte MissingProducerBuilding = 3;
+    public const byte InvalidSelection = 4;
+
+    public int RequestId;
+    public FixedString128Bytes ItemId;
+    public FixedString128Bytes RequiredBuildingDisplayName;
+    public int Price;
+    public byte Accepted;
+    public byte ResultCode;
+}
+
+public struct BuildingUiSelectionCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct BuildingUiSelectionCommandRequestElement : IBufferElementData
+{
+    public const byte KindDeleteSelectedBuilding = 0;
+    public const byte KindClearSelectedBuilding = 1;
+
+    public int RequestId;
+    public byte RequestKind;
+}
+
+public struct BuildingUiSelectionCommandResultElement : IBufferElementData
+{
+    public const byte Completed = 0;
+    public const byte MissingSelection = 1;
+    public const byte DeleteRejected = 2;
+    public const byte MissingRuntimeSystem = 3;
+
+    public int RequestId;
+    public int BuildingId;
+    public byte RequestKind;
+    public byte Accepted;
+    public byte ResultCode;
+}
+
+public struct RoadBuildCommandQueueComponent : IComponentData
+{
+    public int LastRequestId;
+}
+
+public struct RoadBuildCommandRequestElement : IBufferElementData
+{
+    public const byte KindEnterRoadBuildMode = 0;
+    public const byte KindConfirmRoadBuildSession = 1;
+    public const byte KindCancelRoadBuildSession = 2;
+    public const byte KindExitBuildMode = 3;
+
+    public int RequestId;
+    public byte RequestKind;
+}
+
+public struct RoadBuildCommandResultElement : IBufferElementData
+{
+    public const byte Completed = 0;
+    public const byte MissingSession = 1;
+    public const byte MissingRuntimeState = 2;
+    public const byte MissingSessionState = 3;
+    public const byte Rejected = 4;
 
     public int RequestId;
     public byte RequestKind;

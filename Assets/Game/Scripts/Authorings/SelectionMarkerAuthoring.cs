@@ -27,7 +27,9 @@ public sealed class SelectionMarkerAuthoring : MonoBehaviour
             AddComponent(entity, new SelectionMarkerVisualChild
             {
                 Value = visualEntity,
-                VisibleScale = visibleScale
+                VisibleScale = visibleScale,
+                VisibleScaleX = visibleScale,
+                VisibleScaleZ = visibleScale
             });
         }
     }

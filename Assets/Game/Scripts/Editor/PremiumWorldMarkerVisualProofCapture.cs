@@ -5,6 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -24,6 +25,8 @@ public static class PremiumWorldMarkerVisualProofCapture
     private const string MoveMarkerPath = "Assets/Game/Prefabs/Shapes/Target_Move.prefab";
     private const string AttackMarkerPath = "Assets/Game/Prefabs/Shapes/Target_Attack.prefab";
     private const string AttackTargetMarkerPath = "Assets/Game/Prefabs/Shapes/AttackTargetSelectionMarker.prefab";
+    private const string UnitSelectionRingMeshPath = "Assets/Game/Rendering/Meshes/Selection/Premium_Unit_CapsuleAura.asset";
+    private const string VehicleSelectionMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Vehicle_Hologram.mat";
 
     private static readonly Color BackgroundColor = new(0.035f, 0.04f, 0.048f, 1f);
     private static readonly Color GroundColor = new(0.075f, 0.085f, 0.09f, 1f);
@@ -69,15 +72,15 @@ public static class PremiumWorldMarkerVisualProofCapture
                 "vehicle_selection",
                 VehiclePrefabPath,
                 VehicleSelectionMarkerPath,
-                targetPadding: 1.28f,
-                minimumMarkerSize: 3.6f,
+                targetPadding: 1.08f,
+                minimumMarkerSize: 2.4f,
                 "Vehicle selection marker scales to vehicle footprint and stays below the hull."),
             CaptureSelectionScenario(
                 "aircraft_selection",
                 AircraftPrefabPath,
                 VehicleSelectionMarkerPath,
-                targetPadding: 1.18f,
-                minimumMarkerSize: 5.0f,
+                targetPadding: 1.08f,
+                minimumMarkerSize: 3.2f,
                 "Aircraft selection marker uses the shared calm selection family at aircraft scale."),
             CaptureCommandMarkerScenario(
                 "move_command_marker",
@@ -109,7 +112,10 @@ public static class PremiumWorldMarkerVisualProofCapture
 
         GameObject marker = InstantiatePrefab(markerPath, id + "_marker");
         if (id.Contains("infantry", StringComparison.OrdinalIgnoreCase))
+        {
             SetNamedRendererVisibility(marker, "Vehicle", visible: false);
+            AddProofInfantrySelectionRing(marker);
+        }
         float targetX = Mathf.Max(minimumMarkerSize, modelBounds.size.x * targetPadding);
         float targetZ = Mathf.Max(minimumMarkerSize, modelBounds.size.z * targetPadding);
         PlaceMarker(marker, modelBounds, targetX, targetZ, 0.12f);
@@ -238,6 +244,31 @@ public static class PremiumWorldMarkerVisualProofCapture
                 renderer.enabled = visible;
             }
         }
+    }
+
+    private static void AddProofInfantrySelectionRing(GameObject marker)
+    {
+        Mesh ringMesh = AssetDatabase.LoadAssetAtPath<Mesh>(UnitSelectionRingMeshPath);
+        Material ringMaterial = AssetDatabase.LoadAssetAtPath<Material>(VehicleSelectionMaterialPath);
+        Require(ringMesh != null, $"Missing infantry selection ring mesh at {UnitSelectionRingMeshPath}.");
+        Require(ringMaterial != null, $"Missing infantry selection material at {VehicleSelectionMaterialPath}.");
+
+        GameObject ring = new("RuntimeInfantrySelectionRing_Proof");
+        ring.transform.SetParent(marker.transform, false);
+        ring.transform.localPosition = new Vector3(0f, 0.12f, 0f);
+        ring.transform.localRotation = Quaternion.identity;
+        ring.transform.localScale = Vector3.one;
+
+        MeshFilter filter = ring.AddComponent<MeshFilter>();
+        filter.sharedMesh = ringMesh;
+        MeshRenderer renderer = ring.AddComponent<MeshRenderer>();
+        renderer.sharedMaterial = ringMaterial;
+        renderer.shadowCastingMode = ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        renderer.lightProbeUsage = LightProbeUsage.Off;
+        renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        renderer.allowOcclusionWhenDynamic = false;
     }
 
     private static void CenterOnGround(GameObject instance)

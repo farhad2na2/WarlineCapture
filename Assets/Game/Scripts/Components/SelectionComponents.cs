@@ -12,6 +12,8 @@ public struct SelectionMarkerVisualChild : IComponentData
 {
     public Entity Value;
     public float VisibleScale;
+    public float VisibleScaleX;
+    public float VisibleScaleZ;
 }
 
 public struct SelectionMarkerOwner : IComponentData

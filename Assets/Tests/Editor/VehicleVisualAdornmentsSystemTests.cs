@@ -15,6 +15,11 @@ using SnivelerCode.GpuAnimation.Scripts.Components;
 
 public sealed class VehicleVisualAdornmentsSystemTests
 {
+    private const float ExpectedVehicleFallbackMarkerScaleX = 3.024194f;
+    private const float ExpectedVehicleFallbackMarkerScaleZ = 3.04878f;
+    private const float ExpectedVehicleMeshMarkerScaleX = 1.306452f;
+    private const float ExpectedVehicleMeshMarkerScaleZ = 1.97561f;
+
     public static void RunFocusedValidation()
     {
         try
@@ -24,6 +29,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.VehicleVisualPrefabReferenceBackfillUsesSharedMarkerWhenSourcePrefabIsStale();
             tests.UnitVisualPrefabReferenceBackfillCopiesMarkerAndHealthReferencesForCharacterUnit();
             tests.UnitSelectionMarkerSystemCreatesAndRetainsMarkersPerSelectedVehicle();
+            tests.UnitSelectionMarkerSystemSizesVehicleMarkerFromMeshBoundsWhenAvailable();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
             tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
@@ -36,7 +42,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=16");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=17");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -162,9 +168,12 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(firstMarker).Scale, 0.001f);
         Assert.AreEqual(0.12f, em.GetComponentData<LocalTransform>(firstMarker).Position.y, 0.001f);
         Assert.IsTrue(em.HasComponent<SelectionMarkerTag>(firstMarker));
-        Assert.AreEqual(4.05f, em.GetComponentData<SelectionMarkerVisualChild>(firstMarker).VisibleScale, 0.001f);
+        SelectionMarkerVisualChild firstVisualChild = em.GetComponentData<SelectionMarkerVisualChild>(firstMarker);
+        Assert.AreEqual(ExpectedVehicleFallbackMarkerScaleZ, firstVisualChild.VisibleScale, 0.001f);
+        Assert.AreEqual(ExpectedVehicleFallbackMarkerScaleX, firstVisualChild.VisibleScaleX, 0.001f);
+        Assert.AreEqual(ExpectedVehicleFallbackMarkerScaleZ, firstVisualChild.VisibleScaleZ, 0.001f);
         Assert.IsTrue(em.HasComponent<PostTransformMatrix>(firstMarker));
-        AssertPostTransformScale(em, firstMarker, 4.05f, 1f, 4.05f);
+        AssertPostTransformScale(em, firstMarker, ExpectedVehicleFallbackMarkerScaleX, 1f, ExpectedVehicleFallbackMarkerScaleZ);
 
         em.RemoveComponent<SelectedUnitTag>(firstVehicle);
         system.Update(world.Unmanaged);
@@ -177,7 +186,38 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(secondVehicle));
         Assert.IsTrue(em.Exists(secondMarker));
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(secondMarker).Scale, 0.001f);
-        AssertPostTransformScale(em, secondMarker, 4.05f, 1f, 4.05f);
+        AssertPostTransformScale(em, secondMarker, ExpectedVehicleFallbackMarkerScaleX, 1f, ExpectedVehicleFallbackMarkerScaleZ);
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemSizesVehicleMarkerFromMeshBoundsWhenAvailable()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemSizesVehicleMarkerFromMeshBoundsWhenAvailable));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateVisualPrefab(em);
+        Entity vehicle = CreateVehicle(em, health: 100);
+        Entity renderer = CreateRenderableChild(em, vehicle, "CompactVehicleBody", 1.5f);
+        em.SetComponentData(renderer, new Unity.Rendering.RenderBounds
+        {
+            Value = new AABB
+            {
+                Center = float3.zero,
+                Extents = new float3(64f, 64f, 64f)
+            }
+        });
+        em.AddComponentData(vehicle, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(vehicle);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(vehicle));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(vehicle).Instance;
+        SelectionMarkerVisualChild visualChild = em.GetComponentData<SelectionMarkerVisualChild>(marker);
+        Assert.AreEqual(ExpectedVehicleMeshMarkerScaleZ, visualChild.VisibleScale, 0.001f);
+        Assert.AreEqual(ExpectedVehicleMeshMarkerScaleX, visualChild.VisibleScaleX, 0.001f);
+        Assert.AreEqual(ExpectedVehicleMeshMarkerScaleZ, visualChild.VisibleScaleZ, 0.001f);
+        AssertPostTransformScale(em, marker, ExpectedVehicleMeshMarkerScaleX, 1f, ExpectedVehicleMeshMarkerScaleZ);
     }
 
     [Test]
@@ -223,7 +263,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Entity vehicleInfantryRing = FindLinkedEntityByName(em, vehicleMarker, "InfantryGroundRing");
         Entity vehicleFrame = FindLinkedEntityByName(em, vehicleMarker, "VehicleBoundsFrame");
         Assert.IsTrue(em.HasComponent<PostTransformMatrix>(vehicleModel));
-        AssertPostTransformScale(em, vehicleModel, 4.05f, 1f, 4.05f);
+        AssertPostTransformScale(em, vehicleModel, ExpectedVehicleFallbackMarkerScaleX, 1f, ExpectedVehicleFallbackMarkerScaleZ);
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleInfantryRing).Scale, 0.001f);
         Assert.AreEqual(1f, em.GetComponentData<LocalTransform>(vehicleFrame).Scale, 0.001f);
 
@@ -726,12 +766,12 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.AreEqual(LocalTransform.Identity.Position, em.GetComponentData<LocalTransform>(volume).Position);
         Assert.IsTrue(em.HasComponent<PostTransformMatrix>(volume));
         float4x4 volumeScale = em.GetComponentData<PostTransformMatrix>(volume).Value;
-        Assert.LessOrEqual(volumeScale.c0.x, 0.78f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
+        Assert.LessOrEqual(volumeScale.c0.x, 0.86f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
         Assert.LessOrEqual(volumeScale.c1.y, 2.05f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
-        Assert.LessOrEqual(volumeScale.c2.z, 0.78f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
-        Assert.GreaterOrEqual(volumeScale.c0.x, 0.34f);
+        Assert.LessOrEqual(volumeScale.c2.z, 0.86f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
+        Assert.GreaterOrEqual(volumeScale.c0.x, 0.56f);
         Assert.GreaterOrEqual(volumeScale.c1.y, 1.2f);
-        Assert.GreaterOrEqual(volumeScale.c2.z, 0.34f);
+        Assert.GreaterOrEqual(volumeScale.c2.z, 0.56f);
         Assert.IsFalse(em.HasComponent<MeshLODComponent>(volume), "GPU-animated soldiers must not use duplicated render mesh outlines by default.");
         Assert.IsFalse(em.HasComponent<MaterialPropertyRenderPixel>(volume));
         Assert.IsFalse(em.HasComponent<MaterialPropertyShowModel>(volume));

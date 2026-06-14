@@ -68,19 +68,26 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
                 return;
 
             LocalTransform childTransform = TransformLookup[visualChild.Value];
+            float visibleScaleX = visualChild.VisibleScaleX > 0f
+                ? visualChild.VisibleScaleX
+                : visualChild.VisibleScale;
+            float visibleScaleZ = visualChild.VisibleScaleZ > 0f
+                ? visualChild.VisibleScaleZ
+                : visualChild.VisibleScale;
             if (PostTransformLookup.HasComponent(visualChild.Value))
             {
                 childTransform.Scale = visible ? 1f : 0f;
                 TransformLookup[visualChild.Value] = childTransform;
-                float scale = visible ? math.max(0f, visualChild.VisibleScale) : 0f;
+                float scaleX = visible ? math.max(0f, visibleScaleX) : 0f;
+                float scaleZ = visible ? math.max(0f, visibleScaleZ) : 0f;
                 PostTransformLookup[visualChild.Value] = new PostTransformMatrix
                 {
-                    Value = float4x4.Scale(new float3(scale, 1f, scale))
+                    Value = float4x4.Scale(new float3(scaleX, 1f, scaleZ))
                 };
                 return;
             }
 
-            childTransform.Scale = visible ? visualChild.VisibleScale : 0f;
+            childTransform.Scale = visible ? math.max(visibleScaleX, visibleScaleZ) : 0f;
             TransformLookup[visualChild.Value] = childTransform;
         }
     }

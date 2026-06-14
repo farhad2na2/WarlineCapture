@@ -15,11 +15,18 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 {
     private const float MarkerGroundLift = 0.12f;
     private const float MarkerFootprintScaleMultiplier = 1.35f;
-    private const float MarkerMinimumVehicleScale = 2.5f;
+    private const float VehicleMarkerFootprintCellWorldSize = 1.25f;
+    private const float VehicleMarkerMeshBoundsPadding = 1.08f;
+    private const float VehicleMarkerMeshWidth = 1.24f;
+    private const float VehicleMarkerMeshDepth = 0.82f;
+    private const float VehicleMarkerMinimumWorldWidth = 1.6f;
+    private const float VehicleMarkerMinimumWorldDepth = 1.1f;
+    private const float VehicleMarkerMaximumScale = 8f;
+    private const float MarkerMinimumVehicleScale = 1.15f;
     private const float MarkerMinimumCharacterScale = 1f;
-    private const float CharacterSelectionVolumeDefaultRadius = 0.46f;
-    private const float CharacterSelectionVolumeMinRadius = 0.34f;
-    private const float CharacterSelectionVolumeMaxRadius = 0.78f;
+    private const float CharacterSelectionVolumeDefaultRadius = 0.68f;
+    private const float CharacterSelectionVolumeMinRadius = 0.56f;
+    private const float CharacterSelectionVolumeMaxRadius = 0.86f;
     private const float CharacterSelectionVolumeDefaultHeight = 1.5f;
     private const float CharacterSelectionVolumeMinHeight = 1.2f;
     private const float CharacterSelectionVolumeMaxHeight = 2.05f;
@@ -186,21 +193,24 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         }
 
         bool usesVehicleMarker = UsesVehicleSelectionMarker(em, unit);
-        EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, unit, usesVehicleMarker));
+        EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, unit, usesVehicleMarker, renderEntityQuery));
         ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker);
         CreateSelectionObjectOutlines(em, unit, marker, usesVehicleMarker, renderEntityQuery);
         em.AddComponentData(unit, new UnitSelectionMarkerInstanceReference { Instance = marker });
     }
 
-    private static void EnsureSelectionMarkerComponents(EntityManager em, Entity marker, float visibleScale)
+    private static void EnsureSelectionMarkerComponents(EntityManager em, Entity marker, float2 visibleScale)
     {
         if (!em.HasComponent<SelectionMarkerTag>(marker))
             em.AddComponent<SelectionMarkerTag>(marker);
 
+        float uniformVisibleScale = math.max(visibleScale.x, visibleScale.y);
         if (em.HasComponent<SelectionMarkerVisualChild>(marker))
         {
             SelectionMarkerVisualChild visualChild = em.GetComponentData<SelectionMarkerVisualChild>(marker);
-            visualChild.VisibleScale = visibleScale;
+            visualChild.VisibleScale = uniformVisibleScale;
+            visualChild.VisibleScaleX = visibleScale.x;
+            visualChild.VisibleScaleZ = visibleScale.y;
             em.SetComponentData(marker, visualChild);
             EnsureNonUniformMarkerScaleComponent(em, visualChild.Value, visibleScale);
             return;
@@ -214,18 +224,20 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         em.AddComponentData(marker, new SelectionMarkerVisualChild
         {
             Value = visual,
-            VisibleScale = visibleScale
+            VisibleScale = uniformVisibleScale,
+            VisibleScaleX = visibleScale.x,
+            VisibleScaleZ = visibleScale.y
         });
     }
 
-    private static void EnsureNonUniformMarkerScaleComponent(EntityManager em, Entity visual, float visibleScale)
+    private static void EnsureNonUniformMarkerScaleComponent(EntityManager em, Entity visual, float2 visibleScale)
     {
         if (visual == Entity.Null || !em.Exists(visual) || !em.HasComponent<LocalTransform>(visual))
             return;
 
         PostTransformMatrix matrix = new()
         {
-            Value = float4x4.Scale(new float3(math.max(0f, visibleScale), 1f, math.max(0f, visibleScale)))
+            Value = float4x4.Scale(new float3(math.max(0f, visibleScale.x), 1f, math.max(0f, visibleScale.y)))
         };
         if (!em.HasComponent<PostTransformMatrix>(visual))
             em.AddComponentData(visual, matrix);
@@ -259,17 +271,183 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         return Entity.Null;
     }
 
-    private static float ResolveMarkerScale(EntityManager em, Entity unit, bool usesVehicleMarker)
+    private static float2 ResolveMarkerScale(
+        EntityManager em,
+        Entity unit,
+        bool usesVehicleMarker,
+        EntityQuery renderEntityQuery)
     {
         float minimumScale = usesVehicleMarker
             ? MarkerMinimumVehicleScale
             : MarkerMinimumCharacterScale;
 
         if (!em.HasComponent<UnitFootprint>(unit))
-            return minimumScale;
+            return new float2(minimumScale, minimumScale);
 
         int2 size = em.GetComponentData<UnitFootprint>(unit).Size;
-        return math.max(minimumScale, math.max(size.x, size.y) * MarkerFootprintScaleMultiplier);
+        if (!usesVehicleMarker)
+        {
+            float scale = math.max(minimumScale, math.max(size.x, size.y) * MarkerFootprintScaleMultiplier);
+            return new float2(scale, scale);
+        }
+
+        if (TryResolveUnitMeshFootprintSize(em, unit, renderEntityQuery, out float2 meshFootprint))
+        {
+            float2 renderWorldSize = meshFootprint * VehicleMarkerMeshBoundsPadding;
+            float2 minimumWorldSize = new(VehicleMarkerMinimumWorldWidth, VehicleMarkerMinimumWorldDepth);
+            return ClampVehicleMarkerScale(math.max(renderWorldSize, minimumWorldSize), minimumScale);
+        }
+
+        float2 fallbackWorldSize = new(
+            math.max(VehicleMarkerMinimumWorldWidth, math.max(1, size.x) * VehicleMarkerFootprintCellWorldSize),
+            math.max(VehicleMarkerMinimumWorldDepth, math.max(1, size.y) * VehicleMarkerFootprintCellWorldSize));
+        return ClampVehicleMarkerScale(fallbackWorldSize, minimumScale);
+    }
+
+    private static float2 ClampVehicleMarkerScale(float2 desiredWorldSize, float minimumScale)
+    {
+        return math.min(
+            new float2(
+                math.max(minimumScale, desiredWorldSize.x / VehicleMarkerMeshWidth),
+                math.max(minimumScale, desiredWorldSize.y / VehicleMarkerMeshDepth)),
+            new float2(VehicleMarkerMaximumScale, VehicleMarkerMaximumScale));
+    }
+
+    private static bool TryResolveUnitMeshFootprintSize(
+        EntityManager em,
+        Entity unit,
+        EntityQuery renderEntityQuery,
+        out float2 size)
+    {
+        size = float2.zero;
+        using NativeList<Entity> sources = new(MaxSelectionObjectOutlineRenderers, Allocator.Temp);
+        CollectRenderableDescendants(em, unit, sources);
+        if (sources.Length == 0)
+            CollectRenderableDescendantsByAncestryScan(em, unit, renderEntityQuery, sources);
+        if (sources.Length == 0)
+            return false;
+
+        float minX = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float minZ = float.PositiveInfinity;
+        float maxZ = float.NegativeInfinity;
+        bool found = false;
+        for (int i = 0; i < sources.Length; i++)
+        {
+            Entity source = sources[i];
+            if (!em.HasComponent<RenderMeshArray>(source) ||
+                !em.HasComponent<MaterialMeshInfo>(source) ||
+                !em.HasComponent<LocalTransform>(source))
+            {
+                continue;
+            }
+
+            if (!TryResolveLocalToOwnerMatrix(em, source, unit, out float4x4 localToOwner))
+                continue;
+
+            bool sourceFound = false;
+            RenderMeshArray renderMeshArray = em.GetSharedComponentManaged<RenderMeshArray>(source);
+            MaterialMeshInfo meshInfo = em.GetComponentData<MaterialMeshInfo>(source);
+            if (meshInfo.HasMaterialMeshIndexRange)
+            {
+                MaterialMeshIndex[] materialMeshIndices = renderMeshArray.MaterialMeshIndices;
+                if (materialMeshIndices != null)
+                {
+                    RangeInt range = meshInfo.MaterialMeshIndexRange;
+                    int end = math.min(range.end, materialMeshIndices.Length);
+                    for (int meshIndex = range.start; meshIndex < end; meshIndex++)
+                    {
+                        Mesh mesh = ResolveRenderMeshArrayMesh(renderMeshArray, materialMeshIndices[meshIndex].MeshIndex);
+                        sourceFound |= AccumulateMeshFootprint(mesh, localToOwner, ref minX, ref maxX, ref minZ, ref maxZ);
+                    }
+                }
+            }
+            else
+            {
+                Mesh mesh = renderMeshArray.GetMesh(meshInfo);
+                sourceFound = AccumulateMeshFootprint(mesh, localToOwner, ref minX, ref maxX, ref minZ, ref maxZ);
+            }
+
+            found |= sourceFound;
+        }
+
+        if (!found)
+            return false;
+
+        size = new float2(math.max(0f, maxX - minX), math.max(0f, maxZ - minZ));
+        return math.all(size > new float2(0.001f, 0.001f));
+    }
+
+    private static bool TryResolveLocalToOwnerMatrix(EntityManager em, Entity source, Entity owner, out float4x4 localToOwner)
+    {
+        localToOwner = float4x4.identity;
+        if (source == Entity.Null || owner == Entity.Null || !em.Exists(source) || !em.Exists(owner))
+            return false;
+
+        using NativeList<float4x4> chain = new(MaxSelectionObjectOutlineParentDepth, Allocator.Temp);
+        Entity current = source;
+        for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
+        {
+            if (!em.HasComponent<LocalTransform>(current))
+                return false;
+
+            LocalTransform transform = em.GetComponentData<LocalTransform>(current);
+            float4x4 localMatrix = float4x4.TRS(transform.Position, transform.Rotation, new float3(transform.Scale));
+            if (em.HasComponent<PostTransformMatrix>(current))
+                localMatrix = math.mul(localMatrix, em.GetComponentData<PostTransformMatrix>(current).Value);
+            chain.Add(localMatrix);
+
+            if (current == owner)
+                break;
+
+            if (!em.HasComponent<Parent>(current))
+                return false;
+
+            current = em.GetComponentData<Parent>(current).Value;
+            if (current == Entity.Null || !em.Exists(current))
+                return false;
+        }
+
+        if (chain.Length == 0 || current != owner)
+            return false;
+
+        localToOwner = float4x4.identity;
+        for (int i = chain.Length - 2; i >= 0; i--)
+            localToOwner = math.mul(localToOwner, chain[i]);
+
+        return true;
+    }
+
+    private static bool AccumulateMeshFootprint(
+        Mesh mesh,
+        float4x4 localToOwner,
+        ref float minX,
+        ref float maxX,
+        ref float minZ,
+        ref float maxZ)
+    {
+        if (mesh == null || mesh.vertexCount <= 0)
+            return false;
+
+        Bounds bounds = mesh.bounds;
+        if (bounds.size.sqrMagnitude <= 0.0001f)
+            return false;
+
+        float3 center = bounds.center;
+        float3 extents = bounds.extents;
+        for (int x = -1; x <= 1; x += 2)
+        for (int y = -1; y <= 1; y += 2)
+        for (int z = -1; z <= 1; z += 2)
+        {
+            float3 localCorner = center + extents * new float3(x, y, z);
+            float3 ownerCorner = math.transform(localToOwner, localCorner);
+            minX = math.min(minX, ownerCorner.x);
+            maxX = math.max(maxX, ownerCorner.x);
+            minZ = math.min(minZ, ownerCorner.z);
+            maxZ = math.max(maxZ, ownerCorner.z);
+        }
+
+        return true;
     }
 
     private static bool UsesVehicleSelectionMarker(EntityManager em, Entity unit)
@@ -697,7 +875,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         if (em.HasComponent<UnitFootprint>(unit))
         {
             int2 footprint = em.GetComponentData<UnitFootprint>(unit).Size;
-            radius = math.max(radius, math.max(footprint.x, footprint.y) * 0.36f);
+            radius = math.max(radius, math.max(footprint.x, footprint.y) * 0.48f);
         }
 
         if (source != Entity.Null && em.Exists(source) && em.HasComponent<Unity.Rendering.RenderBounds>(source))
@@ -778,16 +956,16 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             renderQueue = (int)RenderQueue.Transparent + 6
         };
 
-        SetMaterialColorIfPresent(material, BaseColorProperty, new Color(0.02f, 0.9f, 1f, 0.42f));
-        SetMaterialColorIfPresent(material, LegacyColorProperty, new Color(0.02f, 0.9f, 1f, 0.42f));
-        SetMaterialColorIfPresent(material, EmissionColorProperty, SelectionObjectOutlineEmissionColor);
-        SetMaterialColorIfPresent(material, AccentColorProperty, new Color(0.6f, 1f, 1f, 0.72f));
-        SetMaterialFloatIfPresent(material, AlphaProperty, 0.38f);
-        SetMaterialFloatIfPresent(material, "_PulseStrength", 0.16f);
+        SetMaterialColorIfPresent(material, BaseColorProperty, new Color(0.02f, 0.88f, 1f, 0.9f));
+        SetMaterialColorIfPresent(material, LegacyColorProperty, new Color(0.02f, 0.88f, 1f, 0.9f));
+        SetMaterialColorIfPresent(material, EmissionColorProperty, new Color(0.01f, 0.22f, 0.28f, 1f));
+        SetMaterialColorIfPresent(material, AccentColorProperty, new Color(0.56f, 0.98f, 1f, 0.9f));
+        SetMaterialFloatIfPresent(material, AlphaProperty, 0.78f);
+        SetMaterialFloatIfPresent(material, "_PulseStrength", 0.08f);
         SetMaterialFloatIfPresent(material, "_PulseSpeed", 0.42f);
-        SetMaterialFloatIfPresent(material, ScanStrengthProperty, 0.18f);
+        SetMaterialFloatIfPresent(material, ScanStrengthProperty, 0.1f);
         SetMaterialFloatIfPresent(material, ScanSpeedProperty, 0.24f);
-        SetMaterialFloatIfPresent(material, "_EdgeSoftness", 0.44f);
+        SetMaterialFloatIfPresent(material, "_EdgeSoftness", 0.16f);
 
         _characterSelectionVolumeMaterial = material;
         return _characterSelectionVolumeMaterial;
@@ -840,16 +1018,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         List<Color> colors = new(segments * 8 + 64);
         List<int> triangles = new(segments * 12 + 96);
         Color bright = Color.white;
-        Color subtle = new(1f, 1f, 1f, 0.38f);
-        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.78f, 1.0f, segments, -34f, 34f, bright);
-        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.78f, 1.0f, segments, 146f, 214f, bright);
-        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.82f, 0.98f, segments, 64f, 116f, bright);
-        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.82f, 0.98f, segments, 244f, 296f, bright);
-
-        AddVerticalRibbon(vertices, uvs, colors, triangles, 0f, 0.34f, 0.82f, 0.78f, 0.042f, bright);
-        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI, 0.34f, 0.82f, 0.78f, 0.042f, bright);
-        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI * 0.5f, 0.16f, 0.92f, 0.62f, 0.026f, subtle);
-        AddVerticalRibbon(vertices, uvs, colors, triangles, math.PI * 1.5f, 0.16f, 0.92f, 0.62f, 0.026f, subtle);
+        AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.74f, 1.0f, segments, 0f, 360f, bright);
 
         _characterSelectionVolumeMesh = new Mesh
         {
@@ -907,89 +1076,6 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             triangles.Add(outerB);
             triangles.Add(innerB);
         }
-    }
-
-    private static void AddFlatRing(
-        List<Vector3> vertices,
-        List<Vector2> uvs,
-        List<Color> colors,
-        List<int> triangles,
-        float y,
-        float innerRadius,
-        float outerRadius,
-        int segments)
-    {
-        int start = vertices.Count;
-        for (int i = 0; i < segments; i++)
-        {
-            float angle = math.PI * 2f * i / segments;
-            float sin = math.sin(angle);
-            float cos = math.cos(angle);
-            float ringU = (float)i / segments;
-            vertices.Add(new Vector3(cos * outerRadius, y, sin * outerRadius));
-            uvs.Add(new Vector2(0.02f, ringU));
-            colors.Add(Color.white);
-            vertices.Add(new Vector3(cos * innerRadius, y, sin * innerRadius));
-            uvs.Add(new Vector2(0.98f, ringU));
-            colors.Add(Color.white);
-        }
-
-        for (int i = 0; i < segments; i++)
-        {
-            int next = (i + 1) % segments;
-            int outerA = start + i * 2;
-            int innerA = outerA + 1;
-            int outerB = start + next * 2;
-            int innerB = outerB + 1;
-            triangles.Add(outerA);
-            triangles.Add(outerB);
-            triangles.Add(innerA);
-            triangles.Add(innerA);
-            triangles.Add(outerB);
-            triangles.Add(innerB);
-        }
-    }
-
-    private static void AddVerticalRibbon(
-        List<Vector3> vertices,
-        List<Vector2> uvs,
-        List<Color> colors,
-        List<int> triangles,
-        float angle,
-        float yMin,
-        float yMax,
-        float radius,
-        float width,
-        Color color)
-    {
-        float3 radial = new(math.cos(angle), 0f, math.sin(angle));
-        float3 tangent = new(-radial.z, 0f, radial.x);
-        float3 center = radial * radius;
-        float3 halfWidth = tangent * width;
-        int start = vertices.Count;
-        vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMin, 0f)));
-        uvs.Add(new Vector2(0.02f, 0.02f));
-        colors.Add(color);
-        vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMin, 0f)));
-        uvs.Add(new Vector2(0.98f, 0.02f));
-        colors.Add(color);
-        vertices.Add(ToVector3(center - halfWidth + new float3(0f, yMax, 0f)));
-        uvs.Add(new Vector2(0.02f, 0.98f));
-        colors.Add(color);
-        vertices.Add(ToVector3(center + halfWidth + new float3(0f, yMax, 0f)));
-        uvs.Add(new Vector2(0.98f, 0.98f));
-        colors.Add(color);
-        triangles.Add(start);
-        triangles.Add(start + 2);
-        triangles.Add(start + 1);
-        triangles.Add(start + 1);
-        triangles.Add(start + 2);
-        triangles.Add(start + 3);
-    }
-
-    private static Vector3 ToVector3(float3 value)
-    {
-        return new Vector3(value.x, value.y, value.z);
     }
 
     private static float ResolveSelectionObjectOutlineScanStrength(float outlineWidth)

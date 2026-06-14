@@ -107,6 +107,43 @@ public sealed class SelectionOrderMarkerSystem
         CacheAttackOrderMarker();
     }
 
+    public bool TryShowCommandResultMarker(
+        EntityManager em,
+        RtsSelectionCommandResultElement result,
+        float attackVisibleSeconds = 6f)
+    {
+        if (result.Accepted == 0 || result.HasWorldPosition == 0)
+            return false;
+
+        switch (result.Kind)
+        {
+            case RtsSelectionCommandIntentKind.Move:
+            case RtsSelectionCommandIntentKind.BoardTransport:
+            case RtsSelectionCommandIntentKind.BoardSelectedTransport:
+            case RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger:
+                if (result.HasTargetCell == 0)
+                    return false;
+                ShowMoveOrderMarker(em, result.TargetCell, result.WorldPosition, result.MarkerFactionId);
+                return true;
+
+            case RtsSelectionCommandIntentKind.Attack:
+                if (result.HasTargetEntity != 0)
+                    ShowAttackOrderMarker(em, result.TargetEntity, result.WorldPosition, attackVisibleSeconds);
+                else
+                    ShowAttackOrderMarker(em, result.WorldPosition, attackVisibleSeconds);
+                return true;
+
+            case RtsSelectionCommandIntentKind.Scan:
+                if (result.HasTargetCell == 0)
+                    return false;
+                ShowScanOrderMarker(em, result.TargetCell, result.WorldPosition, result.RadiusCells);
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
     public void Dispose()
     {
         if (_moveOrderMarker != null)

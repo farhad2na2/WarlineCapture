@@ -8,6 +8,7 @@ public sealed class MapSurfaceEditorOverlaySystem
     public enum OverlayMode
     {
         Walkable,
+        Vehicle3x3Footprint,
         Height,
         Slope,
         Layer,
@@ -23,6 +24,12 @@ public sealed class MapSurfaceEditorOverlaySystem
             return;
 
         int stride = math.max(1, cellStride);
+        if (mode == OverlayMode.Vehicle3x3Footprint)
+        {
+            DrawVehicleFootprintOverlay(surface, grid, stride);
+            return;
+        }
+
         for (int y = 0; y < surface.Dimensions.y; y += stride)
         {
             for (int x = 0; x < surface.Dimensions.x; x += stride)
@@ -58,6 +65,33 @@ public sealed class MapSurfaceEditorOverlaySystem
         };
 
         Handles.DrawSolidRectangleWithOutline(verts, color, new Color(color.r, color.g, color.b, 0.8f));
+    }
+
+    private static void DrawVehicleFootprintOverlay(MapSurfaceComponent surface, GridConfig grid, int cellStride)
+    {
+        MapSurfacePathingValidationSystem validation = new();
+        int2 footprint = new(3, 3);
+        for (int y = 0; y < surface.Dimensions.y; y += cellStride)
+        {
+            for (int x = 0; x < surface.Dimensions.x; x += cellStride)
+            {
+                int2 cell = new(x, y);
+                bool singleVehicleCell = validation.CanTraverse(
+                    surface,
+                    surface.HasSurfaceData,
+                    cell,
+                    MapSurfaceMovementMask.WheeledVehicle | MapSurfaceMovementMask.TrackedVehicle);
+                bool footprintValid = singleVehicleCell &&
+                    validation.CanTraverseFootprint(surface, surface.HasSurfaceData, grid, cell, footprint, true);
+
+                Color color = singleVehicleCell
+                    ? footprintValid
+                        ? new Color(0.05f, 0.85f, 0.18f, 0.18f)
+                        : new Color(1f, 0.42f, 0.04f, 0.42f)
+                    : new Color(0.9f, 0.05f, 0.05f, 0.28f);
+                DrawCell(grid, new MapSurfaceSample { Cell = cell, Height = grid.Origin.y }, color, cellStride);
+            }
+        }
     }
 
     private static Color ResolveOverlayColor(MapSurfaceSample sample, OverlayMode mode)

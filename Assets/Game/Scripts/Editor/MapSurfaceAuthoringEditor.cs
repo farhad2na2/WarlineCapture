@@ -39,6 +39,17 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         EditorSceneManager.SaveOpenScenes();
     }
 
+    [MenuItem("Game/Map Surface/Preview Vehicle 3x3 Footprint Around Selection")]
+    public static void PreviewVehicle3x3FootprintAroundSelection()
+    {
+        if (!TryFindActiveSceneAuthoring(out MapSurfaceAuthoring authoring))
+            throw new MissingReferenceException("No MapSurfaceAuthoring found in the active scene.");
+
+        MapSurfacePreviewOverlaySystem.ShowAuthoringPreview(
+            authoring,
+            MapSurfaceEditorOverlaySystem.OverlayMode.Vehicle3x3Footprint);
+    }
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();

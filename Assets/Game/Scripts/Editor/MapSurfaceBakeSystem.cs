@@ -48,6 +48,7 @@ public readonly struct MapSurfaceMeshBakeSource
 public sealed class MapSurfaceBakeSystem
 {
     private const int SpatialBucketSizeInCells = 16;
+    private const float BlockerBelowSurfaceIgnoreTolerance = 0.25f;
     private const string MissingSurfaceReferenceError = "Match must have exactly one active MapSurfaceAuthoring with a baked MapSurfaceDataAsset reference.";
     private const string MultipleSurfaceReferencesError = "Match has multiple active MapSurfaceAuthoring baked surface references. Keep exactly one active map-surface data reference.";
 
@@ -233,13 +234,15 @@ public sealed class MapSurfaceBakeSystem
                     spatialIndex,
                     cell,
                     new float2(worldCenter.x, worldCenter.z),
-                    out _,
+                    out float blockerHeight,
                     out _,
                     out _,
                     out _,
                     out _,
                     out _);
-                if (blockerCoversCell && !IsRoadLikeSurface(surfaceType, flags))
+                bool blockerIsAtSurface = blockerCoversCell &&
+                    blockerHeight >= height - BlockerBelowSurfaceIgnoreTolerance;
+                if (blockerIsAtSurface && !IsRoadLikeSurface(surfaceType, flags))
                 {
                     surfaceType = MapSurfaceType.Blocked;
                     flags = MapSurfaceFlags.None;

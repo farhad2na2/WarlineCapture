@@ -22,12 +22,14 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             tests.RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation();
             tests.PerformanceValidationProbeKeepsSurfaceSamplingAllocationBounded();
             tests.PathingValidationUsesTraversableLayerWhenFirstSampleIsBlocked();
+            tests.PathingValidationAllowsRoadsRegardlessOfSlope();
             tests.MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain();
+            tests.MapSurfaceBakeIgnoresBlockerBuriedBelowGround();
             tests.MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps();
             tests.MapSurfaceBakePrefersRoadHeightOverHigherTerrain();
             tests.MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps();
             tests.MovePreviewResolverUsesSelectedVehicleFootprint();
-            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=13");
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=15");
         }
         catch (System.Exception exception)
         {
@@ -210,6 +212,67 @@ public sealed class MapSurfaceLayeredGridFocusedTests
     }
 
     [Test]
+    public void PathingValidationAllowsRoadsRegardlessOfSlope()
+    {
+        int width = 3;
+        int height = 3;
+        MapSurfaceCell[] cells = FlatCells(width, height);
+        var samples = new MapSurfaceSample[width * height];
+        for (int i = 0; i < samples.Length; i++)
+        {
+            samples[i] = Sample(
+                new int2(i % width, i / width),
+                i + 1,
+                0,
+                1.36f,
+                slopeDegrees: 24.88f,
+                surfaceType: MapSurfaceType.Road,
+                flags: MapSurfaceFlags.Road,
+                movementMask: MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded);
+        }
+
+        using SurfaceBlobScope roadScope = CreateSurface(
+            new int2(width, height),
+            cells,
+            samples,
+            Array.Empty<MapSurfaceConnection>());
+
+        var validationSystem = new MapSurfacePathingValidationSystem();
+        var grid = new GridConfig
+        {
+            Width = width,
+            Height = height,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+
+        Assert.IsTrue(
+            validationSystem.CanTraverse(roadScope.Surface, roadScope.Surface.HasSurfaceData, new int2(1, 1), MapSurfaceMovementMask.TrackedVehicle),
+            "Road cells must stay vehicle-walkable even when their baked slope exceeds the normal vehicle slope limit.");
+        Assert.IsTrue(
+            validationSystem.CanTraverseFootprint(roadScope.Surface, roadScope.Surface.HasSurfaceData, grid, new int2(1, 1), new int2(3, 3), true),
+            "A full tank footprint on road cells must not fail only because the road surface is sloped.");
+
+        MapSurfaceSample steepTerrain = Sample(
+            int2.zero,
+            100,
+            0,
+            1.36f,
+            slopeDegrees: 24.88f,
+            surfaceType: MapSurfaceType.Terrain,
+            movementMask: MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded);
+        using SurfaceBlobScope terrainScope = CreateSurface(
+            new int2(1, 1),
+            FlatCells(1, 1),
+            new[] { steepTerrain },
+            Array.Empty<MapSurfaceConnection>());
+
+        Assert.IsFalse(
+            validationSystem.CanTraverse(terrainScope.Surface, terrainScope.Surface.HasSurfaceData, int2.zero, MapSurfaceMovementMask.TrackedVehicle),
+            "Non-road terrain should still enforce the normal vehicle slope limit.");
+    }
+
+    [Test]
     public void RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation()
     {
         MapSurfaceSample slope = Sample(
@@ -307,6 +370,53 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             Assert.AreEqual(0f, sample.Height, 0.0001f);
             Assert.AreEqual(MapSurfaceType.Blocked, sample.SurfaceType);
             Assert.AreEqual(MapSurfaceMovementMask.None, sample.MovementMask);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(terrain);
+            UnityEngine.Object.DestroyImmediate(blocker);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBakeIgnoresBlockerBuriedBelowGround()
+    {
+        Mesh terrain = CreatePlaneMesh(0f);
+        Mesh blocker = CreatePlaneMesh(-40f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(float3.zero, 1f, new int2(1, 1)),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        terrain,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0),
+                    new MapSurfaceMeshBakeSource(
+                        blocker,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Blocked,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.None,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Terrain, sample.SurfaceType);
+            Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.TrackedVehicle) != 0);
         }
         finally
         {

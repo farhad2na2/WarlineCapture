@@ -101,6 +101,19 @@ public readonly struct MapSurfacePathingValidationSystem
             return false;
         }
 
+        if (IsRoadLikeSurface(sample.SurfaceType, sample.Flags))
+            return true;
+
         return math.max(0f, sample.SlopeDegrees) <= maxSlopeDegrees;
+    }
+
+    private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags)
+    {
+        return surfaceType == MapSurfaceType.Road ||
+               surfaceType == MapSurfaceType.DirtRoad ||
+               surfaceType == MapSurfaceType.Highway ||
+               surfaceType == MapSurfaceType.BridgeDeck ||
+               surfaceType == MapSurfaceType.Ramp ||
+               (flags & MapSurfaceFlags.Road) != 0;
     }
 }

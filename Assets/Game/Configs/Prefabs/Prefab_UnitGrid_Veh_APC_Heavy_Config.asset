@@ -60,11 +60,11 @@ MonoBehaviour:
   allowAutoEngage: 1
   usesTurretAim: 1
   aggroRangeCells: 9
-  attackRange: 60
-  chaseBreakDistance: 8
-  attackCooldownSeconds: 0.65
-  attackDamage: 18
-  maxHealth: 850
+  attackRange: 13
+  chaseBreakDistance: 17
+  attackCooldownSeconds: 0.5
+  attackDamage: 22
+  maxHealth: 900
   attackImpactPrefab: {fileID: 5169478979705239038, guid: 62beb837fa50d43f7828cb4fe57e779d, type: 3}
   muzzleFlashPrefab: {fileID: 1358076909425026753, guid: f8b2b4dad2dab42629ef74d7e7a01aad, type: 3}
   muzzleFlashHeightOffset: 1.6

@@ -46,17 +46,21 @@ MonoBehaviour:
   allowAutoEngage: 1
   usesTurretAim: 0
   aggroRangeCells: 0
-  attackRange: 1.5
-  chaseBreakDistance: 8
-  attackCooldownSeconds: 2
+  attackRange: 1.25
+  chaseBreakDistance: 2.5
+  attackCooldownSeconds: 2.5
   attackDamage: 1
-  maxHealth: 50
+  maxHealth: 55
   attackImpactPrefab: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  attackTraceWidth: 0.05
-  attackTraceScrollSpeed: 10
-  attackTraceDashDensity: 10
-  attackTraceVisibleSeconds: 0.08
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.9
+  muzzleFlashForwardOffset: 0.35
+  attackTraceColor: {r: 0.78, g: 0.78, b: 0.72, a: 0.75}
+  attackTraceWidth: 0.035
+  attackTraceScrollSpeed: 8
+  attackTraceDashDensity: 1
+  attackTraceVisibleSeconds: 0.045
+  attackTracerEveryNthShot: 1
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7
   idleWanderDistanceMin: 3

@@ -16,23 +16,32 @@ public partial struct RtsSelectionCancelActiveCommandModeSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        ProcessPendingRequests(state.EntityManager, _commandQueueQuery, _runtimeStateQuery);
+        ProcessPendingRequests(state.EntityManager, _commandQueueQuery, _runtimeStateQuery, out _);
     }
 
     public static bool ProcessPendingRequests(EntityManager em)
+    {
+        return ProcessPendingRequests(em, out _);
+    }
+
+    public static bool ProcessPendingRequests(
+        EntityManager em,
+        out RtsSelectionCommandIntentKind processedKind)
     {
         using EntityQuery commandQueueQuery = em.CreateEntityQuery(
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
         using EntityQuery runtimeStateQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
-        return ProcessPendingRequests(em, commandQueueQuery, runtimeStateQuery);
+        return ProcessPendingRequests(em, commandQueueQuery, runtimeStateQuery, out processedKind);
     }
 
     private static bool ProcessPendingRequests(
         EntityManager em,
         EntityQuery commandQueueQuery,
-        EntityQuery runtimeStateQuery)
+        EntityQuery runtimeStateQuery,
+        out RtsSelectionCommandIntentKind processedKind)
     {
+        processedKind = RtsSelectionCommandIntentKind.None;
         if (commandQueueQuery.IsEmptyIgnoreFilter || runtimeStateQuery.IsEmptyIgnoreFilter)
             return false;
 
@@ -43,12 +52,15 @@ public partial struct RtsSelectionCancelActiveCommandModeSystem : ISystem
 
         for (int i = 0; i < commandRequests.Length;)
         {
-            if (commandRequests[i].Kind != RtsSelectionCommandIntentKind.CancelActiveCommandMode)
+            RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
+            if (!IsCancelCommand(kind))
             {
                 i++;
                 continue;
             }
 
+            if (processedKind == RtsSelectionCommandIntentKind.None)
+                processedKind = kind;
             commandRequests.RemoveAt(i);
             handledAny = true;
         }
@@ -65,6 +77,12 @@ public partial struct RtsSelectionCancelActiveCommandModeSystem : ISystem
         em.SetComponentData(commandEntity, inputState);
         em.SetComponentData(runtimeEntity, runtimeState);
         return true;
+    }
+
+    private static bool IsCancelCommand(RtsSelectionCommandIntentKind kind)
+    {
+        return kind == RtsSelectionCommandIntentKind.CancelActiveCommandMode ||
+               kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
     }
 
     private static void ClearCommandMode(ref RtsSelectionInputStateComponent inputState)

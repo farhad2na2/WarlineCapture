@@ -39,15 +39,8 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly ValidateControllableEntityDelegate ValidateControllableEntity;
         public readonly IsBoardPassengerCandidateDelegate IsBoardPassengerCandidate;
         public readonly IsBoardTransportCandidateDelegate IsBoardTransportCandidate;
-        public readonly Action IssueHoldPositionOrder;
-        public readonly Action IssueStopOrder;
-        public readonly Action DestroyFocusedUnit;
-        public readonly Action ReturnFocusedSelectionToBase;
         public readonly Action BoardFocusedTransport;
         public readonly Func<Vector2, bool> TryFocusScreenPosition;
-        public readonly Func<bool> IssueFocusedMissileLauncherRadarAttack;
-        public readonly Func<bool> ArmFocusedAttackTargetMode;
-        public readonly Action CancelExplicitAttackTargetMode;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -77,15 +70,8 @@ public sealed class RtsSelectionFocusCommandSystem
             ValidateControllableEntityDelegate validateControllableEntity,
             IsBoardPassengerCandidateDelegate isBoardPassengerCandidate,
             IsBoardTransportCandidateDelegate isBoardTransportCandidate,
-            Action issueHoldPositionOrder,
-            Action issueStopOrder,
-            Action destroyFocusedUnit,
-            Action returnFocusedSelectionToBase,
             Action boardFocusedTransport,
-            Func<Vector2, bool> tryFocusScreenPosition,
-            Func<bool> issueFocusedMissileLauncherRadarAttack,
-            Func<bool> armFocusedAttackTargetMode,
-            Action cancelExplicitAttackTargetMode)
+            Func<Vector2, bool> tryFocusScreenPosition)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
@@ -114,15 +100,8 @@ public sealed class RtsSelectionFocusCommandSystem
             ValidateControllableEntity = validateControllableEntity;
             IsBoardPassengerCandidate = isBoardPassengerCandidate;
             IsBoardTransportCandidate = isBoardTransportCandidate;
-            IssueHoldPositionOrder = issueHoldPositionOrder;
-            IssueStopOrder = issueStopOrder;
-            DestroyFocusedUnit = destroyFocusedUnit;
-            ReturnFocusedSelectionToBase = returnFocusedSelectionToBase;
             BoardFocusedTransport = boardFocusedTransport;
             TryFocusScreenPosition = tryFocusScreenPosition;
-            IssueFocusedMissileLauncherRadarAttack = issueFocusedMissileLauncherRadarAttack;
-            ArmFocusedAttackTargetMode = armFocusedAttackTargetMode;
-            CancelExplicitAttackTargetMode = cancelExplicitAttackTargetMode;
         }
     }
 
@@ -279,14 +258,8 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
                kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
-               kind == RtsSelectionCommandIntentKind.HoldPosition ||
-               kind == RtsSelectionCommandIntentKind.Stop ||
-               kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
-               kind == RtsSelectionCommandIntentKind.ReturnToBase ||
                kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
-               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport ||
-               kind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode ||
-               kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
+               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport;
     }
 
     private bool ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentRequestElement request)
@@ -314,37 +287,12 @@ public sealed class RtsSelectionFocusCommandSystem
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
                 return true;
-            case RtsSelectionCommandIntentKind.HoldPosition:
-                context.InputSystem.ClearActiveCommandMode();
-                context.IssueHoldPositionOrder?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.Stop:
-                context.InputSystem.ClearActiveCommandMode();
-                context.IssueStopOrder?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
-                context.DestroyFocusedUnit?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.ReturnToBase:
-                context.InputSystem.ClearActiveCommandMode();
-                context.ReturnFocusedSelectionToBase?.Invoke();
-                return true;
             case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
                 context.InputSystem.ClearActiveCommandMode();
                 context.BoardFocusedTransport?.Invoke();
                 return true;
             case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
                 context.BoardFocusedTransport?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
-                if (context.IssueFocusedMissileLauncherRadarAttack == null ||
-                    !context.IssueFocusedMissileLauncherRadarAttack())
-                {
-                    context.ArmFocusedAttackTargetMode?.Invoke();
-                }
-                return true;
-            case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
-                context.CancelExplicitAttackTargetMode?.Invoke();
                 return true;
             default:
                 return false;

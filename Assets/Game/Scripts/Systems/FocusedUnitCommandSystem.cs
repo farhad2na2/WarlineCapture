@@ -4,13 +4,6 @@ using Unity.Mathematics;
 
 public sealed class FocusedUnitCommandSystem
 {
-    public enum MissileLauncherTargetMode
-    {
-        None,
-        Ground,
-        Air
-    }
-
     private World _queryWorld;
     private EntityQuery _respawnQueueQuery;
     private EntityQuery _selectedMoveQuery;
@@ -29,23 +22,6 @@ public sealed class FocusedUnitCommandSystem
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitMove>());
-    }
-
-    public void DestroyFocusedUnit(EntityManager em, Entity entity)
-    {
-        if (em.HasComponent<SelectedUnitTag>(entity))
-            em.RemoveComponent<SelectedUnitTag>(entity);
-
-        if (em.HasComponent<UnitHealth>(entity))
-        {
-            UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-            health.Current = 0;
-            em.SetComponentData(entity, health);
-        }
-        else
-        {
-            em.DestroyEntity(entity);
-        }
     }
 
     public bool ReturnFocusedUnitToBase(EntityManager em, Entity entity, UnitMoveOrderSystem moveOrderSystem)
@@ -77,37 +53,6 @@ public sealed class FocusedUnitCommandSystem
     public void EnableFocusedUnitAutoAttack(EntityManager em, Entity entity, UnitTargetOrderSystem targetOrderSystem)
     {
         targetOrderSystem.ClearCommandedAttackOrderComponents(em, entity);
-    }
-
-    public bool TryIssueFocusedMissileLauncherRadarAttack(
-        EntityManager em,
-        Entity launcher,
-        UnitTargetOrderSystem targetOrderSystem,
-        out float3 targetPosition)
-    {
-        targetPosition = default;
-        if (!em.HasComponent<UnitCombat>(launcher) || em.GetComponentData<UnitCombat>(launcher).CanAttack == 0)
-            return false;
-
-        MissileLauncherTargetMode mode = ResolveMissileLauncherTargetMode(em, launcher);
-        if (mode == MissileLauncherTargetMode.None)
-            return false;
-
-        byte factionId = em.GetComponentData<Faction>(launcher).Id;
-        if (!targetOrderSystem.TryFindRadarTargetForMissileLauncher(
-                em,
-                factionId,
-                mode == MissileLauncherTargetMode.Air,
-                launcher,
-                out Entity target,
-                out int2 targetCell,
-                out targetPosition))
-        {
-            return false;
-        }
-
-        targetOrderSystem.IssueDirectAttackTarget(em, launcher, target, targetCell, targetPosition);
-        return true;
     }
 
     public bool IssueImmediateSelectedUnitOrder(
@@ -247,15 +192,4 @@ public sealed class FocusedUnitCommandSystem
         ecb.SetComponent(entity, airState);
     }
 
-    private static MissileLauncherTargetMode ResolveMissileLauncherTargetMode(EntityManager em, Entity launcher)
-    {
-        if (!em.HasComponent<UnitSourcePrefabKey>(launcher))
-            return MissileLauncherTargetMode.None;
-
-        string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(launcher).Value.ToString();
-        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Ground", System.StringComparison.OrdinalIgnoreCase))
-            return MissileLauncherTargetMode.Ground;
-
-        return MissileLauncherTargetMode.None;
-    }
 }

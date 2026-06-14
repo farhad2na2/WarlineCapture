@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `49 / 113 complete (43.4%)`.
+- Checklist progress: `59 / 113 complete (52.2%)`.
 - In progress: `0`.
-- Remaining open: `64`.
-- Phase progress: `5 / 13 phases complete; 0 in progress; 8 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `100` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `54`.
+- Phase progress: `6 / 13 phases complete; 1 in progress; 6 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `390` after excluding `101` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `6` ConvertToISystem, `289` ConvertToSystemBase, `73` FoldIntoOwner, `22` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `11`.
+- Converted to `ISystem`: `15`.
 - Converted to `SystemBase`: `0`.
 - Folded into ECS owners/jobs: `5`.
 - Kept as passive view/config/authoring/editor boundary: `0`.
 - Remaining plain runtime gameplay `*System` classes: `390`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-14 completed Phase 4 selection command request and command-mode transition tests.
+- Last implementation update: 2026-06-14 inventoried direct `UnitMoveOrderSystem` callers for Phase 6.
 
 ## Architecture Rules
 
@@ -329,10 +329,17 @@ Progress notes:
 - 2026-06-14: Added `RtsSelectionCancelActiveCommandModeSystem` as an explicit `ISystem` request processor for `CancelActiveCommandMode` command-intent requests. The ECS processor consumes cancel requests, clears active command-mode state including Board direction/transport data, exits selection mode, and suppresses the next world click without creating a persistent cancel feedback message. `SelectionGameplayStartupSystem` keeps explicit attack presentation state, camera-drag state, world-marker visibility, and HUD command-mode clearing in the managed boundary, and `RtsSelectionFocusCommandSystem` no longer owns the Cancel Active Command Mode branch. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: total runtime `*System` declarations are now `499`, Unity ECS exclusions are now `100`, and the runtime non-ECS denominator remains `390`. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=30` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
 - 2026-06-14: Removed direct command-tab visual ownership from `MatchOverlayCommandInputSystem`. Command button clicks now enqueue ECS command-intent requests only; Select enter/exit is derived from the current HUD feedback state, and tab selection/clearing is driven by `BattleHudRuntimeFeedbackSystem` command-mode feedback. Updated HUD feedback tests so Select clicks record the ECS request while stale Board actions are cleared only when command-mode feedback is applied. Added a selection input guard that fails if command input starts constructing `MatchOverlayCommandTabVisualSystem`, toggling/selecting tabs, or directly applying HUD command modes again. Focused Unity validation passed with `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, `[RtsSelectionInputSystemValidation] result=Passed tests=31`, and `[MatchHudCommandFeedbackValidation] result=Passed tests=10`.
 - 2026-06-14: Completed Phase 4 test coverage with `SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions`. The test starts from `SelectionUiCommandSystem` UI request methods, verifies the queued ECS command-intent kind, then runs the owning ECS processors for Enter Selection, Exit Selection, Enter Move Target, Enter Scan Target, and Cancel Active Command Mode. It asserts each request is consumed once and that runtime command-mode state transitions through selection active, selection inactive, Move target mode, Scan target mode, and finally no active command mode. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=32`.
+- 2026-06-14: Started Phase 5 by converting Hold Position and Stop into `RtsSelectionImmediateSelectedUnitCommandSystem`. The UI still queues `RtsSelectionCommandIntentKind.HoldPosition` or `Stop`, but those requests are now consumed by an ECS processor before the legacy focus-command fallback. The processor clears command mode, removes stale Move requests on accepted immediate commands, applies the same selected-unit order cleanup as the former direct helper, adds or removes `HoldPositionOrderTag`, updates auto-engage for attack-capable units, and leaves HUD/build/camera feedback in the managed shell. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=35`; architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Extended `RtsSelectionImmediateSelectedUnitCommandSystem` to consume `ReturnToBase` command-intent requests. The managed shell still owns UI feedback, world-marker visibility, and focused selection state, while the ECS processor clears command mode, suppresses the next world click, chooses the focused player unit when available, falls back to selected player units, resolves the matching `RespawnFactionSpawnPoint`, and applies the same immediate move component mutations as the former direct helper. Removed the old `ReturnFocusedSelectionToBase` callback path from `RtsSelectionFocusCommandSystem` and `SelectionGameplayStartupSystem`. Also fixed the move-command request path by copying pending move requests into an independent temp array before issuing orders that perform structural component changes, preventing stale `DynamicBuffer<RtsSelectionCommandIntentRequestElement>`/`BufferTypeHandle` access after structural changes. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=38`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Extended `RtsSelectionImmediateSelectedUnitCommandSystem` to consume `DestroyFocusedUnit` command-intent requests. Unit destruction now runs through ECS request processing: it destroys the focused player unit when valid, rejects focused enemy units without falling through to selected-unit fallback, and otherwise destroys selected player units. The managed shell still owns HUD/focused-selection cleanup and the selected-building deletion fallback because that path is a managed building placement boundary. Removed the old direct destroy callback branch from `RtsSelectionFocusCommandSystem`, removed the startup-shell `DestroyFocusedUnit`/selected-unit mutation helpers, and removed the obsolete public `FocusedUnitCommandSystem.DestroyFocusedUnit` direct mutation API. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=41`; architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Extended `RtsSelectionAttackTargetModeCommandSystem` to consume `ToggleAttackTargetMode` command-intent requests for the non-radar fallback path. The managed startup boundary still tries the focused missile-launcher radar shortcut first, then lets the ECS processor validate focused/selected attack-capable units, arm Attack target mode, suppress the next world click, and preserve queued Move request state to match the former toggle fallback behavior. Removed Toggle from `RtsSelectionFocusCommandSystem` and from the external focus-command pending classifier. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=43`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=13`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Extended `RtsSelectionCancelActiveCommandModeSystem` to consume `CancelAttackTargetMode` as an ECS command-mode cancellation request. The processor now reports the processed cancel intent kind, clears active command-mode ECS state, exits selection mode, and suppresses the next world click. `SelectionGameplayStartupSystem` keeps explicit attack presentation, HUD command-mode clearing, world-marker visibility, and camera-drag cleanup in the managed boundary. Removed the old `CancelExplicitAttackTargetMode` callback from `RtsSelectionFocusCommandSystem` and its context factory. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=44`; architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Added `RtsSelectionMissileLauncherRadarAttackCommandSystem` as a dedicated ECS command processor for the successful focused missile-launcher radar shortcut. The system consumes `ToggleAttackTargetMode` only after it validates a player-controlled missile launcher, resolves a radar target, and issues the direct commanded attack. `SelectionGameplayStartupSystem` now keeps only the managed presentation follow-up: attack marker, focus/selection presentation, explicit attack mode flag, HUD feedback, world-marker visibility, and camera dragging. Removed the old radar mutation API from `FocusedUnitCommandSystem`. Updated radar runtime tests to queue the Toggle request and use production `PlayerFactionId`/`EnemyFactionId`. Focused Unity validation passed with `[MissileLauncherRadarAttackRuntimeValidation] result=Passed tests=4`, `[RtsSelectionInputSystemValidation] result=Passed tests=44`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
+- 2026-06-14: Completed Phase 5 result presentation mapping. `SelectionGameplayStartupSystem` now formats Hold, Stop, Return To Base, Destroy Focused Unit, and rejection feedback from the ECS command result tuple through `BuildImmediateSelectedUnitCommandResult`, with `TryGetImmediateSelectedUnitCommandMode` as the single mode mapping for immediate focused commands. Added direct EditMode coverage for accepted and rejected focused command result mapping. Focused Unity validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=45`; architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=2`.
 
 ## Phase 5: Focused Unit Commands
 
-Status: [ ]
+Status: [x]
 
 Purpose:
 Convert focused-unit commands into explicit ECS command request processors.
@@ -344,15 +351,15 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Convert Hold Position into an ECS request processor.
-- [ ] Convert Stop into an ECS request processor.
-- [ ] Convert Return To Base into an ECS request processor.
-- [ ] Convert Destroy Focused Unit into an ECS request processor.
-- [ ] Convert Toggle Attack Target Mode into ECS command-mode state mutation.
-- [ ] Convert Cancel Attack Target Mode into ECS command-mode state mutation.
-- [ ] Move missile/radar automatic target acquisition into a dedicated ECS automatic targeting system.
-- [ ] Add result codes and feedback mapping for each command.
-- [ ] Add tests for each focused command result.
+- [x] Convert Hold Position into an ECS request processor.
+- [x] Convert Stop into an ECS request processor.
+- [x] Convert Return To Base into an ECS request processor.
+- [x] Convert Destroy Focused Unit into an ECS request processor.
+- [x] Convert Toggle Attack Target Mode into ECS command-mode state mutation.
+- [x] Convert Cancel Attack Target Mode into ECS command-mode state mutation.
+- [x] Move missile/radar automatic target acquisition into a dedicated ECS automatic targeting system.
+- [x] Add result codes and feedback mapping for each command.
+- [x] Add tests for each focused command result.
 
 Acceptance checks:
 
@@ -362,7 +369,7 @@ Acceptance checks:
 
 ## Phase 6: Movement And Target Order Primitives
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Remove shared direct-call mutation helpers as public non-ECS systems.
@@ -375,7 +382,7 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Inventory all callers of `UnitMoveOrderSystem`.
+- [x] Inventory all callers of `UnitMoveOrderSystem`.
 - [ ] Replace direct move order calls with `UnitMoveOrderRequest` data.
 - [ ] Convert order clearing into ECS requests or command-buffered ECS helpers.
 - [ ] Replace direct path-request mutation with ECS order application.
@@ -390,6 +397,17 @@ Acceptance checks:
 - Command systems do not call public `UnitMoveOrderSystem` or `UnitTargetOrderSystem` methods for mutation.
 - Structural changes are ECB-backed unless same-frame behavior is documented.
 - Existing Move, Attack, Board, Return, Hold, Stop, and debug-fire behavior still works.
+
+Progress notes:
+
+- 2026-06-14: Inventoried runtime `UnitMoveOrderSystem` callers. Direct runtime mutation paths are:
+  - `SelectedMoveOrderCommandSystem`: uses `FindManualMoveGoal` and `IssueGroupedManualMoveOrder` for resolved Move command requests.
+  - `TransportBoardingCommandSystem`: uses clear/immediate move helpers and ECB-backed clear helper for passenger boarding, disembark, and transport boarding cleanup.
+  - `UnitTransportAirPickupSystem`: clears movement state and issues target-only pickup movement for air transports.
+  - `SelectionGameplayStartupSystem`: still uses clear/immediate move helpers in the managed Board All transport presentation boundary after planning orders.
+  - `FocusedUnitCommandSystem`: still contains public move-order mutation helpers, but current runtime startup no longer calls those helpers; remaining references are tests and the startup construction site. Treat this as a fold/remove cleanup after the equivalent ECS processors and tests own the behavior.
+  - `RtsSelectionCommandResultContextSystem` and `RtsSelectionCommandResultFlushSystem`: pass the shared dependency into move/transport processing and should shrink as those processors become ECS request systems.
+  Test-only and performance-validation references are not runtime conversion blockers.
 
 ## Phase 7: Building, Production, And Road Commands
 

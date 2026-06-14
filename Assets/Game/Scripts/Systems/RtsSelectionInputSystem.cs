@@ -686,14 +686,8 @@ public sealed class RtsSelectionInputSystem
                 case RtsSelectionCommandIntentKind.EnterSelectionMode:
                 case RtsSelectionCommandIntentKind.ExitSelectionMode:
                 case RtsSelectionCommandIntentKind.DeselectAll:
-                case RtsSelectionCommandIntentKind.HoldPosition:
-                case RtsSelectionCommandIntentKind.Stop:
-                case RtsSelectionCommandIntentKind.ReturnToBase:
-                case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
                 case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
                 case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
-                case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
-                case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
                     return true;
             }
         }

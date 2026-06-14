@@ -26,7 +26,9 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
             _commandQueueQuery,
             _runtimeStateQuery,
             _selectedQuery,
+            Entity.Null,
             UnityEngine.Time.frameCount,
+            out _,
             out _,
             out _,
             out _);
@@ -35,6 +37,25 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
     public static bool ProcessPendingRequests(
         EntityManager em,
         int currentFrame,
+        out bool accepted,
+        out bool airDefenseAutoEngageOnly,
+        out TacticalCommandReasonCode rejectionReason)
+    {
+        return ProcessPendingRequests(
+            em,
+            currentFrame,
+            Entity.Null,
+            out _,
+            out accepted,
+            out airDefenseAutoEngageOnly,
+            out rejectionReason);
+    }
+
+    public static bool ProcessPendingRequests(
+        EntityManager em,
+        int currentFrame,
+        Entity focusedUnit,
+        out RtsSelectionCommandIntentKind processedKind,
         out bool accepted,
         out bool airDefenseAutoEngageOnly,
         out TacticalCommandReasonCode rejectionReason)
@@ -50,10 +71,38 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
             commandQueueQuery,
             runtimeStateQuery,
             selectedQuery,
+            focusedUnit,
             currentFrame,
+            out processedKind,
             out accepted,
             out airDefenseAutoEngageOnly,
             out rejectionReason);
+    }
+
+    public static bool HasPendingToggleAttackTargetModeRequest(EntityManager em)
+    {
+        using EntityQuery commandQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+        if (commandQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandQueueQuery.GetSingletonEntity());
+        return HasRequest(commandRequests, RtsSelectionCommandIntentKind.ToggleAttackTargetMode);
+    }
+
+    public static bool ConsumeToggleAttackTargetModeRequest(EntityManager em)
+    {
+        using EntityQuery commandQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+        if (commandQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandQueueQuery.GetSingletonEntity());
+        return RemoveRequests(commandRequests, RtsSelectionCommandIntentKind.ToggleAttackTargetMode);
     }
 
     private static bool ProcessPendingRequests(
@@ -61,11 +110,14 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         EntityQuery commandQueueQuery,
         EntityQuery runtimeStateQuery,
         EntityQuery selectedQuery,
+        Entity focusedUnit,
         int currentFrame,
+        out RtsSelectionCommandIntentKind processedKind,
         out bool accepted,
         out bool airDefenseAutoEngageOnly,
         out TacticalCommandReasonCode rejectionReason)
     {
+        processedKind = RtsSelectionCommandIntentKind.None;
         accepted = false;
         airDefenseAutoEngageOnly = false;
         rejectionReason = TacticalCommandReasonCode.None;
@@ -76,26 +128,23 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         Entity runtimeEntity = runtimeStateQuery.GetSingletonEntity();
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
             em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-        if (!HasRequest(commandRequests, RtsSelectionCommandIntentKind.EnterAttackTargetMode))
+        if (!TryGetAttackTargetModeRequest(commandRequests, out processedKind))
             return false;
 
-        for (int i = 0; i < commandRequests.Length;)
-        {
-            RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
-            if (kind == RtsSelectionCommandIntentKind.Move ||
-                kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode)
-            {
-                commandRequests.RemoveAt(i);
-                continue;
-            }
-
-            i++;
-        }
+        bool enterAttackTargetMode = processedKind == RtsSelectionCommandIntentKind.EnterAttackTargetMode;
+        if (enterAttackTargetMode)
+            RemoveEnterAttackTargetModeRequests(commandRequests);
+        else
+            RemoveRequests(commandRequests, RtsSelectionCommandIntentKind.ToggleAttackTargetMode);
 
         RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
-        ClearQueuedMoveOrder(ref inputState);
-        AttackModeSelectionState attackSelection = ResolveSelectedAttackModeState(em, selectedQuery);
-        if (attackSelection.HasOnlyAirDefenseLauncher)
+        if (enterAttackTargetMode)
+            ClearQueuedMoveOrder(ref inputState);
+
+        AttackModeSelectionState attackSelection = enterAttackTargetMode
+            ? ResolveEnterAttackModeState(em, selectedQuery)
+            : ResolveToggleAttackModeState(em, selectedQuery, focusedUnit);
+        if (enterAttackTargetMode && attackSelection.HasOnlyAirDefenseLauncher)
         {
             ClearCommandMode(ref inputState);
             em.SetComponentData(commandEntity, inputState);
@@ -114,14 +163,17 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         }
 
         RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeEntity);
-        ApplyEnterAttackTargetMode(ref inputState, ref runtimeState, currentFrame);
+        if (enterAttackTargetMode)
+            ApplyEnterAttackTargetMode(ref inputState, ref runtimeState, currentFrame);
+        else
+            ApplyToggleAttackTargetMode(ref inputState, ref runtimeState, currentFrame);
         em.SetComponentData(commandEntity, inputState);
         em.SetComponentData(runtimeEntity, runtimeState);
         accepted = true;
         return true;
     }
 
-    private static AttackModeSelectionState ResolveSelectedAttackModeState(EntityManager em, EntityQuery selectedQuery)
+    private static AttackModeSelectionState ResolveEnterAttackModeState(EntityManager em, EntityQuery selectedQuery)
     {
         AttackModeSelectionState selection = default;
         if (selectedQuery.IsEmptyIgnoreFilter)
@@ -130,6 +182,24 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < selectedEntities.Length; i++)
             IncludeSelectedAttackModeCandidate(em, selectedEntities[i], ref selection);
+
+        return selection;
+    }
+
+    private static AttackModeSelectionState ResolveToggleAttackModeState(
+        EntityManager em,
+        EntityQuery selectedQuery,
+        Entity focusedUnit)
+    {
+        AttackModeSelectionState selection = default;
+        IncludeToggleAttackModeCandidate(em, focusedUnit, ref selection);
+
+        if (selectedQuery.IsEmptyIgnoreFilter)
+            return selection;
+
+        using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+            IncludeToggleAttackModeCandidate(em, selectedEntities[i], ref selection);
 
         return selection;
     }
@@ -153,11 +223,41 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
             selection.HasNonAirDefenseAttackSource = true;
     }
 
+    private static void IncludeToggleAttackModeCandidate(
+        EntityManager em,
+        Entity entity,
+        ref AttackModeSelectionState selection)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+
+        selection.HasSelected = true;
+        if (IsToggleAttackCapableUnit(em, entity))
+            selection.HasNonAirDefenseAttackSource = true;
+    }
+
     private static bool IsSelectedAttackCapableUnit(EntityManager em, Entity entity)
     {
         if (IsAirDefenseLauncher(em, entity))
             return false;
 
+        if (!em.HasComponent<Faction>(entity) ||
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !em.HasComponent<UnitMove>(entity) ||
+            !em.HasComponent<UnitCombat>(entity) ||
+            !em.HasComponent<UnitAttack>(entity) ||
+            !em.HasComponent<LocalTransform>(entity) ||
+            em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
+        {
+            return false;
+        }
+
+        return !em.HasComponent<UnitHealth>(entity) ||
+               em.GetComponentData<UnitHealth>(entity).Current > 0;
+    }
+
+    private static bool IsToggleAttackCapableUnit(EntityManager em, Entity entity)
+    {
         if (!em.HasComponent<Faction>(entity) ||
             !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitMove>(entity) ||
@@ -201,6 +301,64 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         return false;
     }
 
+    private static bool TryGetAttackTargetModeRequest(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out RtsSelectionCommandIntentKind kind)
+    {
+        kind = RtsSelectionCommandIntentKind.None;
+        for (int i = 0; i < commandRequests.Length; i++)
+        {
+            RtsSelectionCommandIntentKind requestKind = commandRequests[i].Kind;
+            if (requestKind != RtsSelectionCommandIntentKind.EnterAttackTargetMode &&
+                requestKind != RtsSelectionCommandIntentKind.ToggleAttackTargetMode)
+            {
+                continue;
+            }
+
+            kind = requestKind;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void RemoveEnterAttackTargetModeRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests)
+    {
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
+            if (kind == RtsSelectionCommandIntentKind.Move ||
+                kind == RtsSelectionCommandIntentKind.EnterAttackTargetMode)
+            {
+                commandRequests.RemoveAt(i);
+                continue;
+            }
+
+            i++;
+        }
+    }
+
+    private static bool RemoveRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        RtsSelectionCommandIntentKind kind)
+    {
+        bool removedAny = false;
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            if (commandRequests[i].Kind != kind)
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            removedAny = true;
+        }
+
+        return removedAny;
+    }
+
     private static void ApplyEnterAttackTargetMode(
         ref RtsSelectionInputStateComponent inputState,
         ref RuntimeGameplayStateComponent runtimeState,
@@ -213,6 +371,23 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         inputState.IgnoreNextLeftMouseRelease = 1;
         inputState.SkipNextWorldReleaseAfterSelection = 1;
         inputState.IgnoreWorldCommandsUntilFrame = currentFrame + 1;
+        ArmCommandMode(
+            ref inputState,
+            TacticalCommandMode.Attack,
+            currentFrame,
+            oneShot: true,
+            requiresWorldTarget: true);
+        runtimeState.SelectionModeActive = 0;
+        runtimeState.SuppressNextWorldClick = 1;
+    }
+
+    private static void ApplyToggleAttackTargetMode(
+        ref RtsSelectionInputStateComponent inputState,
+        ref RuntimeGameplayStateComponent runtimeState,
+        int currentFrame)
+    {
+        inputState.IsDraggingSelection = 0;
+        inputState.SkipNextWorldReleaseAfterSelection = 1;
         ArmCommandMode(
             ref inputState,
             TacticalCommandMode.Attack,

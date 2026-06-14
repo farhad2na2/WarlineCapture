@@ -394,26 +394,16 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         ClickedCellResolver tryGetClickedCell)
     {
         _ = commandResults;
-        int pendingMoveRequestCount = SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace
-            ? CountMoveRequests(commandRequests)
-            : 0;
+        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(Allocator.Temp);
+        int pendingMoveRequestCount = RemovePendingMoveRequests(
+            commandRequests,
+            pendingRequests,
+            SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace);
+        if (pendingRequests.Length == 0)
+            return false;
 
-        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(commandRequests.Length, Allocator.Temp);
-        for (int i = 0; i < commandRequests.Length;)
-        {
-            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
-                IsPreResolvedMoveRequest(request))
-            {
-                i++;
-                continue;
-            }
-
-            commandRequests.RemoveAt(i);
-            pendingRequests.Add(request);
-        }
-
-        NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        using NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray =
+            CopyRequestsToIndependentArray(pendingRequests);
         for (int i = 0; i < pendingRequestArray.Length; i++)
         {
             RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
@@ -448,7 +438,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
         }
 
-        return pendingRequestArray.Length > 0;
+        return true;
     }
 
     private static bool TryGetCommandBuffers(
@@ -486,23 +476,13 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         Entity commandEntity = commandQueueQuery.GetSingletonEntity();
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
             em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(commandRequests.Length, Allocator.Temp);
-        for (int i = 0; i < commandRequests.Length;)
-        {
-            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
-                request.HasTargetCell == 0 ||
-                request.HasWorldPosition == 0)
-            {
-                i++;
-                continue;
-            }
+        using NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests = new(Allocator.Temp);
+        RemovePendingPreResolvedMoveRequests(commandRequests, pendingRequests);
+        if (pendingRequests.Length == 0)
+            return false;
 
-            commandRequests.RemoveAt(i);
-            pendingRequests.Add(request);
-        }
-
-        NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        using NativeArray<RtsSelectionCommandIntentRequestElement> pendingRequestArray =
+            CopyRequestsToIndependentArray(pendingRequests);
         var moveOrderSystem = new UnitMoveOrderSystem();
         for (int i = 0; i < pendingRequestArray.Length; i++)
         {
@@ -526,7 +506,63 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
         }
 
-        return pendingRequestArray.Length > 0;
+        return true;
+    }
+
+    private static int RemovePendingMoveRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests,
+        bool countMoveRequests)
+    {
+        int pendingMoveRequestCount = 0;
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind == RtsSelectionCommandIntentKind.Move && countMoveRequests)
+                pendingMoveRequestCount++;
+
+            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
+                IsPreResolvedMoveRequest(request))
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            pendingRequests.Add(request);
+        }
+
+        return pendingMoveRequestCount;
+    }
+
+    private static void RemovePendingPreResolvedMoveRequests(
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests)
+    {
+        for (int i = 0; i < commandRequests.Length;)
+        {
+            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
+            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
+                request.HasTargetCell == 0 ||
+                request.HasWorldPosition == 0)
+            {
+                i++;
+                continue;
+            }
+
+            commandRequests.RemoveAt(i);
+            pendingRequests.Add(request);
+        }
+    }
+
+    private static NativeArray<RtsSelectionCommandIntentRequestElement> CopyRequestsToIndependentArray(
+        NativeList<RtsSelectionCommandIntentRequestElement> pendingRequests)
+    {
+        NativeArray<RtsSelectionCommandIntentRequestElement> source = pendingRequests.AsArray();
+        NativeArray<RtsSelectionCommandIntentRequestElement> copy = new(source.Length, Allocator.Temp);
+        for (int i = 0; i < source.Length; i++)
+            copy[i] = source[i];
+        return copy;
     }
 
     private static bool IsPreResolvedMoveRequest(RtsSelectionCommandIntentRequestElement request)
@@ -540,20 +576,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             return 0;
 
         return em.GetComponentData<Faction>(entities[0]).Id;
-    }
-
-    private static int CountMoveRequests(DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests)
-    {
-        int count = 0;
-        for (int i = 0; i < commandRequests.Length; i++)
-        {
-            if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Move)
-            {
-                count++;
-            }
-        }
-
-        return count;
     }
 
     private static void AddCommandResult(

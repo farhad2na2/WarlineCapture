@@ -27,15 +27,8 @@ public sealed class RtsSelectionFocusCommandContextSystem
         RtsSelectionFocusCommandSystem.ValidateControllableEntityDelegate validateControllableEntity,
         RtsSelectionFocusCommandSystem.IsBoardPassengerCandidateDelegate isBoardPassengerCandidate,
         RtsSelectionFocusCommandSystem.IsBoardTransportCandidateDelegate isBoardTransportCandidate,
-        Action issueHoldPositionOrder,
-        Action issueStopOrder,
-        Action destroyFocusedUnit,
-        Action returnFocusedSelectionToBase,
         Action boardFocusedTransport,
-        Func<Vector2, bool> tryFocusScreenPosition,
-        Func<bool> issueFocusedMissileLauncherRadarAttack,
-        Func<bool> armFocusedAttackTargetMode,
-        Action cancelExplicitAttackTargetMode)
+        Func<Vector2, bool> tryFocusScreenPosition)
     {
         return new RtsSelectionFocusCommandSystem.Context(
             runtimeGameplayStateSystem,
@@ -68,14 +61,7 @@ public sealed class RtsSelectionFocusCommandContextSystem
             validateControllableEntity,
             isBoardPassengerCandidate,
             isBoardTransportCandidate,
-            issueHoldPositionOrder,
-            issueStopOrder,
-            destroyFocusedUnit,
-            returnFocusedSelectionToBase,
             boardFocusedTransport,
-            tryFocusScreenPosition,
-            issueFocusedMissileLauncherRadarAttack,
-            armFocusedAttackTargetMode,
-            cancelExplicitAttackTargetMode);
+            tryFocusScreenPosition);
     }
 }

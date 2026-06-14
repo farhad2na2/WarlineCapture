@@ -30,6 +30,26 @@ public sealed class MissileLauncherRadarAttackValidationTests
         }
     }
 
+    public static void RunRuntimeFocusedValidation()
+    {
+        try
+        {
+            var tests = new MissileLauncherRadarAttackValidationTests();
+            tests.AirMissileLauncherAttackButton_DoesNotIssueManualRadarAttack();
+            tests.GroundMissileLauncherAttackButton_TargetsGroundUnitInsideFriendlyGroundRadar();
+            tests.MissileLauncherAttackButton_DoesNothingWithoutMatchingRadarCoverage();
+            tests.AttackButtonFallback_ArmsExplicitTargetModeForNormalAttackUnits();
+            UnityEngine.Debug.Log("[MissileLauncherRadarAttackRuntimeValidation] result=Passed tests=4");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogException(ex);
+            UnityEngine.Debug.LogError("[MissileLauncherRadarAttackRuntimeValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void MissileLauncherConfigs_HaveRadarScaleAttackRange()
     {
@@ -54,10 +74,10 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Air", new int2(10, 10));
-            CreateDetector(em, 0, ThreatDetectionKind.Air, new int2(20, 20), 40);
-            Entity airTarget = CreateUnit(em, 1, new int2(40, 20), true, true);
-            CreateUnit(em, 1, new int2(45, 20), false, true);
-            CreateUnit(em, 1, new int2(80, 20), true, true);
+            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Air, new int2(20, 20), 40);
+            Entity airTarget = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(40, 20), true, true);
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(45, 20), false, true);
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(80, 20), true, true);
 
             Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
             Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
@@ -79,10 +99,10 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Ground", new int2(10, 10));
-            CreateDetector(em, 0, ThreatDetectionKind.Ground, new int2(20, 20), 40);
-            Entity groundTarget = CreateUnit(em, 1, new int2(35, 20), false, true);
-            CreateUnit(em, 1, new int2(32, 20), true, true);
-            CreateUnit(em, 1, new int2(80, 20), false, true);
+            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+            Entity groundTarget = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(35, 20), false, true);
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(32, 20), true, true);
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(80, 20), false, true);
 
             Assert.IsTrue(IssueFocusedMissileLauncherRadarAttack(em, launcher));
 
@@ -108,8 +128,8 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Air", new int2(10, 10));
-            CreateDetector(em, 0, ThreatDetectionKind.Ground, new int2(20, 20), 40);
-            CreateUnit(em, 1, new int2(40, 20), true, true);
+            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(40, 20), true, true);
 
             Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
             Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
@@ -129,7 +149,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
         try
         {
             EntityManager em = world.EntityManager;
-            Entity soldier = CreateUnit(em, 0, new int2(10, 10), false, true);
+            Entity soldier = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(10, 10), false, true);
             em.AddComponentData(soldier, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
             em.AddComponentData(soldier, new UnitAttack
             {
@@ -150,7 +170,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
 
     private static Entity CreateLauncher(EntityManager em, string sourceKey, int2 cell)
     {
-        Entity entity = CreateUnit(em, 0, cell, false, true);
+        Entity entity = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, cell, false, true);
         em.AddComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(sourceKey) });
         em.AddComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.AddComponentData(entity, new UnitAttack
@@ -165,12 +185,11 @@ public sealed class MissileLauncherRadarAttackValidationTests
 
     private static bool IssueFocusedMissileLauncherRadarAttack(EntityManager em, Entity launcher)
     {
-        var focusedCommand = new FocusedUnitCommandSystem();
-        var targetOrder = new UnitTargetOrderSystem();
-        return focusedCommand.TryIssueFocusedMissileLauncherRadarAttack(
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ToggleAttackTargetMode, frame: 1));
+        return RtsSelectionMissileLauncherRadarAttackCommandSystem.TryIssuePendingFocusedRadarAttack(
             em,
             launcher,
-            targetOrder,
             out _);
     }
 

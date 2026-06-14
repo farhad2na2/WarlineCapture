@@ -773,7 +773,7 @@ internal sealed class SelectionGameplayStartupSystem
                 SetCameraDragging,
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
                 TryGetClickedUnitEntity,
-                TryGetClickedCell,
+                TryGetMoveCommandCell,
                 TryGetClickedCell,
                 TryGetClickedAttackTargetEntity,
                 CollectSelectedAttackSources,
@@ -1572,6 +1572,16 @@ internal sealed class SelectionGameplayStartupSystem
         bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
         {
             return rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
+                CreatePointerTargetCommandContext(),
+                screenPosition,
+                em,
+                out cell,
+                out worldPoint);
+        }
+
+        bool TryGetMoveCommandCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+        {
+            return rtsSelectionPointerTargetCommandSystem.TryGetMoveCommandCell(
                 CreatePointerTargetCommandContext(),
                 screenPosition,
                 em,

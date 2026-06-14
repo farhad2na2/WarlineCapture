@@ -176,15 +176,6 @@ MonoBehaviour:
     worldEulerAngles: {x: 0, y: 269.99966, z: 0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
   - sourcePath: Map/Vehicles/MapVehicle_Light_Armored_Car/SM_Veh_Light_Armored_Car_01
-      (1)
-    category: Unit_Veh_Light_Armored_Car
-    vehiclePrefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
-    factionId: 1
-    worldCenter: {x: 815.97754, y: 2.4301827, z: 402.1334}
-    worldPosition: {x: 815.97253, y: 1.094, z: 402.15497}
-    worldEulerAngles: {x: 359.89917, y: 90.2084, z: 358.796}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Light_Armored_Car/SM_Veh_Light_Armored_Car_01
     category: Unit_Veh_Light_Armored_Car
     vehiclePrefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
     factionId: 0
@@ -311,14 +302,6 @@ MonoBehaviour:
     worldCenter: {x: 950.1165, y: 1.614971, z: 399.95023}
     worldPosition: {x: 949.6501, y: -0.040000916, z: 399.93994}
     worldEulerAngles: {x: -0, y: 89.16079, z: -0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    factionId: 1
-    worldCenter: {x: 837.2552, y: 2.6912804, z: 392.10867}
-    worldPosition: {x: 837.682, y: 0.9959984, z: 391.55096}
-    worldEulerAngles: {x: 0, y: 322.57468, z: 0}
     worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
   - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (3)
     category: Unit_Veh_Truck_Tray
@@ -480,14 +463,6 @@ MonoBehaviour:
     worldPosition: {x: 1777.5859, y: 2.5851994, z: 277.16925}
     worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
     worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
-  - sourcePath: Map/Vehicles/MapVehicle_APC_Fast/SM_Veh_APC_02
-    category: Unit_Veh_APC_Fast
-    vehiclePrefab: {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
-    factionId: 1
-    worldCenter: {x: 827.7066, y: 2.5958266, z: 403.87225}
-    worldPosition: {x: 827.728, y: 1.2150011, z: 403.87225}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
   - sourcePath: Map/Vehicles/MapVehicle_APC_Fast/SM_Veh_APC_02
     category: Unit_Veh_APC_Fast
     vehiclePrefab: {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}

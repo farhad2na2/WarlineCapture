@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,6 +9,9 @@ public sealed class MapSurfaceCommandTargetSystem
     private const int TraversableTargetSearchRadius = 24;
     private readonly MapSurfaceQuerySystem _querySystem = new();
     private readonly MapSurfaceSlopeClassificationSystem _slopeClassificationSystem = new();
+    private readonly MapSurfacePathfindingReadSystem _surfaceReadSystem = new();
+    private readonly UnitMoveOrderSystem _moveOrderSystem = new();
+    private readonly List<Entity> _selectedMoveEntities = new();
 
     public readonly struct Result
     {
@@ -79,6 +84,100 @@ public sealed class MapSurfaceCommandTargetSystem
         return true;
     }
 
+    public bool TryResolveMoveCommandTarget(
+        EntityManager entityManager,
+        EntityQuery surfaceQuery,
+        Entity gridEntity,
+        GridConfig grid,
+        Camera worldCamera,
+        Vector2 screenPosition,
+        SelectionStateSystem selectionStateSystem,
+        out Result result)
+    {
+        if (!TryResolveCommandTarget(
+                entityManager,
+                surfaceQuery,
+                grid,
+                worldCamera,
+                screenPosition,
+                selectionStateSystem,
+                out result))
+        {
+            return false;
+        }
+
+        if (TryResolveSelectedMoveFootprintTarget(
+                entityManager,
+                surfaceQuery,
+                gridEntity,
+                grid,
+                selectionStateSystem,
+                result.Cell,
+                out _,
+                out Result footprintResult))
+        {
+            result = footprintResult;
+        }
+
+        return true;
+    }
+
+    public bool TryResolveSelectedMoveFootprintTarget(
+        EntityManager entityManager,
+        EntityQuery surfaceQuery,
+        Entity gridEntity,
+        GridConfig grid,
+        SelectionStateSystem selectionStateSystem,
+        int2 desiredGoal,
+        out int2 resolvedCell,
+        out Result result)
+    {
+        resolvedCell = desiredGoal;
+        result = default;
+        if (!TryBuildSelectedGroundMoveEntityList(entityManager, selectionStateSystem, out Entity primaryEntity) ||
+            !TryReadGridPathingData(
+                entityManager,
+                gridEntity,
+                out NativeArray<GridWalkable> walkable,
+                out DynamicBlockerComponent blockerData,
+                out DynamicOccupancyComponent occupancyData))
+        {
+            return false;
+        }
+
+        MapSurfacePathfindingReadSystem.Context surfaceContext =
+            _surfaceReadSystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+                ? resolvedSurfaceContext
+                : _surfaceReadSystem.CreateFlatFallbackContext();
+
+        var reservedGoalCells = new HashSet<int>();
+        HashSet<int> selectedCurrentCells = _moveOrderSystem.BuildSelectedCurrentFootprintCells(entityManager, grid, _selectedMoveEntities);
+        resolvedCell = _moveOrderSystem.FindManualMoveGoal(
+            entityManager,
+            grid,
+            walkable,
+            blockerData.Blocked,
+            blockerData.FriendlyPassFactionIds,
+            occupancyData.Occupied,
+            reservedGoalCells,
+            selectedCurrentCells,
+            primaryEntity,
+            desiredGoal,
+            0,
+            surfaceContext);
+
+        MapSurfaceMovementMask movementMask = ResolveSelectedMovementMask(entityManager, selectionStateSystem);
+        if (_querySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceQuerySystem.Context queryContext) &&
+            TryResolveTraversableCell(queryContext, grid, resolvedCell, movementMask, out result))
+        {
+            return true;
+        }
+
+        Vector3 worldPoint = GridUtils.CellToWorldCenter(grid, resolvedCell);
+        result = Result.FlatFallback(resolvedCell, worldPoint);
+        return true;
+    }
+
     private static bool TryResolveFlatFallback(GridConfig grid, Ray ray, out int2 cell, out Vector3 worldPoint)
     {
         cell = default;
@@ -91,6 +190,74 @@ public sealed class MapSurfaceCommandTargetSystem
         worldPoint = ray.GetPoint(distance);
         cell = GridUtils.WorldToCell(grid, worldPoint);
         return GridUtils.InBounds(cell, grid.Width, grid.Height);
+    }
+
+    private bool TryBuildSelectedGroundMoveEntityList(
+        EntityManager entityManager,
+        SelectionStateSystem selectionStateSystem,
+        out Entity primaryEntity)
+    {
+        primaryEntity = Entity.Null;
+        _selectedMoveEntities.Clear();
+        if (selectionStateSystem == null)
+            return false;
+
+        TryAddGroundMoveEntity(entityManager, selectionStateSystem.FocusedUnit);
+        List<Entity> selected = selectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < selected.Count; i++)
+            TryAddGroundMoveEntity(entityManager, selected[i]);
+
+        if (_selectedMoveEntities.Count == 0)
+            return false;
+
+        primaryEntity = _selectedMoveEntities[0];
+        return true;
+    }
+
+    private void TryAddGroundMoveEntity(EntityManager entityManager, Entity entity)
+    {
+        if (entity == Entity.Null ||
+            _selectedMoveEntities.Contains(entity) ||
+            !SelectionStateSystem.IsCacheableSelectedMoveEntity(entityManager, entity) ||
+            entityManager.HasComponent<UnitAirMovement>(entity) ||
+            !entityManager.HasComponent<UnitFootprint>(entity) ||
+            !entityManager.HasComponent<UnitMovementBehavior>(entity))
+        {
+            return;
+        }
+
+        _selectedMoveEntities.Add(entity);
+    }
+
+    private static bool TryReadGridPathingData(
+        EntityManager entityManager,
+        Entity gridEntity,
+        out NativeArray<GridWalkable> walkable,
+        out DynamicBlockerComponent blockerData,
+        out DynamicOccupancyComponent occupancyData)
+    {
+        walkable = default;
+        blockerData = default;
+        occupancyData = default;
+        if (gridEntity == Entity.Null ||
+            !entityManager.Exists(gridEntity) ||
+            !entityManager.HasBuffer<GridWalkable>(gridEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<GridWalkable> walkableBuffer = entityManager.GetBuffer<GridWalkable>(gridEntity);
+        if (walkableBuffer.Length == 0)
+            return false;
+
+        walkable = walkableBuffer.AsNativeArray();
+        blockerData = entityManager.HasComponent<DynamicBlockerComponent>(gridEntity)
+            ? entityManager.GetComponentData<DynamicBlockerComponent>(gridEntity)
+            : default;
+        occupancyData = entityManager.HasComponent<DynamicOccupancyComponent>(gridEntity)
+            ? entityManager.GetComponentData<DynamicOccupancyComponent>(gridEntity)
+            : default;
+        return true;
     }
 
     private bool TryResolveSurfaceHit(

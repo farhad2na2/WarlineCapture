@@ -26,7 +26,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             tests.MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps();
             tests.MapSurfaceBakePrefersRoadHeightOverHigherTerrain();
             tests.MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps();
-            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=12");
+            tests.MovePreviewResolverUsesSelectedVehicleFootprint();
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=13");
         }
         catch (System.Exception exception)
         {
@@ -457,6 +458,107 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         }
     }
 
+    [Test]
+    public void MovePreviewResolverUsesSelectedVehicleFootprint()
+    {
+        const int width = 8;
+        const int height = 8;
+        int2 desiredGoal = new(3, 3);
+        GridConfig grid = new()
+        {
+            Width = width,
+            Height = height,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+
+        MapSurfaceCell[] cells = FlatCells(width, height);
+        var samples = new MapSurfaceSample[width * height];
+        for (int i = 0; i < samples.Length; i++)
+            samples[i] = Sample(new int2(i % width, i / width), i + 1, 0, 0f);
+
+        samples[GridUtils.CellToIndex(desiredGoal, width)] = Sample(
+            desiredGoal,
+            100,
+            0,
+            0f,
+            surfaceType: MapSurfaceType.Blocked,
+            movementMask: MapSurfaceMovementMask.None);
+
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(width, height),
+            cells,
+            samples,
+            Array.Empty<MapSurfaceConnection>());
+
+        World world = new("MovePreviewResolverUsesSelectedVehicleFootprint");
+        NativeArray<int> blockerCounts = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreatePreviewGrid(
+                em,
+                grid,
+                out blockerCounts,
+                out friendlyPassFactionIds,
+                out blocked,
+                out occupied);
+
+            Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+            em.SetComponentData(surfaceEntity, scope.Surface);
+            using EntityQuery surfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+
+            Entity vehicle = em.CreateEntity(
+                typeof(Faction),
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitFootprint),
+                typeof(UnitMovementBehavior),
+                typeof(SelectedUnitTag));
+            em.SetComponentData(vehicle, new Faction { Id = 1 });
+            em.SetComponentData(vehicle, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(vehicle, new UnitMove { Speed = 1f });
+            em.SetComponentData(vehicle, new UnitFootprint { Size = new int2(3, 3) });
+            em.SetComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+            SelectionStateSystem selectionState = new();
+            selectionState.SetFocusedUnit(vehicle);
+            selectionState.CacheSelectedMoveEntity(em, vehicle);
+
+            var previewSystem = new MapSurfaceCommandTargetSystem();
+            Assert.IsTrue(previewSystem.TryResolveSelectedMoveFootprintTarget(
+                em,
+                surfaceQuery,
+                gridEntity,
+                grid,
+                selectionState,
+                desiredGoal,
+                out int2 resolvedCell,
+                out MapSurfaceCommandTargetSystem.Result result));
+
+            var validationSystem = new MapSurfacePathingValidationSystem();
+            Assert.AreNotEqual(desiredGoal, resolvedCell);
+            Assert.AreEqual(resolvedCell, result.Cell);
+            Assert.IsFalse(validationSystem.CanTraverseFootprint(scope.Surface, 1, grid, desiredGoal, new int2(3, 3), true));
+            Assert.IsTrue(validationSystem.CanTraverseFootprint(scope.Surface, 1, grid, resolvedCell, new int2(3, 3), true));
+        }
+        finally
+        {
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            world.Dispose();
+        }
+    }
+
 
     private static MapSurfaceCell[] FlatCells(int width, int height)
     {
@@ -475,6 +577,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         ushort connectionCount = 0,
         MapSurfaceType surfaceType = MapSurfaceType.Terrain,
         MapSurfaceFlags flags = MapSurfaceFlags.None,
+        MapSurfaceMovementMask movementMask = MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
         float3? normal = null)
     {
         return new MapSurfaceSample
@@ -486,11 +589,54 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             Normal = normal ?? new float3(0f, 1f, 0f),
             SlopeDegrees = slopeDegrees,
             SurfaceType = surfaceType,
-            MovementMask = MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+            MovementMask = movementMask,
             Flags = flags,
             FirstConnectionIndex = 0,
             ConnectionCount = connectionCount
         };
+    }
+
+    private static Entity CreatePreviewGrid(
+        EntityManager em,
+        GridConfig grid,
+        out NativeArray<int> blockerCounts,
+        out NativeArray<byte> friendlyPassFactionIds,
+        out NativeBitArray blocked,
+        out NativeBitArray occupied)
+    {
+        int gridSize = grid.Width * grid.Height;
+        blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+        friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+            friendlyPassFactionIds[i] = byte.MaxValue;
+
+        Entity gridEntity = em.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(GridWalkable));
+        em.SetComponentData(gridEntity, grid);
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Counts = blockerCounts,
+            Blocked = blocked,
+            FriendlyPassFactionIds = friendlyPassFactionIds
+        });
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = occupied
+        });
+
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+            walkable[i] = new GridWalkable { Value = 1 };
+
+        return gridEntity;
     }
 
     private static SurfaceBlobScope CreateSurface(

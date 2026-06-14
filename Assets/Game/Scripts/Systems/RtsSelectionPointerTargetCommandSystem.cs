@@ -153,6 +153,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         {
             return _owner.TryGetClickedCellFromBoundary(_context, screenPosition, em, out cell, out worldPoint);
         }
+
+        public bool TryGetMoveCommandCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+        {
+            return _owner.TryGetMoveCommandCellFromBoundary(_context, screenPosition, em, out cell, out worldPoint);
+        }
     }
 
     private PointerTargetBoundaryPass CreatePointerTargetBoundaryPass(Context context)
@@ -213,7 +218,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out _))
             return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
 
-        if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
+        if (!targetBoundary.TryGetMoveCommandCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
             return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
 
         queuedResolvedTarget = context.InputSystem.QueueMoveCommandRequest(screenPosition, targetCell, worldPoint, frame);
@@ -641,6 +646,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return CreatePointerTargetBoundaryPass(context).TryGetClickedCell(screenPosition, em, out cell, out worldPoint);
     }
 
+    public bool TryGetMoveCommandCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        return CreatePointerTargetBoundaryPass(context).TryGetMoveCommandCell(screenPosition, em, out cell, out worldPoint);
+    }
+
     private bool TryGetClickedCellFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
         cell = default;
@@ -656,6 +666,47 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (!_mapSurfaceCommandTargetSystem.TryResolveCommandTarget(
                 em,
                 _mapSurfaceQuery,
+                grid,
+                context.WorldCamera,
+                screenPosition,
+                context.SelectionStateSystem,
+                out MapSurfaceCommandTargetSystem.Result target))
+        {
+            return false;
+        }
+
+        cell = target.Cell;
+        worldPoint = target.WorldPoint;
+        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"moveTargetResolved screen={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} " +
+                $"surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} " +
+                $"height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
+        }
+
+        context.LogSelectionDiagnostic?.Invoke(
+            $"moveTargetResolved pos={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
+        return true;
+    }
+
+    private bool TryGetMoveCommandCellFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        cell = default;
+        worldPoint = default;
+        if (context.WorldCamera == null)
+            return false;
+
+        EnsureEntityQueries(em);
+        if (_gridConfigQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity gridEntity = _gridConfigQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+        if (!_mapSurfaceCommandTargetSystem.TryResolveMoveCommandTarget(
+                em,
+                _mapSurfaceQuery,
+                gridEntity,
                 grid,
                 context.WorldCamera,
                 screenPosition,

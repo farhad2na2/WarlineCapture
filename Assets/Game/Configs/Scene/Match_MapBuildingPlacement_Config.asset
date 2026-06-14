@@ -1420,8 +1420,8 @@ MonoBehaviour:
     category: Building_Road_Barrier
     buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
     factionId: 1
-    worldCenter: {x: 820.87, y: 1.6740977, z: 401.9214}
-    worldPosition: {x: 820.87, y: 1.138, z: 399.27896}
+    worldCenter: {x: 797.15, y: 1.6740977, z: 401.9224}
+    worldPosition: {x: 797.15, y: 1.138, z: 399.27997}
     worldEulerAngles: {x: 0, y: 270, z: 0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 270

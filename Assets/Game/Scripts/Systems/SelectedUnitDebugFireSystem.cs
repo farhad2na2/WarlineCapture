@@ -145,14 +145,15 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
 
         AirMissileLauncherComponent launcher = em.GetComponentData<AirMissileLauncherComponent>(launcherEntity);
         LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(launcherEntity);
+        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcherEntity);
         Entity target = EnsureDebugTarget(em, launcherEntity);
         EnsureDebugAirTargetComponents(em, target);
 
-        float3 targetPosition = ResolveAirMissileDebugTargetPosition(grid, sourceTransform, launcher);
+        AirMissileDebugLaunchPose launchPose = ResolveAirMissileDebugLaunchPose(em, launcherEntity, sourceTransform, launcherState);
+        float3 targetPosition = ResolveAirMissileDebugTargetPosition(grid, launcher, launchPose);
         em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
         em.SetComponentData(target, new UnitHealth { Current = DebugTargetHealth, Max = DebugTargetHealth });
 
-        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcherEntity);
         if (launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading)
             return true;
 
@@ -171,12 +172,12 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         else
             em.AddComponentData(launcherEntity, debugTarget);
 
-        launcherState.Phase = (byte)AirMissileLauncherPhase.Tracking;
+        launcherState.Phase = (byte)AirMissileLauncherPhase.Locked;
         launcherState.TargetEntity = target;
         launcherState.TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit;
         launcherState.TargetWorldPosition = targetPosition;
         launcherState.PredictedInterceptPosition = targetPosition;
-        launcherState.Timer = math.max(0.01f, launcherState.EffectiveLockSeconds > 0f ? launcherState.EffectiveLockSeconds : launcher.LockSeconds);
+        launcherState.Timer = 0f;
         em.SetComponentData(launcherEntity, launcherState);
 
         if (em.HasComponent<EngageTarget>(launcherEntity))
@@ -203,18 +204,81 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         }
     }
 
+    private readonly struct AirMissileDebugLaunchPose
+    {
+        public readonly float3 Position;
+        public readonly float3 Forward;
+
+        public AirMissileDebugLaunchPose(float3 position, float3 forward)
+        {
+            Position = position;
+            Forward = math.normalizesafe(forward, new float3(0f, 0f, 1f));
+        }
+    }
+
+    private static AirMissileDebugLaunchPose ResolveAirMissileDebugLaunchPose(
+        EntityManager em,
+        Entity launcherEntity,
+        LocalTransform sourceTransform,
+        AirMissileLauncherStateComponent launcherState)
+    {
+        if (em.HasBuffer<AirMissileLauncherMissileVisualComponent>(launcherEntity))
+        {
+            DynamicBuffer<AirMissileLauncherMissileVisualComponent> missiles = em.GetBuffer<AirMissileLauncherMissileVisualComponent>(launcherEntity);
+            if (missiles.Length > 0)
+            {
+                int selectedIndex = (launcherState.SelectedMissileSlot + 1 + missiles.Length) % missiles.Length;
+                Entity missile = missiles[selectedIndex].Missile;
+                if (TryResolveLocalToWorldLaunchPose(em, missile, out AirMissileDebugLaunchPose missilePose))
+                    return missilePose;
+            }
+        }
+
+        if (em.HasComponent<AirMissileLauncherVisualReferenceComponent>(launcherEntity))
+        {
+            AirMissileLauncherVisualReferenceComponent visual = em.GetComponentData<AirMissileLauncherVisualReferenceComponent>(launcherEntity);
+            if (TryResolveLocalToWorldLaunchPose(em, visual.LaunchSpawn, out AirMissileDebugLaunchPose launchSpawnPose))
+                return launchSpawnPose;
+            if (TryResolveLocalToWorldLaunchPose(em, visual.Turret, out AirMissileDebugLaunchPose turretPose))
+                return turretPose;
+        }
+
+        return new AirMissileDebugLaunchPose(
+            sourceTransform.Position,
+            math.rotate(sourceTransform.Rotation, new float3(0f, 0f, 1f)));
+    }
+
+    private static bool TryResolveLocalToWorldLaunchPose(
+        EntityManager em,
+        Entity entity,
+        out AirMissileDebugLaunchPose launchPose)
+    {
+        if (entity != Entity.Null &&
+            em.Exists(entity) &&
+            em.HasComponent<LocalToWorld>(entity))
+        {
+            LocalToWorld localToWorld = em.GetComponentData<LocalToWorld>(entity);
+            float3 forward = math.normalizesafe(
+                new float3(localToWorld.Value.c2.x, localToWorld.Value.c2.y, localToWorld.Value.c2.z),
+                new float3(0f, 0f, 1f));
+            launchPose = new AirMissileDebugLaunchPose(localToWorld.Position, forward);
+            return true;
+        }
+
+        launchPose = default;
+        return false;
+    }
+
     private static float3 ResolveAirMissileDebugTargetPosition(
         GridConfig grid,
-        LocalTransform sourceTransform,
-        AirMissileLauncherComponent launcher)
+        AirMissileLauncherComponent launcher,
+        AirMissileDebugLaunchPose launchPose)
     {
-        float3 forward = math.rotate(sourceTransform.Rotation, new float3(0f, 0f, 1f));
-        forward.y = 0f;
-        forward = math.normalizesafe(forward, new float3(0f, 0f, 1f));
+        float3 forward = math.normalizesafe(launchPose.Forward, new float3(0f, 0f, 1f));
         float minDistance = math.max(launcher.MinRange + math.max(0.1f, grid.CellSize), grid.CellSize * 4f);
         float maxDistance = math.max(minDistance, launcher.BaseDetectionRange * 0.65f);
         float distance = math.clamp(launcher.BaseDetectionRange * 0.45f, minDistance, maxDistance);
-        return sourceTransform.Position + forward * distance + new float3(0f, math.max(22f, grid.CellSize * 8f), 0f);
+        return launchPose.Position + forward * distance;
     }
 
     private static void ClearAirMissileDebugTarget(EntityManager em, Entity source)

@@ -344,6 +344,18 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
                 continue;
             }
 
+            if (IsDebugFireTargetForLauncher(em, target, entity))
+            {
+                stateRw.Phase = (byte)AirMissileLauncherPhase.Launching;
+                stateRw.TargetEntity = target.Target;
+                stateRw.TargetKind = target.TargetKind;
+                stateRw.TargetWorldPosition = target.TargetWorldPosition;
+                stateRw.PredictedInterceptPosition = target.PredictedInterceptPosition;
+                stateRw.Timer = 0f;
+                LaunchMissile(em, ecb, entity, launcher.ValueRO, ref stateRw, launcherTransform.ValueRO, faction.ValueRO.Id, target, localToWorldLookup);
+                continue;
+            }
+
             bool aimed = IsTurretAimed(em, launcherTransform.ValueRO, launcher.ValueRO, entity, target.PredictedInterceptPosition);
             if (!aimed)
             {
@@ -521,6 +533,17 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
         return em.HasComponent<UnitAirMovement>(target.Target) &&
                em.HasComponent<UnitHealth>(target.Target) &&
                em.GetComponentData<UnitHealth>(target.Target).Current > 0;
+    }
+
+    private static bool IsDebugFireTargetForLauncher(
+        EntityManager em,
+        AirMissileLauncherTargetComponent target,
+        Entity launcherEntity)
+    {
+        return target.Target != Entity.Null &&
+               em.Exists(target.Target) &&
+               em.HasComponent<DebugFireTargetTag>(target.Target) &&
+               em.GetComponentData<DebugFireTargetTag>(target.Target).Source == launcherEntity;
     }
 
     private static bool IsTurretAimed(

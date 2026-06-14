@@ -40,8 +40,8 @@ MonoBehaviour:
   satelliteTurnRateBonus: 50
   maxSupportRangeBonus: 180
   maxSupportTrackingBonus: 0.3
-  missileVisualPrefab: {fileID: 0}
-  launchFlashPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  missileVisualPrefab: {fileID: 1206594183249076, guid: eed9b1e31a976bb46b7b75a53363eb86, type: 3}
+  launchFlashPrefab: {fileID: 1133323983294967704, guid: a136b360a88d9471fa269eacd44323ee, type: 3}
   launchSmokePrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}
   missileTrailPrefab: {fileID: 1007556126924062, guid: 0065645c63b01ac439ed494146c20b8c, type: 3}
   airburstExplosionPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}

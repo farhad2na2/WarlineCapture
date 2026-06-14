@@ -19,8 +19,9 @@ public sealed class SelectedUnitDebugFireSystemTests
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherTargetsEnemyBaseBeyondNormalRange());
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherArmsMissileAttackDirectly());
             RunTest(test => test.HoldingDebugFireForGroundMissileLauncherCreatesMissileProjectileThroughCooldown());
+            RunTest(test => test.HoldingDebugFireForAirMissileLauncherTargetsAlongBatteryDirection());
             RunTest(test => test.HoldingDebugFireForReloadingAirMissileLauncherCreatesDebugState());
-            UnityEngine.Debug.Log("[SelectedUnitDebugFireFocusedValidation] result=Passed tests=7");
+            UnityEngine.Debug.Log("[SelectedUnitDebugFireFocusedValidation] result=Passed tests=8");
         }
         catch (System.Exception ex)
         {
@@ -189,6 +190,46 @@ public sealed class SelectedUnitDebugFireSystemTests
         fireSystem.Update(_world.Unmanaged);
 
         Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
+    }
+
+    [Test]
+    public void HoldingDebugFireForAirMissileLauncherTargetsAlongBatteryDirection()
+    {
+        EntityManager em = _world.EntityManager;
+        GridConfig grid = CreateGrid(em, width: 256, height: 256);
+        Entity launcher = CreateSelectedAttackUnit(em, new float3(3f, 0f, 3f), attackRange: 24f);
+        AddAirMissileLauncher(em, launcher);
+
+        float3 missilePosition = new(4f, 3f, 5f);
+        quaternion batteryRotation = quaternion.RotateY(math.radians(45f));
+        float3 expectedForward = math.rotate(batteryRotation, new float3(0f, 0f, 1f));
+        Entity missile = em.CreateEntity(typeof(LocalToWorld));
+        em.SetComponentData(missile, new LocalToWorld
+        {
+            Value = float4x4.TRS(missilePosition, batteryRotation, new float3(1f))
+        });
+        DynamicBuffer<AirMissileLauncherMissileVisualComponent> missiles = em.AddBuffer<AirMissileLauncherMissileVisualComponent>(launcher);
+        missiles.Add(new AirMissileLauncherMissileVisualComponent
+        {
+            Missile = missile,
+            SlotIndex = 0,
+            InitialLocalPosition = float3.zero,
+            InitialLocalRotation = quaternion.identity,
+            InitialLocalScale = 1f
+        });
+
+        SelectedUnitDebugFireSystem.ApplyDebugFire(em, grid, true);
+
+        Assert.IsTrue(em.HasComponent<AirMissileLauncherTargetComponent>(launcher));
+        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)AirMissileLauncherPhase.Locked, launcherState.Phase);
+        Assert.AreEqual(0f, launcherState.Timer, 0.001f);
+
+        AirMissileLauncherTargetComponent target = em.GetComponentData<AirMissileLauncherTargetComponent>(launcher);
+        float3 targetPosition = em.GetComponentData<LocalTransform>(target.Target).Position;
+        float3 actualForward = math.normalizesafe(targetPosition - missilePosition, new float3(0f, 0f, 1f));
+        Assert.Greater(math.dot(actualForward, expectedForward), 0.99f);
+        Assert.AreEqual(missilePosition.y, targetPosition.y, 0.001f);
     }
 
     [Test]

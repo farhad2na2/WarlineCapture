@@ -38,7 +38,9 @@ public static class AirMissileLauncherValidationRunner
         Require(config.MinRange > 0f, "Min range must be positive.");
         Require(config.BaseDetectionRange > config.MinRange, "Base detection range must exceed min range.");
         Require(config.MaxDetectionRange > config.BaseDetectionRange, "Max detection range must exceed base range.");
+        Require(config.MissileVisualPrefab != null, "Missile visual prefab is not assigned.");
         Require(config.LaunchFlashPrefab != null, "Launch flash prefab is not assigned.");
+        Require(config.LaunchFlashPrefab.name == "Vfx_MuzzleFlash_Rocket", "Launch flash prefab must be a muzzle flash, not an explosion.");
         Require(config.LaunchSmokePrefab != null, "Launch smoke prefab is not assigned.");
         Require(config.MissileTrailPrefab != null, "Missile trail prefab is not assigned.");
         Require(config.AirburstExplosionPrefab != null, "Airburst explosion prefab is not assigned.");

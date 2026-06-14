@@ -125,6 +125,55 @@ public sealed class AirMissileLauncherRuntimeTests
     }
 
     [Test]
+    public void FireControl_DebugTargetLaunchesImmediatelyWithoutTurretAimLock()
+    {
+        using var world = new World("AirMissileLauncherRuntimeTests_DebugFireControl");
+        EntityManager em = world.EntityManager;
+        Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
+        Entity turret = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(turret, LocalTransform.Identity);
+        em.AddComponentData(launcher, new AirMissileLauncherVisualReferenceComponent
+        {
+            Turret = turret,
+            LaunchSpawn = Entity.Null,
+            TurretDefaultLocalPosition = float3.zero,
+            TurretDefaultLocalRotation = quaternion.identity
+        });
+
+        Entity target = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(30f, 10f, 0f), air: true);
+        em.AddComponentData(target, new DebugFireTargetTag { Source = launcher });
+        em.SetComponentData(launcher, new AirMissileLauncherStateComponent
+        {
+            Phase = (byte)AirMissileLauncherPhase.Tracking,
+            TargetEntity = target,
+            TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit,
+            TargetWorldPosition = new float3(30f, 10f, 0f),
+            PredictedInterceptPosition = new float3(30f, 10f, 0f),
+            Timer = 5f,
+            EffectiveRange = 120f,
+            EffectiveLockSeconds = 1f,
+            EffectiveTrackingQuality = 0.75f,
+            EffectiveTurnRateDegreesPerSecond = 120f
+        });
+        em.AddComponentData(launcher, new AirMissileLauncherTargetComponent
+        {
+            Target = target,
+            TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit,
+            TargetWorldPosition = new float3(30f, 10f, 0f),
+            PredictedInterceptPosition = new float3(30f, 10f, 0f),
+            Score = 1025f
+        });
+
+        SystemHandle fireControlSystem = world.CreateSystem<AirMissileLauncherFireControlSystem>();
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        fireControlSystem.Update(world.Unmanaged);
+
+        using EntityQuery projectileQuery = em.CreateEntityQuery(typeof(AirMissileProjectileComponent));
+        Assert.AreEqual(1, projectileQuery.CalculateEntityCount());
+        Assert.AreEqual((byte)AirMissileLauncherPhase.Reloading, em.GetComponentData<AirMissileLauncherStateComponent>(launcher).Phase);
+    }
+
+    [Test]
     public void HomingImpact_DamagesAirTargetAndRemovesProjectile()
     {
         using var world = new World("AirMissileLauncherRuntimeTests_HomingImpact");

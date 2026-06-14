@@ -13,6 +13,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         {
             nameof(InitialSpawnResourceSystem_CreatesPlayerEconomyWithConfiguredDollars),
             nameof(InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel),
+            nameof(InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitSourceKeySystem_SkipsUnresolvedSourceKeyWithoutFallback),
             nameof(InitialUnitSpawnApplySystem_InstantiatesConvertedPrefabBackedUnit)
         };
@@ -155,6 +156,68 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(BuildingRuntimeSpawnRequest.KindBuilding, request.RequestKind);
             Assert.AreEqual(1, request.FactionId);
             Assert.AreEqual(new int2(13, 24), request.PreferredOrigin);
+            Assert.AreEqual(configEntity, request.PlanEntity);
+            Assert.AreEqual(BuildingRuntimeSpawnRequest.Pending, request.Status);
+        }
+        finally
+        {
+            factionSpawns.Dispose();
+        }
+    }
+
+    [Test]
+    public void InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig()
+    {
+        using var world = new World("InitialConfiguredBuildingRequestSystemKeyOnlyTest");
+        EntityManager em = world.EntityManager;
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
+            em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
+        readModels.Add(new BuildingConfiguredSpawnableReadModel
+        {
+            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Tent_Regular")),
+            DisplayName = new FixedString128Bytes("Tent"),
+            FootprintCells = new int2(4, 4),
+            CanRequest = 1
+        });
+
+        Entity configEntity = em.CreateEntity();
+        DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns =
+            em.AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
+        buildingSpawns.Add(new InitialUnitsFactionBuildingSpawnEntry
+        {
+            FactionId = 2,
+            Prefab = Entity.Null,
+            PrefabLookupKey = new FixedString128Bytes("Tent_Regular"),
+            OriginOffset = new int2(250, 250)
+        });
+
+        var factionSpawns = new NativeArray<InitialUnitsFactionSpawnEntry>(1, Allocator.Temp);
+        try
+        {
+            factionSpawns[0] = new InitialUnitsFactionSpawnEntry { FactionId = 2, SpawnCell = new int2(150, 250) };
+            var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
+            diagnosticLogSystem.EnsureQueue(em);
+
+            bool issued = new InitialConfiguredBuildingRequestSystem().Enqueue(
+                em,
+                boundary,
+                configEntity,
+                factionSpawns,
+                ref diagnosticLogSystem,
+                out int requestCount);
+
+            Assert.IsTrue(issued);
+            Assert.AreEqual(1, requestCount);
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+            Assert.AreEqual(1, requests.Length);
+            BuildingRuntimeSpawnRequest request = requests[0];
+            Assert.AreEqual(BuildingRuntimeSpawnRequest.KindBuilding, request.RequestKind);
+            Assert.AreEqual(2, request.FactionId);
+            Assert.AreEqual(new int2(400, 500), request.PreferredOrigin);
+            Assert.AreEqual(BuildingDefinitionSystem.NormalizeSpawnableKey("Tent_Regular"), request.BuildingId.ToString());
             Assert.AreEqual(configEntity, request.PlanEntity);
             Assert.AreEqual(BuildingRuntimeSpawnRequest.Pending, request.Status);
         }

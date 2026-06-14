@@ -22,16 +22,16 @@ public readonly struct InitialConfiguredBuildingRequestSystem
         for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
         {
             InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
-            if (building.Prefab == Entity.Null)
+            string buildingId = building.PrefabLookupKey.ToString();
+            if (string.IsNullOrWhiteSpace(buildingId))
                 continue;
 
             if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell))
             {
-                diagnosticLogSystem.EnqueueWarning(em, $"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} prefab={building.Prefab}");
+                diagnosticLogSystem.EnqueueWarning(em, $"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} buildingId={buildingId}");
                 continue;
             }
 
-            string buildingId = building.PrefabLookupKey.ToString();
             if (!spawnableSystem.TryResolveSpawnableReadModel(em, boundaryEntity, buildingId, out _))
             {
                 diagnosticLogSystem.EnqueueWarning(em, $"[InitialSpawn] skipping unresolved initial building entry. faction={building.FactionId} buildingId={buildingId}");

@@ -33,7 +33,7 @@ public sealed class InitialFactionBaseValidationTests
         {
             var tests = new InitialFactionBaseValidationTests();
             tests.InitialFactionBaseLayoutPlanner_BuildsExactBaseRecipe();
-            tests.SceneInitialUnitsConfig_EnablesFactionBasesWithRealPrefabsAndUnitMinimum();
+            tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
             tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
             tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
             tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
@@ -46,6 +46,23 @@ public sealed class InitialFactionBaseValidationTests
         {
             Debug.LogException(ex);
             Debug.LogError("[InitialFactionBaseValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunSceneInitialUnitsConfigValidation()
+    {
+        try
+        {
+            var tests = new InitialFactionBaseValidationTests();
+            tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
+            Debug.Log("[InitialFactionSceneConfigValidation] result=Passed");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[InitialFactionSceneConfigValidation] result=Failed");
             EditorApplication.Exit(1);
         }
     }
@@ -152,39 +169,62 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     [Test]
-    public void SceneInitialUnitsConfig_EnablesFactionBasesWithRealPrefabsAndUnitMinimum()
+    public void SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts()
     {
         InitialUnitsSpawnerAuthoringConfig config =
             AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(SceneConfigPath);
 
         Assert.NotNull(config);
-        Assert.IsTrue(config.CreateFactionBases);
-        Assert.NotNull(config.BaseWallPrefab);
-        Assert.NotNull(config.BaseGatePrefab);
-        Assert.NotNull(config.BaseCoreBuildingPrefab);
-        StringAssert.Contains("Building_Road_Barrier.prefab", AssetDatabase.GetAssetPath(config.BaseGatePrefab));
-        StringAssert.Contains("Wall_Dirt_Straight.prefab", AssetDatabase.GetAssetPath(config.BaseWallPrefab));
-        StringAssert.Contains("Building_Ammunition_Depot.prefab", AssetDatabase.GetAssetPath(config.BaseCoreBuildingPrefab));
-        Assert.AreNotEqual(config.BaseWallPrefab, config.BaseGatePrefab, "Base wall prefab must not be the gate/barrier prefab.");
-        Assert.GreaterOrEqual(config.BaseMinimumUnitsPerFaction, 18);
-        Assert.GreaterOrEqual(config.Factions.Count, 1);
+        Assert.IsFalse(config.CreateFactionBases);
+        Assert.GreaterOrEqual(config.Factions.Count, 2);
         Assert.IsTrue(
             config.Factions.Exists(faction => faction != null && faction.FactionId == FactionIdentitySystem.PlayerFactionId),
-            "Initial match config should include the player faction base.");
+            "Initial match config should include the player faction.");
+
+        BuildingPlacementSystemConfig placementConfig =
+            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
+        Assert.NotNull(placementConfig);
+        Assert.NotNull(placementConfig.UnitPrefabRegistryConfig);
+        var registeredUnitPrefabs = new HashSet<GameObject>(placementConfig.UnitPrefabRegistryConfig.UnitSpawnPrefabs);
+        var registeredBuildingPrefabs = new HashSet<GameObject>(placementConfig.Spawnables);
 
         for (int i = 0; i < config.Factions.Count; i++)
         {
             InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
             Assert.NotNull(faction);
-            Assert.IsNotEmpty(faction.Units, $"Faction {faction.FactionId} needs at least one configured unit prefab so the base can start defended.");
-            Assert.GreaterOrEqual(faction.Units.Count, 5, $"Faction {faction.FactionId} should start with different unit types.");
+            Assert.IsNotEmpty(faction.Units, $"Faction {faction.FactionId} needs at least one configured unit prefab.");
             int totalUnits = 0;
             for (int unitIndex = 0; unitIndex < faction.Units.Count; unitIndex++)
-                totalUnits += faction.Units[unitIndex].Count;
-            Assert.GreaterOrEqual(totalUnits, config.BaseMinimumUnitsPerFaction);
-            AssertConfiguredUnitOffsetsMatchBaseZones(faction);
-            AssertConfiguredAirUnitsMatchBasePlatforms(faction);
+            {
+                InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[unitIndex];
+                Assert.NotNull(unit);
+                Assert.NotNull(unit.Prefab, $"Faction {faction.FactionId} unit {unitIndex} needs a prefab.");
+                Assert.IsTrue(
+                    registeredUnitPrefabs.Contains(unit.Prefab),
+                    $"Faction {faction.FactionId} unit prefab {unit.Prefab.name} must be present in UnitPrefabRegistryConfig.");
+                totalUnits += unit.Count;
+            }
+
+            Assert.Greater(totalUnits, 0);
+            if (faction.Buildings == null)
+                continue;
+
+            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
+            {
+                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
+                Assert.NotNull(building);
+                Assert.NotNull(building.Prefab, $"Faction {faction.FactionId} building {buildingIndex} needs a prefab.");
+                Assert.IsTrue(
+                    registeredBuildingPrefabs.Contains(building.Prefab),
+                    $"Faction {faction.FactionId} building prefab {building.Prefab.name} must be present in BuildingPlacementSystemConfig spawnables.");
+            }
         }
+
+        InitialUnitsSpawnerAuthoringConfig.FactionEntry faction2 =
+            config.Factions.Find(faction => faction != null && faction.FactionId == 2);
+        Assert.NotNull(faction2, "Initial match config should include Faction 2.");
+        Assert.IsNotEmpty(faction2.Units, "Faction 2 should have configured initial soldiers.");
+        Assert.IsNotEmpty(faction2.Buildings, "Faction 2 should have its configured initial building.");
 
         RuntimeCitySpawnerSystemConfig cityConfig =
             AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(RuntimeCityConfigPath);

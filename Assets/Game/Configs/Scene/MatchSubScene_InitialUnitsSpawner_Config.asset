@@ -84,6 +84,15 @@ MonoBehaviour:
       originOffset: {x: 150, y: 100}
     - prefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
       originOffset: {x: 50, y: 100}
+  - factionId: 2
+    spawnCell: {x: 150, y: 250}
+    units:
+    - prefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+      count: 25
+      spawnOffset: {x: -100, y: -100}
+    buildings:
+    - prefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
+      originOffset: {x: 250, y: 250}
   blockerCount: 0
   spawnRadiusCells: 10
   respawnDelaySeconds: 1
@@ -91,7 +100,7 @@ MonoBehaviour:
   initialDollars: 30000000
   initialOil: 50
   initialFuel: 100
-  createFactionBases: 1
+  createFactionBases: 0
   baseWallPrefab: {fileID: 154980996532723225, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
   baseGatePrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
   baseCoreBuildingPrefab: {fileID: 1453209517915397753, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}

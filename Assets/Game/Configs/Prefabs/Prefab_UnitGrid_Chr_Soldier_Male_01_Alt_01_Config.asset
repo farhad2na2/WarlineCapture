@@ -60,8 +60,8 @@ MonoBehaviour:
   allowAutoEngage: 1
   usesTurretAim: 0
   aggroRangeCells: 18
-  attackRange: 18
-  chaseBreakDistance: 23
+  attackRange: 130
+  chaseBreakDistance: 160
   attackCooldownSeconds: 2.25
   attackDamage: 52
   maxHealth: 105

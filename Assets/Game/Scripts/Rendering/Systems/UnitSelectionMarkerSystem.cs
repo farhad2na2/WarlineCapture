@@ -114,13 +114,18 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             if (marker == Entity.Null || !em.Exists(marker))
                 continue;
 
+            bool usesVehicleMarker = UsesVehicleSelectionMarker(em, entity);
+            bool isAirUnit = em.HasComponent<UnitAirMovement>(entity);
+            ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker, isAirUnit);
+            ApplyAirSelectionOutlineFilterState(em, marker, isAirUnit);
+
             if (em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker) &&
                 em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Length > 0)
             {
                 continue;
             }
 
-            CreateSelectionObjectOutlines(em, entity, marker, UsesVehicleSelectionMarker(em, entity), _unitRenderEntityQuery);
+            CreateSelectionObjectOutlines(em, entity, marker, usesVehicleMarker, isAirUnit, _unitRenderEntityQuery);
         }
 
         create.Dispose();
@@ -193,9 +198,11 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         }
 
         bool usesVehicleMarker = UsesVehicleSelectionMarker(em, unit);
+        bool isAirUnit = em.HasComponent<UnitAirMovement>(unit);
         EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, unit, usesVehicleMarker, renderEntityQuery));
-        ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker);
-        CreateSelectionObjectOutlines(em, unit, marker, usesVehicleMarker, renderEntityQuery);
+        ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker, isAirUnit);
+        ApplyAirSelectionOutlineFilterState(em, marker, isAirUnit);
+        CreateSelectionObjectOutlines(em, unit, marker, usesVehicleMarker, isAirUnit, renderEntityQuery);
         em.AddComponentData(unit, new UnitSelectionMarkerInstanceReference { Instance = marker });
     }
 
@@ -456,36 +463,87 @@ public partial struct UnitSelectionMarkerSystem : ISystem
                em.GetComponentData<UnitMovementBehavior>(unit).UsesVehicleMotion != 0;
     }
 
-    private static void ApplyVehicleVariantVisibility(EntityManager em, Entity marker, bool usesVehicleMarker)
+    private static void ApplyVehicleVariantVisibility(EntityManager em, Entity marker, bool usesVehicleMarker, bool isAirUnit)
     {
-        if (!em.HasBuffer<LinkedEntityGroup>(marker))
+        bool showVehicleGroundMarker = usesVehicleMarker && !isAirUnit;
+
+        if (em.HasBuffer<LinkedEntityGroup>(marker))
+        {
+            DynamicBuffer<LinkedEntityGroup> linked = em.GetBuffer<LinkedEntityGroup>(marker);
+            for (int i = 0; i < linked.Length; i++)
+            {
+                Entity entity = linked[i].Value;
+                if (entity != marker)
+                    ApplyVehicleVariantVisibilityToEntity(em, entity, usesVehicleMarker, showVehicleGroundMarker);
+            }
+        }
+
+        if (!em.HasBuffer<Child>(marker))
             return;
 
-        DynamicBuffer<LinkedEntityGroup> linked = em.GetBuffer<LinkedEntityGroup>(marker);
-        for (int i = 0; i < linked.Length; i++)
+        using NativeList<Entity> stack = new(Allocator.Temp);
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(marker);
+        for (int i = 0; i < children.Length; i++)
+            stack.Add(children[i].Value);
+
+        while (stack.Length > 0)
         {
-            Entity entity = linked[i].Value;
-            if (entity == marker ||
-                entity == Entity.Null ||
-                !em.Exists(entity) ||
-                !em.HasComponent<LocalTransform>(entity))
-            {
-                continue;
-            }
-
-            string name = em.GetName(entity);
-            if (string.IsNullOrEmpty(name))
+            int last = stack.Length - 1;
+            Entity entity = stack[last];
+            stack.RemoveAt(last);
+            if (entity == Entity.Null || !em.Exists(entity))
                 continue;
 
-            bool vehicleVisual = IsVehicleSelectionMarkerVisualName(name);
-            bool infantryVisual = IsInfantrySelectionMarkerVisualName(name);
-            if (!vehicleVisual && !infantryVisual)
+            ApplyVehicleVariantVisibilityToEntity(em, entity, usesVehicleMarker, showVehicleGroundMarker);
+
+            if (!em.HasBuffer<Child>(entity))
                 continue;
 
-            LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-            transform.Scale = vehicleVisual == usesVehicleMarker ? 1f : 0f;
-            em.SetComponentData(entity, transform);
+            DynamicBuffer<Child> nestedChildren = em.GetBuffer<Child>(entity);
+            for (int i = 0; i < nestedChildren.Length; i++)
+                stack.Add(nestedChildren[i].Value);
         }
+    }
+
+    private static void ApplyVehicleVariantVisibilityToEntity(
+        EntityManager em,
+        Entity entity,
+        bool usesVehicleMarker,
+        bool showVehicleGroundMarker)
+    {
+        if (entity == Entity.Null ||
+            !em.Exists(entity) ||
+            !em.HasComponent<LocalTransform>(entity))
+        {
+            return;
+        }
+
+        string name = em.GetName(entity);
+        if (string.IsNullOrEmpty(name))
+            return;
+
+        bool vehicleVisual = IsVehicleSelectionMarkerVisualName(name);
+        bool infantryVisual = IsInfantrySelectionMarkerVisualName(name);
+        if (!vehicleVisual && !infantryVisual)
+            return;
+
+        bool visible = vehicleVisual ? showVehicleGroundMarker : !usesVehicleMarker;
+        LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
+        transform.Scale = visible ? 1f : 0f;
+        em.SetComponentData(entity, transform);
+        SetSelectionMarkerVisualRendering(em, entity, visible);
+    }
+
+    private static void SetSelectionMarkerVisualRendering(EntityManager em, Entity entity, bool visible)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<MaterialMeshInfo>(entity))
+            return;
+
+        bool renderingDisabled = em.HasComponent<DisableRendering>(entity);
+        if (visible && renderingDisabled)
+            em.RemoveComponent<DisableRendering>(entity);
+        else if (!visible && !renderingDisabled)
+            em.AddComponent<DisableRendering>(entity);
     }
 
     private static bool IsVehicleSelectionMarkerVisualName(string name)
@@ -498,6 +556,26 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         return name.Contains("Infantry", System.StringComparison.OrdinalIgnoreCase) ||
                name.Contains("CapsuleAura", System.StringComparison.OrdinalIgnoreCase) ||
                name.Contains("OuterReadabilityArcs", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void ApplyAirSelectionOutlineFilterState(EntityManager em, Entity marker, bool isAirUnit)
+    {
+        if (marker == Entity.Null || !em.Exists(marker))
+            return;
+
+        bool alreadyFiltered = em.HasComponent<SelectionMarkerAirOutlineFilteredTag>(marker);
+        if (isAirUnit)
+        {
+            if (alreadyFiltered)
+                return;
+
+            DestroySelectionObjectOutlines(em, marker);
+            em.AddComponent<SelectionMarkerAirOutlineFilteredTag>(marker);
+            return;
+        }
+
+        if (alreadyFiltered)
+            em.RemoveComponent<SelectionMarkerAirOutlineFilteredTag>(marker);
     }
 
     private static void DestroyMarker(EntityManager em, Entity unit)
@@ -514,6 +592,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         Entity unit,
         Entity marker,
         bool usesVehicleMarker,
+        bool isAirUnit,
         EntityQuery renderEntityQuery)
     {
         if (unit == Entity.Null || marker == Entity.Null || !em.Exists(unit) || !em.Exists(marker))
@@ -534,6 +613,9 @@ public partial struct UnitSelectionMarkerSystem : ISystem
         for (int i = 0; i < sources.Length && GetSelectionObjectOutlineCount(em, marker) < MaxSelectionObjectOutlineRenderers; i++)
         {
             Entity source = sources[i];
+            if (isAirUnit && IsAirSelectionObjectOutlineSourceSuppressed(em, source, unit))
+                continue;
+
             bool isGpuAnimatedCharacter = !usesVehicleMarker && IsGpuAnimatedSelectionObjectOutlineSource(em, source, unit);
             if (isGpuAnimatedCharacter)
             {
@@ -548,6 +630,40 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 
             CreateSelectionObjectOutlineForSource(em, unit, marker, source, usesVehicleMarker);
         }
+    }
+
+    private static bool IsAirSelectionObjectOutlineSourceSuppressed(EntityManager em, Entity source, Entity owner)
+    {
+        Entity current = source;
+        for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
+        {
+            if (current == Entity.Null || !em.Exists(current))
+                return false;
+
+            string name = em.GetName(current);
+            if (IsAirSelectionObjectOutlineSourceNameSuppressed(name))
+                return true;
+
+            if (current == owner || !em.HasComponent<Parent>(current))
+                return false;
+
+            current = em.GetComponentData<Parent>(current).Value;
+        }
+
+        return false;
+    }
+
+    private static bool IsAirSelectionObjectOutlineSourceNameSuppressed(string name)
+    {
+        return !string.IsNullOrEmpty(name) &&
+               (name.Contains("Blade", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("Rotor", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("Propeller", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("Shadow", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("SelectionMarker", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("Footprint", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("BoundsFrame", System.StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("CornerBracket", System.StringComparison.OrdinalIgnoreCase));
     }
 
     private static void CollectRenderableDescendants(EntityManager em, Entity unit, NativeList<Entity> sources)

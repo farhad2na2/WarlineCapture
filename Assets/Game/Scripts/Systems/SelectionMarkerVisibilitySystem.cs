@@ -19,6 +19,7 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
         var selectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
+        var airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(false);
         var postTransformLookup = SystemAPI.GetComponentLookup<PostTransformMatrix>(false);
 
@@ -27,6 +28,7 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
             SelectedLookup = selectedLookup,
             HealthLookup = healthLookup,
             PassengerLookup = passengerLookup,
+            AirMovementLookup = airMovementLookup,
             TransformLookup = transformLookup,
             PostTransformLookup = postTransformLookup
         }.ScheduleParallel(state.Dependency);
@@ -46,6 +48,7 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
         [ReadOnly] public ComponentLookup<SelectedUnitTag> SelectedLookup;
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
         [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+        [ReadOnly] public ComponentLookup<UnitAirMovement> AirMovementLookup;
         [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> TransformLookup;
         [NativeDisableParallelForRestriction] public ComponentLookup<PostTransformMatrix> PostTransformLookup;
 
@@ -55,7 +58,8 @@ public partial struct SelectionMarkerVisibilitySystem : ISystem
                 SelectedLookup.HasComponent(parent.Value) &&
                 HealthLookup.HasComponent(parent.Value) &&
                 HealthLookup[parent.Value].Current > 0 &&
-                !PassengerLookup.HasComponent(parent.Value);
+                !PassengerLookup.HasComponent(parent.Value) &&
+                !AirMovementLookup.HasComponent(parent.Value);
 
             if (TransformLookup.HasComponent(entity))
             {

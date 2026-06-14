@@ -17,7 +17,7 @@ MonoBehaviour:
   prepareSeconds: 0.65
   reloadSeconds: 3
   batteryElevatedAngleDegrees: -30
-  rocketSpeed: 42
+  rocketSpeed: 80
   arcHeight: 28
   damage: 650
   damageRadius: 8

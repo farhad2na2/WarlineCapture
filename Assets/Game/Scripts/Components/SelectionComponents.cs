@@ -35,6 +35,10 @@ public struct SelectionObjectOutlineInstanceElement : IBufferElementData
     public Entity Value;
 }
 
+public struct SelectionMarkerAirOutlineFilteredTag : IComponentData
+{
+}
+
 public struct ManualMoveOrderTag : IComponentData
 {
 }

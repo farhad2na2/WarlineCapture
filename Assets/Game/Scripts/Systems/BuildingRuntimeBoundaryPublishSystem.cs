@@ -15,8 +15,8 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
         public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
-        public readonly BuildingProductionRequestSystem ProductionRequestSystem;
-        public readonly BuildingProductionRequestSystem.Context ProductionRequestContext;
+        public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
+        public readonly BuildingProductionRequestBoundary.Context ProductionRequestContext;
         public readonly BuildingRuntimeQuerySystem RuntimeQuerySystem;
         public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
         public readonly FactionResourceSystem FactionResourceSystem;
@@ -30,8 +30,8 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
             BuildingDefinitionSystem definitionSystem,
             BuildingRuntimeSpawnSystem runtimeSpawnSystem,
             BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
-            BuildingProductionRequestSystem productionRequestSystem,
-            BuildingProductionRequestSystem.Context productionRequestContext,
+            BuildingProductionRequestBoundary productionRequestSystem,
+            BuildingProductionRequestBoundary.Context productionRequestContext,
             BuildingRuntimeQuerySystem runtimeQuerySystem,
             BuildingRuntimeQuerySystem.Context runtimeQueryContext,
             FactionResourceSystem factionResourceSystem,

@@ -11,8 +11,8 @@ internal sealed class BuildingUiContextSystem
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
-        public readonly BuildingProductionRequestSystem ProductionRequestSystem;
-        public readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
+        public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
+        public readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly Func<int> GetFrameCount;
         public readonly BuildingUiQuerySystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -43,8 +43,8 @@ internal sealed class BuildingUiContextSystem
             BuildingDefinitionSystem definitionSystem,
             RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
-            BuildingProductionRequestSystem productionRequestSystem,
-            Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
+            BuildingProductionRequestBoundary productionRequestSystem,
+            Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
             Func<int?> getActiveBuildingId,
             Func<int> getFrameCount,
             BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -108,8 +108,8 @@ internal sealed class BuildingUiContextSystem
         BuildingDefinitionSystem definitionSystem,
         RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionSystem productionSystem,
-        BuildingProductionRequestSystem productionRequestSystem,
-        Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
+        BuildingProductionRequestBoundary productionRequestSystem,
+        Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<int?> getActiveBuildingId,
         Func<int> getFrameCount,
         BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -230,7 +230,7 @@ internal sealed class BuildingUiContextSystem
         if (source.ProductionRequestSystem == null)
             return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
 
-        BuildingProductionRequestSystem.Context context =
+        BuildingProductionRequestBoundary.Context context =
             source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default;
         int frameCount = source.GetFrameCount?.Invoke() ?? 0;
         if (TryGetEntityManager(source, out EntityManager entityManager))

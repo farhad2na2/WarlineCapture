@@ -99,7 +99,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages();
             tests.GameRuntimeStatsMustNotReadAuthoringComponents();
             tests.BuildingProductionSystemMustNotReadAuthoringComponents();
-            tests.BuildingProductionRequestSystemMustNotReadAuthoringComponents();
+            tests.BuildingProductionRequestBoundaryMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
             tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
             tests.BuildingDefinitionSystemMustNotReadAuthoringComponents();
@@ -561,15 +561,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void BuildingProductionRequestSystemMustNotReadAuthoringComponents()
+    public void BuildingProductionRequestBoundaryMustNotReadAuthoringComponents()
     {
-        string productionRequestPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionRequestSystem.cs");
+        string productionRequestPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionRequestBoundary.cs");
         string source = File.ReadAllText(productionRequestPath);
 
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingProductionRequestSystem` must not read authoring components. Use configured-unit read models from `BuildingDefinitionSystem`.");
+            "`BuildingProductionRequestBoundary` must not read authoring components. Use configured-unit read models from `BuildingDefinitionSystem`.");
     }
 
     [Test]

@@ -26,8 +26,8 @@ public sealed class BuildingUiQuerySystem
         internal readonly Func<string> GetSelectedBuildingDescription;
         internal readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
         internal readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
-        internal readonly BuildingProductionRequestSystem ProductionRequestSystem;
-        internal readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
+        internal readonly BuildingProductionRequestBoundary ProductionRequestSystem;
+        internal readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
         internal readonly Func<int, bool> IsRuntimeBuildingWall;
         internal readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
         internal readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
@@ -48,8 +48,8 @@ public sealed class BuildingUiQuerySystem
             Func<string> getSelectedBuildingDescription,
             TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
             TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
-            BuildingProductionRequestSystem productionRequestSystem,
-            Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
+            BuildingProductionRequestBoundary productionRequestSystem,
+            Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
             Func<int, bool> isRuntimeBuildingWall,
             Func<int, bool> isRuntimeBuildingCityGenerated,
             TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,

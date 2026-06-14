@@ -267,17 +267,11 @@ internal sealed class BuildingRuntimeContextSystem
 
     public BuildingRuntimeSpawnCommandSystem.Context CreateSpawnCommandContext(
         Source source,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-        BuildingDefinition soldierBaseDefinition,
-        BuildingDefinition soldierTentDefinition,
-        BuildingDefinition factoryDefinition)
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem)
     {
         return new BuildingRuntimeSpawnCommandSystem.Context(
             runtimeSpawnSystem,
-            CreateSpawnContext(source),
-            soldierBaseDefinition,
-            soldierTentDefinition,
-            factoryDefinition);
+            CreateSpawnContext(source));
     }
 
     public BuildingRuntimeCreationSystem.Context CreateCreationContext(Source source)

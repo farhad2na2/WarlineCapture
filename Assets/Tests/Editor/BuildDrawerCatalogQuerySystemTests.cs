@@ -542,11 +542,11 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             DisplayName = "Requestable Airport",
             Prefab = buildingPrefab
         };
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         bool beganPlacement = false;
         int activePlacementCost = -1;
         bool closed = false;
-        BuildingProductionRequestSystem.Context requestContext = CreateProductionRequestContext(
+        BuildingProductionRequestBoundary.Context requestContext = CreateProductionRequestContext(
             new Dictionary<int, RuntimeBuildingEntity>(),
             requestSystem,
             new BuildingProductionSystem(),
@@ -590,9 +590,9 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         RuntimeBuildingEntity producer = CreateRuntimeProducerBuilding(7, "Vehicle Factory", vehicle);
         var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity> { { producer.Id, producer } };
         var productionSystem = new BuildingProductionSystem();
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         int dollars = 100000;
-        BuildingProductionRequestSystem.Context requestContext = CreateProductionRequestContext(
+        BuildingProductionRequestBoundary.Context requestContext = CreateProductionRequestContext(
             runtimeBuildings,
             requestSystem,
             productionSystem,
@@ -1200,15 +1200,15 @@ public sealed class BuildDrawerCatalogQuerySystemTests
         };
     }
 
-    private static BuildingProductionRequestSystem.Context CreateProductionRequestContext(
+    private static BuildingProductionRequestBoundary.Context CreateProductionRequestContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-        BuildingProductionRequestSystem requestSystem,
+        BuildingProductionRequestBoundary requestSystem,
         BuildingProductionSystem productionSystem,
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
-        BuildingProductionRequestSystem.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestSystem.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestSystem.SetActivePlacementCostDelegate setActivePlacementCost,
+        BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
+        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost,
         EntityManager entityManager = default)
     {
         IReadOnlyDictionary<string, GameObject> unitPrefabsByKey = new Dictionary<string, GameObject>();
@@ -1228,7 +1228,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             }
         }
 
-        return new BuildingProductionRequestSystem.Context(
+        return new BuildingProductionRequestBoundary.Context(
             runtimeBuildings,
             configuredDefinitions,
             configuredDefinitionsByPrefab,
@@ -1264,8 +1264,8 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     }
 
     private static BuildingUiCommandBoundary.Context CreateRealCommandContext(
-        BuildingProductionRequestSystem requestSystem,
-        Func<BuildingProductionRequestSystem.Context> createRequestContext)
+        BuildingProductionRequestBoundary requestSystem,
+        Func<BuildingProductionRequestBoundary.Context> createRequestContext)
     {
         return new BuildingUiCommandBoundary.Context(
             () => 100000,
@@ -1298,9 +1298,9 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
     private static BuildingUiQuerySystem.Context CreateProductionQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-        BuildingProductionRequestSystem requestSystem,
+        BuildingProductionRequestBoundary requestSystem,
         BuildingProductionSystem productionSystem,
-        Func<BuildingProductionRequestSystem.Context> createRequestContext,
+        Func<BuildingProductionRequestBoundary.Context> createRequestContext,
         EntityManager entityManager)
     {
         return new BuildingUiQuerySystem.Context(

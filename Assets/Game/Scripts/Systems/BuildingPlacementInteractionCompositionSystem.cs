@@ -45,7 +45,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestSystem.Context> createProductionRequestContext,
+        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
@@ -111,15 +111,15 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
 
     private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(
         BuildingGameplayCompositionSourceSystem source,
-        BuildingProductionRequestSystem.Context context)
+        BuildingProductionRequestBoundary.Context context)
     {
-        if (source.BuildingProductionRequestSystem == null ||
+        if (source.BuildingProductionRequestBoundary == null ||
             !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
         {
             return;
         }
 
-        source.BuildingProductionRequestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
+        source.BuildingProductionRequestBoundary.EnqueueAndProcessCreateUnitFromSelectedBuilding(
             entityManager,
             context,
             source.RuntimeBuildingSystem.CurrentActiveBuildingId,

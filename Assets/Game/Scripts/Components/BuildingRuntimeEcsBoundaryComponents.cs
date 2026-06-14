@@ -84,6 +84,7 @@ public struct BuildingUiProductionCommandRequestElement : IBufferElementData
     public int RequestId;
     public int BuildingId;
     public int ProductionIndex;
+    public int FrameCount;
     public byte RequestKind;
 }
 

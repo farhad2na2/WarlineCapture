@@ -391,10 +391,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext =
             childSystems.BuildingRuntimeContextSystem.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
-                childSystems.BuildingRuntimeSpawnSystem,
-                childSystems.BuildingPlacementStartupSystem.SoldierBaseDefinition,
-                childSystems.BuildingPlacementStartupSystem.SoldierTentDefinition,
-                childSystems.BuildingPlacementStartupSystem.FactoryDefinition);
+                childSystems.BuildingRuntimeSpawnSystem);
         Func<BuildingSpawnSystem.Context> createSpawnContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))

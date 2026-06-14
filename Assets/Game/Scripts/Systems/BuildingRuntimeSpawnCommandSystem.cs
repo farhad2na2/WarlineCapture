@@ -9,33 +9,14 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
     {
         public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
         public readonly BuildingRuntimeSpawnSystem.Context SpawnContext;
-        public readonly BuildingDefinition SoldierBaseDefinition;
-        public readonly BuildingDefinition SoldierTentDefinition;
-        public readonly BuildingDefinition FactoryDefinition;
 
         public Context(
             BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-            BuildingRuntimeSpawnSystem.Context spawnContext,
-            BuildingDefinition soldierBaseDefinition,
-            BuildingDefinition soldierTentDefinition,
-            BuildingDefinition factoryDefinition)
+            BuildingRuntimeSpawnSystem.Context spawnContext)
         {
             RuntimeSpawnSystem = runtimeSpawnSystem;
             SpawnContext = spawnContext;
-            SoldierBaseDefinition = soldierBaseDefinition;
-            SoldierTentDefinition = soldierTentDefinition;
-            FactoryDefinition = factoryDefinition;
         }
-    }
-
-    public void SpawnInitialTestRoster(Context context, Vector2Int anchorCell)
-    {
-        context.RuntimeSpawnSystem?.SpawnInitialTestRoster(
-            context.SpawnContext,
-            context.SoldierBaseDefinition,
-            context.SoldierTentDefinition,
-            context.FactoryDefinition,
-            anchorCell);
     }
 
     public bool TryEnqueueRuntimeBuildingSpawnRequest(
@@ -250,27 +231,6 @@ internal sealed class BuildingRuntimeSpawnCommandSystem
         footprint = default;
         return context.RuntimeSpawnSystem != null &&
                context.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(context.SpawnContext, prefab, rotateVertical, out footprint);
-    }
-
-    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, bool rotateVertical, out RuntimeBuildingEntity building)
-    {
-        building = null;
-        return context.RuntimeSpawnSystem != null &&
-               context.RuntimeSpawnSystem.TrySpawnInitialBuilding(context.SpawnContext, definition, preferredOrigin, rotateVertical, out building);
-    }
-
-    public bool TrySpawnInitialBuilding(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, out RuntimeBuildingEntity building)
-    {
-        building = null;
-        return context.RuntimeSpawnSystem != null &&
-               context.RuntimeSpawnSystem.TrySpawnInitialBuilding(context.SpawnContext, definition, preferredOrigin, out building);
-    }
-
-    public bool TryResolveInitialPlacementOrigin(Context context, BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin)
-    {
-        resolvedOrigin = preferredOrigin;
-        return context.RuntimeSpawnSystem != null &&
-               context.RuntimeSpawnSystem.TryResolveInitialPlacementOrigin(context.SpawnContext, definition, preferredOrigin, out resolvedOrigin);
     }
 
     internal static bool TryGetRuntimeBoundaryEntity(EntityManager em, out Entity boundaryEntity)

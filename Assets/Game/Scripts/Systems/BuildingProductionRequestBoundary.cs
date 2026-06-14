@@ -5,7 +5,7 @@ using UnityEngine;
 using CampRequestFailure = BuildingUiCommandBoundary.CampRequestFailure;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 
-internal sealed class BuildingProductionRequestSystem
+internal sealed class BuildingProductionRequestBoundary
 {
     public enum FactionUnitProductionResultCode
     {
@@ -151,40 +151,26 @@ internal sealed class BuildingProductionRequestSystem
         }
     }
 
-    private int _armedProductionFrame = -1;
-    private RuntimeBuildingEntity _lastCampProductionFocusBuilding;
-    private GameObject _lastCampProductionFocusPrefab;
     private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new();
 
-    public void CreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex, int frameCount)
-    {
-        if (!activeBuildingId.HasValue)
-            return;
-
-        CreateUnitFromBuilding(context, activeBuildingId.Value, productionIndex, frameCount);
-    }
-
-    public void CreateUnitFromBuilding(Context context, int buildingId, int productionIndex, int frameCount)
-    {
-        TryCreateUnitFromBuilding(context, buildingId, productionIndex, frameCount, out _);
-    }
-
-    public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex)
+    public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex, int frameCount)
     {
         return EnqueueUiProductionCommand(
             em,
             BuildingUiProductionCommandRequestElement.KindSelectedBuildingUnit,
             activeBuildingId ?? 0,
-            productionIndex);
+            productionIndex,
+            frameCount);
     }
 
-    public int EnqueueCreateUnitFromBuilding(EntityManager em, int buildingId, int productionIndex)
+    public int EnqueueCreateUnitFromBuilding(EntityManager em, int buildingId, int productionIndex, int frameCount)
     {
         return EnqueueUiProductionCommand(
             em,
             BuildingUiProductionCommandRequestElement.KindBuildingUnit,
             buildingId,
-            productionIndex);
+            productionIndex,
+            frameCount);
     }
 
     public int EnqueueCancelProduction(EntityManager em, int buildingId, int pendingProductionIndex)
@@ -193,7 +179,8 @@ internal sealed class BuildingProductionRequestSystem
             em,
             BuildingUiProductionCommandRequestElement.KindCancelProduction,
             buildingId,
-            pendingProductionIndex);
+            pendingProductionIndex,
+            frameCount: 0);
     }
 
     public bool EnqueueAndProcessCreateUnitFromSelectedBuilding(
@@ -203,7 +190,7 @@ internal sealed class BuildingProductionRequestSystem
         int productionIndex,
         int frameCount)
     {
-        int requestId = EnqueueCreateUnitFromSelectedBuilding(em, activeBuildingId, productionIndex);
+        int requestId = EnqueueCreateUnitFromSelectedBuilding(em, activeBuildingId, productionIndex, frameCount);
         ProcessPendingUiProductionCommands(em, context, frameCount);
         return TryGetUiProductionCommandResult(em, requestId, out BuildingUiProductionCommandResultElement result) &&
                result.Accepted != 0;
@@ -216,7 +203,7 @@ internal sealed class BuildingProductionRequestSystem
         int productionIndex,
         int frameCount)
     {
-        int requestId = EnqueueCreateUnitFromBuilding(em, buildingId, productionIndex);
+        int requestId = EnqueueCreateUnitFromBuilding(em, buildingId, productionIndex, frameCount);
         ProcessPendingUiProductionCommands(em, context, frameCount);
         return TryGetUiProductionCommandResult(em, requestId, out BuildingUiProductionCommandResultElement result) &&
                result.Accepted != 0;
@@ -337,6 +324,7 @@ internal sealed class BuildingProductionRequestSystem
             context,
             request.BuildingId,
             request.ProductionIndex,
+            request.FrameCount,
             frameCount,
             out resultCode);
     }
@@ -345,10 +333,11 @@ internal sealed class BuildingProductionRequestSystem
         Context context,
         int buildingId,
         int productionIndex,
+        int requestFrameCount,
         int frameCount,
         out byte resultCode)
     {
-        if (!ConsumeUiProductionArm(frameCount))
+        if (requestFrameCount != frameCount)
         {
             resultCode = BuildingUiProductionCommandResultElement.NotArmed;
             return false;
@@ -484,11 +473,8 @@ internal sealed class BuildingProductionRequestSystem
 
         if (focusProducerOnSuccess)
             SelectBuildingForProductionRequest(context, producerBuilding, prefab);
-        else
-            RememberCampProductionFocus(producerBuilding, prefab);
 
-        ArmNextProductionFromUi(frameCount);
-        CreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount);
+        TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out _);
         context.RecordUnitOrdered?.Invoke(prefab);
         return CampRequestFailure.None;
     }
@@ -624,21 +610,6 @@ internal sealed class BuildingProductionRequestSystem
                 ResultCode = resultCode
             });
         }
-    }
-
-    public void FocusLastCampProductionRequest(Context context)
-    {
-        if (_lastCampProductionFocusBuilding == null || _lastCampProductionFocusPrefab == null)
-            return;
-
-        SelectBuildingForProductionRequest(context, _lastCampProductionFocusBuilding, _lastCampProductionFocusPrefab);
-        _lastCampProductionFocusBuilding = null;
-        _lastCampProductionFocusPrefab = null;
-    }
-
-    public void ArmNextProductionFromUi(int frameCount)
-    {
-        _armedProductionFrame = frameCount;
     }
 
     public bool CanCreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex)
@@ -946,7 +917,8 @@ internal sealed class BuildingProductionRequestSystem
         EntityManager em,
         byte requestKind,
         int buildingId,
-        int productionIndex)
+        int productionIndex,
+        int frameCount)
     {
         Entity queueEntity = EnsureUiProductionCommandEntity(em);
         BuildingUiProductionCommandQueueComponent queue =
@@ -958,6 +930,7 @@ internal sealed class BuildingProductionRequestSystem
             RequestId = queue.LastRequestId,
             BuildingId = buildingId,
             ProductionIndex = productionIndex,
+            FrameCount = frameCount,
             RequestKind = requestKind
         });
         return queue.LastRequestId;
@@ -1377,15 +1350,6 @@ internal sealed class BuildingProductionRequestSystem
         return false;
     }
 
-    private bool ConsumeUiProductionArm(int frameCount)
-    {
-        if (_armedProductionFrame != frameCount)
-            return false;
-
-        _armedProductionFrame = -1;
-        return true;
-    }
-
     private void SelectBuildingForProductionRequest(Context context, RuntimeBuildingEntity building, GameObject producedUnitPrefab)
     {
         if (building == null)
@@ -1398,12 +1362,6 @@ internal sealed class BuildingProductionRequestSystem
 
         Vector3 focusWorldPosition = ResolveProductionRequestFocusWorldPosition(context, building, producedUnitPrefab);
         context.SmoothMoveCameraGroundCenterTo?.Invoke(focusWorldPosition);
-    }
-
-    private void RememberCampProductionFocus(RuntimeBuildingEntity building, GameObject producedUnitPrefab)
-    {
-        _lastCampProductionFocusBuilding = building;
-        _lastCampProductionFocusPrefab = producedUnitPrefab;
     }
 
     private Vector3 ResolveProductionRequestFocusWorldPosition(Context context, RuntimeBuildingEntity producerBuilding, GameObject producedUnitPrefab)

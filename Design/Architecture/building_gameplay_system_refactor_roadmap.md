@@ -32,9 +32,9 @@ Step 14 placement visual-update transition size: 1824 lines. Active-placement fo
 
 Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewSystem`, wall commit scratch state now lives in `BuildingPlacementContextSystem`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
 
-Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestSystem` owns active-building production request execution, and `BuildingUiContextSystem` wires the command boundary to the production request context.
+Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestBoundary` owns active-building production request execution, and `BuildingUiContextSystem` wires the command boundary to the production request context.
 
-Step 17 camp request transition size: 1736 lines. Camp item affordability, request execution, missing-producer failure reporting, focus memory, and deferred focus now route through `BuildingUiCommandSystem` and `BuildingProductionRequestSystem`; `BuildingGameplaySystem` no longer owns camp request callbacks.
+Step 17 camp request transition size: 1736 lines. Camp item affordability, request execution, missing-producer failure reporting, focus memory, and deferred focus now route through `BuildingUiCommandSystem` and `BuildingProductionRequestBoundary`; `BuildingGameplaySystem` no longer owns camp request callbacks.
 
 Step 18 UI read method transition size: 1742 lines. Selected-building flags, active-building flags, status/label/description/health/preview reads, and selected-building production affordability now route through `BuildingUiQuerySystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers that delegate to the UI query boundary.
 
@@ -250,20 +250,20 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 5: Move UI Command And Read Surface
 
 16. Complete: Move production button commands
-   - Move selected-building production buttons and indexed production commands into `BuildingUiCommandSystem` and `BuildingProductionRequestSystem`.
+   - Move selected-building production buttons and indexed production commands into `BuildingUiCommandSystem` and `BuildingProductionRequestBoundary`.
    - Preserve primary/secondary/tertiary/quaternary UI behavior.
    - Expected output: UI does not call `BuildingGameplaySystem` for unit production.
    - `BuildingUiCommandSystem` now owns primary/secondary/tertiary/quaternary selected-building and building-id production button commands plus the UI production-arm command.
-   - `BuildingProductionRequestSystem` now owns active-building production request execution.
+   - `BuildingProductionRequestBoundary` now owns active-building production request execution.
    - `BuildingUiContextSystem` wires UI production commands to fresh production request contexts and frame counts.
    - `BuildingGameplaySystem` production command wrappers now delegate through `BuildingUiCommandSystem`, and placement interaction uses the same UI command boundary.
 
 17. Complete: Move camp item request flow
    - Move camp item affordability, required-building failure, producer focus, and arm-next-production command into `BuildingUiCommandSystem`.
    - Expected output: camp UI command result semantics remain stable but no longer depend on shell private methods.
-   - `BuildingUiContextSystem` now wires `BuildingUiCommandSystem` camp request delegates directly to `BuildingProductionRequestSystem` using fresh production request contexts.
+   - `BuildingUiContextSystem` now wires `BuildingUiCommandSystem` camp request delegates directly to `BuildingProductionRequestBoundary` using fresh production request contexts.
    - `BuildingGameplaySystem` no longer owns `GetCampRequestFailure`, `TryRequestCampItem`, or `FocusLastCampProductionRequest` callbacks.
-   - Existing camp UI behavior remains routed through `BuildingUiCommandSystem` while production request policy remains in `BuildingProductionRequestSystem`.
+   - Existing camp UI behavior remains routed through `BuildingUiCommandSystem` while production request policy remains in `BuildingProductionRequestBoundary`.
 
 18. Complete: Move UI read methods
    - Move selected-building health, preview prefab, `CanCreate*`, active/selected building flags, and pending/produced UI entries behind `BuildingUiQuerySystem`.

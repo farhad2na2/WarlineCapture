@@ -23,8 +23,8 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
-        BuildingProductionRequestSystem productionRequestSystem,
-        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingProductionRequestBoundary productionRequestSystem,
+        BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
@@ -76,8 +76,8 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
-        BuildingProductionRequestSystem productionRequestSystem,
-        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingProductionRequestBoundary productionRequestSystem,
+        BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
@@ -112,8 +112,8 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private static void ProcessUiProductionRequests(
-        BuildingProductionRequestSystem productionRequestSystem,
-        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingProductionRequestBoundary productionRequestSystem,
+        BuildingProductionRequestBoundary.Context productionRequestContext,
         EntityManager em,
         int frameCount,
         float now)
@@ -164,8 +164,8 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void ProcessProductionRequests(
-        BuildingProductionRequestSystem productionRequestSystem,
-        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingProductionRequestBoundary productionRequestSystem,
+        BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,

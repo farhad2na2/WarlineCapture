@@ -49,17 +49,17 @@ internal sealed class BuildingPlacementAdapterSystem
         CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSource,
         out Vector2Int resolvedOrigin)
     {
-        BuildingRuntimeSpawnCommandSystem.Context context = source.BuildingRuntimeContextSystem.CreateSpawnCommandContext(
-            createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock),
-            source.BuildingRuntimeSpawnSystem,
-            source.BuildingPlacementStartupSystem.SoldierBaseDefinition,
-            source.BuildingPlacementStartupSystem.SoldierTentDefinition,
-            source.BuildingPlacementStartupSystem.FactoryDefinition);
-        return source.BuildingRuntimeSpawnCommandSystem.TryResolveInitialPlacementOrigin(
-            context,
-            definition,
-            preferredOrigin,
-            out resolvedOrigin);
+        resolvedOrigin = preferredOrigin;
+        if (source.BuildingRuntimeSpawnSystem == null)
+            return false;
+
+        BuildingRuntimeSpawnSystem.Context context = source.BuildingRuntimeContextSystem.CreateSpawnContext(
+            createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock));
+        return source.BuildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
+                   context,
+                   definition,
+                   preferredOrigin,
+                   out resolvedOrigin);
     }
 
     public Vector2Int GetCenterScreenPlacementOrigin(

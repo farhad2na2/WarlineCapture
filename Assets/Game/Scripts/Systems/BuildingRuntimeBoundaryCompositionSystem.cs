@@ -18,7 +18,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystem
             source.BuildingDefinitionSystem,
             source.BuildingRuntimeSpawnSystem,
             source.BuildingRuntimeContextSystem.CreateSpawnContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
-            source.BuildingProductionRequestSystem,
+            source.BuildingProductionRequestBoundary,
             source.BuildingProductionContextSystem.CreateProductionRequestContext(createProductionRuntimeContextSource(source)),
             source.BuildingRuntimeQuerySystem,
             source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(source)),

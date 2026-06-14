@@ -80,6 +80,7 @@ public sealed class BuildingProductionSystemTests
             var tests = new BuildingProductionSystemTests();
             tests.BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult();
             tests.BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding();
+            tests.BuildingUiProductionCommandRequest_RejectsStaleFrame();
             tests.BuildingUiProductionCommandRequest_RejectsUnavailablePrefab();
             tests.BuildingUiProductionCommandRequest_RejectsQueueFull();
             tests.BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult();
@@ -87,7 +88,7 @@ public sealed class BuildingProductionSystemTests
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
             tests.BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand();
             tests.BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=9");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=10");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -286,7 +287,7 @@ public sealed class BuildingProductionSystemTests
     [Test]
     public void TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback()
     {
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Attack Helicopter");
         try
@@ -308,7 +309,7 @@ public sealed class BuildingProductionSystemTests
                 [neutralProducer.Id] = neutralProducer,
                 [playerProducer.Id] = playerProducer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab);
@@ -332,7 +333,7 @@ public sealed class BuildingProductionSystemTests
     [Test]
     public void TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists()
     {
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Attack Helicopter");
         try
@@ -347,7 +348,7 @@ public sealed class BuildingProductionSystemTests
             {
                 [neutralProducer.Id] = neutralProducer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab);
@@ -372,7 +373,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult()
     {
         using World world = new("BuildingUiProductionCommandRequestTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -387,14 +388,17 @@ public sealed class BuildingProductionSystemTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
                 world.EntityManager);
 
-            requestSystem.ArmNextProductionFromUi(42);
-            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(world.EntityManager, producer.Id, productionIndex: 0);
+            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
+                world.EntityManager,
+                producer.Id,
+                productionIndex: 0,
+                frameCount: 42);
             requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
 
             Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
@@ -423,19 +427,22 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding()
     {
         using World world = new("BuildingUiProductionCommandMissingActiveBuildingTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 productionSystem,
                 unitPrefab,
                 world.EntityManager);
 
-            requestSystem.ArmNextProductionFromUi(42);
-            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(world.EntityManager, null, productionIndex: 0);
+            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
+                world.EntityManager,
+                null,
+                productionIndex: 0,
+                frameCount: 42);
             requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
 
             Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
@@ -452,10 +459,56 @@ public sealed class BuildingProductionSystemTests
     }
 
     [Test]
+    public void BuildingUiProductionCommandRequest_RejectsStaleFrame()
+    {
+        using World world = new("BuildingUiProductionCommandStaleFrameTest");
+        var requestSystem = new BuildingProductionRequestBoundary();
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Requestable Unit");
+        try
+        {
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 25,
+                displayName: "Player Factory",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                world.EntityManager);
+
+            int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
+                world.EntityManager,
+                producer.Id,
+                productionIndex: 0,
+                frameCount: 41);
+            requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
+
+            Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiProductionCommandResultElement result));
+            Assert.AreEqual(0, result.Accepted);
+            Assert.AreEqual(BuildingUiProductionCommandResultElement.NotArmed, result.ResultCode);
+            Assert.AreEqual(0, producer.PendingProductions.Count);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void BuildingUiProductionCommandRequest_RejectsUnavailablePrefab()
     {
         using World world = new("BuildingUiProductionCommandUnavailablePrefabTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject contextUnitPrefab = new("Context Unit");
         try
@@ -470,17 +523,17 @@ public sealed class BuildingProductionSystemTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 contextUnitPrefab,
                 world.EntityManager);
 
-            requestSystem.ArmNextProductionFromUi(42);
             int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
                 world.EntityManager,
                 producer.Id,
-                productionIndex: 0);
+                productionIndex: 0,
+                frameCount: 42);
             requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
 
             Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
@@ -500,7 +553,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiProductionCommandRequest_RejectsQueueFull()
     {
         using World world = new("BuildingUiProductionCommandQueueFullTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -515,18 +568,18 @@ public sealed class BuildingProductionSystemTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
                 world.EntityManager,
                 tryQueuePlayerUnit: (_, _, _) => false);
 
-            requestSystem.ArmNextProductionFromUi(42);
             int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
                 world.EntityManager,
                 producer.Id,
-                productionIndex: 0);
+                productionIndex: 0,
+                frameCount: 42);
             requestSystem.ProcessPendingUiProductionCommands(world.EntityManager, context, frameCount: 42);
 
             Assert.IsTrue(requestSystem.TryGetUiProductionCommandResult(
@@ -547,7 +600,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult()
     {
         using World world = new("BuildingUiProductionCommandCancelProductionTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -562,13 +615,12 @@ public sealed class BuildingProductionSystemTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
                 world.EntityManager);
 
-            requestSystem.ArmNextProductionFromUi(42);
             Assert.IsTrue(requestSystem.EnqueueAndProcessCreateUnitFromSelectedBuilding(
                 world.EntityManager,
                 context,
@@ -598,7 +650,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult()
     {
         using World world = new("BuildingUiCampItemCommandPlacementTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         GameObject buildingPrefab = new("Requestable Airport");
         try
         {
@@ -609,7 +661,7 @@ public sealed class BuildingProductionSystemTests
             };
             bool beganPlacement = false;
             int activePlacementCost = -1;
-            BuildingProductionRequestSystem.Context context = CreateCampItemRequestContext(
+            BuildingProductionRequestBoundary.Context context = CreateCampItemRequestContext(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 new List<BuildingDefinition> { definition },
                 new Dictionary<GameObject, BuildingDefinition> { { buildingPrefab, definition } },
@@ -657,7 +709,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult()
     {
         using World world = new("BuildingUiCampItemCommandUnitProductionTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         GameObject unitPrefab = new("Requestable Vehicle");
         try
@@ -672,7 +724,7 @@ public sealed class BuildingProductionSystemTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestSystem.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -707,7 +759,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand()
     {
         using World world = new("BuildingRuntimeBoundaryQueuedUiProductionTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
@@ -727,7 +779,7 @@ public sealed class BuildingProductionSystemTests
             Entity boundaryEntity = world.EntityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
             using EntityQuery boundaryQuery = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            BuildingProductionRequestSystem.Context productionContext = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -737,11 +789,11 @@ public sealed class BuildingProductionSystemTests
                 world.EntityManager,
                 productionSystem);
 
-            requestSystem.ArmNextProductionFromUi(42);
             int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
                 world.EntityManager,
                 producer.Id,
-                productionIndex: 0);
+                productionIndex: 0,
+                frameCount: 42);
 
             boundarySystem.Update(
                 new BuildingDefinitionSystem(),
@@ -778,7 +830,7 @@ public sealed class BuildingProductionSystemTests
     public void BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand()
     {
         using World world = new("BuildingRuntimeBoundaryQueuedCampItemTest");
-        var requestSystem = new BuildingProductionRequestSystem();
+        var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionSystem();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
@@ -798,7 +850,7 @@ public sealed class BuildingProductionSystemTests
             world.EntityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
             using EntityQuery boundaryQuery = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            BuildingProductionRequestSystem.Context productionContext = CreateProducerSelectionContext(
+            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1329,16 +1381,16 @@ public sealed class BuildingProductionSystemTests
         };
     }
 
-    private static BuildingProductionRequestSystem.Context CreateCampItemRequestContext(
+    private static BuildingProductionRequestBoundary.Context CreateCampItemRequestContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         IReadOnlyList<BuildingDefinition> configuredSpawnableDefinitions,
         IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<string, GameObject> unitPrefabsByKey,
-        BuildingProductionRequestSystem.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestSystem.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestSystem.RefundDollarsDelegate refundDollars,
-        BuildingProductionRequestSystem.SetActivePlacementCostDelegate setActivePlacementCost)
+        BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
+        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars,
+        BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost)
     {
         var productionSystem = new BuildingProductionSystem();
         BuildingProductionSystem.QueueContext queueContext = new(
@@ -1348,7 +1400,7 @@ public sealed class BuildingProductionSystemTests
             null,
             null);
 
-        return new BuildingProductionRequestSystem.Context(
+        return new BuildingProductionRequestBoundary.Context(
             runtimeBuildings,
             configuredSpawnableDefinitions,
             configuredDefinitionsByPrefab,
@@ -1377,12 +1429,12 @@ public sealed class BuildingProductionSystemTests
             (_, _) => 0);
     }
 
-    private static BuildingProductionRequestSystem.Context CreateProducerSelectionContext(
+    private static BuildingProductionRequestBoundary.Context CreateProducerSelectionContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionSystem productionSystem,
         GameObject unitPrefab,
         EntityManager entityManager = default,
-        BuildingProductionRequestSystem.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null)
+        BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         BuildingProductionSystem.QueueContext queueContext = new(
@@ -1392,7 +1444,7 @@ public sealed class BuildingProductionSystemTests
             null,
             null);
 
-        return new BuildingProductionRequestSystem.Context(
+        return new BuildingProductionRequestBoundary.Context(
             runtimeBuildings,
             null,
             null,

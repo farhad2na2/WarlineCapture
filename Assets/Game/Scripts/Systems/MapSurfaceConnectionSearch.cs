@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public readonly struct MapSurfaceConnectionSystem
+public readonly struct MapSurfaceConnectionSearch
 {
     public readonly struct Context
     {

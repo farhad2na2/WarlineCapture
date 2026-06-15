@@ -199,7 +199,7 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsFalse(selectedPanel.gameObject.activeSelf, "Runtime binding should start with the selection panel hidden.");
 
         Entity unit = CreatePlayerUnit(_world.EntityManager, "Echo Squad", new int2(8, 9), 96);
-        feedback.ApplySelection(_world.EntityManager, unit, new SelectionUiQuerySystem());
+        feedback.ApplySelection(_world.EntityManager, unit, new SelectionUiReadModelLookup());
 
         Assert.IsTrue(selectedPanel.gameObject.activeSelf, "Selecting a valid unit must activate the active Match HUD SelectedSquadPanel.");
     }

@@ -226,7 +226,7 @@ public static class MapSurfacePreviewOverlaySystem
         if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
             return false;
 
-        MapSurfacePathingValidationSystem validation = new();
+        MapSurfaceTraversalValidation validation = new();
         int2 footprint = new(3, 3);
         ResolveCellRange(grid, surface.Dimensions, previewBounds, out int2 minCell, out int2 maxCell);
         List<Vector3> vertices = new(4096);
@@ -288,7 +288,7 @@ public static class MapSurfacePreviewOverlaySystem
     private static bool ShouldAddVehicleFootprintPreviewCell(
         MapSurfaceComponent surface,
         GridConfig grid,
-        MapSurfacePathingValidationSystem validation,
+        MapSurfaceTraversalValidation validation,
         int2 cell,
         int2 footprint,
         VehicleFootprintPreviewCellKind kind)

@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-internal struct UnitPathLiveUnitSnapshotSystem
+internal struct UnitPathLiveUnitSnapshot
 {
     private NativeList<Entity> _entities;
     private NativeList<UnitGrid> _grids;

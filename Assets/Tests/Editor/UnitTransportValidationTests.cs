@@ -115,7 +115,7 @@ public sealed class UnitTransportValidationTests
         Entity passengerC = CreateSelectablePassenger(em, new int2(6, 14));
 
         var boardingSystem = new TransportBoardingCommandSystem();
-        TransportBoardingCommandSystem.Result result = boardingSystem.TryIssueBoardTransportOrderToClickedUnit(
+        TransportBoardingCommandSystem.Result result = boardingSystem.TryRequestBoardTransportOrderToClickedUnit(
             em,
             Vector2.zero,
             new UnitTransportAirPickupSystem(),
@@ -864,7 +864,7 @@ public sealed class UnitTransportValidationTests
         readModelSystem.Publish(
             em,
             selectionState,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             new UnitTransportCapacitySystem(),
             1f);
 

@@ -55,8 +55,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             },
             Array.Empty<MapSurfaceConnection>());
 
-        var querySystem = new MapSurfaceQuerySystem();
-        var context = new MapSurfaceQuerySystem.Context(scope.Surface);
+        var querySystem = new MapSurfaceSampler();
+        var context = new MapSurfaceSampler.Context(scope.Surface);
 
         Assert.IsTrue(querySystem.TrySampleHeight(context, new int2(1, 1), out float height));
         Assert.AreEqual(0f, height);
@@ -74,8 +74,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             new[] { slopeSample },
             Array.Empty<MapSurfaceConnection>());
 
-        var querySystem = new MapSurfaceQuerySystem();
-        var context = new MapSurfaceQuerySystem.Context(scope.Surface);
+        var querySystem = new MapSurfaceSampler();
+        var context = new MapSurfaceSampler.Context(scope.Surface);
         var classificationSystem = new MapSurfaceSlopeClassifier();
 
         Assert.IsTrue(querySystem.TrySampleHeight(context, new int2(0, 0), out float height));
@@ -142,7 +142,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             new[] { bridge, highway },
             Array.Empty<MapSurfaceConnection>());
 
-        var layeredCellSystem = new MapSurfaceLayeredCellSystem();
+        var layeredCellSystem = new MapSurfaceLayerAccess();
         var slopeSystem = new MapSurfaceSlopeClassifier();
 
         Assert.IsTrue(layeredCellSystem.TryGetSurfaceRange(scope.Surface, new int2(0, 0), out MapSurfaceCellSurfaceRange range));
@@ -169,8 +169,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             new[] { bridge, highway },
             Array.Empty<MapSurfaceConnection>());
 
-        var connectionSystem = new MapSurfaceConnectionSystem();
-        var context = new MapSurfaceConnectionSystem.Context(scope.Surface);
+        var connectionSystem = new MapSurfaceConnectionSearch();
+        var context = new MapSurfaceConnectionSearch.Context(scope.Surface);
 
         Assert.IsFalse(connectionSystem.TryFindConnection(
             context,
@@ -195,7 +195,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             new[] { blocker, ground },
             Array.Empty<MapSurfaceConnection>());
 
-        var validationSystem = new MapSurfacePathingValidationSystem();
+        var validationSystem = new MapSurfaceTraversalValidation();
         var grid = new GridConfig
         {
             Width = 1,
@@ -238,7 +238,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             samples,
             Array.Empty<MapSurfaceConnection>());
 
-        var validationSystem = new MapSurfacePathingValidationSystem();
+        var validationSystem = new MapSurfaceTraversalValidation();
         var grid = new GridConfig
         {
             Width = width,
@@ -650,7 +650,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
                 out int2 resolvedCell,
                 out RtsSelectionPointerTargetCommandSystem.MapSurfaceCommandTargetResult result));
 
-            var validationSystem = new MapSurfacePathingValidationSystem();
+            var validationSystem = new MapSurfaceTraversalValidation();
             Assert.AreNotEqual(desiredGoal, resolvedCell);
             Assert.AreEqual(resolvedCell, result.Cell);
             Assert.IsFalse(validationSystem.CanTraverseFootprint(scope.Surface, 1, grid, desiredGoal, new int2(3, 3), true));
@@ -797,9 +797,9 @@ public sealed class MapSurfaceLayeredGridFocusedTests
     private sealed class RuntimeValidationProbe
     {
         private const float MaxVehiclePitchRollDegrees = 20f;
-        private readonly MapSurfaceQuerySystem _querySystem = new();
-        private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();
-        private readonly MapSurfaceConnectionSystem _connectionSystem = new();
+        private readonly MapSurfaceSampler _querySystem = new();
+        private readonly MapSurfaceLayerAccess _layeredCellSystem = new();
+        private readonly MapSurfaceConnectionSearch _connectionSystem = new();
         private readonly MapSurfaceSlopeClassifier _slopeClassificationSystem = new();
 
         public readonly struct Result
@@ -837,7 +837,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
                 return false;
 
-            MapSurfaceQuerySystem.Context queryContext = new(surface);
+            MapSurfaceSampler.Context queryContext = new(surface);
             bool slopeResolved = _querySystem.TryGetPrimarySurface(queryContext, slopeCell, out MapSurfaceSample slopeSample);
             float slopeHeight = 0f;
             bool unitGrounded = slopeResolved &&
@@ -898,7 +898,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             if (!hasBridge || !hasHighway)
                 return false;
 
-            MapSurfaceConnectionSystem.Context context = new(surface);
+            MapSurfaceConnectionSearch.Context context = new(surface);
             return !_connectionSystem.TryFindConnection(
                 context,
                 bridge,
@@ -923,8 +923,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         public const double BaselineFrameBudgetMilliseconds = 16.67d;
         public const long MaxSamplingAllocationBytes = 128;
 
-        private readonly MapSurfaceQuerySystem _querySystem = new();
-        private readonly MapSurfacePathingValidationSystem _pathingValidationSystem = new();
+        private readonly MapSurfaceSampler _querySystem = new();
+        private readonly MapSurfaceTraversalValidation _pathingValidationSystem = new();
 
         public readonly struct Result
         {
@@ -964,7 +964,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         public Result RunSamplingProbe(MapSurfaceComponent surface, int sampleIterations)
         {
             int iterations = math.max(1, sampleIterations);
-            MapSurfaceQuerySystem.Context context = new(surface);
+            MapSurfaceSampler.Context context = new(surface);
             RunWarmup(surface, context);
 
             var stopwatch = new Stopwatch();
@@ -1017,7 +1017,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
                    blob.Connections.Length * estimatedConnectionBytes;
         }
 
-        private void RunWarmup(MapSurfaceComponent surface, MapSurfaceQuerySystem.Context context)
+        private void RunWarmup(MapSurfaceComponent surface, MapSurfaceSampler.Context context)
         {
             if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
                 return;

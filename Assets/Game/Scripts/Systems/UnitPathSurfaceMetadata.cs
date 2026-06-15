@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal readonly struct UnitPathSurfaceMetadataSystem
+internal readonly struct UnitPathSurfaceMetadata
 {
     public DynamicBuffer<UnitPathSurfaceNode> PrepareBuffer(EntityManager em, Entity entity)
     {

@@ -112,7 +112,7 @@ public sealed class TransportBoardingPerformanceValidation
 
             long allocationStart = GC.GetAllocatedBytesForCurrentThread();
             long boardStartTicks = Stopwatch.GetTimestamp();
-            TransportBoardingCommandSystem.Result boardResult = boardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
+            TransportBoardingCommandSystem.Result boardResult = boardingCommandSystem.TryRequestBoardTransportOrderToClickedUnit(
                 em,
                 Vector2.zero,
                 airPickupSystem,

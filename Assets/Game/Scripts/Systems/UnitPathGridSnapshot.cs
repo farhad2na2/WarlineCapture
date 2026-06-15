@@ -8,7 +8,7 @@ using Unity.Collections;
 /// freely while a batch is still running. Capture only happens when a new batch is
 /// scheduled, and a batch is only scheduled when no previous batch is pending.
 /// </summary>
-internal struct UnitPathGridSnapshotSystem
+internal struct UnitPathGridSnapshot
 {
     public NativeArray<GridWalkable> Walkable;
     public NativeArray<GridRoad> Roads;

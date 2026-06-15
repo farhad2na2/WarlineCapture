@@ -13,8 +13,8 @@ Units, vehicles, buildings, pathfinding, road placement, runtime city placement,
 The map surface is gameplay data:
 
 - `MapSurfaceComponent` owns the baked surface blob reference and grid metadata.
-- `MapSurfaceQuerySystem` exposes allocation-free sampling contexts for height, normal, slope, surface type, and layer selection.
-- `MapSurfaceConnectionSystem` owns explicit connectivity between terrain, roads, bridge decks, highways under bridges, ramps, and other layered surfaces.
+- `MapSurfaceSampler` exposes allocation-free sampling contexts for height, normal, slope, surface type, and layer selection.
+- `MapSurfaceConnectionSearch` owns explicit connectivity between terrain, roads, bridge decks, highways under bridges, ramps, and other layered surfaces.
 - `UnitSurfaceTrackingSystem` keeps units on the correct surface/layer.
 - `UnitGroundingSystem` applies height to units.
 - `VehicleSlopeAlignmentSystem` applies visual pitch/roll from surface normals for vehicles.
@@ -151,7 +151,7 @@ Selection, camera focus, command targeting, and markers:
 - `Assets/Game/Scripts/Systems/RtsCameraSystem.cs`: focus and camera ray projection assume a flat `y = 0` plane.
 - `Assets/Game/Scripts/Systems/SelectionOrderMarkerSystem.cs`: order markers use grid-origin y plus a small offset.
 - `Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs` and `SelectionTransportCommandRequestSystem.cs`: command targets and transport target positions resolve against flat grid/world coordinates.
-- `Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs` and `MissionCameraSystem.cs`: selected/focused unit and mission camera vectors flatten y.
+- `Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.cs` and `MissionCameraSystem.cs`: selected/focused unit and mission camera vectors flatten y.
 
 Pathfinding integration rule:
 
@@ -196,7 +196,7 @@ Pathfinding integration rule:
    - Do not build runtime surface data by scanning scene hierarchy during gameplay.
    - Add validation that Match has exactly one active map surface asset/reference.
 
-8. Complete: Add `MapSurfaceQuerySystem`
+8. Complete: Add `MapSurfaceSampler`
    - Create allocation-free context creation for surface sampling.
    - Add pure data sampling functions for cell lookup, surface lookup, bilinear height, normal, slope, and nearest valid surface.
    - Static helpers are allowed only if they are pure stateless data/math operations.
@@ -244,7 +244,7 @@ Pathfinding integration rule:
    - Reject cells/surfaces above movement-type max slope.
    - Preserve current walkability rules for flat maps.
    - Add tests for soldiers vs tanks if movement masks differ.
-   - Added `MapSurfacePathingValidationSystem` as a narrow hot-path data boundary.
+   - Added `MapSurfaceTraversalValidation` as a narrow hot-path data boundary.
    - `PathfindBatchJob` now rejects cells/footprints whose primary surface cannot support the moving unit mask or exceeds the movement-type max slope.
    - The flat fallback remains explicitly inert through `hasSurfaceData == 0`, and traversal cost constants/budgets are unchanged.
 
@@ -267,8 +267,8 @@ Pathfinding integration rule:
    - Replace single-sample cell assumptions with `CellSurfaceRange`.
    - Store one surface inline where possible and sparse extra surfaces only for layered cells.
    - Validate memory and sampling cost.
-   - Added `MapSurfaceCellSurfaceRange` and `MapSurfaceLayeredCellSystem`.
-   - `MapSurfaceQuerySystem` now exposes range-based sampling while primary-surface sampling remains stable.
+   - Added `MapSurfaceCellSurfaceRange` and `MapSurfaceLayerAccess`.
+   - `MapSurfaceSampler` now exposes range-based sampling while primary-surface sampling remains stable.
    - Pathfinding still uses the primary surface only; layered traversal switches are deferred to explicit connection steps.
 
 21. Complete: Add bridge deck bake
@@ -294,12 +294,12 @@ Pathfinding integration rule:
    - Added `MapSurfaceConnectionBakeSystem` to create explicit bridge-approach, ramp, bridge-deck same-layer, and lower-road same-layer connection records.
    - Connection bake clamps authored edge directions and does not inspect height/slope to infer layer transitions.
 
-24. Complete: Add `MapSurfaceConnectionSystem`
+24. Complete: Add `MapSurfaceConnectionSearch`
    - Own connection validation and runtime read contexts.
    - Pathfinding must use connection edges for layered transitions.
    - Surface sampling must stay separate from connection traversal.
-   - Added `MapSurfaceConnectionSystem` with allocation-free runtime connection context, indexed connection reads, movement-mask validation, and explicit connection lookup.
-   - Surface sampling remains in `MapSurfaceQuerySystem`; layered path traversal consumes this boundary in later path-result/surface-id steps.
+   - Added `MapSurfaceConnectionSearch` with allocation-free runtime connection context, indexed connection reads, movement-mask validation, and explicit connection lookup.
+   - Surface sampling remains in `MapSurfaceSampler`; layered path traversal consumes this boundary in later path-result/surface-id steps.
 
 25. Complete: Add unit surface tracking
    - `UnitSurfaceTrackingSystem` updates current surface/layer from path result or current cell.
@@ -314,8 +314,8 @@ Pathfinding integration rule:
    - Preserve path pool allocator behavior.
    - Validate no managed allocation or path output regression.
    - Added `UnitPathSurfaceNode` as a parallel ECS buffer for path surface/layer metadata.
-   - `UnitPathResultApplySystem` now writes surface metadata during result application while keeping the path pool and job `NativeStream` output as `int2` cells.
-   - `UnitPathSurfaceMetadataSystem` resolves metadata from the current map-surface read context without native allocations, scene scans, or physics.
+   - `UnitPathResultApply` now writes surface metadata during result application while keeping the path pool and job `NativeStream` output as `int2` cells.
+   - `UnitPathSurfaceMetadata` resolves metadata from the current map-surface read context without native allocations, scene scans, or physics.
 
 27. Complete: Add vehicle slope alignment
    - Add `VehicleSlopeAlignmentSystem`.

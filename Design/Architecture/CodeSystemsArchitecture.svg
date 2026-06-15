@@ -187,7 +187,7 @@
   <text class="small" x="115" y="1536">RoadRuntimeGenerationSystem</text>
   <text class="small" x="115" y="1562">RoadGridProjectionSystem</text>
   <text class="small" x="115" y="1588">MapSurfaceRuntimeBootstrapSystem</text>
-  <text class="small" x="115" y="1614">MapSurfacePathfindingReadSystem</text>
+  <text class="small" x="115" y="1614">MapSurfacePathfindingSnapshot</text>
   <text class="small" x="115" y="1640">MapSurfaceSpawnGrounding</text>
   <text class="tiny" x="115" y="1670">Road visuals/grid semantics and baked layered surface data.</text>
 

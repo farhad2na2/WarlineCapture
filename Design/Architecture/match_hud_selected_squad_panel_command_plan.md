@@ -187,7 +187,7 @@ Responsibilities:
 
 - Read focused unit/squad/building selection.
 - Resolve portrait using the existing portrait resolver.
-- Resolve title using `SelectionUiQuerySystem` or building query systems.
+- Resolve title using `SelectionUiReadModelLookup` or building query systems.
 - Resolve subtitle using unit/building description, role, or type data.
 - Resolve current order using ECS components.
 - Resolve health ratio and health text using existing unit/building health components and query systems.

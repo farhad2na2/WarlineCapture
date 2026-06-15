@@ -229,7 +229,7 @@ public sealed class UnitMoveOrderSystem
         Entity entity,
         int2 desiredGoal,
         int slotIndex,
-        MapSurfacePathfindingReadSystem.Context surfaceContext = default)
+        MapSurfacePathfindingSnapshot.Context surfaceContext = default)
     {
         int2 footprintSize = entityManager.HasComponent<UnitFootprint>(entity)
             ? entityManager.GetComponentData<UnitFootprint>(entity).Size
@@ -330,7 +330,7 @@ public sealed class UnitMoveOrderSystem
         int2 footprintSize,
         int padding,
         byte factionId,
-        MapSurfacePathfindingReadSystem.Context surfaceContext = default,
+        MapSurfacePathfindingSnapshot.Context surfaceContext = default,
         bool isVehicle = false)
     {
         int2 size = UnitFootprintUtility.ClampSize(footprintSize);
@@ -374,7 +374,7 @@ public sealed class UnitMoveOrderSystem
     }
 
     private static bool CanUseSurfaceFootprint(
-        MapSurfacePathfindingReadSystem.Context surfaceContext,
+        MapSurfacePathfindingSnapshot.Context surfaceContext,
         in GridConfig grid,
         int2 cell,
         int2 footprintSize,
@@ -383,7 +383,7 @@ public sealed class UnitMoveOrderSystem
         if (surfaceContext.HasSurfaceData == 0)
             return true;
 
-        MapSurfacePathingValidationSystem validationSystem = new();
+        MapSurfaceTraversalValidation validationSystem = new();
         return validationSystem.CanTraverseFootprint(
             surfaceContext.Surface,
             surfaceContext.HasSurfaceData,

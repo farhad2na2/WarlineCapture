@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-internal struct UnitHierarchicalPathSystem
+internal struct UnitHierarchicalPathPlanner
 {
     public const int SectorSizeCells = 32;
     public const int MaxExpandedSectors = 2048;
@@ -20,7 +20,7 @@ internal struct UnitHierarchicalPathSystem
         NativeArray<GridWalkable> walkable,
         NativeBitArray dynamicBlocked,
         NativeArray<byte> friendlyPassFactionIds,
-        ref UnitPathCoarseWorkspaceSystem coarseWorkspace,
+        ref UnitPathCoarseWorkspace coarseWorkspace,
         int2 start,
         int2 requestedGoal,
         float maxSegmentCells,
@@ -126,7 +126,7 @@ internal struct UnitHierarchicalPathSystem
         NativeArray<GridWalkable> walkable,
         NativeBitArray dynamicBlocked,
         NativeArray<byte> friendlyPassFactionIds,
-        ref UnitPathCoarseWorkspaceSystem coarseWorkspace,
+        ref UnitPathCoarseWorkspace coarseWorkspace,
         int2 start,
         int2 requestedGoal,
         float maxSegmentCells,
@@ -180,7 +180,7 @@ internal struct UnitHierarchicalPathSystem
         return (diagonal * FreeDiagonalTraversalCost) + (straight * FreeTraversalCost);
     }
 
-    private static int2 CellToSector(int2 cell, in UnitPathCoarseWorkspaceSystem coarseWorkspace)
+    private static int2 CellToSector(int2 cell, in UnitPathCoarseWorkspace coarseWorkspace)
     {
         return new int2(
             math.clamp(cell.x / SectorSizeCells, 0, coarseWorkspace.Width - 1),

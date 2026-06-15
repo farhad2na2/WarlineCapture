@@ -19,7 +19,7 @@ internal sealed class BuildingSelectionClickCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingSelectionClickSystem.CreateContext(new BuildingSelectionClickSystem.Source(
-            source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob,
+            source.UnitPathfindingPendingStateReader.HasPendingPathJob,
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             (screenPosition, cell) => source.BuildingSelectionSystem.HandleBuildingSelectionClick(

@@ -35,7 +35,7 @@ internal struct PathfindBatchJob : IJobFor
     [ReadOnly] public NativeArray<GridRoadDirt> DirtRoads;
     [ReadOnly] public MapSurfaceComponent MapSurface;
     [ReadOnly] public byte HasMapSurface;
-    public MapSurfacePathingValidationSystem SurfaceValidation;
+    public MapSurfaceTraversalValidation SurfaceValidation;
     [ReadOnly] public MapSurfacePathCostComponent MapSurfacePathCost;
     public MapSurfacePathCost SurfacePathCost;
     public MapSurfaceRoadPriorityPolicy SurfaceRoadPriority;
@@ -122,7 +122,7 @@ internal struct PathfindBatchJob : IJobFor
             return;
         }
 
-        int searchEpoch = SearchEpochBase + (index * UnitPathScratchWorkspaceSystem.EpochsPerRequest);
+        int searchEpoch = SearchEpochBase + (index * UnitPathScratchWorkspace.EpochsPerRequest);
         if (TryWritePath(index, movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize, start, goal, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch))
         {
             Status[index] = 1;
@@ -144,11 +144,11 @@ internal struct PathfindBatchJob : IJobFor
 
         int maxRadius = math.min(
             math.max(Grid.Width, Grid.Height),
-            isVehicle ? UnitPathGoalAssignmentSystem.VehicleGoalSearchRadius : UnitPathGoalAssignmentSystem.InfantryGoalSearchRadius);
+            isVehicle ? UnitPathGoalAssignment.VehicleGoalSearchRadius : UnitPathGoalAssignment.InfantryGoalSearchRadius);
         int candidateAttempts = 0;
         if (!skipAlternateSearch)
         {
-            int maxCandidateAttempts = isVehicle ? UnitPathGoalAssignmentSystem.VehicleAlternateGoalCandidates : UnitPathGoalAssignmentSystem.InfantryAlternateGoalCandidates;
+            int maxCandidateAttempts = isVehicle ? UnitPathGoalAssignment.VehicleAlternateGoalCandidates : UnitPathGoalAssignment.InfantryAlternateGoalCandidates;
             for (int radius = 1; radius <= maxRadius; radius++)
             {
                 int ringLen = math.max(1, 8 * radius);
@@ -266,7 +266,7 @@ internal struct PathfindBatchJob : IJobFor
         if (!IsSurfaceCellPathable(goal, isVehicle))
             return false;
 
-        return UnitPathPlacementValidationSystem.CanPlaceForPathing(
+        return UnitPathPlacementValidation.CanPlaceForPathing(
             Grid,
             Walkable,
             DynamicBlocked,
@@ -318,7 +318,7 @@ internal struct PathfindBatchJob : IJobFor
             return false;
         }
 
-        bool goalPlacementValid = UnitPathPlacementValidationSystem.CanPlaceForPathing(
+        bool goalPlacementValid = UnitPathPlacementValidation.CanPlaceForPathing(
             Grid,
             Walkable,
             DynamicBlocked,
@@ -424,7 +424,7 @@ internal struct PathfindBatchJob : IJobFor
                 {
                     int2 horizontalCell = new int2(nextCell.x, currentCell.y);
                     int2 verticalCell = new int2(currentCell.x, nextCell.y);
-                    bool canPlaceHorizontal = UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                    bool canPlaceHorizontal = UnitPathPlacementValidation.CanPlaceForPathing(
                         Grid,
                         Walkable,
                         DynamicBlocked,
@@ -445,7 +445,7 @@ internal struct PathfindBatchJob : IJobFor
                         ignoredOccupancyCell,
                         ignoredOccupancySize);
                     canPlaceHorizontal = canPlaceHorizontal && IsSurfaceFootprintPathable(horizontalCell, footprintSize, isVehicle);
-                    bool canPlaceVertical = UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                    bool canPlaceVertical = UnitPathPlacementValidation.CanPlaceForPathing(
                         Grid,
                         Walkable,
                         DynamicBlocked,
@@ -471,7 +471,7 @@ internal struct PathfindBatchJob : IJobFor
                 }
 
                 int addCost = GetTraversalCost(nextIndex, diagonalStep, isVehicle);
-                bool canPlaceNext = UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                bool canPlaceNext = UnitPathPlacementValidation.CanPlaceForPathing(
                     Grid,
                     Walkable,
                     DynamicBlocked,
@@ -641,7 +641,7 @@ internal struct PathfindBatchJob : IJobFor
             if (next.Equals(current))
                 continue;
 
-            if (!UnitPathPlacementValidationSystem.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, liveUnitManualGroupMembers, movingEntity, next, footprintSize, current, isVehicle, manualMove, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
+            if (!UnitPathPlacementValidation.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, liveUnitManualGroupMembers, movingEntity, next, footprintSize, current, isVehicle, manualMove, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
                 return false;
 
             if (!IsSurfaceFootprintPathable(next, footprintSize, isVehicle))

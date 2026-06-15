@@ -16,16 +16,16 @@ public sealed class SelectionHudFeedbackBoundary
 
     public readonly struct Context
     {
-        public readonly SelectionUiQuerySystem SelectionUiQuerySystem;
+        public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
         public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
         public readonly ResolveSelectionPortraitSpriteDelegate ResolveSelectionPortraitSprite;
 
         public Context(
-            SelectionUiQuerySystem selectionUiQuerySystem,
+            SelectionUiReadModelLookup selectionUiReadModelLookup,
             TryGetEntityManagerDelegate tryGetDefaultEntityManager,
             ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite = null)
         {
-            SelectionUiQuerySystem = selectionUiQuerySystem;
+            SelectionUiReadModelLookup = selectionUiReadModelLookup;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
             ResolveSelectionPortraitSprite = resolveSelectionPortraitSprite;
         }
@@ -115,7 +115,7 @@ public sealed class SelectionHudFeedbackBoundary
         return entity;
     }
 
-    public void QueueSelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
+    public void QueueSelection(EntityManager em, Entity entity, SelectionUiReadModelLookup selectionUiReadModelLookup)
     {
         if (entity == Entity.Null || !em.Exists(entity))
         {
@@ -127,8 +127,8 @@ public sealed class SelectionHudFeedbackBoundary
         feedback.Add(new SelectionHudFeedbackElement
         {
             Kind = SelectionHudFeedbackKind.Selection,
-            Label = ToFixed64(selectionUiQuerySystem.ResolveFocusedUnitName(em, entity)),
-            Status = ToFixed64(selectionUiQuerySystem.ResolveHudSelectionStatus(em, entity))
+            Label = ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, entity)),
+            Status = ToFixed64(selectionUiReadModelLookup.ResolveHudSelectionStatus(em, entity))
         });
     }
 
@@ -214,10 +214,10 @@ public sealed class SelectionHudFeedbackBoundary
         feedback.Clear();
     }
 
-    public void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
+    public void ApplySelection(EntityManager em, Entity entity, SelectionUiReadModelLookup selectionUiReadModelLookup)
     {
         bool validSelection = entity != Entity.Null && em.Exists(entity);
-        QueueSelection(em, entity, selectionUiQuerySystem);
+        QueueSelection(em, entity, selectionUiReadModelLookup);
         ProcessPendingFeedback(em);
         _matchHudSelectionPanelView?.SetSelectionVisible(validSelection);
     }
@@ -225,13 +225,13 @@ public sealed class SelectionHudFeedbackBoundary
     public void ApplySelection(Context context, EntityManager em, Entity entity)
     {
         Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
-        ApplySelection(em, entity, context.SelectionUiQuerySystem, portraitSprite);
+        ApplySelection(em, entity, context.SelectionUiReadModelLookup, portraitSprite);
     }
 
-    private void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem, Sprite portraitSprite)
+    private void ApplySelection(EntityManager em, Entity entity, SelectionUiReadModelLookup selectionUiReadModelLookup, Sprite portraitSprite)
     {
         bool validSelection = entity != Entity.Null && em.Exists(entity);
-        QueueSelection(em, entity, selectionUiQuerySystem);
+        QueueSelection(em, entity, selectionUiReadModelLookup);
         ProcessPendingFeedback(em);
         _matchHudSelectionPanelView?.SetSelectionVisible(validSelection, portraitSprite);
     }
@@ -273,7 +273,7 @@ public sealed class SelectionHudFeedbackBoundary
         focusedUnitUiReadModelSystem?.Publish(
             em,
             selectionStateSystem,
-            context.SelectionUiQuerySystem,
+            context.SelectionUiReadModelLookup,
             unitTransportCapacitySystem,
             timeSeconds);
     }
@@ -383,7 +383,7 @@ public sealed class SelectionHudFeedbackBoundary
             return ResolveFocusedUnitOrderText(
                 em,
                 focusedUnit,
-                context.SelectionUiQuerySystem);
+                context.SelectionUiReadModelLookup);
         }
 
         int selectedCount = CountSelectedTags(em);
@@ -392,7 +392,7 @@ public sealed class SelectionHudFeedbackBoundary
             bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
             return BuildSelectedSummary(
                 em,
-                context.SelectionUiQuerySystem,
+                context.SelectionUiReadModelLookup,
                 includeSelectedBuilding).OrderText;
         }
 
@@ -404,7 +404,7 @@ public sealed class SelectionHudFeedbackBoundary
 
     public static SelectedSummary BuildSelectedSummary(
         EntityManager em,
-        SelectionUiQuerySystem selectionUiQuerySystem,
+        SelectionUiReadModelLookup selectionUiReadModelLookup,
         bool includeSelectedBuilding)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
@@ -435,7 +435,7 @@ public sealed class SelectionHudFeedbackBoundary
         int maxTotal = 0;
         bool hasOrder = false;
         bool mixedOrders = false;
-        SelectionUiQuerySystem.FocusedUnitUiStatus firstOrder = SelectionUiQuerySystem.FocusedUnitUiStatus.Idle;
+        SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
 
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
@@ -462,7 +462,7 @@ public sealed class SelectionHudFeedbackBoundary
                     maxTotal += math.max(0, health.Max);
                 }
 
-                SelectionUiQuerySystem.FocusedUnitUiStatus order = selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity);
+                SelectionUiReadModelLookup.FocusedUnitUiStatus order = selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity);
                 if (!hasOrder)
                 {
                     firstOrder = order;
@@ -517,11 +517,11 @@ public sealed class SelectionHudFeedbackBoundary
     {
         Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
         portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
-        bool owned = context.SelectionUiQuerySystem.IsOwnedByPlayer(em, entity);
+        bool owned = context.SelectionUiReadModelLookup.IsOwnedByPlayer(em, entity);
         bool movable = em.HasComponent<UnitMove>(entity);
-        bool vehicle = context.SelectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
+        bool vehicle = context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, entity);
         TryGetHealthModel(context, em, entity, out string healthLabel, out float health01);
-        string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiQuerySystem);
+        string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiReadModelLookup);
         if (tryGetAttackModeOrderSnapshot != null &&
             tryGetAttackModeOrderSnapshot(out string attackModeOrderText))
         {
@@ -530,8 +530,8 @@ public sealed class SelectionHudFeedbackBoundary
 
         return new MatchHudSelectionPanelModel(
             true,
-            context.SelectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
-            context.SelectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity),
+            context.SelectionUiReadModelLookup.ResolveFocusedUnitName(em, entity),
+            context.SelectionUiReadModelLookup.ResolveFocusedUnitDescription(em, entity),
             orderText,
             healthLabel,
             health01,
@@ -610,7 +610,7 @@ public sealed class SelectionHudFeedbackBoundary
         if (!em.Exists(passenger))
             return "UNIT";
 
-        if (context.SelectionUiQuerySystem.IsVehicleForVisibleSelection(em, passenger))
+        if (context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, passenger))
             return "VEHICLE";
 
         return "SOLDIER";
@@ -628,7 +628,7 @@ public sealed class SelectionHudFeedbackBoundary
         bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
         SelectedSummary summary = BuildSelectedSummary(
             em,
-            context.SelectionUiQuerySystem,
+            context.SelectionUiReadModelLookup,
             includeSelectedBuilding);
         string orderText = tryGetAttackModeOrderSnapshot != null &&
                            tryGetAttackModeOrderSnapshot(out string attackModeOrderText)
@@ -678,23 +678,23 @@ public sealed class SelectionHudFeedbackBoundary
     internal static string ResolveFocusedUnitOrderText(
         EntityManager em,
         Entity entity,
-        SelectionUiQuerySystem selectionUiQuerySystem)
+        SelectionUiReadModelLookup selectionUiReadModelLookup)
     {
         if (em.HasComponent<UnitTransportPassenger>(entity))
             return "In transport";
         if (em.HasComponent<UnitTransportBoardingTarget>(entity))
             return "Boarding transport";
 
-        return selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity) switch
+        return selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity) switch
         {
-            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => "Engaging target",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => "Moving",
             _ => "Idle"
         };
     }
@@ -835,18 +835,18 @@ public sealed class SelectionHudFeedbackBoundary
         return em.GetName(entity);
     }
 
-    private static string ToOrderText(SelectionUiQuerySystem.FocusedUnitUiStatus status)
+    private static string ToOrderText(SelectionUiReadModelLookup.FocusedUnitUiStatus status)
     {
         return status switch
         {
-            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => "Engaging target",
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => "Moving",
             _ => "Idle"
         };
     }
@@ -880,7 +880,7 @@ public sealed class SelectionHudFeedbackBoundary
         out string healthLabel,
         out float health01)
     {
-        if (!context.SelectionUiQuerySystem.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
+        if (!context.SelectionUiReadModelLookup.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
         {
             healthLabel = "Health: -";
             health01 = 0f;

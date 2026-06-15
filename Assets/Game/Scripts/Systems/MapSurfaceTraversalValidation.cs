@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-public readonly struct MapSurfacePathingValidationSystem
+public readonly struct MapSurfaceTraversalValidation
 {
     public bool CanTraverse(MapSurfaceComponent surface, byte hasSurfaceData, int2 cell, MapSurfaceMovementMask movementMask)
     {

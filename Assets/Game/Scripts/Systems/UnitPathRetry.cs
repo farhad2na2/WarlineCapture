@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal struct UnitPathRetrySystem
+internal struct UnitPathRetry
 {
     public const int FailedManualRetryDelayFrames = 8;
 

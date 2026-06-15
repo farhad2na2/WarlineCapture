@@ -1,9 +1,9 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public sealed class MapSurfaceQuerySystem
+public sealed class MapSurfaceSampler
 {
-    private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();
+    private readonly MapSurfaceLayerAccess _layeredCellSystem = new();
 
     public readonly struct Context
     {

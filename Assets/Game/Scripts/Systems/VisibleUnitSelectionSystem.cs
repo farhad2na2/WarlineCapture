@@ -46,14 +46,14 @@ public sealed class VisibleUnitSelectionSystem
     public bool HasVisiblePlayerUnits(
         EntityManager em,
         Camera worldCamera,
-        SelectionUiQuerySystem selectionUiQuerySystem,
+        SelectionUiReadModelLookup selectionUiReadModelLookup,
         Rect screenRect,
         Filter filter)
     {
         return CollectVisiblePlayerUnits(
             em,
             worldCamera,
-            selectionUiQuerySystem,
+            selectionUiReadModelLookup,
             screenRect,
             filter,
             null,
@@ -63,7 +63,7 @@ public sealed class VisibleUnitSelectionSystem
     public int CollectVisiblePlayerUnits(
         EntityManager em,
         Camera worldCamera,
-        SelectionUiQuerySystem selectionUiQuerySystem,
+        SelectionUiReadModelLookup selectionUiReadModelLookup,
         Rect screenRect,
         Filter filter,
         List<Entity> selected)
@@ -71,7 +71,7 @@ public sealed class VisibleUnitSelectionSystem
         return CollectVisiblePlayerUnits(
             em,
             worldCamera,
-            selectionUiQuerySystem,
+            selectionUiReadModelLookup,
             screenRect,
             filter,
             selected,
@@ -81,14 +81,14 @@ public sealed class VisibleUnitSelectionSystem
     private int CollectVisiblePlayerUnits(
         EntityManager em,
         Camera worldCamera,
-        SelectionUiQuerySystem selectionUiQuerySystem,
+        SelectionUiReadModelLookup selectionUiReadModelLookup,
         Rect screenRect,
         Filter filter,
         List<Entity> selected,
         bool stopAtFirst)
     {
         selected?.Clear();
-        if (worldCamera == null || selectionUiQuerySystem == null)
+        if (worldCamera == null || selectionUiReadModelLookup == null)
             return 0;
 
         EnsureEntityQueries(em);

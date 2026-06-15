@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-internal struct UnitPathScratchWorkspaceSystem
+internal struct UnitPathScratchWorkspace
 {
     public const int EpochsPerRequest = 128;
 

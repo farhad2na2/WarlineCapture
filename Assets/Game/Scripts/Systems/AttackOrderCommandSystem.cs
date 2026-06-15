@@ -86,7 +86,7 @@ public partial struct AttackOrderCommandSystem : ISystem
         // Kept for managed transition callers while the command pipeline is moving to ECS-owned updates.
     }
 
-    public Result TryIssueAttackOrderToClickedUnit(
+    public Result TryRequestAttackOrderToClickedUnit(
         EntityManager em,
         Vector2 screenPosition,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
@@ -168,7 +168,7 @@ public partial struct AttackOrderCommandSystem : ISystem
             commandRequests.RemoveAt(i);
             handledAny = true;
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-            Result result = TryIssueAttackOrderToClickedUnit(
+            Result result = TryRequestAttackOrderToClickedUnit(
                 em,
                 screenPosition,
                 tryGetClickedUnitEntity,

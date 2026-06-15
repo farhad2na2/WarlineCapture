@@ -20,19 +20,19 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly Action<bool> SetCameraDragging;
         public readonly Func<Vector2, bool> IsPointerOverAnyUi;
         public readonly Func<Vector2, bool> IsPointerOverGameplayUi;
-        public readonly Func<Vector2, bool> TryIssueAttackOrderToClickedUnit;
-        public readonly Func<Vector2, bool> TryIssueScanOrder;
+        public readonly Func<Vector2, bool> TryRequestAttackOrderToClickedUnit;
+        public readonly Func<Vector2, bool> TryRequestScanOrder;
         public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
         public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly Action<bool> SetHudWorldMarkersVisible;
-        public readonly Func<Vector2, bool> TryIssueBoardTransportOrderToClickedUnit;
-        public readonly Func<Entity, Vector2, bool> TryIssueBoardSelectedTransportOrderToClickedUnit;
+        public readonly Func<Vector2, bool> TryRequestBoardTransportOrderToClickedUnit;
+        public readonly Func<Entity, Vector2, bool> TryRequestBoardSelectedTransportOrderToClickedUnit;
         public readonly Func<Entity, Rect, bool> TryIssueBoardSelectedTransportOrderToPassengerRect;
         public readonly Func<Entity, Vector2, bool> IsBoardSelectedTransportPassengerTarget;
         public readonly Func<Vector2, bool> TryFocusUnit;
         public readonly Action<Vector2> PanCamera;
-        public readonly Action<Vector2> IssueMoveOrder;
+        public readonly Action<Vector2> RequestMoveOrder;
         public readonly Action ProcessSelectionRectangleRequests;
         public readonly Action ClearCommandMode;
         public readonly Action<string> LogClickDiagnostic;
@@ -81,19 +81,19 @@ public sealed class RtsSelectionRuntimeInputSystem
             SetCameraDragging = setCameraDragging;
             IsPointerOverAnyUi = isPointerOverAnyUi;
             IsPointerOverGameplayUi = isPointerOverGameplayUi;
-            TryIssueAttackOrderToClickedUnit = tryIssueAttackOrderToClickedUnit;
-            TryIssueScanOrder = tryIssueScanOrder;
+            TryRequestAttackOrderToClickedUnit = tryIssueAttackOrderToClickedUnit;
+            TryRequestScanOrder = tryIssueScanOrder;
             OrderMarkerSystem = orderMarkerSystem;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
             TryGetScanClickedCell = tryGetScanClickedCell;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
-            TryIssueBoardTransportOrderToClickedUnit = tryIssueBoardTransportOrderToClickedUnit;
-            TryIssueBoardSelectedTransportOrderToClickedUnit = tryIssueBoardSelectedTransportOrderToClickedUnit;
+            TryRequestBoardTransportOrderToClickedUnit = tryIssueBoardTransportOrderToClickedUnit;
+            TryRequestBoardSelectedTransportOrderToClickedUnit = tryIssueBoardSelectedTransportOrderToClickedUnit;
             TryIssueBoardSelectedTransportOrderToPassengerRect = tryIssueBoardSelectedTransportOrderToPassengerRect;
             IsBoardSelectedTransportPassengerTarget = isBoardSelectedTransportPassengerTarget;
             TryFocusUnit = tryFocusUnit;
             PanCamera = panCamera;
-            IssueMoveOrder = issueMoveOrder;
+            RequestMoveOrder = issueMoveOrder;
             ProcessSelectionRectangleRequests = processSelectionRectangleRequests;
             ClearCommandMode = clearCommandMode;
             LogClickDiagnostic = logClickDiagnostic;
@@ -154,7 +154,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
             $"queuedMoveIssue pos={screenPosition} frame={Time.frameCount}");
         context.LogClickDiagnostic?.Invoke($"queuedMoveIssue pos={screenPosition} frame={Time.frameCount}");
-        context.IssueMoveOrder?.Invoke(screenPosition);
+        context.RequestMoveOrder?.Invoke(screenPosition);
     }
 
     public void UpdateNormalPointerInput(Context context)
@@ -472,7 +472,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 }
                 else if (context.GetExplicitAttackTargetModeActive?.Invoke() == true)
                 {
-                    bool attackIssued = context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true;
+                    bool attackIssued = context.TryRequestAttackOrderToClickedUnit?.Invoke(pointerPosition) == true;
                     context.LogClickDiagnostic?.Invoke($"clickExplicitAttack result={attackIssued} pos={pointerPosition}");
                     LogOneClickDebug(context, pointerPosition, attackIssued ? "ExplicitAttack" : "ExplicitAttackMiss");
                     if (attackIssued)
@@ -522,7 +522,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         if (activeMode == TacticalCommandMode.Move)
         {
-            if (context.IssueMoveOrder == null)
+            if (context.RequestMoveOrder == null)
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                     $"handleWorldTargetCommandMove result=False reason=NoIssueMoveOrderDelegate pos={pointerPosition} frame={Time.frameCount}");
@@ -544,7 +544,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             }
 
             input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
-            context.IssueMoveOrder.Invoke(pointerPosition);
+            context.RequestMoveOrder.Invoke(pointerPosition);
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
                 $"handleWorldTargetCommandMove result=True pos={pointerPosition} frame={Time.frameCount}");
             return true;
@@ -552,7 +552,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         if (activeMode == TacticalCommandMode.Attack)
         {
-            if (context.TryIssueAttackOrderToClickedUnit == null)
+            if (context.TryRequestAttackOrderToClickedUnit == null)
             {
                 input.ClearActiveCommandMode();
                 context.SetExplicitAttackTargetModeActive?.Invoke(false);
@@ -560,7 +560,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 return false;
             }
 
-            bool attackIssued = context.TryIssueAttackOrderToClickedUnit.Invoke(pointerPosition);
+            bool attackIssued = context.TryRequestAttackOrderToClickedUnit.Invoke(pointerPosition);
             if (attackIssued)
                 context.SetExplicitAttackTargetModeActive?.Invoke(false);
             return true;
@@ -568,14 +568,14 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         if (activeMode == TacticalCommandMode.Scan)
         {
-            if (context.TryIssueScanOrder == null)
+            if (context.TryRequestScanOrder == null)
             {
                 input.ClearActiveCommandMode();
                 context.ClearCommandMode?.Invoke();
                 return false;
             }
 
-            context.TryIssueScanOrder.Invoke(pointerPosition);
+            context.TryRequestScanOrder.Invoke(pointerPosition);
             return true;
         }
 
@@ -590,27 +590,27 @@ public sealed class RtsSelectionRuntimeInputSystem
 
             if (direction == BoardCommandModeDirection.PassengerToTransport)
             {
-                if (context.TryIssueBoardTransportOrderToClickedUnit == null)
+                if (context.TryRequestBoardTransportOrderToClickedUnit == null)
                 {
                     input.ClearActiveCommandMode();
                     context.ClearCommandMode?.Invoke();
                     return false;
                 }
 
-                context.TryIssueBoardTransportOrderToClickedUnit.Invoke(pointerPosition);
+                context.TryRequestBoardTransportOrderToClickedUnit.Invoke(pointerPosition);
                 return true;
             }
 
             if (direction == BoardCommandModeDirection.TransportToPassenger)
             {
-                if (context.TryIssueBoardSelectedTransportOrderToClickedUnit == null)
+                if (context.TryRequestBoardSelectedTransportOrderToClickedUnit == null)
                 {
                     input.ClearActiveCommandMode();
                     context.ClearCommandMode?.Invoke();
                     return false;
                 }
 
-                context.TryIssueBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition);
+                context.TryRequestBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition);
                 return true;
             }
         }
@@ -707,7 +707,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         RtsSelectionInputSystem input,
         Vector2 pointerPosition)
     {
-        if (context.IssueMoveOrder == null)
+        if (context.RequestMoveOrder == null)
             return false;
 
         input.ArmCommandMode(
@@ -716,7 +716,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             oneShot: false,
             requiresWorldTarget: true);
         input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
-        context.IssueMoveOrder.Invoke(pointerPosition);
+        context.RequestMoveOrder.Invoke(pointerPosition);
         return true;
     }
 

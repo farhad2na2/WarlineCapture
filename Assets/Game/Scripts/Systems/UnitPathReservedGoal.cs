@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-internal struct UnitPathReservedGoalSystem
+internal struct UnitPathReservedGoal
 {
     public NativeArray<int> Epochs;
     public int Generation;

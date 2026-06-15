@@ -329,7 +329,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         TryGetClickedCellDelegate tryGetClickedCell)
     {
         Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-        Result result = TryIssueBoardTransportOrderToClickedUnit(
+        Result result = TryRequestBoardTransportOrderToClickedUnit(
             em,
             screenPosition,
             transportAirPickupSystem,
@@ -538,7 +538,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         };
     }
 
-    public Result TryIssueBoardTransportOrderToClickedUnit(
+    public Result TryRequestBoardTransportOrderToClickedUnit(
         EntityManager em,
         Vector2 screenPosition,
         UnitTransportAirPickupSystem airPickupSystem,

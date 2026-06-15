@@ -83,7 +83,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
         SelectionScreenMarkerSystem selectionScreenMarkers = ResolveSelectionScreenMarkerSystem();
         var selectionStateSystem = new SelectionStateSystem();
-        var selectionUiQuerySystem = new SelectionUiQuerySystem();
+        var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelSystem();
         var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();
         var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
@@ -381,10 +381,10 @@ internal sealed class SelectionGameplayStartupSystem
                 value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
-                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestAttackOrderToClickedUnit(
                     CreatePointerTargetCommandContext(),
                     screenPosition),
-                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueScanOrder(
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestScanOrder(
                     CreatePointerTargetCommandContext(),
                     screenPosition),
                 selectionOrderMarkerSystem,
@@ -397,14 +397,14 @@ internal sealed class SelectionGameplayStartupSystem
                         out cell,
                         out worldPoint),
                 visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
-                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestBoardTransportOrderToClickedUnit(
                     CreatePointerTargetCommandContext(),
                     screenPosition),
-                (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.TryIssueBoardSelectedTransportOrderToClickedUnit(
+                (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.TryRequestBoardSelectedTransportOrderToClickedUnit(
                     CreatePointerTargetCommandContext(),
                     transport,
                     pointerPosition),
-                (transport, screenRect) => rtsSelectionPointerTargetCommandSystem.TryIssueBoardSelectedTransportOrdersToPassengerRect(
+                (transport, screenRect) => rtsSelectionPointerTargetCommandSystem.TryRequestBoardSelectedTransportOrdersToPassengerRect(
                     CreatePointerTargetCommandContext(),
                     transport,
                     screenRect),
@@ -416,7 +416,7 @@ internal sealed class SelectionGameplayStartupSystem
                     CreateFocusCommandContext(),
                     screenPosition),
                 screenDelta => rtsSelectionRuntimeCameraSystem?.PanCamera(GetRuntimeCameraContext(), screenDelta),
-                screenPosition => rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(
+                screenPosition => rtsSelectionPointerTargetCommandSystem.RequestMoveOrder(
                     CreatePointerTargetCommandContext(),
                     screenPosition),
                 ProcessSelectionRectangleRequests,
@@ -622,7 +622,7 @@ internal sealed class SelectionGameplayStartupSystem
                 () => rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext()),
                 LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
-                selectionUiQuerySystem,
+                selectionUiReadModelLookup,
                 visibleUnitSelectionSystem,
                 visibleSelectionScratch);
         }
@@ -630,7 +630,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionHudFeedbackBoundary.Context CreateHudFeedbackContext()
         {
             return new SelectionHudFeedbackBoundary.Context(
-                selectionUiQuerySystem,
+                selectionUiReadModelLookup,
                 TryGetDefaultEntityManager,
                 resolveSelectionPortraitSprite);
         }
@@ -799,7 +799,7 @@ internal sealed class SelectionGameplayStartupSystem
                 em,
                 pointerRequests,
                 runtimeConfig.WorldCamera,
-                selectionUiQuerySystem,
+                selectionUiReadModelLookup,
                 visibleUnitSelectionSystem,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,

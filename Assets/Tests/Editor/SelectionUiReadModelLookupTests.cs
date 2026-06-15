@@ -1,23 +1,64 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class SelectionUiQuerySystemTests
+public sealed class SelectionUiReadModelLookupTests
 {
     private World _world;
     private EntityManager _entityManager;
-    private SelectionUiQuerySystem _querySystem;
+    private SelectionUiReadModelLookup _lookup;
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunCase(test => test.ResolveFocusedUnitNameAndDescription_UsesConfiguredDisplayInfo());
+            passed++;
+            RunCase(test => test.TryGetFocusedUnitCapacityInfo_ProjectsLoadingProgressFromActionTime());
+            passed++;
+            RunCase(test => test.GetFocusedUnitUiStatus_PrioritizesReturningEngagedAndMovingStates());
+            passed++;
+            RunCase(test => test.TryGetSelectedUnitsPortraitPose_CentersAndFramesSelectedUnits());
+            passed++;
+
+            Debug.Log($"[SelectionUiReadModelLookupValidation] result=Passed tests={passed}");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[SelectionUiReadModelLookupValidation] result=Failed passed={passed}");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(Action<SelectionUiReadModelLookupTests> testCase)
+    {
+        var tests = new SelectionUiReadModelLookupTests();
+        tests.SetUp();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
     {
-        _world = new World("SelectionUiQuerySystemTests");
+        _world = new World("SelectionUiReadModelLookupTests");
         _entityManager = _world.EntityManager;
-        _querySystem = new SelectionUiQuerySystem();
+        _lookup = new SelectionUiReadModelLookup();
     }
 
     [TearDown]
@@ -37,8 +78,8 @@ public sealed class SelectionUiQuerySystemTests
         });
         _entityManager.SetComponentData(entity, new Faction { Id = 0 });
 
-        Assert.AreEqual("Scout Team", _querySystem.ResolveFocusedUnitName(_entityManager, entity));
-        Assert.AreEqual("Fast reconnaissance infantry.", _querySystem.ResolveFocusedUnitDescription(_entityManager, entity));
+        Assert.AreEqual("Scout Team", _lookup.ResolveFocusedUnitName(_entityManager, entity));
+        Assert.AreEqual("Fast reconnaissance infantry.", _lookup.ResolveFocusedUnitDescription(_entityManager, entity));
     }
 
     [Test]
@@ -57,7 +98,7 @@ public sealed class SelectionUiQuerySystemTests
             ActionEndsAt = 20f
         });
 
-        Assert.IsTrue(_querySystem.TryGetFocusedUnitCapacityInfo(_entityManager, entity, 15f, out int current, out int max, out float progress01));
+        Assert.IsTrue(_lookup.TryGetFocusedUnitCapacityInfo(_entityManager, entity, 15f, out int current, out int max, out float progress01));
         Assert.AreEqual(50, current);
         Assert.AreEqual(100, max);
         Assert.AreEqual(0.5f, progress01, 0.001f);
@@ -83,21 +124,21 @@ public sealed class SelectionUiQuerySystemTests
         Entity holdingUnit = _entityManager.CreateEntity(typeof(HoldPositionOrderTag), typeof(UnitPathRequest));
         Entity manualGuardUnit = _entityManager.CreateEntity(typeof(ManualMoveOrderTag));
 
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase, _querySystem.GetFocusedUnitUiStatus(_entityManager, airUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched, _querySystem.GetFocusedUnitUiStatus(_entityManager, missileUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched, _querySystem.GetFocusedUnitUiStatus(_entityManager, commandedMissileUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, missilePreparingUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, autoTargetMissileUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged, _querySystem.GetFocusedUnitUiStatus(_entityManager, engagedUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Moving, _querySystem.GetFocusedUnitUiStatus(_entityManager, movingUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
-        Assert.AreEqual(SelectionUiQuerySystem.FocusedUnitUiStatus.Idle, _querySystem.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
-        StringAssert.Contains("MISSILE LAUNCHED", _querySystem.ResolveHudSelectionStatus(_entityManager, missileUnit));
-        StringAssert.Contains("MISSILE LAUNCHED", _querySystem.ResolveHudSelectionStatus(_entityManager, commandedMissileUnit));
-        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, missilePreparingUnit));
-        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, autoTargetMissileUnit));
-        StringAssert.Contains("HOLDING", _querySystem.ResolveHudSelectionStatus(_entityManager, holdingUnit));
-        StringAssert.Contains("IDLE", _querySystem.ResolveHudSelectionStatus(_entityManager, manualGuardUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase, _lookup.GetFocusedUnitUiStatus(_entityManager, airUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched, _lookup.GetFocusedUnitUiStatus(_entityManager, missileUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched, _lookup.GetFocusedUnitUiStatus(_entityManager, commandedMissileUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, missilePreparingUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, autoTargetMissileUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged, _lookup.GetFocusedUnitUiStatus(_entityManager, engagedUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving, _lookup.GetFocusedUnitUiStatus(_entityManager, movingUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
+        StringAssert.Contains("MISSILE LAUNCHED", _lookup.ResolveHudSelectionStatus(_entityManager, missileUnit));
+        StringAssert.Contains("MISSILE LAUNCHED", _lookup.ResolveHudSelectionStatus(_entityManager, commandedMissileUnit));
+        StringAssert.Contains("IDLE", _lookup.ResolveHudSelectionStatus(_entityManager, missilePreparingUnit));
+        StringAssert.Contains("IDLE", _lookup.ResolveHudSelectionStatus(_entityManager, autoTargetMissileUnit));
+        StringAssert.Contains("HOLDING", _lookup.ResolveHudSelectionStatus(_entityManager, holdingUnit));
+        StringAssert.Contains("IDLE", _lookup.ResolveHudSelectionStatus(_entityManager, manualGuardUnit));
     }
 
     [Test]
@@ -111,7 +152,7 @@ public sealed class SelectionUiQuerySystemTests
             selected[0] = a;
             selected[1] = b;
 
-            Assert.IsTrue(_querySystem.TryGetSelectedUnitsPortraitPose(_entityManager, selected, Entity.Null, out Vector3 center, out _, out float radius));
+            Assert.IsTrue(_lookup.TryGetSelectedUnitsPortraitPose(_entityManager, selected, Entity.Null, out Vector3 center, out _, out float radius));
             Assert.AreEqual(new Vector3(5f, 0f, 0f), center);
             Assert.AreEqual(6.5f, radius, 0.001f);
         }

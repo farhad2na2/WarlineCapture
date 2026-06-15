@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-internal struct UnitPathCoarseWorkspaceSystem
+internal struct UnitPathCoarseWorkspace
 {
     public NativeArray<int> CameFrom;
     public NativeArray<int> GScore;

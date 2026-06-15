@@ -126,10 +126,10 @@ internal sealed class BuildingGameplayDependencySystem
                SelectionBuildingInteractionSystem.IsBoardablePlayerTransportClick(screenPosition);
     }
 
-    internal bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
+    internal bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
         return SelectionBuildingInteractionSystem != null &&
-               SelectionBuildingInteractionSystem.TryIssueMoveOrderToBuilding(originCell, footprintCells);
+               SelectionBuildingInteractionSystem.TryRequestMoveOrderToBuilding(originCell, footprintCells);
     }
 
     internal void NotifyHomeBuildingDestroyed(int buildingId)

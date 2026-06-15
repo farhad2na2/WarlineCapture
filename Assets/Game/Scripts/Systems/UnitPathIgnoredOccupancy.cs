@@ -1,9 +1,9 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathIgnoredOccupancySystem
+internal struct UnitPathIgnoredOccupancy
 {
-    public void AddForRequest(ref SystemState state, ref UnitPathRequestBufferSystem requestBuffers, Entity entity)
+    public void AddForRequest(ref SystemState state, ref UnitPathRequestBuffer requestBuffers, Entity entity)
     {
         ResolveIgnoredOccupancy(state.EntityManager, entity, out Entity ignoredEntity, out int2 ignoredCell, out int2 ignoredSize);
 

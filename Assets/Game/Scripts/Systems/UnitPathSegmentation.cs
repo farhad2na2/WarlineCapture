@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-internal struct UnitPathSegmentationSystem
+internal struct UnitPathSegmentation
 {
     public const float DefaultLongDistanceSegmentCells = 32f;
     public const float ManualInfantryLongDistanceSegmentCells = 1024f;

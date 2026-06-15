@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathRequestBufferSystem
+internal struct UnitPathRequestBuffer
 {
     public NativeList<Entity> Entities;
     public NativeList<UnitGrid> UnitGrids;
@@ -26,7 +26,7 @@ internal struct UnitPathRequestBufferSystem
 
     public void Initialize()
     {
-        int capacity = UnitPathfindingBudgetSystem.MaxRequestsPerFrame;
+        int capacity = UnitPathfindingBudget.MaxRequestsPerFrame;
         Entities = new NativeList<Entity>(capacity, Allocator.Persistent);
         UnitGrids = new NativeList<UnitGrid>(capacity, Allocator.Persistent);
         Goals = new NativeList<UnitPathRequest>(capacity, Allocator.Persistent);

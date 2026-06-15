@@ -11,6 +11,7 @@ using UnityEngine;
 public sealed class NonEcsSystemConversionArchitectureTests
 {
     private const string GameScriptsRoot = "Assets/Game/Scripts";
+    private const string UiScriptsRoot = "Assets/Game/Scripts/UI";
     private const string InventoryPath = "Design/Architecture/non_ecs_to_ecs_system_inventory.md";
 
     private static readonly Regex TypeDeclarationRegex = new(
@@ -29,6 +30,14 @@ public sealed class NonEcsSystemConversionArchitectureTests
         @"\bnew\s+UnitPathRequest\b",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex DirectCommandExecutionEntrypointRegex = new(
+        @"\b(?:TryIssue|Issue)[A-Za-z0-9_]*\s*\(",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex PublicCommandMutatorEntrypointRegex = new(
+        @"^[ \t]*public\s+(?:static\s+)?(?:readonly\s+)?[A-Za-z0-9_<>,\.\?\[\]\s]+\s+(?<name>(?:TryIssue|Issue|EnqueueAndProcess|ProcessPending|Clear[A-Za-z0-9_]*Order|Request[A-Za-z0-9_]*(?:Order|Command)|TryRequest[A-Za-z0-9_]*(?:Order|Command))[A-Za-z0-9_]*)\s*\(",
+        RegexOptions.CultureInvariant | RegexOptions.Multiline);
+
     private static readonly HashSet<string> ApprovedUnitPathRequestWriterPaths = new(StringComparer.Ordinal)
     {
         "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
@@ -42,6 +51,79 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
     };
 
+    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginConfiguredPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginPlacementForConfiguredSpawnable"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginSoldierBasePlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessCancelBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessConfirmBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessRotateBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommandsIfPresent"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessClearSelectedBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessDeleteSelectedBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|ProcessPendingUiSelectionCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs|IssueImmediateSelectedUnitOrder"] = 2,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessCancelRoadBuildSession"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessConfirmRoadBuildSession"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessEnterRoadBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|ProcessPendingRoadBuildCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestBoardSelectedTransportOrdersToPassengerRect"] = 1,
+        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|ClearMovementOrderComponents"] = 2,
+        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueGroupedManualMoveOrder"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueImmediateMoveCommand"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueTargetOnlyMoveCommand"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|ClearCommandedAttackOrderComponents"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|IssueAttackTarget"] = 1,
+        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|IssueDirectAttackTarget"] = 1
+    };
+
+    private static readonly string[] UiGameplayMutationTokens =
+    {
+        "using Unity.Entities",
+        "Unity.Entities.",
+        "EntityManager",
+        "EntityQuery",
+        "DynamicBuffer<",
+        "EntityCommandBuffer",
+        "World.DefaultGameObjectInjectionWorld",
+        "GetExistingSystem",
+        "SetComponentData",
+        "AddComponentData",
+        "RemoveComponent",
+        "DestroyEntity",
+        "CreateEntity"
+    };
+
+    private static readonly string[] ConcreteGameplaySystemTokens =
+    {
+        "SelectionUiCommandSystem",
+        "BuildingUiCommandBoundary",
+        "RuntimeGameplayStateSystem",
+        "SelectionUiCameraSystem",
+        "RtsSelectionInputSystem",
+        "RtsSelectionInputStateSystem",
+        "RtsSelectionPointerTargetCommandSystem",
+        "SelectedMoveOrderCommandSystem",
+        "AttackOrderCommandSystem",
+        "ScanIntelCommandSystem",
+        "TransportBoardingCommandSystem",
+        "BuildingPlacementCommandSystem",
+        "RoadBuildCommandSystem"
+    };
+
+    private static readonly string[] PointerCommandBoundaryPaths =
+    {
+        "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs",
+        "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
+    };
+
     public static void RunFocusedValidation()
     {
         try
@@ -50,7 +132,10 @@ public sealed class NonEcsSystemConversionArchitectureTests
             tests.RuntimeSystemInventoryCanBeEnumerated();
             tests.GeneratedInventoryContainsEveryRuntimeNonEcsSystem();
             tests.DirectUnitPathRequestWritesStayInApprovedOrderOwners();
-            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3");
+            tests.UiRuntimeMustNotMutateGameplayDirectly();
+            tests.PointerAndUiBoundariesMustUseCommandRequests();
+            tests.PublicNonEcsCommandMutatorHelpersStayOnApprovedTransitionList();
+            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=6");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -139,6 +224,77 @@ public sealed class NonEcsSystemConversionArchitectureTests
             string.Join(Environment.NewLine, violations));
     }
 
+    [Test]
+    public void UiRuntimeMustNotMutateGameplayDirectly()
+    {
+        string[] violations = EnumerateSourceFiles(UiScriptsRoot)
+            .Select(NormalizePath)
+            .Where(IsConcreteUiGameplayPath)
+            .SelectMany(path => FindTokenReferences(path, UiGameplayMutationTokens.Concat(ConcreteGameplaySystemTokens)))
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Concrete UI runtime code must not mutate gameplay ECS state or bind concrete gameplay systems directly. " +
+            "Use UI contracts that enqueue ECS requests/results through composition/runtime boundaries. Violations:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void PointerAndUiBoundariesMustUseCommandRequests()
+    {
+        string[] violations = EnumeratePointerAndUiCommandBoundaryFiles()
+            .SelectMany(path => FindRegexReferences(path, DirectCommandExecutionEntrypointRegex))
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Pointer/UI command boundaries must request or queue ECS command data, not expose direct `Issue*` execution entrypoints. " +
+            "Use `Request*`, `Queue*`, and request/result drain methods instead. Violations:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void PublicNonEcsCommandMutatorHelpersStayOnApprovedTransitionList()
+    {
+        Dictionary<string, int> current = EnumeratePlainRuntimeNonEcsSystemFiles()
+            .SelectMany(FindPublicNonEcsCommandMutatorMethods)
+            .GroupBy(method => method.Key, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+
+        string[] unexpected = current.Keys
+            .Except(ApprovedPublicNonEcsCommandMutatorMethods.Keys, StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+        string[] countMismatches = current
+            .Where(pair =>
+                ApprovedPublicNonEcsCommandMutatorMethods.TryGetValue(pair.Key, out int approvedCount) &&
+                approvedCount != pair.Value)
+            .OrderBy(pair => pair.Key, StringComparer.Ordinal)
+            .Select(pair => $"{pair.Key}: approved={ApprovedPublicNonEcsCommandMutatorMethods[pair.Key]} current={pair.Value}")
+            .ToArray();
+        string[] stale = ApprovedPublicNonEcsCommandMutatorMethods.Keys
+            .Except(current.Keys, StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            unexpected,
+            "New public command-shaped helper methods on plain runtime non-ECS `*System` classes must not mutate ECS state. " +
+            "Convert the owner to an ECS system/request boundary, make the helper private/internal to an ECS owner, or update the transition list with a removal owner. Unexpected:\n" +
+            string.Join(Environment.NewLine, unexpected));
+        Assert.IsEmpty(
+            countMismatches,
+            "Approved public non-ECS command mutator helper counts changed. Shrink or split the transition list instead of leaving broad approvals. Mismatches:\n" +
+            string.Join(Environment.NewLine, countMismatches));
+        Assert.IsEmpty(
+            stale,
+            "Approved public non-ECS command mutator helper entries are stale. Remove them when the transitional API is converted or folded. Stale:\n" +
+            string.Join(Environment.NewLine, stale));
+    }
+
     private static IEnumerable<SystemDeclaration> EnumerateSystemDeclarations()
     {
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
@@ -163,6 +319,45 @@ public sealed class NonEcsSystemConversionArchitectureTests
         return Directory.Exists(root)
             ? Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories).OrderBy(path => path, StringComparer.Ordinal)
             : Array.Empty<string>();
+    }
+
+    private static IEnumerable<string> EnumeratePlainRuntimeNonEcsSystemFiles()
+    {
+        return EnumerateSystemDeclarations()
+            .Where(declaration => !IsUnityEcsSystem(declaration))
+            .Where(declaration => !IsMonoBehaviour(declaration))
+            .Where(declaration => !IsEditorOnlyPath(declaration))
+            .Select(declaration => declaration.Path)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> EnumeratePointerAndUiCommandBoundaryFiles()
+    {
+        foreach (string path in PointerCommandBoundaryPaths)
+        {
+            if (File.Exists(path))
+                yield return path;
+        }
+
+        foreach (string path in EnumerateSourceFiles(UiScriptsRoot).Select(NormalizePath).Where(IsConcreteUiGameplayPath))
+            yield return path;
+    }
+
+    private static IEnumerable<PublicCommandMutatorMethod> FindPublicNonEcsCommandMutatorMethods(string path)
+    {
+        string text = File.ReadAllText(path);
+        foreach (Match match in PublicCommandMutatorEntrypointRegex.Matches(text))
+        {
+            string body = FindMethodBody(text, match.Index);
+            if (!ContainsEcsMutationToken(body))
+                continue;
+
+            yield return new PublicCommandMutatorMethod(
+                path,
+                match.Groups["name"].Value,
+                GetLineNumber(text, match.Index));
+        }
     }
 
     private static bool IsUnityEcsSystem(SystemDeclaration declaration)
@@ -223,6 +418,99 @@ public sealed class NonEcsSystemConversionArchitectureTests
         return path.Replace('\\', '/');
     }
 
+    private static bool IsConcreteUiGameplayPath(string path)
+    {
+        return !path.Contains("/UI/Shell/Ecs/", StringComparison.Ordinal);
+    }
+
+    private static IEnumerable<string> FindTokenReferences(string path, IEnumerable<string> tokens)
+    {
+        string[] lines = File.ReadAllLines(path);
+        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        {
+            string line = lines[lineIndex];
+            foreach (string token in tokens)
+            {
+                if (line.Contains(token, StringComparison.Ordinal))
+                    yield return $"{path}:{lineIndex + 1} references `{token}`: {line.Trim()}";
+            }
+        }
+    }
+
+    private static IEnumerable<string> FindRegexReferences(string path, Regex regex)
+    {
+        string[] lines = File.ReadAllLines(path);
+        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        {
+            string line = lines[lineIndex];
+            Match match = regex.Match(line);
+            if (match.Success)
+                yield return $"{path}:{lineIndex + 1} matches `{match.Value}`: {line.Trim()}";
+        }
+    }
+
+    private static string FindMethodBody(string text, int declarationIndex)
+    {
+        int openBrace = text.IndexOf('{', declarationIndex);
+        if (openBrace < 0)
+            return string.Empty;
+
+        int depth = 0;
+        for (int index = openBrace; index < text.Length; index++)
+        {
+            char value = text[index];
+            if (value == '{')
+            {
+                depth++;
+                continue;
+            }
+
+            if (value != '}')
+                continue;
+
+            depth--;
+            if (depth == 0)
+                return text[declarationIndex..(index + 1)];
+        }
+
+        return text[declarationIndex..];
+    }
+
+    private static bool ContainsEcsMutationToken(string text)
+    {
+        string[] tokens =
+        {
+            "EntityManager",
+            "EntityCommandBuffer",
+            "DynamicBuffer<",
+            "GetBuffer<",
+            "SetComponentData",
+            "AddComponent",
+            "RemoveComponent",
+            "DestroyEntity",
+            "CreateEntity",
+            ".Playback(",
+            "UnitMoveOrderRequestSystem.EnqueueAndProcess",
+            "UnitAttackOrderRequestSystem.EnqueueAndProcess",
+            "ClearMovementOrderComponents",
+            "ClearCommandedAttackOrderComponents"
+        };
+
+        return tokens.Any(token => text.Contains(token, StringComparison.Ordinal));
+    }
+
+    private static int GetLineNumber(string text, int index)
+    {
+        int line = 1;
+        for (int i = 0; i < index; i++)
+        {
+            if (text[i] == '\n')
+                line++;
+        }
+
+        return line;
+    }
+
     private static HashSet<string> ParseInventoryRows(IEnumerable<string> lines)
     {
         HashSet<string> rows = new(StringComparer.Ordinal);
@@ -270,6 +558,22 @@ public sealed class NonEcsSystemConversionArchitectureTests
             Name = name;
             Bases = bases;
         }
+    }
+
+    private readonly struct PublicCommandMutatorMethod
+    {
+        public readonly string Path;
+        public readonly string Name;
+        public readonly int Line;
+
+        public PublicCommandMutatorMethod(string path, string name, int line)
+        {
+            Path = path;
+            Name = name;
+            Line = line;
+        }
+
+        public string Key => $"{Path}|{Name}";
     }
 }
 #endif

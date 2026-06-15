@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathPlacementValidationSystem
+internal struct UnitPathPlacementValidation
 {
     public const int VehicleOccupancyPaddingCells = 1;
 

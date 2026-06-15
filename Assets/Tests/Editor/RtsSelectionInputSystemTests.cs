@@ -2234,8 +2234,8 @@ public sealed class RtsSelectionInputSystemTests
         string boardRectCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleBoardPassengerRectCommand");
 
         Assert.IsFalse(pointerPressed.Contains("TryFocusUnit", StringComparison.Ordinal));
-        Assert.IsFalse(pointerPressed.Contains("TryIssueAttackOrderToClickedUnit", StringComparison.Ordinal));
-        Assert.IsFalse(pointerPressed.Contains("TryIssueBoardTransportOrderToClickedUnit", StringComparison.Ordinal));
+        Assert.IsFalse(pointerPressed.Contains("TryRequestAttackOrderToClickedUnit", StringComparison.Ordinal));
+        Assert.IsFalse(pointerPressed.Contains("TryRequestBoardTransportOrderToClickedUnit", StringComparison.Ordinal));
         StringAssert.Contains("input.BoardPassengerDragArmed = IsTransportFirstBoardPassengerPress(context, input, pointerPosition);", pointerPressed);
         StringAssert.Contains("bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;", pointerPressed);
         StringAssert.Contains("context.SetCameraDragging?.Invoke(allowCommandPan)", pointerPressed);
@@ -2248,15 +2248,15 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);
         StringAssert.Contains("else if (dragDistance < context.DragThresholdPixels)", pointerReleased);
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
-        StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
-        Assert.IsFalse(pointerReleased.Contains("else if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", StringComparison.Ordinal));
+        StringAssert.Contains("context.TryRequestAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
+        Assert.IsFalse(pointerReleased.Contains("else if (context.TryRequestAttackOrderToClickedUnit?.Invoke(pointerPosition)", StringComparison.Ordinal));
         StringAssert.Contains("HandleWorldTargetCommand(context, input, activeMode, pointerPosition)", pointerReleased);
         StringAssert.Contains("activeMode == TacticalCommandMode.Attack", worldTargetCommand);
-        StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
+        StringAssert.Contains("context.TryRequestAttackOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
         StringAssert.Contains("activeMode == TacticalCommandMode.Board", worldTargetCommand);
         StringAssert.Contains("input.TryGetActiveBoardCommandMode", worldTargetCommand);
-        StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
-        StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition)", worldTargetCommand);
+        StringAssert.Contains("context.TryRequestBoardTransportOrderToClickedUnit.Invoke(pointerPosition)", worldTargetCommand);
+        StringAssert.Contains("context.TryRequestBoardSelectedTransportOrderToClickedUnit.Invoke(transport, pointerPosition)", worldTargetCommand);
         StringAssert.Contains("HandleBoardPassengerRectCommand", pointerReleased);
         StringAssert.Contains("if (!input.BoardPassengerDragArmed)", boardRectCommand);
         StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect)", boardRectCommand);
@@ -2582,7 +2582,7 @@ public sealed class RtsSelectionInputSystemTests
             em,
             pointerRequests,
             null,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             new VisibleUnitSelectionSystem(),
             new SelectionStateSystem(),
             new FocusedUnitLifecycleSystem(),

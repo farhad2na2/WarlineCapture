@@ -21,7 +21,7 @@ internal sealed class BuildingProductionTickCompositionSystem
             value => source.BuildingSpawnSystem.BuildingSpawnRandomState = value,
             GameRuntimeStats.RecordOilExtracted,
             GameRuntimeStats.RecordFuelProduced,
-            source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob,
+            source.UnitPathfindingPendingStateReader.HasPendingPathJob,
             oilBarrelsPerFuelBarrel);
     }
 }

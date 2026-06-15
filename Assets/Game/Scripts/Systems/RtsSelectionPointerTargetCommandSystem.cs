@@ -21,7 +21,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
         public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
-        public readonly SelectionUiQuerySystem SelectionUiQuerySystem;
+        public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
         public readonly VisibleUnitSelectionSystem VisibleUnitSelectionSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
@@ -81,7 +81,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             Action processMoveCommandRequests,
             Action<string> logSelectionDiagnostic,
             FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
-            SelectionUiQuerySystem selectionUiQuerySystem = null,
+            SelectionUiReadModelLookup selectionUiReadModelLookup = null,
             VisibleUnitSelectionSystem visibleUnitSelectionSystem = null,
             List<Entity> visibleSelectionScratch = null)
         {
@@ -90,7 +90,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
             FocusableUnitLookupSystem = focusableUnitLookupSystem;
-            SelectionUiQuerySystem = selectionUiQuerySystem;
+            SelectionUiReadModelLookup = selectionUiReadModelLookup;
             VisibleUnitSelectionSystem = visibleUnitSelectionSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
@@ -125,9 +125,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private EntityQuery _gridConfigQuery;
     private EntityQuery _mapSurfaceQuery;
     private EntityQuery _runtimeBuildingCombatQuery;
-    private readonly MapSurfaceQuerySystem _mapSurfaceQuerySystem = new();
+    private readonly MapSurfaceSampler _mapSurfaceQuerySystem = new();
     private readonly MapSurfaceSlopeClassifier _mapSurfaceSlopeClassificationSystem = new();
-    private readonly MapSurfacePathfindingReadSystem _mapSurfaceReadSystem = new();
+    private readonly MapSurfacePathfindingSnapshot _mapSurfaceReadSystem = new();
     private readonly UnitMoveOrderSystem _mapSurfaceMoveOrderSystem = new();
     private readonly List<Entity> _mapSurfaceSelectedMoveEntities = new();
 
@@ -194,7 +194,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return new PointerTargetBoundaryPass(this, context);
     }
 
-    public void IssueMoveOrder(Context context, Vector2 screenPosition)
+    public void RequestMoveOrder(Context context, Vector2 screenPosition)
     {
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
@@ -254,7 +254,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return queuedResolvedTarget;
     }
 
-    public bool TryIssueAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
+    public bool TryRequestAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
     {
         bool explicitAttackTargetModeActive = context.GetExplicitAttackTargetModeActive?.Invoke() == true;
         if (!TryQueueResolvedAttackCommand(
@@ -325,7 +325,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
                em.GetComponentData<UnitHealth>(targetEntity).Current > 0;
     }
 
-    public bool TryIssueScanOrder(Context context, Vector2 screenPosition)
+    public bool TryRequestScanOrder(Context context, Vector2 screenPosition)
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
@@ -363,7 +363,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return queuedResolvedTarget;
     }
 
-    public bool TryIssueBoardTransportOrderToClickedUnit(Context context, Vector2 screenPosition)
+    public bool TryRequestBoardTransportOrderToClickedUnit(Context context, Vector2 screenPosition)
     {
         if (!TryQueueResolvedBoardTransportCommand(context, screenPosition, out bool queuedResolvedTarget))
             return false;
@@ -412,7 +412,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => targetBoundary.TryGetClickedCell(position, entityManager, out cell, out worldPoint));
     }
 
-    public bool TryIssueBoardSelectedTransportOrderToClickedUnit(Context context, Entity transport, Vector2 screenPosition)
+    public bool TryRequestBoardSelectedTransportOrderToClickedUnit(Context context, Entity transport, Vector2 screenPosition)
     {
         if (context.InputSystem == null ||
             !context.InputSystem.QueueBoardSelectedTransportCommandRequest(transport, screenPosition, Time.frameCount))
@@ -423,10 +423,10 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return context.ProcessTransportCommandRequests?.Invoke() == true;
     }
 
-    public bool TryIssueBoardSelectedTransportOrdersToPassengerRect(Context context, Entity transport, Rect screenRect)
+    public bool TryRequestBoardSelectedTransportOrdersToPassengerRect(Context context, Entity transport, Rect screenRect)
     {
         if (context.VisibleUnitSelectionSystem == null ||
-            context.SelectionUiQuerySystem == null ||
+            context.SelectionUiReadModelLookup == null ||
             context.VisibleSelectionScratch == null ||
             context.WorldCamera == null ||
             context.InputSystem == null ||
@@ -439,7 +439,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         context.VisibleUnitSelectionSystem.CollectVisiblePlayerUnits(
             em,
             context.WorldCamera,
-            context.SelectionUiQuerySystem,
+            context.SelectionUiReadModelLookup,
             screenRect,
             VisibleUnitSelectionSystem.Filter.Soldiers,
             context.VisibleSelectionScratch);
@@ -593,12 +593,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return count;
     }
 
-    public bool TryIssueMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)
+    public bool TryRequestMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
             return false;
 
-        bool issued = context.BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(
+        bool issued = context.BuildingTargetMoveOrderSystem.TryRequestMoveOrderToBuilding(
             em,
             new int2(originCell.x, originCell.y),
             new int2(footprintCells.x, footprintCells.y));
@@ -1016,7 +1016,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (!TryResolveFlatFallback(grid, ray, out int2 fallbackCell, out Vector3 fallbackWorldPoint))
             return false;
 
-        if (!_mapSurfaceQuerySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceQuerySystem.Context surfaceContext))
+        if (!_mapSurfaceQuerySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceSampler.Context surfaceContext))
         {
             result = MapSurfaceCommandTargetResult.FlatFallback(fallbackCell, fallbackWorldPoint);
             return true;
@@ -1105,8 +1105,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return false;
         }
 
-        MapSurfacePathfindingReadSystem.Context surfaceContext =
-            _mapSurfaceReadSystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+        MapSurfacePathfindingSnapshot.Context surfaceContext =
+            _mapSurfaceReadSystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfacePathfindingSnapshot.Context resolvedSurfaceContext)
                 ? resolvedSurfaceContext
                 : _mapSurfaceReadSystem.CreateFlatFallbackContext();
 
@@ -1127,7 +1127,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             surfaceContext);
 
         MapSurfaceMovementMask movementMask = ResolveSelectedMovementMask(entityManager, selectionStateSystem);
-        if (_mapSurfaceQuerySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceQuerySystem.Context queryContext) &&
+        if (_mapSurfaceQuerySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceSampler.Context queryContext) &&
             TryResolveTraversableCell(queryContext, grid, resolvedCell, movementMask, out result))
         {
             return true;
@@ -1221,7 +1221,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     }
 
     private bool TryResolveSurfaceHit(
-        MapSurfaceQuerySystem.Context context,
+        MapSurfaceSampler.Context context,
         GridConfig grid,
         Ray ray,
         int2 fallbackCell,
@@ -1278,7 +1278,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     }
 
     private bool TryResolveNearestTraversableTarget(
-        MapSurfaceQuerySystem.Context context,
+        MapSurfaceSampler.Context context,
         GridConfig grid,
         int2 originCell,
         MapSurfaceMovementMask movementMask,
@@ -1306,7 +1306,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     }
 
     private bool TryResolveTraversableCell(
-        MapSurfaceQuerySystem.Context context,
+        MapSurfaceSampler.Context context,
         GridConfig grid,
         int2 cell,
         MapSurfaceMovementMask movementMask,

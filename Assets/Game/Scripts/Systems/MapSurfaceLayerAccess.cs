@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-public readonly struct MapSurfaceLayeredCellSystem
+public readonly struct MapSurfaceLayerAccess
 {
     public bool TryGetSurfaceRange(MapSurfaceComponent surface, int2 cell, out MapSurfaceCellSurfaceRange range)
     {

@@ -205,9 +205,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         NativeBitArray blocked = blockerData.Blocked;
         NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
         NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
-        MapSurfacePathfindingReadSystem surfaceReadSystem = new();
-        MapSurfacePathfindingReadSystem.Context surfaceContext =
-            surfaceReadSystem.TryCreateContext(em, mapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+        MapSurfacePathfindingSnapshot surfaceReadSystem = new();
+        MapSurfacePathfindingSnapshot.Context surfaceContext =
+            surfaceReadSystem.TryCreateContext(em, mapSurfaceQuery, out MapSurfacePathfindingSnapshot.Context resolvedSurfaceContext)
                 ? resolvedSurfaceContext
                 : surfaceReadSystem.CreateFlatFallbackContext();
         var reservedGoalCells = new HashSet<int>();

@@ -420,7 +420,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Runtime city Game scene smoke passed: `[RuntimeCityGameSceneSmokeValidation] result=Passed cityPrefabs=36 productionCityCount=1 validationCityCount=1 buildingSpawnables=32 blockerPrefabs=63`.
    - Unity TestRunner commands for `BuildingPlacementValidationSystemTests` and `BootstrapAndMenuPlayModeTests` exited cleanly but did not emit XML or summary lines in batchmode; this matches the existing Unity TestRunner caveat on this project.
    - Runtime FPS play-button probe completed: `[RuntimeFpsPlayButtonProbe] result=completed avgFps=297.0 minFps=3.3 maxFps=387.4 logs=9 output=/private/tmp/warlinecapture-runtime-fps-probe.json`.
-   - Known validation caveats: Unity QuickSearch emitted its startup indexing exception during the FPS probe, and `UnitPathfindingPendingStateReadSystem.Dispose` logged an EntityQuery disposal null reference during editor teardown after the probe result was already written.
+   - Known validation caveats: Unity QuickSearch emitted its startup indexing exception during the FPS probe, and `UnitPathfindingPendingStateReader.Dispose` logged an EntityQuery disposal null reference during editor teardown after the probe result was already written.
    - Wrote handoff report: `Design/AgentReports/2026-05-27_gameplay_runtime_city_building_spawn_refactor_final.md`.
 
 ## Progress Notes

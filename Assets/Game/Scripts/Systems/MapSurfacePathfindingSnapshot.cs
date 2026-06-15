@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public readonly struct MapSurfacePathfindingReadSystem
+public readonly struct MapSurfacePathfindingSnapshot
 {
     private readonly MapSurfacePathCost _pathCostSystem;
 

@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class SelectionUiQuerySystem
+public sealed class SelectionUiReadModelLookup
 {
     public readonly struct TransportPassengerUiInfo
     {

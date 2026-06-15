@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-internal struct UnitPathfindingBudgetSystem
+internal struct UnitPathfindingBudget
 {
     public const int MaxRequestsPerFrame = 32;
     public const int MinRequestsPerFrame = 1;

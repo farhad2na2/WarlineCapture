@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathGoalAssignmentSystem
+internal struct UnitPathGoalAssignment
 {
     public const int InfantryGoalSearchRadius = 10;
     public const int VehicleGoalSearchRadius = 20;
@@ -24,7 +24,7 @@ internal struct UnitPathGoalAssignmentSystem
         Entity ignoredOccupancyEntity,
         int2 ignoredOccupancyCell,
         int2 ignoredOccupancySize,
-        MapSurfacePathfindingReadSystem.Context surfaceContext,
+        MapSurfacePathfindingSnapshot.Context surfaceContext,
         int2 desiredGoal,
         int2 startCell,
         int2 footprintSize,
@@ -72,7 +72,7 @@ internal struct UnitPathGoalAssignmentSystem
                     startCell,
                     factionId))
             {
-                UnitPathReservedGoalSystem.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, desiredGoal, footprintSize);
+                UnitPathReservedGoal.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, desiredGoal, footprintSize);
                 return desiredGoal;
             }
         }
@@ -123,7 +123,7 @@ internal struct UnitPathGoalAssignmentSystem
                         factionId))
                 {
                     ConsiderBest(cell);
-                    UnitPathReservedGoalSystem.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, cell, footprintSize);
+                    UnitPathReservedGoal.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, cell, footprintSize);
                     return bestCell;
                 }
             }
@@ -131,7 +131,7 @@ internal struct UnitPathGoalAssignmentSystem
 
         if (bestDistanceSq != int.MaxValue)
         {
-            UnitPathReservedGoalSystem.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, bestCell, footprintSize);
+            UnitPathReservedGoal.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, bestCell, footprintSize);
             return bestCell;
         }
 
@@ -153,17 +153,17 @@ internal struct UnitPathGoalAssignmentSystem
         Entity ignoredOccupancyEntity,
         int2 ignoredOccupancyCell,
         int2 ignoredOccupancySize,
-        MapSurfacePathfindingReadSystem.Context surfaceContext,
+        MapSurfacePathfindingSnapshot.Context surfaceContext,
         int2 cell,
         int2 footprintSize,
         int2 startCell,
         byte factionId)
     {
         bool isVehicle = footprintSize.x > 1 || footprintSize.y > 1;
-        if (!UnitPathPlacementValidationSystem.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, default, movingEntity, cell, footprintSize, startCell, isVehicle, false, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
+        if (!UnitPathPlacementValidation.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, default, movingEntity, cell, footprintSize, startCell, isVehicle, false, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
             return false;
 
-        MapSurfacePathingValidationSystem surfaceValidation = new();
+        MapSurfaceTraversalValidation surfaceValidation = new();
         if (!surfaceValidation.CanTraverseFootprint(surfaceContext.Surface, surfaceContext.HasSurfaceData, grid, cell, footprintSize, isVehicle))
             return false;
 

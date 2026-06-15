@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-internal struct UnitPathValidationMetricsSystem
+internal struct UnitPathValidationMetrics
 {
     public const int StuckLogIntervalFrames = 180;
     public const int StuckLogFirstDelayFrames = 180;

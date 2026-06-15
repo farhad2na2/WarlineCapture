@@ -58,7 +58,7 @@ Target owner: `UnitTargetOrderSystem`.
 - Portrait pose and selected-unit framing data.
 - HUD selection result text.
 
-Target owner: `SelectionUiQuerySystem`.
+Target owner: `SelectionUiReadModelLookup`.
 
 ### Camera Control
 
@@ -102,7 +102,7 @@ Target owner: `RtsCameraSystem` or a shell-edge camera service fed by ECS camera
 
 ## Third Extraction Completed
 
-`SelectionUiQuerySystem` now owns:
+`SelectionUiReadModelLookup` now owns:
 
 - Focused unit label, description, health, capacity, ownership, attack, and vehicle read models.
 - Focused transport passenger UI lists.
@@ -431,7 +431,7 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 - manual move tag assignment for building-target movement
 - already-moving-to-goal skip policy for building-target movement
 
-`RTSSelectionSystem` still exposes `TryIssueMoveOrderToBuilding` for compatibility and still clears selection / emits the screen marker after a successful command, but it no longer owns the building-target move algorithm.
+`RTSSelectionSystem` still exposes `TryRequestMoveOrderToBuilding` for compatibility and still clears selection / emits the screen marker after a successful command, but it no longer owns the building-target move algorithm.
 
 ## Thirty-Second Extraction Started
 
@@ -589,7 +589,7 @@ Step 7 moved focused-unit UI read models into ECS data:
 
 - `FocusedUnitUiReadModelComponent` stores focused entity, label, description, health, capacity, ownership, vehicle, attack, status, world position, and portrait pose read-model data.
 - `FocusedUnitPassengerUiReadModelElement` stores focused transport passenger rows.
-- `FocusedUnitUiReadModelSystem` publishes the focused read model from selection state and `SelectionUiQuerySystem` into an ECS singleton plus passenger buffer.
+- `FocusedUnitUiReadModelSystem` publishes the focused read model from selection state and `SelectionUiReadModelLookup` into an ECS singleton plus passenger buffer.
 - `RTSSelectionSystem` compatibility getters now read focused UI data from that ECS read model instead of directly resolving labels, status, health, passenger rows, world position, or portrait pose.
 
 Step 8 moved HUD feedback into ECS result data:

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal struct UnitPathfindingQuerySystem
+internal struct UnitPathfindingEntitySets
 {
     public EntityQuery GridQuery;
     public EntityQuery RequestQuery;

@@ -29,7 +29,7 @@ internal sealed class BuildingSelectionSystem
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
-        public readonly BuildingMoveOrderAction TryIssueMoveOrderToBuilding;
+        public readonly BuildingMoveOrderAction TryRequestMoveOrderToBuilding;
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Source(
@@ -60,7 +60,7 @@ internal sealed class BuildingSelectionSystem
             SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
             IsBoardablePlayerTransportClick = isBoardablePlayerTransportClick;
             TryAssignSelectedHaulerOrders = tryAssignSelectedHaulerOrders;
-            TryIssueMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
+            TryRequestMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
             ShouldUseExpandedSelectionArea = shouldUseExpandedSelectionArea;
         }
     }
@@ -79,7 +79,7 @@ internal sealed class BuildingSelectionSystem
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
-        public readonly BuildingMoveOrderAction TryIssueMoveOrderToBuilding;
+        public readonly BuildingMoveOrderAction TryRequestMoveOrderToBuilding;
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Context(
@@ -110,7 +110,7 @@ internal sealed class BuildingSelectionSystem
             SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
             IsBoardablePlayerTransportClick = isBoardablePlayerTransportClick;
             TryAssignSelectedHaulerOrders = tryAssignSelectedHaulerOrders;
-            TryIssueMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
+            TryRequestMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
             ShouldUseExpandedSelectionArea = shouldUseExpandedSelectionArea;
         }
     }
@@ -241,7 +241,7 @@ internal sealed class BuildingSelectionSystem
             source.SmoothMoveCameraGroundCenterTo,
             source.IsBoardablePlayerTransportClick,
             source.TryAssignSelectedHaulerOrders,
-            source.TryIssueMoveOrderToBuilding,
+            source.TryRequestMoveOrderToBuilding,
             source.ShouldUseExpandedSelectionArea);
     }
 

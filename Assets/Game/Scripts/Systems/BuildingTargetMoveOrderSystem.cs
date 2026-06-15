@@ -34,7 +34,7 @@ public partial struct BuildingTargetMoveOrderSystem : ISystem
         ProcessPendingRequests(state.EntityManager, _queueQuery, _selectedMoveQuery, _gridPathingQuery, _entityType);
     }
 
-    public readonly bool TryIssueMoveOrderToBuilding(EntityManager em, int2 originCell, int2 footprintCells)
+    public readonly bool TryRequestMoveOrderToBuilding(EntityManager em, int2 originCell, int2 footprintCells)
     {
         int requestId = EnqueueMoveOrderToBuilding(em, originCell, footprintCells);
         ProcessPendingRequests(em);

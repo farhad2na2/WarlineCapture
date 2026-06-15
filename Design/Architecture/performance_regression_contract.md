@@ -106,7 +106,7 @@ Focused pathfinding validation should cover:
 Required pathfinding metrics:
 
 - Frame time average, p95, p99, and max after warmup.
-- `UnitPathfindingSystem`, `UnitPathfindingScheduleSystem`, and `UnitPathfindingApplySystem` p95, p99, and max timing when available.
+- `UnitPathfindingSystem`, `UnitPathfindingScheduler`, and `UnitPathfindingApply` p95, p99, and max timing when available.
 - Request count, adaptive request budget, pending job wall time, completed/retried/abandoned counts, and long-distance/segmented request counts when diagnostics are enabled for validation.
 - GC allocation after warmup.
 

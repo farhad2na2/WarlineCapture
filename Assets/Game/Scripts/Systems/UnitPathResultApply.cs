@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathResultApplySystem
+internal struct UnitPathResultApply
 {
     public void Apply(
         ref SystemState state,
@@ -13,7 +13,7 @@ internal struct UnitPathResultApplySystem
         NativeArray<int2> assignedGoals,
         NativeArray<byte> segmented,
         NativeArray<byte> manualMoves,
-        MapSurfacePathfindingReadSystem.Context surfaceContext,
+        MapSurfacePathfindingSnapshot.Context surfaceContext,
         NativeStream stream,
         NativeArray<byte> status,
         NativeArray<int> failureCodes,
@@ -36,8 +36,8 @@ internal struct UnitPathResultApplySystem
         var em = state.EntityManager;
         var reader = stream.AsReader();
         var follow = new UnitPathFollow { PathIndex = 0 };
-        var retry = new UnitPathRetrySystem();
-        var surfaceMetadata = new UnitPathSurfaceMetadataSystem();
+        var retry = new UnitPathRetry();
+        var surfaceMetadata = new UnitPathSurfaceMetadata();
         int manualTraceCount = 0;
 
         for (int i = 0; i < entities.Length; i++)

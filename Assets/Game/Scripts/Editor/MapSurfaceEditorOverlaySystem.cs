@@ -16,7 +16,7 @@ public sealed class MapSurfaceEditorOverlaySystem
         Blocked
     }
 
-    private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();
+    private readonly MapSurfaceLayerAccess _layeredCellSystem = new();
 
     public void DrawOverlay(MapSurfaceComponent surface, GridConfig grid, OverlayMode mode, int cellStride)
     {
@@ -69,7 +69,7 @@ public sealed class MapSurfaceEditorOverlaySystem
 
     private static void DrawVehicleFootprintOverlay(MapSurfaceComponent surface, GridConfig grid, int cellStride)
     {
-        MapSurfacePathingValidationSystem validation = new();
+        MapSurfaceTraversalValidation validation = new();
         int2 footprint = new(3, 3);
         for (int y = 0; y < surface.Dimensions.y; y += cellStride)
         {

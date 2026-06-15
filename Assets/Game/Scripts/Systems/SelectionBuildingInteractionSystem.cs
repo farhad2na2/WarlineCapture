@@ -72,12 +72,12 @@ public sealed class SelectionBuildingInteractionSystem
             TryGetClickedCell);
     }
 
-    public bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
+    public bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
         if (!TryGetDefaultEntityManager(out EntityManager em))
             return false;
 
-        bool issued = _buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(
+        bool issued = _buildingTargetMoveOrderSystem.TryRequestMoveOrderToBuilding(
             em,
             new int2(originCell.x, originCell.y),
             new int2(footprintCells.x, footprintCells.y));

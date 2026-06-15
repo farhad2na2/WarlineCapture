@@ -84,7 +84,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(2, summary.UnitCount);
@@ -108,7 +108,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(2, summary.UnitCount);
@@ -133,7 +133,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(1, summary.SoldierCount);
@@ -156,7 +156,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(1, summary.SoldierCount);
@@ -178,7 +178,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(1, summary.VehicleCount);
@@ -199,7 +199,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(2, summary.VehicleCount);
@@ -223,7 +223,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(2, summary.TransportCount);
@@ -245,7 +245,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(1, summary.VehicleCount);
@@ -269,7 +269,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual(1, summary.TransportCount);
@@ -289,7 +289,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
-            new SelectionUiQuerySystem(),
+            new SelectionUiReadModelLookup(),
             false);
 
         Assert.AreEqual("Mixed orders", summary.OrderText);

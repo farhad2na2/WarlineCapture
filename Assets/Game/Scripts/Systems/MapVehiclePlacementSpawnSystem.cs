@@ -8,7 +8,7 @@ using UnityEngine;
 internal sealed class MapVehiclePlacementSpawnSystem
 {
     private const int MaxPlacementsPerUpdate = 32;
-    private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidationSystem.VehicleOccupancyPaddingCells;
+    private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
     private const float UniformScaleEpsilon = 0.0001f;
 
     public delegate bool TryGetGridDataDelegate(

@@ -15,7 +15,7 @@ public static class EcsBurstSelectionCommandValidationRunner
         typeof(UnitMoveOrderSystemTests),
         typeof(SelectionStateSystemTests),
         typeof(FocusableUnitLookupSystemTests),
-        typeof(SelectionUiQuerySystemTests),
+        typeof(SelectionUiReadModelLookupTests),
         typeof(SelectionOrderMarkerSystemTests),
         typeof(MatchHudSquadTraySelectionSystemTests),
         typeof(MatchHudCommandFeedbackPanelTests),

@@ -157,7 +157,7 @@ Validation:
 - 2026-06-12: Focused selection/command validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
   - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=57`.
-  - Covered fixtures: `RtsSelectionInputSystemTests`, `UnitMoveOrderSystemTests`, `SelectionUiQuerySystemTests`, `SelectionOrderMarkerSystemTests`, `MatchHudCommandFeedbackPanelTests`, `MatchHudCommandControlsCurrentPrefabTests`, and `ScanIntelCommandSystemTests`.
+  - Covered fixtures: `RtsSelectionInputSystemTests`, `UnitMoveOrderSystemTests`, `SelectionUiReadModelLookupTests`, `SelectionOrderMarkerSystemTests`, `MatchHudCommandFeedbackPanelTests`, `MatchHudCommandControlsCurrentPrefabTests`, and `ScanIntelCommandSystemTests`.
 - 2026-06-12: Full EditMode TestRunner command attempted but did not produce `/private/tmp/warline-ecs-burst-full-editmode.xml` or a TestRunner summary, despite exiting `0`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform EditMode -testResults /private/tmp/warline-ecs-burst-full-editmode.xml -logFile /private/tmp/warline-ecs-burst-full-editmode.log`
   - Do not treat this as a full-suite pass; use explicit focused validation runners until the Unity TestRunner output path is reliable.
@@ -205,7 +205,7 @@ Validation:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-transport-boarding-performance-main.log`
   - Log marker: `[TransportBoardingPerformanceValidation] result=Passed`.
   - Report: `/private/tmp/warlinecapture-transport-boarding-performance.json`.
-  - Fixture coverage: `TransportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit` batch-orders 8 selected passengers into one transport, `UnitTransportBoardingSystem` boards them, and `SelectionTransportCommandRequestSystem` processes disembark-all.
+  - Fixture coverage: `TransportBoardingCommandSystem.TryRequestBoardTransportOrderToClickedUnit` batch-orders 8 selected passengers into one transport, `UnitTransportBoardingSystem` boards them, and `SelectionTransportCommandRequestSystem` processes disembark-all.
   - Metrics: `warmupScenarios=16`, `measuredScenarios=64`, `passengerCount=8`, `boardedCount=512`, `disembarkedCount=512`, `averageTotalMs=1.183`, `p95TotalMs=1.216`, `p99TotalMs=1.246`, `maxTotalMs=1.256`, `averageBoardCommandMs=0.890`, `p95BoardCommandMs=0.913`, `averageBoardingUpdateMs=0.183`, `p95BoardingUpdateMs=0.191`, `averageDisembarkCommandMs=0.109`, `p95DisembarkCommandMs=0.117`, `allocatedBytesCurrentThread=0`.
   - Completed the Phase 0 transport board/board-all/unboard baseline checklist item and the Phase 0 baseline performance parent checklist item.
   - Progress snapshot is now `84 / 157 complete (53.5%)`, `12 / 157 in progress`, `61 / 157 open`.
@@ -399,7 +399,7 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
   - `git diff --check` passed.
-- 2026-06-12: Removed unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` and its `SelectionUiQuerySystem` helper. This deletes a dead selected-entity snapshot API rather than hiding it behind a helper.
+- 2026-06-12: Removed unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` and its `SelectionUiReadModelLookup` helper. This deletes a dead selected-entity snapshot API rather than hiding it behind a helper.
 - 2026-06-12: Guardrail ratchet after the fourth Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `104`.
 - 2026-06-12: Validation passed after the fourth Phase 3 slice. The main project was open in Unity, so validation ran in the synced `WarlineCapture-CodexUnity1` shadow project after mirroring the current script and editor-test trees:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-shadow-ecs-burst-hot-path-architecture.log`
@@ -622,7 +622,7 @@ Progress notes:
 - 2026-06-12: Focused selection command validation passed after the runtime-building attack-target chunk traversal slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-baseline.log`
   - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
-- 2026-06-12: Continued Phase 7 in `UnitPathfindingApplySystem`. Manual-move diagnostic sample collection now walks the pending manual-move query by chunks instead of copying pending entities.
+- 2026-06-12: Continued Phase 7 in `UnitPathfindingApply`. Manual-move diagnostic sample collection now walks the pending manual-move query by chunks instead of copying pending entities.
 - 2026-06-12: Focused pathfinding validation passed after the diagnostic sample chunk traversal slice:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-baseline.log`
   - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed`.
@@ -725,7 +725,7 @@ Progress notes:
   - Log marker: `[UnitMovementBlockerValidation] result=Passed`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `8`, direct `EntityManager.*` mutation count `40`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
   - `git diff --check` passed.
-- 2026-06-12: Continued Phase 7 in `UnitPathLiveUnitSnapshotSystem`. The detached pathfinding live-unit snapshot now owns persistent `NativeList` storage and captures entities, grids, footprints, and manual-group flags via cached type handles and chunk traversal instead of persistent `ToEntityArray` / `ToComponentDataArray<T>` snapshots. `UnitPathfindingSystem.OnCreate` initializes the cached handles.
+- 2026-06-12: Continued Phase 7 in `UnitPathLiveUnitSnapshot`. The detached pathfinding live-unit snapshot now owns persistent `NativeList` storage and captures entities, grids, footprints, and manual-group flags via cached type handles and chunk traversal instead of persistent `ToEntityArray` / `ToComponentDataArray<T>` snapshots. `UnitPathfindingSystem.OnCreate` initializes the cached handles.
 - 2026-06-12: Guardrail ratchet after the pathfinding live-snapshot slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `5`.
 - 2026-06-12: Focused pathfinding validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-live-snapshot.log`
@@ -746,7 +746,7 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-zero-arrays.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
   - `git diff --check` passed.
-- 2026-06-12: Continued Phase 7 in `UnitPathfindingPendingStateSystem`. Pending path-job state now publishes through `SystemAPI.GetSingletonRW<UnitPathfindingPendingStateComponent>()` from `UnitPathfindingSystem`, removing the frequent `EntityManager.SetComponentData` singleton write while leaving startup singleton creation and read-boundary query setup unchanged.
+- 2026-06-12: Continued Phase 7 in `UnitPathfindingPendingStateStore`. Pending path-job state now publishes through `SystemAPI.GetSingletonRW<UnitPathfindingPendingStateComponent>()` from `UnitPathfindingSystem`, removing the frequent `EntityManager.SetComponentData` singleton write while leaving startup singleton creation and read-boundary query setup unchanged.
 - 2026-06-12: Guardrail ratchet after the pending-state singleton write slice: direct `EntityManager.*` mutation ceiling reduced to `39`.
 - 2026-06-12: Focused pathfinding validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-pending-state-rw.log`
@@ -772,7 +772,7 @@ Progress notes:
   - Log marker: `[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1`.
   - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `26`, Burst-compiled system files `35`.
   - Guardrail ratchet after `MapSurfaceDiagnosticsSystem`: non-Burst `OnUpdate` ceiling reduced to `26`, Burst file floor increased to `35`.
-- 2026-06-12: Continued Phase 7 in `UnitPathfindingApplySystem`. Path-pool read/write now uses a cached `ComponentLookup<PathPoolComponent>` initialized from `UnitPathfindingSystem.OnCreate`; the lookup is refreshed again after `UnitPathResultApplySystem` structural path-component changes before writing the pool back. This removes the direct `EntityManager.SetComponentData` path-pool write without changing detached path result application.
+- 2026-06-12: Continued Phase 7 in `UnitPathfindingApply`. Path-pool read/write now uses a cached `ComponentLookup<PathPoolComponent>` initialized from `UnitPathfindingSystem.OnCreate`; the lookup is refreshed again after `UnitPathResultApply` structural path-component changes before writing the pool back. This removes the direct `EntityManager.SetComponentData` path-pool write without changing detached path result application.
 - 2026-06-12: Guardrail ratchet after the path-pool lookup slice: direct `EntityManager.*` mutation ceiling reduced to `36`.
 - 2026-06-12: Focused pathfinding validation passed after fixing the lookup refresh point:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-pathpool-lookup-clean.log`
@@ -788,7 +788,7 @@ Progress notes:
   - Log marker: `[CitizenMovementCommandFocusedValidation] result=Passed tests=2`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `22`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
 - 2026-06-12: Continued Phase 6 in `CitizenVisibleUnitSystem`. Visible-citizen clear/remove destruction and spawned-citizen setup component writes now use temporary `EntityCommandBuffer` playback while preserving same-frame semantics. The remaining direct call is the visible-citizen spawn `Instantiate`, intentionally left immediate because the visible-citizen state dictionary stores the real created entity in the same frame.
-- 2026-06-12: Continued Phase 6 startup-boundary cleanup in `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, and `UnitPathfindingPendingStateSystem`. Missing grid runtime components, flat-equivalent map-surface bootstrap entity creation, and the pathfinding pending-state singleton now use same-frame temporary `EntityCommandBuffer` playback instead of direct `EntityManager.AddComponentData`, `CreateEntity`, or `SetComponentData`. This leaves only the intentional `CitizenVisibleUnitSystem` same-frame spawn as direct literal EntityManager mutation debt.
+- 2026-06-12: Continued Phase 6 startup-boundary cleanup in `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, and `UnitPathfindingPendingStateStore`. Missing grid runtime components, flat-equivalent map-surface bootstrap entity creation, and the pathfinding pending-state singleton now use same-frame temporary `EntityCommandBuffer` playback instead of direct `EntityManager.AddComponentData`, `CreateEntity`, or `SetComponentData`. This leaves only the intentional `CitizenVisibleUnitSystem` same-frame spawn as direct literal EntityManager mutation debt.
 - 2026-06-12: Validation passed after the startup-boundary ECB cleanup:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-startup-ecb.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
@@ -810,7 +810,7 @@ Progress notes:
   - `CitizenVisibleUnitSystem`: one runtime immediate `Instantiate` retained so the visible-citizen dictionary can store the created entity in the same frame.
   - `DynamicBlockerInitSystem`: startup grid support components, initialized once from `GridConfig`.
   - `MapSurfaceFlatEquivalentBootstrapSystem`: initialization-group fallback surface entity creation, then disables itself.
-  - `UnitPathfindingPendingStateSystem`: pathfinding pending-state singleton creation at initialization.
+  - `UnitPathfindingPendingStateStore`: pathfinding pending-state singleton creation at initialization.
   - These remaining startup/bootstrap mutations are left in place unless diagnostics show they affect runtime frame rate.
 - 2026-06-13: Completed the Phase 2 EndSimulation ECB item with low-risk visual cleanup slices. `UnitHealthBarSystem` now sends expired `RecentDamageHealthBarVisibility` removals through `EndSimulationEntityCommandBufferSystem.Singleton` instead of playing back an immediate ECB in the system. Same-frame bar hiding is preserved because the timer is decremented before the visibility update job reads it; only the structural removal moves to end simulation. `UnitDestroyedVisualSystem` now also queues `UnitDestroyedVisualInitialized` through the end-simulation ECB while preserving same-frame alive/destroyed child scale updates. Focused isolated-world tests now create/update the end-simulation ECB system for these paths.
   - Validation passed:
@@ -1242,9 +1242,9 @@ Protect already optimized pathfinding semantics while removing surrounding hot-p
 
 Target areas:
 - `UnitPathfindingSystem`
-- `UnitPathfindingScheduleSystem`
-- `UnitPathfindingApplySystem`
-- `UnitPathLiveUnitSnapshotSystem`
+- `UnitPathfindingScheduler`
+- `UnitPathfindingApply`
+- `UnitPathLiveUnitSnapshot`
 - `DynamicOccupancyRebuildSystem`
 - `BuildingBarrierSystem`
 
@@ -1275,7 +1275,7 @@ Progress notes:
 - 2026-06-12: Focused runtime-grid deduplication validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod RuntimeGridDeduplicationSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-runtime-grid-dedup.log`
   - Log marker: `[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=2`.
-- 2026-06-13: Continued Phase 7 pathfinding diagnostic sampling cleanup in `UnitPathfindingApplySystem`. The stuck manual-move sample collector now uses an `EntityTypeHandle` cached during `Initialize` and refreshed before diagnostic sampling instead of creating a handle from `EntityManager` when validation logging is active. Runtime pathfinding behavior is unchanged.
+- 2026-06-13: Continued Phase 7 pathfinding diagnostic sampling cleanup in `UnitPathfindingApply`. The stuck manual-move sample collector now uses an `EntityTypeHandle` cached during `Initialize` and refreshed before diagnostic sampling instead of creating a handle from `EntityManager` when validation logging is active. Runtime pathfinding behavior is unchanged.
   - Shadow validation used because the main Unity editor still had `/Users/farhad/Projects/WarlineCapture` open.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-unit-pathfinding-apply-cached-handle-shadow.log`
   - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed`; report `/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json`, `updates=11`, `allocatedBytes=0`, `remainingRequests=0`.
@@ -1296,7 +1296,7 @@ Progress notes:
   - `git diff --check` passed.
   - Friendly-pass gates remain covered by the explicit full-editor validation runner in the Phase 0 notes, where `BaseBreachValidationTests` and `UnitMovementBlockerValidationTests` passed.
   - Progress snapshot is now `108 / 157 complete (68.8%)`, `10 / 157 in progress`, `39 / 157 open`.
-- 2026-06-13: Completed the Phase 7 native snapshot ownership item by reworking `UnitPathLiveUnitSnapshotSystem.Capture` to reuse its system-owned persistent `NativeList` buffers across path batches. The system now clears and grows the entity/grid/footprint/manual-group lists instead of disposing and reallocating them every capture. Detached path job ownership remains unchanged: capture only happens when no previous path batch is pending, and disposal still happens through the owning pathfinding system lifecycle.
+- 2026-06-13: Completed the Phase 7 native snapshot ownership item by reworking `UnitPathLiveUnitSnapshot.Capture` to reuse its system-owned persistent `NativeList` buffers across path batches. The system now clears and grows the entity/grid/footprint/manual-group lists instead of disposing and reallocating them every capture. Detached path job ownership remains unchanged: capture only happens when no previous path batch is pending, and disposal still happens through the owning pathfinding system lifecycle.
   - Main-project validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitPathfindingFocusedPerformanceValidation.RunBatchValidation -logFile /private/tmp/warline-ecs-burst-pathfinding-phase7-live-snapshot-reuse-main.log`
     - Log marker: `[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3`.
@@ -1307,7 +1307,7 @@ Progress notes:
     - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot is now `109 / 157 complete (69.4%)`, `10 / 157 in progress`, `38 / 157 open`.
-- 2026-06-13: Closed Phase 7 after reviewing the remaining guardrail items. The Phase 7 code slices did not change pathfinding traversal costs, request budgets, detached-job scheduling, or the core pathfinding algorithm. No new runtime path diagnostics were added outside the existing ECS diagnostic-buffer path, and every path-related Phase 7 slice was validated with `UnitPathfindingFocusedPerformanceValidation.RunBatchValidation`. The surrounding snapshot audit covered `UnitPathLiveUnitSnapshotSystem`, `UnitPathGridSnapshotSystem`, `UnitPathScratchWorkspaceSystem`, and `UnitPathRequestBufferSystem`; the only follow-up code change needed was the live-unit snapshot persistent-list reuse above.
+- 2026-06-13: Closed Phase 7 after reviewing the remaining guardrail items. The Phase 7 code slices did not change pathfinding traversal costs, request budgets, detached-job scheduling, or the core pathfinding algorithm. No new runtime path diagnostics were added outside the existing ECS diagnostic-buffer path, and every path-related Phase 7 slice was validated with `UnitPathfindingFocusedPerformanceValidation.RunBatchValidation`. The surrounding snapshot audit covered `UnitPathLiveUnitSnapshot`, `UnitPathGridSnapshot`, `UnitPathScratchWorkspace`, and `UnitPathRequestBuffer`; the only follow-up code change needed was the live-unit snapshot persistent-list reuse above.
   - Phase 7 is complete.
   - Progress snapshot is now `113 / 157 complete (72.0%)`, `9 / 157 in progress`, `35 / 157 open`.
 

@@ -8,12 +8,12 @@ public sealed class FocusedUnitUiReadModelSystem
 {
     private World _queryWorld;
     private EntityQuery _readModelQuery;
-    private readonly List<SelectionUiQuerySystem.TransportPassengerUiInfo> _passengerScratch = new();
+    private readonly List<SelectionUiReadModelLookup.TransportPassengerUiInfo> _passengerScratch = new();
 
     public void Publish(
         EntityManager em,
         SelectionStateSystem selectionStateSystem,
-        SelectionUiQuerySystem selectionUiQuerySystem,
+        SelectionUiReadModelLookup selectionUiReadModelLookup,
         UnitTransportCapacitySystem transportCapacitySystem,
         float timeSeconds)
     {
@@ -23,7 +23,7 @@ public sealed class FocusedUnitUiReadModelSystem
         passengerBuffer.Clear();
 
         Entity focusedUnit = selectionStateSystem.FocusedUnit;
-        if (!selectionUiQuerySystem.HasFocusedUnit(em, focusedUnit))
+        if (!selectionUiReadModelLookup.HasFocusedUnit(em, focusedUnit))
         {
             em.SetComponentData(readModelEntity, EmptyModel());
             return;
@@ -33,23 +33,23 @@ public sealed class FocusedUnitUiReadModelSystem
         {
             FocusedUnit = focusedUnit,
             HasFocusedUnit = 1,
-            OwnedByPlayer = selectionUiQuerySystem.IsOwnedByPlayer(em, focusedUnit) ? (byte)1 : (byte)0,
-            IsVehicle = selectionUiQuerySystem.IsVehicleUnit(em, focusedUnit) ? (byte)1 : (byte)0,
-            CanAttack = selectionUiQuerySystem.CanAttack(em, focusedUnit) ? (byte)1 : (byte)0,
-            Label = ToFixed64(selectionUiQuerySystem.ResolveFocusedUnitName(em, focusedUnit)),
-            Description = ToFixed128(selectionUiQuerySystem.ResolveFocusedUnitDescription(em, focusedUnit)),
-            HealthText = ToFixed32(selectionUiQuerySystem.ResolveFocusedUnitHealthText(em, focusedUnit)),
-            Status = (int)selectionUiQuerySystem.GetFocusedUnitUiStatus(em, focusedUnit)
+            OwnedByPlayer = selectionUiReadModelLookup.IsOwnedByPlayer(em, focusedUnit) ? (byte)1 : (byte)0,
+            IsVehicle = selectionUiReadModelLookup.IsVehicleUnit(em, focusedUnit) ? (byte)1 : (byte)0,
+            CanAttack = selectionUiReadModelLookup.CanAttack(em, focusedUnit) ? (byte)1 : (byte)0,
+            Label = ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, focusedUnit)),
+            Description = ToFixed128(selectionUiReadModelLookup.ResolveFocusedUnitDescription(em, focusedUnit)),
+            HealthText = ToFixed32(selectionUiReadModelLookup.ResolveFocusedUnitHealthText(em, focusedUnit)),
+            Status = (int)selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, focusedUnit)
         };
 
-        if (selectionUiQuerySystem.TryGetFocusedUnitHealth(em, focusedUnit, out int healthCurrent, out int healthMax))
+        if (selectionUiReadModelLookup.TryGetFocusedUnitHealth(em, focusedUnit, out int healthCurrent, out int healthMax))
         {
             model.HasHealth = 1;
             model.HealthCurrent = healthCurrent;
             model.HealthMax = healthMax;
         }
 
-        if (selectionUiQuerySystem.TryGetFocusedUnitCapacityInfo(
+        if (selectionUiReadModelLookup.TryGetFocusedUnitCapacityInfo(
                 em,
                 focusedUnit,
                 timeSeconds,
@@ -63,13 +63,13 @@ public sealed class FocusedUnitUiReadModelSystem
             model.CapacityProgress01 = capacityProgress01;
         }
 
-        model.PassengerCount = selectionUiQuerySystem.GetTransportPassengerCount(em, focusedUnit, transportCapacitySystem);
-        model.TransportPassengerCapacity = selectionUiQuerySystem.GetTransportPassengerCapacity(em, focusedUnit, transportCapacitySystem);
+        model.PassengerCount = selectionUiReadModelLookup.GetTransportPassengerCount(em, focusedUnit, transportCapacitySystem);
+        model.TransportPassengerCapacity = selectionUiReadModelLookup.GetTransportPassengerCapacity(em, focusedUnit, transportCapacitySystem);
         _passengerScratch.Clear();
-        selectionUiQuerySystem.GetTransportPassengers(em, focusedUnit, transportCapacitySystem, _passengerScratch);
+        selectionUiReadModelLookup.GetTransportPassengers(em, focusedUnit, transportCapacitySystem, _passengerScratch);
         for (int i = 0; i < _passengerScratch.Count; i++)
         {
-            SelectionUiQuerySystem.TransportPassengerUiInfo passenger = _passengerScratch[i];
+            SelectionUiReadModelLookup.TransportPassengerUiInfo passenger = _passengerScratch[i];
             passengerBuffer.Add(new FocusedUnitPassengerUiReadModelElement
             {
                 Passenger = passenger.Entity,
@@ -79,13 +79,13 @@ public sealed class FocusedUnitUiReadModelSystem
             });
         }
 
-        if (selectionUiQuerySystem.TryGetFocusedUnitWorldPosition(em, focusedUnit, out Vector3 worldPosition))
+        if (selectionUiReadModelLookup.TryGetFocusedUnitWorldPosition(em, focusedUnit, out Vector3 worldPosition))
         {
             model.HasWorldPosition = 1;
             model.WorldPosition = worldPosition;
         }
 
-        if (selectionUiQuerySystem.TryGetFocusedUnitPortraitPose(em, focusedUnit, out Vector3 portraitWorldPosition, out Vector3 portraitForward))
+        if (selectionUiReadModelLookup.TryGetFocusedUnitPortraitPose(em, focusedUnit, out Vector3 portraitWorldPosition, out Vector3 portraitForward))
         {
             model.HasPortraitPose = 1;
             model.PortraitWorldPosition = portraitWorldPosition;

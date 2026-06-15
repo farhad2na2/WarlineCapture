@@ -106,25 +106,25 @@ public sealed class SelectionStateSystemTests
             var system = new VisibleUnitSelectionSystem();
             var selected = new System.Collections.Generic.List<Entity>();
             Rect screenRect = new(0f, 0f, 100f, 100f);
-            var querySystem = new SelectionUiQuerySystem();
+            var lookup = new SelectionUiReadModelLookup();
 
             Assert.IsTrue(system.HasVisiblePlayerUnits(
                 _entityManager,
                 camera,
-                querySystem,
+                lookup,
                 screenRect,
                 VisibleUnitSelectionSystem.Filter.All));
             Assert.IsFalse(system.HasVisiblePlayerUnits(
                 _entityManager,
                 camera,
-                querySystem,
+                lookup,
                 screenRect,
                 VisibleUnitSelectionSystem.Filter.Vehicles));
 
             int selectedCount = system.CollectVisiblePlayerUnits(
                 _entityManager,
                 camera,
-                querySystem,
+                lookup,
                 screenRect,
                 VisibleUnitSelectionSystem.Filter.All,
                 selected);
@@ -168,12 +168,12 @@ public sealed class SelectionStateSystemTests
             var system = new VisibleUnitSelectionSystem();
             var selected = new System.Collections.Generic.List<Entity>();
             Rect screenRect = new(0f, 0f, 100f, 100f);
-            var querySystem = new SelectionUiQuerySystem();
+            var lookup = new SelectionUiReadModelLookup();
 
             int vehicleCount = system.CollectVisiblePlayerUnits(
                 _entityManager,
                 camera,
-                querySystem,
+                lookup,
                 screenRect,
                 VisibleUnitSelectionSystem.Filter.Vehicles,
                 selected);
@@ -184,7 +184,7 @@ public sealed class SelectionStateSystemTests
             int soldierCount = system.CollectVisiblePlayerUnits(
                 _entityManager,
                 camera,
-                querySystem,
+                lookup,
                 screenRect,
                 VisibleUnitSelectionSystem.Filter.Soldiers,
                 selected);

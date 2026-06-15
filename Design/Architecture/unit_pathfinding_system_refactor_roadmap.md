@@ -20,7 +20,7 @@ Goal: reduce `UnitPathfindingSystem` from a broad pathfinding monolith into narr
 - Job algorithm: `PathfindBatchJob`, traversal costs, A*, open-list management, direct-path checks, infantry/vehicle placement checks, soft blocker rules, path output writing.
 - Result application: path pool allocation, `UnitPathFollow` / `UnitPathRange` writes, retry cooldowns, segmented move continuation, abandoned request cleanup.
 - Diagnostics: freeze logs, validation logs, stuck samples, hierarchical validation logs, manual move counters.
-- Static runtime access: removed. Pending path-job state is published through `UnitPathfindingPendingStateComponent` and read through `UnitPathfindingPendingStateReadSystem`.
+- Static runtime access: removed. Pending path-job state is published through `UnitPathfindingPendingStateComponent` and read through `UnitPathfindingPendingStateReader`.
 
 ## Public/Static Surface Inventory Freeze
 
@@ -31,11 +31,11 @@ Allowed temporary public/static members:
 - None. `UnitPathfindingSystem` must not expose public/static runtime state.
 - `public static bool HasPendingPathJob { get; private set; }`
   - Status: removed from `UnitPathfindingSystem` in step 31.
-  - Replacement: `UnitPathfindingPendingStateComponent` plus `UnitPathfindingPendingStateReadSystem`.
+  - Replacement: `UnitPathfindingPendingStateComponent` plus `UnitPathfindingPendingStateReader`.
 - `public static bool CanPlaceForPathing(...)`
   - Type: pure path placement helper.
   - Status: removed from `UnitPathfindingSystem` in step 18.
-  - Target owner: `UnitPathPlacementValidationSystem`.
+  - Target owner: `UnitPathPlacementValidation`.
   - Migration step: 18 complete.
 
 Non-static public surface:
@@ -108,165 +108,165 @@ Acceptance target: no measurable regression in path request throughput, no new G
 
 ## Phase 2: Extract Non-Hot Diagnostics And Budget Policy
 
-4. Complete: Extract diagnostics formatting into `UnitPathfindingDiagnosticSystem`
+4. Complete: Extract diagnostics formatting into `UnitPathfindingDiagnostics`
    - Move freeze-log formatting, validation-start/end formatting, stuck-sample formatting, and hierarchical validation message construction.
    - Keep calls gated by the existing diagnostic booleans.
    - No behavior or logging frequency changes.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingDiagnostics.cs`.
    - `UnitPathfindingSystem` now delegates pathfinding diagnostics and manual-move sample formatting to that boundary.
    - `UnitPathfindingSystem` direct `Debug.Log*` and `StringBuilder` diagnostic formatting count is now zero.
-   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2769 lines; `UnitPathfindingDiagnosticSystem.cs` is 242 lines.
+   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2769 lines; `UnitPathfindingDiagnostics.cs` is 242 lines.
 
-5. Complete: Extract adaptive request budgeting into `UnitPathfindingBudgetSystem`
+5. Complete: Extract adaptive request budgeting into `UnitPathfindingBudget`
    - Move adaptive budget fields and `UpdateAdaptiveBudget`.
    - Preserve exact budget constants and state transitions.
    - `UnitPathfindingSystem` asks for current request budget and reports completed job timing.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingBudgetSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingBudget.cs`.
    - Moved adaptive budget state, pending-job reduction state, budget thresholds, stability counters, and request-budget transition logic to that boundary.
    - `UnitPathfindingSystem` now calls `GetCurrentRequestBudget`, `ReduceForPendingJob`, `ReportCompletedJob`, and `ResetPendingJobReduction`.
    - Budget constants are unchanged: max 32, min 1, target 0.008s, low 0.006s, high 0.012s, manual infantry max 4, stable manual batches 2, stable one-frame batches 3.
-   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2691 lines; `UnitPathfindingBudgetSystem.cs` is 122 lines.
+   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2691 lines; `UnitPathfindingBudget.cs` is 122 lines.
 
-6. Complete: Extract pending-job status publication into `UnitPathfindingPendingStateSystem`
+6. Complete: Extract pending-job status publication into `UnitPathfindingPendingStateStore`
    - Keep the existing static `HasPendingPathJob` temporarily.
    - Add an ECS singleton/read model path for pending-job state.
    - The static property becomes a compatibility mirror, not the source of truth.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingPendingStateSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs`.
    - Added `UnitPathfindingPendingStateComponent` with pending flag, request count, request budget, and scheduled frame.
    - `UnitPathfindingSystem` now publishes pending state through the ECS boundary while mirroring `HasPendingPathJob` for temporary callers.
    - Current `HasPendingPathJob` readers migrate in steps 28-31.
 
 ## Phase 3: Extract Query And Request Collection Ownership
 
-7. Complete: Extract query creation into `UnitPathfindingQuerySystem`
+7. Complete: Extract query creation into `UnitPathfindingEntitySets`
    - Own request, live-unit, manual move, path-follow, long-distance, retry-cooldown, and manual-follow queries.
    - `UnitPathfindingSystem.OnCreate` delegates query creation and `RequireForUpdate` setup.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingQuerySystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingEntitySets.cs`.
    - Moved all pathfinding `RequireForUpdate` calls and pathfinding `EntityQueryDesc` construction into that boundary.
    - `UnitPathfindingSystem` now stores one `_queries` boundary and reads query handles from it.
-   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2597 lines; `UnitPathfindingQuerySystem.cs` is 121 lines.
+   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2597 lines; `UnitPathfindingEntitySets.cs` is 121 lines.
 
-8. Complete: Extract request buffers into `UnitPathRequestBufferSystem`
+8. Complete: Extract request buffers into `UnitPathRequestBuffer`
    - Own NativeLists for request entities, unit grids, goals, footprints, movement behaviors, factions, manual flags, ignored occupancy, assigned goals, status, segmented flags, continuation flags, cheap segment flags, alternate-search flags, and alternate-attempt counts.
    - Preserve allocator types and capacity reuse.
-   - Added `Assets/Game/Scripts/Systems/UnitPathRequestBufferSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathRequestBuffer.cs`.
    - Moved request NativeList fields, persistent allocation, disposal, and collection clearing into that boundary.
    - `UnitPathfindingSystem` now owns one `_requestBuffers` boundary and reads/writes the same NativeLists through it.
-   - Allocation policy is unchanged: `Allocator.Persistent`, initial capacity `UnitPathfindingBudgetSystem.MaxRequestsPerFrame`.
-   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2539 lines; `UnitPathRequestBufferSystem.cs` is 82 lines.
+   - Allocation policy is unchanged: `Allocator.Persistent`, initial capacity `UnitPathfindingBudget.MaxRequestsPerFrame`.
+   - Transition size after extraction: `UnitPathfindingSystem.cs` is 2539 lines; `UnitPathRequestBuffer.cs` is 82 lines.
 
-9. Complete: Extract ignored occupancy collection into `UnitPathIgnoredOccupancySystem`
+9. Complete: Extract ignored occupancy collection into `UnitPathIgnoredOccupancy`
    - Move transport-boarding ignored-occupancy lookup.
    - Keep exact component checks and fallback values.
    - No extra entity queries per request beyond current behavior.
-   - Added `Assets/Game/Scripts/Systems/UnitPathIgnoredOccupancySystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathIgnoredOccupancy.cs`.
    - Moved `UnitTransportBoardingTarget` ignored-occupancy lookup and fallback writes into that boundary.
    - `UnitPathfindingSystem` now delegates request ignored-occupancy writes while preserving the same `EntityManager` component checks.
 
-10. Complete: Extract request collection into `UnitPathRequestCollectionSystem`
+10. Complete: Extract request collection into `UnitPathRequestCollection`
    - Move manual-first request collection and non-manual request collection.
    - Preserve current request ordering and early break at request budget.
-   - Output into `UnitPathRequestBufferSystem` without managed allocations.
-   - Added `Assets/Game/Scripts/Systems/UnitPathRequestCollectionSystem.cs`.
+   - Output into `UnitPathRequestBuffer` without managed allocations.
+   - Added `Assets/Game/Scripts/Systems/UnitPathRequestCollection.cs`.
    - Moved manual-first and non-manual `SystemAPI.Query` request collection loops into that boundary.
    - Marked it `[DisableAutoCreation]` because it is an ECS source-generation boundary invoked by the coordinator, not a standalone scheduled system.
    - Preserved ordering: manual requests first, then non-manual requests excluding manual-tagged entities.
    - Preserved early return/break at current request budget and the same long-distance continuation flag write.
-   - Step 35 validation fix: removed helper-owned `SystemAPI.Query` source-generation use because the helper is not a created ECS system; request collection now consumes the initialized `UnitPathfindingQuerySystem` queries through chunk iteration while preserving the same manual-first ordering and budget break behavior.
+   - Step 35 validation fix: removed helper-owned `SystemAPI.Query` source-generation use because the helper is not a created ECS system; request collection now consumes the initialized `UnitPathfindingEntitySets` queries through chunk iteration while preserving the same manual-first ordering and budget break behavior.
 
 ## Phase 4: Extract Snapshot And Workspace Ownership
 
-11. Complete: Extract live-unit snapshot ownership into `UnitPathLiveUnitSnapshotSystem`
+11. Complete: Extract live-unit snapshot ownership into `UnitPathLiveUnitSnapshot`
    - Own persistent arrays for live unit entities, grids, footprints, and manual-group flags.
    - Preserve disposal timing and allocation lifetime.
    - Keep snapshot creation before request goal assignment.
-   - Added `Assets/Game/Scripts/Systems/UnitPathLiveUnitSnapshotSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathLiveUnitSnapshot.cs`.
    - Moved persistent live-unit entity/grid/footprint/manual-group snapshot allocation and disposal into that boundary.
    - `UnitPathfindingSystem` still captures snapshots before request goal assignment and disposes them after pending job completion/disposal.
    - Allocation policy is unchanged: `Allocator.Persistent` arrays retained until pending job completion.
 
-12. Complete: Extract A* scratch workspace into `UnitPathScratchWorkspaceSystem`
+12. Complete: Extract A* scratch workspace into `UnitPathScratchWorkspace`
    - Move scratch arrays, scratch grid size, scratch epoch reservation, `EnsureScratch`, and `DisposeScratch`.
    - Preserve epoch behavior and thread-slot sizing.
-   - Added `Assets/Game/Scripts/Systems/UnitPathScratchWorkspaceSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathScratchWorkspace.cs`.
    - Moved A* scratch arrays, grid size, search epoch, `Ensure`, `ReserveEpochs`, and disposal into that boundary.
    - Preserved current scratch sizing: one thread slot, `total = gridSize`, and `EpochsPerRequest = 128`.
    - `UnitPathfindingSystem` now passes scratch arrays from `_scratchWorkspace` into the batch job.
 
-13. Complete: Extract reserved-goal workspace into `UnitPathReservedGoalSystem`
+13. Complete: Extract reserved-goal workspace into `UnitPathReservedGoal`
    - Move reserved-goal epoch arrays, generation counter, `PrepareReservedGoals`, `ReserveGoalFootprint`, and disposal.
    - Keep the nearest-goal reservation behavior unchanged.
-   - Added `Assets/Game/Scripts/Systems/UnitPathReservedGoalSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathReservedGoal.cs`.
    - Moved reserved-goal epoch array, generation counter, preparation, disposal, and footprint reservation helper into that boundary.
    - `UnitPathfindingSystem` now consumes `_reservedGoals.Epochs` and `_reservedGoals.Generation` while nearest-goal assignment behavior stays unchanged.
 
-14. Complete: Extract hierarchical coarse workspace into `UnitPathCoarseWorkspaceSystem`
+14. Complete: Extract hierarchical coarse workspace into `UnitPathCoarseWorkspace`
    - Move coarse arrays, coarse dimensions, coarse epoch reservation, `EnsureCoarseScratch`, and disposal.
    - Do not change sector size or expansion limits.
-   - Added `Assets/Game/Scripts/Systems/UnitPathCoarseWorkspaceSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathCoarseWorkspace.cs`.
    - Moved hierarchical coarse arrays, dimensions, search epoch, allocation, epoch reset, and disposal into that boundary.
    - `UnitPathfindingSystem` still owns hierarchical path policy for now but reads coarse workspace arrays/dimensions from `_coarseWorkspace`.
    - Sector size and expansion limits are unchanged.
 
 ## Phase 5: Extract Goal Assignment And Hierarchical Planning
 
-15. Complete: Extract movement segmentation policy into `UnitPathSegmentationSystem`
+15. Complete: Extract movement segmentation policy into `UnitPathSegmentation`
    - Move `GetMaxSegmentCells` and segment-goal selection wrapper.
    - Preserve current manual infantry, manual vehicle, and default segment distances.
-   - Added `Assets/Game/Scripts/Systems/UnitPathSegmentationSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathSegmentation.cs`.
    - Moved segment distance constants, max-segment selection, long-distance threshold check, and fallback segment-goal selection into that boundary.
    - Preserved distances: default 32, manual infantry 1024, manual vehicle 128.
 
-16. Complete: Extract hierarchical waypoint planning into `UnitHierarchicalPathSystem`
+16. Complete: Extract hierarchical waypoint planning into `UnitHierarchicalPathPlanner`
    - Move sector conversion, coarse indexing, representative cell lookup, coarse passability, waypoint search, and waypoint choice.
-   - Consume `UnitPathCoarseWorkspaceSystem`.
+   - Consume `UnitPathCoarseWorkspace`.
    - Preserve exact fallback behavior.
-   - Added `Assets/Game/Scripts/Systems/UnitHierarchicalPathSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitHierarchicalPathPlanner.cs`.
    - Moved hierarchical sector size, expansion cap, coarse search, waypoint choice, representative cell lookup, and coarse passability checks into that boundary.
    - `UnitPathfindingSystem` now only ensures the coarse workspace and delegates manual long-distance hierarchical waypoint selection before falling back to the existing direct segment goal.
    - Preserved constants: sector size 32 and max expanded sectors 2048.
 
-17. Complete: Extract nearest free goal assignment into `UnitPathGoalAssignmentSystem`
+17. Complete: Extract nearest free goal assignment into `UnitPathGoalAssignment`
    - Move `FindNearestFreeGoal`, `CanUseGoalCell`, `IsFree`, ring offset helpers, alternate-goal limits, and reserved-goal interaction.
    - Preserve manual infantry alternate-search skip behavior and vehicle candidate limits.
-   - Added `Assets/Game/Scripts/Systems/UnitPathGoalAssignmentSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathGoalAssignment.cs`.
    - Moved nearest-free-goal search, goal-cell reservation checks, free-cell helper, goal search radii, alternate-goal candidate caps, and ring offset helper into that boundary.
    - `UnitPathfindingSystem` now delegates assigned-goal selection to `_goalAssignment.FindNearestFreeGoal`.
-   - `PathfindBatchJob` now reads alternate-search radii/caps from `UnitPathGoalAssignmentSystem` while keeping its job-local fallback ring helper unchanged for Burst hot-path stability.
-   - Temporary bridge removed in step 18: `UnitPathGoalAssignmentSystem.CanUseGoalCell` now calls `UnitPathPlacementValidationSystem.CanPlaceForPathing`.
+   - `PathfindBatchJob` now reads alternate-search radii/caps from `UnitPathGoalAssignment` while keeping its job-local fallback ring helper unchanged for Burst hot-path stability.
+   - Temporary bridge removed in step 18: `UnitPathGoalAssignment.CanUseGoalCell` now calls `UnitPathPlacementValidation.CanPlaceForPathing`.
 
-18. Complete: Extract placement validity helpers into `UnitPathPlacementValidationSystem`
+18. Complete: Extract placement validity helpers into `UnitPathPlacementValidation`
    - Move `CanPlaceForPathing`, infantry/vehicle placement checks, soft blocker checks, manual-group occupancy checks, and faction pass checks.
    - Keep methods static/pure where they are data-only and hot-path friendly.
-   - Added `Assets/Game/Scripts/Systems/UnitPathPlacementValidationSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathPlacementValidation.cs`.
    - Moved path placement validation, infantry/vehicle footprint checks, dynamic blocker friendly-pass checks, manual-group occupancy ignore checks, vehicle soft-blocker checks, and vehicle occupancy padding into that boundary.
-   - Removed `UnitPathfindingSystem.CanPlaceForPathing`; callers now use `UnitPathPlacementValidationSystem.CanPlaceForPathing`.
+   - Removed `UnitPathfindingSystem.CanPlaceForPathing`; callers now use `UnitPathPlacementValidation.CanPlaceForPathing`.
    - `PathfindBatchJob` still owns traversal/path writing, but delegates placement validity to the static data-oriented validation boundary.
 
 ## Phase 6: Extract Result Application
 
-19. Complete: Extract path result application into `UnitPathResultApplySystem`
+19. Complete: Extract path result application into `UnitPathResultApply`
    - Move `ApplyResults` and path-pool write behavior.
    - Preserve all component add/remove/set decisions.
    - Reacquire ECS data after structural changes; do not keep invalid DynamicBuffer handles.
-   - Added `Assets/Game/Scripts/Systems/UnitPathResultApplySystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathResultApply.cs`.
    - Moved path stream reading, path-pool writes, `UnitTarget` / `UnitPathFollow` / `UnitPathRange` writes, long-distance continuation writes, retry cooldown writes, abandon cleanup, and request removal into that boundary.
    - `UnitPathfindingSystem` now delegates pending path result application to `_resultApply.Apply` and only persists the returned path pool.
 
-20. Complete: Extract retry/abandon policy into `UnitPathRetrySystem`
+20. Complete: Extract retry/abandon policy into `UnitPathRetry`
    - Move failed manual retry delay, retry cooldown application, segmented retry accounting, and abandoned request cleanup.
    - Preserve exact retry frame delays and counters.
-   - Added `Assets/Game/Scripts/Systems/UnitPathRetrySystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathRetry.cs`.
    - Moved failed manual retry delay, retry eligibility checks, segmented retry target restoration, retry cooldown application, manual retry counters, and abandoned request cleanup into that boundary.
-   - `UnitPathResultApplySystem` now delegates failure retry/abandon decisions to `UnitPathRetrySystem`.
+   - `UnitPathResultApply` now delegates failure retry/abandon decisions to `UnitPathRetry`.
 
-21. Complete: Extract validation counters into `UnitPathValidationMetricsSystem`
+21. Complete: Extract validation counters into `UnitPathValidationMetrics`
    - Own manual validation counters, peaks, totals, and stuck-log scheduling.
    - Diagnostics system formats messages; metrics system owns state.
-   - Added `Assets/Game/Scripts/Systems/UnitPathValidationMetricsSystem.cs`.
+   - Added `Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs`.
    - Moved validation active state, peak counters, total counters, stuck-log intervals, stuck sample count, and stuck-log next-frame scheduling into that boundary.
    - `UnitPathfindingSystem` now builds frame input/result snapshots and delegates validation metric begin/update/end decisions to `_validationMetrics`.
-   - `UnitPathfindingDiagnosticSystem` remains the formatter for validation start/end/stuck messages.
+   - `UnitPathfindingDiagnostics` remains the formatter for validation start/end/stuck messages.
 
 ## Phase 7: Move The Job Without Changing The Job
 
@@ -292,20 +292,20 @@ Acceptance target: no measurable regression in path request throughput, no new G
 
 ## Phase 8: Split Scheduling And Apply Phases
 
-25. Complete: Extract scheduling phase into `UnitPathfindingScheduleSystem`
+25. Complete: Extract scheduling phase into `UnitPathfindingScheduler`
    - Own grid access, workspace preparation, request collection invocation, goal assignment invocation, job construction, and job scheduling.
    - Return a pending-job state object owned by the main coordinator.
    - Preserve current early returns and disposal paths.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingScheduleSystem.cs`.
-   - `UnitPathfindingScheduleSystem` now owns grid singleton access through `UnitPathfindingQuerySystem.GridQuery`, scratch preparation, live-unit snapshot capture, request collection, reserved-goal preparation, goal assignment, hierarchical waypoint scheduling diagnostics, `NativeStream` allocation, `PathfindBatchJob` construction, and `job.Schedule(requestCount, state.Dependency)`.
-   - `UnitPathfindingSystem` now receives a `UnitPathfindingScheduleSystem.Result`, stores the pending job state, resets pending-job budget reduction, and publishes pending state.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs`.
+   - `UnitPathfindingScheduler` now owns grid singleton access through `UnitPathfindingEntitySets.GridQuery`, scratch preparation, live-unit snapshot capture, request collection, reserved-goal preparation, goal assignment, hierarchical waypoint scheduling diagnostics, `NativeStream` allocation, `PathfindBatchJob` construction, and `job.Schedule(requestCount, state.Dependency)`.
+   - `UnitPathfindingSystem` now receives a `UnitPathfindingScheduler.Result`, stores the pending job state, resets pending-job budget reduction, and publishes pending state.
    - Current behavior is preserved: early returns for no request query/no collected requests, live-unit snapshot disposal on zero collected requests, and scheduling dependency assignment remain unchanged.
 
-26. Complete: Extract apply phase into `UnitPathfindingApplySystem`
+26. Complete: Extract apply phase into `UnitPathfindingApply`
    - Own pending job completion, budget reporting, result application, validation metric updates, and pending resource disposal.
    - Preserve current one-frame/nonblocking behavior when the job is still running.
-   - Added `Assets/Game/Scripts/Systems/UnitPathfindingApplySystem.cs`.
-   - `UnitPathfindingApplySystem` now owns pending job completion, budget reporting, path-pool result application, manual validation metric updates, validation stuck-sample diagnostics, async timing diagnostics, and disposal/reset of the pending stream plus live-unit snapshot.
+   - Added `Assets/Game/Scripts/Systems/UnitPathfindingApply.cs`.
+   - `UnitPathfindingApply` now owns pending job completion, budget reporting, path-pool result application, manual validation metric updates, validation stuck-sample diagnostics, async timing diagnostics, and disposal/reset of the pending stream plus live-unit snapshot.
    - `UnitPathfindingSystem` now delegates completed pending-job application and pending-job disposal to `_apply`, then publishes the pending-state read model.
    - Current nonblocking behavior is preserved: incomplete jobs still return early with `state.Dependency = _pendingPathHandle`; apply only runs after `_pendingPathHandle.IsCompleted`.
 
@@ -318,22 +318,22 @@ Acceptance target: no measurable regression in path request throughput, no new G
      - schedule new job if requests exist.
    - No path rules or diagnostics formatting should remain here.
    - `UnitPathfindingSystem.OnUpdate` now only handles play-state exit, pending-job wait/apply delegation, schedule delegation, pending state storage, and pending-state publication.
-   - Scheduling rules live in `UnitPathfindingScheduleSystem`; completed-job application, validation metrics, diagnostics, and pending resource disposal live in `UnitPathfindingApplySystem`.
+   - Scheduling rules live in `UnitPathfindingScheduler`; completed-job application, validation metrics, diagnostics, and pending resource disposal live in `UnitPathfindingApply`.
    - Guarded by architecture tests so path rules, job construction, result application, validation stuck sample formatting, and completed resource disposal do not return to the coordinator.
 
 ## Phase 9: Remove Static Pending-State Debt
 
 28. Complete: Migrate building production pending-path reads
    - Move `BuildingProductionRuntimeTickSystem` and building composition callbacks from `UnitPathfindingSystem.HasPendingPathJob` to the ECS pending-state boundary.
-   - Added `UnitPathfindingPendingStateReadSystem` as a managed ECS read-model boundary over `UnitPathfindingPendingStateComponent`.
+   - Added `UnitPathfindingPendingStateReader` as a managed ECS read-model boundary over `UnitPathfindingPendingStateComponent`.
    - `BuildingProductionRuntimeTickSystem.Context` now receives a pending-path delegate from the ECS read-model boundary instead of reading `UnitPathfindingSystem.HasPendingPathJob`.
-   - `BuildingGameplayCompositionSystem` now wires building production and building selection-click callbacks through `UnitPathfindingPendingStateReadSystem.HasPendingPathJob`.
+   - `BuildingGameplayCompositionSystem` now wires building production and building selection-click callbacks through `UnitPathfindingPendingStateReader.HasPendingPathJob`.
    - Remaining temporary static reader after this step was `CitizenPopulationLifecycleSystem.cs`.
 
 29. Complete: Migrate citizen pending-path reads
    - Move citizen lifecycle/runtime update paths from `UnitPathfindingSystem.HasPendingPathJob` to the ECS pending-state boundary.
-   - `CitizenPopulationCompositionSystem.Result` now owns a `UnitPathfindingPendingStateReadSystem`.
-   - `CitizenPopulationRuntimeUpdateSystem` passes `UnitPathfindingPendingStateReadSystem.HasPendingPathJob` into the lifecycle update.
+   - `CitizenPopulationCompositionSystem.Result` now owns a `UnitPathfindingPendingStateReader`.
+   - `CitizenPopulationRuntimeUpdateSystem` passes `UnitPathfindingPendingStateReader.HasPendingPathJob` into the lifecycle update.
    - `CitizenPopulationLifecycleSystem` now receives a pending-path delegate and no longer reads `UnitPathfindingSystem.HasPendingPathJob`.
 
 30. Complete: Migrate selection/building click pending-path reads
@@ -355,7 +355,7 @@ Acceptance target: no measurable regression in path request throughput, no new G
    - Keep diagnostics disabled by default unless the current flags/config enable them.
    - Added `UnitPathfindingDiagnosticLogQueueComponent` and `UnitPathfindingDiagnosticLogComponent` as the ECS diagnostic event queue.
    - Added `UnitPathfindingDiagnosticLogFlushSystem` as the only direct Unity log emitter for pathfinding diagnostics.
-   - `UnitPathfindingDiagnosticSystem` now formats and enqueues diagnostic events; schedule/apply systems pass `EntityManager` into the diagnostics boundary and do not call `Debug.Log*` directly.
+   - `UnitPathfindingDiagnostics` now formats and enqueues diagnostic events; schedule/apply systems pass `EntityManager` into the diagnostics boundary and do not call `Debug.Log*` directly.
 
 33. Complete: Add pathfinding performance contract coverage
    - Add contract wording in `performance_regression_contract.md` for the pathfinding scenario and budgets.

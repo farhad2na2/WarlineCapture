@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal struct UnitPathfindingDiagnosticSystem
+internal struct UnitPathfindingDiagnostics
 {
     private Entity _logQueueEntity;
 

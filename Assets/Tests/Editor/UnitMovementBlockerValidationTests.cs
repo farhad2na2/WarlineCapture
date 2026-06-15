@@ -715,7 +715,7 @@ public sealed class UnitMovementBlockerValidationTests
                 HasSurfaceData = 1,
                 HasLayeredCells = 1
             };
-            var validation = new MapSurfacePathingValidationSystem();
+            var validation = new MapSurfaceTraversalValidation();
             int2 centerCell = GridUtils.WorldToCell(grid, new float3(loggedPlacement.WorldCenter.x, loggedPlacement.WorldCenter.y, loggedPlacement.WorldCenter.z));
             int2 footprintSize = new(3, 3);
             int2[] offsets =
@@ -876,7 +876,7 @@ public sealed class UnitMovementBlockerValidationTests
                 ref blockerData,
                 center,
                 footprint,
-                UnitPathPlacementValidationSystem.VehicleOccupancyPaddingCells);
+                UnitPathPlacementValidation.VehicleOccupancyPaddingCells);
 
             Assert.AreEqual(25, cleared, "Map-authored vehicles need a one-cell blocker-free departure pad around their footprint.");
             for (int y = min.y; y < max.y; y++)
@@ -933,7 +933,7 @@ public sealed class UnitMovementBlockerValidationTests
             occupied.Set(GridUtils.CellToIndex(new int2(3, 0), grid.Width), true);
 
             Assert.IsTrue(
-                UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                UnitPathPlacementValidation.CanPlaceForPathing(
                     grid,
                     walkable,
                     blocked,
@@ -996,7 +996,7 @@ public sealed class UnitMovementBlockerValidationTests
             blocked.Set(GridUtils.CellToIndex(new int2(4, 2), grid.Width), true);
 
             Assert.IsTrue(
-                UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                UnitPathPlacementValidation.CanPlaceForPathing(
                     grid,
                     walkable,
                     blocked,
@@ -1059,7 +1059,7 @@ public sealed class UnitMovementBlockerValidationTests
             blocked.Set(GridUtils.CellToIndex(new int2(5, 2), grid.Width), true);
 
             Assert.IsFalse(
-                UnitPathPlacementValidationSystem.CanPlaceForPathing(
+                UnitPathPlacementValidation.CanPlaceForPathing(
                     grid,
                     walkable,
                     blocked,
@@ -1100,7 +1100,7 @@ public sealed class UnitMovementBlockerValidationTests
         em.SetComponentData(unit, new UnitGrid { Cell = new int2(7, 3) });
         em.SetComponentData(unit, new UnitFootprint { Size = new int2(5, 10) });
 
-        UnitPathIgnoredOccupancySystem.ResolveIgnoredOccupancy(
+        UnitPathIgnoredOccupancy.ResolveIgnoredOccupancy(
             em,
             unit,
             out Entity ignoredEntity,

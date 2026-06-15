@@ -4,9 +4,9 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal struct UnitPathfindingApplySystem
+internal struct UnitPathfindingApply
 {
-    private MapSurfacePathfindingReadSystem _surfaceReadSystem;
+    private MapSurfacePathfindingSnapshot _surfaceReadSystem;
     private ComponentLookup<PathPoolComponent> _pathPoolLookup;
     private EntityTypeHandle _pendingManualMoveEntityType;
 
@@ -18,13 +18,13 @@ internal struct UnitPathfindingApplySystem
 
     public void Apply(
         ref SystemState state,
-        ref UnitPathfindingQuerySystem queries,
-        ref UnitPathRequestBufferSystem requestBuffers,
-        ref UnitPathResultApplySystem resultApply,
-        ref UnitPathValidationMetricsSystem validationMetrics,
-        ref UnitPathfindingBudgetSystem budget,
-        ref UnitPathfindingDiagnosticSystem diagnostics,
-        ref UnitPathLiveUnitSnapshotSystem liveUnitSnapshot,
+        ref UnitPathfindingEntitySets queries,
+        ref UnitPathRequestBuffer requestBuffers,
+        ref UnitPathResultApply resultApply,
+        ref UnitPathValidationMetrics validationMetrics,
+        ref UnitPathfindingBudget budget,
+        ref UnitPathfindingDiagnostics diagnostics,
+        ref UnitPathLiveUnitSnapshot liveUnitSnapshot,
         ref JobHandle pendingPathHandle,
         ref NativeStream pendingPathStream,
         ref bool hasPendingPathJob,
@@ -65,7 +65,7 @@ internal struct UnitPathfindingApplySystem
         Entity gridEntity = queries.GridQuery.GetSingletonEntity();
         _pathPoolLookup.Update(ref state);
         PathPoolComponent pool = _pathPoolLookup[gridEntity];
-        MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(state.EntityManager, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+        MapSurfacePathfindingSnapshot.Context surfaceContext = _surfaceReadSystem.TryCreateContext(state.EntityManager, queries.MapSurfaceQuery, out MapSurfacePathfindingSnapshot.Context resolvedSurfaceContext)
             ? resolvedSurfaceContext
             : _surfaceReadSystem.CreateFlatFallbackContext();
         NativeArray<Entity> requestEntities = requestBuffers.Entities.AsArray();
@@ -141,14 +141,14 @@ internal struct UnitPathfindingApplySystem
 
         double afterApply = Time.realtimeSinceStartupAsDouble;
         double applyElapsed = afterApply - applyStart;
-        bool manualValidationActive = UnitPathValidationMetricsSystem.IsManualValidationActive(
+        bool manualValidationActive = UnitPathValidationMetrics.IsManualValidationActive(
             enablePathDiagnostics,
             manualPendingCount,
             manualQueuedCount,
             manualFollowingCount,
             longDistanceCount,
             retryCooldownCount);
-        var validationInputs = new UnitPathValidationMetricsSystem.FrameInputs
+        var validationInputs = new UnitPathValidationMetrics.FrameInputs
         {
             ManualQueuedCount = manualQueuedCount,
             ManualFollowingCount = manualFollowingCount,
@@ -166,7 +166,7 @@ internal struct UnitPathfindingApplySystem
             AlternateReducedCount = alternateReducedCount,
             AlternateAttemptTotal = alternateAttemptTotal,
         };
-        var validationResults = new UnitPathValidationMetricsSystem.FrameResults
+        var validationResults = new UnitPathValidationMetrics.FrameResults
         {
             CompletedCount = completedCount,
             CompletedSegmentCount = completedSegmentCount,
@@ -206,7 +206,7 @@ internal struct UnitPathfindingApplySystem
                     manualRetriedCount,
                     abandonedCount);
         }
-        else if (validationMetrics.TryEnd(manualValidationActive, Time.frameCount, out UnitPathValidationMetricsSystem.EndSnapshot validationEnd))
+        else if (validationMetrics.TryEnd(manualValidationActive, Time.frameCount, out UnitPathValidationMetrics.EndSnapshot validationEnd))
         {
             diagnostics.LogValidationEnd(
                 state.EntityManager,
@@ -272,8 +272,8 @@ internal struct UnitPathfindingApplySystem
 
     public void DisposePending(
         ref SystemState state,
-        ref UnitPathLiveUnitSnapshotSystem liveUnitSnapshot,
-        ref UnitPathfindingBudgetSystem budget,
+        ref UnitPathLiveUnitSnapshot liveUnitSnapshot,
+        ref UnitPathfindingBudget budget,
         ref JobHandle pendingPathHandle,
         ref NativeStream pendingPathStream,
         ref bool hasPendingPathJob,
@@ -306,9 +306,9 @@ internal struct UnitPathfindingApplySystem
 
     private void LogValidationStuck(
         ref SystemState state,
-        ref UnitPathfindingQuerySystem queries,
-        ref UnitPathValidationMetricsSystem validationMetrics,
-        ref UnitPathfindingDiagnosticSystem diagnostics,
+        ref UnitPathfindingEntitySets queries,
+        ref UnitPathValidationMetrics validationMetrics,
+        ref UnitPathfindingDiagnostics diagnostics,
         bool hasPendingPathJob,
         int pendingRequestCount,
         int pendingRequestBudget,
@@ -326,7 +326,7 @@ internal struct UnitPathfindingApplySystem
         int manualRetriedCount,
         int abandonedCount)
     {
-        string samples = BuildManualMoveSamples(ref state, ref queries, ref diagnostics, UnitPathValidationMetricsSystem.StuckSampleCount);
+        string samples = BuildManualMoveSamples(ref state, ref queries, ref diagnostics, UnitPathValidationMetrics.StuckSampleCount);
         diagnostics.LogValidationStuck(
             state.EntityManager,
             Time.frameCount,
@@ -355,8 +355,8 @@ internal struct UnitPathfindingApplySystem
 
     private string BuildManualMoveSamples(
         ref SystemState state,
-        ref UnitPathfindingQuerySystem queries,
-        ref UnitPathfindingDiagnosticSystem diagnostics,
+        ref UnitPathfindingEntitySets queries,
+        ref UnitPathfindingDiagnostics diagnostics,
         int maxSamples)
     {
         EntityManager em = state.EntityManager;
@@ -379,7 +379,7 @@ internal struct UnitPathfindingApplySystem
     }
 
     private static void DisposeCompleted(
-        ref UnitPathLiveUnitSnapshotSystem liveUnitSnapshot,
+        ref UnitPathLiveUnitSnapshot liveUnitSnapshot,
         ref NativeStream pendingPathStream,
         ref bool hasPendingPathJob,
         ref int pendingRequestCount,
@@ -389,7 +389,7 @@ internal struct UnitPathfindingApplySystem
         ref int pendingGridHeight,
         ref int pendingScheduleFrame,
         ref double pendingScheduleTime,
-        ref UnitPathfindingBudgetSystem budget)
+        ref UnitPathfindingBudget budget)
     {
         if (pendingPathStream.IsCreated)
             pendingPathStream.Dispose();

@@ -34,7 +34,7 @@ internal sealed class BuildingSelectionCompositionSystem
             clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(
                 createRuntimeContextSource(source),
                 clickedBuildingId),
-            source.BuildingGameplayDependencySystem.TryIssueMoveOrderToBuilding,
+            source.BuildingGameplayDependencySystem.TryRequestMoveOrderToBuilding,
             BuildingBarrierSystem.ShouldUseExpandedSelectionArea));
     }
 }

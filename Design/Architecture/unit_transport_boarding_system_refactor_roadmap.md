@@ -137,7 +137,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Update `TransportBoardingCommandSystem` and read-model callers to use the capacity system.
    - Expected output: no non-boarding-tick caller asks `UnitTransportBoardingSystem` for capacity metadata.
    - `UnitTransportBoardingSystemExtractionTests` now uses `UnitTransportCapacitySystem` for personnel-name recognition and capacity/buffer ensure behavior.
-   - Focused-unit passenger read-model paths now pass `UnitTransportCapacitySystem` into `SelectionUiQuerySystem`.
+   - Focused-unit passenger read-model paths now pass `UnitTransportCapacitySystem` into `SelectionUiReadModelLookup`.
    - `SelectionTransportCommandRequestSystem` and `TransportBoardingCommandSystem` now use `UnitTransportCapacitySystem` for capacity ensure/resolve calls.
    - Temporary capacity wrappers remain only on `UnitTransportBoardingSystem` for compatibility and local query behavior until the broader query extraction removes them.
 
@@ -152,7 +152,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Passenger-count UI reads already use `UnitTransportCapacitySystem`; remaining selection query migration is tracked by step 7.
 
 7. Complete: Migrate selection read-model callers
-   - Update `FocusedUnitUiReadModelSystem`, `SelectionUiQuerySystem`, and selection context systems to receive/use `UnitTransportBoardingQuerySystem`.
+   - Update `FocusedUnitUiReadModelSystem`, `SelectionUiReadModelLookup`, and selection context systems to receive/use `UnitTransportBoardingQuerySystem`.
    - Keep UI/view classes as passive reference wiring only.
    - Expected output: selection read surfaces no longer depend on the full boarding tick system.
    - `FocusedUnitUiReadModelSystem` no longer receives `UnitTransportBoardingSystem` for passenger UI reads; passenger count/list reads use `UnitTransportCapacitySystem`.
@@ -297,7 +297,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Change transport command execution to accept and use narrow transport systems.
    - Preserve boarding target creation, selected-passenger ordering, and diagnostic behavior.
    - Expected output: command execution no longer receives `UnitTransportBoardingSystem` as a helper bundle.
-   - `TransportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit` now receives query, rule, approach-cell, and air-pickup dependencies directly.
+   - `TransportBoardingCommandSystem.TryRequestBoardTransportOrderToClickedUnit` now receives query, rule, approach-cell, and air-pickup dependencies directly.
    - Transport landed checks and direct boarding cell distance now use `UnitTransportBoardingRuleSystem`.
    - Boarding approach search/reservation uses the passed `UnitTransportApproachCellSystem`.
    - Air pickup landing search and pickup movement command use the passed `UnitTransportAirPickupSystem`.

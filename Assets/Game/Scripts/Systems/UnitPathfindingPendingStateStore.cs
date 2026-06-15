@@ -9,7 +9,7 @@ public struct UnitPathfindingPendingStateComponent : IComponentData
     public int ScheduledFrame;
 }
 
-internal struct UnitPathfindingPendingStateSystem
+internal struct UnitPathfindingPendingStateStore
 {
     public EntityQuery CreateQuery(ref SystemState state)
     {
@@ -44,7 +44,7 @@ internal struct UnitPathfindingPendingStateSystem
     }
 }
 
-internal sealed class UnitPathfindingPendingStateReadSystem
+internal sealed class UnitPathfindingPendingStateReader
 {
     private EntityQuery _query;
     private World _world;

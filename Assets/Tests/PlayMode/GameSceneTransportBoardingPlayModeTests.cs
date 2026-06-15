@@ -42,7 +42,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         em.AddComponent<SelectedUnitTag>(passenger);
 
         var commandSystem = new TransportBoardingCommandSystem();
-        TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToClickedUnit(
+        TransportBoardingCommandSystem.Result result = commandSystem.TryRequestBoardTransportOrderToClickedUnit(
             em,
             Vector2.zero,
             new UnitTransportAirPickupSystem(),

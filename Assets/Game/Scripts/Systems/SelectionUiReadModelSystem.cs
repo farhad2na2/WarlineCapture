@@ -34,7 +34,7 @@ public sealed class SelectionUiReadModelSystem
     }
 
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
-    private readonly SelectionUiQuerySystem _selectionUiQuerySystem = new();
+    private readonly SelectionUiReadModelLookup _selectionUiReadModelLookup = new();
     private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
 
     private World _queryWorld;
@@ -52,7 +52,7 @@ public sealed class SelectionUiReadModelSystem
                 return false;
 
             EnsureEntityQueries(em);
-            return _selectionUiQuerySystem.HasAnySelectedUnits(_selectedTagQuery);
+            return _selectionUiReadModelLookup.HasAnySelectedUnits(_selectedTagQuery);
         }
     }
 
@@ -161,7 +161,7 @@ public sealed class SelectionUiReadModelSystem
         return _visibleUnitSelectionSystem.HasVisiblePlayerUnits(
             em,
             worldCamera,
-            _selectionUiQuerySystem,
+            _selectionUiReadModelLookup,
             screenRect,
             filter);
     }
@@ -208,16 +208,16 @@ public sealed class SelectionUiReadModelSystem
 
     private static FocusedUnitUiStatus ToFocusedUnitUiStatus(int status)
     {
-        return (SelectionUiQuerySystem.FocusedUnitUiStatus)status switch
+        return (SelectionUiReadModelLookup.FocusedUnitUiStatus)status switch
         {
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => FocusedUnitUiStatus.AirspaceClear,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => FocusedUnitUiStatus.TrackingAirTarget,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => FocusedUnitUiStatus.InterceptingMissile,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => FocusedUnitUiStatus.AirDefenseReloading,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => FocusedUnitUiStatus.AirspaceClear,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => FocusedUnitUiStatus.TrackingAirTarget,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => FocusedUnitUiStatus.InterceptingMissile,
+            SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => FocusedUnitUiStatus.AirDefenseReloading,
             _ => FocusedUnitUiStatus.Idle
         };
     }

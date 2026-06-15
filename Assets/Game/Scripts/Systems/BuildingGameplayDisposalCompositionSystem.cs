@@ -19,7 +19,7 @@ internal sealed class BuildingGameplayDisposalCompositionSystem
             source.BuildingDefinitionSystem,
             source.BuildingPlacementPreviewSystem,
             source.BuildingRuntimeObjectSystem,
-            source.UnitPathfindingPendingStateReadSystem,
+            source.UnitPathfindingPendingStateReader,
             () => ExitBuildModeWithoutEntityManager(createPlacementCommandContext()));
     }
 

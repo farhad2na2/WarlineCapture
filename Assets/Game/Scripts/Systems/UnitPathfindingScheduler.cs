@@ -4,9 +4,9 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal struct UnitPathfindingScheduleSystem
+internal struct UnitPathfindingScheduler
 {
-    private MapSurfacePathfindingReadSystem _surfaceReadSystem;
+    private MapSurfacePathfindingSnapshot _surfaceReadSystem;
 
     public struct Result
     {
@@ -24,19 +24,19 @@ internal struct UnitPathfindingScheduleSystem
 
     public Result Schedule(
         ref SystemState state,
-        ref UnitPathfindingQuerySystem queries,
-        ref UnitPathScratchWorkspaceSystem scratchWorkspace,
-        ref UnitPathGridSnapshotSystem gridSnapshot,
-        ref UnitPathLiveUnitSnapshotSystem liveUnitSnapshot,
-        ref UnitPathRequestBufferSystem requestBuffers,
-        ref UnitPathIgnoredOccupancySystem ignoredOccupancy,
-        ref UnitPathRequestCollectionSystem requestCollection,
-        ref UnitPathReservedGoalSystem reservedGoals,
-        ref UnitPathSegmentationSystem segmentation,
-        ref UnitPathCoarseWorkspaceSystem coarseWorkspace,
-        ref UnitHierarchicalPathSystem hierarchicalPath,
-        ref UnitPathGoalAssignmentSystem goalAssignment,
-        ref UnitPathfindingDiagnosticSystem diagnostics,
+        ref UnitPathfindingEntitySets queries,
+        ref UnitPathScratchWorkspace scratchWorkspace,
+        ref UnitPathGridSnapshot gridSnapshot,
+        ref UnitPathLiveUnitSnapshot liveUnitSnapshot,
+        ref UnitPathRequestBuffer requestBuffers,
+        ref UnitPathIgnoredOccupancy ignoredOccupancy,
+        ref UnitPathRequestCollection requestCollection,
+        ref UnitPathReservedGoal reservedGoals,
+        ref UnitPathSegmentation segmentation,
+        ref UnitPathCoarseWorkspace coarseWorkspace,
+        ref UnitHierarchicalPathPlanner hierarchicalPath,
+        ref UnitPathGoalAssignment goalAssignment,
+        ref UnitPathfindingDiagnostics diagnostics,
         ref int lastHierarchicalPathValidationFrame,
         int requestBudget,
         int adaptiveRequestBudget,
@@ -80,7 +80,7 @@ internal struct UnitPathfindingScheduleSystem
             DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
             DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
             DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
-            MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(em, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+            MapSurfacePathfindingSnapshot.Context surfaceContext = _surfaceReadSystem.TryCreateContext(em, queries.MapSurfaceQuery, out MapSurfacePathfindingSnapshot.Context resolvedSurfaceContext)
                 ? resolvedSurfaceContext
                 : _surfaceReadSystem.CreateFlatFallbackContext();
             DynamicBlockerComponent dynamicBlockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
@@ -236,7 +236,7 @@ internal struct UnitPathfindingScheduleSystem
                 Time.frameCount - lastHierarchicalPathValidationFrame >= 60)
             {
                 lastHierarchicalPathValidationFrame = Time.frameCount;
-                diagnostics.LogHierarchicalValidation(state.EntityManager, Time.frameCount, requestCount, manualRequestCount, hierarchicalEligibleCount, hierarchicalWaypointCount, hierarchicalFallbackCount, UnitHierarchicalPathSystem.SectorSizeCells, UnitPathSegmentationSystem.ManualInfantryLongDistanceSegmentCells, UnitPathSegmentationSystem.ManualVehicleLongDistanceSegmentCells, UnitHierarchicalPathSystem.MaxExpandedSectors);
+                diagnostics.LogHierarchicalValidation(state.EntityManager, Time.frameCount, requestCount, manualRequestCount, hierarchicalEligibleCount, hierarchicalWaypointCount, hierarchicalFallbackCount, UnitHierarchicalPathPlanner.SectorSizeCells, UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells, UnitPathSegmentation.ManualVehicleLongDistanceSegmentCells, UnitHierarchicalPathPlanner.MaxExpandedSectors);
             }
 
             afterGoalAssignTime = Time.realtimeSinceStartupAsDouble;
@@ -264,7 +264,7 @@ internal struct UnitPathfindingScheduleSystem
                 DirtRoads = gridSnapshot.DirtRoads,
                 MapSurface = surfaceContext.Surface,
                 HasMapSurface = surfaceContext.HasSurfaceData,
-                SurfaceValidation = new MapSurfacePathingValidationSystem(),
+                SurfaceValidation = new MapSurfaceTraversalValidation(),
                 MapSurfacePathCost = surfaceContext.PathCost,
                 SurfacePathCost = new MapSurfacePathCost(),
                 SurfaceRoadPriority = new MapSurfaceRoadPriorityPolicy(),
@@ -395,9 +395,9 @@ internal struct UnitPathfindingScheduleSystem
         NativeArray<GridWalkable> walkable,
         NativeBitArray dynamicBlocked,
         NativeArray<byte> friendlyPassFactionIds,
-        ref UnitPathSegmentationSystem segmentation,
-        ref UnitPathCoarseWorkspaceSystem coarseWorkspace,
-        ref UnitHierarchicalPathSystem hierarchicalPath,
+        ref UnitPathSegmentation segmentation,
+        ref UnitPathCoarseWorkspace coarseWorkspace,
+        ref UnitHierarchicalPathPlanner hierarchicalPath,
         int2 start,
         int2 requestedGoal,
         bool manualMove,
@@ -414,7 +414,7 @@ internal struct UnitPathfindingScheduleSystem
             return requestedGoal;
 
         if (manualMove &&
-            coarseWorkspace.Ensure(grid.Width, grid.Height, UnitHierarchicalPathSystem.SectorSizeCells) &&
+            coarseWorkspace.Ensure(grid.Width, grid.Height, UnitHierarchicalPathPlanner.SectorSizeCells) &&
             hierarchicalPath.TryFindWaypoint(
                 grid,
                 walkable,

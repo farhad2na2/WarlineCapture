@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-internal struct UnitPathRequestCollectionSystem
+internal struct UnitPathRequestCollection
 {
     private EntityTypeHandle _entityType;
     private ComponentTypeHandle<UnitGrid> _unitGridType;
@@ -26,9 +26,9 @@ internal struct UnitPathRequestCollectionSystem
 
     public int Collect(
         ref SystemState state,
-        ref UnitPathfindingQuerySystem queries,
-        ref UnitPathRequestBufferSystem requestBuffers,
-        ref UnitPathIgnoredOccupancySystem ignoredOccupancy,
+        ref UnitPathfindingEntitySets queries,
+        ref UnitPathRequestBuffer requestBuffers,
+        ref UnitPathIgnoredOccupancy ignoredOccupancy,
         int requestBudget)
     {
         requestBuffers.ClearForCollection();
@@ -89,8 +89,8 @@ internal struct UnitPathRequestCollectionSystem
     private static void CollectFromQuery(
         ref SystemState state,
         EntityQuery query,
-        ref UnitPathRequestBufferSystem requestBuffers,
-        ref UnitPathIgnoredOccupancySystem ignoredOccupancy,
+        ref UnitPathRequestBuffer requestBuffers,
+        ref UnitPathIgnoredOccupancy ignoredOccupancy,
         int requestBudget,
         EntityTypeHandle entityType,
         ComponentTypeHandle<UnitGrid> unitGridType,

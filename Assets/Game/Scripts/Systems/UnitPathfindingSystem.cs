@@ -11,27 +11,27 @@ public partial struct UnitPathfindingSystem : ISystem
     private static readonly bool EnableHierarchicalPathValidationLog = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
     private EntityQuery _pendingStateQuery;
-    private UnitPathfindingQuerySystem _queries;
-    private UnitPathScratchWorkspaceSystem _scratchWorkspace;
-    private UnitPathGridSnapshotSystem _gridSnapshot;
-    private UnitPathReservedGoalSystem _reservedGoals;
-    private UnitPathCoarseWorkspaceSystem _coarseWorkspace;
-    private UnitHierarchicalPathSystem _hierarchicalPath;
-    private UnitPathGoalAssignmentSystem _goalAssignment;
+    private UnitPathfindingEntitySets _queries;
+    private UnitPathScratchWorkspace _scratchWorkspace;
+    private UnitPathGridSnapshot _gridSnapshot;
+    private UnitPathReservedGoal _reservedGoals;
+    private UnitPathCoarseWorkspace _coarseWorkspace;
+    private UnitHierarchicalPathPlanner _hierarchicalPath;
+    private UnitPathGoalAssignment _goalAssignment;
     private int _lastHierarchicalPathValidationFrame;
-    private UnitPathRequestBufferSystem _requestBuffers;
-    private UnitPathIgnoredOccupancySystem _ignoredOccupancy;
-    private UnitPathRequestCollectionSystem _requestCollection;
-    private UnitPathSegmentationSystem _segmentation;
-    private UnitPathResultApplySystem _resultApply;
-    private UnitPathValidationMetricsSystem _validationMetrics;
-    private UnitPathfindingScheduleSystem _schedule;
-    private UnitPathfindingApplySystem _apply;
-    private UnitPathfindingBudgetSystem _budget;
+    private UnitPathRequestBuffer _requestBuffers;
+    private UnitPathIgnoredOccupancy _ignoredOccupancy;
+    private UnitPathRequestCollection _requestCollection;
+    private UnitPathSegmentation _segmentation;
+    private UnitPathResultApply _resultApply;
+    private UnitPathValidationMetrics _validationMetrics;
+    private UnitPathfindingScheduler _schedule;
+    private UnitPathfindingApply _apply;
+    private UnitPathfindingBudget _budget;
     private JobHandle _pendingPathHandle;
     private NativeStream _pendingPathStream;
     private bool _hasPendingPathJob;
-    private UnitPathLiveUnitSnapshotSystem _liveUnitSnapshot;
+    private UnitPathLiveUnitSnapshot _liveUnitSnapshot;
     private int _pendingRequestCount;
     private int _pendingRequestBudget;
     private int _pendingLiveUnitCount;
@@ -39,8 +39,8 @@ public partial struct UnitPathfindingSystem : ISystem
     private int _pendingGridHeight;
     private int _pendingScheduleFrame;
     private double _pendingScheduleTime;
-    private UnitPathfindingDiagnosticSystem _diagnostics;
-    private UnitPathfindingPendingStateSystem _pendingState;
+    private UnitPathfindingDiagnostics _diagnostics;
+    private UnitPathfindingPendingStateStore _pendingState;
 
     public void OnCreate(ref SystemState state)
     {
@@ -84,7 +84,7 @@ public partial struct UnitPathfindingSystem : ISystem
             {
                 _budget.ReduceForPendingJob(Time.frameCount, _pendingScheduleFrame, _pendingRequestBudget);
                 // Intentionally NOT chained into state.Dependency: the job only reads
-                // system-owned snapshots (see UnitPathGridSnapshotSystem), so nothing on
+                // system-owned snapshots (see UnitPathGridSnapshot), so nothing on
                 // the main thread should ever be forced to wait for it.
                 PublishPendingState(ref state);
                 return;
@@ -115,7 +115,7 @@ public partial struct UnitPathfindingSystem : ISystem
         }
 
         int requestBudgetForLog = _budget.GetCurrentRequestBudget();
-        UnitPathfindingScheduleSystem.Result scheduleResult = _schedule.Schedule(
+        UnitPathfindingScheduler.Result scheduleResult = _schedule.Schedule(
             ref state,
             ref _queries,
             ref _scratchWorkspace,
@@ -177,7 +177,7 @@ public partial struct UnitPathfindingSystem : ISystem
         _pendingState.EnsureSingleton(ref state, _pendingStateQuery);
         RefRW<UnitPathfindingPendingStateComponent> pendingState =
             SystemAPI.GetSingletonRW<UnitPathfindingPendingStateComponent>();
-        pendingState.ValueRW = UnitPathfindingPendingStateSystem.CreateState(
+        pendingState.ValueRW = UnitPathfindingPendingStateStore.CreateState(
             _hasPendingPathJob,
             _pendingRequestCount,
             _pendingRequestBudget,

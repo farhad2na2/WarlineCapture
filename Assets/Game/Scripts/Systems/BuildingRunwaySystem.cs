@@ -85,7 +85,7 @@ internal sealed class BuildingRunwaySystem
         if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
             return;
 
-        Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(candidate.Definition.RunwayLocalPosition);
+        Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(ResolveRuntimeRunwayLocalPosition(candidate.Definition));
         float distance = (candidateCenter - origin).sqrMagnitude;
         if (distance >= bestDistance)
             return;
@@ -95,6 +95,17 @@ internal sealed class BuildingRunwaySystem
         runwayCenter = candidateCenter;
         runwayRotation = candidate.Instance.transform.rotation * candidate.Definition.RunwayLocalRotation;
         runwayHalfExtents = Vector3.Scale(candidate.Definition.RunwayHalfExtents, candidate.Instance.transform.lossyScale);
+    }
+
+    internal static Vector3 ResolveRuntimeRunwayLocalPosition(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return Vector3.zero;
+
+        Vector3 visualOffset = definition.HasLocalBounds
+            ? new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z)
+            : Vector3.zero;
+        return definition.RunwayLocalPosition - visualOffset;
     }
 
     public RectInt GetEffectivePlacementRect(
@@ -159,7 +170,7 @@ internal sealed class BuildingRunwaySystem
             Vector3 planarDirection = new(worldDirection.x, 0f, worldDirection.z);
             if (planarDirection.sqrMagnitude > 0.0001f)
             {
-                Vector3 worldCenter = (worldStart + worldEnd) * 0.5f;
+                Vector3 worldCenter = ResolveRunwaySurfaceWorldCenter(runway, (worldStart + worldEnd) * 0.5f);
                 localPosition = prefab.transform.InverseTransformPoint(worldCenter);
                 Quaternion worldRotation = Quaternion.LookRotation(planarDirection.normalized, Vector3.up);
                 localRotation = Quaternion.Inverse(prefab.transform.rotation) * worldRotation;
@@ -186,6 +197,67 @@ internal sealed class BuildingRunwaySystem
         return true;
     }
 
+    private static Vector3 ResolveRunwaySurfaceWorldCenter(Transform runway, Vector3 fallbackCenter)
+    {
+        if (runway == null)
+            return fallbackCenter;
+
+        Renderer directRenderer = runway.GetComponent<Renderer>();
+        if (directRenderer != null)
+            return ResolveRunwayRendererSurfaceCenter(directRenderer);
+
+        Renderer[] childRenderers = runway.GetComponentsInChildren<Renderer>(true);
+        bool found = false;
+        Bounds combinedBounds = default;
+        for (int i = 0; i < childRenderers.Length; i++)
+        {
+            Renderer renderer = childRenderers[i];
+            if (renderer == null || IsRunwayEndpointMarker(renderer.transform))
+                continue;
+
+            if (found)
+                combinedBounds.Encapsulate(renderer.bounds);
+            else
+            {
+                combinedBounds = renderer.bounds;
+                found = true;
+            }
+        }
+
+        if (!found)
+            return new Vector3(runway.position.x, fallbackCenter.y, runway.position.z);
+
+        Vector3 center = combinedBounds.center;
+        center.y = combinedBounds.max.y;
+        return center;
+    }
+
+    private static Vector3 ResolveRunwayRendererSurfaceCenter(Renderer renderer)
+    {
+        Bounds bounds = renderer.bounds;
+        Vector3 center = bounds.center;
+        center.y = bounds.max.y;
+        return center;
+    }
+
+    private static bool IsRunwayEndpointMarker(Transform transform)
+    {
+        if (transform == null)
+            return false;
+
+        string name = transform.name;
+        return ContainsOrdinalIgnoreCase(name, "Runway_Start") ||
+               ContainsOrdinalIgnoreCase(name, "Runway_End") ||
+               ContainsOrdinalIgnoreCase(name, "Touchdown") ||
+               ContainsOrdinalIgnoreCase(name, "Marker");
+    }
+
+    private static bool ContainsOrdinalIgnoreCase(string value, string part)
+    {
+        return !string.IsNullOrEmpty(value) &&
+               value.IndexOf(part, System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
     private bool TryGetRunwayFootprintRect(
         BuildingDefinition definition,
         Vector2Int originCell,
@@ -201,11 +273,8 @@ internal sealed class BuildingRunwaySystem
 
         Vector2Int modelFootprint = getPlacementFootprint(definition, rotateVertical);
         Vector3 buildingCenter = GetFootprintCenter(originCell, modelFootprint, grid, buildPlaneY);
-        Vector3 visualOffset = definition.HasLocalBounds
-            ? new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z)
-            : Vector3.zero;
         Quaternion placementRotation = rotateVertical ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
-        Vector3 runwayCenter = buildingCenter + placementRotation * (definition.RunwayLocalPosition - visualOffset);
+        Vector3 runwayCenter = buildingCenter + placementRotation * ResolveRuntimeRunwayLocalPosition(definition);
         Quaternion runwayRotation = placementRotation * definition.RunwayLocalRotation;
 
         Vector3 halfExtents = definition.RunwayHalfExtents;

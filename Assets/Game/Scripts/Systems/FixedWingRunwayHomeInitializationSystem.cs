@@ -30,22 +30,35 @@ public partial struct FixedWingRunwayHomeInitializationSystem : ISystem
         if (runways.Length == 0)
             return;
 
-        EntityManager em = state.EntityManager;
-        foreach (var (airState, transform, grid, faction, sourceKey, entity) in SystemAPI
+        foreach (var (airState, transform, grid, faction, sourceKey) in SystemAPI
                      .Query<RefRW<UnitAirComponent>, RefRO<LocalTransform>, RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitSourcePrefabKey>>()
                      .WithAll<UnitAirMovement, UnitMove>()
-                     .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>()
-                     .WithEntityAccess())
+                     .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>())
         {
-            if (!ShouldInitializeRunwayHome(em, entity, airState.ValueRO, sourceKey.ValueRO.Value))
+            if (!ShouldInitializeRunwayHome(airState.ValueRO, sourceKey.ValueRO.Value))
                 continue;
 
             if (!TryFindNearestRunway(runways, faction.ValueRO.Id, transform.ValueRO.Position, out BuildingFactionRunwayReadModel runway))
                 continue;
 
+            ResolveRunwayThresholdsForUnit(
+                runway,
+                transform.ValueRO.Position,
+                out float3 takeoffPosition,
+                out int2 takeoffCell,
+                out float3 landingPosition,
+                out int2 landingCell);
+
+            float3 homePosition = airState.ValueRO.HomeInitialized != 0
+                ? airState.ValueRO.HomePosition
+                : transform.ValueRO.Position;
+            int2 homeCell = airState.ValueRO.HomeInitialized != 0
+                ? airState.ValueRO.HomeCell
+                : grid.ValueRO.Cell;
+
             UnitAirComponent initialized = airState.ValueRO;
-            initialized.HomePosition = transform.ValueRO.Position;
-            initialized.HomeCell = grid.ValueRO.Cell;
+            initialized.HomePosition = homePosition;
+            initialized.HomeCell = homeCell;
             initialized.HomeInitialized = 1;
             initialized.ReturningHome = 0;
             initialized.Airborne = 0;
@@ -54,23 +67,23 @@ public partial struct FixedWingRunwayHomeInitializationSystem : ISystem
             initialized.LandingRolling = 0;
             initialized.AttackRunActive = 0;
             initialized.ReturnApproachInitialized = 0;
-            initialized.RunwayTakeoffPosition = runway.TakeoffPosition;
-            initialized.RunwayTakeoffCell = runway.TakeoffCell;
-            initialized.RunwayLandingPosition = runway.LandingPosition;
-            initialized.RunwayLandingCell = runway.LandingCell;
+            initialized.RunwayTakeoffPosition = takeoffPosition;
+            initialized.RunwayTakeoffCell = takeoffCell;
+            initialized.RunwayLandingPosition = landingPosition;
+            initialized.RunwayLandingCell = landingCell;
             initialized.AttackRunExitPosition = default;
             airState.ValueRW = initialized;
         }
     }
 
     private static bool ShouldInitializeRunwayHome(
-        EntityManager em,
-        Entity entity,
         UnitAirComponent airState,
         FixedString64Bytes sourceKey)
     {
-        if (airState.UsesRunway != 0 ||
-            airState.Airborne != 0 ||
+        if (!FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(sourceKey))
+            return false;
+
+        if (airState.Airborne != 0 ||
             airState.ReturningHome != 0 ||
             airState.TakeoffRolling != 0 ||
             airState.LandingRolling != 0 ||
@@ -80,14 +93,35 @@ public partial struct FixedWingRunwayHomeInitializationSystem : ISystem
             return false;
         }
 
-        if (em.HasComponent<UnitTarget>(entity) ||
-            em.HasComponent<UnitPathRequest>(entity) ||
-            em.HasComponent<ManualMoveOrderTag>(entity))
+        return true;
+    }
+
+    private static void ResolveRunwayThresholdsForUnit(
+        BuildingFactionRunwayReadModel runway,
+        float3 unitPosition,
+        out float3 takeoffPosition,
+        out int2 takeoffCell,
+        out float3 landingPosition,
+        out int2 landingCell)
+    {
+        float3 toTakeoff = runway.TakeoffPosition - unitPosition;
+        float3 toLanding = runway.LandingPosition - unitPosition;
+        toTakeoff.y = 0f;
+        toLanding.y = 0f;
+
+        if (math.lengthsq(toLanding) < math.lengthsq(toTakeoff))
         {
-            return false;
+            takeoffPosition = runway.LandingPosition;
+            takeoffCell = runway.LandingCell;
+            landingPosition = runway.TakeoffPosition;
+            landingCell = runway.TakeoffCell;
+            return;
         }
 
-        return FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(sourceKey);
+        takeoffPosition = runway.TakeoffPosition;
+        takeoffCell = runway.TakeoffCell;
+        landingPosition = runway.LandingPosition;
+        landingCell = runway.LandingCell;
     }
 
     private static bool TryFindNearestRunway(

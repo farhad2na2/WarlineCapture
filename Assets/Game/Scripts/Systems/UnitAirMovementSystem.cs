@@ -131,6 +131,7 @@ public partial struct UnitAirMovementSystem : ISystem
                     continue;
                 }
 
+                float runwayGroundY = ResolveRunwayGroundY(stateRw, groundY);
                 if (stateRw.UsesRunway != 0 && stateRw.Airborne == 0)
                 {
                     if (stateRw.TakeoffRolling == 0)
@@ -141,7 +142,7 @@ public partial struct UnitAirMovementSystem : ISystem
                             grid,
                             math.max(0.01f, airMovement.ValueRO.RunwayTaxiSpeed),
                             dt,
-                            groundY,
+                            runwayGroundY,
                             stateRw.RunwayTakeoffPosition,
                             false,
                             5f);
@@ -160,7 +161,7 @@ public partial struct UnitAirMovementSystem : ISystem
                             grid,
                             math.max(0.01f, move.ValueRO.Speed),
                             dt,
-                            groundY,
+                            runwayGroundY,
                             stateRw.RunwayLandingPosition,
                             false,
                             3.25f);
@@ -277,6 +278,7 @@ public partial struct UnitAirMovementSystem : ISystem
                 bool reached;
                 if (stateRw.UsesRunway != 0 && !isSpawnTransit)
                 {
+                    float runwayGroundY = ResolveRunwayGroundY(stateRw, groundY);
                     if (stateRw.Airborne == 0)
                     {
                         if (stateRw.TakeoffRolling == 0)
@@ -287,7 +289,7 @@ public partial struct UnitAirMovementSystem : ISystem
                                 grid,
                                 math.max(0.01f, airMovement.ValueRO.RunwayTaxiSpeed),
                                 dt,
-                                groundY,
+                                runwayGroundY,
                                 stateRw.RunwayTakeoffPosition,
                                 false,
                                 5f);
@@ -308,7 +310,7 @@ public partial struct UnitAirMovementSystem : ISystem
                                 grid,
                                 math.max(0.01f, move.ValueRO.Speed),
                                 dt,
-                                groundY,
+                                runwayGroundY,
                                 stateRw.RunwayLandingPosition,
                                 false,
                                 3.25f);
@@ -432,6 +434,7 @@ public partial struct UnitAirMovementSystem : ISystem
             {
                 if (stateRw.UsesRunway != 0)
                 {
+                    float runwayGroundY = ResolveRunwayGroundY(stateRw, groundY);
                     if (stateRw.Airborne != 0)
                     {
                         float cruiseY = groundY + airMovement.ValueRO.CruiseHeight;
@@ -475,7 +478,7 @@ public partial struct UnitAirMovementSystem : ISystem
                         float3 airborneTarget = canDescendToRunway
                             ? stateRw.RunwayTakeoffPosition
                             : approachPoint;
-                        float airborneTargetY = canDescendToRunway ? groundY : cruiseY;
+                        float airborneTargetY = canDescendToRunway ? runwayGroundY : cruiseY;
 
                         bool reachedTouchdown = SteerTowards(
                             ref transform.ValueRW,
@@ -504,7 +507,7 @@ public partial struct UnitAirMovementSystem : ISystem
                             grid,
                             math.max(0.01f, move.ValueRO.Speed),
                             dt,
-                            groundY,
+                            runwayGroundY,
                             stateRw.RunwayLandingPosition,
                             false);
 
@@ -556,6 +559,16 @@ public partial struct UnitAirMovementSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+    private static float ResolveRunwayGroundY(in UnitAirComponent state, float fallbackY)
+    {
+        float3 runwayDelta = state.RunwayLandingPosition - state.RunwayTakeoffPosition;
+        runwayDelta.y = 0f;
+        if (math.lengthsq(runwayDelta) <= 1e-6f)
+            return fallbackY;
+
+        return (state.RunwayTakeoffPosition.y + state.RunwayLandingPosition.y) * 0.5f;
     }
 
     private static bool FlyTowards(

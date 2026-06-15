@@ -11,6 +11,7 @@ using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode
 internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
+    private const float RunwaySurfaceClearance = 0.03f;
     private const int DefaultTransportPoolPrewarmCount = 2;
     private const int DefaultTransportStatePoolPrewarmCount = 32;
 
@@ -111,7 +112,7 @@ internal sealed class BuildingProductionTransportSystem
             float runwayHalfLength = Mathf.Max(8f, runwayHalfExtents.z);
             Vector3 runwayStart = runwayCenter - (runwayAxis * runwayHalfLength);
             touchdownPosition = runwayStart + (runwayAxis * Mathf.Min(8f, runwayHalfLength * 0.35f));
-            touchdownPosition.y = Mathf.Max(0.5f, runwayCenter.y + 0.25f);
+            touchdownPosition.y = runwayCenter.y + RunwaySurfaceClearance;
             hoverPosition = runwayCenter;
             hoverPosition.y = touchdownPosition.y;
             entryPosition = touchdownPosition - (runwayAxis * Mathf.Max(80f, runwayHalfExtents.z * 5f)) + new Vector3(0f, 28f, 0f);

@@ -818,7 +818,7 @@ public sealed class BuildingRuntimeBoundarySystem
         }
 
         Transform transform = building.Instance.transform;
-        Vector3 center = transform.TransformPoint(building.Definition.RunwayLocalPosition);
+        Vector3 center = transform.TransformPoint(BuildingRunwaySystem.ResolveRuntimeRunwayLocalPosition(building.Definition));
         Quaternion rotation = transform.rotation * building.Definition.RunwayLocalRotation;
         Vector3 direction = rotation * Vector3.forward;
         direction.y = 0f;

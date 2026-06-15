@@ -945,14 +945,14 @@ internal sealed class MatchBootstrapSystem
     private static UnitAttackTraceSystem ResolveUnitAttackTraceSystem(World world)
     {
         return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<UnitAttackTraceSystem>()
+            ? world.GetOrCreateSystemManaged(typeof(UnitAttackTraceSystem)) as UnitAttackTraceSystem
             : null;
     }
 
     private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem(World world)
     {
         return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<UnitImpostorRenderSystem>()
+            ? world.GetOrCreateSystemManaged(typeof(UnitImpostorRenderSystem)) as UnitImpostorRenderSystem
             : null;
     }
 

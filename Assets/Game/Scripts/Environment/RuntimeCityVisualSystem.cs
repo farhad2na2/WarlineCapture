@@ -29,7 +29,7 @@ internal sealed partial class RuntimeCityVisualSystem : SystemBase
 
     public void Dispose()
     {
-        RuntimeCitySurfaceIntegrationSystem?.Clear();
+        _surfaceIntegrationSystem?.Clear();
         _cityVisualRoot = null;
         _runtimeRoot = null;
     }

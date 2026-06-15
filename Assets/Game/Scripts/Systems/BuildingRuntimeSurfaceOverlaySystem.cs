@@ -45,7 +45,7 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         if (!definition.HasRunway)
             return false;
 
-        Vector3 runwaySurfaceCenter = instanceTransform.TransformPoint(definition.RunwayLocalPosition);
+        Vector3 runwaySurfaceCenter = instanceTransform.TransformPoint(BuildingRunwaySystem.ResolveRuntimeRunwayLocalPosition(definition));
         Vector3 center = runwaySurfaceCenter;
         Quaternion rotation = instanceTransform.rotation * definition.RunwayLocalRotation;
 

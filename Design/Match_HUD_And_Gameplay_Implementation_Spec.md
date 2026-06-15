@@ -220,8 +220,9 @@ M01 exception: `SELECT` may be visible but disabled/neutral; `SPECIAL` and `BUIL
 
 `SCAN`, `SUPPORT`, and `SPECIAL` separation:
 
-- `SCAN` is for information. It asks: what is hidden or uncertain in this area?
-- `SCAN` may reveal hostiles hidden among civilians, but auto-engage is not automatic. Auto-engage while scanning must follow the selected unit's policy, confidence threshold, weapon readiness, and civilian-risk checks defined in `Match_Unit_Command_Behavior_Spec.md`.
+- `SCAN` is for recon and information. It asks: what is hidden or uncertain in this area?
+- Global/faction `SCAN` reveals intel only; it does not move units and never attacks.
+- Selected-unit `SCAN` is an active recon order for scan-capable units. The unit patrols or performs a recon pass in the target area, reveals contacts, and may engage detected enemies only when its policy, confidence threshold, weapon readiness, scan bounds, and civilian-risk checks allow it. Exact behavior is defined in `Match_Unit_Command_Behavior_Spec.md`.
 - `SUPPORT` is for off-map or auxiliary help. It asks: what external help do I want to call into this area?
 - `SPECIAL` is for the selected unit/group's own contextual ability. It usually depends on the selected unit.
 - Temporary one-shot support abilities should not appear as squad-tray quick-select cards unless they represent persistent controllable units.

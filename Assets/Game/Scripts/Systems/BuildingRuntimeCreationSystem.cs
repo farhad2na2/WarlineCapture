@@ -75,7 +75,7 @@ internal sealed class BuildingRuntimeCreationSystem
     }
 
     private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();
-    private readonly BuildingFoundationVisualSystem _foundationVisualSystem = new();
+    private BuildingFoundationVisualSystem _foundationVisualSystem;
 
     public RuntimeBuildingEntity RegisterRuntimeBuilding(
         Context context,
@@ -104,7 +104,7 @@ internal sealed class BuildingRuntimeCreationSystem
             occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
             hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
             if (hasSurfaceResult && !preserveAuthoredTransform)
-                _foundationVisualSystem.ApplyVisualFoundation(instance, surfaceResult);
+                FoundationVisualSystem?.ApplyVisualFoundation(instance, surfaceResult);
         }
 
         bool pathBlocking = context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition);
@@ -118,7 +118,7 @@ internal sealed class BuildingRuntimeCreationSystem
             ? context.CreateCombatEntity(originCell, definition, 0, instance.transform.rotation)
             : Entity.Null;
         if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
-            _foundationVisualSystem.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
+            FoundationVisualSystem?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
 
         if (context.DeferSideEffects)
         {
@@ -196,5 +196,16 @@ internal sealed class BuildingRuntimeCreationSystem
             link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
 
         link.Configure(interactionSystem, interactionContext, building.Id, building.CombatEntity, building.BlockerEntity);
+    }
+
+    private BuildingFoundationVisualSystem FoundationVisualSystem =>
+        _foundationVisualSystem ??= ResolveBuildingFoundationVisualSystem();
+
+    private static BuildingFoundationVisualSystem ResolveBuildingFoundationVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingFoundationVisualSystem>()
+            : null;
     }
 }

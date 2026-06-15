@@ -1,11 +1,21 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionScreenMarkerSystem
+public sealed partial class SelectionScreenMarkerSystem : SystemBase
 {
     public event Action<Vector2> MoveOrderScreenMarkerRequested;
     public event Action<Vector2> AttackOrderScreenMarkerRequested;
     public event Action OrderScreenMarkersHideRequested;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void RequestMoveOrderMarker(Vector2 screenPosition)
     {

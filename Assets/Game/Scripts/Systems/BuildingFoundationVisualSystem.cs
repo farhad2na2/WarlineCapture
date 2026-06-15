@@ -2,8 +2,17 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class BuildingFoundationVisualSystem
+internal sealed partial class BuildingFoundationVisualSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void ApplyVisualFoundation(GameObject instance, BuildingSurfacePlacementSystem.Result surfaceResult)
     {
         if (instance == null)

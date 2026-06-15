@@ -85,7 +85,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
-        var selectionScreenMarkers = new SelectionScreenMarkerSystem();
+        SelectionScreenMarkerSystem selectionScreenMarkers = ResolveSelectionScreenMarkerSystem();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiQuerySystem = new SelectionUiQuerySystem();
         var selectionSummaryQuerySystem = new SelectionSummaryQuerySystem();
@@ -441,7 +441,7 @@ internal sealed class SelectionGameplayStartupSystem
                 resolvedMatchIntroStateQuery,
                 IsPointerOverGameplayUi,
                 pointerPosition => rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition),
-                () => selectionScreenMarkers.RequestHideOrderMarkers());
+                () => selectionScreenMarkers?.RequestHideOrderMarkers());
         }
 
         RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
@@ -471,8 +471,8 @@ internal sealed class SelectionGameplayStartupSystem
                 SetExplicitAttackTargetModeActive,
                 ProcessSelectionRectangleRequests,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
-                screenPosition => selectionScreenMarkers.RequestMoveOrderMarker(screenPosition),
-                screenPosition => selectionScreenMarkers.RequestAttackOrderMarker(screenPosition),
+                screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
+                screenPosition => selectionScreenMarkers?.RequestAttackOrderMarker(screenPosition),
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
                 (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
@@ -571,7 +571,7 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
                 ClearCurrentSelection,
-                screenPosition => selectionScreenMarkers.RequestMoveOrderMarker(screenPosition),
+                screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 () => rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
                     GetCommandResultFlushContext(),
@@ -799,6 +799,14 @@ internal sealed class SelectionGameplayStartupSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
+            : null;
+    }
+
+    private static SelectionScreenMarkerSystem ResolveSelectionScreenMarkerSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<SelectionScreenMarkerSystem>()
             : null;
     }
 

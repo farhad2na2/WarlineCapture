@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
+public sealed partial class UnitAttackTraceSystem : SystemBase, IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
     private const int MaxTraceOriginCount = 4;
@@ -43,6 +43,21 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
     private readonly Matrix4x4[] _matrices = new Matrix4x4[MaxBatchSize];
     private readonly Vector4[] _colors = new Vector4[MaxBatchSize];
     private readonly Vector4[] _traceParams = new Vector4[MaxBatchSize];
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        DisposeRenderResources();
+    }
+
     public void Init(UnitAttackTraceSystemConfig configAsset, Camera sceneWorldCamera, int renderLayer)
     {
         config = configAsset;
@@ -68,10 +83,19 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 
     public void Dispose()
     {
+        DisposeRenderResources();
+    }
+
+    private void DisposeRenderResources()
+    {
         if (_traceMesh != null)
             Object.Destroy(_traceMesh);
         if (_traceMaterial != null)
             Object.Destroy(_traceMaterial);
+
+        _traceMesh = null;
+        _traceMaterial = null;
+        _propertyBlock = null;
     }
 
     public void LateUpdate()
@@ -205,7 +229,7 @@ public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
         _colors[batchCount] = attack.TraceColor;
         _traceParams[batchCount] = new Vector4(
             math.max(1f, attack.TraceDashDensity),
-            phase + (Time.time * math.max(0.1f, attack.TraceScrollSpeed)),
+            phase + (UnityEngine.Time.time * math.max(0.1f, attack.TraceScrollSpeed)),
             0f,
             0f);
 

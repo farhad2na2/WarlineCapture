@@ -8,6 +8,8 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 {
     private const float SceneOverlayPadding = 0.1f;
 
+    private bool runtimeSurfaceDisposed;
+
     protected override void OnCreate()
     {
         Enabled = false;
@@ -88,6 +90,7 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 
         entityManager.SetName(surfaceEntity, "RuntimeBakedMapSurface");
         RemoveOtherSurfaceEntities(entityManager, surfaceEntity);
+        runtimeSurfaceDisposed = false;
         return true;
     }
 
@@ -204,8 +207,14 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 
     public void DisposeRuntimeSurface()
     {
-        if (!TryGetLiveEntityManager(out EntityManager entityManager))
+        if (runtimeSurfaceDisposed)
             return;
+
+        if (!TryGetLiveEntityManager(out EntityManager entityManager))
+        {
+            runtimeSurfaceDisposed = true;
+            return;
+        }
 
         using EntityQuery query = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<MapSurfaceComponent>(),
@@ -218,6 +227,8 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
             if (entityManager.Exists(entity))
                 entityManager.DestroyEntity(entity);
         }
+
+        runtimeSurfaceDisposed = true;
     }
 
     private bool TryGetLiveEntityManager(out EntityManager entityManager)

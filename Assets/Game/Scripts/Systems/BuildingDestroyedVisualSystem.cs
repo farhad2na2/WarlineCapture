@@ -44,9 +44,23 @@ public sealed partial class BuildingDestroyedVisualSystem : SystemBase
             return;
 
         Transform source = building.Instance.transform;
-        GameObject instance = Object.Instantiate(prefab, source.position, source.rotation, source.parent);
+        Transform visualRoot = source.childCount > 0 ? source.GetChild(0) : source;
+        bool hasWrapperVisualRoot = visualRoot != source;
+        Transform parent = hasWrapperVisualRoot ? source : source.parent;
+        GameObject instance = Object.Instantiate(prefab, parent, false);
         instance.name = $"{source.name}_Destroyed";
-        instance.transform.localScale = source.localScale;
+        if (hasWrapperVisualRoot)
+        {
+            instance.transform.localPosition = visualRoot.localPosition;
+            instance.transform.localRotation = visualRoot.localRotation;
+            instance.transform.localScale = visualRoot.localScale;
+        }
+        else
+        {
+            instance.transform.SetPositionAndRotation(source.position, source.rotation);
+            instance.transform.localScale = source.localScale;
+        }
+
         building.DestroyedVisualInstance = instance;
     }
 

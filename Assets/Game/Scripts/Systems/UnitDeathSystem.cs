@@ -183,7 +183,7 @@ public partial struct UnitDeathSystem : ISystem
         {
             UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
             LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-            float groundedY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
+            float groundedY = ResolveAirWreckGroundY(em, entity, transform, airState);
             transform.Position.y = groundedY;
             em.SetComponentData(entity, transform);
 
@@ -244,6 +244,70 @@ public partial struct UnitDeathSystem : ISystem
             em.AddComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
         }
 
+        return true;
+    }
+
+    private static float ResolveAirWreckGroundY(
+        EntityManager em,
+        Entity entity,
+        in LocalTransform transform,
+        in UnitAirComponent airState)
+    {
+        float groundOffset = ResolveGroundOffset(em, entity);
+        if (em.HasComponent<UnitSurfaceComponent>(entity))
+        {
+            UnitSurfaceComponent surface = em.GetComponentData<UnitSurfaceComponent>(entity);
+            if (surface.HasSurface != 0)
+                return surface.LastSampledHeight + groundOffset;
+        }
+
+        if (em.HasComponent<UnitGrid>(entity) && TryGetRuntimeGrid(em, out GridConfig grid))
+        {
+            float3 worldPosition = transform.Position;
+            var groundingSystem = new MapSurfaceSpawnGroundingSystem();
+            if (groundingSystem.TryGroundCellCenter(
+                    em,
+                    grid,
+                    em.GetComponentData<UnitGrid>(entity).Cell,
+                    ref worldPosition,
+                    out _,
+                    groundOffset))
+            {
+                return worldPosition.y;
+            }
+        }
+
+        if (airState.HomeInitialized != 0)
+            return airState.HomePosition.y;
+
+        return transform.Position.y;
+    }
+
+    private static float ResolveGroundOffset(EntityManager em, Entity entity)
+    {
+        return em.HasComponent<UnitGroundOffsetComponent>(entity)
+            ? em.GetComponentData<UnitGroundOffsetComponent>(entity).Value
+            : 0f;
+    }
+
+    private static bool TryGetRuntimeGrid(EntityManager em, out GridConfig grid)
+    {
+        grid = default;
+        using EntityQuery runtimeGridQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<RuntimeGridBootstrapGridTag>());
+        int runtimeGridCount = runtimeGridQuery.CalculateEntityCount();
+        if (runtimeGridCount == 1)
+        {
+            grid = runtimeGridQuery.GetSingleton<GridConfig>();
+            return true;
+        }
+
+        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (gridQuery.CalculateEntityCount() != 1)
+            return false;
+
+        grid = gridQuery.GetSingleton<GridConfig>();
         return true;
     }
 

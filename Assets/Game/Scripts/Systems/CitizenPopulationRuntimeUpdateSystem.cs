@@ -25,7 +25,9 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
         if (!_systems.PopulationEnabled)
             return;
 
-        _systems.LifecycleSystem.Update(
+        CitizenPopulationLifecycleSystem.Update(
+            _systems.LifecycleSystem,
+            ref _systems.LifecycleState,
             _systems.BuildingReadSystem,
             _systems.EcsProjection,
             _systems.DangerSystem,
@@ -56,7 +58,13 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
 
     public bool HandleCitizenDeath(int citizenId, string reason)
     {
-        if (!_systems.StatusTransitionSystem.TryMarkCitizenDead(_systems.State, citizenId, reason, Time.time, StoreCitizen))
+        if (!CitizenStatusTransitionSystem.TryMarkCitizenDead(
+                _systems.StatusTransitionSystem,
+                _systems.State,
+                citizenId,
+                reason,
+                Time.time,
+                StoreCitizen))
             return false;
 
         _systems.VisibleUnitSystem.RemoveVisibleCitizen(_systems.State, _systems.EcsProjection, citizenId);
@@ -87,7 +95,13 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
 
     private void RecalculateTotalsFromRecords(bool syncSummaryEntity)
     {
-        _systems.ReadModel.Refresh(_systems.TotalsSystem, _systems.State, _systems.EcsProjection, syncSummaryEntity);
+        CitizenPopulationReadModelSystem.Refresh(
+            _systems.ReadModel,
+            ref _systems.ReadModelState,
+            _systems.TotalsSystem,
+            _systems.State,
+            _systems.EcsProjection,
+            syncSummaryEntity);
     }
 
     private void RecalculateTotalsForLifecycle(bool syncSummaryEntity)
@@ -100,10 +114,12 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
 
     private void UpdateLogicalCitizenPopulation()
     {
-        _systems.HouseholdRegistrationSystem.SyncRemovedHouses(
+        CitizenHouseholdRegistrationSystem.SyncRemovedHouses(
+            _systems.HouseholdRegistrationSystem,
             _systems.State,
             _systems.BuildingReadSystem,
-            (household, reason) => _systems.RefugeeSystem.DisplaceHousehold(
+            (household, reason) => CitizenRefugeeSystem.DisplaceHousehold(
+                _systems.RefugeeSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,
                 _systems.HouseholdRegistrationSystem,
@@ -111,33 +127,38 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 reason,
                 StoreHousehold,
                 StoreCitizen,
-                (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => _systems.TravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
-                (CitizenRecordComponent citizen, int targetBuildingId) => _systems.TravelSystem.EstimateTravelSeconds(_systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
+                (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.TravelSystem, _systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
+                (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
                 HandleCitizenDeath));
-        _systems.HouseholdRegistrationSystem.RegisterNewHouses(
+        CitizenHouseholdRegistrationSystem.RegisterNewHouses(
+            _systems.HouseholdRegistrationSystem,
             _systems.State,
             _systems.BuildingReadSystem,
-            newHomeBuildingId => _systems.HouseholdRegistrationSystem.TryRehouseDisplacedHousehold(
+            newHomeBuildingId => CitizenHouseholdRegistrationSystem.TryRehouseDisplacedHousehold(
+                _systems.HouseholdRegistrationSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,
                 newHomeBuildingId,
                 StoreHousehold,
                 StoreCitizen,
-                (CitizenRecordComponent citizen, int targetBuildingId) => _systems.TravelSystem.EstimateTravelSeconds(_systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId)),
+                (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId)),
             StoreHousehold,
             StoreCitizen);
-        _systems.RefugeeSystem.UpdateRefugeeTentState(
+        CitizenRefugeeSystem.UpdateRefugeeTentState(
+            _systems.RefugeeSystem,
             _systems.State,
             _systems.BuildingReadSystem,
             _systems.HouseholdRegistrationSystem,
             StoreHousehold,
             StoreCitizen,
-            (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => _systems.TravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
-            (CitizenRecordComponent citizen, int targetBuildingId) => _systems.TravelSystem.EstimateTravelSeconds(_systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
+            (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.TravelSystem, _systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
+            (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
             HandleCitizenDeath);
         UpdateDeferredCitizenTravel();
         UpdateCitizenSchedules();
-        _systems.RefugeeSystem.UpdateRefugeeUpkeep(
+        CitizenRefugeeSystem.UpdateRefugeeUpkeep(
+            _systems.RefugeeSystem,
+            ref _systems.RefugeeState,
             _systems.State,
             _systems.BuildingReadSystem,
             _systems.HouseholdRegistrationSystem,
@@ -173,11 +194,17 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 continue;
             }
 
-            if (_systems.DangerSystem.TryGetDangerFleeTarget(_systems.BuildingReadSystem, citizen, out int fleeTargetBuildingId))
+            if (CitizenDangerSystem.TryGetDangerFleeTarget(_systems.DangerSystem, _systems.BuildingReadSystem, citizen, out int fleeTargetBuildingId))
             {
                 if (citizen.Status != CitizenStatus.Fleeing || citizen.CurrentTargetBuildingId != fleeTargetBuildingId)
                 {
-                    _systems.StatusTransitionSystem.SetCitizenStatus(ref citizen, CitizenStatus.Fleeing, fleeTargetBuildingId, 0f, Time.time);
+                    CitizenStatusTransitionSystem.SetCitizenStatus(
+                        _systems.StatusTransitionSystem,
+                        ref citizen,
+                        CitizenStatus.Fleeing,
+                        fleeTargetBuildingId,
+                        0f,
+                        Time.time);
                     StoreCitizen(citizen);
                 }
                 continue;
@@ -186,19 +213,39 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             if (citizen.Status == CitizenStatus.Fleeing)
                 continue;
 
-            CitizenStatus desiredStatus = _systems.ScheduleSystem.GetScheduledStatus(_systems.State, _systems.DayNightSystem, citizen);
-            int desiredTargetBuildingId = _systems.ScheduleSystem.GetScheduledTargetBuildingId(_systems.State, _systems.DayNightSystem, citizen, desiredStatus);
-            CitizenStatus nextStatus = _systems.StatusTransitionSystem.ShouldUseTravelStatus(_systems.State, citizen, desiredStatus, desiredTargetBuildingId)
-                ? _systems.StatusTransitionSystem.GetTravelStatusForDesiredStatus(desiredStatus)
+            CitizenStatus desiredStatus = CitizenScheduleSystem.GetScheduledStatus(
+                _systems.ScheduleSystem,
+                _systems.State,
+                _systems.DayNightSystem,
+                citizen);
+            int desiredTargetBuildingId = CitizenScheduleSystem.GetScheduledTargetBuildingId(
+                _systems.ScheduleSystem,
+                _systems.State,
+                _systems.DayNightSystem,
+                citizen,
+                desiredStatus);
+            CitizenStatus nextStatus = CitizenStatusTransitionSystem.ShouldUseTravelStatus(
+                    _systems.StatusTransitionSystem,
+                    _systems.State,
+                    citizen,
+                    desiredStatus,
+                    desiredTargetBuildingId)
+                ? CitizenStatusTransitionSystem.GetTravelStatusForDesiredStatus(_systems.StatusTransitionSystem, desiredStatus)
                 : desiredStatus;
 
             if (citizen.Status == nextStatus && citizen.CurrentTargetBuildingId == desiredTargetBuildingId)
                 continue;
 
-            float stateDurationSeconds = _systems.StatusTransitionSystem.IsTravelStatus(nextStatus)
-                ? _systems.TravelSystem.EstimateTravelSeconds(_systems.State, _systems.BuildingReadSystem, citizen, desiredTargetBuildingId)
+            float stateDurationSeconds = CitizenStatusTransitionSystem.IsTravelStatus(_systems.StatusTransitionSystem, nextStatus)
+                ? CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, desiredTargetBuildingId)
                 : 0f;
-            _systems.StatusTransitionSystem.SetCitizenStatus(ref citizen, nextStatus, desiredTargetBuildingId, stateDurationSeconds, Time.time);
+            CitizenStatusTransitionSystem.SetCitizenStatus(
+                _systems.StatusTransitionSystem,
+                ref citizen,
+                nextStatus,
+                desiredTargetBuildingId,
+                stateDurationSeconds,
+                Time.time);
             StoreCitizen(citizen);
         }
     }
@@ -215,12 +262,17 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 continue;
             if (citizen.LifeState == CitizenLifeState.Dead)
                 continue;
-            if (!_systems.StatusTransitionSystem.IsTravelStatus(citizen.Status))
+            if (!CitizenStatusTransitionSystem.IsTravelStatus(_systems.StatusTransitionSystem, citizen.Status))
                 continue;
             if (citizen.StateEndsAt <= 0f || Time.time < citizen.StateEndsAt)
                 continue;
 
-            _systems.StatusTransitionSystem.TryResolveCitizenArrival(_systems.State, citizenId, Time.time, StoreCitizen);
+            CitizenStatusTransitionSystem.TryResolveCitizenArrival(
+                _systems.StatusTransitionSystem,
+                _systems.State,
+                citizenId,
+                Time.time,
+                StoreCitizen);
         }
     }
 
@@ -263,7 +315,8 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             if (homeExists && !isDestroyed)
                 continue;
 
-            _systems.RefugeeSystem.DisplaceHousehold(
+            CitizenRefugeeSystem.DisplaceHousehold(
+                _systems.RefugeeSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,
                 _systems.HouseholdRegistrationSystem,
@@ -271,8 +324,8 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 homeExists ? "home-destroyed" : "home-missing",
                 StoreHousehold,
                 StoreCitizen,
-                (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => _systems.TravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
-                (CitizenRecordComponent citizen, int targetBuildingId) => _systems.TravelSystem.EstimateTravelSeconds(_systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
+                (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.TravelSystem, _systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
+                (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
                 HandleCitizenDeath);
         }
     }

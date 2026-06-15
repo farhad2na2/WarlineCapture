@@ -69,7 +69,8 @@ internal sealed partial class CitizenPopulationDebugSystem : SystemBase
         if (!state.TryGetCitizen(citizenId, out _))
             return false;
 
-        return statusTransitionSystem.TrySetCitizenStatus(
+        return CitizenStatusTransitionSystem.TrySetCitizenStatus(
+            statusTransitionSystem,
             state,
             citizenId,
             status,

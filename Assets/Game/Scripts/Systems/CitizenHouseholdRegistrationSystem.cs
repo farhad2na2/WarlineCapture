@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Entities;
 
-internal sealed class CitizenHouseholdRegistrationSystem
+internal sealed partial class CitizenHouseholdRegistrationSystem : SystemBase
 {
     public delegate CitizenHouseholdRecordComponent StoreHouseholdAction(CitizenHouseholdRecordComponent household);
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
@@ -8,7 +9,181 @@ internal sealed class CitizenHouseholdRegistrationSystem
     public delegate void DisplaceHouseholdAction(CitizenHouseholdRecordComponent household, string reason);
     public delegate float EstimateTravelSecondsAction(CitizenRecordComponent citizen, int targetBuildingId);
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static void SyncRemovedHouses(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        DisplaceHouseholdAction displaceHousehold)
+    {
+        if (system != null)
+        {
+            system.SyncRemovedHouses(state, buildingReadSystem, displaceHousehold);
+            return;
+        }
+
+        SyncRemovedHousesState(state, buildingReadSystem, displaceHousehold);
+    }
+
     public void SyncRemovedHouses(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        DisplaceHouseholdAction displaceHousehold)
+    {
+        SyncRemovedHousesState(state, buildingReadSystem, displaceHousehold);
+    }
+
+    public static void RegisterNewHouses(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen)
+    {
+        if (system != null)
+        {
+            system.RegisterNewHouses(
+                state,
+                buildingReadSystem,
+                tryRehouseDisplacedHousehold,
+                storeHousehold,
+                storeCitizen);
+            return;
+        }
+
+        RegisterNewHousesState(
+            state,
+            buildingReadSystem,
+            tryRehouseDisplacedHousehold,
+            storeHousehold,
+            storeCitizen);
+    }
+
+    public void RegisterNewHouses(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen)
+    {
+        RegisterNewHousesState(
+            state,
+            buildingReadSystem,
+            tryRehouseDisplacedHousehold,
+            storeHousehold,
+            storeCitizen);
+    }
+
+    public static bool TryRehouseDisplacedHousehold(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int newHomeBuildingId,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        EstimateTravelSecondsAction estimateTravelSeconds)
+    {
+        return system != null
+            ? system.TryRehouseDisplacedHousehold(
+                state,
+                buildingReadSystem,
+                newHomeBuildingId,
+                storeHousehold,
+                storeCitizen,
+                estimateTravelSeconds)
+            : TryRehouseDisplacedHouseholdState(
+                state,
+                buildingReadSystem,
+                newHomeBuildingId,
+                storeHousehold,
+                storeCitizen,
+                estimateTravelSeconds);
+    }
+
+    public bool TryRehouseDisplacedHousehold(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int newHomeBuildingId,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        EstimateTravelSecondsAction estimateTravelSeconds)
+    {
+        return TryRehouseDisplacedHouseholdState(
+            state,
+            buildingReadSystem,
+            newHomeBuildingId,
+            storeHousehold,
+            storeCitizen,
+            estimateTravelSeconds);
+    }
+
+    public static int CountLivingHouseholdMembers(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenHouseholdRecordComponent household)
+    {
+        return system != null
+            ? system.CountLivingHouseholdMembers(state, household)
+            : CountLivingHouseholdMembersState(state, household);
+    }
+
+    public int CountLivingHouseholdMembers(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    {
+        return CountLivingHouseholdMembersState(state, household);
+    }
+
+    public static int CountLivingHouseholdRefugees(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenHouseholdRecordComponent household)
+    {
+        return system != null
+            ? system.CountLivingHouseholdRefugees(state, household)
+            : CountLivingHouseholdRefugeesState(state, household);
+    }
+
+    public int CountLivingHouseholdRefugees(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    {
+        return CountLivingHouseholdRefugeesState(state, household);
+    }
+
+    public static bool IsCitizenAlive(
+        CitizenHouseholdRegistrationSystem system,
+        CitizenPopulationStateSystem state,
+        int citizenId)
+    {
+        return system != null
+            ? system.IsCitizenAlive(state, citizenId)
+            : IsCitizenAliveState(state, citizenId);
+    }
+
+    public bool IsCitizenAlive(CitizenPopulationStateSystem state, int citizenId)
+    {
+        return IsCitizenAliveState(state, citizenId);
+    }
+
+    public static bool HasHouseholdData(CitizenHouseholdRegistrationSystem system, CitizenPopulationStateSystem state)
+    {
+        return system != null
+            ? system.HasHouseholdData(state)
+            : HasHouseholdDataState(state);
+    }
+
+    public bool HasHouseholdData(CitizenPopulationStateSystem state)
+    {
+        return HasHouseholdDataState(state);
+    }
+
+    private static void SyncRemovedHousesState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
@@ -42,7 +217,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
         }
     }
 
-    public void RegisterNewHouses(
+    private static void RegisterNewHousesState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
@@ -95,7 +270,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
                 Gender = CitizenGender.Male,
                 LifeState = CitizenLifeState.Alive,
                 Status = CitizenStatus.AtHome,
-                StateStartedAt = Time.time,
+                StateStartedAt = UnityEngine.Time.time,
                 StateEndsAt = 0f
             });
             storeCitizen(new CitizenRecordComponent
@@ -113,13 +288,13 @@ internal sealed class CitizenHouseholdRegistrationSystem
                 Gender = CitizenGender.Female,
                 LifeState = CitizenLifeState.Alive,
                 Status = CitizenStatus.AtHome,
-                StateStartedAt = Time.time,
+                StateStartedAt = UnityEngine.Time.time,
                 StateEndsAt = 0f
             });
         }
     }
 
-    public bool TryRehouseDisplacedHousehold(
+    private static bool TryRehouseDisplacedHouseholdState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         int newHomeBuildingId,
@@ -145,43 +320,43 @@ internal sealed class CitizenHouseholdRegistrationSystem
         household.RefugeeTentBuildingId = 0;
         household = storeHousehold(household);
 
-        RehouseCitizen(state, household.MaleCitizenId, newHomeBuildingId, assignedWorkBuildingId, assignedWorkBuildingId, assignedLunchShopBuildingId, assignedWalkBuildingId, assignedCityHallBuildingId, storeCitizen, estimateTravelSeconds);
-        RehouseCitizen(state, household.FemaleCitizenId, newHomeBuildingId, 0, assignedWorkBuildingId, 0, assignedWalkBuildingId, assignedCityHallBuildingId, storeCitizen, estimateTravelSeconds);
+        RehouseCitizenState(state, household.MaleCitizenId, newHomeBuildingId, assignedWorkBuildingId, assignedWorkBuildingId, assignedLunchShopBuildingId, assignedWalkBuildingId, assignedCityHallBuildingId, storeCitizen, estimateTravelSeconds);
+        RehouseCitizenState(state, household.FemaleCitizenId, newHomeBuildingId, 0, assignedWorkBuildingId, 0, assignedWalkBuildingId, assignedCityHallBuildingId, storeCitizen, estimateTravelSeconds);
 
         return true;
     }
 
-    public int CountLivingHouseholdMembers(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    private static int CountLivingHouseholdMembersState(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
     {
         int count = 0;
-        if (IsCitizenAlive(state, household.MaleCitizenId))
+        if (IsCitizenAliveState(state, household.MaleCitizenId))
             count++;
-        if (IsCitizenAlive(state, household.FemaleCitizenId))
+        if (IsCitizenAliveState(state, household.FemaleCitizenId))
             count++;
         return count;
     }
 
-    public int CountLivingHouseholdRefugees(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    private static int CountLivingHouseholdRefugeesState(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
     {
         int count = 0;
-        if (IsCitizenRefugee(state, household.MaleCitizenId))
+        if (IsCitizenRefugeeState(state, household.MaleCitizenId))
             count++;
-        if (IsCitizenRefugee(state, household.FemaleCitizenId))
+        if (IsCitizenRefugeeState(state, household.FemaleCitizenId))
             count++;
         return count;
     }
 
-    public bool IsCitizenAlive(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenAliveState(CitizenPopulationStateSystem state, int citizenId)
     {
         return state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen) && citizen.LifeState != CitizenLifeState.Dead;
     }
 
-    public bool HasHouseholdData(CitizenPopulationStateSystem state)
+    private static bool HasHouseholdDataState(CitizenPopulationStateSystem state)
     {
         return state.HouseholdCount > 0;
     }
 
-    private int FindDisplacedHouseholdForRehousing(CitizenPopulationStateSystem state)
+    private static int FindDisplacedHouseholdForRehousing(CitizenPopulationStateSystem state)
     {
         state.PopulateHouseholdIds();
         for (int i = 0; i < state.ScratchHouseholdIds.Count; i++)
@@ -190,9 +365,9 @@ internal sealed class CitizenHouseholdRegistrationSystem
                 continue;
             if (household.IsDisplaced == 0)
                 continue;
-            if (!IsCitizenAlive(state, household.MaleCitizenId) && !IsCitizenAlive(state, household.FemaleCitizenId))
+            if (!IsCitizenAliveState(state, household.MaleCitizenId) && !IsCitizenAliveState(state, household.FemaleCitizenId))
                 continue;
-            if (!IsCitizenAwaitingRehousing(state, household.MaleCitizenId) && !IsCitizenAwaitingRehousing(state, household.FemaleCitizenId))
+            if (!IsCitizenAwaitingRehousingState(state, household.MaleCitizenId) && !IsCitizenAwaitingRehousingState(state, household.FemaleCitizenId))
                 continue;
 
             return household.HouseholdId;
@@ -201,7 +376,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
         return 0;
     }
 
-    private void RehouseCitizen(
+    private static void RehouseCitizenState(
         CitizenPopulationStateSystem state,
         int citizenId,
         int newHomeBuildingId,
@@ -228,7 +403,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
         storeCitizen(citizen);
     }
 
-    private bool IsCitizenRefugee(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenRefugeeState(CitizenPopulationStateSystem state, int citizenId)
     {
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;
@@ -237,7 +412,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
                (citizen.Status == CitizenStatus.RefugeeSeekingShelter || citizen.Status == CitizenStatus.AtRefugeeTent);
     }
 
-    private bool IsCitizenAwaitingRehousing(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenAwaitingRehousingState(CitizenPopulationStateSystem state, int citizenId)
     {
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;
@@ -250,8 +425,8 @@ internal sealed class CitizenHouseholdRegistrationSystem
     {
         citizen.Status = status;
         citizen.CurrentTargetBuildingId = targetBuildingId != 0 ? targetBuildingId : citizen.HomeBuildingId;
-        citizen.StateStartedAt = Time.time;
-        citizen.StateEndsAt = stateDurationSeconds > 0f ? Time.time + stateDurationSeconds : 0f;
+        citizen.StateStartedAt = UnityEngine.Time.time;
+        citizen.StateEndsAt = stateDurationSeconds > 0f ? UnityEngine.Time.time + stateDurationSeconds : 0f;
         citizen.LifeState = status == CitizenStatus.Dead ? CitizenLifeState.Dead : CitizenLifeState.Alive;
     }
 }

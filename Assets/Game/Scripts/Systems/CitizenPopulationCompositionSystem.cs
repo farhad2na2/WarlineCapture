@@ -5,27 +5,30 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 {
     public sealed class Result
     {
-        public readonly CitizenResourceSystem CitizenResourceSystem = new();
+        public readonly CitizenResourceSystem CitizenResourceSystem = ResolveCitizenResourceSystem();
         public CitizenResourceSystem.Context CitizenResourceContext;
         public readonly CitizenPrefabSystem CitizenPrefabSystem = ResolveCitizenPrefabSystem();
         public CitizenPrefabSystem.Context CitizenPrefabContext;
         public readonly CitizenPopulationStateSystem State = new();
         public readonly CitizenPopulationEcsProjectionSystem EcsProjection = new();
         public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
-        public readonly CitizenPopulationReadModelSystem ReadModel = new();
+        public readonly CitizenPopulationReadModelSystem ReadModel = ResolveCitizenPopulationReadModelSystem();
+        public CitizenPopulationReadModelSystem.State ReadModelState;
         public readonly CitizenBuildingReadSystem BuildingReadSystem = new();
-        public readonly CitizenHouseholdRegistrationSystem HouseholdRegistrationSystem = new();
-        public readonly CitizenRefugeeSystem RefugeeSystem = new();
-        public readonly CitizenScheduleSystem ScheduleSystem = new();
-        public readonly CitizenStatusTransitionSystem StatusTransitionSystem = new();
-        public readonly CitizenDangerSystem DangerSystem = new();
-        public readonly CitizenTravelSystem TravelSystem = new();
+        public readonly CitizenHouseholdRegistrationSystem HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
+        public readonly CitizenRefugeeSystem RefugeeSystem = ResolveCitizenRefugeeSystem();
+        public CitizenRefugeeSystem.State RefugeeState;
+        public readonly CitizenScheduleSystem ScheduleSystem = ResolveCitizenScheduleSystem();
+        public readonly CitizenStatusTransitionSystem StatusTransitionSystem = ResolveCitizenStatusTransitionSystem();
+        public readonly CitizenDangerSystem DangerSystem = ResolveCitizenDangerSystem();
+        public readonly CitizenTravelSystem TravelSystem = ResolveCitizenTravelSystem();
         public readonly CitizenPrefabSelectionSystem PrefabSelectionSystem = ResolveCitizenPrefabSelectionSystem();
         public readonly CitizenVisibleUnitSystem VisibleUnitSystem = new();
-        public readonly CitizenPopulationEventSystem EventSystem = new();
+        public readonly CitizenPopulationEventSystem EventSystem = ResolveCitizenPopulationEventSystem();
         public readonly CitizenPopulationDebugSystem DebugSystem = ResolveCitizenPopulationDebugSystem();
-        public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = new();
-        public readonly CitizenPopulationLifecycleSystem LifecycleSystem = new();
+        public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = ResolveCitizenPopulationDiagnosticSystem();
+        public readonly CitizenPopulationLifecycleSystem LifecycleSystem = ResolveCitizenPopulationLifecycleSystem();
+        public CitizenPopulationLifecycleSystem.State LifecycleState;
         public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
         public DayNightSystem DayNightSystem;
@@ -124,12 +127,12 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         result.EcsProjection.ResolveEntityManager();
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
         result.State.Reset();
-        result.ReadModel.Reset();
-        result.LifecycleSystem.Reset();
-        result.RefugeeSystem.Reset();
-        result.DangerSystem.Reset();
+        CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
+        CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
+        CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
+        CitizenDangerSystem.Reset(result.DangerSystem);
         result.PrefabSelectionSystem?.Init(result.CitizenPrefabSystem, result.CitizenPrefabContext);
-        result.EventSystem.Init(
+        result.EventSystem?.Init(
             result.State,
             result.BuildingReadSystem,
             result.HouseholdRegistrationSystem,
@@ -141,7 +144,13 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
             result.RuntimeUpdateSystem.StoreCitizen,
             result.RuntimeUpdateSystem.HandleCitizenDeath);
         result.EcsProjection.EnsurePopulationSummaryEntity();
-        result.ReadModel.Refresh(result.TotalsSystem, result.State, result.EcsProjection, syncSummaryEntity: true);
+        CitizenPopulationReadModelSystem.Refresh(
+            result.ReadModel,
+            ref result.ReadModelState,
+            result.TotalsSystem,
+            result.State,
+            result.EcsProjection,
+            syncSummaryEntity: true);
     }
 
     public static void Dispose(CitizenPopulationCompositionSystem system, Result result)
@@ -165,13 +174,13 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         result.EcsProjection.DestroyAllCitizenEntities(result.State);
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
         result.State.Reset();
-        result.ReadModel.Reset();
+        CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
         result.BuildingReadSystem.Dispose();
-        result.DangerSystem.Reset();
-        result.LifecycleSystem.Reset();
-        result.RefugeeSystem.Reset();
+        CitizenDangerSystem.Reset(result.DangerSystem);
+        CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
+        CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
         result.PrefabSelectionSystem?.Reset();
-        result.EventSystem.Reset();
+        result.EventSystem?.Reset();
         result.RuntimeUpdateSystem.Reset();
         result.UnitPathfindingPendingStateReader.Dispose();
         result.EcsProjection.Reset();
@@ -185,6 +194,14 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<CitizenPrefabSystem>()
+            : null;
+    }
+
+    private static CitizenResourceSystem ResolveCitizenResourceSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenResourceSystem>()
             : null;
     }
 
@@ -204,11 +221,91 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
             : null;
     }
 
+    private static CitizenPopulationReadModelSystem ResolveCitizenPopulationReadModelSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenPopulationReadModelSystem>()
+            : null;
+    }
+
+    private static CitizenPopulationLifecycleSystem ResolveCitizenPopulationLifecycleSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenPopulationLifecycleSystem>()
+            : null;
+    }
+
+    private static CitizenScheduleSystem ResolveCitizenScheduleSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenScheduleSystem>()
+            : null;
+    }
+
+    private static CitizenStatusTransitionSystem ResolveCitizenStatusTransitionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenStatusTransitionSystem>()
+            : null;
+    }
+
+    private static CitizenTravelSystem ResolveCitizenTravelSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenTravelSystem>()
+            : null;
+    }
+
+    private static CitizenDangerSystem ResolveCitizenDangerSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenDangerSystem>()
+            : null;
+    }
+
+    private static CitizenHouseholdRegistrationSystem ResolveCitizenHouseholdRegistrationSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenHouseholdRegistrationSystem>()
+            : null;
+    }
+
+    private static CitizenRefugeeSystem ResolveCitizenRefugeeSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenRefugeeSystem>()
+            : null;
+    }
+
     private static CitizenPopulationDebugSystem ResolveCitizenPopulationDebugSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<CitizenPopulationDebugSystem>()
+            : null;
+    }
+
+    private static CitizenPopulationDiagnosticSystem ResolveCitizenPopulationDiagnosticSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenPopulationDiagnosticSystem>()
+            : null;
+    }
+
+    private static CitizenPopulationEventSystem ResolveCitizenPopulationEventSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<CitizenPopulationEventSystem>()
             : null;
     }
 }

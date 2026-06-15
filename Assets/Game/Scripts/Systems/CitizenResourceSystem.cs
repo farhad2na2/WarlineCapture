@@ -1,7 +1,8 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenResourceSystem
+internal sealed partial class CitizenResourceSystem : SystemBase
 {
     public readonly struct Context
     {
@@ -15,17 +16,50 @@ internal sealed class CitizenResourceSystem
         }
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static bool IsConfigured(CitizenResourceSystem system, Context context)
+    {
+        return system != null
+            ? system.IsConfigured(context)
+            : IsConfiguredState(context);
+    }
+
     public bool IsConfigured(Context context)
     {
-        return context.GetDollars != null && context.SetDollars != null;
+        return IsConfiguredState(context);
+    }
+
+    public static bool TrySpendDollars(CitizenResourceSystem system, Context context, int amount)
+    {
+        return system != null
+            ? system.TrySpendDollars(context, amount)
+            : TrySpendDollarsState(context, amount);
     }
 
     public bool TrySpendDollars(Context context, int amount)
     {
+        return TrySpendDollarsState(context, amount);
+    }
+
+    private static bool IsConfiguredState(Context context)
+    {
+        return context.GetDollars != null && context.SetDollars != null;
+    }
+
+    private static bool TrySpendDollarsState(Context context, int amount)
+    {
         amount = Mathf.Max(0, amount);
         if (amount <= 0)
             return true;
-        if (!IsConfigured(context))
+        if (!IsConfiguredState(context))
             return false;
 
         int current = Mathf.Max(0, context.GetDollars());

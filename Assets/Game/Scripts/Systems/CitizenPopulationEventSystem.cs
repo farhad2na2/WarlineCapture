@@ -1,6 +1,7 @@
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class CitizenPopulationEventSystem
+public sealed partial class CitizenPopulationEventSystem : SystemBase
 {
     private CitizenPopulationStateSystem _state;
     private CitizenBuildingReadSystem _buildingReadSystem;
@@ -14,6 +15,15 @@ public sealed class CitizenPopulationEventSystem
     private CitizenRefugeeSystem.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
     private CitizenRefugeeSystem.EstimateTravelSecondsAction _estimateTravelSeconds;
     private CitizenRefugeeSystem.MarkCitizenDeadAction _markCitizenDead;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     internal void Init(
         CitizenPopulationStateSystem state,
@@ -67,10 +77,11 @@ public sealed class CitizenPopulationEventSystem
 
     public void NotifyHomeBuildingDestroyed(int buildingId)
     {
-        if (_refugeeSystem == null || _state == null)
+        if (_state == null)
             return;
 
-        _refugeeSystem.NotifyHomeBuildingDestroyed(
+        CitizenRefugeeSystem.NotifyHomeBuildingDestroyed(
+            _refugeeSystem,
             _state,
             _buildingReadSystem,
             _householdRegistrationSystem,
@@ -84,7 +95,8 @@ public sealed class CitizenPopulationEventSystem
 
     private bool TryGetHouseholdReferenceWorldPosition(CitizenHouseholdRecordComponent household, out Vector3 worldPosition)
     {
-        return _travelSystem.TryGetHouseholdReferenceWorldPosition(
+        return CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(
+            _travelSystem,
             _state,
             _ecsProjection,
             _buildingReadSystem,
@@ -95,6 +107,6 @@ public sealed class CitizenPopulationEventSystem
 
     private float EstimateTravelSeconds(CitizenRecordComponent citizen, int targetBuildingId)
     {
-        return _travelSystem.EstimateTravelSeconds(_state, _buildingReadSystem, citizen, targetBuildingId);
+        return CitizenTravelSystem.EstimateTravelSeconds(_travelSystem, _state, _buildingReadSystem, citizen, targetBuildingId);
     }
 }

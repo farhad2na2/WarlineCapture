@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Unity.Entities;
 
-internal sealed class CitizenPopulationStateSystem
+internal sealed partial class CitizenPopulationStateSystem : SystemBase
 {
     private readonly Dictionary<int, int> _householdIdsByHomeBuildingId = new();
     private readonly Dictionary<int, CitizenHouseholdRecordComponent> _householdsById = new();
@@ -23,6 +24,15 @@ internal sealed class CitizenPopulationStateSystem
     public List<int> ScratchRemovedBuildingIds => _scratchRemovedBuildingIds;
     public int CitizenCount => _citizensById.Count;
     public int HouseholdCount => _householdsById.Count;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Reset()
     {

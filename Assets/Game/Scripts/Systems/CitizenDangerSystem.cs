@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenDangerSystem
+internal sealed partial class CitizenDangerSystem : SystemBase
 {
     private const float DangerDetectRadius = 35f;
     private const float DangerScanIntervalSeconds = 1f;
@@ -10,11 +11,30 @@ internal sealed class CitizenDangerSystem
     private readonly List<Vector3> _dangerWorldPositions = new();
     private float _nextDangerScanAt;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static void Reset(CitizenDangerSystem system)
+    {
+        system?.Reset();
+    }
+
     public void Reset()
     {
         _dangerSourceTransforms.Clear();
         _dangerWorldPositions.Clear();
         _nextDangerScanAt = 0f;
+    }
+
+    public static void RegisterDangerSource(CitizenDangerSystem system, Transform source)
+    {
+        system?.RegisterDangerSource(source);
     }
 
     public void RegisterDangerSource(Transform source)
@@ -25,10 +45,20 @@ internal sealed class CitizenDangerSystem
         _dangerSourceTransforms.Add(source);
     }
 
+    public static void UnregisterDangerSource(CitizenDangerSystem system, Transform source)
+    {
+        system?.UnregisterDangerSource(source);
+    }
+
     public void UnregisterDangerSource(Transform source)
     {
         if (source != null)
             _dangerSourceTransforms.Remove(source);
+    }
+
+    public static void RefreshDangerSourcesIfNeeded(CitizenDangerSystem system, float now)
+    {
+        system?.RefreshDangerSourcesIfNeeded(now);
     }
 
     public void RefreshDangerSourcesIfNeeded(float now)
@@ -49,6 +79,16 @@ internal sealed class CitizenDangerSystem
 
             _dangerWorldPositions.Add(source.position);
         }
+    }
+
+    public static bool TryGetDangerFleeTarget(
+        CitizenDangerSystem system,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenRecordComponent citizen,
+        out int fleeTargetBuildingId)
+    {
+        fleeTargetBuildingId = 0;
+        return system != null && system.TryGetDangerFleeTarget(buildingReadSystem, citizen, out fleeTargetBuildingId);
     }
 
     public bool TryGetDangerFleeTarget(

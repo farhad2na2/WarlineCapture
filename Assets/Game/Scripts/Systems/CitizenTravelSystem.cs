@@ -3,12 +3,325 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class CitizenTravelSystem
+internal sealed partial class CitizenTravelSystem : SystemBase
 {
     private const float MaxVisibleTravelSegmentDistance = 48f;
     private const float DeferredTravelCellsPerSecond = 10f;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static bool TryGetHouseholdReferenceWorldPosition(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenHouseholdRecordComponent household,
+        out Vector3 worldPosition)
+    {
+        return system != null
+            ? system.TryGetHouseholdReferenceWorldPosition(state, ecsProjection, buildingReadSystem, statusTransitionSystem, household, out worldPosition)
+            : TryGetHouseholdReferenceWorldPositionState(state, ecsProjection, buildingReadSystem, statusTransitionSystem, household, out worldPosition);
+    }
+
     public bool TryGetHouseholdReferenceWorldPosition(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenHouseholdRecordComponent household,
+        out Vector3 worldPosition)
+    {
+        return TryGetHouseholdReferenceWorldPositionState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            statusTransitionSystem,
+            household,
+            out worldPosition);
+    }
+
+    public static bool TryGetCitizenReferenceWorldPosition(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int citizenId,
+        out Vector3 worldPosition)
+    {
+        return system != null
+            ? system.TryGetCitizenReferenceWorldPosition(state, buildingReadSystem, citizenId, out worldPosition)
+            : TryGetCitizenReferenceWorldPositionState(state, buildingReadSystem, citizenId, out worldPosition);
+    }
+
+    public bool TryGetCitizenReferenceWorldPosition(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int citizenId,
+        out Vector3 worldPosition)
+    {
+        return TryGetCitizenReferenceWorldPositionState(state, buildingReadSystem, citizenId, out worldPosition);
+    }
+
+    public static bool ShouldCitizenBeVisible(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        Camera worldCamera,
+        CitizenRecordComponent citizen,
+        float maxDistance,
+        out Vector3 worldPosition)
+    {
+        return system != null
+            ? system.ShouldCitizenBeVisible(state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, maxDistance, out worldPosition)
+            : ShouldCitizenBeVisibleState(state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, maxDistance, out worldPosition);
+    }
+
+    public bool ShouldCitizenBeVisible(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        Camera worldCamera,
+        CitizenRecordComponent citizen,
+        float maxDistance,
+        out Vector3 worldPosition)
+    {
+        return ShouldCitizenBeVisibleState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            statusTransitionSystem,
+            worldCamera,
+            citizen,
+            maxDistance,
+            out worldPosition);
+    }
+
+    public static int GetTravelOriginBuildingId(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenRecordComponent citizen)
+    {
+        return system != null
+            ? system.GetTravelOriginBuildingId(state, citizen)
+            : GetTravelOriginBuildingIdState(state, citizen);
+    }
+
+    public int GetTravelOriginBuildingId(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
+    {
+        return GetTravelOriginBuildingIdState(state, citizen);
+    }
+
+    public static bool TryGetCitizenReferenceAnchorWorldPosition(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenRecordComponent citizen,
+        out Vector3 worldPosition)
+    {
+        return system != null
+            ? system.TryGetCitizenReferenceAnchorWorldPosition(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, out worldPosition)
+            : TryGetCitizenReferenceAnchorWorldPositionState(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, out worldPosition);
+    }
+
+    public bool TryGetCitizenReferenceAnchorWorldPosition(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenRecordComponent citizen,
+        out Vector3 worldPosition)
+    {
+        return TryGetCitizenReferenceAnchorWorldPositionState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            statusTransitionSystem,
+            citizen,
+            out worldPosition);
+    }
+
+    public static bool TryWorldToCell(
+        CitizenTravelSystem system,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        Vector3 worldPosition,
+        out int2 cell)
+    {
+        return system != null
+            ? system.TryWorldToCell(ecsProjection, worldPosition, out cell)
+            : TryWorldToCellState(ecsProjection, worldPosition, out cell);
+    }
+
+    public bool TryWorldToCell(CitizenPopulationEcsProjectionSystem ecsProjection, Vector3 worldPosition, out int2 cell)
+    {
+        return TryWorldToCellState(ecsProjection, worldPosition, out cell);
+    }
+
+    public static bool TryGetCitizenMoveGoal(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenRecordComponent citizen,
+        Vector3 currentPosition,
+        out int2 goalCell)
+    {
+        return system != null
+            ? system.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out goalCell)
+            : TryGetCitizenMoveGoalState(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out goalCell);
+    }
+
+    public bool TryGetCitizenMoveGoal(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenRecordComponent citizen,
+        Vector3 currentPosition,
+        out int2 goalCell)
+    {
+        return TryGetCitizenMoveGoalState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            statusTransitionSystem,
+            citizen,
+            currentPosition,
+            out goalCell);
+    }
+
+    public static bool TryGetCitizenSegmentGoalCell(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenRecordComponent citizen,
+        Vector3 currentPosition,
+        out int2 goalCell)
+    {
+        return system != null
+            ? system.TryGetCitizenSegmentGoalCell(state, ecsProjection, buildingReadSystem, citizen, currentPosition, out goalCell)
+            : TryGetCitizenSegmentGoalCellState(state, ecsProjection, buildingReadSystem, citizen, currentPosition, out goalCell);
+    }
+
+    public bool TryGetCitizenSegmentGoalCell(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenRecordComponent citizen,
+        Vector3 currentPosition,
+        out int2 goalCell)
+    {
+        return TryGetCitizenSegmentGoalCellState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            citizen,
+            currentPosition,
+            out goalCell);
+    }
+
+    public static float EstimateTravelSeconds(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenRecordComponent citizen,
+        int targetBuildingId)
+    {
+        return system != null
+            ? system.EstimateTravelSeconds(state, buildingReadSystem, citizen, targetBuildingId)
+            : EstimateTravelSecondsState(state, buildingReadSystem, citizen, targetBuildingId);
+    }
+
+    public float EstimateTravelSeconds(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenRecordComponent citizen,
+        int targetBuildingId)
+    {
+        return EstimateTravelSecondsState(state, buildingReadSystem, citizen, targetBuildingId);
+    }
+
+    public static bool TryGetCitizenBuildingApproachCell(
+        CitizenTravelSystem system,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int buildingId,
+        int2 referenceCell,
+        out int2 goalCell)
+    {
+        return system != null
+            ? system.TryGetCitizenBuildingApproachCell(buildingReadSystem, buildingId, referenceCell, out goalCell)
+            : TryGetCitizenBuildingApproachCellState(buildingReadSystem, buildingId, referenceCell, out goalCell);
+    }
+
+    public bool TryGetCitizenBuildingApproachCell(
+        CitizenBuildingReadSystem buildingReadSystem,
+        int buildingId,
+        int2 referenceCell,
+        out int2 goalCell)
+    {
+        return TryGetCitizenBuildingApproachCellState(buildingReadSystem, buildingId, referenceCell, out goalCell);
+    }
+
+    public static bool TryGetCitizenBuildingApproachWorldPosition(
+        CitizenTravelSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int buildingId,
+        CitizenRecordComponent citizen,
+        out Vector3 worldPosition)
+    {
+        return system != null
+            ? system.TryGetCitizenBuildingApproachWorldPosition(state, ecsProjection, buildingReadSystem, buildingId, citizen, out worldPosition)
+            : TryGetCitizenBuildingApproachWorldPositionState(state, ecsProjection, buildingReadSystem, buildingId, citizen, out worldPosition);
+    }
+
+    public bool TryGetCitizenBuildingApproachWorldPosition(
+        CitizenPopulationStateSystem state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenBuildingReadSystem buildingReadSystem,
+        int buildingId,
+        CitizenRecordComponent citizen,
+        out Vector3 worldPosition)
+    {
+        return TryGetCitizenBuildingApproachWorldPositionState(
+            state,
+            ecsProjection,
+            buildingReadSystem,
+            buildingId,
+            citizen,
+            out worldPosition);
+    }
+
+    public static Vector3 ResolveCitizenWorldPosition(
+        CitizenTravelSystem system,
+        CitizenRecordComponent citizen,
+        Vector3 anchorPosition)
+    {
+        return system != null
+            ? system.ResolveCitizenWorldPosition(citizen, anchorPosition)
+            : ResolveCitizenWorldPositionState(citizen, anchorPosition);
+    }
+
+    public Vector3 ResolveCitizenWorldPosition(CitizenRecordComponent citizen, Vector3 anchorPosition)
+    {
+        return ResolveCitizenWorldPositionState(citizen, anchorPosition);
+    }
+
+    private static bool TryGetHouseholdReferenceWorldPositionState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -22,15 +335,15 @@ internal sealed class CitizenTravelSystem
         if (buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(household.HomeBuildingId, out worldPosition))
             return true;
 
-        if (TryGetCitizenReferenceWorldPosition(state, buildingReadSystem, household.MaleCitizenId, out worldPosition))
+        if (TryGetCitizenReferenceWorldPositionState(state, buildingReadSystem, household.MaleCitizenId, out worldPosition))
             return true;
-        if (TryGetCitizenReferenceWorldPosition(state, buildingReadSystem, household.FemaleCitizenId, out worldPosition))
+        if (TryGetCitizenReferenceWorldPositionState(state, buildingReadSystem, household.FemaleCitizenId, out worldPosition))
             return true;
 
         return false;
     }
 
-    public bool TryGetCitizenReferenceWorldPosition(
+    private static bool TryGetCitizenReferenceWorldPositionState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         int citizenId,
@@ -46,7 +359,7 @@ internal sealed class CitizenTravelSystem
         return buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(preferredBuildingId, out worldPosition);
     }
 
-    public bool ShouldCitizenBeVisible(
+    private static bool ShouldCitizenBeVisibleState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -63,7 +376,7 @@ internal sealed class CitizenTravelSystem
             return false;
         if (citizen.Status == CitizenStatus.AtRefugeeTent)
             return false;
-        if (!TryGetCitizenReferenceAnchorWorldPosition(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, out Vector3 anchorPosition))
+        if (!TryGetCitizenReferenceAnchorWorldPositionState(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, out Vector3 anchorPosition))
             return false;
 
         Vector3 cameraPosition = worldCamera.transform.position;
@@ -74,7 +387,7 @@ internal sealed class CitizenTravelSystem
         return true;
     }
 
-    public int GetTravelOriginBuildingId(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
+    private static int GetTravelOriginBuildingIdState(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
     {
         if (state.TryGetHousehold(citizen.HouseholdId, out CitizenHouseholdRecordComponent household))
         {
@@ -97,7 +410,7 @@ internal sealed class CitizenTravelSystem
         return citizen.HomeBuildingId;
     }
 
-    public bool TryGetCitizenReferenceAnchorWorldPosition(
+    private static bool TryGetCitizenReferenceAnchorWorldPositionState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -118,25 +431,25 @@ internal sealed class CitizenTravelSystem
             return true;
         }
 
-        int anchorBuildingId = statusTransitionSystem.IsTravelStatus(citizen.Status)
-            ? GetTravelOriginBuildingId(state, citizen)
+        int anchorBuildingId = CitizenStatusTransitionSystem.IsTravelStatus(statusTransitionSystem, citizen.Status)
+            ? GetTravelOriginBuildingIdState(state, citizen)
             : citizen.CurrentTargetBuildingId;
 
         if (anchorBuildingId == 0)
             anchorBuildingId = citizen.HomeBuildingId;
         if (anchorBuildingId == 0)
             return false;
-        if (TryGetCitizenBuildingApproachWorldPosition(state, ecsProjection, buildingReadSystem, anchorBuildingId, citizen, out worldPosition))
+        if (TryGetCitizenBuildingApproachWorldPositionState(state, ecsProjection, buildingReadSystem, anchorBuildingId, citizen, out worldPosition))
             return true;
 
         if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(anchorBuildingId, out Vector3 anchorPosition))
             return false;
 
-        worldPosition = ResolveCitizenWorldPosition(citizen, anchorPosition);
+        worldPosition = ResolveCitizenWorldPositionState(citizen, anchorPosition);
         return true;
     }
 
-    public bool TryWorldToCell(CitizenPopulationEcsProjectionSystem ecsProjection, Vector3 worldPosition, out int2 cell)
+    private static bool TryWorldToCellState(CitizenPopulationEcsProjectionSystem ecsProjection, Vector3 worldPosition, out int2 cell)
     {
         cell = default;
         if (!ecsProjection.TryGetGridConfig(out GridConfig grid))
@@ -146,7 +459,7 @@ internal sealed class CitizenTravelSystem
         return GridUtils.InBounds(cell, grid.Width, grid.Height);
     }
 
-    public bool TryGetCitizenMoveGoal(
+    private static bool TryGetCitizenMoveGoalState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -159,10 +472,10 @@ internal sealed class CitizenTravelSystem
         if (buildingReadSystem == null || !buildingReadSystem.HasRuntimeBuildingQuery())
             return false;
 
-        return TryGetCitizenSegmentGoalCell(state, ecsProjection, buildingReadSystem, citizen, currentPosition, out goalCell);
+        return TryGetCitizenSegmentGoalCellState(state, ecsProjection, buildingReadSystem, citizen, currentPosition, out goalCell);
     }
 
-    public bool TryGetCitizenSegmentGoalCell(
+    private static bool TryGetCitizenSegmentGoalCellState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -175,17 +488,17 @@ internal sealed class CitizenTravelSystem
             return false;
 
         int2 currentCell;
-        if (!TryWorldToCell(ecsProjection, currentPosition, out currentCell))
+        if (!TryWorldToCellState(ecsProjection, currentPosition, out currentCell))
             currentCell = default;
 
         int2 targetCell;
-        if (!TryGetCitizenBuildingApproachCell(buildingReadSystem, citizen.CurrentTargetBuildingId, currentCell, out targetCell))
+        if (!TryGetCitizenBuildingApproachCellState(buildingReadSystem, citizen.CurrentTargetBuildingId, currentCell, out targetCell))
         {
             if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 targetPosition))
                 return false;
 
-            Vector3 desiredWorld = ResolveCitizenWorldPosition(citizen, targetPosition);
-            if (!TryWorldToCell(ecsProjection, desiredWorld, out targetCell))
+            Vector3 desiredWorld = ResolveCitizenWorldPositionState(citizen, targetPosition);
+            if (!TryWorldToCellState(ecsProjection, desiredWorld, out targetCell))
                 return false;
         }
 
@@ -201,7 +514,7 @@ internal sealed class CitizenTravelSystem
         return true;
     }
 
-    public float EstimateTravelSeconds(
+    private static float EstimateTravelSecondsState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenRecordComponent citizen,
@@ -214,7 +527,7 @@ internal sealed class CitizenTravelSystem
 
         int originBuildingId = citizen.CurrentTargetBuildingId != 0 ? citizen.CurrentTargetBuildingId : citizen.HomeBuildingId;
         if (originBuildingId == 0)
-            originBuildingId = GetTravelOriginBuildingId(state, citizen);
+            originBuildingId = GetTravelOriginBuildingIdState(state, citizen);
         if (originBuildingId == 0)
             return 0f;
         if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
@@ -226,7 +539,7 @@ internal sealed class CitizenTravelSystem
         return Mathf.Max(1f, distanceCells / DeferredTravelCellsPerSecond);
     }
 
-    public bool TryGetCitizenBuildingApproachCell(
+    private static bool TryGetCitizenBuildingApproachCellState(
         CitizenBuildingReadSystem buildingReadSystem,
         int buildingId,
         int2 referenceCell,
@@ -238,7 +551,7 @@ internal sealed class CitizenTravelSystem
                buildingReadSystem.TryGetRuntimeBuildingApproachCell(buildingId, new int2(1, 1), referenceCell, out goalCell);
     }
 
-    public bool TryGetCitizenBuildingApproachWorldPosition(
+    private static bool TryGetCitizenBuildingApproachWorldPositionState(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenBuildingReadSystem buildingReadSystem,
@@ -258,7 +571,7 @@ internal sealed class CitizenTravelSystem
             referenceCell = ecsProjection.EntityManager.GetComponentData<UnitGrid>(visibleCitizen.UnitEntity).Cell;
         }
 
-        if (!TryGetCitizenBuildingApproachCell(buildingReadSystem, buildingId, referenceCell, out int2 approachCell))
+        if (!TryGetCitizenBuildingApproachCellState(buildingReadSystem, buildingId, referenceCell, out int2 approachCell))
             return false;
 
         if (!ecsProjection.TryGetGridConfig(out GridConfig grid))
@@ -268,7 +581,7 @@ internal sealed class CitizenTravelSystem
         return true;
     }
 
-    public Vector3 ResolveCitizenWorldPosition(CitizenRecordComponent citizen, Vector3 anchorPosition)
+    private static Vector3 ResolveCitizenWorldPositionState(CitizenRecordComponent citizen, Vector3 anchorPosition)
     {
         int slotIndex = citizen.Gender == CitizenGender.Male ? 0 : 1;
         float xOffset = slotIndex == 0 ? -2.5f : 2.5f;

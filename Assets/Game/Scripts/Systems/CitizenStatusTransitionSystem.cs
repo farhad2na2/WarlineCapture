@@ -1,8 +1,174 @@
-internal sealed class CitizenStatusTransitionSystem
+using Unity.Entities;
+
+internal sealed partial class CitizenStatusTransitionSystem : SystemBase
 {
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static void SetCitizenStatus(
+        CitizenStatusTransitionSystem system,
+        ref CitizenRecordComponent citizen,
+        CitizenStatus status,
+        int targetBuildingId,
+        float stateDurationSeconds,
+        float now)
+    {
+        if (system != null)
+        {
+            system.SetCitizenStatus(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
+            return;
+        }
+
+        SetCitizenStatusState(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
+    }
+
     public void SetCitizenStatus(
+        ref CitizenRecordComponent citizen,
+        CitizenStatus status,
+        int targetBuildingId,
+        float stateDurationSeconds,
+        float now)
+    {
+        SetCitizenStatusState(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
+    }
+
+    public static bool IsTravelStatus(CitizenStatusTransitionSystem system, CitizenStatus status)
+    {
+        return system != null
+            ? system.IsTravelStatus(status)
+            : IsTravelStatusState(status);
+    }
+
+    public bool IsTravelStatus(CitizenStatus status)
+    {
+        return IsTravelStatusState(status);
+    }
+
+    public static bool ShouldUseTravelStatus(
+        CitizenStatusTransitionSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenRecordComponent citizen,
+        CitizenStatus desiredStatus,
+        int desiredTargetBuildingId)
+    {
+        return system != null
+            ? system.ShouldUseTravelStatus(state, citizen, desiredStatus, desiredTargetBuildingId)
+            : ShouldUseTravelStatusState(state, citizen, desiredStatus, desiredTargetBuildingId);
+    }
+
+    public bool ShouldUseTravelStatus(
+        CitizenPopulationStateSystem state,
+        CitizenRecordComponent citizen,
+        CitizenStatus desiredStatus,
+        int desiredTargetBuildingId)
+    {
+        return ShouldUseTravelStatusState(state, citizen, desiredStatus, desiredTargetBuildingId);
+    }
+
+    public static CitizenStatus GetTravelStatusForDesiredStatus(CitizenStatusTransitionSystem system, CitizenStatus desiredStatus)
+    {
+        return system != null
+            ? system.GetTravelStatusForDesiredStatus(desiredStatus)
+            : GetTravelStatusForDesiredStatusState(desiredStatus);
+    }
+
+    public CitizenStatus GetTravelStatusForDesiredStatus(CitizenStatus desiredStatus)
+    {
+        return GetTravelStatusForDesiredStatusState(desiredStatus);
+    }
+
+    public static CitizenStatus GetSettledStatus(CitizenStatusTransitionSystem system, CitizenStatus status)
+    {
+        return system != null
+            ? system.GetSettledStatus(status)
+            : GetSettledStatusState(status);
+    }
+
+    public CitizenStatus GetSettledStatus(CitizenStatus status)
+    {
+        return GetSettledStatusState(status);
+    }
+
+    public static bool TrySetCitizenStatus(
+        CitizenStatusTransitionSystem system,
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        CitizenStatus status,
+        int targetBuildingId,
+        float stateDurationSeconds,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return system != null
+            ? system.TrySetCitizenStatus(state, citizenId, status, targetBuildingId, stateDurationSeconds, now, storeCitizen)
+            : TrySetCitizenStatusState(state, citizenId, status, targetBuildingId, stateDurationSeconds, now, storeCitizen);
+    }
+
+    public bool TrySetCitizenStatus(
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        CitizenStatus status,
+        int targetBuildingId,
+        float stateDurationSeconds,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return TrySetCitizenStatusState(state, citizenId, status, targetBuildingId, stateDurationSeconds, now, storeCitizen);
+    }
+
+    public static bool TryResolveCitizenArrival(
+        CitizenStatusTransitionSystem system,
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return system != null
+            ? system.TryResolveCitizenArrival(state, citizenId, now, storeCitizen)
+            : TryResolveCitizenArrivalState(state, citizenId, now, storeCitizen);
+    }
+
+    public bool TryResolveCitizenArrival(
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return TryResolveCitizenArrivalState(state, citizenId, now, storeCitizen);
+    }
+
+    public static bool TryMarkCitizenDead(
+        CitizenStatusTransitionSystem system,
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        string reason,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return system != null
+            ? system.TryMarkCitizenDead(state, citizenId, reason, now, storeCitizen)
+            : TryMarkCitizenDeadState(state, citizenId, reason, now, storeCitizen);
+    }
+
+    public bool TryMarkCitizenDead(
+        CitizenPopulationStateSystem state,
+        int citizenId,
+        string reason,
+        float now,
+        StoreCitizenAction storeCitizen)
+    {
+        return TryMarkCitizenDeadState(state, citizenId, reason, now, storeCitizen);
+    }
+
+    private static void SetCitizenStatusState(
         ref CitizenRecordComponent citizen,
         CitizenStatus status,
         int targetBuildingId,
@@ -16,7 +182,7 @@ internal sealed class CitizenStatusTransitionSystem
         citizen.LifeState = status == CitizenStatus.Dead ? CitizenLifeState.Dead : CitizenLifeState.Alive;
     }
 
-    public bool IsTravelStatus(CitizenStatus status)
+    private static bool IsTravelStatusState(CitizenStatus status)
     {
         return status == CitizenStatus.GoingToWork ||
                status == CitizenStatus.GoingToShop ||
@@ -28,7 +194,7 @@ internal sealed class CitizenStatusTransitionSystem
                status == CitizenStatus.RelocatingToNewHouse;
     }
 
-    public bool ShouldUseTravelStatus(
+    private static bool ShouldUseTravelStatusState(
         CitizenPopulationStateSystem state,
         CitizenRecordComponent citizen,
         CitizenStatus desiredStatus,
@@ -37,11 +203,11 @@ internal sealed class CitizenStatusTransitionSystem
         if (!state.VisibleCitizensById.ContainsKey(citizen.CitizenId))
             return false;
 
-        CitizenStatus settledStatus = GetSettledStatus(citizen.Status);
+        CitizenStatus settledStatus = GetSettledStatusState(citizen.Status);
         return settledStatus != desiredStatus || citizen.CurrentTargetBuildingId != desiredTargetBuildingId;
     }
 
-    public CitizenStatus GetTravelStatusForDesiredStatus(CitizenStatus desiredStatus)
+    private static CitizenStatus GetTravelStatusForDesiredStatusState(CitizenStatus desiredStatus)
     {
         return desiredStatus switch
         {
@@ -56,7 +222,7 @@ internal sealed class CitizenStatusTransitionSystem
         };
     }
 
-    public CitizenStatus GetSettledStatus(CitizenStatus status)
+    private static CitizenStatus GetSettledStatusState(CitizenStatus status)
     {
         return status switch
         {
@@ -70,7 +236,7 @@ internal sealed class CitizenStatusTransitionSystem
         };
     }
 
-    public bool TrySetCitizenStatus(
+    private static bool TrySetCitizenStatusState(
         CitizenPopulationStateSystem state,
         int citizenId,
         CitizenStatus status,
@@ -82,12 +248,12 @@ internal sealed class CitizenStatusTransitionSystem
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;
 
-        SetCitizenStatus(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
+        SetCitizenStatusState(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
         storeCitizen(citizen);
         return true;
     }
 
-    public bool TryResolveCitizenArrival(
+    private static bool TryResolveCitizenArrivalState(
         CitizenPopulationStateSystem state,
         int citizenId,
         float now,
@@ -96,16 +262,16 @@ internal sealed class CitizenStatusTransitionSystem
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;
 
-        CitizenStatus settledStatus = GetSettledStatus(citizen.Status);
+        CitizenStatus settledStatus = GetSettledStatusState(citizen.Status);
         if (settledStatus == citizen.Status)
             return false;
 
-        SetCitizenStatus(ref citizen, settledStatus, citizen.CurrentTargetBuildingId, 0f, now);
+        SetCitizenStatusState(ref citizen, settledStatus, citizen.CurrentTargetBuildingId, 0f, now);
         storeCitizen(citizen);
         return true;
     }
 
-    public bool TryMarkCitizenDead(
+    private static bool TryMarkCitizenDeadState(
         CitizenPopulationStateSystem state,
         int citizenId,
         string reason,
@@ -118,7 +284,7 @@ internal sealed class CitizenStatusTransitionSystem
         if (citizen.LifeState == CitizenLifeState.Dead)
             return false;
 
-        SetCitizenStatus(ref citizen, CitizenStatus.Dead, citizen.CurrentTargetBuildingId, 0f, now);
+        SetCitizenStatusState(ref citizen, CitizenStatus.Dead, citizen.CurrentTargetBuildingId, 0f, now);
         storeCitizen(citizen);
         return true;
     }

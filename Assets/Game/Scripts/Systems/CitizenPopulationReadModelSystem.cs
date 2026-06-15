@@ -1,12 +1,58 @@
-internal sealed class CitizenPopulationReadModelSystem
+using Unity.Entities;
+
+internal sealed partial class CitizenPopulationReadModelSystem : SystemBase
 {
+    public struct State
+    {
+        public CitizenPopulationTotals Totals;
+    }
+
     private CitizenPopulationTotals _totals;
 
     public CitizenPopulationTotals Totals => _totals;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static void Reset(CitizenPopulationReadModelSystem system, ref State state)
+    {
+        if (system != null)
+        {
+            system.Reset();
+            return;
+        }
+
+        state.Totals = default;
+    }
+
     public void Reset()
     {
         _totals = default;
+    }
+
+    public static void Refresh(
+        CitizenPopulationReadModelSystem system,
+        ref State state,
+        CitizenPopulationTotalsSystem totalsSystem,
+        CitizenPopulationStateSystem populationState,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        bool syncSummaryEntity)
+    {
+        if (system != null)
+        {
+            system.Refresh(totalsSystem, populationState, ecsProjection, syncSummaryEntity);
+            return;
+        }
+
+        state.Totals = CitizenPopulationTotalsSystem.Calculate(totalsSystem, populationState, ecsProjection);
+        if (syncSummaryEntity)
+            ecsProjection.TryPublishSummary(state.Totals);
     }
 
     public void Refresh(
@@ -20,7 +66,58 @@ internal sealed class CitizenPopulationReadModelSystem
             ecsProjection.TryPublishSummary(_totals);
     }
 
+    public static void GetTotals(
+        CitizenPopulationReadModelSystem system,
+        ref State state,
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        out int households,
+        out int totalCitizens,
+        out int housedCitizens,
+        out int refugeeCitizens,
+        out int deadCitizens)
+    {
+        if (system != null)
+        {
+            system.GetTotals(
+                ecsProjection,
+                out households,
+                out totalCitizens,
+                out housedCitizens,
+                out refugeeCitizens,
+                out deadCitizens);
+            return;
+        }
+
+        GetTotalsState(
+            state.Totals,
+            ecsProjection,
+            out households,
+            out totalCitizens,
+            out housedCitizens,
+            out refugeeCitizens,
+            out deadCitizens);
+    }
+
     public void GetTotals(
+        CitizenPopulationEcsProjectionSystem ecsProjection,
+        out int households,
+        out int totalCitizens,
+        out int housedCitizens,
+        out int refugeeCitizens,
+        out int deadCitizens)
+    {
+        GetTotalsState(
+            _totals,
+            ecsProjection,
+            out households,
+            out totalCitizens,
+            out housedCitizens,
+            out refugeeCitizens,
+            out deadCitizens);
+    }
+
+    private static void GetTotalsState(
+        CitizenPopulationTotals totals,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         out int households,
         out int totalCitizens,
@@ -38,10 +135,10 @@ internal sealed class CitizenPopulationReadModelSystem
             return;
         }
 
-        households = _totals.Households;
-        totalCitizens = _totals.TotalCitizens;
-        housedCitizens = _totals.HousedCitizens;
-        refugeeCitizens = _totals.RefugeeCitizens;
-        deadCitizens = _totals.DeadCitizens;
+        households = totals.Households;
+        totalCitizens = totals.TotalCitizens;
+        housedCitizens = totals.HousedCitizens;
+        refugeeCitizens = totals.RefugeeCitizens;
+        deadCitizens = totals.DeadCitizens;
     }
 }

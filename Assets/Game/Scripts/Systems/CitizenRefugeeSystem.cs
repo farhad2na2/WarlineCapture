@@ -1,6 +1,7 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenRefugeeSystem
+internal sealed partial class CitizenRefugeeSystem : SystemBase
 {
     public delegate CitizenHouseholdRecordComponent StoreHouseholdAction(CitizenHouseholdRecordComponent household);
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
@@ -8,11 +9,75 @@ internal sealed class CitizenRefugeeSystem
     public delegate float EstimateTravelSecondsAction(CitizenRecordComponent citizen, int targetBuildingId);
     public delegate bool MarkCitizenDeadAction(int citizenId, string reason);
 
+    public struct State
+    {
+        public int LastRefugeeUpkeepChargedDay;
+    }
+
     private int _lastRefugeeUpkeepChargedDay;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static void Reset(CitizenRefugeeSystem system, ref State refugeeState)
+    {
+        if (system != null)
+        {
+            system.Reset();
+            return;
+        }
+
+        ResetState(ref refugeeState);
+    }
 
     public void Reset()
     {
         _lastRefugeeUpkeepChargedDay = 0;
+    }
+
+    public static void NotifyHomeBuildingDestroyed(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        int buildingId,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        if (system != null)
+        {
+            system.NotifyHomeBuildingDestroyed(
+                state,
+                buildingReadSystem,
+                householdRegistrationSystem,
+                buildingId,
+                storeHousehold,
+                storeCitizen,
+                tryGetHouseholdReferenceWorldPosition,
+                estimateTravelSeconds,
+                markCitizenDead);
+            return;
+        }
+
+        NotifyHomeBuildingDestroyedState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            buildingId,
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
     }
 
     public void NotifyHomeBuildingDestroyed(
@@ -26,17 +91,47 @@ internal sealed class CitizenRefugeeSystem
         EstimateTravelSecondsAction estimateTravelSeconds,
         MarkCitizenDeadAction markCitizenDead)
     {
-        if (!TryFindHouseholdByHomeBuildingId(state, buildingId, out CitizenHouseholdRecordComponent household))
-            return;
-        if (household.IsDisplaced != 0)
-            return;
-
-        DisplaceHousehold(
+        NotifyHomeBuildingDestroyedState(
             state,
             buildingReadSystem,
             householdRegistrationSystem,
-            household,
-            "home-destroyed",
+            buildingId,
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
+    }
+
+    public static void UpdateRefugeeTentState(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        if (system != null)
+        {
+            system.UpdateRefugeeTentState(
+                state,
+                buildingReadSystem,
+                householdRegistrationSystem,
+                storeHousehold,
+                storeCitizen,
+                tryGetHouseholdReferenceWorldPosition,
+                estimateTravelSeconds,
+                markCitizenDead);
+            return;
+        }
+
+        UpdateRefugeeTentStateState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
             storeHousehold,
             storeCitizen,
             tryGetHouseholdReferenceWorldPosition,
@@ -54,7 +149,255 @@ internal sealed class CitizenRefugeeSystem
         EstimateTravelSecondsAction estimateTravelSeconds,
         MarkCitizenDeadAction markCitizenDead)
     {
-        if (!householdRegistrationSystem.HasHouseholdData(state))
+        UpdateRefugeeTentStateState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
+    }
+
+    public static void DisplaceHousehold(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRecordComponent household,
+        string reason,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        if (system != null)
+        {
+            system.DisplaceHousehold(
+                state,
+                buildingReadSystem,
+                householdRegistrationSystem,
+                household,
+                reason,
+                storeHousehold,
+                storeCitizen,
+                tryGetHouseholdReferenceWorldPosition,
+                estimateTravelSeconds,
+                markCitizenDead);
+            return;
+        }
+
+        DisplaceHouseholdState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            household,
+            reason,
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
+    }
+
+    public void DisplaceHousehold(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRecordComponent household,
+        string reason,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        DisplaceHouseholdState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            household,
+            reason,
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
+    }
+
+    public static void ReleaseHouseholdRefugeeAssignment(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        int householdId,
+        StoreHouseholdAction storeHousehold)
+    {
+        if (system != null)
+        {
+            system.ReleaseHouseholdRefugeeAssignment(state, householdId, storeHousehold);
+            return;
+        }
+
+        ReleaseHouseholdRefugeeAssignmentState(state, householdId, storeHousehold);
+    }
+
+    public void ReleaseHouseholdRefugeeAssignment(
+        CitizenPopulationStateSystem state,
+        int householdId,
+        StoreHouseholdAction storeHousehold)
+    {
+        ReleaseHouseholdRefugeeAssignmentState(state, householdId, storeHousehold);
+    }
+
+    public static int GetAssignedRefugeeOccupancy(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        int refugeeTentBuildingId)
+    {
+        return system != null
+            ? system.GetAssignedRefugeeOccupancy(state, householdRegistrationSystem, refugeeTentBuildingId)
+            : GetAssignedRefugeeOccupancyState(state, householdRegistrationSystem, refugeeTentBuildingId);
+    }
+
+    public int GetAssignedRefugeeOccupancy(
+        CitizenPopulationStateSystem state,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        int refugeeTentBuildingId)
+    {
+        return GetAssignedRefugeeOccupancyState(state, householdRegistrationSystem, refugeeTentBuildingId);
+    }
+
+    public static void UpdateRefugeeUpkeep(
+        CitizenRefugeeSystem system,
+        ref State refugeeState,
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenResourceSystem citizenResourceSystem,
+        CitizenResourceSystem.Context citizenResourceContext,
+        DayNightSystem dayNightSystem,
+        MarkCitizenDeadAction markCitizenDead,
+        StoreHouseholdAction storeHousehold)
+    {
+        if (system != null)
+        {
+            system.UpdateRefugeeUpkeep(
+                state,
+                buildingReadSystem,
+                householdRegistrationSystem,
+                citizenResourceSystem,
+                citizenResourceContext,
+                dayNightSystem,
+                markCitizenDead,
+                storeHousehold);
+            return;
+        }
+
+        UpdateRefugeeUpkeepState(
+            ref refugeeState,
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            citizenResourceSystem,
+            citizenResourceContext,
+            dayNightSystem,
+            markCitizenDead,
+            storeHousehold);
+    }
+
+    public void UpdateRefugeeUpkeep(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenResourceSystem citizenResourceSystem,
+        CitizenResourceSystem.Context citizenResourceContext,
+        DayNightSystem dayNightSystem,
+        MarkCitizenDeadAction markCitizenDead,
+        StoreHouseholdAction storeHousehold)
+    {
+        State refugeeState = new()
+        {
+            LastRefugeeUpkeepChargedDay = _lastRefugeeUpkeepChargedDay
+        };
+        UpdateRefugeeUpkeepState(
+            ref refugeeState,
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            citizenResourceSystem,
+            citizenResourceContext,
+            dayNightSystem,
+            markCitizenDead,
+            storeHousehold);
+        _lastRefugeeUpkeepChargedDay = refugeeState.LastRefugeeUpkeepChargedDay;
+    }
+
+    public static bool TryFindHouseholdByHomeBuildingId(
+        CitizenRefugeeSystem system,
+        CitizenPopulationStateSystem state,
+        int buildingId,
+        out CitizenHouseholdRecordComponent household)
+    {
+        return system != null
+            ? system.TryFindHouseholdByHomeBuildingId(state, buildingId, out household)
+            : TryFindHouseholdByHomeBuildingIdState(state, buildingId, out household);
+    }
+
+    public bool TryFindHouseholdByHomeBuildingId(
+        CitizenPopulationStateSystem state,
+        int buildingId,
+        out CitizenHouseholdRecordComponent household)
+    {
+        return TryFindHouseholdByHomeBuildingIdState(state, buildingId, out household);
+    }
+
+    private static void ResetState(ref State refugeeState)
+    {
+        refugeeState.LastRefugeeUpkeepChargedDay = 0;
+    }
+
+    private static void NotifyHomeBuildingDestroyedState(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        int buildingId,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        if (!TryFindHouseholdByHomeBuildingIdState(state, buildingId, out CitizenHouseholdRecordComponent household))
+            return;
+        if (household.IsDisplaced != 0)
+            return;
+
+        DisplaceHouseholdState(
+            state,
+            buildingReadSystem,
+            householdRegistrationSystem,
+            household,
+            "home-destroyed",
+            storeHousehold,
+            storeCitizen,
+            tryGetHouseholdReferenceWorldPosition,
+            estimateTravelSeconds,
+            markCitizenDead);
+    }
+
+    private static void UpdateRefugeeTentStateState(
+        CitizenPopulationStateSystem state,
+        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        StoreHouseholdAction storeHousehold,
+        StoreCitizenAction storeCitizen,
+        TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
+        EstimateTravelSecondsAction estimateTravelSeconds,
+        MarkCitizenDeadAction markCitizenDead)
+    {
+        if (!CitizenHouseholdRegistrationSystem.HasHouseholdData(householdRegistrationSystem, state))
             return;
 
         state.PopulateHouseholdIds();
@@ -72,7 +415,7 @@ internal sealed class CitizenRefugeeSystem
                 continue;
 
             int previousTentBuildingId = household.RefugeeTentBuildingId;
-            ReleaseHouseholdRefugeeAssignment(state, household.HouseholdId, storeHousehold);
+            ReleaseHouseholdRefugeeAssignmentState(state, household.HouseholdId, storeHousehold);
             if (!state.TryGetHousehold(household.HouseholdId, out household))
                 continue;
 
@@ -91,7 +434,7 @@ internal sealed class CitizenRefugeeSystem
         }
     }
 
-    public void DisplaceHousehold(
+    private static void DisplaceHouseholdState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenHouseholdRegistrationSystem householdRegistrationSystem,
@@ -119,7 +462,7 @@ internal sealed class CitizenRefugeeSystem
         markCitizenDead(household.FemaleCitizenId, $"{reason}-no-refugee");
     }
 
-    public void ReleaseHouseholdRefugeeAssignment(
+    private static void ReleaseHouseholdRefugeeAssignmentState(
         CitizenPopulationStateSystem state,
         int householdId,
         StoreHouseholdAction storeHousehold)
@@ -131,7 +474,7 @@ internal sealed class CitizenRefugeeSystem
         storeHousehold(household);
     }
 
-    public int GetAssignedRefugeeOccupancy(
+    private static int GetAssignedRefugeeOccupancyState(
         CitizenPopulationStateSystem state,
         CitizenHouseholdRegistrationSystem householdRegistrationSystem,
         int refugeeTentBuildingId)
@@ -145,13 +488,14 @@ internal sealed class CitizenRefugeeSystem
             if (household.RefugeeTentBuildingId != refugeeTentBuildingId)
                 continue;
 
-            occupied += householdRegistrationSystem.CountLivingHouseholdRefugees(state, household);
+            occupied += CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
         }
 
         return occupied;
     }
 
-    public void UpdateRefugeeUpkeep(
+    private static void UpdateRefugeeUpkeepState(
+        ref State refugeeState,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenHouseholdRegistrationSystem householdRegistrationSystem,
@@ -162,17 +506,17 @@ internal sealed class CitizenRefugeeSystem
         StoreHouseholdAction storeHousehold)
     {
         if (dayNightSystem == null ||
-            !citizenResourceSystem.IsConfigured(citizenResourceContext) ||
+            !CitizenResourceSystem.IsConfigured(citizenResourceSystem, citizenResourceContext) ||
             !buildingReadSystem.HasRuntimeBuildingQuery())
         {
             return;
         }
 
         int currentDay = Mathf.Max(1, dayNightSystem.DayCount);
-        if (currentDay == _lastRefugeeUpkeepChargedDay)
+        if (currentDay == refugeeState.LastRefugeeUpkeepChargedDay)
             return;
 
-        _lastRefugeeUpkeepChargedDay = currentDay;
+        refugeeState.LastRefugeeUpkeepChargedDay = currentDay;
 
         int refugeeCitizens = 0;
         int totalCost = 0;
@@ -187,7 +531,7 @@ internal sealed class CitizenRefugeeSystem
             if (!buildingReadSystem.TryGetRuntimeBuildingRefugeeSettings(household.RefugeeTentBuildingId, out _, out int upkeepPerCitizenPerDay))
                 continue;
 
-            int householdRefugees = householdRegistrationSystem.CountLivingHouseholdRefugees(state, household);
+            int householdRefugees = CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
             if (householdRefugees <= 0)
                 continue;
 
@@ -198,7 +542,7 @@ internal sealed class CitizenRefugeeSystem
         if (refugeeCitizens <= 0 || totalCost <= 0)
             return;
 
-        if (citizenResourceSystem.TrySpendDollars(citizenResourceContext, totalCost))
+        if (CitizenResourceSystem.TrySpendDollars(citizenResourceSystem, citizenResourceContext, totalCost))
             return;
 
         state.PopulateHouseholdIds();
@@ -208,17 +552,17 @@ internal sealed class CitizenRefugeeSystem
             if (!state.TryGetHousehold(state.ScratchHouseholdIds[i], out CitizenHouseholdRecordComponent household))
                 continue;
 
-            int householdRefugees = householdRegistrationSystem.CountLivingHouseholdRefugees(state, household);
+            int householdRefugees = CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
             if (householdRefugees <= 0)
                 continue;
 
             markCitizenDead(household.MaleCitizenId, "refugee-upkeep-unpaid");
             markCitizenDead(household.FemaleCitizenId, "refugee-upkeep-unpaid");
-            ReleaseHouseholdRefugeeAssignment(state, household.HouseholdId, storeHousehold);
+            ReleaseHouseholdRefugeeAssignmentState(state, household.HouseholdId, storeHousehold);
         }
     }
 
-    public bool TryFindHouseholdByHomeBuildingId(
+    private static bool TryFindHouseholdByHomeBuildingIdState(
         CitizenPopulationStateSystem state,
         int buildingId,
         out CitizenHouseholdRecordComponent household)
@@ -247,7 +591,7 @@ internal sealed class CitizenRefugeeSystem
         return false;
     }
 
-    private int FindNearestAvailableRefugeeTent(
+    private static int FindNearestAvailableRefugeeTent(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenHouseholdRegistrationSystem householdRegistrationSystem,
@@ -260,7 +604,7 @@ internal sealed class CitizenRefugeeSystem
         if (!tryGetHouseholdReferenceWorldPosition(household, out Vector3 originPosition))
             return 0;
 
-        int requiredSlots = Mathf.Max(1, householdRegistrationSystem.CountLivingHouseholdMembers(state, household));
+        int requiredSlots = Mathf.Max(1, CitizenHouseholdRegistrationSystem.CountLivingHouseholdMembers(householdRegistrationSystem, state, household));
         int bestBuildingId = 0;
         float bestDistanceSq = float.MaxValue;
         for (int i = 0; i < buildingReadSystem.RefugeeTentBuildingIds.Count; i++)
@@ -271,7 +615,7 @@ internal sealed class CitizenRefugeeSystem
             if (refugeeCapacity <= 0)
                 continue;
 
-            int occupiedSlots = GetAssignedRefugeeOccupancy(state, householdRegistrationSystem, candidateBuildingId);
+            int occupiedSlots = GetAssignedRefugeeOccupancyState(state, householdRegistrationSystem, candidateBuildingId);
             if (occupiedSlots + requiredSlots > refugeeCapacity)
                 continue;
             if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(candidateBuildingId, out Vector3 candidatePosition))
@@ -288,7 +632,7 @@ internal sealed class CitizenRefugeeSystem
         return bestBuildingId;
     }
 
-    private void MoveCitizenToRefugeeState(
+    private static void MoveCitizenToRefugeeState(
         CitizenPopulationStateSystem state,
         int citizenId,
         int refugeeTentBuildingId,
@@ -309,8 +653,8 @@ internal sealed class CitizenRefugeeSystem
     {
         citizen.Status = status;
         citizen.CurrentTargetBuildingId = targetBuildingId != 0 ? targetBuildingId : citizen.HomeBuildingId;
-        citizen.StateStartedAt = Time.time;
-        citizen.StateEndsAt = stateDurationSeconds > 0f ? Time.time + stateDurationSeconds : 0f;
+        citizen.StateStartedAt = UnityEngine.Time.time;
+        citizen.StateEndsAt = stateDurationSeconds > 0f ? UnityEngine.Time.time + stateDurationSeconds : 0f;
         citizen.LifeState = status == CitizenStatus.Dead ? CitizenLifeState.Dead : CitizenLifeState.Alive;
     }
 }

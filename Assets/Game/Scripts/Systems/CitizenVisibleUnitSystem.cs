@@ -40,7 +40,7 @@ internal sealed class CitizenVisibleUnitSystem
         {
             int citizenId = state.ScratchVisibleCitizenIds[i];
             if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen) ||
-                !travelSystem.ShouldCitizenBeVisible(state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, VisibleCitizenDespawnDistance, out Vector3 worldPosition))
+                !CitizenTravelSystem.ShouldCitizenBeVisible(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, VisibleCitizenDespawnDistance, out Vector3 worldPosition))
             {
                 RemoveVisibleCitizen(state, ecsProjection, citizenId);
                 continue;
@@ -58,7 +58,7 @@ internal sealed class CitizenVisibleUnitSystem
                 continue;
             if (state.VisibleCitizensById.ContainsKey(citizenId))
                 continue;
-            if (!travelSystem.ShouldCitizenBeVisible(state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, VisibleCitizenSpawnDistance, out Vector3 worldPosition))
+            if (!CitizenTravelSystem.ShouldCitizenBeVisible(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, worldCamera, citizen, VisibleCitizenSpawnDistance, out Vector3 worldPosition))
                 continue;
 
             SpawnVisibleCitizen(
@@ -137,29 +137,29 @@ internal sealed class CitizenVisibleUnitSystem
 
         if (buildingReadSystem.IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
         {
-            statusTransitionSystem.TryResolveCitizenArrival(state, citizenId, now, storeCitizen);
+            CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
             return;
         }
 
-        if (travelSystem.TryGetCitizenBuildingApproachCell(buildingReadSystem, citizen.CurrentTargetBuildingId, currentCell, out int2 finalApproachGoal))
+        if (CitizenTravelSystem.TryGetCitizenBuildingApproachCell(travelSystem, buildingReadSystem, citizen.CurrentTargetBuildingId, currentCell, out int2 finalApproachGoal))
         {
             int dx = math.abs(currentCell.x - finalApproachGoal.x);
             int dy = math.abs(currentCell.y - finalApproachGoal.y);
             if (math.max(dx, dy) <= 2)
             {
-                statusTransitionSystem.TryResolveCitizenArrival(state, citizenId, now, storeCitizen);
+                CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 return;
             }
         }
 
-        if (statusTransitionSystem.IsTravelStatus(citizen.Status) && !hasPathFollow && !hasPathRequest)
+        if (CitizenStatusTransitionSystem.IsTravelStatus(statusTransitionSystem, citizen.Status) && !hasPathFollow && !hasPathRequest)
         {
             if (hasLongMove)
             {
                 int2 finalGoal = ecsProjection.EntityManager.GetComponentData<UnitLongDistanceMove>(visibleCitizen.UnitEntity).FinalGoal;
                 CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, finalGoal);
             }
-            else if (travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 retryGoal))
+            else if (CitizenTravelSystem.TryGetCitizenMoveGoal(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 retryGoal))
             {
                 CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, retryGoal);
                 visibleCitizen.GoalCell = retryGoal;
@@ -170,7 +170,7 @@ internal sealed class CitizenVisibleUnitSystem
 
         bool segmentReached = currentCell.Equals(visibleCitizen.GoalCell);
         if ((visibleCitizen.TargetBuildingId != citizen.CurrentTargetBuildingId || segmentReached) &&
-            travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 goalCell) &&
+            CitizenTravelSystem.TryGetCitizenMoveGoal(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, currentPosition, out int2 goalCell) &&
             !currentCell.Equals(goalCell))
         {
             CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, visibleCitizen.UnitEntity, goalCell);
@@ -185,13 +185,13 @@ internal sealed class CitizenVisibleUnitSystem
             {
                 if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 finalTargetPosition))
                 {
-                    statusTransitionSystem.TryResolveCitizenArrival(state, citizenId, now, storeCitizen);
+                    CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 }
                 else
                 {
-                    Vector3 finalWorld = travelSystem.ResolveCitizenWorldPosition(citizen, finalTargetPosition);
+                    Vector3 finalWorld = CitizenTravelSystem.ResolveCitizenWorldPosition(travelSystem, citizen, finalTargetPosition);
                     if ((finalWorld - currentPosition).sqrMagnitude <= VisibleCitizenArriveDistance * VisibleCitizenArriveDistance)
-                        statusTransitionSystem.TryResolveCitizenArrival(state, citizenId, now, storeCitizen);
+                        CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 }
             }
         }
@@ -240,7 +240,7 @@ internal sealed class CitizenVisibleUnitSystem
             return;
         if (!citizenPrefabSystem.TryResolveConfiguredUnitPrefabEntity(citizenPrefabContext, prefab, out Entity prefabEntity) || prefabEntity == Entity.Null)
             return;
-        if (!travelSystem.TryWorldToCell(ecsProjection, worldPosition, out int2 spawnCell))
+        if (!CitizenTravelSystem.TryWorldToCell(travelSystem, ecsProjection, worldPosition, out int2 spawnCell))
             return;
         if (ecsProjection.TryGetGridConfig(out GridConfig grid))
         {
@@ -325,7 +325,7 @@ internal sealed class CitizenVisibleUnitSystem
         ecb.Dispose();
 
         int2 goalCell = spawnCell;
-        if (travelSystem.TryGetCitizenMoveGoal(state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, worldPosition, out int2 resolvedGoalCell))
+        if (CitizenTravelSystem.TryGetCitizenMoveGoal(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, worldPosition, out int2 resolvedGoalCell))
             goalCell = resolvedGoalCell;
         CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, instance, goalCell);
 

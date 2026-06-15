@@ -1,4 +1,6 @@
-internal sealed class CitizenScheduleSystem
+using Unity.Entities;
+
+internal sealed partial class CitizenScheduleSystem : SystemBase
 {
     private const float WeekdayWorkStartHour = 8f;
     private const float WeekdayWorkEndHour = 17f;
@@ -19,7 +21,68 @@ internal sealed class CitizenScheduleSystem
     private const float RefugeeEveningWalkStartHour = 16f;
     private const float RefugeeEveningWalkEndHour = 18.5f;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static CitizenStatus GetScheduledStatus(
+        CitizenScheduleSystem system,
+        CitizenPopulationStateSystem state,
+        DayNightSystem dayNightSystem,
+        CitizenRecordComponent citizen)
+    {
+        return system != null
+            ? system.GetScheduledStatus(state, dayNightSystem, citizen)
+            : GetScheduledStatusState(state, dayNightSystem, citizen);
+    }
+
     public CitizenStatus GetScheduledStatus(
+        CitizenPopulationStateSystem state,
+        DayNightSystem dayNightSystem,
+        CitizenRecordComponent citizen)
+    {
+        return GetScheduledStatusState(state, dayNightSystem, citizen);
+    }
+
+    public static int GetScheduledTargetBuildingId(
+        CitizenScheduleSystem system,
+        CitizenPopulationStateSystem state,
+        DayNightSystem dayNightSystem,
+        CitizenRecordComponent citizen,
+        CitizenStatus status)
+    {
+        return system != null
+            ? system.GetScheduledTargetBuildingId(state, dayNightSystem, citizen, status)
+            : GetScheduledTargetBuildingIdState(state, dayNightSystem, citizen, status);
+    }
+
+    public int GetScheduledTargetBuildingId(
+        CitizenPopulationStateSystem state,
+        DayNightSystem dayNightSystem,
+        CitizenRecordComponent citizen,
+        CitizenStatus status)
+    {
+        return GetScheduledTargetBuildingIdState(state, dayNightSystem, citizen, status);
+    }
+
+    public static int GetSchedulePhase(CitizenScheduleSystem system, DayNightSystem dayNightSystem)
+    {
+        return system != null
+            ? system.GetSchedulePhase(dayNightSystem)
+            : GetSchedulePhaseState(dayNightSystem);
+    }
+
+    public int GetSchedulePhase(DayNightSystem dayNightSystem)
+    {
+        return GetSchedulePhaseState(dayNightSystem);
+    }
+
+    private static CitizenStatus GetScheduledStatusState(
         CitizenPopulationStateSystem state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen)
@@ -98,7 +161,7 @@ internal sealed class CitizenScheduleSystem
         return CitizenStatus.AtHome;
     }
 
-    public int GetScheduledTargetBuildingId(
+    private static int GetScheduledTargetBuildingIdState(
         CitizenPopulationStateSystem state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen,
@@ -126,7 +189,7 @@ internal sealed class CitizenScheduleSystem
         };
     }
 
-    public int GetSchedulePhase(DayNightSystem dayNightSystem)
+    private static int GetSchedulePhaseState(DayNightSystem dayNightSystem)
     {
         if (dayNightSystem == null || IsNightSchedule(dayNightSystem))
             return 0;
@@ -151,7 +214,7 @@ internal sealed class CitizenScheduleSystem
         return 3;
     }
 
-    private int GetDayOfWeek(DayNightSystem dayNightSystem)
+    private static int GetDayOfWeek(DayNightSystem dayNightSystem)
     {
         if (dayNightSystem == null)
             return 1;
@@ -159,7 +222,7 @@ internal sealed class CitizenScheduleSystem
         return ((dayNightSystem.DayCount - 1) % 7) + 1;
     }
 
-    private bool IsNightSchedule(DayNightSystem dayNightSystem)
+    private static bool IsNightSchedule(DayNightSystem dayNightSystem)
     {
         return dayNightSystem == null || dayNightSystem.IsNightTime;
     }
@@ -169,7 +232,7 @@ internal sealed class CitizenScheduleSystem
         return dayOfWeek == 6 || dayOfWeek == 7;
     }
 
-    private bool ShouldCitizenShopOnWeekday(DayNightSystem dayNightSystem, CitizenRecordComponent citizen)
+    private static bool ShouldCitizenShopOnWeekday(DayNightSystem dayNightSystem, CitizenRecordComponent citizen)
     {
         if (dayNightSystem == null)
             return false;
@@ -177,7 +240,7 @@ internal sealed class CitizenScheduleSystem
         return ((citizen.HouseholdId + dayNightSystem.DayCount) & 1) == 0;
     }
 
-    private int ResolveShopTarget(DayNightSystem dayNightSystem, CitizenRecordComponent citizen)
+    private static int ResolveShopTarget(DayNightSystem dayNightSystem, CitizenRecordComponent citizen)
     {
         if (dayNightSystem != null &&
             !IsWeekend(GetDayOfWeek(dayNightSystem)) &&

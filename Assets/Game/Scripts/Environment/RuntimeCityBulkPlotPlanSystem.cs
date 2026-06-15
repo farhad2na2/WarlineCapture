@@ -1,10 +1,25 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using Plan = RuntimeCityBulkPlotPlanSystem.Plan;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 
-internal sealed class RuntimeCityBulkPlotPlanSystem
+internal sealed partial class RuntimeCityBulkPlotPlanSystem : SystemBase
 {
+    private readonly RuntimeCityBulkPlotPlanState _state = new();
+
+    public RuntimeCityBulkPlotPlanState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Plan
     {
         public readonly List<PlotCandidate> CentralPlots;
@@ -22,6 +37,20 @@ internal sealed class RuntimeCityBulkPlotPlanSystem
         }
     }
 
+    public Plan CreatePlan(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        CityLayoutData city,
+        int townRadius,
+        HashSet<Vector2Int> roadCells,
+        Vector2Int centerRoadCell,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng);
+    }
+}
+
+internal sealed class RuntimeCityBulkPlotPlanState
+{
     public Plan CreatePlan(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         CityLayoutData city,

@@ -1,15 +1,82 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 
-internal sealed class RuntimeCityBuildingPlotSystem
+internal sealed partial class RuntimeCityBuildingPlotSystem : SystemBase
 {
+    private readonly RuntimeCityBuildingPlotState _state = new();
+
+    public RuntimeCityBuildingPlotState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public struct PlotCandidate
     {
         public Vector2Int PlotCell;
         public int DistanceFromCenter;
     }
 
+    public List<PlotCandidate> CollectRoadsidePlots(
+        HashSet<Vector2Int> roadCells,
+        Vector2Int centerRoadCell,
+        int townRadius,
+        int minDistance,
+        int maxDistance)
+    {
+        return _state.CollectRoadsidePlots(roadCells, centerRoadCell, townRadius, minDistance, maxDistance);
+    }
+
+    public List<PlotCandidate> CollectEntryRoadsidePlots(CityLayoutData city, int townRadius)
+    {
+        return _state.CollectEntryRoadsidePlots(city, townRadius);
+    }
+
+    public List<PlotCandidate> BuildCorridorRoadsidePlots(
+        Vector2Int connectorCell,
+        Vector2Int direction,
+        int corridorLength)
+    {
+        return _state.BuildCorridorRoadsidePlots(connectorCell, direction, corridorLength);
+    }
+
+    public List<Vector2Int> BuildAdjacentOrigins(RectInt anchorRect, Vector2Int footprint)
+    {
+        return _state.BuildAdjacentOrigins(anchorRect, footprint);
+    }
+
+    public Vector2Int GetRandomScatterPlotCell(
+        Vector2Int centerRoadCell,
+        int maxDistance,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng);
+    }
+
+    public bool HasPlotSpacing(Vector2Int candidate, List<Vector2Int> usedPlots, int minSpacing)
+    {
+        return _state.HasPlotSpacing(candidate, usedPlots, minSpacing);
+    }
+
+    public Vector2Int GetCenteredOriginForPlot(
+        Vector2Int plotCell,
+        Vector2Int footprint,
+        int roadCellSizeInGridCells)
+    {
+        return _state.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
+    }
+}
+
+internal sealed class RuntimeCityBuildingPlotState
+{
     private static readonly Vector2Int North = new(0, 1);
     private static readonly Vector2Int East = new(1, 0);
     private static readonly Vector2Int South = new(0, -1);

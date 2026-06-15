@@ -1,7 +1,54 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityPrefabSelectionSystem
+internal sealed partial class RuntimeCityPrefabSelectionSystem : SystemBase
+{
+    private readonly RuntimeCityPrefabSelectionState _state = new();
+
+    public RuntimeCityPrefabSelectionState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool IsConfiguredPrefab(GameObject prefab, List<GameObject> configuredPrefabs)
+    {
+        return _state.IsConfiguredPrefab(prefab, configuredPrefabs);
+    }
+
+    public GameObject GetRandomPrefab(List<GameObject> prefabs, ref Unity.Mathematics.Random rng)
+    {
+        return _state.GetRandomPrefab(prefabs, ref rng);
+    }
+
+    public void Shuffle<T>(List<T> list, ref Unity.Mathematics.Random rng)
+    {
+        _state.Shuffle(list, ref rng);
+    }
+
+    public int GetMajorFootprint(GameObject prefab)
+    {
+        return _state.GetMajorFootprint(prefab);
+    }
+
+    public int GetMinorFootprint(GameObject prefab)
+    {
+        return _state.GetMinorFootprint(prefab);
+    }
+
+    public Vector2Int GetCachedFootprintCells(GameObject prefab)
+    {
+        return _state.GetCachedFootprintCells(prefab);
+    }
+}
+
+internal sealed class RuntimeCityPrefabSelectionState
 {
     private readonly Dictionary<GameObject, Vector2Int> _prefabFootprintCache = new();
 

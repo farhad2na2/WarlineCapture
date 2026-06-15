@@ -13,9 +13,9 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
 
     public Context Create(
         RuntimeCityConfigSystem.Snapshot config,
-        RuntimeCityBuildingPlotSystem buildingPlotSystem,
-        RuntimeCityWalkabilitySystem walkabilitySystem,
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityBuildingPlotState buildingPlotSystem,
+        RuntimeCityWalkabilityState walkabilitySystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
         RuntimeCityDiagnosticSystem diagnosticSystem)
@@ -32,9 +32,9 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
 
     public static Context CreateFallback(
         RuntimeCityConfigSystem.Snapshot config,
-        RuntimeCityBuildingPlotSystem buildingPlotSystem,
-        RuntimeCityWalkabilitySystem walkabilitySystem,
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityBuildingPlotState buildingPlotSystem,
+        RuntimeCityWalkabilityState walkabilitySystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
         RuntimeCityDiagnosticSystem diagnosticSystem)
@@ -52,10 +52,10 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
     public readonly struct Systems
     {
         public readonly RuntimeCityBuildingPlacementSystem PlacementSystem;
-        public readonly RuntimeCityLandmarkOffsetSystem LandmarkOffsetSystem;
+        public readonly RuntimeCityLandmarkOffsetState LandmarkOffsetSystem;
         public readonly RuntimeCityHallSpawnSystem HallSpawnSystem;
         public readonly RuntimeCityLandmarkSpawnSystem LandmarkSpawnSystem;
-        public readonly RuntimeCityBulkPlotPlanSystem BulkPlotPlanSystem;
+        public readonly RuntimeCityBulkPlotPlanState BulkPlotPlanSystem;
         public readonly RuntimeCityEntryBuildingSpawnSystem EntryBuildingSpawnSystem;
         public readonly RuntimeCityRoadsideBuildingSpawnSystem RoadsideBuildingSpawnSystem;
         public readonly RuntimeCityRuralBuildingSpawnSystem RuralBuildingSpawnSystem;
@@ -73,10 +73,10 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
 
         public Systems(
             RuntimeCityBuildingPlacementSystem placementSystem,
-            RuntimeCityLandmarkOffsetSystem landmarkOffsetSystem,
+            RuntimeCityLandmarkOffsetState landmarkOffsetSystem,
             RuntimeCityHallSpawnSystem hallSpawnSystem,
             RuntimeCityLandmarkSpawnSystem landmarkSpawnSystem,
-            RuntimeCityBulkPlotPlanSystem bulkPlotPlanSystem,
+            RuntimeCityBulkPlotPlanState bulkPlotPlanSystem,
             RuntimeCityEntryBuildingSpawnSystem entryBuildingSpawnSystem,
             RuntimeCityRoadsideBuildingSpawnSystem roadsideBuildingSpawnSystem,
             RuntimeCityRuralBuildingSpawnSystem ruralBuildingSpawnSystem,
@@ -117,18 +117,18 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
     public readonly struct Context
     {
         public readonly RuntimeCityConfigSystem.Snapshot Config;
-        public readonly RuntimeCityBuildingPlotSystem BuildingPlotSystem;
-        public readonly RuntimeCityWalkabilitySystem WalkabilitySystem;
-        public readonly RuntimeCityPrefabSelectionSystem PrefabSelectionSystem;
+        public readonly RuntimeCityBuildingPlotState BuildingPlotSystem;
+        public readonly RuntimeCityWalkabilityState WalkabilitySystem;
+        public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
         public readonly RuntimeCityVisualSystem VisualSystem;
         public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;
         public readonly RuntimeCityDiagnosticSystem DiagnosticSystem;
 
         public Context(
             RuntimeCityConfigSystem.Snapshot config,
-            RuntimeCityBuildingPlotSystem buildingPlotSystem,
-            RuntimeCityWalkabilitySystem walkabilitySystem,
-            RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+            RuntimeCityBuildingPlotState buildingPlotSystem,
+            RuntimeCityWalkabilityState walkabilitySystem,
+            RuntimeCityPrefabSelectionState prefabSelectionSystem,
             RuntimeCityVisualSystem visualSystem,
             RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
             RuntimeCityDiagnosticSystem diagnosticSystem)

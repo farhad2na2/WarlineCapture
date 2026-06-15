@@ -6,7 +6,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     public void BuildYardBoundaryVisuals(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCityYardGateSystem gateSystem,
         RectInt yardRect,
@@ -45,7 +45,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     }
 
     private void PlaceHorizontalWallSide(
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RectInt yardRect,
         int yOrigin,
@@ -67,7 +67,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     }
 
     private void PlaceHorizontalWallRun(
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         int xOrigin,
         int yOrigin,
@@ -106,7 +106,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     }
 
     private void PlaceVerticalWallSide(
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RectInt yardRect,
         int xOrigin,
@@ -127,7 +127,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     }
 
     private void PlaceVerticalWallRun(
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         int xOrigin,
         int yOrigin,

@@ -19,7 +19,7 @@ internal sealed class RuntimeCityYardWallPlanSystem
     public HousePlan CreateHousePlan(
         List<RectInt> houseFootprints,
         float houseWallChance,
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         ref Unity.Mathematics.Random rng)
     {
         var shuffledHouses = new List<RectInt>(houseFootprints);
@@ -30,8 +30,8 @@ internal sealed class RuntimeCityYardWallPlanSystem
     }
 
     public bool TryFindYardRect(
-        RuntimeCityWalkabilitySystem walkabilitySystem,
-        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityWalkabilityState walkabilitySystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RectInt houseRect,
         int minDistanceCells,
         int maxDistanceCells,

@@ -1,6 +1,34 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityLandmarkOffsetSystem
+internal sealed partial class RuntimeCityLandmarkOffsetSystem : SystemBase
+{
+    private readonly RuntimeCityLandmarkOffsetState _state = new();
+
+    public RuntimeCityLandmarkOffsetState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public Vector2Int[] HallOffsets => _state.HallOffsets;
+    public Vector2Int[] ClockTowerOffsets => _state.ClockTowerOffsets;
+    public Vector2Int[] FountainOffsets => _state.FountainOffsets;
+    public Vector2Int[] MonumentOffsets => _state.MonumentOffsets;
+    public Vector2Int[] PillarOffsets => _state.PillarOffsets;
+
+    public bool IsTooCloseToHall(RuntimeCityConfigSystem.Snapshot config, Vector2Int offset)
+    {
+        return _state.IsTooCloseToHall(config, offset);
+    }
+}
+
+internal sealed class RuntimeCityLandmarkOffsetState
 {
     private static readonly Vector2Int[] HallOffsetsValue =
     {

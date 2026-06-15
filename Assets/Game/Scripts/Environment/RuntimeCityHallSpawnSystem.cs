@@ -8,7 +8,7 @@ internal sealed class RuntimeCityHallSpawnSystem
     public void EnsureCityHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
-        RuntimeCityLandmarkOffsetSystem offsetSystem,
+        RuntimeCityLandmarkOffsetState offsetSystem,
         CityLayoutData city,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng)
@@ -24,7 +24,7 @@ internal sealed class RuntimeCityHallSpawnSystem
     private static bool TrySpawnHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
-        RuntimeCityLandmarkOffsetSystem offsetSystem,
+        RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,

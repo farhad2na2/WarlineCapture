@@ -12,15 +12,20 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityLayoutState _fallbackRuntimeCityLayout = new();
     private RuntimeCityRoadLayoutSystem _runtimeCityRoadLayoutSystem;
     private readonly RuntimeCityRoadLayoutState _fallbackRuntimeCityRoadLayout = new();
-    private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new();
-    private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new();
-    private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new();
+    private RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem;
+    private readonly RuntimeCityBuildingPlotState _fallbackRuntimeCityBuildingPlot = new();
+    private RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem;
+    private readonly RuntimeCityWalkabilityState _fallbackRuntimeCityWalkability = new();
+    private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
+    private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
     private RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem;
     private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();
-    private readonly RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem = new();
+    private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
+    private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
     private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();
     private readonly RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem = new();
-    private readonly RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem = new();
+    private RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem;
+    private readonly RuntimeCityBulkPlotPlanState _fallbackRuntimeCityBulkPlotPlan = new();
     private readonly RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem = new();
     private readonly RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem = new();
     private readonly RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem = new();
@@ -133,7 +138,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public bool IsConfiguredHousePrefab(GameObject prefab)
     {
-        return _runtimeCityPrefabSelectionSystem.IsConfiguredPrefab(prefab, housePrefabs);
+        return RuntimeCityPrefabSelectionState.IsConfiguredPrefab(prefab, housePrefabs);
     }
 
     public void GenerateCity(int frameCount)
@@ -156,17 +161,17 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityBuildingSpawnContext = spawnContextSystem != null
             ? spawnContextSystem.Create(
                 cityConfig,
-                _runtimeCityBuildingPlotSystem,
-                _runtimeCityWalkabilitySystem,
-                _runtimeCityPrefabSelectionSystem,
+                RuntimeCityBuildingPlotState,
+                RuntimeCityWalkabilityState,
+                RuntimeCityPrefabSelectionState,
                 RuntimeCityVisualSystem,
                 _runtimeCitySpawnBridgeSystem,
                 RuntimeCityDiagnosticSystem)
             : global::RuntimeCityBuildingSpawnContextSystem.CreateFallback(
                 cityConfig,
-                _runtimeCityBuildingPlotSystem,
-                _runtimeCityWalkabilitySystem,
-                _runtimeCityPrefabSelectionSystem,
+                RuntimeCityBuildingPlotState,
+                RuntimeCityWalkabilityState,
+                RuntimeCityPrefabSelectionState,
                 RuntimeCityVisualSystem,
                 _runtimeCitySpawnBridgeSystem,
                 RuntimeCityDiagnosticSystem);
@@ -252,7 +257,7 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityLifecycleState,
             CreateLifecycleContext(frameCount),
             RuntimeCityLayoutState,
-            _runtimeCityWalkabilitySystem,
+            RuntimeCityWalkabilityState,
             CreateBuildingSpawnSystems(),
             _runtimeCityBuildingSpawnContext,
             _runtimeCityBuildingPlacementSystem,
@@ -275,10 +280,10 @@ public sealed class RuntimeCityCompositionSystem
     {
         return new RuntimeCityBuildingSpawnContextSystem.Systems(
             _runtimeCityBuildingPlacementSystem,
-            _runtimeCityLandmarkOffsetSystem,
+            RuntimeCityLandmarkOffsetState,
             _runtimeCityHallSpawnSystem,
             _runtimeCityLandmarkSpawnSystem,
-            _runtimeCityBulkPlotPlanSystem,
+            RuntimeCityBulkPlotPlanState,
             _runtimeCityEntryBuildingSpawnSystem,
             _runtimeCityRoadsideBuildingSpawnSystem,
             _runtimeCityRuralBuildingSpawnSystem,
@@ -301,7 +306,7 @@ public sealed class RuntimeCityCompositionSystem
             cityConfig,
             RuntimeCityLayoutState,
             RuntimeCityRoadLayoutState,
-            _runtimeCityPrefabSelectionSystem,
+            RuntimeCityPrefabSelectionState,
             _runtimeCityRoadCommitSystem,
             _runtimeCityIngressSystem,
             CreateIngressContext());
@@ -362,6 +367,36 @@ public sealed class RuntimeCityCompositionSystem
 
     private RuntimeCityRoadLayoutSystem RuntimeCityRoadLayoutSystem =>
         _runtimeCityRoadLayoutSystem ??= ResolveRuntimeCityRoadLayoutSystem();
+
+    private RuntimeCityWalkabilityState RuntimeCityWalkabilityState =>
+        RuntimeCityWalkabilitySystem?.State ?? _fallbackRuntimeCityWalkability;
+
+    private RuntimeCityWalkabilitySystem RuntimeCityWalkabilitySystem =>
+        _runtimeCityWalkabilitySystem ??= ResolveRuntimeCityWalkabilitySystem();
+
+    private RuntimeCityBuildingPlotState RuntimeCityBuildingPlotState =>
+        RuntimeCityBuildingPlotSystem?.State ?? _fallbackRuntimeCityBuildingPlot;
+
+    private RuntimeCityBuildingPlotSystem RuntimeCityBuildingPlotSystem =>
+        _runtimeCityBuildingPlotSystem ??= ResolveRuntimeCityBuildingPlotSystem();
+
+    private RuntimeCityBulkPlotPlanState RuntimeCityBulkPlotPlanState =>
+        RuntimeCityBulkPlotPlanSystem?.State ?? _fallbackRuntimeCityBulkPlotPlan;
+
+    private RuntimeCityBulkPlotPlanSystem RuntimeCityBulkPlotPlanSystem =>
+        _runtimeCityBulkPlotPlanSystem ??= ResolveRuntimeCityBulkPlotPlanSystem();
+
+    private RuntimeCityPrefabSelectionState RuntimeCityPrefabSelectionState =>
+        RuntimeCityPrefabSelectionSystem?.State ?? _fallbackRuntimeCityPrefabSelection;
+
+    private RuntimeCityPrefabSelectionSystem RuntimeCityPrefabSelectionSystem =>
+        _runtimeCityPrefabSelectionSystem ??= ResolveRuntimeCityPrefabSelectionSystem();
+
+    private RuntimeCityLandmarkOffsetState RuntimeCityLandmarkOffsetState =>
+        RuntimeCityLandmarkOffsetSystem?.State ?? _fallbackRuntimeCityLandmarkOffset;
+
+    private RuntimeCityLandmarkOffsetSystem RuntimeCityLandmarkOffsetSystem =>
+        _runtimeCityLandmarkOffsetSystem ??= ResolveRuntimeCityLandmarkOffsetSystem();
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
@@ -479,6 +514,46 @@ public sealed class RuntimeCityCompositionSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityRoadLayoutSystem>()
+            : null;
+    }
+
+    private static RuntimeCityWalkabilitySystem ResolveRuntimeCityWalkabilitySystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityWalkabilitySystem>()
+            : null;
+    }
+
+    private static RuntimeCityBuildingPlotSystem ResolveRuntimeCityBuildingPlotSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingPlotSystem>()
+            : null;
+    }
+
+    private static RuntimeCityBulkPlotPlanSystem ResolveRuntimeCityBulkPlotPlanSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityBulkPlotPlanSystem>()
+            : null;
+    }
+
+    private static RuntimeCityPrefabSelectionSystem ResolveRuntimeCityPrefabSelectionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityPrefabSelectionSystem>()
+            : null;
+    }
+
+    private static RuntimeCityLandmarkOffsetSystem ResolveRuntimeCityLandmarkOffsetSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityLandmarkOffsetSystem>()
             : null;
     }
 }

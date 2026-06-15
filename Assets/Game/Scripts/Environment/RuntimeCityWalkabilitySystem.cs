@@ -1,15 +1,101 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityWalkabilitySystem
+internal sealed partial class RuntimeCityWalkabilitySystem : SystemBase
 {
+    private readonly RuntimeCityWalkabilityState _state = new();
+
+    public RuntimeCityWalkabilityState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public struct ReservedFootprint
     {
         public RectInt Rect;
         public int ClearanceCells;
     }
 
+    public void ReserveFootprint(
+        List<ReservedFootprint> reservedFootprints,
+        Vector2Int originCell,
+        Vector2Int footprint,
+        int clearanceCells)
+    {
+        _state.ReserveFootprint(reservedFootprints, originCell, footprint, clearanceCells);
+    }
+
+    public void ReserveStandaloneEntranceCorridor(
+        CityLayoutData city,
+        Vector2Int startRoadCell,
+        Vector2Int direction,
+        int roadSegmentCount,
+        int roadCellSizeInGridCells)
+    {
+        _state.ReserveStandaloneEntranceCorridor(city, startRoadCell, direction, roadSegmentCount, roadCellSizeInGridCells);
+    }
+
+    public bool WouldBeTooCloseToReserved(
+        Vector2Int originCell,
+        Vector2Int footprint,
+        List<ReservedFootprint> reservedFootprints,
+        int additionalClearanceCells)
+    {
+        return _state.WouldBeTooCloseToReserved(originCell, footprint, reservedFootprints, additionalClearanceCells);
+    }
+
+    public bool CanPlaceHouseYardRect(
+        RectInt yardRect,
+        RectInt houseRect,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        List<ReservedFootprint> reservedFootprints,
+        GridConfig grid)
+    {
+        return _state.CanPlaceHouseYardRect(
+            yardRect,
+            houseRect,
+            roadCellSizeInGridCells,
+            roadCells,
+            reservedFootprints,
+            grid);
+    }
+
+    public RectInt ExpandRect(RectInt rect, int padding)
+    {
+        return _state.ExpandRect(rect, padding);
+    }
+
+    public bool DoesRectOverlapRoadCells(RectInt rect, int roadCellSizeInGridCells, HashSet<Vector2Int> roadCells)
+    {
+        return _state.DoesRectOverlapRoadCells(rect, roadCellSizeInGridCells, roadCells);
+    }
+
+    public bool TouchesRect(RectInt rectA, RectInt rectB)
+    {
+        return _state.TouchesRect(rectA, rectB);
+    }
+
+    public Vector2Int GetCenteredOriginForPlot(
+        Vector2Int plotCell,
+        Vector2Int footprint,
+        int roadCellSizeInGridCells)
+    {
+        return _state.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
+    }
+}
+
+internal sealed class RuntimeCityWalkabilityState
+{
     public void ReserveFootprint(
         List<ReservedFootprint> reservedFootprints,
         Vector2Int originCell,

@@ -236,7 +236,7 @@ internal sealed class RuntimeCityChainSystem
         public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
         public readonly RuntimeCityLayoutState LayoutSystem;
         public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
-        public readonly RuntimeCityPrefabSelectionSystem PrefabSelectionSystem;
+        public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
         public readonly RuntimeCityRoadCommitSystem RoadCommitSystem;
         public readonly RuntimeCityIngressSystem IngressSystem;
         public readonly RuntimeCityIngressSystem.Context IngressContext;
@@ -245,7 +245,7 @@ internal sealed class RuntimeCityChainSystem
             RuntimeCityConfigSystem.Snapshot cityConfig,
             RuntimeCityLayoutState layoutSystem,
             RuntimeCityRoadLayoutState roadLayoutSystem,
-            RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+            RuntimeCityPrefabSelectionState prefabSelectionSystem,
             RuntimeCityRoadCommitSystem roadCommitSystem,
             RuntimeCityIngressSystem ingressSystem,
             RuntimeCityIngressSystem.Context ingressContext)

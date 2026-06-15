@@ -286,7 +286,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityLifecycleState LifecycleState;
         public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
         public readonly RuntimeCityLayoutState LayoutSystem;
-        public readonly RuntimeCityWalkabilitySystem WalkabilitySystem;
+        public readonly RuntimeCityWalkabilityState WalkabilitySystem;
         public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
         public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
         public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;
@@ -311,7 +311,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityLifecycleState lifecycleState,
             RuntimeCityLifecycleSystem.Context lifecycleContext,
             RuntimeCityLayoutState layoutSystem,
-            RuntimeCityWalkabilitySystem walkabilitySystem,
+            RuntimeCityWalkabilityState walkabilitySystem,
             RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
             RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
             RuntimeCityBuildingPlacementSystem buildingPlacementSystem,

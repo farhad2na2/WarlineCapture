@@ -37,7 +37,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
     public IEnumerator SpawnRoutine(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
-        RuntimeCityBulkPlotPlanSystem plotPlanSystem,
+        RuntimeCityBulkPlotPlanState plotPlanSystem,
         RuntimeCityEntryBuildingSpawnSystem entryBuildingSpawnSystem,
         RuntimeCityRoadsideBuildingSpawnSystem roadsideBuildingSpawnSystem,
         RuntimeCityRuralBuildingSpawnSystem ruralBuildingSpawnSystem,

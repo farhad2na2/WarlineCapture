@@ -3,33 +3,48 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class MapSurfaceRuntimeBootstrapSystem
+[UpdateInGroup(typeof(InitializationSystemGroup))]
+internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 {
     private const float SceneOverlayPadding = 0.1f;
 
-    public bool Ensure(World world, MapSurfaceAuthoring authoring)
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        DisposeRuntimeSurface();
+    }
+
+    public bool Ensure(MapSurfaceAuthoring authoring)
     {
         if (authoring == null)
             return false;
 
-        bool ensured = Ensure(world, authoring.BakedSurfaceData, out Entity surfaceEntity);
+        bool ensured = Ensure(authoring.BakedSurfaceData, out Entity surfaceEntity);
         if (ensured)
-            PublishSceneOverlays(world, authoring, surfaceEntity);
+            PublishSceneOverlays(authoring, surfaceEntity);
         return ensured;
     }
 
-    public bool Ensure(World world, MapSurfaceDataAsset surfaceData)
+    public bool Ensure(MapSurfaceDataAsset surfaceData)
     {
-        return Ensure(world, surfaceData, out _);
+        return Ensure(surfaceData, out _);
     }
 
-    private bool Ensure(World world, MapSurfaceDataAsset surfaceData, out Entity surfaceEntity)
+    private bool Ensure(MapSurfaceDataAsset surfaceData, out Entity surfaceEntity)
     {
         surfaceEntity = Entity.Null;
-        if (world == null || !world.IsCreated || surfaceData == null)
+        if (surfaceData == null)
             return false;
 
-        EntityManager entityManager = world.EntityManager;
+        EntityManager entityManager = EntityManager;
         if (!surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
         {
             Debug.LogWarning("[MapSurfaceRuntimeBootstrap] missingRuntimeSurfaceBlob");
@@ -76,12 +91,12 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
         return true;
     }
 
-    private static void PublishSceneOverlays(World world, MapSurfaceAuthoring authoring, Entity surfaceEntity)
+    private void PublishSceneOverlays(MapSurfaceAuthoring authoring, Entity surfaceEntity)
     {
-        if (world == null || !world.IsCreated || authoring == null)
+        if (authoring == null)
             return;
 
-        EntityManager entityManager = world.EntityManager;
+        EntityManager entityManager = EntityManager;
         if (surfaceEntity == Entity.Null || !entityManager.Exists(surfaceEntity))
             surfaceEntity = ResolveRuntimeSurfaceEntity(entityManager);
         if (!entityManager.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntity))
@@ -187,12 +202,9 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
         return nearestGroup == ownerGroup;
     }
 
-    public void Dispose(World world)
+    public void DisposeRuntimeSurface()
     {
-        if (world == null || !world.IsCreated)
-            return;
-
-        EntityManager entityManager = world.EntityManager;
+        EntityManager entityManager = EntityManager;
         using EntityQuery query = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<MapSurfaceComponent>(),
             ComponentType.ReadOnly<MapSurfaceRuntimeBakedBlobTag>());

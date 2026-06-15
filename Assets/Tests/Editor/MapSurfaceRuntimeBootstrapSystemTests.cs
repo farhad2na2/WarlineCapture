@@ -32,9 +32,6 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         BlobAssetReference<MapSurfaceBlob> staleBlob = default;
         BlobAssetReference<MapSurfaceBlob> authoredSourceBlob = default;
         MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
-        object bootstrap = Activator.CreateInstance(
-            typeof(MapSurfaceRuntimeBootstrapSystem),
-            nonPublic: true);
         try
         {
             staleBlob = CreateSingleCellSurface(7f);
@@ -50,12 +47,13 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
             Entity staleSubsceneSurface = em.CreateEntity(typeof(MapSurfaceComponent));
             em.SetComponentData(staleSubsceneSurface, CreateSurfaceComponent(staleBlob));
 
+            MapSurfaceRuntimeBootstrapSystem bootstrap = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
             MethodInfo ensure = bootstrap.GetType().GetMethod(
                 "Ensure",
-                new[] { typeof(World), typeof(MapSurfaceDataAsset) });
+                new[] { typeof(MapSurfaceDataAsset) });
             Assert.IsNotNull(ensure);
 
-            bool ensured = (bool)ensure.Invoke(bootstrap, new object[] { world, asset });
+            bool ensured = (bool)ensure.Invoke(bootstrap, new object[] { asset });
 
             Assert.IsTrue(ensured);
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
@@ -72,8 +70,10 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         }
         finally
         {
-            MethodInfo dispose = bootstrap.GetType().GetMethod("Dispose", new[] { typeof(World) });
-            dispose?.Invoke(bootstrap, new object[] { world });
+            MapSurfaceRuntimeBootstrapSystem bootstrap = world.IsCreated
+                ? world.GetExistingSystemManaged<MapSurfaceRuntimeBootstrapSystem>()
+                : null;
+            bootstrap?.DisposeRuntimeSurface();
             if (staleBlob.IsCreated)
                 staleBlob.Dispose();
             if (authoredSourceBlob.IsCreated)

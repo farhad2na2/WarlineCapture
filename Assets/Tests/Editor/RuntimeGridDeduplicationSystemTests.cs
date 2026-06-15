@@ -18,7 +18,8 @@ public sealed class RuntimeGridDeduplicationSystemTests
             var tests = new RuntimeGridDeduplicationSystemTests();
             tests.RunWithFixture(tests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists);
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
-            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=2");
+            tests.RunWithFixture(tests.RuntimeGridBootstrapSystemCreatesRuntimeGridFromWorldManagedBoundary);
+            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3");
             EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -64,6 +65,31 @@ public sealed class RuntimeGridDeduplicationSystemTests
         system.Update(_world.Unmanaged);
 
         Assert.IsTrue(_entityManager.Exists(runtime));
+    }
+
+    [Test]
+    public void RuntimeGridBootstrapSystemCreatesRuntimeGridFromWorldManagedBoundary()
+    {
+        RuntimeGridBootstrapSystem system = _world.GetOrCreateSystemManaged<RuntimeGridBootstrapSystem>();
+
+        Assert.IsTrue(system.Ensure(12, 10, 1.5f, new Vector3(2f, 0f, 3f)));
+
+        using EntityQuery query = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<RuntimeGridBootstrapGridTag>());
+        Assert.IsFalse(query.IsEmptyIgnoreFilter);
+        Entity gridEntity = query.GetSingletonEntity();
+        GridConfig grid = _entityManager.GetComponentData<GridConfig>(gridEntity);
+        Assert.AreEqual(12, grid.Width);
+        Assert.AreEqual(10, grid.Height);
+        Assert.AreEqual(1.5f, grid.CellSize);
+        Assert.AreEqual(new float3(2f, 0f, 3f), grid.Origin);
+        Assert.AreEqual(120, _entityManager.GetBuffer<GridWalkable>(gridEntity).Length);
+        Assert.AreEqual(120, _entityManager.GetBuffer<GridRoad>(gridEntity).Length);
+        Assert.AreEqual(120, _entityManager.GetBuffer<GridRoadSidewalk>(gridEntity).Length);
+        Assert.AreEqual(120, _entityManager.GetBuffer<GridRoadDirt>(gridEntity).Length);
+        Assert.IsTrue(_entityManager.HasComponent<DynamicBlockerComponent>(gridEntity));
+        Assert.IsTrue(_entityManager.HasComponent<DynamicOccupancyComponent>(gridEntity));
     }
 
     private void RunWithFixture(Action test)

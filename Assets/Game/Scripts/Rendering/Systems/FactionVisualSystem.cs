@@ -3,11 +3,33 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(PresentationSystemGroup))]
 public partial struct FactionVisualSystem : ISystem
 {
+    public static bool ProjectConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
+    {
+        if (world == null || !world.IsCreated || factionVisualConfig == null)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        FactionVisualConfig config = new()
+        {
+            PlayerColor = ToFloat4(factionVisualConfig.PlayerColor),
+            EnemyColor = ToFloat4(factionVisualConfig.EnemyColor),
+            NeutralColor = ToFloat4(factionVisualConfig.NeutralColor)
+        };
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionVisualConfig>());
+        Entity entity = query.IsEmptyIgnoreFilter
+            ? em.CreateEntity(typeof(FactionVisualConfig))
+            : query.GetSingletonEntity();
+        em.SetComponentData(entity, config);
+        return true;
+    }
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<FactionTintTarget>();
@@ -122,5 +144,10 @@ public partial struct FactionVisualSystem : ISystem
 
             return neutralColor;
         }
+    }
+
+    private static float4 ToFloat4(Color color)
+    {
+        return new float4(color.r, color.g, color.b, color.a);
     }
 }

@@ -3,23 +3,27 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class RuntimeGridBootstrapSystem
+[UpdateInGroup(typeof(InitializationSystemGroup))]
+internal sealed partial class RuntimeGridBootstrapSystem : SystemBase
 {
     private const string FixMarker = "RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26";
 
-    public bool Ensure(World world, int width, int height, float cellSize, Vector3 origin)
+    protected override void OnCreate()
     {
-        if (world == null || !world.IsCreated)
-        {
-            Debug.LogWarning("[RuntimeGridBootstrap] missingWorld");
-            return false;
-        }
+        Enabled = false;
+    }
 
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool Ensure(int width, int height, float cellSize, Vector3 origin)
+    {
         width = Mathf.Max(1, width);
         height = Mathf.Max(1, height);
         cellSize = Mathf.Max(0.01f, cellSize);
 
-        EntityManager entityManager = world.EntityManager;
+        EntityManager entityManager = EntityManager;
         Entity gridEntity = ResolveGridEntity(entityManager);
         entityManager.SetComponentData(gridEntity, new GridConfig
         {

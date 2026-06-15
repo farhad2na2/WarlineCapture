@@ -30,8 +30,8 @@ internal sealed class MatchBootstrapSystem
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
-    private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
-    private readonly MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem = new();
+    private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
+    private MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem;
     private readonly CustomGameStartupSystem _customGameStartupSystem = new();
     private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
@@ -336,6 +336,8 @@ internal sealed class MatchBootstrapSystem
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
         RuntimeCity = null;
+        _runtimeGridBootstrapSystem = null;
+        _mapSurfaceRuntimeBootstrapSystem = null;
         _gameplayStartRequested = false;
         _gameplayStartComplete = false;
         _managedRuntimeInitialized = false;
@@ -433,26 +435,6 @@ internal sealed class MatchBootstrapSystem
             matchIntroStateQuery);
     }
 
-    public void ProjectFactionVisualConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
-    {
-        if (world == null || !world.IsCreated || factionVisualConfig == null)
-            return;
-
-        EntityManager em = world.EntityManager;
-        FactionVisualConfig config = new()
-        {
-            PlayerColor = ToFloat4(factionVisualConfig.PlayerColor),
-            EnemyColor = ToFloat4(factionVisualConfig.EnemyColor),
-            NeutralColor = ToFloat4(factionVisualConfig.NeutralColor)
-        };
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionVisualConfig>());
-        Entity entity = query.IsEmptyIgnoreFilter
-            ? em.CreateEntity(typeof(FactionVisualConfig))
-            : query.GetSingletonEntity();
-        em.SetComponentData(entity, config);
-    }
-
     public void ProjectRuntimeStartupConfig(
         World world,
         RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
@@ -471,22 +453,28 @@ internal sealed class MatchBootstrapSystem
             return;
         }
 
+        if (runtimeGridBootstrapSystem == null)
+        {
+            Debug.LogWarning("[MatchBootstrap] missingRuntimeGridBootstrapSystem");
+            return;
+        }
+
         runtimeGridBootstrapSystem.Ensure(
-            world,
             runtimeGridConfig.Width,
             runtimeGridConfig.Height,
             runtimeGridConfig.CellSize,
             runtimeGridConfig.Origin);
-        mapSurfaceRuntimeBootstrapSystem.Ensure(world, mapSurfaceAuthoring);
+        if (mapSurfaceRuntimeBootstrapSystem == null)
+        {
+            Debug.LogWarning("[MatchBootstrap] missingMapSurfaceRuntimeBootstrapSystem");
+            return;
+        }
+
+        mapSurfaceRuntimeBootstrapSystem.Ensure(mapSurfaceAuthoring);
         initialFactionSpawnCellSystem.Configure(
             world,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         aiStartupSystem.LogConfigValidation(aiControllerConfigs, aiSettings);
-    }
-
-    private static float4 ToFloat4(Color color)
-    {
-        return new float4(color.r, color.g, color.b, color.a);
     }
 
     public AIStartupSystem.Result InitializeAiStartupConfig(
@@ -716,7 +704,7 @@ internal sealed class MatchBootstrapSystem
         runtimeDecorations?.Dispose();
         runtimeGridBlockers?.Dispose();
         runtimeCity?.Dispose();
-        mapSurfaceRuntimeBootstrapSystem?.Dispose(World.DefaultGameObjectInjectionWorld);
+        mapSurfaceRuntimeBootstrapSystem?.DisposeRuntimeSurface();
         runtimeCameraReferenceSystem?.ClearWorldCamera();
         ReleasePerformanceDiagnostics(performanceDiagnosticsSystem);
         SharedPrefabPreviewCache.ReleaseAll();
@@ -800,7 +788,7 @@ internal sealed class MatchBootstrapSystem
                 GameRuntimeStats.ConfigureUnitPrefabClassifier(GameRuntimeStatsUnitPrefabClassifierSystem.ClassifyUnitPrefab);
                 GameRuntimeStats.Reset();
                 _pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
-                ProjectFactionVisualConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
+                FactionVisualSystem.ProjectConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
                 _gameplayStartStep = GameplayStartStep.ProjectStartupConfig;
                 break;
 
@@ -808,8 +796,8 @@ internal sealed class MatchBootstrapSystem
                 SetGameplayStartProgress(0.24f, "Preparing map data");
                 ProjectRuntimeStartupConfig(
                     World.DefaultGameObjectInjectionWorld,
-                    _runtimeGridBootstrapSystem,
-                    _mapSurfaceRuntimeBootstrapSystem,
+                    ResolveRuntimeGridBootstrapSystem(World.DefaultGameObjectInjectionWorld),
+                    ResolveMapSurfaceRuntimeBootstrapSystem(World.DefaultGameObjectInjectionWorld),
                     RuntimeGridConfig,
                     MapSurfaceAuthoring,
                     _initialFactionSpawnCellSystem,
@@ -879,6 +867,24 @@ internal sealed class MatchBootstrapSystem
     {
         _gameplayStartProgress01 = Mathf.Clamp01(progress01);
         _gameplayStartStatus = string.IsNullOrEmpty(status) ? "Starting match" : status;
+    }
+
+    private RuntimeGridBootstrapSystem ResolveRuntimeGridBootstrapSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _runtimeGridBootstrapSystem = world.GetOrCreateSystemManaged<RuntimeGridBootstrapSystem>();
+        return _runtimeGridBootstrapSystem;
+    }
+
+    private MapSurfaceRuntimeBootstrapSystem ResolveMapSurfaceRuntimeBootstrapSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _mapSurfaceRuntimeBootstrapSystem = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
+        return _mapSurfaceRuntimeBootstrapSystem;
     }
 
     private static ISelectionRectangleView EnsureSelectionRectangleView(

@@ -21,7 +21,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             tests.GroundedReturningAirUnitDoesNotRotateBakedBladeReference();
             tests.HelicopterPrefabsDoNotUseCompanionBladeSpinner();
             tests.HelicopterUnitPrefabsExposeBakedBladeTransforms();
-            tests.MatchBootstrapProjectsConfiguredFactionVisualColorsToEcs();
+            tests.FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs();
             Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=7");
             EditorApplication.Exit(0);
         }
@@ -217,9 +217,9 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     }
 
     [Test]
-    public void MatchBootstrapProjectsConfiguredFactionVisualColorsToEcs()
+    public void FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs()
     {
-        using var world = new World(nameof(MatchBootstrapProjectsConfiguredFactionVisualColorsToEcs));
+        using var world = new World(nameof(FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs));
         FactionVisualSettingsSceneConfigAsset config = ScriptableObject.CreateInstance<FactionVisualSettingsSceneConfigAsset>();
         try
         {
@@ -229,7 +229,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             serialized.FindProperty("neutralColor").colorValue = new Color(0.82f, 0.82f, 0.82f, 1f);
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            new MatchBootstrapSystem().ProjectFactionVisualConfig(world, config);
+            Assert.IsTrue(FactionVisualSystem.ProjectConfig(world, config));
 
             using EntityQuery query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<FactionVisualConfig>());
             FactionVisualConfig projected = query.GetSingleton<FactionVisualConfig>();

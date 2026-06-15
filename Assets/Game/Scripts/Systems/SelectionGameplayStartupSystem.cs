@@ -226,22 +226,53 @@ internal sealed class SelectionGameplayStartupSystem
         void UpdateSelectionRuntimePhases()
         {
             if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
-                ProcessTransportCommandRequests();
+                rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
             if (rtsSelectionInputSystem.HasPendingMoveCommandRequestsOrResults())
-                ProcessMoveCommandRequests();
+                rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
             if (rtsSelectionInputSystem.HasPendingAttackCommandRequestsOrResults())
-                ProcessAttackCommandRequests();
+                rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
+                    GetCommandResultFlushContext(),
+                    explicitAttackTargetModeActive);
             if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
-                ProcessScanCommandRequests();
-            ProcessSelectionModeCommandRequests();
-            ProcessMoveTargetModeCommandRequests();
-            ProcessAttackTargetModeCommandRequests();
-            ProcessScanTargetModeCommandRequests();
-            ProcessBoardTargetModeCommandRequests();
-            ProcessCancelActiveCommandModeRequests();
-            ProcessImmediateSelectedUnitCommandRequests();
-            ProcessSelectAllCommandRequests();
-            ProcessDeselectAllCommandRequests();
+                rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
+            rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
+            rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
+            if (TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
+            {
+                Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
+                    attackTargetModeEntityManager,
+                    selectionStateSystem,
+                    out Entity resolvedFocusedUnit)
+                    ? resolvedFocusedUnit
+                    : Entity.Null;
+                if (!RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(attackTargetModeEntityManager) ||
+                    !rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
+                        GetCommandResultFlushContext(),
+                        focusedUnit))
+                {
+                    rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
+                        GetCommandResultFlushContext(),
+                        Time.frameCount,
+                        focusedUnit);
+                }
+            }
+            rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
+            rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
+            rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
+            rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
+                GetCommandResultFlushContext(),
+                selectionStateSystem.FocusedUnit);
+            if (runtimeConfig.WorldCamera != null)
+                rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
+            rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
             RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
@@ -301,82 +332,6 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
         }
 
-        void ProcessSelectAllCommandRequests()
-        {
-            if (runtimeConfig.WorldCamera != null)
-                rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
-        }
-
-        void ProcessSelectionModeCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
-                GetCommandResultFlushContext(),
-                Time.frameCount);
-        }
-
-        void ProcessMoveTargetModeCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
-                GetCommandResultFlushContext(),
-                Time.frameCount);
-        }
-
-        void ProcessAttackTargetModeCommandRequests()
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
-                em,
-                selectionStateSystem,
-                out Entity resolvedFocusedUnit)
-                ? resolvedFocusedUnit
-                : Entity.Null;
-            if (RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(em) &&
-                rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
-                    GetCommandResultFlushContext(),
-                    focusedUnit))
-            {
-                return;
-            }
-
-            rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
-                GetCommandResultFlushContext(),
-                Time.frameCount,
-                focusedUnit);
-        }
-
-        void ProcessScanTargetModeCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
-                GetCommandResultFlushContext(),
-                Time.frameCount);
-        }
-
-        void ProcessBoardTargetModeCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
-                GetCommandResultFlushContext(),
-                Time.frameCount);
-        }
-
-        void ProcessCancelActiveCommandModeRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
-        }
-
-        void ProcessImmediateSelectedUnitCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
-                GetCommandResultFlushContext(),
-                selectionStateSystem.FocusedUnit);
-        }
-
-        void ProcessDeselectAllCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
-        }
-
         RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()
         {
             if (!hasRuntimeInputContext)
@@ -431,7 +386,13 @@ internal sealed class SelectionGameplayStartupSystem
                     screenPosition),
                 selectionOrderMarkerSystem,
                 TryGetDefaultEntityManager,
-                TryGetClickedCell,
+                (Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        em,
+                        out cell,
+                        out worldPoint),
                 visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
                 screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
                     CreatePointerTargetCommandContext(),
@@ -519,12 +480,45 @@ internal sealed class SelectionGameplayStartupSystem
                     state,
                     applyHudSelectionAction),
                 focusedUnitLifecycleSystem.SetFocusedUnit,
-                TryGetClickedUnitEntity,
-                TryGetMoveCommandCell,
-                TryGetClickedCell,
-                TryGetClickedAttackTargetEntity,
-                TryGetClickedUnitEntity,
-                TryGetClickedCell);
+                (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out entity),
+                (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetMoveCommandCell(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out cell,
+                        out worldPoint),
+                (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out cell,
+                        out worldPoint),
+                (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedAttackTargetEntity(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out entity),
+                (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out entity),
+                (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
+                    rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
+                        CreatePointerTargetCommandContext(),
+                        screenPosition,
+                        entityManager,
+                        out cell,
+                        out worldPoint));
         }
 
         RtsSelectionFocusCommandSystem.Context CreateFocusCommandContext()
@@ -579,10 +573,12 @@ internal sealed class SelectionGameplayStartupSystem
                 ClearCurrentSelection,
                 screenPosition => selectionScreenMarkers.RequestMoveOrderMarker(screenPosition),
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
-                ProcessAttackCommandRequests,
-                ProcessScanCommandRequests,
-                ProcessTransportCommandRequests,
-                ProcessMoveCommandRequests,
+                () => rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
+                    GetCommandResultFlushContext(),
+                    explicitAttackTargetModeActive),
+                () => rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext()),
+                () => rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext()),
+                () => rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext()),
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 visibleSelectionScratch);
@@ -739,14 +735,11 @@ internal sealed class SelectionGameplayStartupSystem
                 applyRectangleHudSelectionAction,
                 applyRectangleHudSquadSelectionAction,
                 selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
-                ClearSelectedBuildingAfterRectangleSelection,
+                () => buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                    buildingPlacementInteractionContext,
+                    "RTSSelection.SelectUnitsInRectangle"),
                 screenRect => trySelectFirstBuildingInScreenRect != null &&
                     trySelectFirstBuildingInScreenRect(screenRect));
-        }
-
-        void ClearSelectedBuildingAfterRectangleSelection()
-        {
-            buildingPlacementInteractionSystem?.ClearSelectedBuilding(buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
         }
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
@@ -766,66 +759,6 @@ internal sealed class SelectionGameplayStartupSystem
             VisibleUnitSelectionSystem.Filter filter = VisibleUnitSelectionSystem.Filter.All)
         {
             rtsSelectionInputSystem.QueueSelectionRectangleRequest(kind, screenRect, Time.frameCount, filter);
-        }
-
-        void ProcessMoveCommandRequests()
-        {
-            rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
-        }
-
-        bool ProcessAttackCommandRequests()
-        {
-            return rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
-                GetCommandResultFlushContext(),
-                explicitAttackTargetModeActive);
-        }
-
-        bool ProcessScanCommandRequests()
-        {
-            return rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
-        }
-
-        bool ProcessTransportCommandRequests()
-        {
-            return rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
-        }
-
-        bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
-                CreatePointerTargetCommandContext(),
-                screenPosition,
-                em,
-                out cell,
-                out worldPoint);
-        }
-
-        bool TryGetMoveCommandCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryGetMoveCommandCell(
-                CreatePointerTargetCommandContext(),
-                screenPosition,
-                em,
-                out cell,
-                out worldPoint);
-        }
-
-        bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
-                CreatePointerTargetCommandContext(),
-                screenPosition,
-                em,
-                out bestEntity);
-        }
-
-        bool TryGetClickedAttackTargetEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryGetClickedAttackTargetEntity(
-                CreatePointerTargetCommandContext(),
-                screenPosition,
-                em,
-                out bestEntity);
         }
 
         bool TryGetPointerPosition(out Vector2 pointerPosition)

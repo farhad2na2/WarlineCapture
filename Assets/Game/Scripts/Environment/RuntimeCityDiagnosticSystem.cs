@@ -1,12 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityDiagnosticSystem
+internal sealed partial class RuntimeCityDiagnosticSystem : SystemBase
 {
-    private readonly bool _enableStateDiagnostics;
+    private bool _enableStateDiagnostics;
 
-    public RuntimeCityDiagnosticSystem(bool enableStateDiagnostics = false)
+    protected override void OnCreate()
     {
-        _enableStateDiagnostics = enableStateDiagnostics;
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void LogLifecycleStart(int frameCount, int cityCount, bool generateBuildings, int generationYieldInterval)

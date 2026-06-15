@@ -1,122 +1,33 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityStartupSystem
+internal sealed partial class RuntimeCityStartupSystem : SystemBase
 {
-    private int _nextInitialSpawnWaitDiagnosticFrame;
+    private readonly RuntimeCityStartupState _state = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public Result Evaluate(Context context)
     {
-        if (!context.SpawnOnStart || context.IsSpawned)
-            return Result.None;
-        if (context.CityCount <= 0)
-            return Result.None;
-        if (!context.PlayRequested)
-            return Result.None;
-        if (context.IsMissionExcluded)
-            return Result.MarkSpawned;
-        if (context.TryGetPendingInitialUnits != null &&
-            context.TryGetPendingInitialUnits(out int initialSpawnConfigs, out int initializedInitialSpawnConfigs))
-        {
-            LogInitialSpawnWait(context, initialSpawnConfigs, initializedInitialSpawnConfigs);
-            return Result.None;
-        }
-
-        return TryCreateGenerateResult(context);
+        return _state.Evaluate(context);
     }
 
     public Result EvaluateManualGeneration(Context context)
     {
-        if (context.IsSpawned)
-            return Result.None;
-        if (context.CityCount <= 0)
-            return Result.None;
-
-        return TryCreateGenerateResult(context);
+        return _state.EvaluateManualGeneration(context);
     }
 
     public static string DescribeStartupBlocker(Context context)
     {
-        if (!context.SpawnOnStart)
-            return "spawnOnStart=0";
-        if (context.IsSpawned)
-            return "alreadySpawned";
-        if (context.CityCount <= 0)
-            return $"cityCount={context.CityCount}";
-        if (!context.PlayRequested)
-            return "playRequested=0";
-        if (context.IsMissionExcluded)
-            return "missionExcluded";
-        if (context.TryGetPendingInitialUnits != null &&
-            context.TryGetPendingInitialUnits(out int initialSpawnConfigs, out int initializedInitialSpawnConfigs))
-        {
-            return $"pendingInitialUnits configs={initialSpawnConfigs} initialized={initializedInitialSpawnConfigs}";
-        }
-        if (!context.HasRoadRuntimeGenerationSystem)
-            return "missingRoadRuntimeGenerationSystem";
-        if (context.GenerateBuildings && !context.HasSpawnSystem)
-            return "missingBuildingSpawnSystem";
-        if (context.TryGetRoadCellSize == null)
-            return "missingRoadCellSizeQuery";
-        if (!context.TryGetRoadCellSize(out int roadCellSizeInGridCells))
-            return "missingRoadCellSize";
-        if (context.TryGetGridData == null)
-            return "missingGridDataQuery";
-        if (!context.TryGetGridData(out GridConfig grid))
-            return "missingGridData";
-        if (!HasRequiredPrefabs(context.HallPrefabs, context.ShopPrefabs, context.HousePrefabs))
-        {
-            int hallCount = context.HallPrefabs?.Count ?? 0;
-            int shopCount = context.ShopPrefabs?.Count ?? 0;
-            int houseCount = context.HousePrefabs?.Count ?? 0;
-            return $"missingCityPrefabs hall={hallCount} shop={shopCount} house={houseCount}";
-        }
-
-        return $"readyToGenerate roadCellSize={roadCellSizeInGridCells} grid={grid.Width}x{grid.Height}";
-    }
-
-    private static Result TryCreateGenerateResult(Context context)
-    {
-        if (!context.HasRoadRuntimeGenerationSystem)
-            return Result.None;
-        if (context.GenerateBuildings && !context.HasSpawnSystem)
-            return Result.None;
-        if (context.TryGetRoadCellSize == null ||
-            !context.TryGetRoadCellSize(out int roadCellSizeInGridCells))
-        {
-            return Result.None;
-        }
-        if (context.TryGetGridData == null ||
-            !context.TryGetGridData(out GridConfig grid))
-        {
-            return Result.None;
-        }
-        if (!HasRequiredPrefabs(context.HallPrefabs, context.ShopPrefabs, context.HousePrefabs))
-            return Result.None;
-
-        return Result.Generate(grid, roadCellSizeInGridCells);
-    }
-
-    private void LogInitialSpawnWait(Context context, int initialSpawnConfigs, int initializedInitialSpawnConfigs)
-    {
-        if (context.FrameCount < _nextInitialSpawnWaitDiagnosticFrame)
-            return;
-
-        _nextInitialSpawnWaitDiagnosticFrame = context.FrameCount + 120;
-        context.Diagnostics?.LogInitialSpawnWait(context.FrameCount, initialSpawnConfigs, initializedInitialSpawnConfigs);
-    }
-
-    private static bool HasRequiredPrefabs(
-        IReadOnlyCollection<GameObject> hallPrefabs,
-        IReadOnlyCollection<GameObject> shopPrefabs,
-        IReadOnlyCollection<GameObject> housePrefabs)
-    {
-        return hallPrefabs != null &&
-            hallPrefabs.Count > 0 &&
-            shopPrefabs != null &&
-            shopPrefabs.Count > 0 &&
-            housePrefabs != null &&
-            housePrefabs.Count > 0;
+        return RuntimeCityStartupState.DescribeStartupBlocker(context);
     }
 
     public delegate bool TryGetPendingInitialUnitsDelegate(out int totalConfigs, out int initializedConfigs);
@@ -209,5 +120,124 @@ internal sealed class RuntimeCityStartupSystem
         None,
         MarkSpawned,
         Generate
+    }
+}
+
+internal sealed class RuntimeCityStartupState
+{
+    private int _nextInitialSpawnWaitDiagnosticFrame;
+
+    public RuntimeCityStartupSystem.Result Evaluate(RuntimeCityStartupSystem.Context context)
+    {
+        if (!context.SpawnOnStart || context.IsSpawned)
+            return RuntimeCityStartupSystem.Result.None;
+        if (context.CityCount <= 0)
+            return RuntimeCityStartupSystem.Result.None;
+        if (!context.PlayRequested)
+            return RuntimeCityStartupSystem.Result.None;
+        if (context.IsMissionExcluded)
+            return RuntimeCityStartupSystem.Result.MarkSpawned;
+        if (context.TryGetPendingInitialUnits != null &&
+            context.TryGetPendingInitialUnits(out int initialSpawnConfigs, out int initializedInitialSpawnConfigs))
+        {
+            LogInitialSpawnWait(context, initialSpawnConfigs, initializedInitialSpawnConfigs);
+            return RuntimeCityStartupSystem.Result.None;
+        }
+
+        return TryCreateGenerateResult(context);
+    }
+
+    public RuntimeCityStartupSystem.Result EvaluateManualGeneration(RuntimeCityStartupSystem.Context context)
+    {
+        if (context.IsSpawned)
+            return RuntimeCityStartupSystem.Result.None;
+        if (context.CityCount <= 0)
+            return RuntimeCityStartupSystem.Result.None;
+
+        return TryCreateGenerateResult(context);
+    }
+
+    public static string DescribeStartupBlocker(RuntimeCityStartupSystem.Context context)
+    {
+        if (!context.SpawnOnStart)
+            return "spawnOnStart=0";
+        if (context.IsSpawned)
+            return "alreadySpawned";
+        if (context.CityCount <= 0)
+            return $"cityCount={context.CityCount}";
+        if (!context.PlayRequested)
+            return "playRequested=0";
+        if (context.IsMissionExcluded)
+            return "missionExcluded";
+        if (context.TryGetPendingInitialUnits != null &&
+            context.TryGetPendingInitialUnits(out int initialSpawnConfigs, out int initializedInitialSpawnConfigs))
+        {
+            return $"pendingInitialUnits configs={initialSpawnConfigs} initialized={initializedInitialSpawnConfigs}";
+        }
+        if (!context.HasRoadRuntimeGenerationSystem)
+            return "missingRoadRuntimeGenerationSystem";
+        if (context.GenerateBuildings && !context.HasSpawnSystem)
+            return "missingBuildingSpawnSystem";
+        if (context.TryGetRoadCellSize == null)
+            return "missingRoadCellSizeQuery";
+        if (!context.TryGetRoadCellSize(out int roadCellSizeInGridCells))
+            return "missingRoadCellSize";
+        if (context.TryGetGridData == null)
+            return "missingGridDataQuery";
+        if (!context.TryGetGridData(out GridConfig grid))
+            return "missingGridData";
+        if (!HasRequiredPrefabs(context.HallPrefabs, context.ShopPrefabs, context.HousePrefabs))
+        {
+            int hallCount = context.HallPrefabs?.Count ?? 0;
+            int shopCount = context.ShopPrefabs?.Count ?? 0;
+            int houseCount = context.HousePrefabs?.Count ?? 0;
+            return $"missingCityPrefabs hall={hallCount} shop={shopCount} house={houseCount}";
+        }
+
+        return $"readyToGenerate roadCellSize={roadCellSizeInGridCells} grid={grid.Width}x{grid.Height}";
+    }
+
+    private static RuntimeCityStartupSystem.Result TryCreateGenerateResult(RuntimeCityStartupSystem.Context context)
+    {
+        if (!context.HasRoadRuntimeGenerationSystem)
+            return RuntimeCityStartupSystem.Result.None;
+        if (context.GenerateBuildings && !context.HasSpawnSystem)
+            return RuntimeCityStartupSystem.Result.None;
+        if (context.TryGetRoadCellSize == null ||
+            !context.TryGetRoadCellSize(out int roadCellSizeInGridCells))
+        {
+            return RuntimeCityStartupSystem.Result.None;
+        }
+        if (context.TryGetGridData == null ||
+            !context.TryGetGridData(out GridConfig grid))
+        {
+            return RuntimeCityStartupSystem.Result.None;
+        }
+        if (!HasRequiredPrefabs(context.HallPrefabs, context.ShopPrefabs, context.HousePrefabs))
+            return RuntimeCityStartupSystem.Result.None;
+
+        return RuntimeCityStartupSystem.Result.Generate(grid, roadCellSizeInGridCells);
+    }
+
+    private void LogInitialSpawnWait(RuntimeCityStartupSystem.Context context, int initialSpawnConfigs, int initializedInitialSpawnConfigs)
+    {
+        if (context.FrameCount < _nextInitialSpawnWaitDiagnosticFrame)
+            return;
+
+        _nextInitialSpawnWaitDiagnosticFrame = context.FrameCount + 120;
+        context.Diagnostics?.LogInitialSpawnWait(context.FrameCount, initialSpawnConfigs, initializedInitialSpawnConfigs);
+    }
+
+    private static bool HasRequiredPrefabs(
+        IReadOnlyCollection<GameObject> hallPrefabs,
+        IReadOnlyCollection<GameObject> shopPrefabs,
+        IReadOnlyCollection<GameObject> housePrefabs)
+    {
+        return hallPrefabs != null &&
+            hallPrefabs.Count > 0 &&
+            shopPrefabs != null &&
+            shopPrefabs.Count > 0 &&
+            housePrefabs != null &&
+            housePrefabs.Count > 0;
     }
 }

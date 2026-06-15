@@ -13,7 +13,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new();
     private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new();
     private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new();
-    private readonly RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem = new();
+    private RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem;
     private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();
     private readonly RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem = new();
     private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();
@@ -37,12 +37,13 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new();
     private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new();
     private readonly RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem = new();
-    private readonly RuntimeCityStartupSystem _runtimeCityStartupSystem = new();
+    private RuntimeCityStartupSystem _runtimeCityStartupSystem;
+    private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
     private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
     private readonly RuntimeCityGenerationSystem _runtimeCityGenerationSystem = new();
     private readonly RuntimeCityChainSystem _runtimeCityChainSystem = new();
     private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new();
-    private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new();
+    private RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem;
     private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new();
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
     private RuntimeCityReadModelSystem _runtimeCityReadModelSystem;
@@ -76,7 +77,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public string DescribeStartupBlocker(int frameCount)
     {
-        return RuntimeCityStartupSystem.DescribeStartupBlocker(CreateStartupContext(frameCount));
+        return global::RuntimeCityStartupSystem.DescribeStartupBlocker(CreateStartupContext(frameCount));
     }
 
     public void MarkSpawnedAfterLoadingGateTimeout()
@@ -134,7 +135,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public void GenerateCity(int frameCount)
     {
-        RuntimeCityStartupSystem.Result result = _runtimeCityStartupSystem.EvaluateManualGeneration(CreateStartupContext(frameCount));
+        RuntimeCityStartupSystem.Result result = EvaluateManualGeneration(CreateStartupContext(frameCount));
         if (result.Kind == RuntimeCityStartupSystem.ResultKind.Generate)
             GenerateCity(result.Grid, result.RoadCellSizeInGridCells, frameCount);
         PublishReadModel();
@@ -148,23 +149,49 @@ public sealed class RuntimeCityCompositionSystem
         else
             _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.From(_config, _fallbackCityPrefabs);
 
-        _runtimeCityBuildingSpawnContext = _runtimeCityBuildingSpawnContextSystem.Create(
-            cityConfig,
-            _runtimeCityBuildingPlotSystem,
-            _runtimeCityWalkabilitySystem,
-            _runtimeCityPrefabSelectionSystem,
-            RuntimeCityVisualSystem,
-            _runtimeCitySpawnBridgeSystem,
-            _runtimeCityDiagnosticSystem);
+        RuntimeCityBuildingSpawnContextSystem spawnContextSystem = RuntimeCityBuildingSpawnContextSystem;
+        _runtimeCityBuildingSpawnContext = spawnContextSystem != null
+            ? spawnContextSystem.Create(
+                cityConfig,
+                _runtimeCityBuildingPlotSystem,
+                _runtimeCityWalkabilitySystem,
+                _runtimeCityPrefabSelectionSystem,
+                RuntimeCityVisualSystem,
+                _runtimeCitySpawnBridgeSystem,
+                RuntimeCityDiagnosticSystem)
+            : global::RuntimeCityBuildingSpawnContextSystem.CreateFallback(
+                cityConfig,
+                _runtimeCityBuildingPlotSystem,
+                _runtimeCityWalkabilitySystem,
+                _runtimeCityPrefabSelectionSystem,
+                RuntimeCityVisualSystem,
+                _runtimeCitySpawnBridgeSystem,
+                RuntimeCityDiagnosticSystem);
     }
 
     private void TryAutoSpawn(int frameCount)
     {
-        RuntimeCityStartupSystem.Result result = _runtimeCityStartupSystem.Evaluate(CreateStartupContext(frameCount));
+        RuntimeCityStartupSystem.Result result = EvaluateStartup(CreateStartupContext(frameCount));
         if (result.Kind == RuntimeCityStartupSystem.ResultKind.MarkSpawned)
             _runtimeCityLifecycleSystem.MarkSpawned();
         else if (result.Kind == RuntimeCityStartupSystem.ResultKind.Generate)
             GenerateCity(result.Grid, result.RoadCellSizeInGridCells, frameCount);
+    }
+
+    private RuntimeCityStartupSystem.Result EvaluateStartup(RuntimeCityStartupSystem.Context context)
+    {
+        RuntimeCityStartupSystem startupSystem = RuntimeCityStartupSystem;
+        return startupSystem != null
+            ? startupSystem.Evaluate(context)
+            : _fallbackRuntimeCityStartup.Evaluate(context);
+    }
+
+    private RuntimeCityStartupSystem.Result EvaluateManualGeneration(RuntimeCityStartupSystem.Context context)
+    {
+        RuntimeCityStartupSystem startupSystem = RuntimeCityStartupSystem;
+        return startupSystem != null
+            ? startupSystem.EvaluateManualGeneration(context)
+            : _fallbackRuntimeCityStartup.EvaluateManualGeneration(context);
     }
 
     private void PublishReadModel()
@@ -189,7 +216,7 @@ public sealed class RuntimeCityCompositionSystem
             cityCount,
             generateBuildings,
             generationYieldInterval,
-            _runtimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticSystem);
     }
 
     private RuntimeCityStartupSystem.Context CreateStartupContext(int frameCount)
@@ -210,7 +237,7 @@ public sealed class RuntimeCityCompositionSystem
             _tryGetPendingInitialUnits,
             _tryGetRoadCellSize,
             _tryGetGridData,
-            _runtimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticSystem);
     }
 
     private RuntimeCityGenerationSystem.Context CreateGenerationContext(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
@@ -238,7 +265,7 @@ public sealed class RuntimeCityCompositionSystem
             CollectInitialBaseExclusionRoadRects,
             ShouldYield,
             RuntimeCityMinimapEventSystem,
-            _runtimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticSystem);
     }
 
     private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()
@@ -281,7 +308,7 @@ public sealed class RuntimeCityCompositionSystem
     {
         return new RuntimeCityRoadCommitSystem.Context(
             _runtimeCityRoadBuildBridgeSystem,
-            _runtimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticSystem);
     }
 
     private RuntimeCityIngressSystem.Context CreateIngressContext()
@@ -305,6 +332,15 @@ public sealed class RuntimeCityCompositionSystem
 
     private RuntimeCityConfigSystem RuntimeCityConfigSystem =>
         _runtimeCityConfigSystem ??= ResolveRuntimeCityConfigSystem();
+
+    private RuntimeCityDiagnosticSystem RuntimeCityDiagnosticSystem =>
+        _runtimeCityDiagnosticSystem ??= ResolveRuntimeCityDiagnosticSystem();
+
+    private RuntimeCityBuildingSpawnContextSystem RuntimeCityBuildingSpawnContextSystem =>
+        _runtimeCityBuildingSpawnContextSystem ??= ResolveRuntimeCityBuildingSpawnContextSystem();
+
+    private RuntimeCityStartupSystem RuntimeCityStartupSystem =>
+        _runtimeCityStartupSystem ??= ResolveRuntimeCityStartupSystem();
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
@@ -374,6 +410,30 @@ public sealed class RuntimeCityCompositionSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityConfigSystem>()
+            : null;
+    }
+
+    private static RuntimeCityDiagnosticSystem ResolveRuntimeCityDiagnosticSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityDiagnosticSystem>()
+            : null;
+    }
+
+    private static RuntimeCityBuildingSpawnContextSystem ResolveRuntimeCityBuildingSpawnContextSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingSpawnContextSystem>()
+            : null;
+    }
+
+    private static RuntimeCityStartupSystem ResolveRuntimeCityStartupSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityStartupSystem>()
             : null;
     }
 }

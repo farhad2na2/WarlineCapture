@@ -1,6 +1,36 @@
-internal sealed class RuntimeCityBuildingSpawnContextSystem
+using Unity.Entities;
+
+internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public Context Create(
+        RuntimeCityConfigSystem.Snapshot config,
+        RuntimeCityBuildingPlotSystem buildingPlotSystem,
+        RuntimeCityWalkabilitySystem walkabilitySystem,
+        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityVisualSystem visualSystem,
+        RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+        RuntimeCityDiagnosticSystem diagnosticSystem)
+    {
+        return CreateFallback(
+            config,
+            buildingPlotSystem,
+            walkabilitySystem,
+            prefabSelectionSystem,
+            visualSystem,
+            spawnBridgeSystem,
+            diagnosticSystem);
+    }
+
+    public static Context CreateFallback(
         RuntimeCityConfigSystem.Snapshot config,
         RuntimeCityBuildingPlotSystem buildingPlotSystem,
         RuntimeCityWalkabilitySystem walkabilitySystem,

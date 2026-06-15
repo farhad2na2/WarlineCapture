@@ -264,19 +264,8 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessSelectAllCommandRequests()
         {
-            if (runtimeConfig.WorldCamera == null ||
-                !TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionSelectAllCommandSystem.ProcessPendingRequests(em))
-            {
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            if (rtsSelectionInputSystem.HasPendingSelectionRectangleRequests())
-                ProcessSelectionRectangleRequests();
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+            if (runtimeConfig.WorldCamera != null)
+                rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
         }
 
         void ProcessSelectionModeCommandRequests()
@@ -508,16 +497,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessCancelActiveCommandModeRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(em))
-            {
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
         }
 
         void ProcessImmediateSelectedUnitCommandRequests()
@@ -540,16 +520,12 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode);
             if (!accepted)
             {
-                if (destroyFocusedUnit &&
-                    rejectionReason == TacticalCommandReasonCode.NoSelection &&
-                    buildingPlacementInteractionSystem != null &&
-                    buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
+                if (rtsSelectionCommandResultFlushSystem.TryProcessSelectedBuildingDestroyFallback(
+                        GetCommandResultFlushContext(),
+                        processedKind,
+                        accepted,
+                        rejectionReason))
                 {
-                    buildingPlacementInteractionSystem.DeleteSelectedBuilding(buildingPlacementInteractionContext);
-                    selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
-                    selectionHudFeedbackSystem.ApplyCommandResult(
-                        CreateHudFeedbackContext(),
-                        TacticalCommandResult.Success("Destroyed selected building."));
                     return;
                 }
 
@@ -599,19 +575,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessDeselectAllCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(em))
-            {
-                return;
-            }
-
-            selectionStateSystem.ClearSelectedMoveCache();
-            focusedUnitLifecycleSystem.ClearFocusedUnit(selectionStateSystem);
-            SetExplicitAttackTargetModeActive(false);
-            selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
-            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
+            rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
         }
 
         RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()
@@ -720,6 +684,8 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetDefaultEntityManager,
                 EnsureRuntimeSelectionDependencies,
                 ClearCurrentSelection,
+                SetExplicitAttackTargetModeActive,
+                ProcessSelectionRectangleRequests,
                 RequestMoveOrderScreenMarker,
                 RequestAttackOrderScreenMarker,
                 SetCameraDragging,

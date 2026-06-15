@@ -37,8 +37,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly ClearCurrentSelectionAction ClearCurrentSelection;
         public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
+        public readonly Action ClearHudSelection;
         public readonly Action ClearHudCommandMode;
+        public readonly Action<bool> SetExplicitAttackTargetModeActive;
         public readonly Action<bool> SetHudWorldMarkersVisible;
+        public readonly Action ProcessSelectionRectangleRequests;
+        public readonly Action<string> LogSelectionClickDiagnostic;
         public readonly Action<Vector2> RequestMoveOrderScreenMarker;
         public readonly Action<Vector2> RequestAttackOrderScreenMarker;
         public readonly Action<bool> SetCameraDragging;
@@ -73,8 +77,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ClearCurrentSelectionAction clearCurrentSelection,
             Action<TacticalCommandMode> applyHudCommandMode,
             Action<TacticalCommandResult> applyHudCommandResult,
+            Action clearHudSelection,
             Action clearHudCommandMode,
+            Action<bool> setExplicitAttackTargetModeActive,
             Action<bool> setHudWorldMarkersVisible,
+            Action processSelectionRectangleRequests,
+            Action<string> logSelectionClickDiagnostic,
             Action<Vector2> requestMoveOrderScreenMarker,
             Action<Vector2> requestAttackOrderScreenMarker,
             Action<bool> setCameraDragging,
@@ -108,8 +116,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ClearCurrentSelection = clearCurrentSelection;
             ApplyHudCommandMode = applyHudCommandMode;
             ApplyHudCommandResult = applyHudCommandResult;
+            ClearHudSelection = clearHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
+            SetExplicitAttackTargetModeActive = setExplicitAttackTargetModeActive;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
+            ProcessSelectionRectangleRequests = processSelectionRectangleRequests;
+            LogSelectionClickDiagnostic = logSelectionClickDiagnostic;
             RequestMoveOrderScreenMarker = requestMoveOrderScreenMarker;
             RequestAttackOrderScreenMarker = requestAttackOrderScreenMarker;
             SetCameraDragging = setCameraDragging;
@@ -122,6 +134,124 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TryGetTransportClickedUnitEntity = tryGetTransportClickedUnitEntity;
             TryGetTransportClickedCell = tryGetTransportClickedCell;
         }
+    }
+
+    public bool ProcessSelectAllCommandRequests(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionSelectAllCommandSystem.ProcessPendingRequests(em))
+        {
+            return false;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.ClearHudCommandMode?.Invoke();
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        if (context.InputSystem != null &&
+            context.InputSystem.HasPendingSelectionRectangleRequests())
+        {
+            context.ProcessSelectionRectangleRequests?.Invoke();
+        }
+        context.SetCameraDragging?.Invoke(false);
+        return true;
+    }
+
+    public bool TryProcessSelectedBuildingDestroyFallback(
+        Context context,
+        RtsSelectionCommandIntentKind processedKind,
+        bool accepted,
+        TacticalCommandReasonCode rejectionReason)
+    {
+        if (processedKind != RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
+            accepted ||
+            rejectionReason != TacticalCommandReasonCode.NoSelection ||
+            context.BuildingPlacementInteractionSystem == null ||
+            !context.BuildingPlacementInteractionSystem.HasSelectedBuilding(context.BuildingPlacementInteractionContext))
+        {
+            return false;
+        }
+
+        context.BuildingPlacementInteractionSystem.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
+        context.ClearHudSelection?.Invoke();
+        context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Destroyed selected building."));
+        return true;
+    }
+
+    public bool ProcessDeselectAllCommandRequests(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(em))
+        {
+            return false;
+        }
+
+        context.SelectionStateSystem?.ClearSelectedMoveCache();
+        if (context.SelectionStateSystem != null)
+            context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.ClearHudSelection?.Invoke();
+        context.ClearHudCommandMode?.Invoke();
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.SetCameraDragging?.Invoke(false);
+        return true;
+    }
+
+    public bool ProcessCancelActiveCommandModeRequests(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(em))
+        {
+            return false;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ClearHudCommandMode?.Invoke();
+        return true;
+    }
+
+    public bool ProcessMoveTargetModeCommandRequests(Context context, int currentFrame)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
+                em,
+                currentFrame,
+                out bool accepted,
+                out TacticalCommandReasonCode rejectionReason))
+        {
+            return false;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterMoveTargetMode");
+        context.SetCameraDragging?.Invoke(false);
+        if (!accepted)
+        {
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"moveModeEntered result=False reason={rejectionReason} frame={currentFrame}");
+            return true;
+        }
+
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+        if (context.InputSystem != null)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True " +
+                $"ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} frame={currentFrame}");
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"moveModeEntered result=True frame={currentFrame} dragReset={context.InputSystem.LastPointerPosition}");
+        }
+        else
+        {
+            context.LogSelectionClickDiagnostic?.Invoke($"moveModeEntered result=True frame={currentFrame}");
+        }
+        return true;
     }
 
     public void UpdateOrderMarkerVisibility(Context context)

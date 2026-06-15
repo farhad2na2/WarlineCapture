@@ -2074,11 +2074,11 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CancelActiveCommandMode_ClearsModeWithoutPersistentCancelMessage()
     {
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string cancelProcessor = ExtractBlockAfter(startup, "void ProcessCancelActiveCommandModeRequests");
+        string flushSystem = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string cancelProcessor = ExtractBlockAfter(flushSystem, "public bool ProcessCancelActiveCommandModeRequests");
 
         StringAssert.Contains("RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests", cancelProcessor);
-        StringAssert.Contains("selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext())", cancelProcessor);
+        StringAssert.Contains("context.ClearHudCommandMode?.Invoke()", cancelProcessor);
         Assert.IsFalse(
             cancelProcessor.Contains("Command cancelled", StringComparison.Ordinal),
             "Cancel should clear mode/buttons without leaving a feedback message on screen.");

@@ -82,7 +82,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         runtimeBuildings.AddBuilding(buildingA.Id, buildingA);
         runtimeBuildings.AddBuilding(buildingB.Id, buildingB);
 
-        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
         BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(buildingA.Id);
@@ -111,7 +111,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         RuntimeBuildingEntity building = CreateBuilding(1, Vector2Int.zero, new Vector2Int(4, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
         BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
@@ -135,7 +135,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
         BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
@@ -171,7 +171,7 @@ public sealed class BuildingSelectionMarkerSystemTests
 
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
         BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
@@ -200,7 +200,7 @@ public sealed class BuildingSelectionMarkerSystemTests
             Instance = buildingObject,
             Definition = new BuildingDefinition { FootprintCells = new Vector2Int(4, 4) }
         };
-        var visualSystem = new BuildingRuntimeVisualSystem();
+        BuildingRuntimeVisualSystem visualSystem = CreateBuildingRuntimeVisualSystem();
         var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity> { { 1, building } };
         var context = new BuildingRuntimeVisualSystem.Context(
             runtimeBuildings,
@@ -231,7 +231,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         _objects.Add(model);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        var system = new BuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
         BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
@@ -293,6 +293,18 @@ public sealed class BuildingSelectionMarkerSystemTests
     {
         _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
         return _world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>();
+    }
+
+    private BuildingRuntimeVisualSystem CreateBuildingRuntimeVisualSystem()
+    {
+        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingRuntimeVisualSystem>();
+    }
+
+    private BuildingSelectionMarkerSystem CreateBuildingSelectionMarkerSystem()
+    {
+        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingSelectionMarkerSystem>();
     }
 
     private RuntimeBuildingEntity CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeVisualSystem
+internal sealed partial class BuildingRuntimeVisualSystem : SystemBase
 {
     public readonly struct Context
     {
@@ -33,6 +34,15 @@ internal sealed class BuildingRuntimeVisualSystem
             MarkerPropertyBlock = markerPropertyBlock;
             FactionTintStrength = Mathf.Clamp01(factionTintStrength);
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void InitializeBuildingVisuals(Context context, RuntimeBuildingEntity building)

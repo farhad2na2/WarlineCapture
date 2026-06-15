@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingSelectionMarkerSystem
+internal sealed partial class BuildingSelectionMarkerSystem : SystemBase
 {
     private const float MarkerSurfaceClearance = 0.12f;
     private const string RuntimeMarkerName = "BuildingSelectionMarkerRuntime";
@@ -61,6 +62,15 @@ internal sealed class BuildingSelectionMarkerSystem
     private Color _markerColor = PremiumSelectionColor;
 
     internal GameObject RuntimeMarkerForTests => _markerInstance;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Refresh(Context context)
     {

@@ -90,7 +90,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     public void BeginDestroyedVisualHidesAliveRootsAndSpawnsConfiguredPrefab()
     {
         RuntimeBuildingEntity building = CreateBuilding();
-        var system = new BuildingDestroyedVisualSystem();
+        BuildingDestroyedVisualSystem system = CreateBuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
             CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
@@ -114,7 +114,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     public void BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt()
     {
         RuntimeBuildingEntity building = CreateBuilding();
-        var system = new BuildingDestroyedVisualSystem();
+        BuildingDestroyedVisualSystem system = CreateBuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
             CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
@@ -138,6 +138,12 @@ public sealed class BuildingDestroyedVisualSystemTests
     {
         _world ??= new World(nameof(BuildingDestroyedVisualSystemTests));
         return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
+    }
+
+    private BuildingDestroyedVisualSystem CreateBuildingDestroyedVisualSystem()
+    {
+        _world ??= new World(nameof(BuildingDestroyedVisualSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>();
     }
 
     private RuntimeBuildingEntity CreateBuilding()

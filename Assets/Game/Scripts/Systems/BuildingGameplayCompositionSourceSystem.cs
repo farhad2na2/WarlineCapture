@@ -5,10 +5,10 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     internal readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem;
-    internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem = new();
-    internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();
+    internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem;
+    internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem;
     internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
-    internal readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem = new();
+    internal readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem;
     internal readonly BuildingCombatSystem BuildingCombatSystem = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();
@@ -89,7 +89,10 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     public BuildingGameplayCompositionSourceSystem()
     {
         BuildingVisualSystem = ResolveBuildingVisualSystem();
+        BuildingRuntimeVisualSystem = ResolveBuildingRuntimeVisualSystem();
+        BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
+        BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
     }
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
@@ -105,6 +108,30 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>()
+            : null;
+    }
+
+    private static BuildingRuntimeVisualSystem ResolveBuildingRuntimeVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingRuntimeVisualSystem>()
+            : null;
+    }
+
+    private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingSelectionMarkerSystem>()
+            : null;
+    }
+
+    private static BuildingDestroyedVisualSystem ResolveBuildingDestroyedVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>()
             : null;
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class RuntimeCityCompositionSystem
@@ -30,7 +31,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem = new();
     private readonly RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem = new();
     private readonly RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem = new();
-    private readonly RuntimeCityVisualSystem _runtimeCityVisualSystem = new();
+    private RuntimeCityVisualSystem _runtimeCityVisualSystem;
     private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new();
     private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new();
     private readonly RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem = new();
@@ -93,7 +94,7 @@ public sealed class RuntimeCityCompositionSystem
         _config = configAsset;
         _runtimeCityRoadBuildBridgeSystem.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         _runtimeCitySpawnBridgeSystem.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
-        _runtimeCityVisualSystem.SetRuntimeRoot(runtimeRoot);
+        RuntimeCityVisualSystem?.SetRuntimeRoot(runtimeRoot);
         _runtimeCityMinimapEventSystem.Configure(mainMenuPlayUi);
         ApplyConfigIfAvailable();
         PublishReadModel();
@@ -116,7 +117,7 @@ public sealed class RuntimeCityCompositionSystem
     public void Dispose()
     {
         _runtimeCityLifecycleSystem.CancelGeneration();
-        _runtimeCityVisualSystem.Dispose();
+        RuntimeCityVisualSystem?.Dispose();
         _runtimeCitySpawnBridgeSystem.Clear();
         _runtimeCityRoadBuildBridgeSystem.Clear();
         _runtimeCityReadinessQuerySystem.Clear();
@@ -144,7 +145,7 @@ public sealed class RuntimeCityCompositionSystem
             _runtimeCityBuildingPlotSystem,
             _runtimeCityWalkabilitySystem,
             _runtimeCityPrefabSelectionSystem,
-            _runtimeCityVisualSystem,
+            RuntimeCityVisualSystem,
             _runtimeCitySpawnBridgeSystem,
             _runtimeCityDiagnosticSystem);
     }
@@ -280,5 +281,16 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityIngressSystem.Context(
             cityConfig,
             _runtimeCityRoadLayoutSystem);
+    }
+
+    private RuntimeCityVisualSystem RuntimeCityVisualSystem =>
+        _runtimeCityVisualSystem ??= ResolveRuntimeCityVisualSystem();
+
+    private static RuntimeCityVisualSystem ResolveRuntimeCityVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityVisualSystem>()
+            : null;
     }
 }

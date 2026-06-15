@@ -59,7 +59,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
         List<PlotCandidate> outerPlots = plotPlan.OuterPlots;
         List<PlotCandidate> entryPlots = plotPlan.EntryPlots;
 
-        context.VisualSystem.EnsureCityVisualRoot();
+        context.VisualSystem?.EnsureCityVisualRoot();
 
         var usedPlotCells = new List<Vector2Int>();
         var shopAndHouseFootprints = new List<RectInt>();

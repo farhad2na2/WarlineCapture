@@ -16,6 +16,9 @@ internal sealed class RuntimeCityYardWallVisualSystem
         GameObject pillarPrefab,
         GridConfig grid)
     {
+        if (visualSystem == null)
+            return;
+
         int horizontalThickness = prefabSelectionSystem.GetMinorFootprint(wallPrefab);
         int verticalThickness = prefabSelectionSystem.GetMinorFootprint(wallPrefab);
         int horizontalGateLength = Mathf.Max(1, prefabSelectionSystem.GetMajorFootprint(gatePrefab));

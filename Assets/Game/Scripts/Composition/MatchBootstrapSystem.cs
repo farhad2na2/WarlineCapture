@@ -949,6 +949,13 @@ internal sealed class MatchBootstrapSystem
             : null;
     }
 
+    private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem(World world)
+    {
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<UnitImpostorRenderSystem>()
+            : null;
+    }
+
     private static ISelectionRectangleView EnsureSelectionRectangleView(
         Transform runtimeUiRoot,
         RTSSelectionSystemConfig rtsSelectionConfig)
@@ -1064,8 +1071,8 @@ internal sealed class MatchBootstrapSystem
         unitAttackTraces?.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
         UnitAttackTraces = unitAttackTraces;
 
-        var unitImpostors = new UnitImpostorRenderSystem();
-        unitImpostors.Init(
+        UnitImpostorRenderSystem unitImpostors = ResolveUnitImpostorRenderSystem(World.DefaultGameObjectInjectionWorld);
+        unitImpostors?.Init(
             WorldCamera,
             ownerLayer,
             BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null,

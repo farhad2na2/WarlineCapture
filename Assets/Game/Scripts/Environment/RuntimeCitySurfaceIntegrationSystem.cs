@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class RuntimeCitySurfaceIntegrationSystem
+internal sealed partial class RuntimeCitySurfaceIntegrationSystem : SystemBase
 {
     private const float RuntimeCityMaxSurfaceHeightDelta = 0.5f;
     private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;
@@ -11,6 +12,20 @@ internal sealed class RuntimeCitySurfaceIntegrationSystem
     private readonly RoadSurfacePlacementSystem _roadSurfacePlacementSystem = new();
     private MapSurfaceComponent _surface;
     private bool _hasSurface;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Clear();
+    }
 
     public void Configure(MapSurfaceComponent surface)
     {

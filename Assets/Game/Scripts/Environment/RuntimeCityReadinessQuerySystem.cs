@@ -3,11 +3,25 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityReadinessQuerySystem
+internal sealed partial class RuntimeCityReadinessQuerySystem : SystemBase
 {
     private World _queryWorld;
     private EntityQuery _gridDataQuery;
     private bool _hasGridDataQuery;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Clear();
+    }
 
     public bool TryGetGridConfig(out GridConfig grid)
     {
@@ -27,11 +41,9 @@ internal sealed class RuntimeCityReadinessQuerySystem
         roads = default;
         blockerData = default;
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        if (!TryGetLiveEntityManager(out EntityManager em))
             return false;
 
-        EntityManager em = world.EntityManager;
         EnsureGridDataQuery(em);
         if (_gridDataQuery.IsEmptyIgnoreFilter)
             return false;
@@ -48,11 +60,9 @@ internal sealed class RuntimeCityReadinessQuerySystem
         totalConfigs = 0;
         initializedConfigs = 0;
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        if (!TryGetLiveEntityManager(out EntityManager em))
             return false;
 
-        EntityManager em = world.EntityManager;
         using EntityQuery configQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
         using EntityQuery initializedQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
@@ -66,11 +76,9 @@ internal sealed class RuntimeCityReadinessQuerySystem
     public List<RectInt> CollectInitialBaseExclusionRoadRects(int roadCellSizeInGridCells)
     {
         var exclusions = new List<RectInt>();
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        if (!TryGetLiveEntityManager(out EntityManager em))
             return exclusions;
 
-        EntityManager em = world.EntityManager;
         using EntityQuery configQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
         using var entities = configQuery.ToEntityArray(Allocator.Temp);
         int roadCellSize = Mathf.Max(1, roadCellSizeInGridCells);
@@ -117,6 +125,20 @@ internal sealed class RuntimeCityReadinessQuerySystem
             ComponentType.ReadOnly<GridRoad>(),
             ComponentType.ReadOnly<DynamicBlockerComponent>());
         _hasGridDataQuery = true;
+    }
+
+    private bool TryGetLiveEntityManager(out EntityManager entityManager)
+    {
+        entityManager = default;
+        try
+        {
+            entityManager = EntityManager;
+            return true;
+        }
+        catch (System.InvalidOperationException)
+        {
+            return false;
+        }
     }
 
     public void Clear()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed partial class RuntimeCityVisualSystem : SystemBase
 {
-    private readonly RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem = new();
+    private RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem;
     private Transform _runtimeRoot;
     private Transform _cityVisualRoot;
 
@@ -29,19 +29,19 @@ internal sealed partial class RuntimeCityVisualSystem : SystemBase
 
     public void Dispose()
     {
-        _surfaceIntegrationSystem.Clear();
+        RuntimeCitySurfaceIntegrationSystem?.Clear();
         _cityVisualRoot = null;
         _runtimeRoot = null;
     }
 
     public void ConfigureSurface(MapSurfaceComponent surface)
     {
-        _surfaceIntegrationSystem.Configure(surface);
+        RuntimeCitySurfaceIntegrationSystem?.Configure(surface);
     }
 
     public void ClearSurface()
     {
-        _surfaceIntegrationSystem.Clear();
+        RuntimeCitySurfaceIntegrationSystem?.Clear();
     }
 
     public void EnsureCityVisualRoot()
@@ -72,7 +72,7 @@ internal sealed partial class RuntimeCityVisualSystem : SystemBase
         var wrapper = new GameObject($"{prefab.name}_Visual");
         wrapper.transform.SetParent(_cityVisualRoot, false);
         Vector3 center = GetFootprintCenter(originCell, footprintCells, grid);
-        center = _surfaceIntegrationSystem.ResolveFootprintCenter(originCell, footprintCells, grid, center);
+        center = RuntimeCitySurfaceIntegrationSystem?.ResolveFootprintCenter(originCell, footprintCells, grid, center) ?? center;
         wrapper.transform.SetPositionAndRotation(center, rotation);
         wrapper.transform.localScale = Vector3.one;
 
@@ -100,6 +100,17 @@ internal sealed partial class RuntimeCityVisualSystem : SystemBase
             grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
             0f,
             grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+    }
+
+    private RuntimeCitySurfaceIntegrationSystem RuntimeCitySurfaceIntegrationSystem =>
+        _surfaceIntegrationSystem ??= ResolveRuntimeCitySurfaceIntegrationSystem();
+
+    private static RuntimeCitySurfaceIntegrationSystem ResolveRuntimeCitySurfaceIntegrationSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCitySurfaceIntegrationSystem>()
+            : null;
     }
 
     private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)

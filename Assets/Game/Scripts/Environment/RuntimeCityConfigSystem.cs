@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityConfigSystem
+internal sealed partial class RuntimeCityConfigSystem : SystemBase
 {
     private readonly List<GameObject> _emptyPrefabs = new();
 
@@ -11,6 +12,16 @@ internal sealed class RuntimeCityConfigSystem
     }
 
     public Snapshot Current { get; private set; }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+        Current = Snapshot.Default(_emptyPrefabs);
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public Snapshot Apply(RuntimeCitySpawnerSystemConfig config)
     {

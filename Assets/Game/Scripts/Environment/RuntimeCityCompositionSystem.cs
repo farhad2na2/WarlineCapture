@@ -5,7 +5,9 @@ using UnityEngine;
 public sealed class RuntimeCityCompositionSystem
 {
     private RuntimeCitySpawnerSystemConfig _config;
-    private readonly RuntimeCityConfigSystem _runtimeCityConfigSystem = new();
+    private readonly List<GameObject> _fallbackCityPrefabs = new();
+    private RuntimeCityConfigSystem _runtimeCityConfigSystem;
+    private RuntimeCityConfigSystem.Snapshot _fallbackCityConfig;
     private readonly RuntimeCityLayoutSystem _runtimeCityLayoutSystem = new();
     private readonly RuntimeCityRoadLayoutSystem _runtimeCityRoadLayoutSystem = new();
     private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new();
@@ -36,21 +38,21 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new();
     private readonly RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem = new();
     private readonly RuntimeCityStartupSystem _runtimeCityStartupSystem = new();
-    private readonly RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem = new();
+    private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
     private readonly RuntimeCityGenerationSystem _runtimeCityGenerationSystem = new();
     private readonly RuntimeCityChainSystem _runtimeCityChainSystem = new();
     private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new();
     private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new();
     private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new();
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
-    private readonly RuntimeCityReadModelSystem _runtimeCityReadModelSystem = new();
+    private RuntimeCityReadModelSystem _runtimeCityReadModelSystem;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
     private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
     private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;
     private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;
 
-    private RuntimeCityConfigSystem.Snapshot cityConfig => _runtimeCityConfigSystem.Current;
+    private RuntimeCityConfigSystem.Snapshot cityConfig => RuntimeCityConfigSystem?.Current ?? _fallbackCityConfig;
     private bool spawnOnStart => cityConfig.SpawnOnStart;
     private bool generateBuildings => cityConfig.GenerateBuildings;
     private int cityCount => cityConfig.CityCount;
@@ -62,13 +64,14 @@ public sealed class RuntimeCityCompositionSystem
     public bool SpawnOnStartEnabled => spawnOnStart;
     public bool HasSpawned => _runtimeCityLifecycleSystem.HasSpawned(cityCount);
     public bool IsGenerating => _runtimeCityLifecycleSystem.IsGenerating;
-    public RuntimeCityReadModelSystem ReadModel => _runtimeCityReadModelSystem;
+    public RuntimeCityReadModelSystem ReadModel => RuntimeCityReadModelSystem;
 
     public RuntimeCityCompositionSystem()
     {
-        _tryGetPendingInitialUnits = _runtimeCityReadinessQuerySystem.HasPendingInitialUnitsSpawn;
+        _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.Default(_fallbackCityPrefabs);
+        _tryGetPendingInitialUnits = TryGetPendingInitialUnits;
         _tryGetRoadCellSize = _runtimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells;
-        _tryGetGridData = _runtimeCityReadinessQuerySystem.TryGetGridConfig;
+        _tryGetGridData = TryGetGridConfig;
     }
 
     public string DescribeStartupBlocker(int frameCount)
@@ -120,7 +123,7 @@ public sealed class RuntimeCityCompositionSystem
         RuntimeCityVisualSystem?.Dispose();
         _runtimeCitySpawnBridgeSystem.Clear();
         _runtimeCityRoadBuildBridgeSystem.Clear();
-        _runtimeCityReadinessQuerySystem.Clear();
+        RuntimeCityReadinessQuerySystem?.Clear();
         RuntimeCityMinimapEventSystem?.Clear();
     }
 
@@ -139,7 +142,12 @@ public sealed class RuntimeCityCompositionSystem
 
     private void ApplyConfigIfAvailable()
     {
-        _runtimeCityConfigSystem.Apply(_config);
+        RuntimeCityConfigSystem configSystem = RuntimeCityConfigSystem;
+        if (configSystem != null)
+            configSystem.Apply(_config);
+        else
+            _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.From(_config, _fallbackCityPrefabs);
+
         _runtimeCityBuildingSpawnContext = _runtimeCityBuildingSpawnContextSystem.Create(
             cityConfig,
             _runtimeCityBuildingPlotSystem,
@@ -161,7 +169,7 @@ public sealed class RuntimeCityCompositionSystem
 
     private void PublishReadModel()
     {
-        _runtimeCityReadModelSystem.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating);
+        RuntimeCityReadModelSystem?.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating);
     }
 
     private void GenerateCity(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
@@ -227,7 +235,7 @@ public sealed class RuntimeCityCompositionSystem
             CreateRoadCommitContext(),
             _runtimeCityIngressSystem,
             CreateIngressContext(),
-            _runtimeCityReadinessQuerySystem.CollectInitialBaseExclusionRoadRects,
+            CollectInitialBaseExclusionRoadRects,
             ShouldYield,
             RuntimeCityMinimapEventSystem,
             _runtimeCityDiagnosticSystem);
@@ -289,6 +297,46 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityMinimapEventSystem RuntimeCityMinimapEventSystem =>
         _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
 
+    private RuntimeCityReadinessQuerySystem RuntimeCityReadinessQuerySystem =>
+        _runtimeCityReadinessQuerySystem ??= ResolveRuntimeCityReadinessQuerySystem();
+
+    private RuntimeCityReadModelSystem RuntimeCityReadModelSystem =>
+        _runtimeCityReadModelSystem ??= ResolveRuntimeCityReadModelSystem();
+
+    private RuntimeCityConfigSystem RuntimeCityConfigSystem =>
+        _runtimeCityConfigSystem ??= ResolveRuntimeCityConfigSystem();
+
+    private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
+    {
+        RuntimeCityReadinessQuerySystem readinessQuerySystem = RuntimeCityReadinessQuerySystem;
+        if (readinessQuerySystem == null)
+        {
+            totalConfigs = 0;
+            initializedConfigs = 0;
+            return false;
+        }
+
+        return readinessQuerySystem.HasPendingInitialUnitsSpawn(out totalConfigs, out initializedConfigs);
+    }
+
+    private bool TryGetGridConfig(out GridConfig grid)
+    {
+        RuntimeCityReadinessQuerySystem readinessQuerySystem = RuntimeCityReadinessQuerySystem;
+        if (readinessQuerySystem == null)
+        {
+            grid = default;
+            return false;
+        }
+
+        return readinessQuerySystem.TryGetGridConfig(out grid);
+    }
+
+    private List<RectInt> CollectInitialBaseExclusionRoadRects(int roadCellSizeInGridCells)
+    {
+        return RuntimeCityReadinessQuerySystem?.CollectInitialBaseExclusionRoadRects(roadCellSizeInGridCells) ??
+            new List<RectInt>();
+    }
+
     private static RuntimeCityVisualSystem ResolveRuntimeCityVisualSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
@@ -302,6 +350,30 @@ public sealed class RuntimeCityCompositionSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityMinimapEventSystem>()
+            : null;
+    }
+
+    private static RuntimeCityReadinessQuerySystem ResolveRuntimeCityReadinessQuerySystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityReadinessQuerySystem>()
+            : null;
+    }
+
+    private static RuntimeCityReadModelSystem ResolveRuntimeCityReadModelSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityReadModelSystem>()
+            : null;
+    }
+
+    private static RuntimeCityConfigSystem ResolveRuntimeCityConfigSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityConfigSystem>()
             : null;
     }
 }

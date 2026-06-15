@@ -1,14 +1,24 @@
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildPlacementVisualSystem
+internal sealed partial class RoadBuildPlacementVisualSystem : SystemBase
 {
     internal sealed class State
     {
         public GameObject PlacementOutline;
         public Transform[] PlacementOutlineEdges;
         public MeshRenderer[] PlacementOutlineRenderers;
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public State CreateState()

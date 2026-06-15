@@ -1,12 +1,22 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed class RoadVisualRefreshSystem
+internal sealed partial class RoadVisualRefreshSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;
@@ -16,7 +26,6 @@ internal sealed class RoadVisualRefreshSystem
         public readonly RoadChunkVisualSystem.Context RoadChunkVisualContext;
         public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
         public readonly RoadSpecialVisualSystem.Context RoadSpecialVisualContext;
-        public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem;
         public readonly RoadVisualResolutionSystem.Context RoadVisualResolutionContext;
 
         public Context(
@@ -27,7 +36,6 @@ internal sealed class RoadVisualRefreshSystem
             RoadChunkVisualSystem.Context roadChunkVisualContext,
             RoadSpecialVisualSystem roadSpecialVisualSystem,
             RoadSpecialVisualSystem.Context roadSpecialVisualContext,
-            RoadVisualResolutionSystem roadVisualResolutionSystem,
             RoadVisualResolutionSystem.Context roadVisualResolutionContext)
         {
             RoadNetworkSystem = roadNetworkSystem;
@@ -37,51 +45,50 @@ internal sealed class RoadVisualRefreshSystem
             RoadChunkVisualContext = roadChunkVisualContext;
             RoadSpecialVisualSystem = roadSpecialVisualSystem;
             RoadSpecialVisualContext = roadSpecialVisualContext;
-            RoadVisualResolutionSystem = roadVisualResolutionSystem;
             RoadVisualResolutionContext = roadVisualResolutionContext;
         }
     }
 
-    public void RefreshCells(Context context, HashSet<Vector2Int> dirtyCells)
+    public static void RefreshCells(Context context, HashSet<Vector2Int> dirtyCells)
     {
         foreach (var cell in dirtyCells)
             RefreshCell(context, cell);
 
         context.RoadGridProjectionSystem?.RequestRoadEcsSync(context.RoadGridProjectionContext);
-        context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext);
+        context.RoadChunkVisualSystem?.RebuildDirtyChunks(context.RoadChunkVisualContext);
         RebuildSpecialRoadObjects(context, dirtyCells);
     }
 
-    public void RebuildRoadStateFromCurrentTiles(Context context)
+    public static void RebuildRoadStateFromCurrentTiles(Context context)
     {
         context.RoadNetworkSystem.RebuildSpecialRoadCellMetadata();
 
-        context.RoadChunkVisualSystem.ClearChunks();
-        context.RoadSpecialVisualSystem.ClearSpecialRoadObjects();
+        context.RoadChunkVisualSystem?.ClearChunks();
+        context.RoadSpecialVisualSystem?.ClearSpecialRoadObjects();
 
         foreach (var cell in context.RoadNetworkSystem.RoadTiles.Keys)
-            context.RoadChunkVisualSystem.AddCellToChunk(context.RoadChunkVisualContext, cell);
+            context.RoadChunkVisualSystem?.AddCellToChunk(context.RoadChunkVisualContext, cell);
 
         context.RoadGridProjectionSystem?.SyncRoadCellsToEcs(context.RoadGridProjectionContext);
-        context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext);
-        context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext);
+        context.RoadChunkVisualSystem?.RebuildDirtyChunks(context.RoadChunkVisualContext);
+        context.RoadSpecialVisualSystem?.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext);
     }
 
-    private void RefreshCell(Context context, Vector2Int cell)
+    private static void RefreshCell(Context context, Vector2Int cell)
     {
         TileConnectionMask mask = context.RoadNetworkSystem.GetMask(cell);
-        RoadVisualType targetType = context.RoadVisualResolutionSystem.ResolveVisualType(
+        RoadVisualType targetType = RoadVisualResolutionSystem.ResolveVisualType(
             context.RoadVisualResolutionContext,
             cell,
             mask);
         if (targetType == RoadVisualType.None)
         {
             context.RoadNetworkSystem.RoadTiles.Remove(cell);
-            context.RoadChunkVisualSystem.RemoveCellFromChunk(context.RoadChunkVisualContext, cell);
+            context.RoadChunkVisualSystem?.RemoveCellFromChunk(context.RoadChunkVisualContext, cell);
             return;
         }
 
-        if (!context.RoadVisualResolutionSystem.TryGetVariant(
+        if (!RoadVisualResolutionSystem.TryGetVariant(
                 context.RoadVisualResolutionContext,
                 targetType,
                 mask,
@@ -107,11 +114,11 @@ internal sealed class RoadVisualRefreshSystem
             Scale = variant.Scale
         };
 
-        context.RoadChunkVisualSystem.AddCellToChunk(context.RoadChunkVisualContext, cell);
+        context.RoadChunkVisualSystem?.AddCellToChunk(context.RoadChunkVisualContext, cell);
     }
 
-    private void RebuildSpecialRoadObjects(Context context, HashSet<Vector2Int> dirtyCells)
+    private static void RebuildSpecialRoadObjects(Context context, HashSet<Vector2Int> dirtyCells)
     {
-        context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext);
+        context.RoadSpecialVisualSystem?.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext);
     }
 }

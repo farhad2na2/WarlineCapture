@@ -57,13 +57,13 @@ internal sealed class RoadBuildDisposalSystem
     public void Dispose(Context context)
     {
         context.StartupSystem.DisposeRuntimeRoots(context.StartupState, context.RuntimeRootSystem);
-        context.PlacementVisualSystem.Dispose(context.PlacementVisualState);
-        context.VisualVariantSystem.DisposeCachedVisualData();
-        context.PreviewSystem.DisposePreview();
-        context.ChunkVisualSystem.DisposeChunks();
+        context.PlacementVisualSystem?.Dispose(context.PlacementVisualState);
+        context.VisualVariantSystem?.DisposeCachedVisualData();
+        context.PreviewSystem?.DisposePreview();
+        context.ChunkVisualSystem?.DisposeChunks();
         context.EcsBoundarySystem.DisposeRuntimeBuildings(context.PlacementStorageSystem.RuntimeBuildings);
-        context.SpecialVisualSystem.DisposeVisuals();
-        context.MinimapEventSystem.Clear();
+        context.SpecialVisualSystem?.DisposeVisuals();
+        context.MinimapEventSystem?.Clear();
         context.GridProjectionSystem?.ClearRoadDataInEcs();
         context.RoadTiles.Clear();
         context.PlacementStorageSystem.Clear();

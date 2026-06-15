@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
@@ -6,8 +7,22 @@ using RoadTileData = RoadNetworkSystem.RoadTileData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-public sealed class RoadChunkVisualSystem
+public sealed partial class RoadChunkVisualSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnDestroy()
+    {
+        DisposeChunks();
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly Dictionary<Vector2Int, RoadTileData> RoadTiles;

@@ -12,8 +12,8 @@ internal sealed class RoadBuildCompositionContextSystem
     {
         return new RoadGridProjectionSystem.RoadFootprintState(
             source.RoadNetworkSystem.RoadTiles,
-            source.RoadSpecialVisualSystem.SpecialRoadObjects,
-            source.RoadVisualVariantSystem.VisualData,
+            source.RoadSpecialVisualSystem?.SpecialRoadObjects,
+            source.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, RoadGridProjectionSystem.CombinedRoadVisualData>(),
             source.RoadBuildStartupState.GridOrigin,
             source.RoadBuildStartupState.BuildPlaneY,
             source.RoadBuildStartupState.RoadGridSize);
@@ -21,7 +21,7 @@ internal sealed class RoadBuildCompositionContextSystem
 
     public RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadRuntimeGenerationContextSystem.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
+        return RoadRuntimeGenerationContextSystem.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
     }
 
     public RoadBuildReadModelSystem.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceSystem source)
@@ -51,7 +51,7 @@ internal sealed class RoadBuildCompositionContextSystem
             () => source.RoadBuildMutationSystem.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
             snapshot => source.RoadBuildMutationSystem.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
             () => RemoveRuntimeBlockersUnderRoads(source),
-            source.RoadMinimapEventSystem.PublishStaticMinimapChanged,
+            () => source.RoadMinimapEventSystem?.PublishStaticMinimapChanged(),
             () => ApplyBuildCommandMode(source),
             () => ClearCommandMode(source),
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
@@ -60,15 +60,15 @@ internal sealed class RoadBuildCompositionContextSystem
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
             () => source.RoadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext(source)),
-            () => source.RoadBuildPlacementVisualSystem.HidePlacementOutline(source.RoadBuildPlacementVisualState),
-            () => source.RoadPreviewSystem.UpdatePreview(
+            () => source.RoadBuildPlacementVisualSystem?.HidePlacementOutline(source.RoadBuildPlacementVisualState),
+            () => source.RoadPreviewSystem?.UpdatePreview(
                 CreateRoadPreviewContext(source),
                 source.RoadBuildInputState.IsDrawing,
                 source.RoadBuildInputState.PendingStartCell,
                 source.RoadBuildInputState.CurrentDragCell,
                 source.RoadBuildInputState.DragFirstAxis),
             (Vector2 screenPosition, out Vector2Int cell) => TryGetHoveredCell(source, screenPosition, out cell),
-            source.RoadPreviewSystem.ClearPreview,
+            () => source.RoadPreviewSystem?.ClearPreview(),
             screenPosition => source.RoadBuildBuildingPlacementSystem.UpdateBuildingPlacement(
                 CreateRoadBuildPlacementContext(source),
                 screenPosition),
@@ -143,7 +143,6 @@ internal sealed class RoadBuildCompositionContextSystem
         return new RoadVisualResolutionSystem.Context(
             source.RoadNetworkSystem,
             source.RoadVisualVariantSystem,
-            source.RoadBuildVisualContextSystem,
             CreateRoadBuildVisualContext(source));
     }
 
@@ -157,31 +156,30 @@ internal sealed class RoadBuildCompositionContextSystem
             CreateRoadChunkVisualContext(source),
             source.RoadSpecialVisualSystem,
             CreateRoadSpecialVisualContext(source),
-            source.RoadVisualResolutionSystem,
             CreateRoadVisualResolutionContext(source));
     }
 
     private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadPreviewSystem.Context CreateRoadPreviewContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext(RoadBuildCompositionSourceSystem source)
     {
-        return source.RoadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadBuildMutationSystem.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadBuildMutationSystem.Context(
             source.RoadNetworkSystem,
-            dirtyCells => source.RoadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
-            () => source.RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
+            dirtyCells => RoadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
+            () => RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }
 
     private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)
@@ -318,12 +316,12 @@ internal sealed class RoadBuildCompositionContextSystem
         Vector2Int cell,
         TileConnectionMask mask)
     {
-        return source.RoadVisualResolutionSystem.ResolveVisualType(CreateRoadVisualResolutionContext(source), cell, mask);
+        return RoadVisualResolutionSystem.ResolveVisualType(CreateRoadVisualResolutionContext(source), cell, mask);
     }
 
     private GameObject GetPrefab(RoadBuildCompositionSourceSystem source, RoadVisualType type)
     {
-        return source.RoadVisualResolutionSystem.GetPrefab(CreateRoadVisualResolutionContext(source), type);
+        return RoadVisualResolutionSystem.GetPrefab(CreateRoadVisualResolutionContext(source), type);
     }
 
     private bool TryGetVariant(
@@ -332,7 +330,7 @@ internal sealed class RoadBuildCompositionContextSystem
         TileConnectionMask mask,
         out VariantData variant)
     {
-        return source.RoadVisualResolutionSystem.TryGetVariant(CreateRoadVisualResolutionContext(source), type, mask, out variant);
+        return RoadVisualResolutionSystem.TryGetVariant(CreateRoadVisualResolutionContext(source), type, mask, out variant);
     }
 
     private bool TryGetHoveredCell(RoadBuildCompositionSourceSystem source, Vector2 screenPosition, out Vector2Int cell)

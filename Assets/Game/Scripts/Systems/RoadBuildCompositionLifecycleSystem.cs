@@ -24,17 +24,17 @@ internal sealed class RoadBuildCompositionLifecycleSystem
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext);
         source.RoadBuildReadModelSystem.Configure(contextSystem.CreateRoadBuildReadModelContext(source));
-        source.RoadBuildRuntimeActionSystem.ConfigureInput(
+        RoadBuildRuntimeActionSystem.ConfigureInput(
             source.RoadBuildRuntimeActionState,
             source.RoadBuildInteractionContextSystem,
             contextSystem.CreateRoadBuildInteractionContext(source),
             source.RoadBuildStartupState.WorldCamera);
-        source.RoadBuildRuntimeActionSystem.ConfigureCommands(
+        RoadBuildRuntimeActionSystem.ConfigureCommands(
             source.RoadBuildRuntimeActionState,
             source.RoadBuildCommandSystem,
             contextSystem.CreateRoadBuildCommandContext(source),
             source.RoadBuildEcsBoundarySystem.TryGetEntityManager);
-        source.RoadBuildRuntimeActionSystem.ConfigureGui(
+        RoadBuildRuntimeActionSystem.ConfigureGui(
             source.RoadBuildRuntimeActionState,
             source.RoadDeletePromptSystem,
             contextSystem.CreateRoadDeletePromptContext(source));
@@ -43,7 +43,7 @@ internal sealed class RoadBuildCompositionLifecycleSystem
             source.RoadBuildStartupState.SoldierBasePrefab,
             source.RoadBuildStartupState.SoldierBaseFootprintCells,
             source.RoadBuildPlacementStorageSystem);
-        source.RoadBuildPlacementVisualSystem.CreatePlacementOutline(
+        source.RoadBuildPlacementVisualSystem?.CreatePlacementOutline(
             source.RoadBuildPlacementVisualState,
             source.RoadBuildStartupState.RuntimeRoot,
             source.RoadBuildStartupState.PlacementValidColor);

@@ -36,7 +36,7 @@ internal sealed class RoadBuildDependencySystem
             buildingPlacementInteractionContext);
 
         state.MainMenuPlayUi = mainMenuPlayUi;
-        roadMinimapEventSystem.Configure(mainMenuPlayUi);
+        roadMinimapEventSystem?.Configure(mainMenuPlayUi);
         if (runtimeGridBlockers != null)
             state.RuntimeGridBlockers = runtimeGridBlockers;
     }

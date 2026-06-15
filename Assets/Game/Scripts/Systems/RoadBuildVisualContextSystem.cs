@@ -1,10 +1,23 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
+using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
+using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed class RoadBuildVisualContextSystem
+internal sealed partial class RoadBuildVisualContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;
@@ -40,19 +53,21 @@ internal sealed class RoadBuildVisualContextSystem
         }
     }
 
-    public GameObject GetPrefab(Context context, RoadVisualType type)
+    public static GameObject GetPrefab(Context context, RoadVisualType type)
     {
-        return context.RoadVisualVariantSystem.GetPrefab(
-            context.RoadBuildStartupSystem.CreateRoadPrefabSet(context.StartupState),
-            type);
+        return context.RoadVisualVariantSystem == null
+            ? null
+            : context.RoadVisualVariantSystem.GetPrefab(
+                context.RoadBuildStartupSystem.CreateRoadPrefabSet(context.StartupState),
+                type);
     }
 
-    public RoadChunkVisualSystem.Context CreateChunkContext(Context context)
+    public static RoadChunkVisualSystem.Context CreateChunkContext(Context context)
     {
         RoadRuntimeRootSystem.Roots roots = context.StartupState.RuntimeRoots;
         return new RoadChunkVisualSystem.Context(
             context.RoadNetworkSystem.RoadTiles,
-            context.RoadVisualVariantSystem.VisualData,
+            context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
             context.RoadNetworkSystem.AutobahnCells,
             context.RoadNetworkSystem.AutobahnConnectorCells,
             roots.RoadRoot,
@@ -62,12 +77,12 @@ internal sealed class RoadBuildVisualContextSystem
             context.StartupState.ChunkSizeInCells);
     }
 
-    public RoadPreviewSystem.Context CreatePreviewContext(Context context)
+    public static RoadPreviewSystem.Context CreatePreviewContext(Context context)
     {
         RoadBuildStartupSystem.State startupState = context.StartupState;
         RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
         return new RoadPreviewSystem.Context(
-            context.RoadVisualVariantSystem.VisualData,
+            context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
             roots.RoadRoot,
             startupState.GridOrigin,
             startupState.BuildPlaneY,
@@ -80,15 +95,15 @@ internal sealed class RoadBuildVisualContextSystem
             context.PreviewTryGetVariant);
     }
 
-    public RoadSpecialVisualSystem.Context CreateSpecialContext(Context context)
+    public static RoadSpecialVisualSystem.Context CreateSpecialContext(Context context)
     {
         RoadBuildStartupSystem.State startupState = context.StartupState;
         RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
         return new RoadSpecialVisualSystem.Context(
             context.RoadNetworkSystem.RoadTiles,
             context.RoadNetworkSystem.Strokes,
-            context.RoadVisualVariantSystem.MarkerLayouts,
-            context.RoadVisualVariantSystem.AutobahnConnectorMarkerData,
+            context.RoadVisualVariantSystem?.MarkerLayouts ?? new Dictionary<RoadVisualType, MarkerLayoutData>(),
+            context.RoadVisualVariantSystem?.AutobahnConnectorMarkerData,
             roots.RoadRoot,
             roots.SpecialRoadRoot,
             roots.SpecialRoadConnectorRoot,

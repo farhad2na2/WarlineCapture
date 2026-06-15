@@ -6,39 +6,39 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
     public readonly RoadBuildReadModelSystem RoadBuildReadModelSystem = new();
-    public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem = new();
+    public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
-    public readonly RoadBuildRuntimeActionSystem RoadBuildRuntimeActionSystem = new();
+    public readonly RoadBuildRuntimeActionSystem RoadBuildRuntimeActionSystem;
     public readonly RoadBuildRuntimeActionSystem.State RoadBuildRuntimeActionState;
     public readonly RoadBuildDisposalSystem RoadBuildDisposalSystem = new();
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
-    public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem = new();
+    public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem;
     public readonly RoadNetworkSystem RoadNetworkSystem = new();
     public readonly RoadPathPlanningSystem RoadPathPlanningSystem = new();
     public readonly RoadSurfacePlacementSystem RoadSurfacePlacementSystem = new();
     public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
-    public readonly RoadVisualVariantSystem RoadVisualVariantSystem = new();
-    public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem = new();
-    public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem = new();
-    public readonly RoadChunkVisualSystem RoadChunkVisualSystem = new();
-    public readonly RoadPreviewSystem RoadPreviewSystem = new();
-    public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem = new();
+    public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
+    public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem;
+    public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem;
+    public readonly RoadChunkVisualSystem RoadChunkVisualSystem;
+    public readonly RoadPreviewSystem RoadPreviewSystem;
+    public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
     public readonly RoadBuildSessionSystem RoadBuildSessionSystem = new();
     public readonly RoadBuildSessionSystem.State RoadBuildSessionState = new();
-    public readonly RoadMinimapEventSystem RoadMinimapEventSystem = new();
+    public readonly RoadMinimapEventSystem RoadMinimapEventSystem;
     public readonly RoadBuildInputSystem RoadBuildInputSystem = new();
     public readonly RoadBuildInputSystem.State RoadBuildInputState = new();
     public readonly RoadBuildCommandSystem RoadBuildCommandSystem = new();
     public readonly RoadDeletePromptSystem RoadDeletePromptSystem = new();
     public readonly RoadBuildPlacementStorageSystem RoadBuildPlacementStorageSystem = new();
     public readonly RoadBuildDefinitionProjectionSystem RoadBuildDefinitionProjectionSystem = new();
-    public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem = new();
+    public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem;
     public readonly RoadBuildBuildingPlacementSystem RoadBuildBuildingPlacementSystem = new();
     public readonly RoadBuildInteractionSystem RoadBuildInteractionSystem = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
     public readonly RoadBuildEcsBoundarySystem RoadBuildEcsBoundarySystem = new();
-    public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem = new();
-    public readonly RoadRuntimeGenerationContextSystem RoadRuntimeGenerationContextSystem = new();
+    public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem;
+    public readonly RoadRuntimeGenerationContextSystem RoadRuntimeGenerationContextSystem;
     public readonly RoadBuildMutationSystem RoadBuildMutationSystem = new();
     public readonly RoadBuildCompositionContextSystem RoadBuildCompositionContextSystem = new();
     public readonly RoadBuildCompositionLifecycleSystem RoadBuildCompositionLifecycleSystem = new();
@@ -52,9 +52,22 @@ internal sealed class RoadBuildCompositionSourceSystem
     public RoadBuildCompositionSourceSystem()
     {
         RoadGridProjectionSystem = ResolveRoadGridProjectionSystem();
-        RoadBuildRuntimeActionState = RoadBuildRuntimeActionSystem.CreateState();
+        RoadRuntimeRootSystem = ResolveRoadRuntimeRootSystem();
+        RoadVisualVariantSystem = ResolveRoadVisualVariantSystem();
+        RoadBuildVisualContextSystem = ResolveRoadBuildVisualContextSystem();
+        RoadVisualResolutionSystem = ResolveRoadVisualResolutionSystem();
+        RoadVisualRefreshSystem = ResolveRoadVisualRefreshSystem();
+        RoadChunkVisualSystem = ResolveRoadChunkVisualSystem();
+        RoadSpecialVisualSystem = ResolveRoadSpecialVisualSystem();
+        RoadPreviewSystem = ResolveRoadPreviewSystem();
+        RoadRuntimeGenerationSystem = ResolveRoadRuntimeGenerationSystem();
+        RoadRuntimeGenerationContextSystem = ResolveRoadRuntimeGenerationContextSystem();
+        RoadMinimapEventSystem = ResolveRoadMinimapEventSystem();
+        RoadBuildRuntimeActionSystem = ResolveRoadBuildRuntimeActionSystem();
+        RoadBuildPlacementVisualSystem = ResolveRoadBuildPlacementVisualSystem();
+        RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionSystem.CreateState();
         RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
-        RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem.CreateState();
+        RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem?.CreateState() ?? new RoadBuildPlacementVisualSystem.State();
         RoadBuildPlacementState = RoadBuildBuildingPlacementSystem.CreateState();
     }
 
@@ -63,6 +76,110 @@ internal sealed class RoadBuildCompositionSourceSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadGridProjectionSystem>()
+            : null;
+    }
+
+    private static RoadRuntimeRootSystem ResolveRoadRuntimeRootSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadRuntimeRootSystem>()
+            : null;
+    }
+
+    private static RoadVisualVariantSystem ResolveRoadVisualVariantSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadVisualVariantSystem>()
+            : null;
+    }
+
+    private static RoadBuildPlacementVisualSystem ResolveRoadBuildPlacementVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadBuildPlacementVisualSystem>()
+            : null;
+    }
+
+    private static RoadBuildVisualContextSystem ResolveRoadBuildVisualContextSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadBuildVisualContextSystem>()
+            : null;
+    }
+
+    private static RoadVisualResolutionSystem ResolveRoadVisualResolutionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadVisualResolutionSystem>()
+            : null;
+    }
+
+    private static RoadVisualRefreshSystem ResolveRoadVisualRefreshSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadVisualRefreshSystem>()
+            : null;
+    }
+
+    private static RoadChunkVisualSystem ResolveRoadChunkVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadChunkVisualSystem>()
+            : null;
+    }
+
+    private static RoadSpecialVisualSystem ResolveRoadSpecialVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadSpecialVisualSystem>()
+            : null;
+    }
+
+    private static RoadPreviewSystem ResolveRoadPreviewSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadPreviewSystem>()
+            : null;
+    }
+
+    private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationSystem>()
+            : null;
+    }
+
+    private static RoadRuntimeGenerationContextSystem ResolveRoadRuntimeGenerationContextSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationContextSystem>()
+            : null;
+    }
+
+    private static RoadMinimapEventSystem ResolveRoadMinimapEventSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadMinimapEventSystem>()
+            : null;
+    }
+
+    private static RoadBuildRuntimeActionSystem ResolveRoadBuildRuntimeActionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RoadBuildRuntimeActionSystem>()
             : null;
     }
 }

@@ -1,5 +1,16 @@
-internal sealed class RoadRuntimeGenerationContextSystem
+using Unity.Entities;
+
+internal sealed partial class RoadRuntimeGenerationContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate TryGetRoadCellSizeInGridCells;
@@ -26,7 +37,7 @@ internal sealed class RoadRuntimeGenerationContextSystem
         }
     }
 
-    public RoadRuntimeGenerationSystem.Context CreateContext(Context context)
+    public static RoadRuntimeGenerationSystem.Context CreateContext(Context context)
     {
         return new RoadRuntimeGenerationSystem.Context(
             context.TryGetRoadCellSizeInGridCells,
@@ -37,12 +48,12 @@ internal sealed class RoadRuntimeGenerationContextSystem
             context.SpecialVisualContext);
     }
 
-    public void BeginDeferredRoadEcsSync(Context context)
+    public static void BeginDeferredRoadEcsSync(Context context)
     {
         context.RoadGridProjectionSystem?.BeginDeferredRoadEcsSync();
     }
 
-    public void EndDeferredRoadEcsSync(Context context)
+    public static void EndDeferredRoadEcsSync(Context context)
     {
         context.RoadGridProjectionSystem?.EndDeferredRoadEcsSync(context.RoadGridProjectionContext);
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ConnectorMarkerData = RoadVisualVariantSystem.ConnectorMarkerData;
 using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
@@ -8,8 +9,22 @@ using StrokeData = RoadNetworkSystem.StrokeData;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-public sealed class RoadSpecialVisualSystem
+public sealed partial class RoadSpecialVisualSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnDestroy()
+    {
+        DisposeVisuals();
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate GameObject GetPrefabAction(RoadVisualType type);
     public delegate bool TryGetVariantAction(RoadVisualType type, TileConnectionMask mask, out VariantData variant);
 

@@ -363,11 +363,17 @@ public partial struct ScanIntelCommandSystem : ISystem
         if (requests.Length == 0)
             return;
 
+        using NativeList<ScanIntelCommandRequestElement> pendingRequests = new(requests.Length, Allocator.Temp);
+        for (int i = 0; i < requests.Length; i++)
+            pendingRequests.Add(requests[i]);
+        requests.Clear();
+
         DynamicBuffer<ScanIntelCommandResultElement> results = em.GetBuffer<ScanIntelCommandResultElement>(queueEntity);
         results.Clear();
-        for (int i = 0; i < requests.Length; i++)
+        NativeArray<ScanIntelCommandRequestElement> pendingRequestArray = pendingRequests.AsArray();
+        for (int i = 0; i < pendingRequestArray.Length; i++)
         {
-            ScanIntelCommandRequestElement request = requests[i];
+            ScanIntelCommandRequestElement request = pendingRequestArray[i];
             TacticalCommandResult commandResult = TryApplyScan(
                 em,
                 gridConfigQuery,
@@ -387,6 +393,10 @@ public partial struct ScanIntelCommandSystem : ISystem
                 out int revealedCount,
                 out bool hasWorldPosition);
 
+            if (!em.Exists(queueEntity) || !em.HasBuffer<ScanIntelCommandResultElement>(queueEntity))
+                continue;
+
+            results = em.GetBuffer<ScanIntelCommandResultElement>(queueEntity);
             results.Add(new ScanIntelCommandResultElement
             {
                 RequestId = request.RequestId,
@@ -400,8 +410,6 @@ public partial struct ScanIntelCommandSystem : ISystem
                 HasWorldPosition = hasWorldPosition ? (byte)1 : (byte)0
             });
         }
-
-        requests.Clear();
     }
 
     private static TacticalCommandResult TryApplyScan(

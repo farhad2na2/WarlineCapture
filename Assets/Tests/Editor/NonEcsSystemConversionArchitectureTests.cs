@@ -26,6 +26,14 @@ public sealed class NonEcsSystemConversionArchitectureTests
         @"\b(MonoBehaviour|UnityEngine\.MonoBehaviour)\b",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex TopLevelTypeDeclarationRegex = new(
+        @"^(?:(?:public|internal|private|protected|sealed|abstract|static|partial|readonly)\s+)*(?<kind>class|struct|interface|enum)\s+(?<name>[A-Za-z_]\w*)\b",
+        RegexOptions.CultureInvariant | RegexOptions.Multiline);
+
+    private static readonly Regex NamingEscapeSuffixRegex = new(
+        @"(?:Service|Query|Rule|Cell|Resolver|Adapter|Composer|Context)$",
+        RegexOptions.CultureInvariant);
+
     private static readonly Regex UnitPathRequestCreationRegex = new(
         @"\bnew\s+UnitPathRequest\b",
         RegexOptions.CultureInvariant);
@@ -84,6 +92,25 @@ public sealed class NonEcsSystemConversionArchitectureTests
         ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|IssueDirectAttackTarget"] = 1
     };
 
+    private static readonly HashSet<string> ApprovedTopLevelNamingEscapeTypes = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Components/GridComponents.cs|UnitPathCell",
+        "Assets/Game/Scripts/Components/MapSurfaceComponents.cs|MapSurfaceCell",
+        "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs|MatchIntroEcsStateQuery",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|BuildingUiCommandAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|BuildingUiQueryAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchHudCameraControlAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchHudMinimapDataSourceAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchRuntimeStateAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionDiagnosticsSinkAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionRectangleStateAdapter",
+        "Assets/Game/Scripts/Persistence/SaveService.cs|SaveService",
+        "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|IMatchIntroStateQuery",
+        "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|NullMatchIntroStateQuery",
+        "Assets/Game/Scripts/UI/Contracts/UiRuntimeBoundaryContracts.cs|IBuildingUiQuery",
+        "Assets/Game/Scripts/UI/Settings/SettingsService.cs|SettingsService"
+    };
+
     private static readonly string[] UiGameplayMutationTokens =
     {
         "using Unity.Entities",
@@ -124,6 +151,17 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
     };
 
+    private static readonly string[] RetiredDirectCallContextSystemTokens =
+    {
+        "RtsSelectionCommandResultContextSystem",
+        "RtsSelectionFocusCommandContextSystem",
+        "RtsSelectionPointerTargetCommandContextSystem",
+        "RtsSelectionRuntimeInputContextSystem",
+        "RtsSelectionRuntimeCameraContextSystem",
+        "SelectionRuntimeContextSystem",
+        "SelectionRuntimeUpdateSystem"
+    };
+
     public static void RunFocusedValidation()
     {
         try
@@ -135,7 +173,9 @@ public sealed class NonEcsSystemConversionArchitectureTests
             tests.UiRuntimeMustNotMutateGameplayDirectly();
             tests.PointerAndUiBoundariesMustUseCommandRequests();
             tests.PublicNonEcsCommandMutatorHelpersStayOnApprovedTransitionList();
-            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=6");
+            tests.TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList();
+            tests.RetiredDirectCallContextSystemsStayDeleted();
+            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=8");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -295,6 +335,51 @@ public sealed class NonEcsSystemConversionArchitectureTests
             string.Join(Environment.NewLine, stale));
     }
 
+    [Test]
+    public void TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList()
+    {
+        HashSet<string> current = EnumerateSourceFiles(GameScriptsRoot)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .SelectMany(FindTopLevelNamingEscapeTypes)
+            .Select(type => type.Key)
+            .ToHashSet(StringComparer.Ordinal);
+
+        string[] unexpected = current
+            .Except(ApprovedTopLevelNamingEscapeTypes, StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+        string[] stale = ApprovedTopLevelNamingEscapeTypes
+            .Except(current, StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            unexpected,
+            "Do not rename gameplay behavior into top-level `Service`, `Query`, `Rule`, `Cell`, `Resolver`, `Adapter`, `Composer`, or `Context` types. " +
+            "Use an ECS system, owner-local helper, passive UI contract, or explicitly approved boundary instead. Unexpected:\n" +
+            string.Join(Environment.NewLine, unexpected));
+        Assert.IsEmpty(
+            stale,
+            "Approved top-level naming-escape entries are stale. Remove approvals when the boundary or passive type is renamed or deleted. Stale:\n" +
+            string.Join(Environment.NewLine, stale));
+    }
+
+    [Test]
+    public void RetiredDirectCallContextSystemsStayDeleted()
+    {
+        string[] violations = EnumerateSourceFiles(GameScriptsRoot)
+            .Select(NormalizePath)
+            .SelectMany(path => FindTokenReferences(path, RetiredDirectCallContextSystemTokens))
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Retired direct-call context wrapper systems must stay deleted. Selection startup should build narrow payloads directly and UI/pointer paths should use ECS requests/results. Violations:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
     private static IEnumerable<SystemDeclaration> EnumerateSystemDeclarations()
     {
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
@@ -357,6 +442,19 @@ public sealed class NonEcsSystemConversionArchitectureTests
                 path,
                 match.Groups["name"].Value,
                 GetLineNumber(text, match.Index));
+        }
+    }
+
+    private static IEnumerable<NamingEscapeType> FindTopLevelNamingEscapeTypes(string path)
+    {
+        string text = File.ReadAllText(path);
+        foreach (Match match in TopLevelTypeDeclarationRegex.Matches(text))
+        {
+            string name = match.Groups["name"].Value;
+            if (!NamingEscapeSuffixRegex.IsMatch(name))
+                continue;
+
+            yield return new NamingEscapeType(path, name, GetLineNumber(text, match.Index));
         }
     }
 
@@ -567,6 +665,22 @@ public sealed class NonEcsSystemConversionArchitectureTests
         public readonly int Line;
 
         public PublicCommandMutatorMethod(string path, string name, int line)
+        {
+            Path = path;
+            Name = name;
+            Line = line;
+        }
+
+        public string Key => $"{Path}|{Name}";
+    }
+
+    private readonly struct NamingEscapeType
+    {
+        public readonly string Path;
+        public readonly string Name;
+        public readonly int Line;
+
+        public NamingEscapeType(string path, string name, int line)
         {
             Path = path;
             Name = name;

@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildRuntimeActionSystem
+internal sealed partial class RoadBuildRuntimeActionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal sealed class State
     {
         public RoadBuildInteractionContextSystem InteractionContextSystem;
@@ -15,12 +24,12 @@ internal sealed class RoadBuildRuntimeActionSystem
         public Camera WorldCamera;
     }
 
-    public State CreateState()
+    public static State CreateState()
     {
         return new State();
     }
 
-    public void ConfigureGui(
+    public static void ConfigureGui(
         State state,
         RoadDeletePromptSystem deletePromptSystem,
         RoadDeletePromptSystem.Context deletePromptContext)
@@ -32,7 +41,7 @@ internal sealed class RoadBuildRuntimeActionSystem
         state.DeletePromptContext = deletePromptContext;
     }
 
-    public void ConfigureInput(
+    public static void ConfigureInput(
         State state,
         RoadBuildInteractionContextSystem interactionContextSystem,
         RoadBuildInteractionContextSystem.Context interactionContext,
@@ -46,7 +55,7 @@ internal sealed class RoadBuildRuntimeActionSystem
         state.WorldCamera = worldCamera;
     }
 
-    public void ConfigureCommands(
+    public static void ConfigureCommands(
         State state,
         RoadBuildCommandSystem commandSystem,
         RoadBuildCommandSystem.Context commandContext,
@@ -60,7 +69,7 @@ internal sealed class RoadBuildRuntimeActionSystem
         state.TryGetEntityManager = tryGetEntityManager;
     }
 
-    public void Update(State state)
+    public static void Update(State state)
     {
         ProcessCommandQueue(state);
 
@@ -72,7 +81,7 @@ internal sealed class RoadBuildRuntimeActionSystem
             state.WorldCamera);
     }
 
-    public void OnGui(State state)
+    public static void OnGui(State state)
     {
         state?.DeletePromptSystem?.OnGui(state.DeletePromptContext);
     }

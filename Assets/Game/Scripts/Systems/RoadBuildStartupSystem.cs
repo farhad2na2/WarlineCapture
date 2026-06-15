@@ -44,8 +44,10 @@ internal sealed class RoadBuildStartupSystem
         };
 
         ApplyConfigIfAvailable(state, configSystem);
-        state.RuntimeRoots = runtimeRootSystem.CreateRoots(runtimeRoot);
-        visualVariantSystem.CacheVariants(CreateRoadPrefabSet(state));
+        state.RuntimeRoots = runtimeRootSystem != null
+            ? runtimeRootSystem.CreateRoots(runtimeRoot)
+            : default;
+        visualVariantSystem?.CacheVariants(CreateRoadPrefabSet(state));
         return state;
     }
 
@@ -54,7 +56,7 @@ internal sealed class RoadBuildStartupSystem
         if (state == null)
             return;
 
-        runtimeRootSystem.DisposeRoots(state.RuntimeRoots);
+        runtimeRootSystem?.DisposeRoots(state.RuntimeRoots);
         state.RuntimeRoots = default;
     }
 

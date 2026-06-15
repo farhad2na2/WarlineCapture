@@ -1,31 +1,38 @@
 using UnityEngine;
+using Unity.Entities;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed class RoadVisualResolutionSystem
+internal sealed partial class RoadVisualResolutionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
-        public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
         public readonly RoadBuildVisualContextSystem.Context VisualContext;
 
         public Context(
             RoadNetworkSystem roadNetworkSystem,
             RoadVisualVariantSystem roadVisualVariantSystem,
-            RoadBuildVisualContextSystem roadBuildVisualContextSystem,
             RoadBuildVisualContextSystem.Context visualContext)
         {
             RoadNetworkSystem = roadNetworkSystem;
             RoadVisualVariantSystem = roadVisualVariantSystem;
-            RoadBuildVisualContextSystem = roadBuildVisualContextSystem;
             VisualContext = visualContext;
         }
     }
 
-    public RoadVisualType ResolveVisualType(Context context, Vector2Int cell, TileConnectionMask mask)
+    public static RoadVisualType ResolveVisualType(Context context, Vector2Int cell, TileConnectionMask mask)
     {
         if (context.RoadNetworkSystem.AutobahnConnectorCells.Contains(cell))
             return RoadVisualType.AutobahnConnect;
@@ -66,13 +73,15 @@ internal sealed class RoadVisualResolutionSystem
         }
     }
 
-    public GameObject GetPrefab(Context context, RoadVisualType type)
+    public static GameObject GetPrefab(Context context, RoadVisualType type)
     {
-        return context.RoadBuildVisualContextSystem.GetPrefab(context.VisualContext, type);
+        return RoadBuildVisualContextSystem.GetPrefab(context.VisualContext, type);
     }
 
-    public bool TryGetVariant(Context context, RoadVisualType type, TileConnectionMask mask, out VariantData variant)
+    public static bool TryGetVariant(Context context, RoadVisualType type, TileConnectionMask mask, out VariantData variant)
     {
-        return context.RoadVisualVariantSystem.TryGetVariant(type, mask, out variant);
+        variant = default;
+        return context.RoadVisualVariantSystem != null &&
+               context.RoadVisualVariantSystem.TryGetVariant(type, mask, out variant);
     }
 }

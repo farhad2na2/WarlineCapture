@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using static UnityEngine.Object;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
@@ -7,8 +8,22 @@ using FootprintKind = RoadGridProjectionSystem.RoadFootprintKind;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 
-public sealed class RoadVisualVariantSystem
+public sealed partial class RoadVisualVariantSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnDestroy()
+    {
+        DisposeCachedVisualData();
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct VariantData
     {
         public readonly Quaternion Rotation;

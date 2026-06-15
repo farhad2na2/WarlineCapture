@@ -81,7 +81,7 @@ internal sealed class SelectionGameplayStartupSystem
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
         var rtsSelectionPointerTargetCommandContextSystem = new RtsSelectionPointerTargetCommandContextSystem();
         var rtsCameraSystem = new RtsCameraSystem();
-        var rtsCameraRequestSystem = new RtsCameraRequestSystem();
+        RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
@@ -792,6 +792,14 @@ internal sealed class SelectionGameplayStartupSystem
             return mainMenuPlayUi != null &&
                    mainMenuPlayUi.IsPointerOverRaycastableUi(screenPosition, out source);
         }
+    }
+
+    private static RtsCameraRequestSystem ResolveRtsCameraRequestSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
+            : null;
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)

@@ -44,6 +44,39 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "BuildingPlacementAdapterSystem",
     };
 
+    private static readonly string[] BootstrapCompositionGuardrailFiles =
+    {
+        "Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/GameplayFeatureStartupSystem.cs",
+        "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs",
+    };
+
+    private static readonly string[] BootstrapCompositionForbiddenPolicyTokens =
+    {
+        "FactionEconomy",
+        "FactionControlEntry",
+        "AIBuildPlan",
+        "AIProductionPlan",
+        "AISquadPlan",
+        "AITargetPrioritySetting",
+        "FactionEconomyPolicy",
+        "MissionCameraSystem",
+        "MissionStartupSystem",
+        "AIDiagnosticLog",
+        "PerfDiag",
+        "FreezeDetect",
+        "FrameRateDiag",
+    };
+
+    private static readonly string[] BootstrapCompositionForbiddenStandaloneTypes =
+    {
+        "BuildingPlacementSystem",
+        "BuildingGameplaySystem",
+        "RTSSelectionSystem",
+        "SelectionRuntimeContextSystem",
+    };
+
     private static readonly HashSet<string> SelectionPanelConcreteSystemBindingAllowlist = new(StringComparer.Ordinal)
     {
         "Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs",
@@ -148,6 +181,26 @@ public sealed class ScriptArchitectureAlignmentContractTests
         {
             Debug.LogException(exception);
             Debug.LogError("[ScriptBroadShellValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunBootstrapCompositionGuardrailValidation()
+    {
+        try
+        {
+            var tests = new ScriptArchitectureAlignmentContractTests();
+            tests.RuntimeScriptsMustNotAddHierarchyLookupOrObjectFindUsage();
+            tests.RuntimeScriptsMustNotUseCameraMain();
+            tests.BootstrapCompositionSystemsMustNotOwnGameplayPolicy();
+            tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
+            Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=4");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BootstrapCompositionGuardrailValidation] result=Failed");
             EditorApplication.Exit(1);
         }
     }
@@ -633,6 +686,39 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Scene binding and map-surface authoring bootstrap code must stay in `Game.Composition`, where scene authoring references are allowed.");
+    }
+
+    [Test]
+    public void BootstrapCompositionSystemsMustNotOwnGameplayPolicy()
+    {
+        List<string> violations = new();
+
+        foreach (string path in BootstrapCompositionGuardrailFiles)
+        {
+            if (!File.Exists(path))
+            {
+                violations.Add($"{NormalizePath(path)} is missing from the bootstrap composition guardrail scan.");
+                continue;
+            }
+
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                string policyToken = BootstrapCompositionForbiddenPolicyTokens.FirstOrDefault(t => line.Contains(t, StringComparison.Ordinal));
+                if (policyToken != null)
+                    violations.Add($"{normalized}:{lineIndex + 1} references policy token `{policyToken}`: {line.Trim()}");
+
+                string standaloneType = BootstrapCompositionForbiddenStandaloneTypes.FirstOrDefault(t => ContainsStandaloneIdentifier(line, t));
+                if (standaloneType != null)
+                    violations.Add($"{normalized}:{lineIndex + 1} references broad gameplay shell `{standaloneType}`: {line.Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Bootstrap/composition systems must stay at serialized binding and lifecycle orchestration edges. Keep AI/economy/mission/perf diagnostics policy and retired gameplay shells in their owning ECS or narrow runtime systems.");
     }
 
     [Test]
@@ -1291,6 +1377,33 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static string NormalizePath(string path)
     {
         return path.Replace('\\', '/');
+    }
+
+    private static bool ContainsStandaloneIdentifier(string line, string identifier)
+    {
+        int searchIndex = 0;
+        while (searchIndex < line.Length)
+        {
+            int matchIndex = line.IndexOf(identifier, searchIndex, StringComparison.Ordinal);
+            if (matchIndex < 0)
+                return false;
+
+            int before = matchIndex - 1;
+            int after = matchIndex + identifier.Length;
+            bool hasIdentifierBefore = before >= 0 && IsIdentifierPart(line[before]);
+            bool hasIdentifierAfter = after < line.Length && IsIdentifierPart(line[after]);
+            if (!hasIdentifierBefore && !hasIdentifierAfter)
+                return true;
+
+            searchIndex = matchIndex + identifier.Length;
+        }
+
+        return false;
+    }
+
+    private static bool IsIdentifierPart(char value)
+    {
+        return char.IsLetterOrDigit(value) || value == '_';
     }
 
     private static void AssertNoViolations(IReadOnlyCollection<string> violations, string header)

@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `95 / 113 complete (84.1%)`.
+- Checklist progress: `99 / 113 complete (87.6%)`.
 - In progress: `0`.
-- Remaining open: `18`.
-- Phase progress: `10 / 13 phases complete; 1 in progress; 2 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `347` after excluding `112` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `14`.
+- Phase progress: `11 / 13 phases complete; 1 in progress; 1 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `346` after excluding `113` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `252` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `251` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
-- Converted to `SystemBase`: `6`.
+- Converted to `SystemBase`: `7`.
 - Folded into ECS owners/jobs: `37`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `347`.
+- Remaining plain runtime gameplay `*System` classes: `346`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 converted AI startup projection into a managed ECS initialization boundary and closed authored-data projection cleanup.
+- Last implementation update: 2026-06-15 converted the RTS camera request/data owner to a managed ECS boundary and kept camera application managed.
 
 ## Architecture Rules
 
@@ -588,7 +588,7 @@ Progress notes:
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Reduce broad composition/startup systems without turning them into gameplay shells.
@@ -606,8 +606,8 @@ Implementation steps:
 - [x] Leave only binding/composition responsibilities at the managed scene edge.
 - [x] Audit `MatchBootstrapSystem`, `MenuBootstrapSystem`, `GameplayFeatureStartupSystem`, and `ManagedGameplayStartupSystem`.
 - [x] Move authored data projection into ECS initialization systems where safe.
-- [ ] Keep scene references serialized/injected, never found by runtime hierarchy lookup.
-- [ ] Add contract tests preventing broad shells from growing new gameplay policy.
+- [x] Keep scene references serialized/injected, never found by runtime hierarchy lookup.
+- [x] Add contract tests preventing broad shells from growing new gameplay policy.
 
 Acceptance checks:
 
@@ -658,10 +658,11 @@ Progress notes:
 - 2026-06-15: Continued authored-data projection cleanup by converting `InitialFactionSpawnCellSystem` into a disabled managed `SystemBase` initialization boundary resolved from `World.DefaultGameObjectInjectionWorld`. Match startup now configures the serialized initial-units fallback on that ECS-managed boundary, while AI startup and initial camera focus read the same baked-first spawn-cell lookup delegate. Added focused coverage for baked ECS spawn-buffer lookup and serialized fallback lookup. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `349`, Unity ECS exclusions are now `110`, and converted-to-`SystemBase` count is now `4`. AI config validation and custom-game startup projection remain open for this checklist item. Focused validation passed with `[InitialFactionSpawnCellFocusedValidation] result=Passed tests=2` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Continued authored-data projection cleanup by converting `CustomGameStartupSystem` into a disabled managed `SystemBase` initialization boundary resolved from `World.DefaultGameObjectInjectionWorld`. Match startup now delegates legacy custom-game unit, spawn, registry, and visual buffer projection to the ECS-managed boundary instead of constructing a plain helper. Added focused coverage for the legacy projection path creating startup state, initial spawn config, and expected buffers. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `348`, Unity ECS exclusions are now `111`, and converted-to-`SystemBase` count is now `5`. AI config validation remains open for this checklist item. Focused validation passed with `[CustomGameStartupFocusedValidation] result=Passed tests=1` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Completed authored-data projection cleanup by converting `AIStartupSystem` into a disabled managed `SystemBase` initialization boundary resolved from `World.DefaultGameObjectInjectionWorld`. Match startup now delegates AI economy, faction-control, build-plan, production-plan, squad-plan, target-priority, and diagnostic-log projection to the ECS-managed boundary instead of constructing a plain helper. Updated the existing AI startup validation to exercise the world-resolved ECS boundary. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `347`, Unity ECS exclusions are now `112`, and converted-to-`SystemBase` count is now `6`. This closes the authored-data projection checklist item. Focused validation passed with `[AIStartupSystemFocusedValidation] result=Passed tests=1` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Completed the remaining Phase 10 serialized-reference and broad-shell guardrail work by adding `ScriptArchitectureAlignmentContractTests.RunBootstrapCompositionGuardrailValidation`. The focused runner covers runtime hierarchy/Object.Find lookup, `Camera.main`, bootstrap composition policy ownership, and broad application-layer suffixes. Added `BootstrapCompositionSystemsMustNotOwnGameplayPolicy` to scan `MatchBootstrapSystem`, `MenuBootstrapSystem`, `GameplayFeatureStartupSystem`, and `ManagedGameplayStartupSystem` for AI/economy/mission/perf policy tokens and retired broad gameplay shells while allowing serialized config names. This closes Phase 10 once validation passes with `[BootstrapCompositionGuardrailValidation] result=Passed tests=4`.
 
 ## Phase 11: Visual, Camera, Prefab, And Environment Boundaries
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Classify and split non-ECS systems that must interact with UnityEngine managed objects.
@@ -674,8 +675,8 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Inventory camera systems and convert only request/data parts to ECS.
-- [ ] Keep camera application in managed boundary code.
+- [x] Inventory camera systems and convert only request/data parts to ECS.
+- [x] Keep camera application in managed boundary code.
 - [ ] Inventory building/unit visual systems and split ECS read-model updates from GameObject visual application.
 - [ ] Inventory runtime city/environment generation systems.
 - [ ] Split runtime city planning/data from prefab spawning and coroutine/yield boundaries.
@@ -687,6 +688,10 @@ Acceptance checks:
 - No `ISystem` touches managed Unity objects.
 - Visual systems do not own gameplay policy.
 - Environment generation has a clear ECS data/planning side and managed spawn side.
+
+Progress notes:
+
+- 2026-06-15: Began Phase 11 by inventorying the RTS camera boundary. Converted `RtsCameraRequestSystem` from a plain helper into a disabled managed `SystemBase` resolved from `World.DefaultGameObjectInjectionWorld`, preserving the existing ECS request queue/state components while keeping `RtsCameraSystem`, `SelectionUiCameraSystem`, and `RtsSelectionRuntimeCameraSystem` as managed camera/UI application boundaries. Updated focused camera validation to resolve the request owner from its temporary ECS world and regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `346`, Unity ECS exclusions are now `113`, and converted-to-`SystemBase` count is now `7`.
 
 ## Phase 12: Final Guardrails And Cleanup
 

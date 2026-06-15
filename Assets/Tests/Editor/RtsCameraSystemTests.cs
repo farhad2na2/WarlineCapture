@@ -180,7 +180,7 @@ public sealed class RtsCameraSystemTests
             runtime.PlayRequested = true;
 
             var cameraSystem = new RtsCameraSystem();
-            var cameraRequestSystem = new RtsCameraRequestSystem();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystem();
             Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(58f, 10f, 0f));
             camera.fieldOfView = 36f;
@@ -254,7 +254,7 @@ public sealed class RtsCameraSystemTests
             runtime.PlayRequested = true;
 
             var cameraSystem = new RtsCameraSystem();
-            var cameraRequestSystem = new RtsCameraRequestSystem();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystem();
             Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(58f, 10f, 0f));
             camera.fieldOfView = 36f;

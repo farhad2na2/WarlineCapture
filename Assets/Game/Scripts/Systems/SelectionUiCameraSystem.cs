@@ -24,7 +24,7 @@ public sealed class SelectionUiCameraSystem
     public SelectionUiCameraSystem(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
     {
         _cameraSystem = cameraSystem ?? new RtsCameraSystem();
-        _cameraRequestSystem = cameraRequestSystem ?? new RtsCameraRequestSystem();
+        _cameraRequestSystem = cameraRequestSystem ?? ResolveDefaultCameraRequestSystem();
     }
 
     public bool IsNormalIsoModeActive => _cameraSystem.NormalIsoModeActive;
@@ -71,7 +71,7 @@ public sealed class SelectionUiCameraSystem
 
     public void MoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
@@ -80,7 +80,7 @@ public sealed class SelectionUiCameraSystem
 
     public void ZoomPerspective(float direction, float deltaTime)
     {
-        if (_worldCamera == null || Mathf.Approximately(direction, 0f) || !TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || _worldCamera == null || Mathf.Approximately(direction, 0f) || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueuePerspectiveZoom(
@@ -95,7 +95,7 @@ public sealed class SelectionUiCameraSystem
 
     public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (_worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueueSetSmoothFocusTarget(em, focusWorldPosition, resetVelocity: true);
@@ -105,7 +105,7 @@ public sealed class SelectionUiCameraSystem
 
     public void FollowCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (_worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueueSetSmoothFocusTarget(em, focusWorldPosition, resetVelocity: false);
@@ -132,7 +132,7 @@ public sealed class SelectionUiCameraSystem
             8f,
             48f);
 
-        if (!TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueueSetFullscreenIsoTargets(em, targetHeight, targetOrthographicSize);
@@ -160,7 +160,7 @@ public sealed class SelectionUiCameraSystem
             _maxZoomHeight,
             _normalModeZoomHeight);
 
-        if (!TryGetDefaultEntityManager(out EntityManager em))
+        if (_cameraRequestSystem == null || !TryGetDefaultEntityManager(out EntityManager em))
             return;
 
         _cameraRequestSystem.QueueApplyPerspectiveModeInstant(em, targetHeight, _normalModePitch, _normalModeYaw, _normalModeFieldOfView);
@@ -172,7 +172,18 @@ public sealed class SelectionUiCameraSystem
 
     private void ProcessCameraRequests(EntityManager em)
     {
+        if (_cameraRequestSystem == null)
+            return;
+
         _cameraRequestSystem.ProcessPendingRequests(em, _cameraSystem, _worldCamera);
+    }
+
+    private static RtsCameraRequestSystem ResolveDefaultCameraRequestSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
+            : null;
     }
 
     private static bool TryGetDefaultEntityManager(out EntityManager em)

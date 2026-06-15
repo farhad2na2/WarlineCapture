@@ -3,9 +3,18 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RtsCameraRequestSystem
+public sealed partial class RtsCameraRequestSystem : SystemBase
 {
     private Entity _cameraEntity;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public Entity EnsureCameraEntity(EntityManager entityManager)
     {

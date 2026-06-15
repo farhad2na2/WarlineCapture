@@ -264,7 +264,7 @@ public partial struct UnitDeathSystem : ISystem
         if (em.HasComponent<UnitGrid>(entity) && TryGetRuntimeGrid(em, out GridConfig grid))
         {
             float3 worldPosition = transform.Position;
-            var groundingSystem = new MapSurfaceSpawnGroundingSystem();
+            var groundingSystem = new MapSurfaceSpawnGrounding();
             if (groundingSystem.TryGroundCellCenter(
                     em,
                     grid,

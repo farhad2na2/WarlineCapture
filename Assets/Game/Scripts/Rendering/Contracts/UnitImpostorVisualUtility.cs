@@ -7,14 +7,20 @@ public static class UnitImpostorVisualUtility
     private const float CharacterTacticalBillboardFullCameraY = 200f;
     private const float CharacterTacticalBillboardMaxScale = 16f;
 
-    public static bool HasCharacterUnitPrefix(FixedString64Bytes sourceKey)
+    public static bool HasUnitPrefix(FixedString64Bytes sourceKey)
     {
-        return sourceKey.Length >= 9 &&
+        return sourceKey.Length >= 5 &&
                sourceKey[0] == (byte)'U' &&
                sourceKey[1] == (byte)'n' &&
                sourceKey[2] == (byte)'i' &&
                sourceKey[3] == (byte)'t' &&
-               sourceKey[4] == (byte)'_' &&
+               sourceKey[4] == (byte)'_';
+    }
+
+    public static bool HasCharacterUnitPrefix(FixedString64Bytes sourceKey)
+    {
+        return sourceKey.Length >= 9 &&
+               HasUnitPrefix(sourceKey) &&
                sourceKey[5] == (byte)'C' &&
                sourceKey[6] == (byte)'h' &&
                sourceKey[7] == (byte)'r' &&

@@ -558,6 +558,7 @@ public sealed class PerformanceDiagnosticsSystem
             ComponentType.ReadOnly<LocalTransform>(),
             ComponentType.Exclude<UnitModelInstanceReference>(),
             ComponentType.Exclude<UnitDetailedVisualReference>(),
+            ComponentType.Exclude<RuntimeBuildingCombatTag>(),
             ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>());
         using EntityQuery initialSpawnConfigQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>());

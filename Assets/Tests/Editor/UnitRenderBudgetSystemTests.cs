@@ -42,7 +42,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
-            tests.CharacterSourceKeyPrefixCheckDoesNotAllocate();
+            tests.SourceKeyPrefixChecksDoNotAllocate();
             Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=28");
         }
         catch (System.Exception ex)
@@ -993,13 +993,18 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void CharacterSourceKeyPrefixCheckDoesNotAllocate()
+    public void SourceKeyPrefixChecksDoNotAllocate()
     {
         FixedString64Bytes character = new("Unit_Chr_Rifleman");
         FixedString64Bytes vehicle = new("Unit_Veh_APC");
+        FixedString64Bytes building = new("Building_Airport");
 
+        _ = UnitImpostorVisualUtility.HasUnitPrefix(character);
+        _ = UnitImpostorVisualUtility.HasUnitPrefix(vehicle);
+        _ = UnitImpostorVisualUtility.HasUnitPrefix(building);
         _ = UnitImpostorVisualUtility.HasCharacterUnitPrefix(character);
         _ = UnitImpostorVisualUtility.HasCharacterUnitPrefix(vehicle);
+        _ = UnitImpostorVisualUtility.HasCharacterUnitPrefix(building);
 
         bool allMatched = false;
         Assert.That(() =>
@@ -1007,8 +1012,12 @@ public sealed partial class UnitRenderBudgetSystemTests
             bool result = true;
             for (int i = 0; i < 4096; i++)
             {
+                result &= UnitImpostorVisualUtility.HasUnitPrefix(character);
+                result &= UnitImpostorVisualUtility.HasUnitPrefix(vehicle);
+                result &= !UnitImpostorVisualUtility.HasUnitPrefix(building);
                 result &= UnitImpostorVisualUtility.HasCharacterUnitPrefix(character);
                 result &= !UnitImpostorVisualUtility.HasCharacterUnitPrefix(vehicle);
+                result &= !UnitImpostorVisualUtility.HasCharacterUnitPrefix(building);
             }
 
             allMatched = result;

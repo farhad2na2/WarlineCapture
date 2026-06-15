@@ -275,6 +275,9 @@ public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
             float3 unitPosition = transforms[i].Position;
             Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
             FixedString64Bytes sourceKey = sourceKeys[i].Value;
+            if (!IsUnitSourceKey(sourceKey))
+                continue;
+
             ImpostorStyle style = GetOrCreateStyle(sourceKey);
             Material material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
             if (style == null || material == null)
@@ -739,6 +742,11 @@ public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
     private static bool IsCharacterSourceKey(FixedString64Bytes sourceKey)
     {
         return HasCharacterUnitPrefix(sourceKey);
+    }
+
+    private static bool IsUnitSourceKey(FixedString64Bytes sourceKey)
+    {
+        return UnitImpostorVisualUtility.HasUnitPrefix(sourceKey);
     }
 
     internal static bool HasCharacterUnitPrefix(FixedString64Bytes sourceKey)

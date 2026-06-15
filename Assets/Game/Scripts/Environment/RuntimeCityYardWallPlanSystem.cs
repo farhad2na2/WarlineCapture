@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityYardWallPlanSystem
+internal sealed partial class RuntimeCityYardWallPlanSystem : SystemBase
 {
+    private readonly RuntimeCityYardWallPlanState _state = new();
+
     public readonly struct HousePlan
     {
         public readonly List<RectInt> ShuffledHouses;
@@ -16,7 +19,57 @@ internal sealed class RuntimeCityYardWallPlanSystem
         }
     }
 
+    public RuntimeCityYardWallPlanState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public HousePlan CreateHousePlan(
+        List<RectInt> houseFootprints,
+        float houseWallChance,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.CreateHousePlan(houseFootprints, houseWallChance, prefabSelectionSystem, ref rng);
+    }
+
+    public bool TryFindYardRect(
+        RuntimeCityWalkabilityState walkabilitySystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
+        RectInt houseRect,
+        int minDistanceCells,
+        int maxDistanceCells,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        List<ReservedFootprint> reservedFootprints,
+        GridConfig grid,
+        ref Unity.Mathematics.Random rng,
+        out RectInt yardRect)
+    {
+        return _state.TryFindYardRect(
+            walkabilitySystem,
+            prefabSelectionSystem,
+            houseRect,
+            minDistanceCells,
+            maxDistanceCells,
+            roadCellSizeInGridCells,
+            roadCells,
+            reservedFootprints,
+            grid,
+            ref rng,
+            out yardRect);
+    }
+}
+
+internal sealed class RuntimeCityYardWallPlanState
+{
+    public RuntimeCityYardWallPlanSystem.HousePlan CreateHousePlan(
         List<RectInt> houseFootprints,
         float houseWallChance,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
@@ -26,7 +79,7 @@ internal sealed class RuntimeCityYardWallPlanSystem
         prefabSelectionSystem.Shuffle(shuffledHouses, ref rng);
 
         int targetCount = Mathf.RoundToInt(shuffledHouses.Count * Mathf.Clamp01(houseWallChance));
-        return new HousePlan(shuffledHouses, targetCount);
+        return new RuntimeCityYardWallPlanSystem.HousePlan(shuffledHouses, targetCount);
     }
 
     public bool TryFindYardRect(

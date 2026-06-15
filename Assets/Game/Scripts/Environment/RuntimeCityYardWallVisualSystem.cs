@@ -1,14 +1,58 @@
+using Unity.Entities;
 using UnityEngine;
 using YardSide = RuntimeCityYardGateSystem.YardSide;
 
-internal sealed class RuntimeCityYardWallVisualSystem
+internal sealed partial class RuntimeCityYardWallVisualSystem : SystemBase
+{
+    private readonly RuntimeCityYardWallVisualState _state = new();
+
+    public RuntimeCityYardWallVisualState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void BuildYardBoundaryVisuals(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
+        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityYardGateState gateSystem,
+        RectInt yardRect,
+        YardSide gateSide,
+        GameObject wallPrefab,
+        GameObject gatePrefab,
+        GameObject pillarPrefab,
+        GridConfig grid)
+    {
+        _state.BuildYardBoundaryVisuals(
+            context,
+            placementSystem,
+            prefabSelectionSystem,
+            visualSystem,
+            gateSystem,
+            yardRect,
+            gateSide,
+            wallPrefab,
+            gatePrefab,
+            pillarPrefab,
+            grid);
+    }
+}
+
+internal sealed class RuntimeCityYardWallVisualState
 {
     public void BuildYardBoundaryVisuals(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
-        RuntimeCityYardGateSystem gateSystem,
+        RuntimeCityYardGateState gateSystem,
         RectInt yardRect,
         YardSide gateSide,
         GameObject wallPrefab,

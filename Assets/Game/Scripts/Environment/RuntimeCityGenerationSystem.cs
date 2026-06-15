@@ -291,8 +291,8 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
         public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;
         public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
-        public readonly RuntimeCityRoadBuildBridgeSystem RoadBuildBridgeSystem;
-        public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;
+        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
+        public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
         public readonly RuntimeCityChainSystem ChainSystem;
         public readonly RuntimeCityChainSystem.Context ChainContext;
         public readonly RuntimeCityRoadCommitSystem RoadCommitSystem;
@@ -316,8 +316,8 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
             RuntimeCityBuildingPlacementSystem buildingPlacementSystem,
             RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
-            RuntimeCityRoadBuildBridgeSystem roadBuildBridgeSystem,
-            RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
+            RuntimeCitySpawnBridgeState spawnBridgeSystem,
             RuntimeCityChainSystem chainSystem,
             RuntimeCityChainSystem.Context chainContext,
             RuntimeCityRoadCommitSystem roadCommitSystem,

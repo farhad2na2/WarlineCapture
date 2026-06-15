@@ -17,7 +17,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
-        RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+        RuntimeCitySpawnBridgeState spawnBridgeSystem,
         RuntimeCityDiagnosticSystem diagnosticSystem)
     {
         return CreateFallback(
@@ -36,7 +36,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
-        RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+        RuntimeCitySpawnBridgeState spawnBridgeSystem,
         RuntimeCityDiagnosticSystem diagnosticSystem)
     {
         return new Context(
@@ -59,12 +59,12 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
         public readonly RuntimeCityEntryBuildingSpawnState EntryBuildingSpawnSystem;
         public readonly RuntimeCityRoadsideBuildingSpawnState RoadsideBuildingSpawnSystem;
         public readonly RuntimeCityRuralBuildingSpawnState RuralBuildingSpawnSystem;
-        public readonly RuntimeCityBulkBuildingSpawnRoutineSystem BulkBuildingSpawnRoutineSystem;
+        public readonly RuntimeCityBulkBuildingSpawnRoutineState BulkBuildingSpawnRoutineSystem;
         public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
-        public readonly RuntimeCityYardWallPlanSystem YardWallPlanSystem;
-        public readonly RuntimeCityYardGateSystem YardGateSystem;
-        public readonly RuntimeCityYardWallVisualSystem YardWallVisualSystem;
-        public readonly RuntimeCityHouseYardWallSystem HouseYardWallSystem;
+        public readonly RuntimeCityYardWallPlanState YardWallPlanSystem;
+        public readonly RuntimeCityYardGateState YardGateSystem;
+        public readonly RuntimeCityYardWallVisualState YardWallVisualSystem;
+        public readonly RuntimeCityHouseYardWallState HouseYardWallSystem;
         public readonly RuntimeCityDecorationPrefabGroupState DecorationPrefabGroupSystem;
         public readonly RuntimeCityClothCoverSpawnState ClothCoverSpawnSystem;
         public readonly RuntimeCityArchwaySpawnState ArchwaySpawnSystem;
@@ -80,12 +80,12 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
             RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,
             RuntimeCityRoadsideBuildingSpawnState roadsideBuildingSpawnSystem,
             RuntimeCityRuralBuildingSpawnState ruralBuildingSpawnSystem,
-            RuntimeCityBulkBuildingSpawnRoutineSystem bulkBuildingSpawnRoutineSystem,
+            RuntimeCityBulkBuildingSpawnRoutineState bulkBuildingSpawnRoutineSystem,
             RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
-            RuntimeCityYardWallPlanSystem yardWallPlanSystem,
-            RuntimeCityYardGateSystem yardGateSystem,
-            RuntimeCityYardWallVisualSystem yardWallVisualSystem,
-            RuntimeCityHouseYardWallSystem houseYardWallSystem,
+            RuntimeCityYardWallPlanState yardWallPlanSystem,
+            RuntimeCityYardGateState yardGateSystem,
+            RuntimeCityYardWallVisualState yardWallVisualSystem,
+            RuntimeCityHouseYardWallState houseYardWallSystem,
             RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
             RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
             RuntimeCityArchwaySpawnState archwaySpawnSystem,
@@ -121,7 +121,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
         public readonly RuntimeCityWalkabilityState WalkabilitySystem;
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
         public readonly RuntimeCityVisualSystem VisualSystem;
-        public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;
+        public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
         public readonly RuntimeCityDiagnosticSystem DiagnosticSystem;
 
         public Context(
@@ -130,7 +130,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
             RuntimeCityWalkabilityState walkabilitySystem,
             RuntimeCityPrefabSelectionState prefabSelectionSystem,
             RuntimeCityVisualSystem visualSystem,
-            RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+            RuntimeCitySpawnBridgeState spawnBridgeSystem,
             RuntimeCityDiagnosticSystem diagnosticSystem)
         {
             Config = config;

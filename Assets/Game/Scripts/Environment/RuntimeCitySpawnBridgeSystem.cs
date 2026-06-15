@@ -1,6 +1,75 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCitySpawnBridgeSystem
+internal sealed partial class RuntimeCitySpawnBridgeSystem : SystemBase
+{
+    private readonly RuntimeCitySpawnBridgeState _state = new();
+
+    public RuntimeCitySpawnBridgeState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool HasSpawnSystem => _state.HasSpawnSystem;
+
+    public void Configure(
+        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
+        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext)
+    {
+        _state.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
+    }
+
+    public void Clear()
+    {
+        _state.Clear();
+    }
+
+    public void BeginDeferredSideEffects()
+    {
+        _state.BeginDeferredSideEffects();
+    }
+
+    public void EndDeferredSideEffects()
+    {
+        _state.EndDeferredSideEffects();
+    }
+
+    public bool TrySpawnCityBuilding(
+        GameObject prefab,
+        Vector2Int preferredOrigin,
+        out int buildingId,
+        out Vector2Int actualOrigin,
+        out Vector2Int actualFootprint,
+        string fallbackDisplayName,
+        string fallbackDescription,
+        Vector2Int? fallbackFootprint,
+        int fallbackMaxHealth)
+    {
+        return _state.TrySpawnCityBuilding(
+            prefab,
+            preferredOrigin,
+            out buildingId,
+            out actualOrigin,
+            out actualFootprint,
+            fallbackDisplayName,
+            fallbackDescription,
+            fallbackFootprint,
+            fallbackMaxHealth);
+    }
+
+    public bool DeleteCityBuilding(int buildingId)
+    {
+        return _state.DeleteCityBuilding(buildingId);
+    }
+}
+
+internal sealed class RuntimeCitySpawnBridgeState
 {
     private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem;
     private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;

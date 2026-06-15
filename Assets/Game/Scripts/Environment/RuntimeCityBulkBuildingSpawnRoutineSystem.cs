@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
+internal sealed partial class RuntimeCityBulkBuildingSpawnRoutineSystem : SystemBase
 {
+    private readonly RuntimeCityBulkBuildingSpawnRoutineState _state = new();
+
     public sealed class GenerationRandomState
     {
         public Unity.Mathematics.Random Value;
@@ -34,6 +37,17 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
         List<ReservedFootprint> reservedFootprints,
         List<RectInt> shopAndHouseFootprints);
 
+    public RuntimeCityBulkBuildingSpawnRoutineState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public IEnumerator SpawnRoutine(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
@@ -47,6 +61,38 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
         GenerationRandomState rng,
         PlaceHouseYardWallsAction placeHouseYardWalls,
         PlaceCityDecorationBuildingsAction placeCityDecorationBuildings)
+    {
+        return _state.SpawnRoutine(
+            context,
+            placementSystem,
+            plotPlanSystem,
+            entryBuildingSpawnSystem,
+            roadsideBuildingSpawnSystem,
+            ruralBuildingSpawnSystem,
+            city,
+            grid,
+            roadCellSizeInGridCells,
+            rng,
+            placeHouseYardWalls,
+            placeCityDecorationBuildings);
+    }
+}
+
+internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
+{
+    public IEnumerator SpawnRoutine(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBulkPlotPlanState plotPlanSystem,
+        RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,
+        RuntimeCityRoadsideBuildingSpawnState roadsideBuildingSpawnSystem,
+        RuntimeCityRuralBuildingSpawnState ruralBuildingSpawnSystem,
+        CityLayoutData city,
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng,
+        RuntimeCityBulkBuildingSpawnRoutineSystem.PlaceHouseYardWallsAction placeHouseYardWalls,
+        RuntimeCityBulkBuildingSpawnRoutineSystem.PlaceCityDecorationBuildingsAction placeCityDecorationBuildings)
     {
         RuntimeCityConfigSystem.Snapshot config = context.Config;
         Vector2Int centerRoadCell = city.CenterRoadCell;

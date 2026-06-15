@@ -1,18 +1,82 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 using YardSide = RuntimeCityYardGateSystem.YardSide;
 
-internal sealed class RuntimeCityHouseYardWallSystem
+internal sealed partial class RuntimeCityHouseYardWallSystem : SystemBase
+{
+    private readonly RuntimeCityHouseYardWallState _state = new();
+
+    public RuntimeCityHouseYardWallState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void PlaceHouseYardWalls(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityPrefabSelectionState prefabSelectionSystem,
+        RuntimeCityWalkabilityState walkabilitySystem,
+        RuntimeCityYardWallPlanState yardWallPlanSystem,
+        RuntimeCityYardGateState yardGateSystem,
+        RuntimeCityYardWallVisualState yardWallVisualSystem,
+        RuntimeCityVisualSystem visualSystem,
+        List<GameObject> houseWallPrefabs,
+        GameObject houseWallGatePrefab,
+        GameObject houseWallPillarPrefab,
+        float houseWallChance,
+        int houseWallMinDistanceCells,
+        int houseWallMaxDistanceCells,
+        List<RectInt> houseFootprints,
+        Vector2Int centerRoadCell,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        GridConfig grid,
+        ref Unity.Mathematics.Random rng,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        _state.PlaceHouseYardWalls(
+            context,
+            placementSystem,
+            prefabSelectionSystem,
+            walkabilitySystem,
+            yardWallPlanSystem,
+            yardGateSystem,
+            yardWallVisualSystem,
+            visualSystem,
+            houseWallPrefabs,
+            houseWallGatePrefab,
+            houseWallPillarPrefab,
+            houseWallChance,
+            houseWallMinDistanceCells,
+            houseWallMaxDistanceCells,
+            houseFootprints,
+            centerRoadCell,
+            roadCellSizeInGridCells,
+            roadCells,
+            grid,
+            ref rng,
+            reservedFootprints);
+    }
+}
+
+internal sealed class RuntimeCityHouseYardWallState
 {
     public void PlaceHouseYardWalls(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
-        RuntimeCityYardWallPlanSystem yardWallPlanSystem,
-        RuntimeCityYardGateSystem yardGateSystem,
-        RuntimeCityYardWallVisualSystem yardWallVisualSystem,
+        RuntimeCityYardWallPlanState yardWallPlanSystem,
+        RuntimeCityYardGateState yardGateSystem,
+        RuntimeCityYardWallVisualState yardWallVisualSystem,
         RuntimeCityVisualSystem visualSystem,
         List<GameObject> houseWallPrefabs,
         GameObject houseWallGatePrefab,
@@ -73,9 +137,9 @@ internal sealed class RuntimeCityHouseYardWallSystem
         RuntimeCityBuildingPlacementSystem placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
-        RuntimeCityYardWallPlanSystem yardWallPlanSystem,
-        RuntimeCityYardGateSystem yardGateSystem,
-        RuntimeCityYardWallVisualSystem yardWallVisualSystem,
+        RuntimeCityYardWallPlanState yardWallPlanSystem,
+        RuntimeCityYardGateState yardGateSystem,
+        RuntimeCityYardWallVisualState yardWallVisualSystem,
         RuntimeCityVisualSystem visualSystem,
         List<GameObject> houseWallPrefabs,
         GameObject houseWallGatePrefab,

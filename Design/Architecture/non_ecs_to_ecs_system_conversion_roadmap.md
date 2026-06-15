@@ -37,16 +37,16 @@ Always update this section when implementation begins or a phase completes.
 - In progress: `2`.
 - Remaining open: `11` unchecked (`13` not complete including in-progress).
 - Phase progress: `11 / 13 phases complete; 1 in progress; 1 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `308` after excluding `151` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `301` after excluding `158` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `213` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `206` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
-- Converted to `SystemBase`: `45`.
+- Converted to `SystemBase`: `52`.
 - Folded into ECS owners/jobs: `37`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `308`.
+- Remaining plain runtime gameplay `*System` classes: `301`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 converted the runtime city corridor building spawn boundary to managed ECS and kept runtime city split work open.
+- Last implementation update: 2026-06-15 converted the runtime city bulk building spawn coroutine coordinator to managed ECS and kept runtime city split work open.
 
 ## Architecture Rules
 
@@ -721,6 +721,9 @@ Progress notes:
 - 2026-06-15: Continued the runtime city managed-spawn split by converting `RuntimeCityEntryBuildingSpawnSystem`, `RuntimeCityRoadsideBuildingSpawnSystem`, and `RuntimeCityRuralBuildingSpawnSystem` into disabled managed `SystemBase` boundaries resolved by `RuntimeCityCompositionSystem`. Entry shop/house placement, roadside shop/gas-station/house placement, rural scatter placement, and the stable `RuntimeCityRoadsideBuildingSpawnSystem.Plan` payload now live behind state objects consumed by the bulk spawn routine. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `314`, Unity ECS exclusions are now `145`, and converted-to-`SystemBase` count is now `39`.
 - 2026-06-15: Continued the runtime city managed-spawn split by converting `RuntimeCityDecorationPrefabGroupSystem`, `RuntimeCityClothCoverSpawnSystem`, `RuntimeCityArchwaySpawnSystem`, `RuntimeCityFreeScatterDecorationSystem`, and `RuntimeCityDecorationBuildingSpawnSystem` into disabled managed `SystemBase` boundaries resolved by `RuntimeCityCompositionSystem`. Decoration prefab grouping, cloth-cover attachment placement, archway scatter placement, free-scatter decoration placement, and the city decoration coordinator now live behind state objects consumed by the generation callback. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `309`, Unity ECS exclusions are now `150`, and converted-to-`SystemBase` count is now `44`.
 - 2026-06-15: Continued the runtime city managed-spawn split by converting `RuntimeCityCorridorBuildingSpawnSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Corridor shop/house entrance placement now lives behind `RuntimeCityCorridorBuildingSpawnState`, and both generation and building-spawn context bundles consume the state instead of the former plain helper. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `308`, Unity ECS exclusions are now `151`, and converted-to-`SystemBase` count is now `45`.
+- 2026-06-15: Continued the runtime city managed-spawn split by converting `RuntimeCityYardWallPlanSystem`, `RuntimeCityYardGateSystem`, `RuntimeCityYardWallVisualSystem`, and `RuntimeCityHouseYardWallSystem` into disabled managed `SystemBase` boundaries resolved by `RuntimeCityCompositionSystem`. House yard-wall planning, gate-side/opening math, visual-only wall/gate/pillar spawning, and the house-yard-wall coordinator now live behind state objects consumed through the building-spawn system bundle while preserving the stable nested `HousePlan` and `YardSide` payloads. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `304`, Unity ECS exclusions are now `155`, and converted-to-`SystemBase` count is now `49`.
+- 2026-06-15: Continued the runtime city managed-boundary split by converting `RuntimeCitySpawnBridgeSystem` and `RuntimeCityRoadBuildBridgeSystem` into disabled managed `SystemBase` boundaries resolved by `RuntimeCityCompositionSystem`. Runtime city building spawn/deletion bridging, deferred building side effects, road ECS sync, road stroke creation, straight connector creation, and road-cell-size fallback now live behind `RuntimeCitySpawnBridgeState` and `RuntimeCityRoadBuildBridgeState`, with no-world validation paths retaining fallback states. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `302`, Unity ECS exclusions are now `157`, and converted-to-`SystemBase` count is now `51`.
+- 2026-06-15: Continued the runtime city managed-boundary split by converting `RuntimeCityBulkBuildingSpawnRoutineSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. The staged coroutine for entry, roadside, rural, yard-wall, and decoration building placement now lives behind `RuntimeCityBulkBuildingSpawnRoutineState`, while preserving the existing `GenerationRandomState` and delegate callback payloads used by generation. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `301`, Unity ECS exclusions are now `158`, and converted-to-`SystemBase` count is now `52`.
 
 ## Phase 12: Final Guardrails And Cleanup
 

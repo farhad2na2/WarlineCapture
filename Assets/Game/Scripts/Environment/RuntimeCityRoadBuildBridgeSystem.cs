@@ -2,7 +2,83 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityRoadBuildBridgeSystem
+internal sealed partial class RuntimeCityRoadBuildBridgeSystem : SystemBase
+{
+    private readonly RuntimeCityRoadBuildBridgeState _state = new();
+
+    public RuntimeCityRoadBuildBridgeState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool HasRoadRuntimeGenerationSystem => _state.HasRoadRuntimeGenerationSystem;
+
+    public void Configure(
+        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
+        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext)
+    {
+        _state.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
+    }
+
+    public void Clear()
+    {
+        _state.Clear();
+    }
+
+    public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
+    {
+        return _state.TryGetRoadCellSizeInGridCells(out roadCellSizeInGridCells);
+    }
+
+    public void BeginDeferredRoadEcsSync()
+    {
+        _state.BeginDeferredRoadEcsSync();
+    }
+
+    public void EndDeferredRoadEcsSync()
+    {
+        _state.EndDeferredRoadEcsSync();
+    }
+
+    public bool CreateRoadStrokeFromRoadCells(IReadOnlyList<Vector2Int> cells)
+    {
+        return _state.CreateRoadStrokeFromRoadCells(cells);
+    }
+
+    public bool CreateAutobahnStrokeFromRoadCells(
+        IReadOnlyList<Vector2Int> cells,
+        bool useAutobahnConnectorAtStart,
+        bool useAutobahnConnectorAtEnd)
+    {
+        return _state.CreateAutobahnStrokeFromRoadCells(
+            cells,
+            useAutobahnConnectorAtStart,
+            useAutobahnConnectorAtEnd);
+    }
+
+    public bool CreateStandaloneStraightRoadChainFromConnector(
+        Vector2Int connectorCell,
+        Vector2Int direction,
+        int length)
+    {
+        return _state.CreateStandaloneStraightRoadChainFromConnector(connectorCell, direction, length);
+    }
+
+    public bool TryGetStandaloneStraightChainEndRoadCell(
+        Vector2Int direction,
+        out Vector2Int roadConnectionCell)
+    {
+        return _state.TryGetStandaloneStraightChainEndRoadCell(direction, out roadConnectionCell);
+    }
+}
+
+internal sealed class RuntimeCityRoadBuildBridgeState
 {
     private const int DefaultRoadCellSizeInGridCells = 10;
     private const string RoadCellSizeFallbackFixTag = "RuntimeCityRoadCellFallbackFix_2026-05-26";

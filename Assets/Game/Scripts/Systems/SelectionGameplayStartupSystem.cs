@@ -307,39 +307,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessMoveTargetModeCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
-                    em,
-                    Time.frameCount,
-                    out bool accepted,
-                    out TacticalCommandReasonCode rejectionReason))
-            {
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                buildingPlacementInteractionContext,
-                "SelectionUiCommandSystem.EnterMoveTargetMode");
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-            if (!accepted)
-            {
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(rejectionReason));
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"moveModeEntered result=False reason={rejectionReason} frame={Time.frameCount}");
-                return;
-            }
-
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Move);
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True " +
-                $"ignoreWorldUntil={rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame} frame={Time.frameCount}");
-            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                $"moveModeEntered result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
         }
 
         void ProcessAttackTargetModeCommandRequests()
@@ -686,6 +656,7 @@ internal sealed class SelectionGameplayStartupSystem
                 ClearCurrentSelection,
                 SetExplicitAttackTargetModeActive,
                 ProcessSelectionRectangleRequests,
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 RequestMoveOrderScreenMarker,
                 RequestAttackOrderScreenMarker,
                 SetCameraDragging,

@@ -12,8 +12,9 @@ public sealed class InitialUnitsSpawnFocusedTests
         string[] methodNames =
         {
             nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
-            nameof(InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel),
-            nameof(InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
+            nameof(InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel),
+            nameof(InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
+            nameof(InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests),
             nameof(InitialUnitsSpawnSystem_SkipsUnresolvedSourceKeyWithoutFallback),
             nameof(InitialUnitSpawnApplySystem_InstantiatesConvertedPrefabBackedUnit)
         };
@@ -104,9 +105,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel()
+    public void InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel()
     {
-        using var world = new World("InitialConfiguredBuildingRequestSystemTest");
+        using var world = new World("InitialUnitsSpawnConfiguredBuildingRequestTest");
         EntityManager em = world.EntityManager;
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
@@ -136,15 +137,15 @@ public sealed class InitialUnitsSpawnFocusedTests
         try
         {
             factionSpawns[0] = new InitialUnitsFactionSpawnEntry { FactionId = 1, SpawnCell = new int2(10, 20) };
-            var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
-            diagnosticLogSystem.EnsureQueue(em);
+            var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+            diagnosticLogWriter.EnsureQueue(em);
 
-            bool issued = new InitialConfiguredBuildingRequestSystem().Enqueue(
+            bool issued = InitialUnitsSpawnSystem.EnqueueConfiguredInitialBuildingRequests(
                 em,
                 boundary,
                 configEntity,
                 factionSpawns,
-                ref diagnosticLogSystem,
+                ref diagnosticLogWriter,
                 out int requestCount);
 
             Assert.IsTrue(issued);
@@ -166,9 +167,9 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialConfiguredBuildingRequestSystem_QueuesKeyOnlyRuntimeSpawnRequestFromLegacyConfig()
+    public void InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig()
     {
-        using var world = new World("InitialConfiguredBuildingRequestSystemKeyOnlyTest");
+        using var world = new World("InitialUnitsSpawnConfiguredBuildingRequestKeyOnlyTest");
         EntityManager em = world.EntityManager;
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
@@ -197,15 +198,15 @@ public sealed class InitialUnitsSpawnFocusedTests
         try
         {
             factionSpawns[0] = new InitialUnitsFactionSpawnEntry { FactionId = 2, SpawnCell = new int2(150, 250) };
-            var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
-            diagnosticLogSystem.EnsureQueue(em);
+            var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+            diagnosticLogWriter.EnsureQueue(em);
 
-            bool issued = new InitialConfiguredBuildingRequestSystem().Enqueue(
+            bool issued = InitialUnitsSpawnSystem.EnqueueConfiguredInitialBuildingRequests(
                 em,
                 boundary,
                 configEntity,
                 factionSpawns,
-                ref diagnosticLogSystem,
+                ref diagnosticLogWriter,
                 out int requestCount);
 
             Assert.IsTrue(issued);
@@ -228,12 +229,127 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
+    public void InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests()
+    {
+        using var world = new World("InitialUnitsSpawnFactionBaseRequestTest");
+        EntityManager em = world.EntityManager;
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
+            em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
+        AddInitialBaseSpawnableReadModel(readModels, "Wall_Dirt_Straight", new int2(4, 2));
+        AddInitialBaseSpawnableReadModel(readModels, "Building_Road_Barrier", new int2(10, 4));
+        for (int i = 0; i < InitialFactionBaseLayoutPlanner.RequiredBuildingKeys.Length; i++)
+            AddInitialBaseSpawnableReadModel(readModels, InitialFactionBaseLayoutPlanner.RequiredBuildingKeys[i], new int2(6, 6));
+        for (int i = 0; i < InitialFactionBaseLayoutPlanner.TentKeys.Length; i++)
+            AddInitialBaseSpawnableReadModel(readModels, InitialFactionBaseLayoutPlanner.TentKeys[i], new int2(3, 3));
+
+        Entity configEntity = em.CreateEntity();
+        var factionSpawns = new NativeArray<InitialUnitsFactionSpawnEntry>(1, Allocator.Temp);
+        try
+        {
+            factionSpawns[0] = new InitialUnitsFactionSpawnEntry
+            {
+                FactionId = FactionIdentitySystem.PlayerFactionId,
+                SpawnCell = new int2(1000, 2000)
+            };
+
+            const int coreRequestEntryIndex = -77;
+            bool issued = InitialUnitsSpawnSystem.EnqueueInitialFactionBaseRequests(
+                em,
+                boundary,
+                configEntity,
+                new InitialUnitsSpawnConfig
+                {
+                    CreateFactionBases = 1,
+                    BaseCoreBuildingPrefabLookupKey = new FixedString128Bytes("Building_Ammunition_Depot"),
+                    BaseHalfWidthCells = 120,
+                    BaseHalfHeightCells = 80
+                },
+                factionSpawns,
+                coreRequestEntryIndex,
+                out int requestCount);
+
+            Assert.IsTrue(issued);
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+            Assert.AreEqual(requests.Length, requestCount);
+            Assert.Greater(requests.Length, 0);
+
+            bool sawWallRunSegment = false;
+            bool sawGateFlankSegment = false;
+            bool sawGateBuilding = false;
+            bool sawPlayerCore = false;
+            string wallId = BuildingDefinitionSystem.NormalizeSpawnableKey("Wall_Dirt_Straight");
+            string gateId = BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Road_Barrier");
+            string coreId = BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Ammunition_Depot");
+            for (int i = 0; i < requests.Length; i++)
+            {
+                BuildingRuntimeSpawnRequest request = requests[i];
+                Assert.AreEqual(i + 1, request.RequestId);
+                Assert.AreEqual(configEntity, request.PlanEntity);
+                Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, request.FactionId);
+                Assert.AreEqual(1, request.HasOwnerFaction);
+                if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment &&
+                    request.BuildingId.ToString() == wallId &&
+                    request.AllowExistingWallOverlap == 0)
+                {
+                    sawWallRunSegment = true;
+                }
+
+                if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment &&
+                    request.BuildingId.ToString() == wallId &&
+                    request.AllowExistingWallOverlap == 1)
+                {
+                    sawGateFlankSegment = true;
+                }
+
+                if (request.RequestKind == BuildingRuntimeSpawnRequest.KindBuilding &&
+                    request.BuildingId.ToString() == gateId)
+                {
+                    sawGateBuilding = true;
+                }
+
+                if (request.RequestKind == BuildingRuntimeSpawnRequest.KindBuilding &&
+                    request.BuildingId.ToString() == coreId &&
+                    request.EntryIndex == coreRequestEntryIndex)
+                {
+                    sawPlayerCore = true;
+                }
+            }
+
+            Assert.IsTrue(sawWallRunSegment);
+            Assert.IsTrue(sawGateFlankSegment);
+            Assert.IsTrue(sawGateBuilding);
+            Assert.IsTrue(sawPlayerCore);
+        }
+        finally
+        {
+            factionSpawns.Dispose();
+        }
+    }
+
+    private static void AddInitialBaseSpawnableReadModel(
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels,
+        string buildingId,
+        int2 footprint)
+    {
+        readModels.Add(new BuildingConfiguredSpawnableReadModel
+        {
+            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            DisplayName = new FixedString128Bytes(buildingId),
+            FootprintCells = footprint,
+            CanRequest = 1
+        });
+    }
+
+    [Test]
     public void InitialUnitsSpawnSystem_SkipsUnresolvedSourceKeyWithoutFallback()
     {
         using var world = new World("InitialUnitsSpawnSourceKeyTest");
         EntityManager em = world.EntityManager;
-        var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
-        diagnosticLogSystem.EnsureQueue(em);
+        var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+        diagnosticLogWriter.EnsureQueue(em);
         Entity sourceEntity = em.CreateEntity();
         DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> sourceSpawns =
             em.AddBuffer<CustomGameFactionUnitSourceSpawnEntry>(sourceEntity);
@@ -262,7 +378,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             hasSourceKey: true,
             sourceKey,
             ref progress,
-            ref diagnosticLogSystem));
+            ref diagnosticLogWriter));
         Assert.AreEqual(3, progress.Spawned);
 
         using EntityQuery logQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialSpawnDiagnosticLogComponent>());
@@ -483,8 +599,8 @@ public sealed class InitialUnitsSpawnFocusedTests
         using var world = new World("InitialUnitsSpawnBlockerTest");
         EntityManager em = world.EntityManager;
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
-        diagnosticLogSystem.EnsureQueue(em);
+        var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+        diagnosticLogWriter.EnsureQueue(em);
         GridConfig grid = new()
         {
             Width = 1,
@@ -519,7 +635,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 occupied,
                 ref reserved,
                 enableDiagnostics: false,
-                ref diagnosticLogSystem);
+                ref diagnosticLogWriter);
 
             Assert.AreEqual(5, result.TargetCount);
             Assert.AreEqual(2, result.ProgressIncrement);
@@ -544,8 +660,8 @@ public sealed class InitialUnitsSpawnFocusedTests
         em.SetComponentData(configEntity, new InitialUnitsSpawnConfig { CreateFactionBases = 1 });
         em.SetComponentData(configEntity, new InitialUnitsSpawnProgress());
         em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity);
-        var diagnosticLogSystem = new InitialSpawnDiagnosticLogSystem();
-        diagnosticLogSystem.EnsureQueue(em);
+        var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+        diagnosticLogWriter.EnsureQueue(em);
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(configEntity);
         try
@@ -559,7 +675,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 allUnitsSpawned: true,
                 allBlockersSpawned: true,
                 maxInitialBuildingCompletionWaitFrames: 2,
-                ref diagnosticLogSystem,
+                ref diagnosticLogWriter,
                 out bool progressChanged);
 
             Assert.IsFalse(completed);
@@ -576,7 +692,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 allUnitsSpawned: true,
                 allBlockersSpawned: true,
                 maxInitialBuildingCompletionWaitFrames: 2,
-                ref diagnosticLogSystem,
+                ref diagnosticLogWriter,
                 out progressChanged);
 
             Assert.IsTrue(completed);

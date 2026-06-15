@@ -23,6 +23,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.GroundPersonnelTransport_BoardsSoldierLikeApc());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
+            RunTest(test => test.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
             RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
@@ -39,7 +40,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=19");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=20");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -166,6 +167,59 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results[0].Accepted);
         Assert.AreEqual(1, results[0].HasCommandResult);
         Assert.AreEqual(1, CountBoardingTargets(em, passenger), "The resolved board request should produce the same passenger boarding target as the old screen-click command path.");
+    }
+
+    [Test]
+    public void BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers()
+    {
+        using var world = new World("BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        Entity transport = CreateTransport(em, new int2(10, 10), air: false, airborne: false);
+        Entity nearSoldier = CreateBoardAllSoldier(em, new int2(7, 10));
+        Entity farSoldier = CreateBoardAllSoldier(em, new int2(7, 13));
+        Entity commandEntity = em.CreateEntity();
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardAllSelectedTransport,
+            RequestId = 17,
+            Frame = 90
+        });
+
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(transport);
+        var transportCommandSystem = new TransportBoardingCommandSystem();
+
+        bool handled = transportCommandSystem.ProcessCommandIntentRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new UnitTransportCapacitySystem(),
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            selectionState,
+            TryGetNoClickedUnit,
+            TryGetNoClickedCell);
+
+        Assert.IsTrue(handled);
+        requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardAllSelectedTransport, results[0].Kind);
+        Assert.AreEqual(17, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasCommandResult);
+        Assert.AreEqual("Boarding 2 units.", results[0].Message.ToString());
+        Assert.AreEqual(2, CountBoardingTargets(em, nearSoldier, farSoldier));
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(nearSoldier).Transport);
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(farSoldier).Transport);
     }
 
     [Test]
@@ -970,6 +1024,26 @@ public sealed class UnitTransportValidationTests
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
         em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return entity;
+    }
+
+    private static Entity CreateBoardAllSoldier(EntityManager em, int2 cell)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitMove),
+            typeof(UnitMovementBehavior),
+            typeof(UnitSourcePrefabKey),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Chr_Rifle") });
         em.SetComponentData(entity, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
         return entity;
     }

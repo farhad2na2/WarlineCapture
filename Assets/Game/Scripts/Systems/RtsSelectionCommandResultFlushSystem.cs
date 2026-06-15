@@ -462,6 +462,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
             if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardNearestSoldiers &&
+                result.Kind != RtsSelectionCommandIntentKind.BoardAllSelectedTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.DisembarkTransport &&
                 result.Kind != RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
             {
@@ -492,6 +494,17 @@ public sealed class RtsSelectionCommandResultFlushSystem
                     result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
                         ? "Exiting unit."
                         : "Exiting passengers."));
+                continue;
+            }
+
+            if (result.Kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
+                result.Kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport)
+            {
+                context.InputSystem.ClearActiveCommandMode();
+                context.SetCameraDragging?.Invoke(false);
+                context.SetHudWorldMarkersVisible?.Invoke(false);
+                context.ClearHudCommandMode?.Invoke();
+                context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                 continue;
             }
 

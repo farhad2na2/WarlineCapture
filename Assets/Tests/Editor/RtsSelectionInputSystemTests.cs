@@ -63,7 +63,10 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=46");
+            RunCase(test => test.BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation());
+            RunCase(test => test.BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats());
+            RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=49");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -2007,10 +2010,10 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation()
     {
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string boarding = ExtractBlockAfter(startup, "bool TryIssueFocusedTransportBoarding");
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
+        string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
-        int planningIndex = boarding.IndexOf("plannedOrders.Add(new TransportBoardingOrder", StringComparison.Ordinal);
+        int planningIndex = boarding.IndexOf("plannedOrders.Add(new PendingTransportBoardingOrder", StringComparison.Ordinal);
         int mutationIndex = boarding.IndexOf("UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder", StringComparison.Ordinal);
         Assert.GreaterOrEqual(planningIndex, 0, "Board All transport boarding must collect planned orders before mutating ECS components.");
         Assert.GreaterOrEqual(mutationIndex, 0, "Board All transport boarding must still issue movement orders after planning.");
@@ -2023,24 +2026,26 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats()
     {
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string boarding = ExtractBlockAfter(startup, "bool TryIssueFocusedTransportBoarding");
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
+        string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
         StringAssert.Contains("int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);", boarding);
         StringAssert.Contains("int availableSeats = capacity - occupiedSeats;", boarding);
-        StringAssert.Contains("using NativeList<TransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats), Allocator.Temp);", boarding);
-        StringAssert.Contains("plannedOrders.Length < availableSeats", boarding);
+        StringAssert.Contains("List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats));", boarding);
+        StringAssert.Contains("plannedOrders.Count < availableSeats", boarding);
     }
 
     [Test]
     public void BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess()
     {
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string boardFocusedTransport = ExtractBlockAfter(startup, "void BoardFocusedTransport");
+        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string processTransport = ExtractBlockAfter(flush, "public bool ProcessTransportCommandRequests");
 
-        int clearModeIndex = boardFocusedTransport.IndexOf("selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext())", StringComparison.Ordinal);
-        int successIndex = boardFocusedTransport.IndexOf("TacticalCommandResult.Success($\"Boarding", StringComparison.Ordinal);
+        int boardAllBranchIndex = processTransport.IndexOf("result.Kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport", StringComparison.Ordinal);
+        int clearModeIndex = processTransport.IndexOf("context.ClearHudCommandMode?.Invoke()", boardAllBranchIndex, StringComparison.Ordinal);
+        int successIndex = processTransport.IndexOf("context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result))", boardAllBranchIndex, StringComparison.Ordinal);
 
+        Assert.GreaterOrEqual(boardAllBranchIndex, 0, "Successful Board All results must have an explicit presentation branch.");
         Assert.GreaterOrEqual(clearModeIndex, 0, "Successful Board All must clear Board command mode so BOARD ALL and CANCEL disappear.");
         Assert.GreaterOrEqual(successIndex, 0, "Successful Board All must still show a success message.");
         Assert.Less(clearModeIndex, successIndex, "Clear command mode before showing the success result so the message remains but action buttons are hidden.");

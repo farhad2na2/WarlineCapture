@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `87 / 113 complete (77.0%)`.
+- Checklist progress: `91 / 113 complete (80.5%)`.
 - In progress: `1`.
-- Remaining open: `25`.
-- Phase progress: `9 / 13 phases complete; 1 in progress; 3 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `359` after excluding `106` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Remaining open: `21`.
+- Phase progress: `10 / 13 phases complete; 1 in progress; 2 not started`.
+- Authoritative non-ECS runtime `*System` inventory: `352` after excluding `106` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `263` ConvertToSystemBase, `69` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `256` ConvertToSystemBase, `69` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
 - Converted to `SystemBase`: `1`.
-- Folded into ECS owners/jobs: `30`.
+- Folded into ECS owners/jobs: `37`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `359`.
+- Remaining plain runtime gameplay `*System` classes: `352`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 folded initial-spawn query and startup-gate helpers into `InitialUnitsSpawnSystem` and regenerated the authoritative inventory.
+- Last implementation update: 2026-06-15 moved Board All transport policy from the managed selection shell into ECS transport command processing.
 
 ## Architecture Rules
 
@@ -530,7 +530,7 @@ Progress notes:
 
 ## Phase 9: Query, Rule, Cell, And Helper Cleanup
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Remove misleading standalone non-ECS helper `*System` types.
@@ -547,9 +547,9 @@ Implementation steps:
 - [x] Fold transport boarding helper logic into the transport command ECS owner or private helper structs inside that owner.
 - [x] Fold map-surface command target logic into the pointer target boundary or map-surface ECS owner.
 - [x] Fold road footprint/grid helper logic into road/building ECS owners.
-- [~] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
-- [ ] Remove or rename files only when Unity `.meta` preservation is planned.
-- [ ] Add tests around helper behavior before folding risky algorithms.
+- [x] Fold small initial spawn cell/helper systems into initial spawn ECS owners.
+- [x] Remove or rename files only when Unity `.meta` preservation is planned.
+- [x] Add tests around helper behavior before folding risky algorithms.
 
 Acceptance checks:
 
@@ -577,10 +577,18 @@ Progress notes:
 - 2026-06-15: Continued the initial spawn helper fold by folding `InitialFactionSpawnSnapshotSystem` and `InitialRespawnQueueProjectionSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns faction-spawn buffer snapshotting, initial respawn queue projection, and respawn queue random-state writeback directly; the standalone helper assets and `.meta` files were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `365` to `363`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5`, `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Continued the initial spawn helper fold by folding `InitialAirPlatformSpawnSystem` and `InitialBlockerSpawnSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns configured helipad/airport spawn-point selection and initial blocker batch spawning directly; the standalone helper assets and `.meta` files were removed, and focused tests now exercise the owner APIs. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `363` to `361`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
 - 2026-06-15: Continued the initial spawn helper fold by folding `InitialUnitsSpawnQuerySystem` and `InitialUnitsSpawnStartupGateSystem` into the initial spawn ECS owner. `InitialUnitsSpawnSystem` now owns its cached entity queries directly and evaluates the runtime play/boundary startup gate without standalone helper systems; the standalone helper assets and `.meta` files were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `361` to `359`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialBuildingBoundarySystem`, which only wrapped direct boundary buffer access. Its runtime spawn request, configured spawnable read-model, and faction production spawn-point buffer access were inlined at the existing initial building and initial spawn callers without adding a replacement helper shell; the standalone helper asset and `.meta` file were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `359` to `358`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5`, `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialBuildingSpawnableSystem`, which only wrapped configured building spawnable lookup. `InitialConfiguredBuildingRequestSystem` and `InitialFactionBaseRequestSystem` now resolve configured spawnable read models directly at their existing call sites; the standalone helper asset and `.meta` file were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `358` to `357`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5`, `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialBaseWallRunRequestSystem`, which was constructed only by `InitialFactionBaseRequestSystem`. The faction-base request owner now generates initial base wall-run spawn requests directly with the same wall-run origin and request-buffer data; the standalone helper asset and `.meta` file were removed. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, reducing the authoritative runtime non-ECS denominator from `357` to `356`. Architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`. `InitialFactionBaseValidationTests.RunBatchValidation` was attempted twice and failed in the existing runtime placement smoke path with `Faction 2 wall run 1 should spawn at anchor (150, 50)`; that assertion exercises direct runtime placement, not the folded request-owner path, so it is recorded as a validation caveat for follow-up.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialBuildingCompletionSystem`, which was owned only by `InitialUnitsSpawnSystem`. The initial spawn ECS owner now drains completed initial building spawn requests, removes handled request records, and sets the initial camera focus for the player base core directly. Removed the standalone helper asset and `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `356` to `355`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialConfiguredBuildingRequestSystem`, which was called only by `InitialUnitsSpawnSystem` and focused tests. The initial spawn ECS owner now resolves configured building entries, validates configured spawnable read models, emits `BuildingRuntimeSpawnRequest` records, and reports missing faction/spawnable diagnostics directly. Updated focused tests to call the owner API, removed the standalone helper asset and `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `355` to `354`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Continued the initial spawn helper fold by removing `InitialSpawnDiagnosticLogSystem`, which was only a queue-writing wrapper used by `InitialUnitsSpawnSystem` and focused tests. Diagnostic queue creation and log/warning writes now live in `InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter`, keeping diagnostic state owner-local while preserving the existing `InitialSpawnDiagnosticLogQueueComponent` and `InitialSpawnDiagnosticLogComponent` payloads. Updated focused tests to use the nested owner writer, removed the standalone helper asset and `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `354` to `353`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5`, `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=6`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`.
+- 2026-06-15: Completed the small owner-local initial spawn helper fold by removing `InitialFactionBaseRequestSystem`, which was only owned by `InitialUnitsSpawnSystem`. The initial spawn ECS owner now resolves faction-base wall/gate/core spawnables, calculates base-wall runs and gate flanks, emits faction-base `BuildingRuntimeSpawnRequest` records, and marks the player base core request entry directly. Removed the standalone helper asset and `.meta`, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the authoritative runtime non-ECS denominator from `353` to `352`. Focused Unity validation passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=5` and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`. The remaining initial-named non-ECS classes are not small owner-local helpers: `InitialFactionSpawnCellSystem` is a managed bootstrap fallback boundary, and `InitialUnitSpawnApplySystem` / `InitialUnitSpawnResetSystem` are shared by map vehicle placement and initial spawn.
+- 2026-06-15: Added focused owner-level coverage for the folded faction-base request generator. `InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests` now builds a minimal building runtime boundary read model, invokes `InitialUnitsSpawnSystem.EnqueueInitialFactionBaseRequests`, and asserts sequential request IDs, wall-run segment requests, gate-flank wall requests, gate building requests, and the player base-core entry marker. The focused resource/building batch now runs 6 methods and passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=6`; architecture validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`. Phase 9 is complete; the remaining initial-named non-ECS classes are intentionally deferred to later boundary phases rather than treated as small helper folds.
 
 ## Phase 10: Bootstrap, Composition, And Runtime Lifecycle
 
-Status: [ ]
+Status: [~]
 
 Purpose:
 Reduce broad composition/startup systems without turning them into gameplay shells.
@@ -593,8 +601,8 @@ Recommended disposition:
 
 Implementation steps:
 
-- [ ] Audit `SelectionGameplayStartupSystem` responsibilities after command conversion.
-- [ ] Move remaining selection gameplay policy into ECS systems.
+- [x] Audit `SelectionGameplayStartupSystem` responsibilities after command conversion.
+- [~] Move remaining selection gameplay policy into ECS systems.
 - [ ] Leave only binding/composition responsibilities at the managed scene edge.
 - [ ] Audit `MatchBootstrapSystem`, `MenuBootstrapSystem`, `GameplayFeatureStartupSystem`, and `ManagedGameplayStartupSystem`.
 - [ ] Move authored data projection into ECS initialization systems where safe.
@@ -606,6 +614,11 @@ Acceptance checks:
 - Bootstrap/composition code does not own mission, combat, selection, production, or AI policy.
 - Runtime gameplay policy lives in ECS systems.
 - Scene/UI wiring remains explicit and serialized.
+
+Progress notes:
+
+- 2026-06-15: Audited `SelectionGameplayStartupSystem` after the command conversion phases. Responsibilities now split into four buckets. Managed boundary responsibilities that should remain at the scene edge: UI binding, HUD feedback/panel presentation, command-mode button visibility, camera/input pointer state, marker visibility, selected-building presentation cleanup, and explicit serialized/runtime dependencies. Converted ECS request/result drains already delegated from the shell: Select All, Deselect All, selection-mode enter/exit, move/attack/scan/board target-mode entry, cancel active command mode, immediate selected-unit commands, resolved Move/Attack/Scan/Transport requests, and focused missile-launcher radar attack. Remaining gameplay-policy candidates to move next: the focused/Board All transport path still resolves a selected transport, scans selected soldiers, plans approach cells, issues move orders, and applies boarding state directly from the managed shell; the destroy-selected-building fallback still executes as a managed building boundary; selection-cache/focus cleanup and camera-aware rectangle selection remain transition-boundary work. Recommended next slice: convert `BoardAllSelectedTransport` / `BoardNearestSoldiers` from a direct `RtsSelectionFocusCommandSystem` callback into an ECS transport command request/result processor, preserving immediate "requested" feedback and result feedback while leaving HUD/camera/marker cleanup in `SelectionGameplayStartupSystem`.
+- 2026-06-15: Began moving remaining selection gameplay policy by converting `BoardAllSelectedTransport` and `BoardNearestSoldiers` from direct `RtsSelectionFocusCommandSystem` / `SelectionGameplayStartupSystem` callbacks into `TransportBoardingCommandSystem` request/result processing. The UI still queues the same command intent, `RtsSelectionInputSystem` now classifies it as transport work, and `RtsSelectionCommandResultFlushSystem` owns HUD cleanup/result feedback after accepted transport results. Removed the managed `BoardFocusedTransport` / `TryIssueFocusedTransportBoarding` path and its old candidate job from `SelectionGameplayStartupSystem`; approach-cell planning now completes before movement/order mutations inside the ECS transport command owner. Focused validation passed with `[RtsSelectionInputSystemValidation] result=Passed tests=49`, `[UnitTransportValidation] result=Passed tests=20`, and `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=3`. Remaining selection-policy candidates: destroy-selected-building managed boundary fallback, selection-cache/focus cleanup, and camera-aware rectangle selection.
 
 ## Phase 11: Visual, Camera, Prefab, And Environment Boundaries
 

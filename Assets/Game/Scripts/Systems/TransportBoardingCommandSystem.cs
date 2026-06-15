@@ -44,12 +44,31 @@ public partial struct TransportBoardingCommandSystem : ISystem
         public bool DirectBoarding;
     }
 
+    private readonly struct BoardAllTransportCandidate : System.IComparable<BoardAllTransportCandidate>
+    {
+        public readonly Entity Entity;
+        public readonly int Distance;
+
+        public BoardAllTransportCandidate(Entity entity, int distance)
+        {
+            Entity = entity;
+            Distance = distance;
+        }
+
+        public int CompareTo(BoardAllTransportCandidate other)
+        {
+            int distanceCompare = Distance.CompareTo(other.Distance);
+            return distanceCompare != 0 ? distanceCompare : Entity.Index.CompareTo(other.Entity.Index);
+        }
+    }
+
     private bool _queriesInitialized;
     private EntityQuery _commandQueueQuery;
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _selectedTagQuery;
     private EntityQuery _gridPathingQuery;
     private EntityQuery _allSelectableQuery;
+    private EntityQuery _boardingCandidateQuery;
     private EntityQuery _transportBoardingTargetQuery;
     private EntityQuery _pathingLiveUnitsQuery;
 
@@ -87,6 +106,12 @@ public partial struct TransportBoardingCommandSystem : ISystem
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<LocalToWorld>());
+        _boardingCandidateQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
+            ComponentType.ReadOnly<UnitFootprint>(),
+            ComponentType.ReadOnly<UnitMovementBehavior>());
         _transportBoardingTargetQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
         _pathingLiveUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
         {
@@ -155,6 +180,16 @@ public partial struct TransportBoardingCommandSystem : ISystem
                     request,
                     transportAirPickupSystem,
                     moveOrderSystem),
+                RtsSelectionCommandIntentKind.BoardNearestSoldiers => ProcessBoardAllSelectedTransportRequest(
+                    em,
+                    request,
+                    transportCapacitySystem,
+                    selectionStateSystem),
+                RtsSelectionCommandIntentKind.BoardAllSelectedTransport => ProcessBoardAllSelectedTransportRequest(
+                    em,
+                    request,
+                    transportCapacitySystem,
+                    selectionStateSystem),
                 RtsSelectionCommandIntentKind.DisembarkTransportPassenger => ProcessDisembarkTransportPassengerRequest(
                     em,
                     request,
@@ -249,6 +284,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return kind == RtsSelectionCommandIntentKind.BoardTransport ||
                kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
+               kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
+               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger;
     }
@@ -361,6 +398,42 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return ToBoardingCommandResultElement(request, result);
     }
 
+    private RtsSelectionCommandResultElement ProcessBoardAllSelectedTransportRequest(
+        EntityManager em,
+        RtsSelectionCommandIntentRequestElement request,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        SelectionStateSystem selectionStateSystem)
+    {
+        if (!TryResolveSelectedBoardTransport(em, selectionStateSystem, out Entity transport))
+        {
+            return ToBoardAllCommandResultElement(
+                request,
+                false,
+                TacticalCommandReasonCode.CommandUnavailable,
+                "Select a transport vehicle or aircraft first.");
+        }
+
+        if (!TryIssueBoardNearestSoldierOrders(
+                em,
+                transport,
+                transportCapacitySystem,
+                out int orderedCount))
+        {
+            return ToBoardAllCommandResultElement(
+                request,
+                false,
+                TacticalCommandReasonCode.CommandUnavailable,
+                "No nearby soldiers can board this transport.");
+        }
+
+        string message = orderedCount == 1 ? "Boarding 1 unit." : $"Boarding {orderedCount} units.";
+        return ToBoardAllCommandResultElement(
+            request,
+            true,
+            TacticalCommandReasonCode.None,
+            message);
+    }
+
     private static RtsSelectionCommandResultElement ToBoardingCommandResultElement(
         RtsSelectionCommandIntentRequestElement request,
         Result result)
@@ -384,6 +457,26 @@ public partial struct TransportBoardingCommandSystem : ISystem
             HasTargetCell = result.Accepted ? (byte)1 : (byte)0,
             HasWorldPosition = result.Accepted ? (byte)1 : (byte)0,
             ShowWorldMarkers = result.Accepted ? (byte)1 : (byte)0
+        };
+    }
+
+    private static RtsSelectionCommandResultElement ToBoardAllCommandResultElement(
+        RtsSelectionCommandIntentRequestElement request,
+        bool accepted,
+        TacticalCommandReasonCode reasonCode,
+        string message)
+    {
+        return new RtsSelectionCommandResultElement
+        {
+            Kind = request.Kind,
+            RequestId = request.RequestId,
+            Frame = request.Frame,
+            CommandMode = (int)TacticalCommandMode.Board,
+            HasCommandResult = 1,
+            Accepted = accepted ? (byte)1 : (byte)0,
+            ReasonCode = accepted ? 0 : (int)reasonCode,
+            FeedbackLifetime = RtsSelectionCommandFeedbackLifetime.Transient,
+            Message = new FixedString64Bytes(message ?? string.Empty)
         };
     }
 
@@ -935,6 +1028,206 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
         float3 markerPosition = em.GetComponentData<LocalTransform>(transport).Position;
         return Result.AcceptedAt(transportCell, markerPosition, 0);
+    }
+
+    private bool TryResolveSelectedBoardTransport(
+        EntityManager em,
+        SelectionStateSystem selectionStateSystem,
+        out Entity transport)
+    {
+        transport = Entity.Null;
+        EnsureEntityQueries(em);
+        if (selectionStateSystem != null &&
+            selectionStateSystem.FocusedUnit != Entity.Null &&
+            IsBoardablePlayerTransport(em, selectionStateSystem.FocusedUnit))
+        {
+            transport = selectionStateSystem.FocusedUnit;
+            return true;
+        }
+
+        if (_selectedTagQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity selected = entities[i];
+                if (!IsBoardablePlayerTransport(em, selected))
+                    continue;
+
+                transport = selected;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryIssueBoardNearestSoldierOrders(
+        EntityManager em,
+        Entity transport,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        out int orderedCount)
+    {
+        orderedCount = 0;
+        EnsureEntityQueries(em);
+        if (!IsBoardablePlayerTransport(em, transport))
+            return false;
+
+        bool transportLanded = IsTransportLandedForBoarding(em, transport);
+        if (!transportLanded || !transportCapacitySystem.TryEnsureTransportCapacity(em, transport))
+            return false;
+
+        int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+        int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);
+        int availableSeats = capacity - occupiedSeats;
+        if (availableSeats <= 0 || _gridPathingQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+        NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        NativeBitArray blocked = blockerData.Blocked;
+        NativeArray<byte> friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
+        NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+
+        int liveUnitCount = math.max(1, _pathingLiveUnitsQuery.CalculateEntityCount());
+        using NativeList<Entity> liveUnitEntities = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitGrid> liveUnitGrids = new(liveUnitCount, Allocator.Temp);
+        using NativeList<UnitFootprint> liveUnitFootprints = new(liveUnitCount, Allocator.Temp);
+        CollectPathingLiveUnits(em, liveUnitEntities, liveUnitGrids, liveUnitFootprints);
+        NativeArray<Entity> liveUnitEntityArray = liveUnitEntities.AsArray();
+        NativeArray<UnitGrid> liveUnitGridArray = liveUnitGrids.AsArray();
+        NativeArray<UnitFootprint> liveUnitFootprintArray = liveUnitFootprints.AsArray();
+
+        List<BoardAllTransportCandidate> candidates = new(math.max(1, _boardingCandidateQuery.CalculateEntityCount()));
+        CollectNearestBoardingCandidates(em, transport, candidates);
+        if (candidates.Count == 0)
+            return false;
+
+        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
+        int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
+        int2 boardingTransportSize = em.HasComponent<UnitAirMovement>(transport) ? new int2(1, 1) : transportSize;
+        int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
+        HashSet<int> reservedBoardingCells = new();
+        List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats));
+
+        for (int i = 0; i < candidates.Count && plannedOrders.Count < availableSeats; i++)
+        {
+            Entity passenger = candidates[i].Entity;
+            if (!em.Exists(passenger) || !IsSoldierBoardingCandidate(em, passenger))
+                continue;
+
+            int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
+            int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
+            byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
+            if (!TryFindTransportApproachCell(
+                    grid,
+                    walkable,
+                    blocked,
+                    friendlyPassFactionIds,
+                    occupied,
+                    transportCell,
+                    boardingTransportSize,
+                    referenceCell,
+                    passengerFootprint,
+                    passenger,
+                    liveUnitEntityArray,
+                    liveUnitGridArray,
+                    liveUnitFootprintArray,
+                    transport,
+                    transportCell,
+                    transportSize,
+                    reservedBoardingCells,
+                    directBoardingCells,
+                    passengerFaction,
+                    out int2 goal))
+            {
+                continue;
+            }
+
+            ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+            plannedOrders.Add(new PendingTransportBoardingOrder
+            {
+                Passenger = passenger,
+                PassengerCell = referenceCell,
+                Goal = goal,
+                DirectBoarding = goal.Equals(referenceCell)
+            });
+        }
+
+        if (plannedOrders.Count <= 0)
+            return false;
+
+        var passengerStateSystem = new UnitTransportPassengerStateSystem();
+        EntityCommandBuffer boardingStateEcb = new(Allocator.Temp);
+        try
+        {
+            for (int i = 0; i < plannedOrders.Count; i++)
+            {
+                Entity passenger = plannedOrders[i].Passenger;
+                if (!em.Exists(passenger) || !IsSoldierBoardingCandidate(em, passenger))
+                    continue;
+
+                UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
+                UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, passenger, plannedOrders[i].Goal);
+                passengerStateSystem.ApplyBoardingOrderState(
+                    em,
+                    ref boardingStateEcb,
+                    passenger,
+                    transport,
+                    plannedOrders[i].Goal);
+                orderedCount++;
+            }
+
+            boardingStateEcb.Playback(em);
+        }
+        finally
+        {
+            boardingStateEcb.Dispose();
+        }
+
+        return orderedCount > 0;
+    }
+
+    private void CollectNearestBoardingCandidates(
+        EntityManager em,
+        Entity transport,
+        List<BoardAllTransportCandidate> candidates)
+    {
+        candidates.Clear();
+        EnsureEntityQueries(em);
+        if (_boardingCandidateQuery.IsEmptyIgnoreFilter || !em.HasComponent<UnitGrid>(transport))
+            return;
+
+        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = _boardingCandidateQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if (candidate == transport ||
+                    em.HasComponent<UnitTransportBoardingTarget>(candidate) ||
+                    !IsSoldierBoardingCandidate(em, candidate))
+                {
+                    continue;
+                }
+
+                int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
+                int distance = math.abs(cell.x - transportCell.x) + math.abs(cell.y - transportCell.y);
+                candidates.Add(new BoardAllTransportCandidate(candidate, distance));
+            }
+        }
+
+        candidates.Sort();
     }
 
     public bool IsBoardablePlayerTransportClick(

@@ -7,8 +7,6 @@ public sealed class RtsSelectionFocusCommandSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate TacticalCommandResult ValidateControllableEntityDelegate(Entity entity);
-    public delegate bool IsBoardPassengerCandidateDelegate(EntityManager em, Entity entity);
-    public delegate bool IsBoardTransportCandidateDelegate(EntityManager em, Entity entity);
 
     public readonly struct Context
     {
@@ -27,7 +25,6 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action<EntityManager, Entity> ApplyHudSelection;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
         public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
-        public readonly Action<BoardCommandModeDirection, bool> ApplyHudBoardCommandMode;
         public readonly Action ClearHudSelection;
         public readonly Action ClearHudCommandMode;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -36,9 +33,6 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action<string> LogSelectionDiagnostic;
         public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
         public readonly ValidateControllableEntityDelegate ValidateControllableEntity;
-        public readonly IsBoardPassengerCandidateDelegate IsBoardPassengerCandidate;
-        public readonly IsBoardTransportCandidateDelegate IsBoardTransportCandidate;
-        public readonly Action BoardFocusedTransport;
         public readonly Func<Vector2, bool> TryFocusScreenPosition;
 
         public Context(
@@ -57,7 +51,6 @@ public sealed class RtsSelectionFocusCommandSystem
             Action<EntityManager, Entity> applyHudSelection,
             Action<TacticalCommandResult> applyHudCommandResult,
             Action<TacticalCommandMode> applyHudCommandMode,
-            Action<BoardCommandModeDirection, bool> applyHudBoardCommandMode,
             Action clearHudSelection,
             Action clearHudCommandMode,
             Action<bool> setHudWorldMarkersVisible,
@@ -66,9 +59,6 @@ public sealed class RtsSelectionFocusCommandSystem
             Action<string> logSelectionDiagnostic,
             FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
             ValidateControllableEntityDelegate validateControllableEntity,
-            IsBoardPassengerCandidateDelegate isBoardPassengerCandidate,
-            IsBoardTransportCandidateDelegate isBoardTransportCandidate,
-            Action boardFocusedTransport,
             Func<Vector2, bool> tryFocusScreenPosition)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
@@ -86,7 +76,6 @@ public sealed class RtsSelectionFocusCommandSystem
             ApplyHudSelection = applyHudSelection;
             ApplyHudCommandResult = applyHudCommandResult;
             ApplyHudCommandMode = applyHudCommandMode;
-            ApplyHudBoardCommandMode = applyHudBoardCommandMode;
             ClearHudSelection = clearHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
@@ -95,9 +84,6 @@ public sealed class RtsSelectionFocusCommandSystem
             LogSelectionDiagnostic = logSelectionDiagnostic;
             DescribeEntity = describeEntity;
             ValidateControllableEntity = validateControllableEntity;
-            IsBoardPassengerCandidate = isBoardPassengerCandidate;
-            IsBoardTransportCandidate = isBoardTransportCandidate;
-            BoardFocusedTransport = boardFocusedTransport;
             TryFocusScreenPosition = tryFocusScreenPosition;
         }
     }
@@ -253,9 +239,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
                kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
                kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
-               kind == RtsSelectionCommandIntentKind.DeselectAll ||
-               kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
-               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport;
+               kind == RtsSelectionCommandIntentKind.DeselectAll;
     }
 
     private bool ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentRequestElement request)
@@ -282,13 +266,6 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
-                return true;
-            case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
-                context.InputSystem.ClearActiveCommandMode();
-                context.BoardFocusedTransport?.Invoke();
-                return true;
-            case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
-                context.BoardFocusedTransport?.Invoke();
                 return true;
             default:
                 return false;

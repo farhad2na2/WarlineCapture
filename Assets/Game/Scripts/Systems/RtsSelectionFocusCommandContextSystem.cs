@@ -24,9 +24,6 @@ public sealed class RtsSelectionFocusCommandContextSystem
         Action<string> logSelectionDiagnostic,
         FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
         RtsSelectionFocusCommandSystem.ValidateControllableEntityDelegate validateControllableEntity,
-        RtsSelectionFocusCommandSystem.IsBoardPassengerCandidateDelegate isBoardPassengerCandidate,
-        RtsSelectionFocusCommandSystem.IsBoardTransportCandidateDelegate isBoardTransportCandidate,
-        Action boardFocusedTransport,
         Func<Vector2, bool> tryFocusScreenPosition)
     {
         return new RtsSelectionFocusCommandSystem.Context(
@@ -45,10 +42,6 @@ public sealed class RtsSelectionFocusCommandContextSystem
             (em, entity) => hudFeedbackSystem.ApplySelection(hudFeedbackContext, em, entity),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
             mode => hudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
-            (direction, boardAllInteractable) => hudFeedbackSystem.ApplyBoardCommandMode(
-                hudFeedbackContext,
-                direction,
-                boardAllInteractable),
             () => hudFeedbackSystem.ClearSelection(hudFeedbackContext),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
             visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
@@ -57,9 +50,6 @@ public sealed class RtsSelectionFocusCommandContextSystem
             logSelectionDiagnostic,
             describeEntity,
             validateControllableEntity,
-            isBoardPassengerCandidate,
-            isBoardTransportCandidate,
-            boardFocusedTransport,
             tryFocusScreenPosition);
     }
 }

@@ -686,8 +686,6 @@ public sealed class RtsSelectionInputSystem
                 case RtsSelectionCommandIntentKind.EnterSelectionMode:
                 case RtsSelectionCommandIntentKind.ExitSelectionMode:
                 case RtsSelectionCommandIntentKind.DeselectAll:
-                case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
-                case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
                     return true;
             }
         }
@@ -742,6 +740,8 @@ public sealed class RtsSelectionInputSystem
         return kind == RtsSelectionCommandIntentKind.BoardTransport ||
                kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger ||
+               kind == RtsSelectionCommandIntentKind.BoardNearestSoldiers ||
+               kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
                kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger;
     }

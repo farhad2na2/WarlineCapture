@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class CitizenVisibleUnitSystem
+internal sealed partial class CitizenVisibleUnitSystem : SystemBase
 {
     private const float VisibleCitizenSpawnDistance = 140f;
     private const float VisibleCitizenDespawnDistance = 170f;
@@ -13,6 +13,15 @@ internal sealed class CitizenVisibleUnitSystem
     private readonly MapSurfaceSpawnGrounding _spawnGroundingSystem = new();
 
     public delegate bool HandleCitizenDeathAction(int citizenId, string reason);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void SyncVisibleCitizens(
         CitizenPopulationStateSystem state,

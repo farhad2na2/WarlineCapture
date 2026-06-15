@@ -3,13 +3,22 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class FocusedUnitLifecycleSystem
+public sealed partial class FocusedUnitLifecycleSystem : SystemBase
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate string DescribeEntityDelegate(EntityManager em, Entity entity);
 
     private World _queryWorld;
     private EntityQuery _selectedTagQuery;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void EnsureEntityQueries(EntityManager em)
     {
@@ -57,7 +66,7 @@ public sealed class FocusedUnitLifecycleSystem
         {
             if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
                 SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                    $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={Time.frameCount} " +
+                    $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={UnityEngine.Time.frameCount} " +
                     $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
             if (entities.Length > 0 || cacheBefore > 0)
                 logSelectionDiagnostic?.Invoke($"result=Clear reason={reason} selected={entities.Length} cache={cacheBefore}");
@@ -89,7 +98,7 @@ public sealed class FocusedUnitLifecycleSystem
         {
             if (!em.Exists(focusedUnit))
             {
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={Time.frameCount} focused={focusedUnit}");
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={UnityEngine.Time.frameCount} focused={focusedUnit}");
                 selectionStateSystem.ClearFocusedUnit();
                 focusedUnit = Entity.Null;
             }
@@ -98,7 +107,7 @@ public sealed class FocusedUnitLifecycleSystem
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
                 SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-                    $"[SelectionClick] ONE_SELECTION_DEBUG action=RemoveSelected reason=FocusedNotPlayer frame={Time.frameCount} " +
+                    $"[SelectionClick] ONE_SELECTION_DEBUG action=RemoveSelected reason=FocusedNotPlayer frame={UnityEngine.Time.frameCount} " +
                     $"focused={DescribeSelectionEntity(em, focusedUnit)}");
                 em.RemoveComponent<SelectedUnitTag>(focusedUnit);
             }
@@ -176,9 +185,9 @@ public sealed class FocusedUnitLifecycleSystem
             $"playerControlled={playerControlled} selectedAfterAdd={selectedAfterAdd} cacheable={cacheableAfterAdd} " +
             $"cacheCount={selectionStateSystem.CachedSelectedMoveEntities.Count} hasMove={em.HasComponent<UnitMove>(entity)} " +
             $"hasGrid={em.HasComponent<UnitGrid>(entity)} disabled={em.HasComponent<Disabled>(entity)} " +
-            $"passenger={em.HasComponent<UnitTransportPassenger>(entity)} frame={Time.frameCount}");
+            $"passenger={em.HasComponent<UnitTransportPassenger>(entity)} frame={UnityEngine.Time.frameCount}");
         SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
-            $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={Time.frameCount} " +
+            $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={UnityEngine.Time.frameCount} " +
             $"entity={description} selectedAfterAdd={selectedAfterAdd} cache={selectionStateSystem.CachedSelectedMoveEntities.Count} " +
             $"playerControlled={playerControlled}");
         logSelectionDiagnostic?.Invoke(
@@ -214,13 +223,13 @@ public sealed class FocusedUnitLifecycleSystem
         if (!tryGetClickedUnitEntity(screenPosition, em, out Entity bestEntity))
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={Time.frameCount}");
+                $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
         if (IsBuildingEntity(em, bestEntity))
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={Time.frameCount}");
+                $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
         if (!FocusUnitEntity(

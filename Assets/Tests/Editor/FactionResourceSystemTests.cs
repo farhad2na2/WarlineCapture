@@ -1,9 +1,33 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
 
 public sealed class FactionResourceSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new FactionResourceSystemTests();
+        try
+        {
+            tests.GetResourceTotals_CountsStorageBuildingsOnly();
+            tests.TryGetFactionResourceEconomy_SumsFactionStorageAndRates();
+            tests.DrainFactionResource_DrainsRequestedResourceAcrossFactionBuildings();
+            tests.TryGetPrimaryCapacityInfo_DerivesOilCapacityForFuelProducer();
+            tests.UpdateResourceProduction_ExtractsOilUpToCapacity();
+            tests.UpdateResourceProduction_ConvertsOilIntoFuel();
+            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=6");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[FactionResourceFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void GetResourceTotals_CountsStorageBuildingsOnly()
     {

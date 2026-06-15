@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class CitizenBuildingReadSystem
+internal sealed partial class CitizenBuildingReadSystem : SystemBase
 {
     private const float RuntimeBuildingListRefreshIntervalSeconds = 0.25f;
 
@@ -21,6 +22,15 @@ internal sealed class CitizenBuildingReadSystem
     public IReadOnlyList<int> CityHallBuildingIds => _runtimeCityHallBuildingIds;
     public IReadOnlyList<int> RefugeeTentBuildingIds => _runtimeRefugeeTentBuildingIds;
     public IReadOnlyList<int> MilitaryCampBuildingIds => _runtimeMilitaryCampBuildingIds;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Init(BuildingRuntimeQuerySystem buildingRuntimeQuerySystem, BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext)
     {

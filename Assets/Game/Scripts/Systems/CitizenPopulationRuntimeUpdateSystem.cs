@@ -4,9 +4,18 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class CitizenPopulationRuntimeUpdateSystem
+internal sealed partial class CitizenPopulationRuntimeUpdateSystem : SystemBase
 {
     private CitizenPopulationCompositionSystem.Result _systems;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Bind(CitizenPopulationCompositionSystem.Result systems)
     {
@@ -37,7 +46,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             SyncVisibleCitizens,
             RecalculateTotalsForLifecycle,
             _systems.UnitPathfindingPendingStateReader.HasPendingPathJob,
-            Time.time);
+            UnityEngine.Time.time);
     }
 
     public CitizenHouseholdRecordComponent StoreHousehold(CitizenHouseholdRecordComponent household)
@@ -63,7 +72,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 _systems.State,
                 citizenId,
                 reason,
-                Time.time,
+                UnityEngine.Time.time,
                 StoreCitizen))
             return false;
 
@@ -204,7 +213,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                         CitizenStatus.Fleeing,
                         fleeTargetBuildingId,
                         0f,
-                        Time.time);
+                        UnityEngine.Time.time);
                     StoreCitizen(citizen);
                 }
                 continue;
@@ -245,7 +254,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 nextStatus,
                 desiredTargetBuildingId,
                 stateDurationSeconds,
-                Time.time);
+                UnityEngine.Time.time);
             StoreCitizen(citizen);
         }
     }
@@ -264,14 +273,14 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 continue;
             if (!CitizenStatusTransitionSystem.IsTravelStatus(_systems.StatusTransitionSystem, citizen.Status))
                 continue;
-            if (citizen.StateEndsAt <= 0f || Time.time < citizen.StateEndsAt)
+            if (citizen.StateEndsAt <= 0f || UnityEngine.Time.time < citizen.StateEndsAt)
                 continue;
 
             CitizenStatusTransitionSystem.TryResolveCitizenArrival(
                 _systems.StatusTransitionSystem,
                 _systems.State,
                 citizenId,
-                Time.time,
+                UnityEngine.Time.time,
                 StoreCitizen);
         }
     }
@@ -289,7 +298,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             _systems.TravelSystem,
             _systems.WorldCamera,
             HasCitizenData(),
-            Time.time,
+            UnityEngine.Time.time,
             StoreCitizen,
             HandleCitizenDeath);
         if (_systems.EcsProjection.HasWorld)

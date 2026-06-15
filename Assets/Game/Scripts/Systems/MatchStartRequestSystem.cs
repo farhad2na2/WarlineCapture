@@ -1,9 +1,18 @@
 using Unity.Entities;
 
-public sealed class MatchStartRequestSystem
+public sealed partial class MatchStartRequestSystem : SystemBase
 {
     private World _world;
     private Entity _matchStartEntity;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public bool QueueStartAfterMatchLoaded(EntityManager em)
     {

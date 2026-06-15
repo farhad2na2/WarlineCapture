@@ -3,8 +3,17 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class FactionEconomyStartupSystem
+public sealed partial class FactionEconomyStartupSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
     {
         Initialize(em, aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);

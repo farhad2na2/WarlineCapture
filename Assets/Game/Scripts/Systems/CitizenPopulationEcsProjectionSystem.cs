@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal sealed class CitizenPopulationEcsProjectionSystem
+internal sealed partial class CitizenPopulationEcsProjectionSystem : SystemBase
 {
     private World _ecsWorld;
     private EntityManager _entityManager;
@@ -10,7 +10,16 @@ internal sealed class CitizenPopulationEcsProjectionSystem
     private EntityQuery _gridConfigQuery;
 
     public bool HasWorld => _ecsWorld != null && _ecsWorld.IsCreated;
-    public EntityManager EntityManager => _entityManager;
+    public new EntityManager EntityManager => _entityManager;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void ResolveEntityManager()
     {

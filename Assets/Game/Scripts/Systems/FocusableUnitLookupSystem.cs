@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class FocusableUnitLookupSystem
+public sealed partial class FocusableUnitLookupSystem : SystemBase
 {
     private const float ClickScreenFallbackTorsoHeight = 0.85f;
 
@@ -25,6 +25,15 @@ public sealed class FocusableUnitLookupSystem
     private readonly Dictionary<int, List<Entity>> _focusableUnitsByCell = new();
     private readonly Dictionary<Entity, FocusableUnitCoverage> _focusableUnitCoverage = new();
     private int _lastFocusableUnitCount = -1;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void EnsureEntityQueries(EntityManager em)
     {

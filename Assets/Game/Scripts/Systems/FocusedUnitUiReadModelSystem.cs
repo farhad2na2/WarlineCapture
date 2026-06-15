@@ -4,11 +4,20 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class FocusedUnitUiReadModelSystem
+public sealed partial class FocusedUnitUiReadModelSystem : SystemBase
 {
     private World _queryWorld;
     private EntityQuery _readModelQuery;
     private readonly List<SelectionUiReadModelLookup.TransportPassengerUiInfo> _passengerScratch = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Publish(
         EntityManager em,

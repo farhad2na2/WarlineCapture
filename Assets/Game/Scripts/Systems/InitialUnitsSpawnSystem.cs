@@ -300,28 +300,18 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 {
                     int2 cell = default;
                     float3 pos = default;
-                    bool foundPlatformSpawn = spawnPlan.IsAirUnit &&
-                        TryGetInitialAirPlatformSpawn(
-                            state.EntityManager,
-                            boundaryEntity,
-                            unitSpawn.FactionId,
-                            unitSpawn.SpawnOffset,
-                            grid,
-                            out cell,
-                            out pos);
-                    bool foundSpawnCell = foundPlatformSpawn ||
-                        TryFindInitialUnitSpawnCell(
-                            ref rng,
-                            grid,
-                            gridContext.Walkable,
-                            gridContext.DynamicBlocked,
-                            gridContext.Occupied,
-                            ref gridContext.Reserved,
-                            spawnPlan.UnitSpawnCenter,
-                            math.max(0, config.SpawnRadiusCells),
-                            spawnPlan.FootprintSize,
-                            spawnPlan.IsAirUnit,
-                            out cell);
+                    bool foundSpawnCell = TryFindInitialUnitSpawnCell(
+                        ref rng,
+                        grid,
+                        gridContext.Walkable,
+                        gridContext.DynamicBlocked,
+                        gridContext.Occupied,
+                        ref gridContext.Reserved,
+                        spawnPlan.UnitSpawnCenter,
+                        math.max(0, config.SpawnRadiusCells),
+                        spawnPlan.FootprintSize,
+                        spawnPlan.IsAirUnit,
+                        out cell);
                     if (!foundSpawnCell)
                     {
                         if (EnableInitialSpawnDiagnostics)
@@ -330,11 +320,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     }
 
                     byte faction = unitSpawn.FactionId;
-                    if (!foundPlatformSpawn)
-                    {
-                        pos = GridUtils.CellToWorldCenter(grid, cell);
-                        _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
-                    }
+                    pos = GridUtils.CellToWorldCenter(grid, cell);
+                    _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
                     Entity instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
                         em,
                         ecb,

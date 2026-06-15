@@ -59,6 +59,8 @@ public sealed class RtsSelectionCommandResultContextSystem
             ensureRuntimeSelectionDependencies,
             clearCurrentSelection,
             mode => hudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+            (direction, boardAllInteractable) =>
+                hudFeedbackSystem.ApplyBoardCommandMode(hudFeedbackContext, direction, boardAllInteractable),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
             () => hudFeedbackSystem.ClearSelection(hudFeedbackContext),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),

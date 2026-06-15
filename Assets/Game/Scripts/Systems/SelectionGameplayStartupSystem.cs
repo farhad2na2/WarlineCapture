@@ -270,39 +270,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessSelectionModeCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionModeCommandSystem.ProcessPendingRequests(
-                    em,
-                    Time.frameCount,
-                    out bool enteredSelectionMode,
-                    out bool exitedSelectionMode,
-                    out RtsSelectionCommandIntentKind lastProcessedKind))
-            {
-                return;
-            }
-
-            if (enteredSelectionMode)
-            {
-                SetExplicitAttackTargetModeActive(false);
-                buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                    buildingPlacementInteractionContext,
-                    "SelectionUiCommandSystem.EnterSelectionMode");
-            }
-
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            if (lastProcessedKind == RtsSelectionCommandIntentKind.EnterSelectionMode)
-                selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Select);
-            else if (lastProcessedKind == RtsSelectionCommandIntentKind.ExitSelectionMode)
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-
-            if (enteredSelectionMode)
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"selectionModeEntered source=ui frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
-            if (exitedSelectionMode)
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"selectionModeExited source=ui frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
         }
 
         void ProcessMoveTargetModeCommandRequests()
@@ -390,79 +360,16 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessScanTargetModeCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(em, Time.frameCount))
-            {
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            buildingPlacementInteractionSystem?.ExitBuildMode(buildingPlacementInteractionContext);
-            buildingPlacementInteractionSystem?.CancelBuildingPlacement(buildingPlacementInteractionContext);
-            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                buildingPlacementInteractionContext,
-                "SelectionUiCommandSystem.EnterScanTargetMode");
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Scan);
-            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                $"scanModeEntered result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
         }
 
         void ProcessBoardTargetModeCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
-                    em,
-                    Time.frameCount,
-                    out bool accepted,
-                    out bool toggledOff,
-                    out BoardCommandModeDirection direction,
-                    out Entity transport,
-                    out TacticalCommandReasonCode rejectionReason))
-            {
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                buildingPlacementInteractionContext,
-                "SelectionUiCommandSystem.EnterBoardTargetMode");
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-
-            if (toggledOff)
-            {
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"boardModeToggledOff frame={Time.frameCount}");
-                return;
-            }
-
-            if (!accepted)
-            {
-                string message = rejectionReason == TacticalCommandReasonCode.CommandUnavailable
-                    ? "Selected unit cannot board."
-                    : "Select units to board.";
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(rejectionReason, message));
-                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"boardModeEntered result=False reason={rejectionReason} message=\"{message}\" frame={Time.frameCount}");
-                return;
-            }
-
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
-            bool boardAllInteractable = direction == BoardCommandModeDirection.TransportToPassenger &&
-                                        transport != Entity.Null;
-            selectionHudFeedbackSystem.ApplyBoardCommandMode(
-                CreateHudFeedbackContext(),
-                direction,
-                boardAllInteractable);
-            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                $"boardModeEntered result=True direction={direction} transport={transport} frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount);
         }
 
         void ProcessCancelActiveCommandModeRequests()

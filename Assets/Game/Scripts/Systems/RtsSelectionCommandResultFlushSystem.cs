@@ -36,6 +36,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly ClearCurrentSelectionAction ClearCurrentSelection;
         public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
+        public readonly Action<BoardCommandModeDirection, bool> ApplyHudBoardCommandMode;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
         public readonly Action ClearHudSelection;
         public readonly Action ClearHudCommandMode;
@@ -76,6 +77,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             Action<EntityManager> ensureEntityQueries,
             ClearCurrentSelectionAction clearCurrentSelection,
             Action<TacticalCommandMode> applyHudCommandMode,
+            Action<BoardCommandModeDirection, bool> applyHudBoardCommandMode,
             Action<TacticalCommandResult> applyHudCommandResult,
             Action clearHudSelection,
             Action clearHudCommandMode,
@@ -115,6 +117,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             EnsureEntityQueries = ensureEntityQueries;
             ClearCurrentSelection = clearCurrentSelection;
             ApplyHudCommandMode = applyHudCommandMode;
+            ApplyHudBoardCommandMode = applyHudBoardCommandMode;
             ApplyHudCommandResult = applyHudCommandResult;
             ClearHudSelection = clearHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
@@ -251,6 +254,117 @@ public sealed class RtsSelectionCommandResultFlushSystem
         {
             context.LogSelectionClickDiagnostic?.Invoke($"moveModeEntered result=True frame={currentFrame}");
         }
+        return true;
+    }
+
+    public bool ProcessSelectionModeCommandRequests(Context context, int currentFrame)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionModeCommandSystem.ProcessPendingRequests(
+                em,
+                currentFrame,
+                out bool enteredSelectionMode,
+                out bool exitedSelectionMode,
+                out RtsSelectionCommandIntentKind lastProcessedKind))
+        {
+            return false;
+        }
+
+        if (enteredSelectionMode)
+        {
+            context.SetExplicitAttackTargetModeActive?.Invoke(false);
+            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                context.BuildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterSelectionMode");
+        }
+
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        if (lastProcessedKind == RtsSelectionCommandIntentKind.EnterSelectionMode)
+            context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Select);
+        else if (lastProcessedKind == RtsSelectionCommandIntentKind.ExitSelectionMode)
+            context.ClearHudCommandMode?.Invoke();
+
+        context.SetCameraDragging?.Invoke(false);
+
+        if (enteredSelectionMode)
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"selectionModeEntered source=ui frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
+        if (exitedSelectionMode)
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"selectionModeExited source=ui frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
+        return true;
+    }
+
+    public bool ProcessScanTargetModeCommandRequests(Context context, int currentFrame)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(em, currentFrame))
+        {
+            return false;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterScanTargetMode");
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
+        context.LogSelectionClickDiagnostic?.Invoke(
+            $"scanModeEntered result=True frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
+        return true;
+    }
+
+    public bool ProcessBoardTargetModeCommandRequests(Context context, int currentFrame)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+                em,
+                currentFrame,
+                out bool accepted,
+                out bool toggledOff,
+                out BoardCommandModeDirection direction,
+                out Entity transport,
+                out TacticalCommandReasonCode rejectionReason))
+        {
+            return false;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterBoardTargetMode");
+        context.SetCameraDragging?.Invoke(false);
+
+        if (toggledOff)
+        {
+            context.ClearHudCommandMode?.Invoke();
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionClickDiagnostic?.Invoke($"boardModeToggledOff frame={currentFrame}");
+            return true;
+        }
+
+        if (!accepted)
+        {
+            string message = rejectionReason == TacticalCommandReasonCode.CommandUnavailable
+                ? "Selected unit cannot board."
+                : "Select units to board.";
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason, message));
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"boardModeEntered result=False reason={rejectionReason} message=\"{message}\" frame={currentFrame}");
+            return true;
+        }
+
+        context.SetHudWorldMarkersVisible?.Invoke(true);
+        bool boardAllInteractable = direction == BoardCommandModeDirection.TransportToPassenger &&
+                                    transport != Entity.Null;
+        context.ApplyHudBoardCommandMode?.Invoke(direction, boardAllInteractable);
+        context.LogSelectionClickDiagnostic?.Invoke(
+            $"boardModeEntered result=True direction={direction} transport={transport} frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
         return true;
     }
 
@@ -694,6 +808,13 @@ public sealed class RtsSelectionCommandResultFlushSystem
         return result.Accepted != 0
             ? TacticalCommandResult.Success(message)
             : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode, message);
+    }
+
+    private static Vector2 SelectionPointerPosition(Context context)
+    {
+        return context.InputSystem != null
+            ? context.InputSystem.LastPointerPosition
+            : default;
     }
 
     private static TacticalCommandResult ToScanCommandResult(RtsSelectionCommandResultElement result)

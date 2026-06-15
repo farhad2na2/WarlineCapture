@@ -58,22 +58,22 @@ MonoBehaviour:
   canAttack: 1
   allowAutoEngage: 0
   usesTurretAim: 0
-  aggroRangeCells: 17
-  attackRange: 170
-  chaseBreakDistance: 220
-  attackCooldownSeconds: 1.05
-  attackDamage: 60
-  maxHealth: 540
-  attackImpactPrefab: {fileID: 8996519974687377870, guid: af7eda79b419d46fc92ffeab6a4efb75, type: 3}
-  muzzleFlashPrefab: {fileID: 73502491650677597, guid: 1479726847bd24759826ec7dd3193ea3, type: 3}
-  muzzleFlashHeightOffset: 0
-  muzzleFlashForwardOffset: 2
+  aggroRangeCells: 21
+  attackRange: 230
+  chaseBreakDistance: 300
+  attackCooldownSeconds: 2.8
+  attackDamage: 460
+  maxHealth: 600
+  attackImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  muzzleFlashPrefab: {fileID: 1133323983294967704, guid: a136b360a88d9471fa269eacd44323ee, type: 3}
+  muzzleFlashHeightOffset: 0.2
+  muzzleFlashForwardOffset: 3.2
   groundMissileLauncherConfig: {fileID: 0}
-  attackTraceColor: {r: 1, g: 0.7, b: 0.35, a: 1}
-  attackTraceWidth: 0.2
-  attackTraceScrollSpeed: 30
-  attackTraceDashDensity: 2
-  attackTraceVisibleSeconds: 0.12
+  attackTraceColor: {r: 1, g: 0.56, b: 0.2, a: 1}
+  attackTraceWidth: 0.5
+  attackTraceScrollSpeed: 10
+  attackTraceDashDensity: 1
+  attackTraceVisibleSeconds: 0.3
   attackTracerEveryNthShot: 1
   idleDelayMinSeconds: 5
   idleDelayMaxSeconds: 7

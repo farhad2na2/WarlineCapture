@@ -59,8 +59,8 @@ MonoBehaviour:
   aggroRangeCells: 18
   attackRange: 420
   chaseBreakDistance: 460
-  attackCooldownSeconds: 1.92
-  attackDamage: 120
+  attackCooldownSeconds: 2.2
+  attackDamage: 320
   maxHealth: 520
   attackImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
   muzzleFlashPrefab: {fileID: 0}

@@ -177,14 +177,18 @@ public class UnitGridAuthoring : MonoBehaviour
     public bool ProductionTransportRequiresAirportRunway => productionTransportRequiresAirportRunway;
     public bool ProductionTransportUsesRunwayLanding => productionTransportUsesRunwayLanding;
     public int SoldierTransportCapacity => Mathf.Max(0, soldierTransportCapacity);
-    public bool IsAirUnit => isAirUnit;
+    public bool IsAirUnit => config != null ? config.IsAirUnit : isAirUnit;
     public bool CanRequest => canRequest;
     public int Price => Mathf.Max(0, price);
     public bool ConfiguredAllowIdleWander => config != null ? config.AllowIdleWander : allowIdleWander;
     public float ConfiguredSpeed => Mathf.Max(0f, config != null ? config.Speed : speed);
     public int ConfiguredResourceHaulerBarrelCapacity => Mathf.Max(0, config != null ? config.ResourceHaulerBarrelCapacity : resourceHaulerBarrelCapacity);
     public bool ConfiguredCanAttack => config != null ? config.CanAttack : canAttack;
+    public bool ConfiguredAllowAutoEngage => config != null ? config.AllowAutoEngage : allowAutoEngage;
+    public int ConfiguredAggroRangeCells => Mathf.Max(0, config != null ? config.AggroRangeCells : aggroRangeCells);
     public float ConfiguredAttackRange => Mathf.Max(0f, config != null ? config.AttackRange : attackRange);
+    public float ConfiguredChaseBreakDistance => Mathf.Max(0f, config != null ? config.ChaseBreakDistance : chaseBreakDistance);
+    public float ConfiguredAttackCooldownSeconds => Mathf.Max(0.01f, config != null ? config.AttackCooldownSeconds : attackCooldownSeconds);
     public int ConfiguredAttackDamage => Mathf.Max(0, config != null ? config.AttackDamage : attackDamage);
     public int ConfiguredMaxHealth => Mathf.Max(1, config != null ? config.MaxHealth : maxHealth);
     public GroundMissileLauncherConfig GroundMissileLauncherConfig => config != null ? config.GroundMissileLauncherConfig : groundMissileLauncherConfig;
@@ -198,10 +202,10 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject MidLodPrefab => config != null ? config.MidLodPrefab : null;
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
-    public GameObject AttackImpactPrefab => attackImpactPrefab;
-    public GameObject MuzzleFlashPrefab => muzzleFlashPrefab;
-    public float MuzzleFlashHeightOffset => Mathf.Max(0f, muzzleFlashHeightOffset);
-    public float MuzzleFlashForwardOffset => Mathf.Max(0f, muzzleFlashForwardOffset);
+    public GameObject AttackImpactPrefab => config != null ? config.AttackImpactPrefab : attackImpactPrefab;
+    public GameObject MuzzleFlashPrefab => config != null ? config.MuzzleFlashPrefab : muzzleFlashPrefab;
+    public float MuzzleFlashHeightOffset => Mathf.Max(0f, config != null ? config.MuzzleFlashHeightOffset : muzzleFlashHeightOffset);
+    public float MuzzleFlashForwardOffset => Mathf.Max(0f, config != null ? config.MuzzleFlashForwardOffset : muzzleFlashForwardOffset);
     public GameObject UnitSelectionMarkerPrefab => config != null ? config.UnitSelectionMarkerPrefab : unitSelectionMarkerPrefab;
     public GameObject UnitHealthBarPrefab => config != null ? config.UnitHealthBarPrefab : unitHealthBarPrefab;
     public bool TintUnitModelRenderers => config != null ? config.TintUnitModelRenderers : tintUnitModelRenderers;
@@ -322,19 +326,25 @@ public class UnitGridAuthoring : MonoBehaviour
             AddComponent(entity, new Faction { Id = FactionIdentitySystem.NeutralFactionId });
             AddComponent(entity, new UnitCombat
             {
-                AggroRangeCells = math.max(0, authoring.aggroRangeCells),
-                ChaseBreakDistance = math.max(0f, authoring.chaseBreakDistance),
-                CanAttack = (byte)(authoring.canAttack ? 1 : 0),
-                AutoEngage = (byte)(authoring.allowAutoEngage ? 1 : 0)
+                AggroRangeCells = authoring.ConfiguredAggroRangeCells,
+                ChaseBreakDistance = authoring.ConfiguredChaseBreakDistance,
+                CanAttack = (byte)(authoring.ConfiguredCanAttack ? 1 : 0),
+                AutoEngage = (byte)(authoring.ConfiguredAllowAutoEngage ? 1 : 0)
             });
-            if (authoring.threatDetectionKind != ThreatDetectionKind.None && authoring.threatDetectionRadiusCells > 0)
+            ThreatDetectionKind threatDetectionKind = authoring.config != null
+                ? authoring.config.ThreatDetectionKind
+                : authoring.threatDetectionKind;
+            int threatDetectionRadiusCells = authoring.config != null
+                ? authoring.config.ThreatDetectionRadiusCells
+                : authoring.threatDetectionRadiusCells;
+            if (threatDetectionKind != ThreatDetectionKind.None && threatDetectionRadiusCells > 0)
             {
                 AddComponent(entity, new ThreatDetector
                 {
-                    Kind = (byte)authoring.threatDetectionKind,
-                    RadiusCells = math.max(0, authoring.threatDetectionRadiusCells)
+                    Kind = (byte)threatDetectionKind,
+                    RadiusCells = math.max(0, threatDetectionRadiusCells)
                 });
-                AddAirDefenseSupportProvider(entity, authoring.threatDetectionKind, authoring.threatDetectionRadiusCells);
+                AddAirDefenseSupportProvider(entity, threatDetectionKind, threatDetectionRadiusCells);
             }
 
             // Trace visuals resolve from the config asset when present, so config
@@ -347,9 +357,9 @@ public class UnitGridAuthoring : MonoBehaviour
             float traceVisibleSeconds = authoring.config != null ? authoring.config.AttackTraceVisibleSeconds : authoring.attackTraceVisibleSeconds;
             AddComponent(entity, new UnitAttack
             {
-                Range = math.max(0f, authoring.attackRange),
-                CooldownSeconds = math.max(0.01f, authoring.attackCooldownSeconds),
-                Damage = math.max(0, authoring.attackDamage),
+                Range = authoring.ConfiguredAttackRange,
+                CooldownSeconds = authoring.ConfiguredAttackCooldownSeconds,
+                Damage = authoring.ConfiguredAttackDamage,
                 TraceColor = new float4(traceColor.r, traceColor.g, traceColor.b, traceColor.a),
                 TraceWidth = math.max(0.01f, traceWidth),
                 TraceScrollSpeed = math.max(0.1f, traceScrollSpeed),
@@ -371,18 +381,10 @@ public class UnitGridAuthoring : MonoBehaviour
             }
             if (authoring.config != null)
                 DependsOn(authoring.config);
-            GameObject impactPrefab = authoring.config != null && authoring.config.AttackImpactPrefab != null
-                ? authoring.config.AttackImpactPrefab
-                : authoring.attackImpactPrefab;
-            GameObject muzzleFlashPrefab = authoring.config != null && authoring.config.MuzzleFlashPrefab != null
-                ? authoring.config.MuzzleFlashPrefab
-                : authoring.muzzleFlashPrefab;
-            float muzzleFlashHeightOffset = authoring.config != null
-                ? authoring.config.MuzzleFlashHeightOffset
-                : authoring.muzzleFlashHeightOffset;
-            float muzzleFlashForwardOffset = authoring.config != null
-                ? authoring.config.MuzzleFlashForwardOffset
-                : authoring.muzzleFlashForwardOffset;
+            GameObject impactPrefab = authoring.AttackImpactPrefab;
+            GameObject muzzleFlashPrefab = authoring.MuzzleFlashPrefab;
+            float muzzleFlashHeightOffset = authoring.MuzzleFlashHeightOffset;
+            float muzzleFlashForwardOffset = authoring.MuzzleFlashForwardOffset;
             if (impactPrefab != null)
             {
                 AddComponentObject(entity, new UnitAttackImpactVfxReference
@@ -402,7 +404,7 @@ public class UnitGridAuthoring : MonoBehaviour
             AddGroundMissileLauncherComponents(authoring, entity);
             AddAirMissileLauncherComponents(authoring, entity);
 
-            int maxHp = math.max(1, authoring.maxHealth);
+            int maxHp = authoring.ConfiguredMaxHealth;
             AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
             AddComponent(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
             AddComponent(entity, new UnitAttackTraceComponent { TimeRemaining = 0f, Phase = 0f });
@@ -410,8 +412,8 @@ public class UnitGridAuthoring : MonoBehaviour
             AddComponent(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(authoring.gameObject.name) });
             AddComponent(entity, new UnitDisplayInfo
             {
-                Name = new FixedString64Bytes(string.IsNullOrWhiteSpace(authoring.displayName) ? authoring.gameObject.name : authoring.displayName),
-                Description = new FixedString128Bytes(authoring.description ?? string.Empty)
+                Name = new FixedString64Bytes(authoring.ConfiguredDisplayName),
+                Description = new FixedString128Bytes(authoring.ConfiguredDescription)
             });
 
             AddComponent(entity, new UnitPrevWorldPos { Value = authoring.transform.position });
@@ -759,7 +761,7 @@ public class UnitGridAuthoring : MonoBehaviour
 
         private static bool ShouldUseDualSideAttackTrace(UnitGridAuthoring authoring)
         {
-            if (authoring == null || !authoring.isAirUnit)
+            if (authoring == null || !authoring.IsAirUnit)
                 return false;
 
             string sourceName = authoring.config != null ? authoring.config.name : authoring.gameObject.name;

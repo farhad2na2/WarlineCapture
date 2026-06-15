@@ -27,7 +27,7 @@ MonoBehaviour:
   missileTurnRateDegreesPerSecond: 220
   missileLifetimeSeconds: 7
   proximityFuseRadius: 4
-  airTargetDamage: 120
+  airTargetDamage: 420
   incomingMissileDamage: 9999
   trackingQuality: 0.75
   radarSupportRangeBonus: 80

@@ -11,6 +11,7 @@ Related sources:
 - `UIUX_Gameplay_Element_Alignment.md` defines the high-level UI element roles.
 - `Gameplay_UI_Integration_Handoff_Spec.md` defines `BattleHudGameplayBridge`.
 - `M01_FirstContact_Production_Contract.md` defines the first tutorial mission exception rules.
+- `Match_Unit_Command_Behavior_Spec.md` defines per-unit `HOLD`, `STOP`, and `SCAN` behavior, including aircraft return rules, scan auto-engage, and mixed-selection edge cases.
 - Runtime code currently lives under `RTSSelectionSystem`, `RtsSelectionInputSystem`, `SelectionStateSystem`, `SelectionUiQuerySystem`, `GamePointerInput`, and `BattleHudGameplayBridge`.
 
 ## Product Rule
@@ -170,9 +171,9 @@ After `ApplySelection`, command controls must use real selected-unit capability 
 |---|---|---|
 | `MOVE` | At least one selected unit can move and mission allows movement. | `NoSelection`, immobilized, mission restricted, invalid state. |
 | `ATTACK` | At least one selected unit has an attack command and mission allows combat. | `NoSelection`, non-combat unit, disarmed, mission restricted. |
-| `STOP` | Selected unit has active or interruptible orders. | `NoSelection`, no stoppable order. |
-| `HOLD` | Selected unit can hold/defend position. | `NoSelection`, command unavailable. |
-| `SCAN` | Mission scan rules allow scanning and required source/cooldown/charge/resource checks pass. Selection is not required by default. | Mission does not allow scan, scan unavailable, cooldown, no charges, insufficient resources, invalid target. |
+| `STOP` | Selected unit has active/interruption-capable orders or a unit-specific stop/return profile. Fixed-wing aircraft use return-to-base/staging behavior, not in-place stop. | `NoSelection`, no stoppable order, command unavailable, unit cannot be interrupted. |
+| `HOLD` | Selected unit can hold/defend, hover/loiter, guard, or use an authored hold profile. | `NoSelection`, command unavailable, unit cannot hold. |
+| `SCAN` | Mission/global scan rules allow scanning without selection, or a selected scan-capable unit/source passes cooldown/charge/resource checks. | Mission does not allow scan, scan unavailable, selected unit cannot scan, cooldown, no charges, insufficient resources, invalid target. |
 | `SUPPORT` | Mission support rules allow support and at least one equipped support ability is available. Selection is not required by default unless the chosen support ability requires a selected unit or target. | Mission does not allow support, support unavailable, locked, cooldown, no charges, insufficient resources, invalid target. |
 | `SPECIAL` | Selected unit/group has at least one available contextual ability. | Locked, cooldown, no charges, mission banned, invalid target requirement. |
 | `BUILD` | Mission and selected context allow build/production. | Mission does not allow build, insufficient resources, no builder/producer, locked. |

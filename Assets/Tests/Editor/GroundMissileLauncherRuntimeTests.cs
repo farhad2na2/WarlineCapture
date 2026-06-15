@@ -360,7 +360,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             ArcHeight = 0f,
             DamageRadius = 0f,
             Damage = 0,
-            FactionId = FactionIdentitySystem.PlayerFactionId
+            FactionId = FactionIdentity.PlayerFactionId
         });
 
         SystemHandle slopeSystem = world.CreateSystem<VehicleSlopeAlignmentSystem>();
@@ -535,14 +535,14 @@ public sealed class GroundMissileLauncherRuntimeTests
             originCell: new int2(120, 8),
             footprintCells: new int2(4, 4),
             position: new float3(122f, 0f, 10f),
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             health: 250);
         Entity breachTarget = CreateRuntimeBuildingTarget(
             em,
             originCell: new int2(20, 8),
             footprintCells: new int2(2, 2),
             position: new float3(21f, 0f, 9f),
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             health: 100);
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
         var selected = new NativeArray<Entity>(1, Allocator.Temp);
@@ -597,7 +597,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             originCell: new int2(2, 0),
             footprintCells: new int2(2, 2),
             position: new float3(2f, 0f, 0f),
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             health: 250);
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
         var selected = new NativeArray<Entity>(1, Allocator.Temp);
@@ -675,7 +675,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             originCell: new int2(120, 8),
             footprintCells: new int2(4, 4),
             position: new float3(122f, 0f, 10f),
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             health: 250);
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
 
@@ -746,7 +746,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             typeof(GroundMissileLauncherStateComponent),
             typeof(LocalTransform));
 
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = GridUtils.WorldToCell(new GridConfig { Width = 256, Height = 256, CellSize = 1f, Origin = float3.zero }, position) });
         em.SetComponentData(entity, new UnitMove
         {
@@ -809,13 +809,13 @@ public sealed class GroundMissileLauncherRuntimeTests
 
     private static Entity CreateTarget(EntityManager em, float3 position, int health)
     {
-        Entity entity = CreateHealthEntity(em, position, health, FactionIdentitySystem.EnemyFactionId);
+        Entity entity = CreateHealthEntity(em, position, health, FactionIdentity.EnemyFactionId);
         return entity;
     }
 
     private static Entity CreateFriendly(EntityManager em, float3 position, int health)
     {
-        return CreateHealthEntity(em, position, health, FactionIdentitySystem.PlayerFactionId);
+        return CreateHealthEntity(em, position, health, FactionIdentity.PlayerFactionId);
     }
 
     private static Entity CreateHealthEntity(EntityManager em, float3 position, int health, byte factionId)

@@ -78,25 +78,26 @@
   <rect x="440" y="740" width="340" height="58" rx="6" class="leaf"/>
   <text x="610" y="776" text-anchor="middle" class="small">Match HUD Spec</text>
   <path class="line" d="M610 798 L610 815"/>
-  <rect x="440" y="815" width="340" height="58" rx="6" class="leaf"/>
-  <text x="610" y="843" text-anchor="middle" class="small">Match Selection Spec</text>
-  <text x="610" y="866" text-anchor="middle" class="tiny">Mission Result State Spec</text>
-  <path class="line" d="M610 873 L610 890"/>
-  <rect x="440" y="890" width="340" height="58" rx="6" class="leaf"/>
-  <text x="610" y="926" text-anchor="middle" class="small">Level &amp; Mission Plan</text>
-  <path class="line" d="M610 948 L610 965"/>
-  <rect x="440" y="965" width="340" height="58" rx="6" class="leaf"/>
-  <text x="610" y="1001" text-anchor="middle" class="small">M01 First Contact Contract</text>
-  <path class="line" d="M610 1023 L610 1040"/>
-  <rect x="440" y="1040" width="340" height="58" rx="6" class="leaf"/>
-  <text x="610" y="1076" text-anchor="middle" class="small">FTUE &amp; Command Assistant</text>
-  <path class="line" d="M610 1098 L610 1130"/>
-  <rect x="440" y="1130" width="340" height="180" rx="6" class="leaf"/>
-  <text x="610" y="1165" text-anchor="middle" class="small">Campaign Chapters</text>
-  <text x="610" y="1195" text-anchor="middle" class="tiny">Ch01 First Response</text>
-  <text x="610" y="1222" text-anchor="middle" class="tiny">Ch02 Broken Grid</text>
-  <text x="610" y="1249" text-anchor="middle" class="tiny">Ch03 Hidden Network</text>
-  <text x="610" y="1276" text-anchor="middle" class="tiny">Ch04 / Ch05 Chapters</text>
+  <rect x="440" y="815" width="340" height="76" rx="6" class="leaf"/>
+  <text x="610" y="839" text-anchor="middle" class="small">Match Selection Spec</text>
+  <text x="610" y="862" text-anchor="middle" class="tiny">Unit Command Behavior Spec</text>
+  <text x="610" y="884" text-anchor="middle" class="tiny">Mission Result State Spec</text>
+  <path class="line" d="M610 891 L610 908"/>
+  <rect x="440" y="908" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="944" text-anchor="middle" class="small">Level &amp; Mission Plan</text>
+  <path class="line" d="M610 966 L610 983"/>
+  <rect x="440" y="983" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="1019" text-anchor="middle" class="small">M01 First Contact Contract</text>
+  <path class="line" d="M610 1041 L610 1058"/>
+  <rect x="440" y="1058" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="1094" text-anchor="middle" class="small">FTUE &amp; Command Assistant</text>
+  <path class="line" d="M610 1116 L610 1148"/>
+  <rect x="440" y="1148" width="340" height="180" rx="6" class="leaf"/>
+  <text x="610" y="1183" text-anchor="middle" class="small">Campaign Chapters</text>
+  <text x="610" y="1213" text-anchor="middle" class="tiny">Ch01 First Response</text>
+  <text x="610" y="1240" text-anchor="middle" class="tiny">Ch02 Broken Grid</text>
+  <text x="610" y="1267" text-anchor="middle" class="tiny">Ch03 Hidden Network</text>
+  <text x="610" y="1294" text-anchor="middle" class="tiny">Ch04 / Ch05 Chapters</text>
 
   <path class="line" d="M990 533 L990 590"/>
   <rect x="820" y="590" width="340" height="58" rx="6" class="leaf"/>

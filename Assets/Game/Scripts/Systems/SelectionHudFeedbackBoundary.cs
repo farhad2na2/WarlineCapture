@@ -31,6 +31,50 @@ public sealed class SelectionHudFeedbackBoundary
         }
     }
 
+    public readonly struct SelectedSummary
+    {
+        public readonly int UnitCount;
+        public readonly int SoldierCount;
+        public readonly int VehicleCount;
+        public readonly int AircraftCount;
+        public readonly int TransportCount;
+        public readonly int BuildingCount;
+        public readonly string Title;
+        public readonly string Subtitle;
+        public readonly string OrderText;
+        public readonly string HealthText;
+        public readonly float Health01;
+        public readonly SelectionSummaryPortraitKind PortraitKind;
+
+        public SelectedSummary(
+            int unitCount,
+            int soldierCount,
+            int vehicleCount,
+            int aircraftCount,
+            int transportCount,
+            int buildingCount,
+            string title,
+            string subtitle,
+            string orderText,
+            string healthText,
+            float health01,
+            SelectionSummaryPortraitKind portraitKind)
+        {
+            UnitCount = unitCount;
+            SoldierCount = soldierCount;
+            VehicleCount = vehicleCount;
+            AircraftCount = aircraftCount;
+            TransportCount = transportCount;
+            BuildingCount = buildingCount;
+            Title = title;
+            Subtitle = subtitle;
+            OrderText = orderText;
+            HealthText = healthText;
+            Health01 = health01;
+            PortraitKind = portraitKind;
+        }
+    }
+
     private IBattleHudRuntimeFeedbackView _battleHudView;
     private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
     private World _queryWorld;
@@ -239,7 +283,6 @@ public sealed class SelectionHudFeedbackBoundary
         SelectionStateSystem selectionStateSystem,
         FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
         FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
-        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
@@ -268,7 +311,6 @@ public sealed class SelectionHudFeedbackBoundary
                 context,
                 em,
                 selectedCount,
-                selectionSummaryQuerySystem,
                 tryGetAttackModeOrderSnapshot,
                 resolveActiveSquadTrayPortraitSprite,
                 hasSelectedBuilding,
@@ -303,7 +345,6 @@ public sealed class SelectionHudFeedbackBoundary
                 context,
                 em,
                 selectedCount,
-                selectionSummaryQuerySystem,
                 tryGetAttackModeOrderSnapshot,
                 resolveActiveSquadTrayPortraitSprite,
                 hasSelectedBuilding,
@@ -328,7 +369,6 @@ public sealed class SelectionHudFeedbackBoundary
         Context context,
         SelectionStateSystem selectionStateSystem,
         FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
-        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         System.Func<bool> hasSelectedBuilding)
     {
@@ -350,7 +390,7 @@ public sealed class SelectionHudFeedbackBoundary
         if (selectedCount > 0)
         {
             bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
-            return selectionSummaryQuerySystem.BuildSelectedSummary(
+            return BuildSelectedSummary(
                 em,
                 context.SelectionUiQuerySystem,
                 includeSelectedBuilding).OrderText;
@@ -360,6 +400,100 @@ public sealed class SelectionHudFeedbackBoundary
             return "Structure selected";
 
         return "Idle";
+    }
+
+    public static SelectedSummary BuildSelectedSummary(
+        EntityManager em,
+        SelectionUiQuerySystem selectionUiQuerySystem,
+        bool includeSelectedBuilding)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+        {
+            int noSelectionBuildingCount = includeSelectedBuilding ? 1 : 0;
+            return new SelectedSummary(
+                0,
+                0,
+                0,
+                0,
+                0,
+                noSelectionBuildingCount,
+                noSelectionBuildingCount > 0 ? "1 STRUCTURE" : "NO SELECTION",
+                noSelectionBuildingCount > 0 ? "Building selected" : string.Empty,
+                noSelectionBuildingCount > 0 ? "Structure selected" : "Idle",
+                "-",
+                0f,
+                noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
+        }
+
+        int unitCount = 0;
+        int soldierCount = 0;
+        int vehicleCount = 0;
+        int aircraftCount = 0;
+        int transportCount = 0;
+        int currentTotal = 0;
+        int maxTotal = 0;
+        bool hasOrder = false;
+        bool mixedOrders = false;
+        SelectionUiQuerySystem.FocusedUnitUiStatus firstOrder = SelectionUiQuerySystem.FocusedUnitUiStatus.Idle;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!em.Exists(entity))
+                    continue;
+
+                unitCount++;
+                UnitCategory category = ResolveCategory(em, entity);
+                soldierCount += category == UnitCategory.Soldier ? 1 : 0;
+                vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
+                aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
+                transportCount += category == UnitCategory.Transport ? 1 : 0;
+
+                if (em.HasComponent<UnitHealth>(entity))
+                {
+                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
+                    currentTotal += math.max(0, health.Current);
+                    maxTotal += math.max(0, health.Max);
+                }
+
+                SelectionUiQuerySystem.FocusedUnitUiStatus order = selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity);
+                if (!hasOrder)
+                {
+                    firstOrder = order;
+                    hasOrder = true;
+                }
+                else if (firstOrder != order)
+                {
+                    mixedOrders = true;
+                }
+            }
+        }
+
+        int buildingCount = includeSelectedBuilding ? 1 : 0;
+        string healthText = maxTotal > 0 ? $"{currentTotal}/{maxTotal}" : "-";
+        float health01 = maxTotal > 0 ? math.saturate((float)currentTotal / maxTotal) : 0f;
+        string orderText = mixedOrders ? "Mixed orders" : ToOrderText(firstOrder);
+        SelectionSummaryPortraitKind portraitKind = ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount);
+
+        return new SelectedSummary(
+            unitCount,
+            soldierCount,
+            vehicleCount,
+            aircraftCount,
+            transportCount,
+            buildingCount,
+            ResolveTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
+            ResolveSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
+            orderText,
+            healthText,
+            health01,
+            portraitKind);
     }
 
     private static int CountSelectedTags(EntityManager em)
@@ -486,14 +620,13 @@ public sealed class SelectionHudFeedbackBoundary
         Context context,
         EntityManager em,
         int selectedCount,
-        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
         TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
         System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
         System.Func<bool> hasSelectedBuilding,
         HasSelectedBoardActionDelegate hasSelectedBoardAction)
     {
         bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
-        SelectionSummaryQuerySystem.Summary summary = selectionSummaryQuerySystem.BuildSelectedSummary(
+        SelectedSummary summary = BuildSelectedSummary(
             em,
             context.SelectionUiQuerySystem,
             includeSelectedBuilding);
@@ -564,6 +697,180 @@ public sealed class SelectionHudFeedbackBoundary
             SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
             _ => "Idle"
         };
+    }
+
+    private static string ResolveTitle(
+        int unitCount,
+        int soldierCount,
+        int vehicleCount,
+        int aircraftCount,
+        int transportCount,
+        int buildingCount)
+    {
+        if (unitCount <= 0)
+            return buildingCount == 1 ? "1 STRUCTURE" : "NO SELECTION";
+        if (buildingCount > 0)
+            return "MIXED SELECTION";
+        if (soldierCount == unitCount)
+            return unitCount == 1 ? "1 SOLDIER" : $"{unitCount} SOLDIERS";
+        if (transportCount == unitCount)
+            return unitCount == 1 ? "1 TRANSPORT" : $"{unitCount} TRANSPORTS";
+        if (aircraftCount == unitCount)
+            return unitCount == 1 ? "1 AIRCRAFT" : $"{unitCount} AIRCRAFT";
+        if (vehicleCount == unitCount)
+            return unitCount == 1 ? "1 VEHICLE" : $"{unitCount} VEHICLES";
+        if (aircraftCount > 0 && soldierCount + vehicleCount + transportCount > 0)
+            return "MIXED FORCE";
+
+        return "MIXED SQUAD";
+    }
+
+    private static string ResolveSubtitle(
+        int unitCount,
+        int soldierCount,
+        int vehicleCount,
+        int aircraftCount,
+        int transportCount,
+        int buildingCount)
+    {
+        if (unitCount <= 0)
+            return buildingCount > 0 ? "Building Group" : string.Empty;
+        if (buildingCount > 0)
+            return $"{unitCount} Units / {buildingCount} Structure";
+        if (soldierCount == unitCount)
+            return "Infantry Squad";
+        if (transportCount == unitCount)
+            return "Transport Group";
+        if (aircraftCount == unitCount)
+            return "Air Wing";
+        if (vehicleCount == unitCount)
+            return "Vehicle Squad";
+
+        int groundCount = soldierCount + vehicleCount + transportCount;
+        if (aircraftCount > 0 && groundCount > 0)
+            return $"{groundCount} Ground / {aircraftCount} Air";
+        if (soldierCount > 0 && vehicleCount + transportCount > 0)
+            return $"{soldierCount} Infantry / {vehicleCount + transportCount} Vehicles";
+
+        return $"{unitCount} Selected Units";
+    }
+
+    private static SelectionSummaryPortraitKind ResolvePortraitKind(
+        int soldierCount,
+        int vehicleCount,
+        int aircraftCount,
+        int transportCount,
+        int buildingCount)
+    {
+        int categories = 0;
+        categories += soldierCount > 0 ? 1 : 0;
+        int groundVehicleCount = vehicleCount + transportCount;
+        categories += groundVehicleCount > 0 ? 1 : 0;
+        categories += aircraftCount > 0 ? 1 : 0;
+        categories += buildingCount > 0 ? 1 : 0;
+
+        if (buildingCount > 0)
+            return SelectionSummaryPortraitKind.MixedForce;
+        if (soldierCount > 0 && groundVehicleCount > 0 && aircraftCount > 0)
+            return SelectionSummaryPortraitKind.MixedSoldierVehicleAircraft;
+        if (soldierCount > 0 && aircraftCount > 0)
+            return SelectionSummaryPortraitKind.MixedSoldierAircraft;
+        if (groundVehicleCount > 0 && aircraftCount > 0)
+            return SelectionSummaryPortraitKind.MixedVehicleAircraft;
+        if (soldierCount > 0 && groundVehicleCount > 0)
+            return SelectionSummaryPortraitKind.MixedSoldierVehicle;
+        if (categories != 1)
+            return SelectionSummaryPortraitKind.MixedForce;
+        if (soldierCount > 0)
+            return SelectionSummaryPortraitKind.Soldiers;
+        if (transportCount > 0)
+            return SelectionSummaryPortraitKind.Vehicles;
+        if (aircraftCount > 0)
+            return SelectionSummaryPortraitKind.Aircraft;
+        if (vehicleCount > 0)
+            return SelectionSummaryPortraitKind.Vehicles;
+        if (buildingCount > 0)
+            return SelectionSummaryPortraitKind.Buildings;
+
+        return SelectionSummaryPortraitKind.GenericSquad;
+    }
+
+    private static UnitCategory ResolveCategory(EntityManager em, Entity entity)
+    {
+        string source = ResolveSource(em, entity);
+        string lower = source.ToLowerInvariant();
+        bool isAir = em.HasComponent<UnitAirMovement>(entity);
+        bool hasTransportCapacity = em.HasComponent<UnitTransportCapacity>(entity) &&
+                                    em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity > 0;
+        bool usesVehicleMotion = isAir ||
+                                 (em.HasComponent<UnitMovementBehavior>(entity) &&
+                                  em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0);
+        bool namedTransport = ContainsAny(lower, "transport", "apc", "truck", "tanker", "hauler", "canopy");
+        if (isAir)
+            return UnitCategory.Aircraft;
+        if (hasTransportCapacity || namedTransport && usesVehicleMotion)
+            return UnitCategory.Transport;
+        if (usesVehicleMotion || lower.Contains("unit_veh_", System.StringComparison.OrdinalIgnoreCase))
+            return UnitCategory.Vehicle;
+
+        return UnitCategory.Soldier;
+    }
+
+    private static string ResolveSource(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<UnitSourcePrefabKey>(entity))
+        {
+            string source = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.IsNullOrWhiteSpace(source))
+                return source;
+        }
+
+        if (em.HasComponent<UnitDisplayInfo>(entity))
+        {
+            string displayName = em.GetComponentData<UnitDisplayInfo>(entity).Name.ToString();
+            if (!string.IsNullOrWhiteSpace(displayName))
+                return displayName;
+        }
+
+        return em.GetName(entity);
+    }
+
+    private static string ToOrderText(SelectionUiQuerySystem.FocusedUnitUiStatus status)
+    {
+        return status switch
+        {
+            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
+            _ => "Idle"
+        };
+    }
+
+    private static bool ContainsAny(string value, params string[] needles)
+    {
+        if (string.IsNullOrEmpty(value))
+            return false;
+
+        for (int i = 0; i < needles.Length; i++)
+        {
+            if (value.Contains(needles[i], System.StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
+    private enum UnitCategory
+    {
+        Soldier = 0,
+        Vehicle = 1,
+        Aircraft = 2,
+        Transport = 3
     }
 
     private static void TryGetHealthModel(

@@ -18,7 +18,7 @@ internal sealed class BuildingSpawnSystem
     }
 
     private readonly List<RecentSpawnReservation> _recentSpawnReservations = new();
-    private readonly MapSurfaceSpawnGroundingSystem _spawnGroundingSystem = new();
+    private readonly MapSurfaceSpawnGrounding _spawnGroundingSystem = new();
     private uint _buildingSpawnRandomState = 0x12345678u;
 
     internal uint BuildingSpawnRandomState
@@ -604,8 +604,8 @@ internal sealed class BuildingSpawnSystem
 
     internal static byte ResolveProducedUnitFaction(RuntimeBuildingEntity building)
     {
-        if (building == null || !building.HasOwnerFaction || building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId)
-            return FactionIdentitySystem.PlayerFactionId;
+        if (building == null || !building.HasOwnerFaction || building.OwnerFactionId == FactionIdentity.NeutralFactionId)
+            return FactionIdentity.PlayerFactionId;
 
         return building.OwnerFactionId;
     }

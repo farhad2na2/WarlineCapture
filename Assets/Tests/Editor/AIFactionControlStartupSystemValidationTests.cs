@@ -5,6 +5,37 @@ using UnityEditor;
 
 public sealed class AIFactionControlStartupSystemValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.Initialize_ProjectsAiControlConfigsIntoFactionControlEntries());
+            RunCase(test => test.Initialize_AddsDefaultPlayerAndEnemyEntriesWhenConfigListIsEmpty());
+            RunCase(test => test.Initialize_ReusesExistingConfigEntityAndAddsMissingBuffer());
+            UnityEngine.Debug.Log("[AIFactionControlStartupValidation] result=Passed tests=3");
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError("[AIFactionControlStartupValidation] result=Failed");
+            UnityEngine.Debug.LogException(exception);
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<AIFactionControlStartupSystemValidationTests> testCase)
+    {
+        var tests = new AIFactionControlStartupSystemValidationTests();
+        tests.SetUp();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -26,15 +57,15 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIControllerConfig playerAuto = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset");
         using var world = new World("AIFactionControlStartupSystemValidationTests");
 
-        AIFactionControlStartupSystem system = new();
+        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
         AIFactionControlStartupSystem.Result result = system.Initialize(world.EntityManager, new[] { enemy, playerAuto });
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsTrue(result.PlayerAutoModeEnabled);
         Assert.IsTrue(AISettingsRuntimeState.PlayerAutoAIEnabled);
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, true, true));
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, true, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
     }
 
     [Test]
@@ -42,15 +73,15 @@ public sealed class AIFactionControlStartupSystemValidationTests
     {
         using var world = new World("AIFactionControlStartupSystemEmptyConfigTests");
 
-        AIFactionControlStartupSystem system = new();
+        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
         AIFactionControlStartupSystem.Result result = system.Initialize(world.EntityManager, new AIControllerConfig[0]);
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsFalse(result.PlayerAutoModeEnabled);
         Assert.AreEqual(2, entries.Length);
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, false, true));
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, false, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
     }
 
     [Test]
@@ -61,14 +92,14 @@ public sealed class AIFactionControlStartupSystemValidationTests
         EntityManager em = world.EntityManager;
         Entity configEntity = em.CreateEntity(typeof(FactionControlConfigTag));
 
-        AIFactionControlStartupSystem system = new();
+        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
         system.Initialize(em, new[] { enemy });
 
         Assert.IsTrue(em.HasBuffer<FactionControlEntry>(configEntity));
         DynamicBuffer<FactionControlEntry> entries = em.GetBuffer<FactionControlEntry>(configEntity);
         Assert.AreEqual(2, entries.Length);
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.EnemyFactionId, true, false));
-        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentitySystem.PlayerFactionId, false, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, false, true));
     }
 
     private static AIControllerConfig LoadAIConfig(string path)

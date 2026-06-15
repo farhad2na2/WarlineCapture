@@ -125,7 +125,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             Cell = new int2(originCell.x, originCell.y)
         });
         em.AddComponentData(entity, new UnitGridInitialized());
-        em.AddComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.AddComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.AddComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
         em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
         em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
@@ -181,7 +181,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             if (em.HasComponent<UnitMoveVisualComponent>(instance))
                 em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
             if (em.HasComponent<Faction>(instance))
-                em.SetComponentData(instance, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+                em.SetComponentData(instance, new Faction { Id = FactionIdentity.PlayerFactionId });
             if (em.HasComponent<UnitRespawnPrefab>(instance))
                 em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = prefabEntity });
             if (em.HasComponent<UnitIdleWanderComponent>(instance))
@@ -240,7 +240,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             NativeArray<UnitRespawnPrefab> respawnPrefabs = chunk.GetNativeArray(ref respawnPrefabType);
             for (int i = 0; i < factions.Length; i++)
             {
-                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
                     continue;
 
                 Entity candidate = respawnPrefabs[i].Prefab;

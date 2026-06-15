@@ -7,10 +7,10 @@ using UnityEngine;
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 public sealed partial class AIStartupSystem : SystemBase
 {
-    private readonly RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem = new();
+    private RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem;
     private readonly FactionEconomyStartupSystem _factionEconomyStartupSystem = new();
-    private readonly AIFactionControlStartupSystem _factionControlStartupSystem = new();
-    private readonly AIPlanEntryStartupSystem _planEntryStartupSystem = new();
+    private AIFactionControlStartupSystem _factionControlStartupSystem;
+    private AIPlanEntryStartupSystem _planEntryStartupSystem;
 
     public delegate bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell);
 
@@ -29,6 +29,9 @@ public sealed partial class AIStartupSystem : SystemBase
     protected override void OnCreate()
     {
         Enabled = false;
+        _runtimeDiagnosticsSystem = World.GetOrCreateSystemManaged<RuntimeDiagnosticsSystem>();
+        _factionControlStartupSystem = World.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
+        _planEntryStartupSystem = World.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
     }
 
     protected override void OnUpdate()
@@ -137,7 +140,8 @@ public sealed partial class AIStartupSystem : SystemBase
 
     private bool ShouldQueueAIConfigDiagnostics()
     {
-        return _runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
+        return _runtimeDiagnosticsSystem != null &&
+               _runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
     }
 
     private bool TryEnqueueAIDiagnostic(FixedString512Bytes message, byte severity = AIDiagnosticLogComponent.LogSeverity)

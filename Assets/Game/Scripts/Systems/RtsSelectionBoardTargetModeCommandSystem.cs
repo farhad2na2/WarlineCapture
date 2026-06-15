@@ -217,7 +217,7 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
     {
         return em.Exists(entity) &&
                em.HasComponent<Faction>(entity) &&
-               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
+               FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 
     private static int CountPendingBoardingOrders(EntityManager em, Entity transport)

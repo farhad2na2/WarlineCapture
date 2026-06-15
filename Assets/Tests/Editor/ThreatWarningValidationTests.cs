@@ -80,14 +80,14 @@ public sealed class ThreatWarningValidationTests
     {
         using var world = new World("ThreatDetectionWarningSystem_Ground");
         EntityManager em = world.EntityManager;
-        Entity sensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        Entity sensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
         em.AddComponentData(sensor, new ThreatDetector
         {
             Kind = (byte)ThreatDetectionKind.Ground,
             RadiusCells = 20
         });
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(24, 20), true, 100, 15f, false, new int2(20, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(24, 20), true, 100, 15f, false, new int2(20, 20));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
@@ -116,13 +116,13 @@ public sealed class ThreatWarningValidationTests
     {
         using var world = new World("ThreatDetectionWarningSystem_GroundIgnoresSoldiers");
         EntityManager em = world.EntityManager;
-        Entity sensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        Entity sensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
         em.AddComponentData(sensor, new ThreatDetector
         {
             Kind = (byte)ThreatDetectionKind.Ground,
             RadiusCells = 20
         });
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(30, 20), false, 100, 5f, false, new int2(20, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, false, new int2(20, 20));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
@@ -145,21 +145,21 @@ public sealed class ThreatWarningValidationTests
     {
         using var world = new World("ThreatDetectionWarningSystem_IgnoresMovingAway");
         EntityManager em = world.EntityManager;
-        Entity groundSensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        Entity groundSensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
         em.AddComponentData(groundSensor, new ThreatDetector
         {
             Kind = (byte)ThreatDetectionKind.Ground,
             RadiusCells = 20
         });
-        Entity airSensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(50, 50), false, 100, 0f);
+        Entity airSensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(50, 50), false, 100, 0f);
         em.AddComponentData(airSensor, new ThreatDetector
         {
             Kind = (byte)ThreatDetectionKind.Air,
             RadiusCells = 30
         });
 
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(45, 20));
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(90, 50));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(45, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(90, 50));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
@@ -182,14 +182,14 @@ public sealed class ThreatWarningValidationTests
     {
         using var world = new World("ThreatDetectionWarningSystem_Air");
         EntityManager em = world.EntityManager;
-        Entity sensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(50, 50), false, 100, 0f);
+        Entity sensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(50, 50), false, 100, 0f);
         em.AddComponentData(sensor, new ThreatDetector
         {
             Kind = (byte)ThreatDetectionKind.Air,
             RadiusCells = 30
         });
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(55, 50), false, 100, 5f, true, new int2(50, 50));
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(50, 50));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(55, 50), false, 100, 5f, true, new int2(50, 50));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(50, 50));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
@@ -287,7 +287,7 @@ public sealed class ThreatWarningValidationTests
                 typeof(UnitPathFollow),
                 typeof(UnitPathRange),
                 typeof(LocalTransform));
-            em.SetComponentData(movingUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(movingUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(movingUnit, new UnitGrid { Cell = new int2(1, 1) });
             em.SetComponentData(movingUnit, new UnitFootprint { Size = new int2(1, 1) });
             em.SetComponentData(movingUnit, new UnitMove { Speed = 2f, WalkSpeed = 2f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.01f });
@@ -298,13 +298,13 @@ public sealed class ThreatWarningValidationTests
             em.SetComponentData(movingUnit, new UnitPathRange { Start = 0, Length = pathPool.Length });
             em.SetComponentData(movingUnit, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
 
-            Entity sensor = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+            Entity sensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
             em.AddComponentData(sensor, new ThreatDetector
             {
                 Kind = (byte)ThreatDetectionKind.Ground,
                 RadiusCells = 20
             });
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
 
             world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
             SystemHandle movementSystem = world.CreateSystem<UnitGridMovementSystem>();

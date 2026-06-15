@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 public sealed class MapSurfaceLayeredGridFocusedTests
 {
@@ -75,7 +76,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
 
         var querySystem = new MapSurfaceQuerySystem();
         var context = new MapSurfaceQuerySystem.Context(scope.Surface);
-        var classificationSystem = new MapSurfaceSlopeClassificationSystem();
+        var classificationSystem = new MapSurfaceSlopeClassifier();
 
         Assert.IsTrue(querySystem.TrySampleHeight(context, new int2(0, 0), out float height));
         Assert.AreEqual(3f, height);
@@ -142,7 +143,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             Array.Empty<MapSurfaceConnection>());
 
         var layeredCellSystem = new MapSurfaceLayeredCellSystem();
-        var slopeSystem = new MapSurfaceSlopeClassificationSystem();
+        var slopeSystem = new MapSurfaceSlopeClassifier();
 
         Assert.IsTrue(layeredCellSystem.TryGetSurfaceRange(scope.Surface, new int2(0, 0), out MapSurfaceCellSurfaceRange range));
         Assert.AreEqual(2, range.SurfaceCount);
@@ -294,9 +295,9 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             new[] { slope, bridge, highway },
             Array.Empty<MapSurfaceConnection>());
 
-        var probeSystem = new MapSurfaceRuntimeValidationProbeSystem();
+        var probe = new RuntimeValidationProbe();
 
-        Assert.IsTrue(probeSystem.RunProbe(scope.Surface, new int2(0, 0), new int2(1, 0), out MapSurfaceRuntimeValidationProbeSystem.Result result));
+        Assert.IsTrue(probe.RunProbe(scope.Surface, new int2(0, 0), new int2(1, 0), out RuntimeValidationProbe.Result result));
         Assert.IsTrue(result.UnitMoveOverSlopeGrounded);
         Assert.IsTrue(result.TankVisualPitchRollResolved);
         Assert.IsTrue(result.BridgeAndHighwaySeparated);
@@ -321,8 +322,8 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             samples,
             Array.Empty<MapSurfaceConnection>());
 
-        var performanceSystem = new MapSurfacePerformanceValidationSystem();
-        MapSurfacePerformanceValidationSystem.Result result = performanceSystem.RunSamplingProbe(scope.Surface, 256);
+        var performanceProbe = new PerformanceValidationProbe();
+        PerformanceValidationProbe.Result result = performanceProbe.RunSamplingProbe(scope.Surface, 256);
 
         Assert.AreEqual(256, result.SampleIterations);
         Assert.AreEqual(256, result.HeightSamples);
@@ -330,7 +331,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         Assert.AreEqual(256, result.PathingChecks);
         Assert.Greater(result.EstimatedSurfaceBytes, 0);
         Assert.IsTrue(result.StayedWithinFrameBudget);
-        Assert.LessOrEqual(result.AllocatedBytes, MapSurfacePerformanceValidationSystem.MaxSamplingAllocationBytes);
+        Assert.LessOrEqual(result.AllocatedBytes, PerformanceValidationProbe.MaxSamplingAllocationBytes);
     }
 
     [Test]
@@ -791,6 +792,241 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             },
             triangles = new[] { 0, 2, 1, 1, 2, 3 }
         };
+    }
+
+    private sealed class RuntimeValidationProbe
+    {
+        private const float MaxVehiclePitchRollDegrees = 20f;
+        private readonly MapSurfaceQuerySystem _querySystem = new();
+        private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();
+        private readonly MapSurfaceConnectionSystem _connectionSystem = new();
+        private readonly MapSurfaceSlopeClassifier _slopeClassificationSystem = new();
+
+        public readonly struct Result
+        {
+            public readonly bool UnitMoveOverSlopeGrounded;
+            public readonly bool TankVisualPitchRollResolved;
+            public readonly bool BridgeAndHighwaySeparated;
+            public readonly float SlopeHeight;
+            public readonly float TankPitchDegrees;
+            public readonly int BridgeSurfaceId;
+            public readonly int HighwaySurfaceId;
+
+            public Result(
+                bool unitMoveOverSlopeGrounded,
+                bool tankVisualPitchRollResolved,
+                bool bridgeAndHighwaySeparated,
+                float slopeHeight,
+                float tankPitchDegrees,
+                int bridgeSurfaceId,
+                int highwaySurfaceId)
+            {
+                UnitMoveOverSlopeGrounded = unitMoveOverSlopeGrounded;
+                TankVisualPitchRollResolved = tankVisualPitchRollResolved;
+                BridgeAndHighwaySeparated = bridgeAndHighwaySeparated;
+                SlopeHeight = slopeHeight;
+                TankPitchDegrees = tankPitchDegrees;
+                BridgeSurfaceId = bridgeSurfaceId;
+                HighwaySurfaceId = highwaySurfaceId;
+            }
+        }
+
+        public bool RunProbe(MapSurfaceComponent surface, int2 slopeCell, int2 layeredBridgeCell, out Result result)
+        {
+            result = default;
+            if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
+                return false;
+
+            MapSurfaceQuerySystem.Context queryContext = new(surface);
+            bool slopeResolved = _querySystem.TryGetPrimarySurface(queryContext, slopeCell, out MapSurfaceSample slopeSample);
+            float slopeHeight = 0f;
+            bool unitGrounded = slopeResolved &&
+                _querySystem.TrySampleHeight(queryContext, slopeCell, out slopeHeight) &&
+                _slopeClassificationSystem.AllowsMovement(slopeSample, MapSurfaceMovementMask.Infantry);
+            float tankPitch = slopeResolved ? ResolveVehiclePitchDegrees(slopeSample.Normal) : 0f;
+            bool tankAligned = math.abs(tankPitch) > 0.1f;
+            bool separated = TryProbeBridgeHighwaySeparation(surface, layeredBridgeCell, out int bridgeSurfaceId, out int highwaySurfaceId);
+
+            result = new Result(
+                unitGrounded,
+                tankAligned,
+                separated,
+                slopeResolved ? slopeHeight : 0f,
+                tankPitch,
+                bridgeSurfaceId,
+                highwaySurfaceId);
+            return unitGrounded && tankAligned && separated;
+        }
+
+        private bool TryProbeBridgeHighwaySeparation(
+            MapSurfaceComponent surface,
+            int2 layeredBridgeCell,
+            out int bridgeSurfaceId,
+            out int highwaySurfaceId)
+        {
+            bridgeSurfaceId = -1;
+            highwaySurfaceId = -1;
+            if (!_layeredCellSystem.TryGetSurfaceRange(surface, layeredBridgeCell, out MapSurfaceCellSurfaceRange range) ||
+                range.SurfaceCount < 2)
+            {
+                return false;
+            }
+
+            MapSurfaceSample bridge = default;
+            MapSurfaceSample highway = default;
+            bool hasBridge = false;
+            bool hasHighway = false;
+            for (int i = 0; i < range.SurfaceCount; i++)
+            {
+                if (!_layeredCellSystem.TryGetSurface(surface, range, i, out MapSurfaceSample sample))
+                    continue;
+
+                if (sample.SurfaceType == MapSurfaceType.BridgeDeck)
+                {
+                    bridge = sample;
+                    bridgeSurfaceId = sample.SurfaceId;
+                    hasBridge = true;
+                }
+                else if (sample.SurfaceType == MapSurfaceType.Highway)
+                {
+                    highway = sample;
+                    highwaySurfaceId = sample.SurfaceId;
+                    hasHighway = true;
+                }
+            }
+
+            if (!hasBridge || !hasHighway)
+                return false;
+
+            MapSurfaceConnectionSystem.Context context = new(surface);
+            return !_connectionSystem.TryFindConnection(
+                context,
+                bridge,
+                highway.SurfaceId,
+                int2.zero,
+                MapSurfaceMovementMask.Infantry,
+                out _);
+        }
+
+        private static float ResolveVehiclePitchDegrees(float3 normal)
+        {
+            float3 resolvedNormal = math.normalizesafe(normal, math.up());
+            return math.clamp(
+                math.degrees(math.atan2(resolvedNormal.z, resolvedNormal.y)),
+                -MaxVehiclePitchRollDegrees,
+                MaxVehiclePitchRollDegrees);
+        }
+    }
+
+    private sealed class PerformanceValidationProbe
+    {
+        public const double BaselineFrameBudgetMilliseconds = 16.67d;
+        public const long MaxSamplingAllocationBytes = 128;
+
+        private readonly MapSurfaceQuerySystem _querySystem = new();
+        private readonly MapSurfacePathingValidationSystem _pathingValidationSystem = new();
+
+        public readonly struct Result
+        {
+            public readonly int SampleIterations;
+            public readonly int HeightSamples;
+            public readonly int NormalSamples;
+            public readonly int PathingChecks;
+            public readonly long AllocatedBytes;
+            public readonly long ElapsedTicks;
+            public readonly int EstimatedSurfaceBytes;
+            public readonly bool StayedWithinFrameBudget;
+            public readonly bool StayedWithinAllocationBudget;
+
+            public Result(
+                int sampleIterations,
+                int heightSamples,
+                int normalSamples,
+                int pathingChecks,
+                long allocatedBytes,
+                long elapsedTicks,
+                int estimatedSurfaceBytes,
+                bool stayedWithinFrameBudget,
+                bool stayedWithinAllocationBudget)
+            {
+                SampleIterations = sampleIterations;
+                HeightSamples = heightSamples;
+                NormalSamples = normalSamples;
+                PathingChecks = pathingChecks;
+                AllocatedBytes = allocatedBytes;
+                ElapsedTicks = elapsedTicks;
+                EstimatedSurfaceBytes = estimatedSurfaceBytes;
+                StayedWithinFrameBudget = stayedWithinFrameBudget;
+                StayedWithinAllocationBudget = stayedWithinAllocationBudget;
+            }
+        }
+
+        public Result RunSamplingProbe(MapSurfaceComponent surface, int sampleIterations)
+        {
+            int iterations = math.max(1, sampleIterations);
+            MapSurfaceQuerySystem.Context context = new(surface);
+            RunWarmup(surface, context);
+
+            var stopwatch = new Stopwatch();
+            long allocatedBefore = GC.GetAllocatedBytesForCurrentThread();
+            stopwatch.Start();
+
+            int heightSamples = 0;
+            int normalSamples = 0;
+            int pathingChecks = 0;
+            int2 dimensions = math.max(surface.Dimensions, new int2(1, 1));
+            for (int i = 0; i < iterations; i++)
+            {
+                int2 cell = new(i % dimensions.x, (i / dimensions.x) % dimensions.y);
+                if (_querySystem.TrySampleHeight(context, cell, out _))
+                    heightSamples++;
+                if (_querySystem.TrySampleNormal(context, cell, out _))
+                    normalSamples++;
+                if (_pathingValidationSystem.CanTraverse(surface, surface.HasSurfaceData, cell, MapSurfaceMovementMask.Infantry))
+                    pathingChecks++;
+            }
+
+            stopwatch.Stop();
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocatedBefore;
+            double elapsedMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+            bool stayedWithinFrameBudget = elapsedMilliseconds <= BaselineFrameBudgetMilliseconds;
+            bool stayedWithinAllocationBudget = allocatedBytes <= MaxSamplingAllocationBytes;
+            return new Result(
+                iterations,
+                heightSamples,
+                normalSamples,
+                pathingChecks,
+                allocatedBytes,
+                stopwatch.ElapsedTicks,
+                EstimateSurfaceMemoryBytes(surface),
+                stayedWithinFrameBudget,
+                stayedWithinAllocationBudget);
+        }
+
+        public int EstimateSurfaceMemoryBytes(MapSurfaceComponent surface)
+        {
+            if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
+                return 0;
+
+            ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+            const int estimatedCellBytes = 8;
+            const int estimatedSampleBytes = 64;
+            const int estimatedConnectionBytes = 24;
+            return blob.Cells.Length * estimatedCellBytes +
+                   blob.Samples.Length * estimatedSampleBytes +
+                   blob.Connections.Length * estimatedConnectionBytes;
+        }
+
+        private void RunWarmup(MapSurfaceComponent surface, MapSurfaceQuerySystem.Context context)
+        {
+            if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
+                return;
+
+            int2 cell = int2.zero;
+            _querySystem.TrySampleHeight(context, cell, out _);
+            _querySystem.TrySampleNormal(context, cell, out _);
+            _pathingValidationSystem.CanTraverse(surface, surface.HasSurfaceData, cell, MapSurfaceMovementMask.Infantry);
+        }
     }
 
     private readonly struct SurfaceBlobScope : IDisposable

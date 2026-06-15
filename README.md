@@ -76,6 +76,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/Skirmish_Mode_Implementation_Spec.md`
 - `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
 - `Design/Match_Selection_Implementation_Spec.md`
+- `Design/Match_Unit_Command_Behavior_Spec.md`
 - `Design/Field_Logistics_Oil_Fuel_Design.md`
 - `Design/M01_FirstContact_Production_Contract.md`
 - `Design/FTUE_And_Command_Assistant_Design.md`
@@ -100,7 +101,8 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
     - [3D Operation Map Texture/Mask Workflow](Design/3D_Operation_Map_Texture_Mask_Workflow.md)
     - [Skirmish Mode Implementation Spec](Design/Skirmish_Mode_Implementation_Spec.md)
     - [Match HUD And Gameplay Implementation Spec](Design/Match_HUD_And_Gameplay_Implementation_Spec.md)
-    - [Match Selection Implementation Spec](Design/Match_Selection_Implementation_Spec.md)
+      - [Match Selection Implementation Spec](Design/Match_Selection_Implementation_Spec.md)
+      - [Match Unit Command Behavior Spec](Design/Match_Unit_Command_Behavior_Spec.md)
     - [Mission Result State Spec](Design/Mission_Result_State_Spec.md)
     - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)

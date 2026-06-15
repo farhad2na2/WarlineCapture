@@ -1150,10 +1150,10 @@ internal sealed class BuildingProductionRequestBoundary
         if (building == null)
             return false;
 
-        if (building.HasOwnerFaction && building.OwnerFactionId == FactionIdentitySystem.PlayerFactionId)
+        if (building.HasOwnerFaction && building.OwnerFactionId == FactionIdentity.PlayerFactionId)
             return pass == 0;
 
-        if (!building.HasOwnerFaction || building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId)
+        if (!building.HasOwnerFaction || building.OwnerFactionId == FactionIdentity.NeutralFactionId)
             return pass == 1;
 
         return false;

@@ -1,4 +1,4 @@
-public static class FactionIdentitySystem
+public static class FactionIdentity
 {
     public const byte NeutralFactionId = 0;
     public const byte PlayerFactionId = 1;

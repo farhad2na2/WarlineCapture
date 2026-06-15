@@ -939,7 +939,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitTransportCapacity),
             typeof(LocalToWorld),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(3, 3) });
         em.SetComponentData(entity, new UnitTransportCapacity { SoldierCapacity = 10 });
@@ -974,7 +974,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMovementBehavior),
             typeof(UnitTransportBoardingTarget),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
@@ -997,7 +997,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMoveVisualComponent),
             typeof(LocalTransform),
             typeof(Disabled));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = new int2(0, 0) });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
@@ -1019,7 +1019,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMovementBehavior),
             typeof(SelectedUnitTag),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
@@ -1038,7 +1038,7 @@ public sealed class UnitTransportValidationTests
             typeof(UnitMovementBehavior),
             typeof(UnitSourcePrefabKey),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });

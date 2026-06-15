@@ -10,7 +10,7 @@ internal sealed class CitizenVisibleUnitSystem
     private const float VisibleCitizenSpawnDistance = 140f;
     private const float VisibleCitizenDespawnDistance = 170f;
     private const float VisibleCitizenArriveDistance = 0.35f;
-    private readonly MapSurfaceSpawnGroundingSystem _spawnGroundingSystem = new();
+    private readonly MapSurfaceSpawnGrounding _spawnGroundingSystem = new();
 
     public delegate bool HandleCitizenDeathAction(int citizenId, string reason);
 

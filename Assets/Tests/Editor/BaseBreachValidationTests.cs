@@ -22,7 +22,7 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentity.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
                 gatePrefab,
@@ -30,10 +30,10 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
+                attackerFactionId: FactionIdentity.EnemyFactionId,
                 finalTarget: Entity.Null,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -43,7 +43,7 @@ public sealed class BaseBreachValidationTests
                 out _));
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate, "Enemy units should shoot the Road Barrier gate first when the target is inside a walled base.");
-            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, ownerFactionId);
         });
     }
 
@@ -52,10 +52,10 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentity.PlayerFactionId);
 
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
+                attackerFactionId: FactionIdentity.EnemyFactionId,
                 finalTarget: Entity.Null,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -66,7 +66,7 @@ public sealed class BaseBreachValidationTests
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool isGate, out bool isWall, out byte ownerFactionId));
             Assert.IsFalse(isGate);
             Assert.IsTrue(isWall, "Enemy units should shoot a wall segment when no Road Barrier gate exists.");
-            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, ownerFactionId);
         });
     }
 
@@ -286,7 +286,7 @@ public sealed class BaseBreachValidationTests
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
             RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentity.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
                 gatePrefab,
@@ -294,17 +294,17 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
-            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
-            Entity attacker = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(100, 40), new float3(100f, 0f, 40f));
+            Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
+            Entity attacker = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(100, 40), new float3(100f, 0f, 40f));
             Entity squadEntity = em.CreateEntity(typeof(AISquad));
             em.SetComponentData(squadEntity, new AISquad
             {
                 SquadId = 7,
-                FactionId = FactionIdentitySystem.EnemyFactionId,
+                FactionId = FactionIdentity.EnemyFactionId,
                 Purpose = (byte)AISquadPurpose.Attack,
-                TargetFactionId = FactionIdentitySystem.PlayerFactionId,
+                TargetFactionId = FactionIdentity.PlayerFactionId,
                 TargetKind = (byte)AITargetKind.Threat,
                 TargetEntity = target,
                 RallyCell = new int2(100, 40),
@@ -338,7 +338,7 @@ public sealed class BaseBreachValidationTests
             Assert.AreNotEqual(target, engage.Target);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(engage.Target, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate);
-            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, ownerFactionId);
             Assert.AreEqual(BaseBreachOrder.StageAttackingBreach, em.GetComponentData<BaseBreachOrder>(attacker).Stage);
         });
     }
@@ -355,7 +355,7 @@ public sealed class BaseBreachValidationTests
                 buildingPlacement,
                 wallPrefab,
                 gatePrefab,
-                ownerFactionId: FactionIdentitySystem.EnemyFactionId,
+                ownerFactionId: FactionIdentity.EnemyFactionId,
                 left: 20,
                 right: 100,
                 bottom: 60,
@@ -364,15 +364,15 @@ public sealed class BaseBreachValidationTests
                 buildingPlacement,
                 wallPrefab,
                 gatePrefab,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId,
+                ownerFactionId: FactionIdentity.PlayerFactionId,
                 left: 150,
                 right: 230,
                 bottom: 60,
                 top: 140);
 
-            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(190, 100), new float3(190f, 0f, 100f));
-            Entity attacker = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(60, 100), new float3(60f, 0f, 100f));
-            Entity squadEntity = CreateAttackSquad(em, 8, FactionIdentitySystem.EnemyFactionId, FactionIdentitySystem.PlayerFactionId, target, new int2(60, 100), new int2(190, 100));
+            Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(190, 100), new float3(190f, 0f, 100f));
+            Entity attacker = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(60, 100), new float3(60f, 0f, 100f));
+            Entity squadEntity = CreateAttackSquad(em, 8, FactionIdentity.EnemyFactionId, FactionIdentity.PlayerFactionId, target, new int2(60, 100), new int2(190, 100));
             em.AddBuffer<AISquadUnit>(squadEntity).Add(new AISquadUnit { Unit = attacker });
 
             SystemHandle combatSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<AICombatOrderSystem>();
@@ -397,7 +397,7 @@ public sealed class BaseBreachValidationTests
             Assert.AreNotEqual(target, engage.Target);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(engage.Target, out bool isGate, out _, out byte ownerFactionId));
             Assert.IsTrue(isGate);
-            Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, ownerFactionId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, ownerFactionId);
             Assert.IsFalse(em.HasComponent<UnitPathRequest>(attacker));
             Assert.AreEqual(BaseBreachOrder.StageAttackingBreach, em.GetComponentData<BaseBreachOrder>(attacker).Stage);
         });
@@ -415,7 +415,7 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out Vector2Int gateOrigin,
                 out Vector2Int gateFootprint,
-                ownerFactionId: FactionIdentitySystem.EnemyFactionId));
+                ownerFactionId: FactionIdentity.EnemyFactionId));
 
             SystemHandle blockerSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
@@ -432,7 +432,7 @@ public sealed class BaseBreachValidationTests
             int gateIndex = GridUtils.CellToIndex(gateCell, grid.Width);
 
             Assert.IsTrue(blockerData.Blocked.IsSet(gateIndex), "The road barrier must still block non-friendly pathing.");
-            Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, blockerData.FriendlyPassFactionIds[gateIndex], "The road barrier pass faction must match the owning faction.");
+            Assert.AreEqual(FactionIdentity.EnemyFactionId, blockerData.FriendlyPassFactionIds[gateIndex], "The road barrier pass faction must match the owning faction.");
             Assert.IsTrue(UnitFootprintUtility.CanPlace(
                 grid,
                 walkable,
@@ -442,7 +442,7 @@ public sealed class BaseBreachValidationTests
                 gateCell,
                 new int2(1, 1),
                 new int2(80, 50),
-                FactionIdentitySystem.EnemyFactionId));
+                FactionIdentity.EnemyFactionId));
             Assert.IsFalse(UnitFootprintUtility.CanPlace(
                 grid,
                 walkable,
@@ -452,7 +452,7 @@ public sealed class BaseBreachValidationTests
                 gateCell,
                 new int2(1, 1),
                 new int2(80, 50),
-                FactionIdentitySystem.PlayerFactionId));
+                FactionIdentity.PlayerFactionId));
         });
     }
 
@@ -469,7 +469,7 @@ public sealed class BaseBreachValidationTests
                 gatePrefab,
                 new Vector2Int(80, 60),
                 out _,
-                ownerFactionId: FactionIdentitySystem.EnemyFactionId));
+                ownerFactionId: FactionIdentity.EnemyFactionId));
 
             Transform runtimeDoor = FindDescendantByName(runtimeRoot.transform, "Door_Z");
             Assert.NotNull(runtimeDoor);
@@ -490,7 +490,7 @@ public sealed class BaseBreachValidationTests
                 out int buildingId,
                 out Vector2Int gateOrigin,
                 out Vector2Int gateFootprint,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
             Transform runtimeDoor = FindDescendantByName(runtimeRoot.transform, "Door_Z");
             Assert.NotNull(runtimeDoor);
@@ -502,7 +502,7 @@ public sealed class BaseBreachValidationTests
             int2 gateCenter = new(
                 gateOrigin.x + Mathf.Max(1, gateFootprint.x) / 2,
                 gateOrigin.y + Mathf.Max(1, gateFootprint.y) / 2);
-            CreateDoorTriggerUnit(em, FactionIdentitySystem.PlayerFactionId, gateCenter + new int2(0, 6));
+            CreateDoorTriggerUnit(em, FactionIdentity.PlayerFactionId, gateCenter + new int2(0, 6));
 
             buildingPlacement.UpdateRoadBarrierDoorsForTests(1f);
 
@@ -521,7 +521,7 @@ public sealed class BaseBreachValidationTests
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
             RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentity.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Vector2Int gateOrigin = new(100 - gateFootprint.x / 2, 60);
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
@@ -530,7 +530,7 @@ public sealed class BaseBreachValidationTests
                 out int gateBuildingId,
                 out Vector2Int actualGateOrigin,
                 out Vector2Int actualGateFootprint,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
             SystemHandle blockerSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
@@ -573,9 +573,9 @@ public sealed class BaseBreachValidationTests
                 new int2(100, 40),
                 1));
 
-            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
+            Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
             Assert.IsFalse(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
+                attackerFactionId: FactionIdentity.EnemyFactionId,
                 finalTarget: target,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -610,9 +610,9 @@ public sealed class BaseBreachValidationTests
             CreateStaticBlocker(em, new int2(60, 140), new int2(81, 1));
             CreateStaticBlocker(em, new int2(60, 60), new int2(36, 1));
             CreateStaticBlocker(em, new int2(105, 60), new int2(36, 1));
-            CreateStaticBlocker(em, new int2(96, 60), new int2(9, 1), FactionIdentitySystem.PlayerFactionId);
+            CreateStaticBlocker(em, new int2(96, 60), new int2(9, 1), FactionIdentity.PlayerFactionId);
 
-            Entity unit = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new int2(160, 160));
+            Entity unit = CreatePathfindingUnit(em, FactionIdentity.PlayerFactionId, new int2(100, 100), new int2(160, 160));
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
@@ -695,7 +695,7 @@ public sealed class BaseBreachValidationTests
             Vector2Int anchor = new(220, 180);
             var gateRects = new List<RectInt>();
             var gateBuildingIds = new List<int>();
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, anchor, FactionIdentitySystem.PlayerFactionId, gateRects, gateBuildingIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, anchor, FactionIdentity.PlayerFactionId, gateRects, gateBuildingIds);
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
@@ -717,17 +717,17 @@ public sealed class BaseBreachValidationTests
                     occupancyData.Occupied.IsSet(gateIndex),
                     $"Actual initial-base gate {i} center must not be occupied by the runtime gate combat entity. rect={gate}");
                 Assert.IsTrue(
-                    UnitFootprintUtility.CanPlace(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, gateCell, new int2(1, 1), gateCell, FactionIdentitySystem.PlayerFactionId),
+                    UnitFootprintUtility.CanPlace(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, gateCell, new int2(1, 1), gateCell, FactionIdentity.PlayerFactionId),
                     $"Actual initial-base gate {i} center should be passable for owning faction. rect={gate}");
             }
-            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(-72, -8), FactionIdentitySystem.PlayerFactionId);
-            int2 goalCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(spawnConfig.BaseHalfWidthCells + 70, 42), FactionIdentitySystem.PlayerFactionId);
-            Entity unit = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, startCell, goalCell);
+            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(-72, -8), FactionIdentity.PlayerFactionId);
+            int2 goalCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, anchor + new Vector2Int(spawnConfig.BaseHalfWidthCells + 70, 42), FactionIdentity.PlayerFactionId);
+            Entity unit = CreatePathfindingUnit(em, FactionIdentity.PlayerFactionId, startCell, goalCell);
 
             for (int i = 0; i < gateBuildingIds.Count; i++)
             {
                 RectInt gate = gateRects[i];
-                CreateDoorTriggerUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(gate.xMin + gate.width / 2, gate.yMin + gate.height / 2));
+                CreateDoorTriggerUnit(em, FactionIdentity.PlayerFactionId, new int2(gate.xMin + gate.width / 2, gate.yMin + gate.height / 2));
                 buildingPlacement.UpdateRoadBarrierDoorsForTests(1f);
                 Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingDoorOpen01ForTests(gateBuildingIds[i], out float open01));
                 Assert.Greater(open01, 0.5f, $"Actual initial-base gate {i} should open for a nearby owning-faction unit.");
@@ -821,8 +821,8 @@ public sealed class BaseBreachValidationTests
             var playerGateIds = new List<int>();
             var enemyGateRects = new List<RectInt>();
             var enemyGateIds = new List<int>();
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, playerAnchor, FactionIdentitySystem.PlayerFactionId, playerGateRects, playerGateIds);
-            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, enemyAnchor, FactionIdentitySystem.EnemyFactionId, enemyGateRects, enemyGateIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, playerAnchor, FactionIdentity.PlayerFactionId, playerGateRects, playerGateIds);
+            SpawnActualInitialBase(buildingPlacement, placementConfig, spawnConfig, enemyAnchor, FactionIdentity.EnemyFactionId, enemyGateRects, enemyGateIds);
 
             SystemHandle blockerSystem = world.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(world.Unmanaged);
@@ -836,12 +836,12 @@ public sealed class BaseBreachValidationTests
             DynamicOccupancyComponent occupancyData = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
 
-            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), FactionIdentitySystem.PlayerFactionId);
-            Entity target = FindEnemyInnerBuildingTarget(buildingPlacement, em, FactionIdentitySystem.EnemyFactionId, new int2(enemyAnchor.x, enemyAnchor.y));
+            int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), FactionIdentity.PlayerFactionId);
+            Entity target = FindEnemyInnerBuildingTarget(buildingPlacement, em, FactionIdentity.EnemyFactionId, new int2(enemyAnchor.x, enemyAnchor.y));
             Assert.AreNotEqual(Entity.Null, target, "The actual initial enemy base should expose a non-wall building combat target.");
             int2 targetCell = em.GetComponentData<UnitGrid>(target).Cell;
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                FactionIdentitySystem.PlayerFactionId,
+                FactionIdentity.PlayerFactionId,
                 target,
                 targetCell,
                 startCell,
@@ -852,9 +852,9 @@ public sealed class BaseBreachValidationTests
             Assert.AreEqual("Gate", reason);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingCombatInfo(breachTarget, out bool breachIsGate, out _, out byte breachOwnerFaction));
             Assert.IsTrue(breachIsGate);
-            Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, breachOwnerFaction);
+            Assert.AreEqual(FactionIdentity.EnemyFactionId, breachOwnerFaction);
 
-            Entity attacker = CreatePathfindingUnit(em, FactionIdentitySystem.PlayerFactionId, startCell, breachCell);
+            Entity attacker = CreatePathfindingUnit(em, FactionIdentity.PlayerFactionId, startCell, breachCell);
             SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
             world.SetTime(new TimeData(0.1d, 0.1f));
             for (int i = 0; i < 48 && !em.HasComponent<UnitPathRange>(attacker); i++)
@@ -917,12 +917,12 @@ public sealed class BaseBreachValidationTests
                 wallPrefab,
                 new Vector2Int(20, 20),
                 rotateVertical: false,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeWallSegment(
                 wallPrefab,
                 new Vector2Int(40, 20),
                 rotateVertical: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
             Transform buildingRoot = runtimeRoot.transform.Find("RuntimeBuildings");
             Assert.NotNull(buildingRoot);

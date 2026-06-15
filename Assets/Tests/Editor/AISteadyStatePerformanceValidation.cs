@@ -130,8 +130,8 @@ public sealed class AISteadyStatePerformanceValidation
     {
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.EnemyFactionId, AIControlled = 1, IsPlayerFaction = 0 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId, AIControlled = 1, IsPlayerFaction = 0 });
     }
 
     private static void CreateSquadPlan(EntityManager em)
@@ -139,7 +139,7 @@ public sealed class AISteadyStatePerformanceValidation
         Entity planEntity = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(planEntity, new AISquadPlan
         {
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Enabled = 1,
             MinUnits = 4,
             MaxUnits = 8,
@@ -164,7 +164,7 @@ public sealed class AISteadyStatePerformanceValidation
                 typeof(UnitAttack),
                 typeof(AIControlledTag),
                 typeof(LocalTransform));
-            em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+            em.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
             em.SetComponentData(entity, new UnitGrid { Cell = cell });
             em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
             em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1, AggroRangeCells = 12, ChaseBreakDistance = 24f });
@@ -187,7 +187,7 @@ public sealed class AISteadyStatePerformanceValidation
                 typeof(UnitCombat),
                 typeof(UnitAttack),
                 typeof(LocalTransform));
-            em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(entity, new UnitGrid { Cell = cell });
             em.SetComponentData(entity, new UnitHealth { Current = 150, Max = 150 });
             em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1, AggroRangeCells = 12, ChaseBreakDistance = 24f });
@@ -210,13 +210,13 @@ public sealed class AISteadyStatePerformanceValidation
                 typeof(RuntimeBuildingCombatTag),
                 typeof(RuntimeBuildingCombatInfo),
                 typeof(LocalTransform));
-            em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(entity, new UnitGrid { Cell = center });
             em.SetComponentData(entity, new UnitHealth { Current = 600, Max = 600 });
             em.SetComponentData(entity, new RuntimeBuildingCombatInfo
             {
                 RuntimeBuildingId = i + 1,
-                OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
                 OriginCell = origin,
                 FootprintCells = footprint
             });

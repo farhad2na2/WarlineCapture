@@ -7,7 +7,7 @@ using UnityEngine;
 [UpdateAfter(typeof(UnitDeathSystem))]
 public partial struct UnitRespawnSystem : ISystem
 {
-    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
     private EntityQuery _respawnQueueQuery;
 
     public void OnCreate(ref SystemState state)

@@ -29,7 +29,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private InitialUnitSpawnApplySystem _unitSpawnApplySystem;
     private InitialUnitSpawnResetSystem _unitSpawnResetSystem;
     private InitialSpawnDiagnosticLogWriter _diagnosticLogWriter;
-    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
     private EntityTypeHandle _progressEntityType;
     private int _nextDiagnosticFrame;
 
@@ -815,7 +815,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             for (int i = 0; i < entities.Length; i++)
             {
                 FactionEconomy economy = economies[i];
-                if (!FactionIdentitySystem.IsPlayerControlled(economy.FactionId))
+                if (!FactionIdentity.IsPlayerControlled(economy.FactionId))
                     continue;
 
                 economy.Money = math.max(0, config.InitialDollars);
@@ -827,7 +827,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy
         {
-            FactionId = FactionIdentitySystem.PlayerFactionId,
+            FactionId = FactionIdentity.PlayerFactionId,
             Money = math.max(0, config.InitialDollars)
         });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy
@@ -1219,7 +1219,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     BuildingRuntimeSpawnRequest.KindBuilding,
                     default,
                     false,
-                    FactionIdentitySystem.IsPlayerControlled(factionSpawn.FactionId) && placement.Kind == InitialFactionBasePlacementKind.CoreBuilding
+                    FactionIdentity.IsPlayerControlled(factionSpawn.FactionId) && placement.Kind == InitialFactionBasePlacementKind.CoreBuilding
                         ? initialBaseCoreRequestEntryIndex
                         : 0);
                 requestCount++;
@@ -1384,7 +1384,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             }
 
             if (request.Status == BuildingRuntimeSpawnRequest.Succeeded &&
-                FactionIdentitySystem.IsPlayerControlled(request.FactionId) &&
+                FactionIdentity.IsPlayerControlled(request.FactionId) &&
                 request.EntryIndex == initialBaseCoreRequestEntryIndex)
             {
                 Vector3 coreFocus = GetInitialBuildingFootprintCenterWorld(

@@ -7,6 +7,38 @@ public sealed class RuntimeDiagnosticsSystemTests
     private World _previousWorld;
     private World _world;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.SettingVerboseAILogs_WritesLegacyAndEcsSingleton());
+            RunCase(test => test.SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton());
+            RunCase(test => test.ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton());
+            RunCase(test => test.ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
+            UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=4");
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError("[RuntimeDiagnosticsValidation] result=Failed");
+            UnityEngine.Debug.LogException(exception);
+            throw;
+        }
+    }
+
+    private static void RunCase(System.Action<RuntimeDiagnosticsSystemTests> testCase)
+    {
+        var tests = new RuntimeDiagnosticsSystemTests();
+        tests.SetUp();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -30,7 +62,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     [Test]
     public void SettingVerboseAILogs_WritesLegacyAndEcsSingleton()
     {
-        var diagnosticsSystem = new RuntimeDiagnosticsSystem();
+        RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         diagnosticsSystem.VerboseAILogs = true;
 
@@ -42,7 +74,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     [Test]
     public void SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton()
     {
-        var diagnosticsSystem = new RuntimeDiagnosticsSystem();
+        RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         diagnosticsSystem.TransportBoardingDiagnostics = true;
 
@@ -56,7 +88,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     {
         InitialUnitsRuntimeState.VerboseAILogs = true;
         InitialUnitsRuntimeState.TransportBoardingDiagnostics = true;
-        var diagnosticsSystem = new RuntimeDiagnosticsSystem();
+        RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         RuntimeDiagnosticsStateComponent state = diagnosticsSystem.ReadDiagnosticsState();
 
@@ -70,7 +102,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     [Test]
     public void ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged()
     {
-        var diagnosticsSystem = new RuntimeDiagnosticsSystem();
+        RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
         diagnosticsSystem.VerboseAILogs = true;
         diagnosticsSystem.TransportBoardingDiagnostics = true;
         RuntimeDiagnosticsStateComponent state = diagnosticsSystem.ReadDiagnosticsState();
@@ -88,6 +120,11 @@ public sealed class RuntimeDiagnosticsSystemTests
         Assert.AreEqual(0, reread.TransportBoardingDiagnostics);
         Assert.IsTrue(InitialUnitsRuntimeState.VerboseAILogs);
         Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
+    }
+
+    private RuntimeDiagnosticsSystem ResolveDiagnosticsSystem()
+    {
+        return _world.GetOrCreateSystemManaged<RuntimeDiagnosticsSystem>();
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

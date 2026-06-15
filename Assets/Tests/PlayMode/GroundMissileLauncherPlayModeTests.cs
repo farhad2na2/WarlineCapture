@@ -75,7 +75,7 @@ public sealed class GroundMissileLauncherPlayModeTests
             typeof(GroundMissileLauncherStateComponent),
             typeof(LocalTransform));
 
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = new int2(0, 0) });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(2, 2) });
         em.SetComponentData(entity, new UnitHealth { Current = 450, Max = 450 });
@@ -112,7 +112,7 @@ public sealed class GroundMissileLauncherPlayModeTests
             typeof(UnitFootprint),
             typeof(UnitHealth),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = new int2(10, 0) });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });

@@ -84,7 +84,7 @@ public sealed class GroundMissileAttackPerformanceValidation
             originCell: new int2(120, 8),
             footprintCells: new int2(4, 4),
             position: new float3(122f, 0f, 10f),
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             health: 250);
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), prepareSeconds: 0.5f, reloadSeconds: 3f);
         em.AddComponent<SelectedUnitTag>(launcher);
@@ -162,7 +162,7 @@ public sealed class GroundMissileAttackPerformanceValidation
             typeof(GroundMissileLauncherStateComponent),
             typeof(LocalTransform));
 
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = GridUtils.WorldToCell(CreateGridConfig(), position) });
         em.SetComponentData(entity, new UnitMove
         {

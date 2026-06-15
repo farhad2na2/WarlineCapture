@@ -147,7 +147,7 @@ internal sealed class BuildingSpawnPrefabSystem
                 Entity entity = entities[i];
                 if (em.HasComponent<StaticGridBlocker>(entity))
                     continue;
-                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
                     continue;
 
                 Entity candidate = respawnPrefabs[i].Prefab;

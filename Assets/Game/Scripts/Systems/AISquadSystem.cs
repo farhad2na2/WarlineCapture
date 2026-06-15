@@ -136,7 +136,7 @@ public partial struct AISquadSystem : ISystem
                 }
 
                 int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
-                byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
+                byte targetFactionId = FactionIdentity.ResolveDefaultTargetFaction(plan.FactionId);
                 int2 rallyCell = cellSum / members.Length;
                 int2 targetCell = ResolveInitialTargetCell(
                     _factionGridQuery,
@@ -403,7 +403,7 @@ public partial struct AISquadSystem : ISystem
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
     {
         if (!hasControls)
-            return FactionIdentitySystem.IsAiControlledByDefault(factionId);
+            return FactionIdentity.IsAiControlledByDefault(factionId);
 
         for (int i = 0; i < controls.Length; i++)
         {
@@ -412,7 +412,7 @@ public partial struct AISquadSystem : ISystem
                 return control.AIControlled != 0;
         }
 
-        return FactionIdentitySystem.IsAiControlledByDefault(factionId);
+        return FactionIdentity.IsAiControlledByDefault(factionId);
     }
 
     private bool ShouldQueueDiagnostics(ref SystemState state)

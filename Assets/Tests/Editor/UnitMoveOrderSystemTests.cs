@@ -406,7 +406,7 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitMove),
             typeof(UnitGrid),
             typeof(UnitFootprint));
-        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(unit, new UnitMove
         {
             Speed = 5f,
@@ -466,7 +466,7 @@ public sealed class UnitMoveOrderSystemTests
             typeof(UnitMove),
             typeof(UnitGrid),
             typeof(UnitFootprint));
-        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(unit, new UnitMove
         {
             Speed = 5f,

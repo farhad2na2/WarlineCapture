@@ -126,7 +126,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private EntityQuery _mapSurfaceQuery;
     private EntityQuery _runtimeBuildingCombatQuery;
     private readonly MapSurfaceQuerySystem _mapSurfaceQuerySystem = new();
-    private readonly MapSurfaceSlopeClassificationSystem _mapSurfaceSlopeClassificationSystem = new();
+    private readonly MapSurfaceSlopeClassifier _mapSurfaceSlopeClassificationSystem = new();
     private readonly MapSurfacePathfindingReadSystem _mapSurfaceReadSystem = new();
     private readonly UnitMoveOrderSystem _mapSurfaceMoveOrderSystem = new();
     private readonly List<Entity> _mapSurfaceSelectedMoveEntities = new();
@@ -318,7 +318,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return false;
         }
 
-        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
+        if (!FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
             return false;
 
         return !em.HasComponent<UnitHealth>(targetEntity) ||
@@ -570,7 +570,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return entity != Entity.Null &&
                em.Exists(entity) &&
                em.HasComponent<Faction>(entity) &&
-               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
+               FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 
     private static int CountPendingBoardingOrders(EntityManager em, Entity transport)
@@ -894,7 +894,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         RuntimeBuildingCombatInfo info,
         int2 clickedCell)
     {
-        if (!FactionIdentitySystem.IsHostileToPlayer(faction.Id))
+        if (!FactionIdentity.IsHostileToPlayer(faction.Id))
             return false;
 
         if (health.Current <= 0)

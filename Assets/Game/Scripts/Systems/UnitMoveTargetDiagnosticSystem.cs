@@ -45,7 +45,7 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
-                if (!FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
                     continue;
 
                 UnitTarget target = targets[i];

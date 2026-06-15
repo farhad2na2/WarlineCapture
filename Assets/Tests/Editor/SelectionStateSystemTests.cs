@@ -75,9 +75,9 @@ public sealed class SelectionStateSystemTests
     public void CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits()
     {
         var selectionState = new SelectionStateSystem();
-        Entity playerUnit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
-        Entity enemyUnit = CreateMoveUnit(FactionIdentitySystem.EnemyFactionId);
-        Entity passengerUnit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        Entity playerUnit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+        Entity enemyUnit = CreateMoveUnit(FactionIdentity.EnemyFactionId);
+        Entity passengerUnit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponentData(passengerUnit, new UnitTransportPassenger { Transport = Entity.Null });
 
         selectionState.CacheSelectedMoveEntity(_entityManager, playerUnit);
@@ -203,8 +203,8 @@ public sealed class SelectionStateSystemTests
     {
         var selectionState = new SelectionStateSystem();
         var lifecycle = new FocusedUnitLifecycleSystem();
-        Entity unitA = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
-        Entity unitB = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        Entity unitA = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+        Entity unitB = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<SelectedUnitTag>(unitA);
         _entityManager.AddComponent<SelectedUnitTag>(unitB);
         selectionState.CacheSelectedMoveEntity(_entityManager, unitA);
@@ -231,7 +231,7 @@ public sealed class SelectionStateSystemTests
     {
         var selectionState = new SelectionStateSystem();
         var lifecycle = new FocusedUnitLifecycleSystem();
-        Entity unit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        Entity unit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<SelectedUnitTag>(unit);
 
         Entity applied = Entity.Null;
@@ -250,7 +250,7 @@ public sealed class SelectionStateSystemTests
     {
         var selectionState = new SelectionStateSystem();
         var lifecycle = new FocusedUnitLifecycleSystem();
-        Entity unit = CreateMoveUnit(FactionIdentitySystem.PlayerFactionId);
+        Entity unit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<UnitAirMovement>(unit);
         _entityManager.AddComponent<ManualMoveOrderTag>(unit);
         _entityManager.AddComponentData(unit, new UnitTarget { Cell = new int2(1, 0) });
@@ -293,7 +293,7 @@ public sealed class SelectionStateSystemTests
         Entity entity = hasMove
             ? _entityManager.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove), typeof(LocalToWorld))
             : _entityManager.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(LocalToWorld));
-        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(entity, new UnitGrid { Cell = int2.zero });
         _entityManager.SetComponentData(entity, new LocalToWorld { Value = float4x4.Translate(position) });
         if (hasMove)

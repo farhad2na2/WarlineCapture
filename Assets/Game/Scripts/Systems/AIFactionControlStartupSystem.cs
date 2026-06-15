@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class AIFactionControlStartupSystem
+public sealed partial class AIFactionControlStartupSystem : SystemBase
 {
     public readonly struct Result
     {
@@ -15,6 +15,15 @@ public sealed class AIFactionControlStartupSystem
             HasPlayerAutoMode = hasPlayerAutoMode;
             PlayerAutoModeEnabled = playerAutoModeEnabled;
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public Result Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
@@ -99,7 +108,7 @@ public sealed class AIFactionControlStartupSystem
         {
             entries.Add(new FactionControlEntry
             {
-                FactionId = FactionIdentitySystem.PlayerFactionId,
+                FactionId = FactionIdentity.PlayerFactionId,
                 AIControlled = 0,
                 IsPlayerFaction = 1,
                 LastLogTime = -999f
@@ -110,7 +119,7 @@ public sealed class AIFactionControlStartupSystem
         {
             entries.Add(new FactionControlEntry
             {
-                FactionId = FactionIdentitySystem.EnemyFactionId,
+                FactionId = FactionIdentity.EnemyFactionId,
                 AIControlled = 1,
                 IsPlayerFaction = 0,
                 LastLogTime = -999f

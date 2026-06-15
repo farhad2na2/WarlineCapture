@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-public readonly struct MapSurfaceSlopeClassificationSystem
+public readonly struct MapSurfaceSlopeClassifier
 {
     public const float FlatSlopeDegrees = 5f;
     public const float GentleSlopeDegrees = 18f;

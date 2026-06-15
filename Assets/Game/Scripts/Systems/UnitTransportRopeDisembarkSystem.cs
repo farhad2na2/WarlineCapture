@@ -11,7 +11,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 {
     private const int RopeDropClearanceCells = 2;
     private const float RopeDropDurationSeconds = 1.2f;
-    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
     private EntityQuery _landingClearanceQuery;
     private EntityTypeHandle _landingEntityType;
     private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
@@ -480,7 +480,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 
 public partial struct UnitTransportRopeDropSystem : ISystem
 {
-    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
     private EntityQuery _liveUnitQuery;
     private EntityTypeHandle _liveEntityType;
     private ComponentTypeHandle<UnitGrid> _liveGridType;
@@ -597,7 +597,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
     }
 
     private static void IssueDisperseMoveOrder(
-        MapSurfaceSpawnGroundingSystem spawnGroundingSystem,
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
         EntityManager em,
         EntityCommandBuffer ecb,
         Entity entity,

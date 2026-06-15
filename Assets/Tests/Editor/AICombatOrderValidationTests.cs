@@ -60,9 +60,9 @@ public sealed class AICombatOrderValidationTests
         using var world = new World("AICombatOrderValidationTests");
         EntityManager em = world.EntityManager;
 
-        Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
-        Entity memberA = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
-        Entity memberB = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(6, 5), new float3(6f, 0f, 5f));
+        Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
+        Entity memberA = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
+        Entity memberB = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(6, 5), new float3(6f, 0f, 5f));
         em.AddComponentData(memberA, new UnitPathRequest { Goal = new int2(9, 9) });
         em.AddComponent<ManualMoveOrderTag>(memberA);
         em.AddComponent<AutoWanderMoveTag>(memberB);
@@ -71,9 +71,9 @@ public sealed class AICombatOrderValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 2,
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
-            TargetFactionId = FactionIdentitySystem.PlayerFactionId,
+            TargetFactionId = FactionIdentity.PlayerFactionId,
             TargetKind = (byte)AITargetKind.Threat,
             TargetEntity = target,
             RallyCell = new int2(5, 5),
@@ -118,18 +118,18 @@ public sealed class AICombatOrderValidationTests
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
 
-        Entity target = CreateTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
-        Entity playerMember = CreateAttacker(em, FactionIdentitySystem.PlayerFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
+        Entity target = CreateTarget(em, FactionIdentity.EnemyFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
+        Entity playerMember = CreateAttacker(em, FactionIdentity.PlayerFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
 
         Entity squadEntity = em.CreateEntity(typeof(AISquad));
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 3,
-            FactionId = FactionIdentitySystem.PlayerFactionId,
+            FactionId = FactionIdentity.PlayerFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
-            TargetFactionId = FactionIdentitySystem.EnemyFactionId,
+            TargetFactionId = FactionIdentity.EnemyFactionId,
             TargetKind = (byte)AITargetKind.Threat,
             TargetEntity = target,
             RallyCell = new int2(5, 5),

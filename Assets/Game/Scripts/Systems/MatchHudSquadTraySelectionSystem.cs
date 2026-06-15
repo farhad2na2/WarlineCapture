@@ -249,7 +249,7 @@ public sealed class MatchHudSquadTraySelectionSystem
             return false;
         }
 
-        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
+        if (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
             return false;
 
         return !em.HasComponent<UnitHealth>(entity) || em.GetComponentData<UnitHealth>(entity).Current > 0;

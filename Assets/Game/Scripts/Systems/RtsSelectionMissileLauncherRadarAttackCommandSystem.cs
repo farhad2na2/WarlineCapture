@@ -78,7 +78,7 @@ public partial struct RtsSelectionMissileLauncherRadarAttackCommandSystem : ISys
         if (launcher == Entity.Null ||
             !em.Exists(launcher) ||
             !em.HasComponent<Faction>(launcher) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(launcher).Id) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(launcher).Id) ||
             !em.HasComponent<UnitCombat>(launcher) ||
             em.GetComponentData<UnitCombat>(launcher).CanAttack == 0)
         {

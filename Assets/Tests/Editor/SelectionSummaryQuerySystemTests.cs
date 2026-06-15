@@ -82,7 +82,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponent<SelectedUnitTag>(first);
         em.AddComponent<SelectedUnitTag>(second);
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -106,7 +106,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponent<SelectedUnitTag>(vehicle);
         em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -131,7 +131,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponent<SelectedUnitTag>(aircraft);
         em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -154,7 +154,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
         em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -176,7 +176,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
         em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -197,7 +197,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(firstVehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
         em.AddComponentData(secondVehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -221,7 +221,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(firstTransport, new UnitTransportCapacity { SoldierCapacity = 4 });
         em.AddComponentData(secondTransport, new UnitTransportCapacity { SoldierCapacity = 4 });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -243,7 +243,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(transport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
         em.AddComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 4 });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -267,7 +267,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponentData(airTransport, new UnitTransportCapacity { SoldierCapacity = 6 });
         em.AddComponentData(airTransport, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);
@@ -287,7 +287,7 @@ public sealed class SelectionSummaryQuerySystemTests
         em.AddComponent<SelectedUnitTag>(moving);
         em.AddComponentData(moving, new UnitTarget { Cell = new int2(8, 8) });
 
-        SelectionSummaryQuerySystem.Summary summary = new SelectionSummaryQuerySystem().BuildSelectedSummary(
+        SelectionHudFeedbackBoundary.SelectedSummary summary = SelectionHudFeedbackBoundary.BuildSelectedSummary(
             em,
             new SelectionUiQuerySystem(),
             false);

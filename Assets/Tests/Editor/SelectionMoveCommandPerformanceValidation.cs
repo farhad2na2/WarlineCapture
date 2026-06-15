@@ -264,7 +264,7 @@ public sealed class SelectionMoveCommandPerformanceValidation
                 typeof(UnitGrid),
                 typeof(UnitFootprint));
             em.SetName(unit, $"SelectionMovePerfUnit_{i}");
-            em.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(unit, new UnitMove
             {
                 Speed = 5f,

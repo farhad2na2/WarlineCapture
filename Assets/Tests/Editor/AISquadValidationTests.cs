@@ -55,12 +55,12 @@ public sealed class AISquadValidationTests
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.EnemyFactionId, AIControlled = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId, AIControlled = 1 });
 
         Entity planEntity = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(planEntity, new AISquadPlan
         {
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Enabled = 1,
             MinUnits = 3,
             MaxUnits = 4,
@@ -69,11 +69,11 @@ public sealed class AISquadValidationTests
             LastLogTime = -999f
         });
 
-        Entity playerUnit = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(20, 20), false);
-        Entity unitA = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(4, 4), true);
-        Entity unitB = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(5, 4), true);
-        Entity unitC = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(6, 4), true);
-        Entity unitD = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(7, 4), true);
+        Entity playerUnit = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false);
+        Entity unitA = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(4, 4), true);
+        Entity unitB = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(5, 4), true);
+        Entity unitC = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(6, 4), true);
+        Entity unitD = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(7, 4), true);
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AISquadSystem>();
@@ -92,9 +92,9 @@ public sealed class AISquadValidationTests
 
         AISquad squad = em.GetComponentData<AISquad>(squads[0]);
         Assert.AreEqual(1, squad.SquadId);
-        Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, squad.FactionId);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, squad.FactionId);
         Assert.AreEqual((byte)AISquadPurpose.Attack, squad.Purpose);
-        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, squad.TargetFactionId);
         Assert.AreEqual(new int2(20, 20), squad.TargetCell);
 
         DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squads[0]);

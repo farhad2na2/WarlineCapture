@@ -886,7 +886,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     private static bool IsAttackSourceEntity(EntityManager em, Entity entity)
     {
         if (!em.HasComponent<Faction>(entity) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitMove>(entity) ||
             !em.HasComponent<UnitCombat>(entity) ||
             em.GetComponentData<UnitCombat>(entity).CanAttack == 0)

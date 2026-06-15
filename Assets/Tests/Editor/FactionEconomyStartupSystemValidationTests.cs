@@ -28,11 +28,11 @@ public sealed class FactionEconomyStartupSystemValidationTests
         system.Initialize(world.EntityManager, new[] { enemy });
 
         EntityManager em = world.EntityManager;
-        Entity economyEntity = GetEntityForFaction(em, FactionIdentitySystem.EnemyFactionId);
+        Entity economyEntity = GetEntityForFaction(em, FactionIdentity.EnemyFactionId);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(economyEntity);
 
-        Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, economy.FactionId);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, economy.FactionId);
         Assert.AreEqual(75000, economy.Money);
         Assert.AreEqual(0f, economy.Oil);
         Assert.AreEqual(0f, economy.Fuel);
@@ -55,7 +55,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         system.Initialize(world.EntityManager, new[] { playerAuto });
 
         EntityManager em = world.EntityManager;
-        Entity economyEntity = GetEntityForFaction(em, FactionIdentitySystem.PlayerFactionId);
+        Entity economyEntity = GetEntityForFaction(em, FactionIdentity.PlayerFactionId);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(economyEntity);
 
@@ -71,7 +71,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         using var world = new World("FactionEconomyStartupSystemExistingEntityTests");
         EntityManager em = world.EntityManager;
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
-        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentitySystem.EnemyFactionId, Money = 1 });
+        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentity.EnemyFactionId, Money = 1 });
 
         FactionEconomyStartupSystem system = new();
         system.Initialize(em, new[] { enemy });

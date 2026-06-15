@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public readonly struct MapSurfaceSpawnGroundingSystem
+public readonly struct MapSurfaceSpawnGrounding
 {
     public bool TryGroundCellCenter(
         EntityManager entityManager,

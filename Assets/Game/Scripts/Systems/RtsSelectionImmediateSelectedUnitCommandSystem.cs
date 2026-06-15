@@ -496,6 +496,6 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
     private static bool IsPlayerControlled(EntityManager em, Entity entity)
     {
         return em.HasComponent<Faction>(entity) &&
-               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
+               FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 }

@@ -81,9 +81,9 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
         {
             return CollectMode switch
             {
-                CollectPlayerMarkers => factionId == FactionIdentitySystem.PlayerFactionId,
-                CollectEnemyMarkers => factionId != FactionIdentitySystem.NeutralFactionId &&
-                                       factionId != FactionIdentitySystem.PlayerFactionId,
+                CollectPlayerMarkers => factionId == FactionIdentity.PlayerFactionId,
+                CollectEnemyMarkers => factionId != FactionIdentity.NeutralFactionId &&
+                                       factionId != FactionIdentity.PlayerFactionId,
                 _ => false
             };
         }

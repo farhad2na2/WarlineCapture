@@ -62,18 +62,18 @@ public sealed class AIControlModeValidationTests
 
         Entity configEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(configEntity);
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.PlayerFactionId, AIControlled = 1, IsPlayerFaction = 1, LastLogTime = -999f });
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.EnemyFactionId, AIControlled = 1, IsPlayerFaction = 0, LastLogTime = -999f });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.PlayerFactionId, AIControlled = 1, IsPlayerFaction = 1, LastLogTime = -999f });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId, AIControlled = 1, IsPlayerFaction = 0, LastLogTime = -999f });
         controls.Add(new FactionControlEntry { FactionId = 3, AIControlled = 0, IsPlayerFaction = 0, LastLogTime = -999f });
 
-        Entity playerAutoUnit = CreateFactionUnit(em, FactionIdentitySystem.PlayerFactionId);
+        Entity playerAutoUnit = CreateFactionUnit(em, FactionIdentity.PlayerFactionId);
         em.AddComponent<ManualMoveOrderTag>(playerAutoUnit);
         em.AddComponent<ManualMoveGroupMemberTag>(playerAutoUnit);
         em.AddComponentData(playerAutoUnit, new UnitPathRequest { Goal = new int2(4, 4) });
         em.AddComponentData(playerAutoUnit, new UnitPathRetryCooldown { ResumeFrame = 10 });
         em.AddComponentData(playerAutoUnit, new EngageTarget { IsCommanded = 1 });
 
-        Entity enemyUnit = CreateFactionUnit(em, FactionIdentitySystem.EnemyFactionId);
+        Entity enemyUnit = CreateFactionUnit(em, FactionIdentity.EnemyFactionId);
         Entity manualUnit = CreateFactionUnit(em, 3);
         em.AddComponent<AIControlledTag>(manualUnit);
         em.AddComponent<AICombatOrderTag>(manualUnit);

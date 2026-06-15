@@ -436,7 +436,7 @@ public sealed class UnitTargetOrderSystemTests
             typeof(UnitMove),
             typeof(UnitGrid),
             typeof(UnitCombat));
-        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(entity, new UnitGrid { Cell = new int2(1, 1) });
         _entityManager.SetComponentData(entity, new UnitCombat { CanAttack = 1 });
         return entity;
@@ -449,7 +449,7 @@ public sealed class UnitTargetOrderSystemTests
             typeof(UnitGrid),
             typeof(UnitHealth),
             typeof(LocalTransform));
-        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
         _entityManager.SetComponentData(entity, new UnitGrid { Cell = cell });
         _entityManager.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
         _entityManager.SetComponentData(entity, LocalTransform.FromPosition(position));

@@ -95,7 +95,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         using NativeArray<Entity> economies = economyQuery.ToEntityArray(Allocator.Temp);
         Assert.AreEqual(1, economies.Length);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economies[0]);
-        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, economy.FactionId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, economy.FactionId);
         Assert.AreEqual(345, economy.Money);
 
         using EntityQuery policyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FactionEconomyPolicy>());
@@ -250,7 +250,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         {
             factionSpawns[0] = new InitialUnitsFactionSpawnEntry
             {
-                FactionId = FactionIdentitySystem.PlayerFactionId,
+                FactionId = FactionIdentity.PlayerFactionId,
                 SpawnCell = new int2(1000, 2000)
             };
 
@@ -288,7 +288,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 BuildingRuntimeSpawnRequest request = requests[i];
                 Assert.AreEqual(i + 1, request.RequestId);
                 Assert.AreEqual(configEntity, request.PlanEntity);
-                Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, request.FactionId);
+                Assert.AreEqual(FactionIdentity.PlayerFactionId, request.FactionId);
                 Assert.AreEqual(1, request.HasOwnerFaction);
                 if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment &&
                     request.BuildingId.ToString() == wallId &&

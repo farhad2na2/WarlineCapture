@@ -10,6 +10,7 @@ Child specs:
 
 - `Field_Logistics_Oil_Fuel_Design.md` - Oil/Fuel field logistics loop, Build Drawer resource rules, and tactical HUD fuel display rules.
 - `Match_Selection_Implementation_Spec.md` - exact rules for unit selection, `SELECT`, squad cards, drag-select, input suppression, and M01 selection exceptions.
+- `Match_Unit_Command_Behavior_Spec.md` - exact per-unit behavior and edge cases for `HOLD`, `STOP`, and `SCAN`, including fixed-wing aircraft, helicopters, drones, buildings, civilian-risk auto-engage rules, and mixed selections.
 - `M01_FirstContact_Production_Contract.md` - M01-specific mission, FTUE, and tutorial-scope restrictions.
 - `Gameplay_UI_Integration_Handoff_Spec.md` - current `BattleHudGameplayBridge` API and bridge wiring.
 - `UIUX_Gameplay_Element_Alignment.md` - high-level UI element matrix for all screens.
@@ -208,9 +209,9 @@ Default visibility and clickability:
 | `SELECT` | Enter explicit selection mode. | No | Match accepts explicit selection input. | Tutorial disabled, modal open, build placement owns input. | Active select state; current UI click suppressed. |
 | `MOVE` | Enter move targeting; next valid ground tap issues move. | Yes | At least one selected unit can move. | `NoSelection`, immobilized, mission restricted, invalid state. | `ApplyCommandMode(Move)`, move banner/path preview. |
 | `ATTACK` | Enter attack targeting; next valid enemy tap issues attack. | Yes | Selected unit has valid attack capability. | `NoSelection`, `TargetNotEnemy`, `TargetNotAttackable`, non-combat. | `ApplyCommandMode(Attack)`, target highlight. |
-| `STOP` | Cancel the selected unit/group's current interruptible order immediately. Moving units stop where they are; attacking units stop attacking if the order can be interrupted; patrol/queued orders are cleared if stoppable. | Yes | Selection has active/interruption-capable order. | `NoSelection`, no stoppable order, command unavailable. | Immediate stop result or `ApplyCommandMode(Stop)` if the implementation requires confirmation; clear active targeting and update order/status text. |
-| `HOLD` | Issue/toggle hold-position behavior for the selected unit/group. The unit stays near its current position and defends instead of chasing enemies far away. | Yes | Selected unit can hold/defend. | `NoSelection`, command unavailable, unit cannot hold. | Immediate hold result or `ApplyCommandMode(Hold)` if confirmation/targeting is required; show hold state on selected panel/card. |
-| `SCAN` | Enter scan targeting or execute a mission-authored scan. The next valid map tap reveals/updates intel in that area: hidden enemies, suspect buildings, traps, patrol hints, objective clues, civilian risk, or minimap markers. | No by default | Mission allows scan and scan source/cooldown/charges/resources are valid. | `MissionDoesNotAllowScan`, `ScanUnavailable`, insufficient resources, cooldown, charges empty, target invalid/out of bounds. | `ApplyCommandMode(Scan)`, scan radius/preview, intel reveal marker/feed row, resource/cooldown update. |
+| `STOP` | Immediate order. Cancel selected units' interruptible orders and move each unit into its safest valid post-command state. Ground units can stop; helicopters can hover; fixed-wing aircraft never stop in the air and must egress/return to base or staging. | Yes | Selection has active/interruption-capable order or a return/air sequence that can accept stop intent. | `NoSelection`, no stoppable order, command unavailable, unit cannot be interrupted. | Button press flash, clear active targeting, keep selection. Ground status may show `STOPPING`/`IDLE`; helicopter status may show `HOVERING`; fixed-wing status must show `RETURNING TO BASE`, `LANDING`, or `TAKING OFF`, never airborne `STOPPING`. See child command spec. |
+| `HOLD` | Immediate order. Set selected units to a persistent local hold/guard posture appropriate to their movement type. Ground units hold a valid cell/radius, helicopters hover/loiter, jets use authored loiter or return if no loiter exists. | Yes | Selected unit can hold/defend or has an authored loiter/hold profile. | `NoSelection`, command unavailable, unit cannot hold. | Button press flash, clear active targeting, keep selection, show hold state on selected panel/card. See child command spec. |
+| `SCAN` | Enter scan targeting or execute a mission-authored scan. Mission/global scans may work without selection; selected-unit scans use the selected unit's scan profile, such as infantry sweep, vehicle sensor, helicopter orbit, jet recon pass, UAV loiter, or static radar pulse. | No for mission/global scan; yes for selected-unit scan. | Mission scan is available or selected scan-capable unit/source passes cooldown/charge/resource checks. | `MissionDoesNotAllowScan`, `ScanUnavailable`, insufficient resources, cooldown, charges empty, target invalid/out of bounds, unit cannot scan. | `ApplyCommandMode(Scan)`, scan radius/preview, intel reveal marker/feed row, resource/cooldown update, and selected status such as `SCANNING` or `RETURNING`. See child command spec. |
 | `SUPPORT` | Open support ability choices or enter support targeting for a selected support action. Examples: airstrike, smoke, med drone, supply drop, repair drone, evacuation, artillery, recon drone. | No by default; ability may require a selected target/unit | Mission allows support and at least one support ability is equipped/available. | `MissionDoesNotAllowSupport`, `SupportUnavailable`, locked, cooldown, no charges, insufficient resources, invalid target. | Open support menu or `ApplyCommandMode(Support)`, show support target preview, spend resources/charge only on accepted execution. |
 | `SPECIAL` | Use selected contextual ability or open command wheel/detail. | Usually | Selected unit has available special ability. | Locked, cooldown, no charges, mission banned, invalid target. | Opens `SCN-10` or starts special targeting with reason text. |
 | `BUILD` / build toggle | Open build drawer or build placement. | No, unless builder-selected mission requires it. | Mission allows build and catalog/context valid. | `MissionDoesNotAllowBuild`, insufficient resources, locked, no producer. | Open `BuildDrawerCanvas` or show disabled reason. |
@@ -220,6 +221,7 @@ M01 exception: `SELECT` may be visible but disabled/neutral; `SPECIAL` and `BUIL
 `SCAN`, `SUPPORT`, and `SPECIAL` separation:
 
 - `SCAN` is for information. It asks: what is hidden or uncertain in this area?
+- `SCAN` may reveal hostiles hidden among civilians, but auto-engage is not automatic. Auto-engage while scanning must follow the selected unit's policy, confidence threshold, weapon readiness, and civilian-risk checks defined in `Match_Unit_Command_Behavior_Spec.md`.
 - `SUPPORT` is for off-map or auxiliary help. It asks: what external help do I want to call into this area?
 - `SPECIAL` is for the selected unit/group's own contextual ability. It usually depends on the selected unit.
 - Temporary one-shot support abilities should not appear as squad-tray quick-select cards unless they represent persistent controllable units.
@@ -232,7 +234,7 @@ M01 exception: `SELECT` may be visible but disabled/neutral; `SPECIAL` and `BUIL
 | Selected unit + tap walkable ground | Issue direct move if no explicit selection/build/modal state owns input. |
 | Selected combat unit + tap valid enemy | Issue direct attack if no explicit selection/build/modal state owns input. |
 | No selection + tap ground/enemy | Reject with `NoSelection`; do not issue hidden command. |
-| Scan targeting + tap valid area | Execute scan, spend scan cost/charge if accepted, reveal/update intel, then exit scan targeting unless the scan mode explicitly supports repeat use. |
+| Scan targeting + tap valid area | Execute mission/global scan or selected-unit scan, spend scan cost/charge if accepted, reveal/update intel, apply scan auto-engage only if policy/risk checks allow it, then exit scan targeting unless the scan mode explicitly supports repeat use. |
 | Support targeting + tap valid area/unit | Execute selected support action, spend cost/charge if accepted, show support marker/effect, then exit support targeting unless repeat use is explicitly allowed. |
 | Tap UI while over HUD/popup | UI handles input; no world command. |
 
@@ -349,6 +351,14 @@ M01 FTUE target ids are owned by `M01_FirstContact_Production_Contract.md`.
 | `TargetNotEnemy` | Attack target is not hostile. | Choose an enemy target. |
 | `TargetNotAttackable` | Target cannot be attacked by selected unit. | Target cannot be attacked. |
 | `CommandUnavailable` | Capability/order not available. | Command unavailable for this unit. |
+| `NoStoppableOrder` | Stop pressed while selected unit/group has no active stoppable order. | No active order to stop. |
+| `CommandLockedBySafetyPhase` | Command is blocked by a non-interruptible safety phase such as landing, takeoff, emergency return, deployment, or extraction. | Use the command-specific text from `Match_Unit_Command_Behavior_Spec.md`, such as `Jet is landing. Hold unavailable.` |
+| `UnitCannotHold` | Hold pressed for selected unit/group without a valid hold/loiter/guard profile. | This unit cannot hold position. |
+| `UnitCannotScan` | Selected-unit scan requested from a unit/group without scan capability. | This unit cannot scan. |
+| `OrderCannotStopInPlace` | Stop was requested for a unit that cannot physically stop at current position, such as fixed-wing aircraft. | Returning to base. |
+| `CivilianRiskTooHigh` | Scan or auto-engage found a hostile but firing is blocked by civilian-risk rules. | Target marked. Civilian risk too high. |
+| `IntelConfidenceTooLow` | Scan found an uncertain/suspect target that cannot be auto-engaged. | Target not confirmed. |
+| `PartialCommandAccepted` | Mixed selection accepted the command for some units and skipped others. | Name which units accepted and which were skipped when possible. |
 | `MissionDoesNotAllowBuild` | Build pressed in a no-build mission. | Building unlocks in a later mission or this mission does not allow building. |
 | `MissionDoesNotAllowScan` | Scan pressed in a no-scan mission. | Scanning is not available in this mission. |
 | `MissionDoesNotAllowSupport` | Support pressed in a no-support mission. | Support is not available in this mission. |
@@ -395,7 +405,10 @@ Focused match implementation must prove:
 - Command buttons obey selected-unit capability and disabled reasons.
 - Direct move/attack and explicit move/attack share validation and feedback.
 - `SELECT` behavior follows `Match_Selection_Implementation_Spec.md`.
+- `HOLD` follows `Match_Unit_Command_Behavior_Spec.md`: immediate order, keeps selection, clears active targeting, reports persistent hold state through selected panel/card, and does not keep the button visually latched.
+- `STOP` follows `Match_Unit_Command_Behavior_Spec.md`: immediate order, keeps selection, stops ground units only at valid/safe positions, and returns fixed-wing aircraft instead of freezing them in place.
 - `SCAN` enters scan targeting only when mission, resource, cooldown, charge, and target rules allow it; otherwise it returns typed disabled/reject feedback.
+- Selected-unit `SCAN` follows `Match_Unit_Command_Behavior_Spec.md`: per-unit scan profiles, fixed-wing scan pass/return behavior, partial mixed-selection feedback, and auto-engage gating by unit policy, intel confidence, weapon readiness, and civilian risk.
 - `SUPPORT` opens support choices or support targeting only when mission, equipped support ability, resource, cooldown, charge, and target rules allow it; otherwise it returns typed disabled/reject feedback.
 - Build button opens build drawer only when mission/build context allows it.
 - Build drawer controls bind catalog/queue/capacity data and block world input.

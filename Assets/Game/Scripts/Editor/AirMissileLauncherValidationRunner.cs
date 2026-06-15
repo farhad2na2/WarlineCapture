@@ -74,7 +74,7 @@ public static class AirMissileLauncherValidationRunner
         using World world = new("AirMissileLauncherValidationRunner");
         EntityManager em = world.EntityManager;
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
-        Entity target = CreateAirTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(30f, 12f, 0f));
+        Entity target = CreateAirTarget(em, FactionIdentity.EnemyFactionId, new float3(30f, 12f, 0f));
         CreateSupportProvider(em, AirDefenseSupportProviderKind.Radar, new float3(8f, 0f, 0f), rangeBonus: 50f, lockMultiplier: 0.5f, trackingBonus: 0.2f, turnBonus: 40f);
         AddAirMissileVfxReference(em, launcher);
 
@@ -133,7 +133,7 @@ public static class AirMissileLauncherValidationRunner
         using World world = new("AirMissileLauncherValidationRunner_GroundMissile");
         EntityManager em = world.EntityManager;
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
-        Entity incomingMissile = CreateIncomingGroundMissile(em, FactionIdentitySystem.EnemyFactionId, new float3(35f, 4f, 0f));
+        Entity incomingMissile = CreateIncomingGroundMissile(em, FactionIdentity.EnemyFactionId, new float3(35f, 4f, 0f));
 
         SystemHandle acquisitionSystem = world.CreateSystem<AirMissileLauncherTargetAcquisitionSystem>();
         SystemHandle fireControlSystem = world.CreateSystem<AirMissileLauncherFireControlSystem>();
@@ -184,7 +184,7 @@ public static class AirMissileLauncherValidationRunner
             typeof(AirMissileLauncherComponent),
             typeof(AirMissileLauncherStateComponent),
             typeof(AirDefenseSupportLinkComponent));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new AirMissileLauncherComponent
@@ -304,7 +304,7 @@ public static class AirMissileLauncherValidationRunner
             typeof(Faction),
             typeof(LocalTransform),
             typeof(AirDefenseSupportProviderComponent));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new AirDefenseSupportProviderComponent
         {

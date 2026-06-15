@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-public readonly struct MapSurfacePathCostSystem
+public readonly struct MapSurfacePathCost
 {
     public int GetSlopeTraversalCost(
         MapSurfaceComponent surface,
@@ -29,9 +29,9 @@ public readonly struct MapSurfacePathCostSystem
             return 0;
 
         float slope = math.max(0f, blob.Samples[surfaceCell.FirstSurfaceIndex].SlopeDegrees);
-        if (slope <= MapSurfaceSlopeClassificationSystem.FlatSlopeDegrees)
+        if (slope <= MapSurfaceSlopeClassifier.FlatSlopeDegrees)
             return 0;
-        if (slope <= MapSurfaceSlopeClassificationSystem.GentleSlopeDegrees)
+        if (slope <= MapSurfaceSlopeClassifier.GentleSlopeDegrees)
             return math.max(0, pathCost.GentleSlopeTraversalCost);
 
         return math.max(0, pathCost.SteepSlopeTraversalCost);

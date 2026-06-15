@@ -73,7 +73,7 @@ public sealed class SelectionOrderMarkerSystemTests
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
-            markers.ShowMoveOrderMarker(em, new int2(4, 5), new Vector3(4f, 1.35f, 5f), FactionIdentitySystem.PlayerFactionId);
+            markers.ShowMoveOrderMarker(em, new int2(4, 5), new Vector3(4f, 1.35f, 5f), FactionIdentity.PlayerFactionId);
 
             Transform moveMarker = FindChildByNameForTest(runtimeRoot.transform, "MoveOrderMarkerRuntime");
             Assert.IsNotNull(moveMarker);
@@ -121,7 +121,7 @@ public sealed class SelectionOrderMarkerSystemTests
                 WorldPosition = new float3(4f, 1f, 5f),
                 HasTargetCell = 1,
                 HasWorldPosition = 1,
-                MarkerFactionId = FactionIdentitySystem.PlayerFactionId
+                MarkerFactionId = FactionIdentity.PlayerFactionId
             }));
 
             Transform moveMarker = FindChildByNameForTest(runtimeRoot.transform, "MoveOrderMarkerRuntime");
@@ -138,7 +138,7 @@ public sealed class SelectionOrderMarkerSystemTests
                 WorldPosition = new float3(7f, 1f, 8f),
                 HasTargetCell = 1,
                 HasWorldPosition = 1,
-                MarkerFactionId = FactionIdentitySystem.PlayerFactionId
+                MarkerFactionId = FactionIdentity.PlayerFactionId
             }));
             Assert.AreEqual(7f, moveMarker.position.x, 0.001f);
             Assert.AreEqual(8f, moveMarker.position.z, 0.001f);
@@ -318,7 +318,7 @@ public sealed class SelectionOrderMarkerSystemTests
             new float3(7f, 0f, 8f),
             quaternion.RotateY(math.radians(25f))));
         em.SetComponentData(target, new UnitFootprint { Size = new int2(2, 3) });
-        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
 
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
@@ -411,9 +411,9 @@ public sealed class SelectionOrderMarkerSystemTests
         using var world = new World("SelectionOrderMarkerSystemTests_AttackPreview");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
-        Entity hostile = CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(2f, 0f, 3f), 100);
-        CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(4f, 0f, 5f), 100);
-        CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(6f, 0f, 7f), 0);
+        Entity hostile = CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(2f, 0f, 3f), 100);
+        CreatePreviewTarget(em, FactionIdentity.PlayerFactionId, new float3(4f, 0f, 5f), 100);
+        CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(6f, 0f, 7f), 0);
 
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
@@ -453,9 +453,9 @@ public sealed class SelectionOrderMarkerSystemTests
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
         Entity source = em.CreateEntity();
-        Entity passenger = CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(8f, 0f, 9f), 100);
-        CreatePreviewTarget(em, FactionIdentitySystem.PlayerFactionId, new float3(10f, 0f, 11f), 100);
-        CreatePreviewTarget(em, FactionIdentitySystem.EnemyFactionId, new float3(12f, 0f, 13f), 100);
+        Entity passenger = CreatePreviewTarget(em, FactionIdentity.PlayerFactionId, new float3(8f, 0f, 9f), 100);
+        CreatePreviewTarget(em, FactionIdentity.PlayerFactionId, new float3(10f, 0f, 11f), 100);
+        CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(12f, 0f, 13f), 100);
 
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);

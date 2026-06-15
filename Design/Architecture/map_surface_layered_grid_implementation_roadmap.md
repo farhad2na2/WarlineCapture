@@ -252,7 +252,7 @@ Pathfinding integration rule:
    - Add slope cost contribution behind a config flag or exact documented defaults.
    - Validate no regression in current flat map path costs.
    - Do not tune gameplay values in this step.
-   - Added `MapSurfacePathCostComponent` and `MapSurfacePathCostSystem`.
+   - Added `MapSurfacePathCostComponent` and `MapSurfacePathCost`.
    - Slope traversal cost is disabled by default and returns zero unless `EnableSlopeCost` is explicitly enabled on the map-surface entity.
    - Existing path traversal cost constants remain unchanged.
 
@@ -260,7 +260,7 @@ Pathfinding integration rule:
    - Mark road samples as road/bridge/highway.
    - Preserve existing road preference/cost behavior by mapping old road data to surface flags.
    - Keep road and surface ownership separate but queryable from the same path context.
-   - Added `MapSurfaceRoadPrioritySystem` to normalize road/bridge/highway/ramp flags during baking.
+   - Added `MapSurfaceRoadPriorityPolicy` to normalize road/bridge/highway/ramp flags during baking.
    - `PathfindBatchJob` now routes existing sidewalk/dirt-road buffer priority through the surface road-priority boundary while preserving the same traversal cost constants.
 
 20. Complete: Add multi-layer surface storage

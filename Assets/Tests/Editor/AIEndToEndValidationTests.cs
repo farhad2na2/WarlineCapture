@@ -108,23 +108,23 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
-        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentitySystem.EnemyFactionId, Money = 100000, LastLogTime = -999f });
+        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentity.EnemyFactionId, Money = 100000, LastLogTime = -999f });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy { Enabled = 1, SellIntervalSeconds = 8f });
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
-        controls.Add(new FactionControlEntry { FactionId = FactionIdentitySystem.EnemyFactionId, AIControlled = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.PlayerFactionId, AIControlled = 0, IsPlayerFaction = 1 });
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId, AIControlled = 1 });
 
         CreateBuildPlan(em);
         CreateProductionPlan(em);
         CreateSquadPlan(em);
 
-        Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(50, 50), new float3(50f, 0f, 50f));
-        Entity unitA = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
-        Entity unitB = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(21, 20), new float3(21f, 0f, 20f));
-        Entity unitC = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(22, 20), new float3(22f, 0f, 20f));
-        Entity unitD = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(23, 20), new float3(23f, 0f, 20f));
+        Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(50, 50), new float3(50f, 0f, 50f));
+        Entity unitA = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
+        Entity unitB = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(21, 20), new float3(21f, 0f, 20f));
+        Entity unitC = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(22, 20), new float3(22f, 0f, 20f));
+        Entity unitD = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(23, 20), new float3(23f, 0f, 20f));
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
@@ -150,7 +150,7 @@ public sealed class AIEndToEndValidationTests
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
-        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Tent_Regular"));
+        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentity.EnemyFactionId, "Tent_Regular"));
 
         if (assertDiagnosticLog)
             LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=10000 result=Requested"));
@@ -170,7 +170,7 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         Assert.AreEqual(
             1,
-            RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentitySystem.EnemyFactionId, "Rifleman"),
+            RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentity.EnemyFactionId, "Rifleman"),
             RuntimeGameplayStateTestHelper.DescribeUnitProductionBoundary(em));
 
         if (assertDiagnosticLog)
@@ -251,7 +251,7 @@ public sealed class AIEndToEndValidationTests
         Entity planEntity = em.CreateEntity(typeof(AIBuildPlan));
         em.SetComponentData(planEntity, new AIBuildPlan
         {
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Enabled = 1,
             BaseCenterCell = new int2(30, 30),
             BuildIntervalSeconds = 1f,
@@ -267,7 +267,7 @@ public sealed class AIEndToEndValidationTests
         Entity planEntity = em.CreateEntity(typeof(AIProductionPlan));
         em.SetComponentData(planEntity, new AIProductionPlan
         {
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Enabled = 1,
             TargetProducedUnits = 1,
             MaxQueuedUnits = 1,
@@ -284,7 +284,7 @@ public sealed class AIEndToEndValidationTests
         Entity planEntity = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(planEntity, new AISquadPlan
         {
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Enabled = 1,
             MinUnits = 4,
             MaxUnits = 4,

@@ -1492,7 +1492,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return em.Exists(transport) &&
                new UnitTransportCapacitySystem().TryEnsureTransportCapacity(em, transport) &&
                em.HasComponent<Faction>(transport) &&
-               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
+               FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
                em.HasComponent<UnitGrid>(transport) &&
                em.HasComponent<UnitFootprint>(transport) &&
                em.HasComponent<LocalTransform>(transport);
@@ -1502,7 +1502,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
     {
         if (!em.Exists(entity) ||
             !em.HasComponent<Faction>(entity) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitGrid>(entity) ||
             !em.HasComponent<UnitMove>(entity) ||
             !em.HasComponent<UnitFootprint>(entity) ||
@@ -2289,7 +2289,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
     {
         return em.Exists(entity) &&
                em.HasComponent<Faction>(entity) &&
-               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
+               FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 
     private static string DescribeTransportBoardingEntity(EntityManager em, Entity entity)

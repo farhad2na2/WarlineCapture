@@ -56,7 +56,7 @@ public sealed class CombatDeathValidationTests
         Entity respawnPrefab = CreateRespawnPrefab(em);
         Entity target = CreateSoldier(
             em,
-            factionId: FactionIdentitySystem.PlayerFactionId,
+            factionId: FactionIdentity.PlayerFactionId,
             cell: new int2(4, 4),
             position: new float3(4f, 0f, 4f),
             health: 100,
@@ -64,7 +64,7 @@ public sealed class CombatDeathValidationTests
             respawnPrefab);
         Entity attacker = CreateSoldier(
             em,
-            factionId: FactionIdentitySystem.EnemyFactionId,
+            factionId: FactionIdentity.EnemyFactionId,
             cell: new int2(4, 5),
             position: new float3(4f, 0f, 5f),
             health: 100,
@@ -100,7 +100,7 @@ public sealed class CombatDeathValidationTests
         world.SetTime(new TimeData(30d, 0.1f));
         respawnSystem.Update(world.Unmanaged);
 
-        Assert.AreEqual(0, CountLivingRuntimeSoldiers(em, FactionIdentitySystem.PlayerFactionId), "The killed soldier must not respawn later.");
+        Assert.AreEqual(0, CountLivingRuntimeSoldiers(em, FactionIdentity.PlayerFactionId), "The killed soldier must not respawn later.");
         Assert.IsTrue(em.Exists(attacker), "The attacking soldier should remain alive.");
     }
 

@@ -179,7 +179,7 @@ public sealed class VisibleUnitSelectionSystem
 
             for (int i = 0; i < entities.Length; i++)
             {
-                if (factions[i].Id != FactionIdentitySystem.PlayerFactionId)
+                if (factions[i].Id != FactionIdentity.PlayerFactionId)
                     continue;
 
                 bool isVehicle = IsVehicleForVisibleSelection(

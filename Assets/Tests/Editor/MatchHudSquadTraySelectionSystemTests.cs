@@ -198,7 +198,7 @@ public sealed class MatchHudSquadTraySelectionSystemTests
             typeof(UnitHealth),
             typeof(UnitSourcePrefabKey),
             typeof(LocalToWorld));
-        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(entity, new UnitGrid { Cell = new int2((int)position.x, (int)position.z) });
         _entityManager.SetComponentData(entity, new UnitMove { Speed = 5f });
         _entityManager.SetComponentData(entity, new UnitMovementBehavior { UsesVehicleMotion = usesVehicleMotion ? (byte)1 : (byte)0 });

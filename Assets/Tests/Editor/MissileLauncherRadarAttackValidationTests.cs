@@ -74,10 +74,10 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Air", new int2(10, 10));
-            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Air, new int2(20, 20), 40);
-            Entity airTarget = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(40, 20), true, true);
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(45, 20), false, true);
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(80, 20), true, true);
+            CreateDetector(em, FactionIdentity.PlayerFactionId, ThreatDetectionKind.Air, new int2(20, 20), 40);
+            Entity airTarget = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(40, 20), true, true);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(45, 20), false, true);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(80, 20), true, true);
 
             Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
             Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
@@ -99,10 +99,10 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Ground", new int2(10, 10));
-            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
-            Entity groundTarget = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(35, 20), false, true);
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(32, 20), true, true);
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(80, 20), false, true);
+            CreateDetector(em, FactionIdentity.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+            Entity groundTarget = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(35, 20), false, true);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(32, 20), true, true);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(80, 20), false, true);
 
             Assert.IsTrue(IssueFocusedMissileLauncherRadarAttack(em, launcher));
 
@@ -128,8 +128,8 @@ public sealed class MissileLauncherRadarAttackValidationTests
         {
             EntityManager em = world.EntityManager;
             Entity launcher = CreateLauncher(em, "Unit_Veh_Missle_Launcher_Air", new int2(10, 10));
-            CreateDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new int2(40, 20), true, true);
+            CreateDetector(em, FactionIdentity.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(40, 20), true, true);
 
             Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
             Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
@@ -149,7 +149,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
         try
         {
             EntityManager em = world.EntityManager;
-            Entity soldier = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new int2(10, 10), false, true);
+            Entity soldier = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(10, 10), false, true);
             em.AddComponentData(soldier, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
             em.AddComponentData(soldier, new UnitAttack
             {
@@ -170,7 +170,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
 
     private static Entity CreateLauncher(EntityManager em, string sourceKey, int2 cell)
     {
-        Entity entity = CreateUnit(em, FactionIdentitySystem.PlayerFactionId, cell, false, true);
+        Entity entity = CreateUnit(em, FactionIdentity.PlayerFactionId, cell, false, true);
         em.AddComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(sourceKey) });
         em.AddComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.AddComponentData(entity, new UnitAttack

@@ -51,7 +51,7 @@ public sealed class SelectionStateSystem
     {
         return entityManager.Exists(entity) &&
                entityManager.HasComponent<Faction>(entity) &&
-               FactionIdentitySystem.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) &&
+               FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) &&
                entityManager.HasComponent<UnitGrid>(entity) &&
                entityManager.HasComponent<UnitMove>(entity) &&
                !entityManager.HasComponent<Disabled>(entity) &&

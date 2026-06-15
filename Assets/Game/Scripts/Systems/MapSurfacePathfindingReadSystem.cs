@@ -2,7 +2,7 @@ using Unity.Entities;
 
 public readonly struct MapSurfacePathfindingReadSystem
 {
-    private readonly MapSurfacePathCostSystem _pathCostSystem;
+    private readonly MapSurfacePathCost _pathCostSystem;
 
     public readonly struct Context
     {

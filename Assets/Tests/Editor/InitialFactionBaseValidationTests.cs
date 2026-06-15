@@ -178,7 +178,7 @@ public sealed class InitialFactionBaseValidationTests
         Assert.IsFalse(config.CreateFactionBases);
         Assert.GreaterOrEqual(config.Factions.Count, 2);
         Assert.IsTrue(
-            config.Factions.Exists(faction => faction != null && faction.FactionId == FactionIdentitySystem.PlayerFactionId),
+            config.Factions.Exists(faction => faction != null && faction.FactionId == FactionIdentity.PlayerFactionId),
             "Initial match config should include the player faction.");
 
         BuildingPlacementSystemConfig placementConfig =
@@ -307,7 +307,7 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
             using EntityQuery staticBlockers = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<StaticGridBlocker>());
             Assert.AreEqual(0, staticBlockers.CalculateEntityCount(), "Building_Helipad should not block ground pathing or boarding approach.");
         }
@@ -368,7 +368,7 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
             Assert.IsTrue(TrySpawnRuntimeBuilding(
                 buildingGameplay,
                 helipad,
@@ -376,16 +376,16 @@ public sealed class InitialFactionBaseValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
+                ownerFactionId: FactionIdentity.PlayerFactionId));
 
             int slotsPerHelipad = CountProductionSpawnPoints(helipad);
             Assert.Greater(slotsPerHelipad, 0);
             BuildingSpawnSystem.Context spawnContext = buildingGameplay.CreateSpawnContext();
-            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
-            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentity.PlayerFactionId, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentity.PlayerFactionId, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
             for (int slot = 0; slot < slotsPerHelipad; slot++)
             {
-                Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentitySystem.PlayerFactionId, "Building_Helipad", slot, grid, out int2 slotCell, out _));
+                Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentity.PlayerFactionId, "Building_Helipad", slot, grid, out int2 slotCell, out _));
                 Entity occupyingHelicopter = world.EntityManager.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitHealth));
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitGrid { Cell = slotCell });
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitFootprint { Size = new int2(3, 3) });
@@ -398,7 +398,7 @@ public sealed class InitialFactionBaseValidationTests
             Assert.IsTrue(
                 buildingGameplay.Spawn.TryResolveAvailableFactionHelipadSpawn(
                     spawnContext,
-                    FactionIdentitySystem.PlayerFactionId,
+                    FactionIdentity.PlayerFactionId,
                     world.EntityManager,
                     gridEntity,
                     grid,

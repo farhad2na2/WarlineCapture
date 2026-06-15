@@ -2,8 +2,17 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed class AIPlanEntryStartupSystem
+public sealed partial class AIPlanEntryStartupSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void WriteBuildPlanEntries(
         DynamicBuffer<AIBuildPlanEntry> entries,
         IReadOnlyList<string> preferredBuildingIds,

@@ -135,7 +135,7 @@ public sealed class BuildingUiQuerySystemTests
             {
                 Id = 7,
                 HasOwnerFaction = true,
-                OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
                 Definition = new BuildingDefinition { DisplayName = "Player Helipad" },
                 PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>
                 {
@@ -151,7 +151,7 @@ public sealed class BuildingUiQuerySystemTests
             {
                 Id = 8,
                 HasOwnerFaction = true,
-                OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+                OwnerFactionId = FactionIdentity.EnemyFactionId,
                 Definition = new BuildingDefinition { DisplayName = "Enemy Helipad" },
                 PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>
                 {

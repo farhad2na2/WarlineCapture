@@ -1,4 +1,4 @@
-public readonly struct MapSurfaceRoadPrioritySystem
+public readonly struct MapSurfaceRoadPriorityPolicy
 {
     public MapSurfaceFlags NormalizeFlagsForSurfaceType(MapSurfaceType surfaceType, MapSurfaceFlags flags)
     {

@@ -367,7 +367,7 @@ public partial struct AttackOrderCommandSystem : ISystem
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (!FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
+        if (!FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (em.HasComponent<UnitHealth>(targetEntity) &&
             em.GetComponentData<UnitHealth>(targetEntity).Current <= 0)

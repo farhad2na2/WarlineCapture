@@ -163,7 +163,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             em,
             "Tent_Regular",
             new Vector2Int(12, 11),
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             out int requestId));
         Assert.Greater(requestId, 0);
 
@@ -268,7 +268,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             "Wall_Regular",
             new Vector2Int(4, 6),
             new Vector2Int(7, 6),
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             out int requestId));
 
         Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
@@ -317,7 +317,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             "Wall_Regular",
             new Vector2Int(4, 6),
             false,
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             false,
             out int requestId));
 

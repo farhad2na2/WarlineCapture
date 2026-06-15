@@ -169,7 +169,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             typeof(LocalTransform),
             typeof(LocalToWorld));
         em.SetName(entity, TransportHelicopterName);
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(3, 3) });
         em.SetComponentData(entity, new UnitTransportCapacity { SoldierCapacity = 10 });
@@ -202,7 +202,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             typeof(LocalTransform),
             typeof(LocalToWorld));
         em.SetName(entity, SoldierName);
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });

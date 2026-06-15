@@ -282,7 +282,7 @@ public sealed class SelectedUnitDebugFireSystemTests
             typeof(UnitAttackAnimationComponent),
             typeof(UnitHealth),
             typeof(LocalTransform));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
         em.SetComponentData(entity, new UnitAttack
         {
@@ -381,13 +381,13 @@ public sealed class SelectedUnitDebugFireSystemTests
         em.SetComponentData(entity, new RuntimeBuildingCombatInfo
         {
             RuntimeBuildingId = 1,
-            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            OwnerFactionId = FactionIdentity.EnemyFactionId,
             OriginCell = new int2((int)position.x, (int)position.z),
             FootprintCells = new int2(20, 20),
             IsWall = 0,
             IsGate = 0
         });
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
         em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(name) });
         em.SetComponentData(entity, new UnitDisplayInfo { Name = new FixedString64Bytes(name) });

@@ -70,9 +70,9 @@ public sealed class AITargetingValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 7,
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
-            TargetFactionId = FactionIdentitySystem.PlayerFactionId,
+            TargetFactionId = FactionIdentity.PlayerFactionId,
             TargetKind = (byte)AITargetKind.None,
             TargetEntity = Entity.Null,
             RallyCell = new int2(10, 10),
@@ -83,9 +83,9 @@ public sealed class AITargetingValidationTests
             LastLogTime = -999f
         });
 
-        Entity lowValueUnit = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 100, false, false);
-        Entity highValueThreat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(18, 10), 500, true, true);
-        CreateTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(9, 10), 500, true, true);
+        Entity lowValueUnit = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(11, 10), 100, false, false);
+        Entity highValueThreat = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(18, 10), 500, true, true);
+        CreateTarget(em, FactionIdentity.EnemyFactionId, new int2(9, 10), 500, true, true);
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
@@ -102,7 +102,7 @@ public sealed class AITargetingValidationTests
         Assert.AreEqual(highValueThreat, squad.TargetEntity);
         Assert.AreEqual((byte)AITargetKind.Threat, squad.TargetKind);
         Assert.AreEqual(new int2(18, 10), squad.TargetCell);
-        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, squad.TargetFactionId);
         Assert.Greater(squad.TargetScore, 0);
         Assert.AreNotEqual(lowValueUnit, squad.TargetEntity);
     }
@@ -116,7 +116,7 @@ public sealed class AITargetingValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 8,
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
             TargetKind = (byte)AITargetKind.None,
             TargetEntity = Entity.Null,
@@ -124,10 +124,10 @@ public sealed class AITargetingValidationTests
             LastLogTime = -999f
         });
         Entity priority = em.CreateEntity(typeof(AITargetPrioritySetting));
-        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentitySystem.EnemyFactionId, Priority = (byte)AITargetPriority.Economy });
+        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentity.EnemyFactionId, Priority = (byte)AITargetPriority.Economy });
 
-        Entity threat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 500, true, false);
-        Entity hauler = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(12, 10), 100, false, false);
+        Entity threat = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(11, 10), 500, true, false);
+        Entity hauler = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(12, 10), 100, false, false);
         em.AddComponentData(hauler, new UnitResourceHauler { BarrelCapacity = 8 });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
@@ -156,7 +156,7 @@ public sealed class AITargetingValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 9,
-            FactionId = FactionIdentitySystem.EnemyFactionId,
+            FactionId = FactionIdentity.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
             TargetKind = (byte)AITargetKind.None,
             TargetEntity = Entity.Null,
@@ -164,11 +164,11 @@ public sealed class AITargetingValidationTests
             LastLogTime = -999f
         });
         Entity priority = em.CreateEntity(typeof(AITargetPrioritySetting));
-        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentitySystem.EnemyFactionId, Priority = (byte)AITargetPriority.Production });
+        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentity.EnemyFactionId, Priority = (byte)AITargetPriority.Production });
 
-        Entity threat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 500, true, false);
-        Entity building = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(12, 10), 100, false, true);
-        CreateTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(8, 10), 1000, false, true);
+        Entity threat = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(11, 10), 500, true, false);
+        Entity building = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(12, 10), 100, false, true);
+        CreateTarget(em, FactionIdentity.EnemyFactionId, new int2(8, 10), 1000, false, true);
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
@@ -186,7 +186,7 @@ public sealed class AITargetingValidationTests
         Assert.AreNotEqual(threat, squad.TargetEntity);
         Assert.AreEqual((byte)AITargetKind.Building, squad.TargetKind);
         Assert.AreEqual(new int2(12, 10), squad.TargetCell);
-        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, squad.TargetFactionId);
     }
 
     private static Entity CreateTarget(EntityManager em, byte factionId, int2 cell, int maxHealth, bool attackCapable, bool building)

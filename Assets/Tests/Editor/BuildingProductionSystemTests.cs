@@ -143,7 +143,7 @@ public sealed class BuildingProductionSystemTests
         RuntimeBuildingEntity building = new()
         {
             HasOwnerFaction = true,
-            OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
             ProducedUnits = new List<Entity> { older, newest }
         };
 
@@ -173,7 +173,7 @@ public sealed class BuildingProductionSystemTests
         RuntimeBuildingEntity building = new()
         {
             HasOwnerFaction = true,
-            OwnerFactionId = FactionIdentitySystem.PlayerFactionId,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
             ProducedUnits = new List<Entity> { newest }
         };
 
@@ -202,7 +202,7 @@ public sealed class BuildingProductionSystemTests
         RuntimeBuildingEntity building = new()
         {
             HasOwnerFaction = true,
-            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            OwnerFactionId = FactionIdentity.EnemyFactionId,
             ProducedUnits = new List<Entity> { newest }
         };
 
@@ -236,7 +236,7 @@ public sealed class BuildingProductionSystemTests
         RuntimeBuildingEntity neutralBuilding = new()
         {
             HasOwnerFaction = true,
-            OwnerFactionId = FactionIdentitySystem.NeutralFactionId,
+            OwnerFactionId = FactionIdentity.NeutralFactionId,
             ProducedUnits = new List<Entity> { newest }
         };
 
@@ -259,28 +259,28 @@ public sealed class BuildingProductionSystemTests
     public void ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer()
     {
         Assert.AreEqual(
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity { HasOwnerFaction = false }));
         Assert.AreEqual(
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
-                OwnerFactionId = FactionIdentitySystem.NeutralFactionId
+                OwnerFactionId = FactionIdentity.NeutralFactionId
             }));
         Assert.AreEqual(
-            FactionIdentitySystem.PlayerFactionId,
+            FactionIdentity.PlayerFactionId,
             BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
-                OwnerFactionId = FactionIdentitySystem.PlayerFactionId
+                OwnerFactionId = FactionIdentity.PlayerFactionId
             }));
         Assert.AreEqual(
-            FactionIdentitySystem.EnemyFactionId,
+            FactionIdentity.EnemyFactionId,
             BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
-                OwnerFactionId = FactionIdentitySystem.EnemyFactionId
+                OwnerFactionId = FactionIdentity.EnemyFactionId
             }));
     }
 
@@ -297,13 +297,13 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Neutral Helipad",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.NeutralFactionId);
+                ownerFactionId: FactionIdentity.NeutralFactionId);
             RuntimeBuildingEntity playerProducer = CreateProducerBuilding(
                 id: 20,
                 displayName: "Player Helipad",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [neutralProducer.Id] = neutralProducer,
@@ -343,7 +343,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Neutral Helipad",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.NeutralFactionId);
+                ownerFactionId: FactionIdentity.NeutralFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [neutralProducer.Id] = neutralProducer
@@ -383,7 +383,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Player Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -472,7 +472,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Player Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -518,7 +518,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Player Factory",
                 unitPrefab: null,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -563,7 +563,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Player Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -610,7 +610,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Player Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -719,7 +719,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Vehicle Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -771,7 +771,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Boundary Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer
@@ -842,7 +842,7 @@ public sealed class BuildingProductionSystemTests
                 displayName: "Boundary Vehicle Factory",
                 unitPrefab,
                 hasOwnerFaction: true,
-                ownerFactionId: FactionIdentitySystem.PlayerFactionId);
+                ownerFactionId: FactionIdentity.PlayerFactionId);
             Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
             {
                 [producer.Id] = producer

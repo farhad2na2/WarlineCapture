@@ -64,7 +64,7 @@ public sealed class CitizenVisibleUnitSystemTests
             em.SetName(prefabEntity, prefab.name);
             em.SetComponentData(prefabEntity, new UnitMovementBehavior { AllowIdleWander = 1, UsesVehicleMotion = 0 });
             em.SetComponentData(prefabEntity, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(prefabEntity, new UnitTarget { Cell = new int2(99, 99) });
             em.SetComponentData(prefabEntity, new UnitPathRequest { Goal = new int2(98, 98) });
 

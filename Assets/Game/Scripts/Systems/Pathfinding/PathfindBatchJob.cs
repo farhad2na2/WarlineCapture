@@ -37,8 +37,8 @@ internal struct PathfindBatchJob : IJobFor
     [ReadOnly] public byte HasMapSurface;
     public MapSurfacePathingValidationSystem SurfaceValidation;
     [ReadOnly] public MapSurfacePathCostComponent MapSurfacePathCost;
-    public MapSurfacePathCostSystem SurfacePathCost;
-    public MapSurfaceRoadPrioritySystem SurfaceRoadPriority;
+    public MapSurfacePathCost SurfacePathCost;
+    public MapSurfaceRoadPriorityPolicy SurfaceRoadPriority;
     [ReadOnly] public NativeBitArray DynamicBlocked;
     [ReadOnly] public NativeArray<byte> FriendlyPassFactionIds;
     [ReadOnly] public NativeBitArray Occupied;

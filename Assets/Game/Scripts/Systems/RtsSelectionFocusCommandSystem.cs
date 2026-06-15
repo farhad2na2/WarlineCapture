@@ -257,7 +257,7 @@ public sealed class RtsSelectionFocusCommandSystem
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
+        if (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
 
         if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)

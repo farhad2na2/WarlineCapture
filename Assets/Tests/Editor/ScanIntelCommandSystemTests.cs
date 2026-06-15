@@ -52,9 +52,9 @@ public sealed class ScanIntelCommandSystemTests
     public void TryIssueScan_RevealsHostileTargetsAndWritesIntelFeed()
     {
         Entity gridEntity = CreateGrid(64, 64);
-        Entity hostile = CreateUnit(FactionIdentitySystem.EnemyFactionId, new int2(14, 14));
-        Entity friendly = CreateUnit(FactionIdentitySystem.PlayerFactionId, new int2(15, 15));
-        Entity farHostile = CreateUnit(FactionIdentitySystem.EnemyFactionId, new int2(40, 40));
+        Entity hostile = CreateUnit(FactionIdentity.EnemyFactionId, new int2(14, 14));
+        Entity friendly = CreateUnit(FactionIdentity.PlayerFactionId, new int2(15, 15));
+        Entity farHostile = CreateUnit(FactionIdentity.EnemyFactionId, new int2(40, 40));
         using EntityQuery gridQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
         var scanSystem = new ScanIntelCommandSystem();
 

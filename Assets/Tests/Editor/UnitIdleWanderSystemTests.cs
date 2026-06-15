@@ -92,7 +92,7 @@ public sealed class UnitIdleWanderSystemTests
         em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
 
         if (addFaction)
-            em.AddComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.AddComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
 
         return entity;
     }

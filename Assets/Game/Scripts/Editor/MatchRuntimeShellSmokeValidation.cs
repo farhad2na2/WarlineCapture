@@ -945,7 +945,7 @@ public static class MatchRuntimeShellSmokeValidation
             typeof(AirMissileLauncherComponent),
             typeof(AirMissileLauncherStateComponent),
             typeof(AirDefenseSupportLinkComponent));
-        em.SetComponentData(_airSmokeLauncher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(_airSmokeLauncher, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(_airSmokeLauncher, new UnitHealth { Current = 500, Max = 500 });
         em.SetComponentData(_airSmokeLauncher, LocalTransform.FromPosition(new float3(0f, 0f, 0f)));
         em.SetComponentData(_airSmokeLauncher, new AirMissileLauncherComponent
@@ -992,7 +992,7 @@ public static class MatchRuntimeShellSmokeValidation
             typeof(UnitHealth),
             typeof(LocalTransform),
             typeof(UnitAirMovement));
-        em.SetComponentData(_airSmokeTarget, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(_airSmokeTarget, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(_airSmokeTarget, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(_airSmokeTarget, LocalTransform.FromPosition(new float3(42f, 12f, 0f)));
         em.SetComponentData(_airSmokeTarget, new UnitAirMovement

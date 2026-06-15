@@ -582,9 +582,9 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
 
     private static MatchHudMinimapMarkerAllegiance ResolveMarkerAllegiance(byte factionId)
     {
-        if (FactionIdentitySystem.IsPlayerControlled(factionId))
+        if (FactionIdentity.IsPlayerControlled(factionId))
             return MatchHudMinimapMarkerAllegiance.Player;
-        if (FactionIdentitySystem.IsHostileToPlayer(factionId))
+        if (FactionIdentity.IsHostileToPlayer(factionId))
             return MatchHudMinimapMarkerAllegiance.Enemy;
         return MatchHudMinimapMarkerAllegiance.Neutral;
     }

@@ -690,7 +690,7 @@ public partial struct ScanIntelCommandSystem : ISystem
         if (hasHealth && health.Current <= 0)
             return false;
 
-        return FactionIdentitySystem.IsHostileToPlayer(faction.Id);
+        return FactionIdentity.IsHostileToPlayer(faction.Id);
     }
 
     private static void RevealEntity(EntityManager em, Entity entity, int2 cell, float3 position, int frame)

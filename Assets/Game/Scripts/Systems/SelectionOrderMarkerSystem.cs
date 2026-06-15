@@ -1163,7 +1163,7 @@ public sealed class SelectionOrderMarkerSystem
 
     private static bool IsValidAttackPreviewTarget(Faction faction, bool hasHealth, UnitHealth health)
     {
-        if (!FactionIdentitySystem.IsHostileToPlayer(faction.Id))
+        if (!FactionIdentity.IsHostileToPlayer(faction.Id))
             return false;
 
         return !hasHealth || health.Current > 0;
@@ -1178,7 +1178,7 @@ public sealed class SelectionOrderMarkerSystem
         UnitHealth health,
         IsPreviewTargetValidWithSourceDelegate isValidTarget)
     {
-        if (!FactionIdentitySystem.IsPlayerControlled(faction.Id))
+        if (!FactionIdentity.IsPlayerControlled(faction.Id))
             return false;
 
         if (hasHealth && health.Current <= 0)

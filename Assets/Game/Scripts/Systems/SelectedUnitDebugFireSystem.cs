@@ -386,7 +386,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             typeof(UnitHealth),
             typeof(LocalTransform));
         em.SetComponentData(target, new DebugFireTargetTag { Source = source });
-        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(target, new UnitHealth { Current = DebugTargetHealth, Max = DebugTargetHealth });
         em.SetComponentData(target, LocalTransform.Identity);
         return target;
@@ -557,7 +557,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         targetPosition = default;
         byte sourceFaction = em.HasComponent<Faction>(source)
             ? em.GetComponentData<Faction>(source).Id
-            : FactionIdentitySystem.PlayerFactionId;
+            : FactionIdentity.PlayerFactionId;
         Entity bestEntity = Entity.Null;
         float bestScore = float.NegativeInfinity;
 
@@ -587,7 +587,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
             {
                 Entity candidate = entities[i];
                 Faction faction = factions[i];
-                if (faction.Id == sourceFaction || FactionIdentitySystem.IsNeutral(faction.Id))
+                if (faction.Id == sourceFaction || FactionIdentity.IsNeutral(faction.Id))
                     continue;
 
                 UnitHealth health = healths[i];
@@ -663,7 +663,7 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
 
     private static float3 ResolveEnemySideFallbackPosition(GridConfig grid, float3 sourcePosition, byte sourceFaction)
     {
-        float xFactor = FactionIdentitySystem.IsPlayerControlled(sourceFaction) ? 0.78f : 0.22f;
+        float xFactor = FactionIdentity.IsPlayerControlled(sourceFaction) ? 0.78f : 0.22f;
         float zFactor = 0.5f;
         float3 position = new(
             grid.Origin.x + math.max(1, grid.Width - 1) * grid.CellSize * xFactor,

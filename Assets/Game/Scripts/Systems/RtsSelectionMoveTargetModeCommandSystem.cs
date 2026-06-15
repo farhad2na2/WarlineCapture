@@ -143,7 +143,7 @@ public partial struct RtsSelectionMoveTargetModeCommandSystem : ISystem
         using NativeArray<Faction> factions = selectedMoveQuery.ToComponentDataArray<Faction>(Allocator.Temp);
         for (int i = 0; i < factions.Length; i++)
         {
-            if (FactionIdentitySystem.IsPlayerControlled(factions[i].Id))
+            if (FactionIdentity.IsPlayerControlled(factions[i].Id))
                 return true;
         }
 

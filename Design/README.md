@@ -15,6 +15,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Skirmish implementation: `Skirmish_Mode_Implementation_Spec.md` is the active contract for the first player-facing Skirmish mode slice, including setup controls, launch flow, presets, result routing, and QuickCustom compatibility rules.
 - Match HUD implementation: `Match_HUD_And_Gameplay_Implementation_Spec.md` is the active contract for `SCN-08` match buttons, panels, warnings, overlays, command feedback, minimap/camera jumps, build/production drawer, command wheel, pause/result routing, and match acceptance checks.
 - Match selection implementation: `Match_Selection_Implementation_Spec.md` is the active contract for unit selection, the `SELECT` HUD button, squad-card selection, drag selection, input suppression, M01 exceptions, and HUD bridge calls.
+- Unit command behavior: `Match_Unit_Command_Behavior_Spec.md` is the active per-unit contract for `HOLD`, `STOP`, and `SCAN`, including fixed-wing aircraft return behavior, scan auto-engage, civilian-risk gating, and mixed-selection edge cases.
 - Mission result states: `Mission_Result_State_Spec.md` is the active contract for `POP-05` victory, partial success, defeat, withdrawal, operation-resolved states, result data, CTA order, rewards, consequences, and routes.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - Operation map texture/mask workflow: `3D_Operation_Map_Texture_Mask_Workflow.md` defines how gameplay/editor tooling consumes 2024x2024 base visuals, blocker masks, tree/rock density masks, and height masks to generate 3D operation-map metadata.
@@ -50,27 +51,28 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 13. `Skirmish_Mode_Implementation_Spec.md`
 14. `Match_HUD_And_Gameplay_Implementation_Spec.md`
 15. `Match_Selection_Implementation_Spec.md`
-16. `Mission_Result_State_Spec.md`
-17. `M01_FirstContact_Production_Contract.md`
-18. `FTUE_And_Command_Assistant_Design.md`
-19. `AssistantPanel_M01_Implementation_Contract.md`
-20. `AssistantRuntime_M01_Wiring_Plan.md`
-21. `Designer_Role_And_Documentation_Workflow.md`
-22. `Agent_Coordination_Workflow.md`
-23. `Architecture/gameplay_solid_ecs_contract.md`
-24. `Architecture/performance_regression_contract.md`
-25. `Gameplay_Features_High_Level_Spec.md`
-26. `Gameplay_Features_Detailed_Spec.md`
-27. `UIUX_Implementation_High_Level_Spec.md`
-28. `UIUX_Implementation_Detailed_Spec.md`
-29. `Field_Logistics_Oil_Fuel_Design.md`
-30. `Economy_Reward_Design.md`
-31. `Balancing_Automated_Test_Plan.md`
-32. `UIUX_Gameplay_Element_Alignment.md`
-33. `Visual_Feedback_VFX_Recommendations.md`
-34. `UIUX_MainMenu_Visual_Contract.md`
-35. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-36. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+16. `Match_Unit_Command_Behavior_Spec.md`
+17. `Mission_Result_State_Spec.md`
+18. `M01_FirstContact_Production_Contract.md`
+19. `FTUE_And_Command_Assistant_Design.md`
+20. `AssistantPanel_M01_Implementation_Contract.md`
+21. `AssistantRuntime_M01_Wiring_Plan.md`
+22. `Designer_Role_And_Documentation_Workflow.md`
+23. `Agent_Coordination_Workflow.md`
+24. `Architecture/gameplay_solid_ecs_contract.md`
+25. `Architecture/performance_regression_contract.md`
+26. `Gameplay_Features_High_Level_Spec.md`
+27. `Gameplay_Features_Detailed_Spec.md`
+28. `UIUX_Implementation_High_Level_Spec.md`
+29. `UIUX_Implementation_Detailed_Spec.md`
+30. `Field_Logistics_Oil_Fuel_Design.md`
+31. `Economy_Reward_Design.md`
+32. `Balancing_Automated_Test_Plan.md`
+33. `UIUX_Gameplay_Element_Alignment.md`
+34. `Visual_Feedback_VFX_Recommendations.md`
+35. `UIUX_MainMenu_Visual_Contract.md`
+36. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+37. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -93,6 +95,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Skirmish_Mode_Implementation_Spec.md` - active implementation contract for Skirmish setup, presets, launch behavior, result routing, prefab-catalog roster use, and QuickCustom compatibility.
 - `Match_HUD_And_Gameplay_Implementation_Spec.md` - canonical implementation contract for live match HUD controls, panels, warnings, command feedback, world markers, build drawer, command wheel, minimap/camera jumps, assistant hooks, pause/result routing, M01 restrictions, and acceptance tests.
 - `Match_Selection_Implementation_Spec.md` - canonical implementation contract for unit selection, the `SELECT` HUD button, squad-card selection, drag selection, disabled states, input suppression, M01 exception behavior, and `BattleHudGameplayBridge` selection calls.
+- `Match_Unit_Command_Behavior_Spec.md` - canonical per-unit command contract for `HOLD`, `STOP`, and `SCAN`, including aircraft return/loiter behavior, scan profiles, auto-engage policy, civilian-risk checks, HUD feedback, mixed selections, config fields, and acceptance tests.
 - `Mission_Result_State_Spec.md` - canonical result-state contract for `POP-05`, including victory, partial success, defeat, withdrawal, Operation auto-resolution, result data, route rules, and acceptance tests.
 - `M01_FirstContact_Production_Contract.md` - concrete first playable slice contract for M01 First Contact, including map metadata anchors, UI command feedback, FTUE targets, asset manifest, audio/VFX requirements, and validation gates.
 - `FTUE_And_Command_Assistant_Design.md` - first-time user experience and reusable ARIA command assistant design, including Chapter 1 tutorial steps, contextual recommendations, safe control takeover, data model, UI surfaces, and validation plan.

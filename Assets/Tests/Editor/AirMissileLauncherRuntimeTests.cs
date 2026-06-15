@@ -13,9 +13,9 @@ public sealed class AirMissileLauncherRuntimeTests
         using var world = new World("AirMissileLauncherRuntimeTests_TargetAcquisition");
         EntityManager em = world.EntityManager;
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
-        Entity hostileGround = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(10f, 0f, 0f), air: false);
-        Entity hostileAir = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(30f, 12f, 0f), air: true);
-        CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new float3(5f, 10f, 0f), air: true);
+        Entity hostileGround = CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(10f, 0f, 0f), air: false);
+        Entity hostileAir = CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(30f, 12f, 0f), air: true);
+        CreateUnit(em, FactionIdentity.PlayerFactionId, new float3(5f, 10f, 0f), air: true);
 
         SystemHandle acquisitionSystem = world.CreateSystem<AirMissileLauncherTargetAcquisitionSystem>();
         world.SetTime(new TimeData(0.1d, 0.1f));
@@ -92,7 +92,7 @@ public sealed class AirMissileLauncherRuntimeTests
         using var world = new World("AirMissileLauncherRuntimeTests_FireControl");
         EntityManager em = world.EntityManager;
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
-        Entity target = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(30f, 10f, 0f), air: true);
+        Entity target = CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(30f, 10f, 0f), air: true);
         em.SetComponentData(launcher, new AirMissileLauncherStateComponent
         {
             Phase = (byte)AirMissileLauncherPhase.Locked,
@@ -140,7 +140,7 @@ public sealed class AirMissileLauncherRuntimeTests
             TurretDefaultLocalRotation = quaternion.identity
         });
 
-        Entity target = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(30f, 10f, 0f), air: true);
+        Entity target = CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(30f, 10f, 0f), air: true);
         em.AddComponentData(target, new DebugFireTargetTag { Source = launcher });
         em.SetComponentData(launcher, new AirMissileLauncherStateComponent
         {
@@ -179,7 +179,7 @@ public sealed class AirMissileLauncherRuntimeTests
         using var world = new World("AirMissileLauncherRuntimeTests_HomingImpact");
         EntityManager em = world.EntityManager;
         Entity launcher = CreateLauncher(em, new float3(0f, 0f, 0f), range: 120f);
-        Entity target = CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(1f, 0f, 0f), air: true);
+        Entity target = CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(1f, 0f, 0f), air: true);
         Entity projectile = em.CreateEntity(
             typeof(LocalTransform),
             typeof(AirMissileProjectileComponent));
@@ -189,7 +189,7 @@ public sealed class AirMissileLauncherRuntimeTests
             Source = launcher,
             Target = target,
             TargetKind = (byte)AirMissileTargetKind.EnemyAirUnit,
-            FactionId = FactionIdentitySystem.PlayerFactionId,
+            FactionId = FactionIdentity.PlayerFactionId,
             Velocity = new float3(10f, 0f, 0f),
             Speed = 10f,
             Acceleration = 0f,
@@ -220,7 +220,7 @@ public sealed class AirMissileLauncherRuntimeTests
             typeof(AirMissileLauncherComponent),
             typeof(AirMissileLauncherStateComponent),
             typeof(AirDefenseSupportLinkComponent));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new AirMissileLauncherComponent
@@ -297,7 +297,7 @@ public sealed class AirMissileLauncherRuntimeTests
             typeof(Faction),
             typeof(LocalTransform),
             typeof(AirDefenseSupportProviderComponent));
-        em.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new AirDefenseSupportProviderComponent
         {

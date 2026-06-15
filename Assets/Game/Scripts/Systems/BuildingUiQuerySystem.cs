@@ -413,8 +413,8 @@ public sealed class BuildingUiQuerySystem
             return false;
 
         return !building.HasOwnerFaction ||
-               building.OwnerFactionId == FactionIdentitySystem.NeutralFactionId ||
-               building.OwnerFactionId == FactionIdentitySystem.PlayerFactionId;
+               building.OwnerFactionId == FactionIdentity.NeutralFactionId ||
+               building.OwnerFactionId == FactionIdentity.PlayerFactionId;
     }
 
     private static string ResolveProducerDisplayName(int buildingId, RuntimeBuildingEntity building)

@@ -94,7 +94,7 @@ public sealed class FocusedUnitLifecycleSystem
                 focusedUnit = Entity.Null;
             }
             else if (em.HasComponent<Faction>(focusedUnit) &&
-                     !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
+                     !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
                 SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
@@ -117,7 +117,7 @@ public sealed class FocusedUnitLifecycleSystem
         if (!em.Exists(selectedEntity) || !em.HasComponent<Faction>(selectedEntity))
             return false;
 
-        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(selectedEntity).Id))
+        if (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(selectedEntity).Id))
             return false;
 
         selectionStateSystem.SetFocusedUnit(selectedEntity);
@@ -163,7 +163,7 @@ public sealed class FocusedUnitLifecycleSystem
 
         ClearCurrentSelection(em, selectionStateSystem, clearReason, logSelectionDiagnostic, clearHudSelection);
         byte factionId = em.GetComponentData<Faction>(entity).Id;
-        bool playerControlled = FactionIdentitySystem.IsPlayerControlled(factionId);
+        bool playerControlled = FactionIdentity.IsPlayerControlled(factionId);
         if (playerControlled && !em.HasComponent<SelectedUnitTag>(entity))
             em.AddComponent<SelectedUnitTag>(entity);
 

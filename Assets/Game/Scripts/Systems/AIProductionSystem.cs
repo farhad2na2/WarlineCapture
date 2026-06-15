@@ -506,7 +506,7 @@ public partial struct AIProductionSystem : ISystem
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
     {
         if (!hasControls)
-            return FactionIdentitySystem.IsAiControlledByDefault(factionId);
+            return FactionIdentity.IsAiControlledByDefault(factionId);
 
         for (int i = 0; i < controls.Length; i++)
         {
@@ -515,7 +515,7 @@ public partial struct AIProductionSystem : ISystem
                 return control.AIControlled != 0;
         }
 
-        return FactionIdentitySystem.IsAiControlledByDefault(factionId);
+        return FactionIdentity.IsAiControlledByDefault(factionId);
     }
 
     private static int PositiveModulo(int value, int modulo)

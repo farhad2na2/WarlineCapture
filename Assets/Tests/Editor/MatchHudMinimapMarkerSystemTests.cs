@@ -34,15 +34,15 @@ public sealed class MatchHudMinimapMarkerSystemTests
         EntityManager em = world.EntityManager;
         float3 deadPosition = new(999f, 0f, 999f);
         for (int i = 0; i < 32; i++)
-            CreateUnit(em, FactionIdentitySystem.NeutralFactionId, new float3(-100f - i, 0f, -100f - i), 100);
+            CreateUnit(em, FactionIdentity.NeutralFactionId, new float3(-100f - i, 0f, -100f - i), 100);
 
         for (int i = 0; i < 600; i++)
-            CreateUnit(em, FactionIdentitySystem.EnemyFactionId, new float3(i, 0f, i + 1), 100);
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new float3(i, 0f, i + 1), 100);
 
         for (int i = 0; i < 600; i++)
-            CreateUnit(em, FactionIdentitySystem.PlayerFactionId, new float3(2000f + i, 0f, 2000f + i), 100);
+            CreateUnit(em, FactionIdentity.PlayerFactionId, new float3(2000f + i, 0f, 2000f + i), 100);
 
-        CreateUnit(em, FactionIdentitySystem.EnemyFactionId, deadPosition, 0);
+        CreateUnit(em, FactionIdentity.EnemyFactionId, deadPosition, 0);
 
         SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
         system.Update(world.Unmanaged);
@@ -61,11 +61,11 @@ public sealed class MatchHudMinimapMarkerSystemTests
         for (int i = 0; i < markers.Length; i++)
         {
             Assert.AreNotEqual(deadPosition, markers[i].Position);
-            if (markers[i].FactionId == FactionIdentitySystem.PlayerFactionId)
+            if (markers[i].FactionId == FactionIdentity.PlayerFactionId)
                 playerCount++;
-            else if (FactionIdentitySystem.IsHostileToPlayer(markers[i].FactionId))
+            else if (FactionIdentity.IsHostileToPlayer(markers[i].FactionId))
                 enemyCount++;
-            else if (FactionIdentitySystem.IsNeutral(markers[i].FactionId))
+            else if (FactionIdentity.IsNeutral(markers[i].FactionId))
                 neutralCount++;
         }
 

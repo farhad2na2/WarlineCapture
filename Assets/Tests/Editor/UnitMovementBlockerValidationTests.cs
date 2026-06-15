@@ -603,7 +603,7 @@ public sealed class UnitMovementBlockerValidationTests
                 CellSize = surface.CellSize,
                 Origin = surface.GridOrigin
             };
-            var slopeClassifier = new MapSurfaceSlopeClassificationSystem();
+            var slopeClassifier = new MapSurfaceSlopeClassifier();
             int checkedPlacements = 0;
 
             for (int placementIndex = 0; placementIndex < vehicleConfig.Placements.Count; placementIndex++)

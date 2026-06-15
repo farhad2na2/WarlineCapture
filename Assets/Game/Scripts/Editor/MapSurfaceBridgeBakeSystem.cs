@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class MapSurfaceBridgeBakeSystem
 {
-    private readonly MapSurfaceRoadPrioritySystem _roadPrioritySystem = new();
+    private readonly MapSurfaceRoadPriorityPolicy _roadPrioritySystem = new();
 
     public MapSurfaceMeshBakeSource CreateBridgeDeckSource(
         Mesh bridgeDeckMesh,

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public sealed class RuntimeDiagnosticsSystem
+public sealed partial class RuntimeDiagnosticsSystem : SystemBase
 {
     private World _cachedWorld;
     private Entity _diagnosticsEntity;
@@ -30,6 +30,15 @@ public sealed class RuntimeDiagnosticsSystem
     }
 
     public bool ShouldLogTransportBoarding => InitialUnitsRuntimeState.TransportBoardingDiagnostics;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public RuntimeDiagnosticsStateComponent ReadDiagnosticsState()
     {
@@ -62,11 +71,13 @@ public sealed class RuntimeDiagnosticsSystem
     {
         entityManager = default;
         entity = Entity.Null;
-        World world = World.DefaultGameObjectInjectionWorld;
+        if (!TryGetLiveEntityManager(out entityManager))
+            return false;
+
+        World world = entityManager.World;
         if (world == null || !world.IsCreated)
             return false;
 
-        entityManager = world.EntityManager;
         if (_cachedWorld == world &&
             _diagnosticsEntity != Entity.Null &&
             entityManager.Exists(_diagnosticsEntity) &&
@@ -89,6 +100,20 @@ public sealed class RuntimeDiagnosticsSystem
         entityManager.SetComponentData(entity, LegacyDiagnosticsState());
         CacheDiagnosticsEntity(world, entity);
         return true;
+    }
+
+    private bool TryGetLiveEntityManager(out EntityManager entityManager)
+    {
+        entityManager = default;
+        try
+        {
+            entityManager = EntityManager;
+            return true;
+        }
+        catch (System.InvalidOperationException)
+        {
+            return false;
+        }
     }
 
     private void CacheDiagnosticsEntity(World world, Entity entity)

@@ -301,7 +301,7 @@ public sealed class SelectionCommandRequestResultContractTests
         em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent());
         em.CreateEntity(typeof(RuntimeGameplayStateComponent));
         Entity focusedUnit = em.CreateEntity(typeof(Faction));
-        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
 
         int clearFocusedCount = 0;
         int clearSelectionCount = 0;
@@ -1284,8 +1284,8 @@ public sealed class SelectionCommandRequestResultContractTests
             ActiveCommandModeRequiresWorldTarget = 1
         });
         Entity launcher = CreateRadarAttackLauncher(em, new int2(10, 10));
-        CreateThreatDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
-        Entity groundTarget = CreateRadarAttackTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(35, 20));
+        CreateThreatDetector(em, FactionIdentity.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+        Entity groundTarget = CreateRadarAttackTarget(em, FactionIdentity.EnemyFactionId, new int2(35, 20));
         var selectionState = new SelectionStateSystem();
 
         int clearSelectionCount = 0;
@@ -1422,7 +1422,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitFootprint),
             typeof(LocalTransform),
             typeof(UnitTransportCapacity));
-        em.SetComponentData(transport, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(transport, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(transport, new UnitGrid { Cell = new int2(4, 5) });
         em.SetComponentData(transport, new UnitFootprint { Size = new int2(2, 2) });
         em.SetComponentData(transport, LocalTransform.FromPosition(float3.zero));
@@ -1803,7 +1803,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 typeof(Faction),
                 typeof(UnitGrid),
                 typeof(UnitMove));
-            em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
             em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(2, 3) });
             em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
 
@@ -2551,7 +2551,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 typeof(Faction));
             em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(1, 1) });
             em.SetComponentData(selectedUnit, new UnitMove { Speed = 4f, WalkSpeed = 4f, ArriveDistance = 0.1f });
-            em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+            em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
             CreateWalkableGrid(em, 8, 8, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
 
             using EntityQuery selectedMoveQuery = em.CreateEntityQuery(
@@ -2728,7 +2728,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(attacker, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attacker, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(attacker, new UnitGrid { Cell = new int2(1, 1) });
         em.SetComponentData(attacker, new UnitCombat { CanAttack = 1 });
         em.SetComponentData(attacker, new UnitAttack { Range = 20f, Damage = 10, CooldownSeconds = 1f });
@@ -2738,7 +2738,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(Faction),
             typeof(UnitGrid),
             typeof(LocalTransform));
-        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(target, new UnitGrid { Cell = new int2(7, 8) });
         em.SetComponentData(target, LocalTransform.FromPosition(new float3(7.5f, 0f, 8.5f)));
 
@@ -2797,7 +2797,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitGrid),
             typeof(UnitHealth),
             typeof(LocalTransform));
-        em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(target, new UnitGrid { Cell = new int2(6, 5) });
         em.SetComponentData(target, new UnitHealth { Current = 10, Max = 10 });
         em.SetComponentData(target, LocalTransform.FromPosition(new float3(6.5f, 0f, 5.5f)));
@@ -2983,7 +2983,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 HasCommandResult = 1,
                 Accepted = 1,
                 EmitScreenMarker = 1,
-                MarkerFactionId = FactionIdentitySystem.PlayerFactionId,
+                MarkerFactionId = FactionIdentity.PlayerFactionId,
                 HasTargetCell = 1,
                 HasWorldPosition = 1,
                 ShowWorldMarkers = 1
@@ -3060,7 +3060,7 @@ public sealed class SelectionCommandRequestResultContractTests
             Entity target = em.CreateEntity(typeof(LocalTransform), typeof(UnitFootprint), typeof(Faction), typeof(UnitHealth));
             em.SetComponentData(target, LocalTransform.FromPosition(new float3(5.5f, 0f, 6.5f)));
             em.SetComponentData(target, new UnitFootprint { Size = new int2(2, 3) });
-            em.SetComponentData(target, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+            em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
             em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
 
             var inputSystem = new RtsSelectionInputSystem();
@@ -3204,7 +3204,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
@@ -3220,7 +3220,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitGrid),
             typeof(UnitMove),
             typeof(UnitCombat));
-        em.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(unit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
@@ -3238,7 +3238,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(launcher, new UnitGrid { Cell = cell });
         em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
@@ -3291,7 +3291,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
@@ -3305,7 +3305,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(SelectedUnitTag),
             typeof(Faction),
             typeof(UnitMove));
-        em.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         return unit;
     }
@@ -3318,7 +3318,7 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(UnitHealth),
             typeof(AirMissileLauncherComponent),
             typeof(AirMissileLauncherStateComponent));
-        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(launcher, new AirMissileLauncherComponent
         {

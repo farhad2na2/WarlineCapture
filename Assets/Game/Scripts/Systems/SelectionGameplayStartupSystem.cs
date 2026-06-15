@@ -66,22 +66,16 @@ internal sealed class SelectionGameplayStartupSystem
         IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
         SelectionRuntimeDiagnosticsSystem selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
         SelectionRuntimeConfigSystem selectionRuntimeConfigSystem = ResolveSelectionRuntimeConfigSystem();
-        var selectionRuntimeQuerySystem = new SelectionRuntimeQuerySystem();
         SelectionRuntimeConfigSystem.State runtimeConfig = selectionRuntimeConfigSystem != null
             ? selectionRuntimeConfigSystem.CreateState(rtsSelectionConfig, worldCamera)
             : SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
-        var rtsSelectionRuntimeInputContextSystem = new RtsSelectionRuntimeInputContextSystem();
         RtsSelectionRuntimeCameraSystem rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystem();
-        var rtsSelectionRuntimeCameraContextSystem = new RtsSelectionRuntimeCameraContextSystem();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushSystem();
-        var rtsSelectionCommandResultContextSystem = new RtsSelectionCommandResultContextSystem();
         var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandSystem();
-        var rtsSelectionFocusCommandContextSystem = new RtsSelectionFocusCommandContextSystem();
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
-        var rtsSelectionPointerTargetCommandContextSystem = new RtsSelectionPointerTargetCommandContextSystem();
         RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
@@ -90,7 +84,6 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionScreenMarkerSystem selectionScreenMarkers = ResolveSelectionScreenMarkerSystem();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiQuerySystem = new SelectionUiQuerySystem();
-        var selectionSummaryQuerySystem = new SelectionSummaryQuerySystem();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelSystem();
         var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();
         var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
@@ -120,6 +113,11 @@ internal sealed class SelectionGameplayStartupSystem
         bool hasRuntimeCameraContext = false;
         RtsSelectionCommandResultFlushSystem.Context commandResultFlushContext = default;
         bool hasCommandResultFlushContext = false;
+        World selectionRuntimeQueryWorld = null;
+        EntityQuery selectedMoveQuery = default;
+        EntityQuery selectedTagQuery = default;
+        EntityQuery gridConfigQuery = default;
+        EntityQuery mapSurfaceQuery = default;
         System.Action<EntityManager, Entity> applyHudSelectionAction = ApplyHudSelection;
         System.Action<int> applyHudSquadSelectionAction = ApplyHudSquadSelection;
         SelectionRectangleRequestSystem.ApplyHudSelectionAction applyRectangleHudSelectionAction = ApplyHudSelection;
@@ -295,7 +293,6 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
                 focusedUnitUiReadModelSystem,
-                selectionSummaryQuerySystem,
                 transportPassengerPanelItems,
                 EnsureRuntimeSelectionDependencies,
                 TryGetAttackModeOrderSnapshot,
@@ -372,11 +369,12 @@ internal sealed class SelectionGameplayStartupSystem
 
         RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()
         {
-            return rtsSelectionRuntimeInputContextSystem.Create(
+            return new RtsSelectionRuntimeInputSystem.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 mainMenuPlayUi,
-                runtimeConfig,
+                runtimeConfig.DragThresholdPixels,
+                runtimeConfig.SelectionModeHoldSeconds,
                 () => explicitAttackTargetModeActive,
                 SetExplicitAttackTargetModeActive,
                 () => rtsCameraSystem != null && rtsCameraSystem.IsDragging,
@@ -432,12 +430,12 @@ internal sealed class SelectionGameplayStartupSystem
 
         RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
         {
-            return rtsSelectionRuntimeCameraContextSystem.Create(
+            return new RtsSelectionRuntimeCameraSystem.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 rtsCameraSystem,
                 rtsCameraRequestSystem,
-                runtimeConfig,
+                runtimeConfig.WorldCamera,
                 mainMenuPlayUi,
                 roadBuildReadState,
                 buildingPlacementInteractionSystem,
@@ -446,7 +444,24 @@ internal sealed class SelectionGameplayStartupSystem
                 resolvedMatchIntroStateQuery,
                 IsPointerOverGameplayUi,
                 pointerPosition => rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition),
-                () => selectionScreenMarkers?.RequestHideOrderMarkers());
+                () => selectionScreenMarkers?.RequestHideOrderMarkers(),
+                runtimeConfig.PanSensitivity,
+                runtimeConfig.ZoomSpeed,
+                runtimeConfig.MinZoomHeight,
+                runtimeConfig.MaxZoomHeight,
+                runtimeConfig.NormalModeZoomHeight,
+                runtimeConfig.BuildModeZoomHeight,
+                runtimeConfig.NormalModePitch,
+                runtimeConfig.BuildModePitch,
+                runtimeConfig.NormalModeYaw,
+                runtimeConfig.BuildModeYaw,
+                runtimeConfig.NormalModeFieldOfView,
+                runtimeConfig.BuildModeFieldOfView,
+                runtimeConfig.FullscreenIsoZoomHeight,
+                runtimeConfig.FullscreenIsoPitch,
+                runtimeConfig.FullscreenIsoYaw,
+                runtimeConfig.FullscreenIsoOrthographicSize,
+                runtimeConfig.ZoomTransitionSmoothTime);
         }
 
         RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
@@ -454,10 +469,11 @@ internal sealed class SelectionGameplayStartupSystem
             if (TryGetDefaultEntityManager(out EntityManager em))
                 EnsureRuntimeSelectionDependencies(em);
 
-            return rtsSelectionCommandResultContextSystem.Create(
+            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+
+            return new RtsSelectionCommandResultFlushSystem.Context(
                 rtsSelectionInputSystem,
                 selectionHudFeedbackSystem,
-                CreateHudFeedbackContext(),
                 selectionOrderMarkerSystem,
                 selectedMoveOrderCommandSystem,
                 attackOrderCommandSystem,
@@ -469,11 +485,22 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionStateSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
-                selectionRuntimeQuerySystem,
+                selectedMoveQuery,
+                selectedTagQuery,
+                gridConfigQuery,
+                mapSurfaceQuery,
                 TryGetDefaultEntityManager,
                 EnsureRuntimeSelectionDependencies,
                 ClearCurrentSelection,
+                mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+                (direction, boardAllInteractable) =>
+                    selectionHudFeedbackSystem.ApplyBoardCommandMode(hudFeedbackContext, direction, boardAllInteractable),
+                result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
+                () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
+                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
+                () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
                 SetExplicitAttackTargetModeActive,
+                visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
                 ProcessSelectionRectangleRequests,
                 LogSelectionClickDiagnostic,
                 screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
@@ -528,7 +555,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         RtsSelectionFocusCommandSystem.Context CreateFocusCommandContext()
         {
-            return rtsSelectionFocusCommandContextSystem.Create(
+            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+
+            return new RtsSelectionFocusCommandSystem.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 selectionStateSystem,
@@ -541,8 +570,12 @@ internal sealed class SelectionGameplayStartupSystem
                 ClearCurrentSelection,
                 QueueSelectionRectangleRequest,
                 ProcessSelectionRectangleRequests,
-                selectionHudFeedbackSystem,
-                CreateHudFeedbackContext(),
+                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
+                result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
+                mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+                () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
+                () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
+                visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
                 value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 SetExplicitAttackTargetModeActive,
                 LogSelectionClickDiagnostic,
@@ -554,14 +587,14 @@ internal sealed class SelectionGameplayStartupSystem
 
         RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
         {
-            return rtsSelectionPointerTargetCommandContextSystem.Create(
+            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+
+            return new RtsSelectionPointerTargetCommandSystem.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
                 focusableUnitLookupSystem,
-                selectionUiQuerySystem,
-                visibleUnitSelectionSystem,
                 transportBoardingCommandSystem,
                 unitTransportCapacitySystem,
                 unitTransportAirPickupSystem,
@@ -573,8 +606,11 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetPointerPosition,
                 () => explicitAttackTargetModeActive,
                 SetExplicitAttackTargetModeActive,
-                selectionHudFeedbackSystem,
-                CreateHudFeedbackContext(),
+                mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+                result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
+                () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
+                () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
+                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
                 ClearCurrentSelection,
                 screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
                 value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
@@ -586,6 +622,8 @@ internal sealed class SelectionGameplayStartupSystem
                 () => rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext()),
                 LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
+                selectionUiQuerySystem,
+                visibleUnitSelectionSystem,
                 visibleSelectionScratch);
         }
 
@@ -629,6 +667,22 @@ internal sealed class SelectionGameplayStartupSystem
                 focusedUnitLifecycleSystem);
         }
 
+        void EnsureSelectionRuntimeEntityQueries(EntityManager em)
+        {
+            World world = em.World;
+            if (selectionRuntimeQueryWorld == world && world != null && world.IsCreated)
+                return;
+
+            selectionRuntimeQueryWorld = world;
+            selectedMoveQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SelectedUnitTag>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitMove>());
+            gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        }
+
         bool TryGetDefaultEntityManager(out EntityManager em)
         {
             em = default;
@@ -647,7 +701,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void EnsureRuntimeSelectionDependencies(EntityManager em)
         {
-            selectionRuntimeQuerySystem.EnsureEntityQueries(em);
+            EnsureSelectionRuntimeEntityQueries(em);
             focusableUnitLookupSystem.EnsureEntityQueries(em);
             visibleUnitSelectionSystem.EnsureEntityQueries(em);
             attackOrderCommandSystem.EnsureEntityQueries(em);
@@ -713,7 +767,6 @@ internal sealed class SelectionGameplayStartupSystem
                 CreateHudFeedbackContext(),
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
-                selectionSummaryQuerySystem,
                 EnsureRuntimeSelectionDependencies,
                 () => buildingPlacementInteractionSystem != null &&
                       buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext));

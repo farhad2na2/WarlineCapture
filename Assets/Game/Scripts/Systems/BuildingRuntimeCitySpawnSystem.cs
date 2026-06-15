@@ -135,7 +135,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
                 em,
                 buildingIdKey,
                 preferredOrigin,
-                FactionIdentitySystem.NeutralFactionId,
+                FactionIdentity.NeutralFactionId,
                 out int requestId,
                 rotateVertical: false,
                 hasOwnerFaction: false))

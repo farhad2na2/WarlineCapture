@@ -183,7 +183,7 @@ public sealed class FocusableUnitLookupSystemTests
             typeof(UnitMove),
             typeof(UnitFootprint),
             typeof(LocalToWorld));
-        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(entity, new UnitGrid { Cell = cell });
         _entityManager.SetComponentData(entity, new UnitMove { Speed = 1f });
         _entityManager.SetComponentData(entity, new UnitFootprint { Size = footprint });

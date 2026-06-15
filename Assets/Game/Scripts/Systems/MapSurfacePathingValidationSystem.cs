@@ -83,11 +83,11 @@ public readonly struct MapSurfacePathingValidationSystem
     private static float GetMaxSlopeForMovement(MapSurfaceMovementMask movementMask)
     {
         if ((movementMask & MapSurfaceMovementMask.Infantry) != 0)
-            return MapSurfaceSlopeClassificationSystem.SteepSlopeDegrees;
+            return MapSurfaceSlopeClassifier.SteepSlopeDegrees;
         if ((movementMask & MapSurfaceMovementMask.TrackedVehicle) != 0)
-            return MapSurfaceSlopeClassificationSystem.GentleSlopeDegrees;
+            return MapSurfaceSlopeClassifier.GentleSlopeDegrees;
         if ((movementMask & MapSurfaceMovementMask.WheeledVehicle) != 0)
-            return MapSurfaceSlopeClassificationSystem.GentleSlopeDegrees;
+            return MapSurfaceSlopeClassifier.GentleSlopeDegrees;
 
         return 0f;
     }

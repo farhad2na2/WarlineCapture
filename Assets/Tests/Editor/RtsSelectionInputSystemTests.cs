@@ -545,7 +545,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(Faction),
             typeof(UnitGrid),
             typeof(UnitMove));
-        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
         var inputSystem = new RtsSelectionInputSystem();
@@ -703,7 +703,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(Faction),
             typeof(UnitGrid),
             typeof(UnitMove));
-        em.SetComponentData(selectedMoveUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedMoveUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedMoveUnit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(selectedMoveUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
 
@@ -1022,7 +1022,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(SelectedUnitTag),
             typeof(Faction),
             typeof(UnitMove));
-        em.SetComponentData(nonAttackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(nonAttackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(nonAttackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         var inputSystem = new RtsSelectionInputSystem();
         inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 99, oneShot: true, requiresWorldTarget: true);
@@ -1128,7 +1128,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(Faction),
             typeof(UnitMove),
             typeof(UnitCombat));
-        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(focusedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(focusedUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         var inputSystem = new RtsSelectionInputSystem();
@@ -1165,7 +1165,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
@@ -1181,7 +1181,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitCombat),
             typeof(UnitAttack),
             typeof(LocalTransform));
-        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
@@ -1197,7 +1197,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitHealth),
             typeof(AirMissileLauncherComponent),
             typeof(AirMissileLauncherStateComponent));
-        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(launcher, new AirMissileLauncherComponent
         {
@@ -1228,7 +1228,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitMove),
             typeof(UnitFootprint),
             typeof(UnitMovementBehavior));
-        em.SetComponentData(passenger, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(passenger, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(passenger, new UnitGrid { Cell = new int2(3, 4) });
         em.SetComponentData(passenger, new UnitMove
         {
@@ -1251,7 +1251,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitFootprint),
             typeof(LocalTransform),
             typeof(UnitTransportCapacity));
-        em.SetComponentData(transport, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(transport, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(transport, new UnitGrid { Cell = new int2(10, 10) });
         em.SetComponentData(transport, new UnitFootprint { Size = new int2(2, 2) });
         em.SetComponentData(transport, LocalTransform.FromPosition(float3.zero));
@@ -1437,7 +1437,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity selected = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
-        em.SetComponentData(selected, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selected, new Faction { Id = FactionIdentity.PlayerFactionId });
         var inputSystem = new RtsSelectionInputSystem();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
 
@@ -1683,7 +1683,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         int2 spawnCell = new(12, 14);
-        CreateRespawnQueue(em, FactionIdentitySystem.PlayerFactionId, spawnCell);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, spawnCell);
         Entity focusedUnit = em.CreateEntity(
             typeof(Faction),
             typeof(UnitGrid),
@@ -1691,13 +1691,13 @@ public sealed class RtsSelectionInputSystemTests
             typeof(HoldPositionOrderTag),
             typeof(EngageTarget),
             typeof(UnitPathFollow));
-        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(focusedUnit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(focusedUnit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(focusedUnit, new EngageTarget { Target = Entity.Null, Cell = new int2(4, 5), IsCommanded = 1 });
         em.SetComponentData(focusedUnit, new UnitPathFollow { PathIndex = 1 });
         Entity selectedEnemy = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
-        em.SetComponentData(selectedEnemy, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(selectedEnemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(selectedEnemy, new UnitGrid { Cell = new int2(8, 8) });
         em.SetComponentData(selectedEnemy, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
 
@@ -1742,13 +1742,13 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         int2 spawnCell = new(6, 9);
-        CreateRespawnQueue(em, FactionIdentitySystem.PlayerFactionId, spawnCell);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, spawnCell);
         Entity first = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
         Entity second = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
         Entity enemy = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
-        em.SetComponentData(first, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(second, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(enemy, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(first, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(second, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(first, new UnitGrid { Cell = new int2(1, 1) });
         em.SetComponentData(second, new UnitGrid { Cell = new int2(2, 2) });
         em.SetComponentData(enemy, new UnitGrid { Cell = new int2(3, 3) });
@@ -1794,9 +1794,9 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        CreateRespawnQueue(em, FactionIdentitySystem.PlayerFactionId, new int2(5, 5));
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(5, 5));
         Entity enemy = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
-        em.SetComponentData(enemy, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         var inputSystem = new RtsSelectionInputSystem();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Move,
@@ -1831,7 +1831,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity focusedUnit = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
-        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(focusedUnit, new UnitHealth { Current = 75, Max = 100 });
         var inputSystem = new RtsSelectionInputSystem();
         inputSystem.ArmCommandMode(
@@ -1870,9 +1870,9 @@ public sealed class RtsSelectionInputSystemTests
         Entity playerWithHealth = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
         Entity playerWithoutHealth = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
         Entity enemy = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
-        em.SetComponentData(playerWithHealth, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(playerWithoutHealth, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
-        em.SetComponentData(enemy, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(playerWithHealth, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(playerWithoutHealth, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(playerWithHealth, new UnitHealth { Current = 60, Max = 100 });
         em.SetComponentData(enemy, new UnitHealth { Current = 60, Max = 100 });
         var inputSystem = new RtsSelectionInputSystem();
@@ -1908,9 +1908,9 @@ public sealed class RtsSelectionInputSystemTests
         CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity focusedEnemy = em.CreateEntity(typeof(Faction), typeof(UnitHealth));
         Entity selectedPlayer = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
-        em.SetComponentData(focusedEnemy, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(focusedEnemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(focusedEnemy, new UnitHealth { Current = 50, Max = 100 });
-        em.SetComponentData(selectedPlayer, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedPlayer, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedPlayer, new UnitHealth { Current = 70, Max = 100 });
         var inputSystem = new RtsSelectionInputSystem();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.DestroyFocusedUnit, frame: 601));
@@ -2542,7 +2542,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity selectedUnit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove), typeof(SelectedUnitTag));
-        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedUnit, new UnitGrid { Cell = Unity.Mathematics.int2.zero });
         em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f });
 
@@ -2628,11 +2628,11 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(building, new RuntimeBuildingCombatInfo
         {
             RuntimeBuildingId = 7,
-            OwnerFactionId = FactionIdentitySystem.EnemyFactionId,
+            OwnerFactionId = FactionIdentity.EnemyFactionId,
             OriginCell = new int2(10, 10),
             FootprintCells = new int2(3, 3)
         });
-        em.SetComponentData(building, new Faction { Id = FactionIdentitySystem.EnemyFactionId });
+        em.SetComponentData(building, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(building, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(building, LocalTransform.FromPosition(new float3(11.5f, 0f, 11.5f)));
 

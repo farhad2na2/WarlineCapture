@@ -52,13 +52,13 @@ public sealed class AIEconomyValidationTests
 
         Assert.IsTrue(enemy.Enabled);
         Assert.AreEqual(AIControllerRole.Enemy, enemy.Role);
-        Assert.AreEqual(FactionIdentitySystem.EnemyFactionId, enemy.FactionId);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, enemy.FactionId);
         Assert.AreEqual(75000, enemy.StartingMoney);
         Assert.AreEqual(1.15f, enemy.IncomeMultiplier, 0.001f);
 
         Assert.IsTrue(playerAuto.Enabled);
         Assert.AreEqual(AIControllerRole.PlayerAuto, playerAuto.Role);
-        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, playerAuto.FactionId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, playerAuto.FactionId);
         Assert.IsTrue(playerAuto.AutoControlsPlayerFaction);
         Assert.AreEqual(300000, playerAuto.StartingMoney);
         Assert.AreEqual(1f, playerAuto.IncomeMultiplier, 0.001f);

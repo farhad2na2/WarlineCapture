@@ -114,7 +114,7 @@ public sealed class MapSurfaceBakeSystem
 
         int cellCount = request.Dimensions.x * request.Dimensions.y;
         using var builder = new BlobBuilder(Allocator.Temp);
-        var roadPrioritySystem = new MapSurfaceRoadPrioritySystem();
+        var roadPrioritySystem = new MapSurfaceRoadPriorityPolicy();
         ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
         root.GridOrigin = request.GridOrigin;
         root.CellSize = request.CellSize;
@@ -176,7 +176,7 @@ public sealed class MapSurfaceBakeSystem
         SpatialTriangleIndex spatialIndex = SpatialTriangleIndex.Build(request, terrainSources);
         int cellCount = request.Dimensions.x * request.Dimensions.y;
         using var builder = new BlobBuilder(Allocator.Temp);
-        var roadPrioritySystem = new MapSurfaceRoadPrioritySystem();
+        var roadPrioritySystem = new MapSurfaceRoadPriorityPolicy();
         ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
         root.GridOrigin = request.GridOrigin;
         root.CellSize = request.CellSize;

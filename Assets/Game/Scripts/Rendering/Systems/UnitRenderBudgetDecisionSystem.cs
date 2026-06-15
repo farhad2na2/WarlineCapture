@@ -99,7 +99,7 @@ public readonly struct UnitRenderBudgetDecision
                 context.MovementBehaviorLookup,
                 context.SourcePrefabKeyLookup);
             byte factionId = context.FactionLookup.HasComponent(unit) ? context.FactionLookup[unit].Id : (byte)0;
-            bool isEnemyUnit = FactionIdentitySystem.IsHostileToPlayer(factionId);
+            bool isEnemyUnit = FactionIdentity.IsHostileToPlayer(factionId);
             bool isSelectedUnit = context.SelectedLookup.HasComponent(unit);
             bool isMovingUnit =
                 context.MoveVisualLookup.HasComponent(unit) &&

@@ -6,6 +6,25 @@ using UnityEditor;
 
 public sealed class AIPlanEntryStartupSystemValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new AIPlanEntryStartupSystemValidationTests();
+            tests.WriteBuildPlanEntries_UsesPreferredIdsBeforeFallbackDefaults();
+            tests.WriteBuildPlanEntries_UsesFallbackDefaultsWhenPreferencesAreEmpty();
+            tests.WriteProductionPlanEntries_CombinesPreferredUnitsAndVehiclesBeforeFallbackDefault();
+            tests.WriteProductionPlanEntries_UsesFallbackDefaultWhenPreferencesAreEmpty();
+            UnityEngine.Debug.Log("[AIPlanEntryStartupValidation] result=Passed tests=4");
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError("[AIPlanEntryStartupValidation] result=Failed");
+            UnityEngine.Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [Test]
     public void WriteBuildPlanEntries_UsesPreferredIdsBeforeFallbackDefaults()
     {
@@ -14,7 +33,7 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = new();
+        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
         system.WriteBuildPlanEntries(
             entries,
             new[] { "Custom_Barracks", "", "  ", "Custom_Refinery" },
@@ -33,7 +52,7 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = new();
+        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
         system.WriteBuildPlanEntries(entries, null, LoadPlanEntryConfig());
 
         Assert.AreEqual(5, entries.Length);
@@ -52,7 +71,7 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = new();
+        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
         system.WriteProductionPlanEntries(
             entries,
             new[] { "Custom_Rifleman", "" },
@@ -72,7 +91,7 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = new();
+        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
         system.WriteProductionPlanEntries(entries, null, null, LoadPlanEntryConfig());
 
         Assert.AreEqual(1, entries.Length);

@@ -242,7 +242,7 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
             return false;
 
         if (!em.HasComponent<Faction>(entity) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitMove>(entity) ||
             !em.HasComponent<UnitCombat>(entity) ||
             !em.HasComponent<UnitAttack>(entity) ||
@@ -259,7 +259,7 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
     private static bool IsToggleAttackCapableUnit(EntityManager em, Entity entity)
     {
         if (!em.HasComponent<Faction>(entity) ||
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitMove>(entity) ||
             !em.HasComponent<UnitCombat>(entity) ||
             !em.HasComponent<UnitAttack>(entity) ||
@@ -279,7 +279,7 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
             return false;
 
         if (em.HasComponent<Faction>(entity) &&
-            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
         {
             return false;
         }

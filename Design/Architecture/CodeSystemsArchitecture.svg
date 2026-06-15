@@ -177,7 +177,7 @@
   <text class="small" x="1300" y="1221">AIEconomy / AIBuildPlanner / AIProduction</text>
   <text class="small" x="1300" y="1247">AISquad / AITargeting / AICombatOrder</text>
   <text class="small" x="1300" y="1273">MissionStartupSystem / MissionCameraSystem</text>
-  <text class="small" x="1300" y="1299">FactionIdentitySystem / FactionResourceSystem</text>
+  <text class="small" x="1300" y="1299">FactionIdentity / FactionResourceSystem</text>
   <text class="small" x="1300" y="1325">MatchStartSystem / SceneLifecycleSystem</text>
   <text class="tiny" x="1300" y="1355">Faction policy, economy, AI intent, mission startup, lifecycle.</text>
 
@@ -188,7 +188,7 @@
   <text class="small" x="115" y="1562">RoadGridProjectionSystem</text>
   <text class="small" x="115" y="1588">MapSurfaceRuntimeBootstrapSystem</text>
   <text class="small" x="115" y="1614">MapSurfacePathfindingReadSystem</text>
-  <text class="small" x="115" y="1640">MapSurfaceSpawnGroundingSystem</text>
+  <text class="small" x="115" y="1640">MapSurfaceSpawnGrounding</text>
   <text class="tiny" x="115" y="1670">Road visuals/grid semantics and baked layered surface data.</text>
 
   <rect class="panel2" x="485" y="1445" width="355" height="255"/>

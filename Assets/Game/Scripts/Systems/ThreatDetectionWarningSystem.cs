@@ -8,7 +8,7 @@ using Unity.Mathematics;
 [UpdateAfter(typeof(UnitAirMovementSystem))]
 public partial struct ThreatDetectionWarningSystem : ISystem
 {
-    private const byte PlayerFactionId = FactionIdentitySystem.PlayerFactionId;
+    private const byte PlayerFactionId = FactionIdentity.PlayerFactionId;
     private const float FallbackThreatSpeed = 5f;
 
     private NativeParallelHashSet<Entity> _previousGroundThreats;

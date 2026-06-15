@@ -290,7 +290,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
         public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
         public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;
-        public readonly RuntimeCityCorridorBuildingSpawnSystem CorridorBuildingSpawnSystem;
+        public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
         public readonly RuntimeCityRoadBuildBridgeSystem RoadBuildBridgeSystem;
         public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;
         public readonly RuntimeCityChainSystem ChainSystem;
@@ -315,7 +315,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
             RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
             RuntimeCityBuildingPlacementSystem buildingPlacementSystem,
-            RuntimeCityCorridorBuildingSpawnSystem corridorBuildingSpawnSystem,
+            RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
             RuntimeCityRoadBuildBridgeSystem roadBuildBridgeSystem,
             RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
             RuntimeCityChainSystem chainSystem,

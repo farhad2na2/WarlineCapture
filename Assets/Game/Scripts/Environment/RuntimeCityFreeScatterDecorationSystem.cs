@@ -1,8 +1,52 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityFreeScatterDecorationSystem
+internal sealed partial class RuntimeCityFreeScatterDecorationSystem : SystemBase
+{
+    private readonly RuntimeCityFreeScatterDecorationState _state = new();
+
+    public RuntimeCityFreeScatterDecorationState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void PlaceFreeScatterDecorations(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<GameObject> prefabs,
+        int remainingCount,
+        Vector2Int centerRoadCell,
+        int townRadius,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        _state.PlaceFreeScatterDecorations(
+            context,
+            placementSystem,
+            prefabs,
+            remainingCount,
+            centerRoadCell,
+            townRadius,
+            roadCellSizeInGridCells,
+            roadCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints);
+    }
+}
+
+internal sealed class RuntimeCityFreeScatterDecorationState
 {
     public void PlaceFreeScatterDecorations(
         RuntimeCityBuildingSpawnContextSystem.Context context,

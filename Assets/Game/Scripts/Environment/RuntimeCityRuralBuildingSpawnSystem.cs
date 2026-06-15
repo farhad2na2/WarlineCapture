@@ -1,8 +1,56 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityRuralBuildingSpawnSystem
+internal sealed partial class RuntimeCityRuralBuildingSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityRuralBuildingSpawnState _state = new();
+
+    public RuntimeCityRuralBuildingSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void PlaceRuralBuildings(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<GameObject> prefabs,
+        int count,
+        Vector2Int centerRoadCell,
+        int townRadius,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> placementAnchors = null,
+        List<RectInt> secondaryPlacementAnchors = null)
+    {
+        _state.PlaceRuralBuildings(
+            context,
+            placementSystem,
+            prefabs,
+            count,
+            centerRoadCell,
+            townRadius,
+            roadCellSizeInGridCells,
+            roadCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            placementAnchors,
+            secondaryPlacementAnchors);
+    }
+}
+
+internal sealed class RuntimeCityRuralBuildingSpawnState
 {
     public void PlaceRuralBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

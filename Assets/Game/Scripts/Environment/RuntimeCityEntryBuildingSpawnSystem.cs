@@ -1,9 +1,70 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityEntryBuildingSpawnSystem
+internal sealed partial class RuntimeCityEntryBuildingSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityEntryBuildingSpawnState _state = new();
+
+    public RuntimeCityEntryBuildingSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void PlaceEntryShops(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> entryPlots,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        _state.PlaceEntryShops(
+            context,
+            placementSystem,
+            entryPlots,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+
+    public void PlaceEntryHouses(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> entryPlots,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints,
+        List<RectInt> houseFootprints)
+    {
+        _state.PlaceEntryHouses(
+            context,
+            placementSystem,
+            entryPlots,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints,
+            houseFootprints);
+    }
+}
+
+internal sealed class RuntimeCityEntryBuildingSpawnState
 {
     public void PlaceEntryShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,

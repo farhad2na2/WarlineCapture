@@ -22,24 +22,35 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();
     private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
     private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
-    private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();
-    private readonly RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem = new();
+    private RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem;
+    private readonly RuntimeCityHallSpawnState _fallbackRuntimeCityHallSpawn = new();
+    private RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem;
+    private readonly RuntimeCityLandmarkSpawnState _fallbackRuntimeCityLandmarkSpawn = new();
     private RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem;
     private readonly RuntimeCityBulkPlotPlanState _fallbackRuntimeCityBulkPlotPlan = new();
-    private readonly RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem = new();
-    private readonly RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem = new();
-    private readonly RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem = new();
+    private RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem;
+    private readonly RuntimeCityEntryBuildingSpawnState _fallbackRuntimeCityEntryBuildingSpawn = new();
+    private RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem;
+    private readonly RuntimeCityRoadsideBuildingSpawnState _fallbackRuntimeCityRoadsideBuildingSpawn = new();
+    private RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem;
+    private readonly RuntimeCityRuralBuildingSpawnState _fallbackRuntimeCityRuralBuildingSpawn = new();
     private readonly RuntimeCityBulkBuildingSpawnRoutineSystem _runtimeCityBulkBuildingSpawnRoutineSystem = new();
-    private readonly RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem = new();
+    private RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem;
+    private readonly RuntimeCityCorridorBuildingSpawnState _fallbackRuntimeCityCorridorBuildingSpawn = new();
     private readonly RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem = new();
     private readonly RuntimeCityYardGateSystem _runtimeCityYardGateSystem = new();
     private readonly RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem = new();
     private readonly RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem = new();
-    private readonly RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem = new();
-    private readonly RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem = new();
-    private readonly RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem = new();
-    private readonly RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem = new();
-    private readonly RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem = new();
+    private RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem;
+    private readonly RuntimeCityDecorationPrefabGroupState _fallbackRuntimeCityDecorationPrefabGroup = new();
+    private RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem;
+    private readonly RuntimeCityClothCoverSpawnState _fallbackRuntimeCityClothCoverSpawn = new();
+    private RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem;
+    private readonly RuntimeCityArchwaySpawnState _fallbackRuntimeCityArchwaySpawn = new();
+    private RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem;
+    private readonly RuntimeCityFreeScatterDecorationState _fallbackRuntimeCityFreeScatterDecoration = new();
+    private RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem;
+    private readonly RuntimeCityDecorationBuildingSpawnState _fallbackRuntimeCityDecorationBuildingSpawn = new();
     private RuntimeCityVisualSystem _runtimeCityVisualSystem;
     private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new();
     private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new();
@@ -261,7 +272,7 @@ public sealed class RuntimeCityCompositionSystem
             CreateBuildingSpawnSystems(),
             _runtimeCityBuildingSpawnContext,
             _runtimeCityBuildingPlacementSystem,
-            _runtimeCityCorridorBuildingSpawnSystem,
+            RuntimeCityCorridorBuildingSpawnState,
             _runtimeCityRoadBuildBridgeSystem,
             _runtimeCitySpawnBridgeSystem,
             _runtimeCityChainSystem,
@@ -281,23 +292,23 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityBuildingSpawnContextSystem.Systems(
             _runtimeCityBuildingPlacementSystem,
             RuntimeCityLandmarkOffsetState,
-            _runtimeCityHallSpawnSystem,
-            _runtimeCityLandmarkSpawnSystem,
+            RuntimeCityHallSpawnState,
+            RuntimeCityLandmarkSpawnState,
             RuntimeCityBulkPlotPlanState,
-            _runtimeCityEntryBuildingSpawnSystem,
-            _runtimeCityRoadsideBuildingSpawnSystem,
-            _runtimeCityRuralBuildingSpawnSystem,
+            RuntimeCityEntryBuildingSpawnState,
+            RuntimeCityRoadsideBuildingSpawnState,
+            RuntimeCityRuralBuildingSpawnState,
             _runtimeCityBulkBuildingSpawnRoutineSystem,
-            _runtimeCityCorridorBuildingSpawnSystem,
+            RuntimeCityCorridorBuildingSpawnState,
             _runtimeCityYardWallPlanSystem,
             _runtimeCityYardGateSystem,
             _runtimeCityYardWallVisualSystem,
             _runtimeCityHouseYardWallSystem,
-            _runtimeCityDecorationPrefabGroupSystem,
-            _runtimeCityClothCoverSpawnSystem,
-            _runtimeCityArchwaySpawnSystem,
-            _runtimeCityFreeScatterDecorationSystem,
-            _runtimeCityDecorationBuildingSpawnSystem);
+            RuntimeCityDecorationPrefabGroupState,
+            RuntimeCityClothCoverSpawnState,
+            RuntimeCityArchwaySpawnState,
+            RuntimeCityFreeScatterDecorationState,
+            RuntimeCityDecorationBuildingSpawnState);
     }
 
     private RuntimeCityChainSystem.Context CreateChainContext()
@@ -397,6 +408,72 @@ public sealed class RuntimeCityCompositionSystem
 
     private RuntimeCityLandmarkOffsetSystem RuntimeCityLandmarkOffsetSystem =>
         _runtimeCityLandmarkOffsetSystem ??= ResolveRuntimeCityLandmarkOffsetSystem();
+
+    private RuntimeCityHallSpawnState RuntimeCityHallSpawnState =>
+        RuntimeCityHallSpawnSystem?.State ?? _fallbackRuntimeCityHallSpawn;
+
+    private RuntimeCityHallSpawnSystem RuntimeCityHallSpawnSystem =>
+        _runtimeCityHallSpawnSystem ??= ResolveRuntimeCityHallSpawnSystem();
+
+    private RuntimeCityLandmarkSpawnState RuntimeCityLandmarkSpawnState =>
+        RuntimeCityLandmarkSpawnSystem?.State ?? _fallbackRuntimeCityLandmarkSpawn;
+
+    private RuntimeCityLandmarkSpawnSystem RuntimeCityLandmarkSpawnSystem =>
+        _runtimeCityLandmarkSpawnSystem ??= ResolveRuntimeCityLandmarkSpawnSystem();
+
+    private RuntimeCityEntryBuildingSpawnState RuntimeCityEntryBuildingSpawnState =>
+        RuntimeCityEntryBuildingSpawnSystem?.State ?? _fallbackRuntimeCityEntryBuildingSpawn;
+
+    private RuntimeCityEntryBuildingSpawnSystem RuntimeCityEntryBuildingSpawnSystem =>
+        _runtimeCityEntryBuildingSpawnSystem ??= ResolveRuntimeCityEntryBuildingSpawnSystem();
+
+    private RuntimeCityRoadsideBuildingSpawnState RuntimeCityRoadsideBuildingSpawnState =>
+        RuntimeCityRoadsideBuildingSpawnSystem?.State ?? _fallbackRuntimeCityRoadsideBuildingSpawn;
+
+    private RuntimeCityRoadsideBuildingSpawnSystem RuntimeCityRoadsideBuildingSpawnSystem =>
+        _runtimeCityRoadsideBuildingSpawnSystem ??= ResolveRuntimeCityRoadsideBuildingSpawnSystem();
+
+    private RuntimeCityRuralBuildingSpawnState RuntimeCityRuralBuildingSpawnState =>
+        RuntimeCityRuralBuildingSpawnSystem?.State ?? _fallbackRuntimeCityRuralBuildingSpawn;
+
+    private RuntimeCityRuralBuildingSpawnSystem RuntimeCityRuralBuildingSpawnSystem =>
+        _runtimeCityRuralBuildingSpawnSystem ??= ResolveRuntimeCityRuralBuildingSpawnSystem();
+
+    private RuntimeCityCorridorBuildingSpawnState RuntimeCityCorridorBuildingSpawnState =>
+        RuntimeCityCorridorBuildingSpawnSystem?.State ?? _fallbackRuntimeCityCorridorBuildingSpawn;
+
+    private RuntimeCityCorridorBuildingSpawnSystem RuntimeCityCorridorBuildingSpawnSystem =>
+        _runtimeCityCorridorBuildingSpawnSystem ??= ResolveRuntimeCityCorridorBuildingSpawnSystem();
+
+    private RuntimeCityDecorationPrefabGroupState RuntimeCityDecorationPrefabGroupState =>
+        RuntimeCityDecorationPrefabGroupSystem?.State ?? _fallbackRuntimeCityDecorationPrefabGroup;
+
+    private RuntimeCityDecorationPrefabGroupSystem RuntimeCityDecorationPrefabGroupSystem =>
+        _runtimeCityDecorationPrefabGroupSystem ??= ResolveRuntimeCityDecorationPrefabGroupSystem();
+
+    private RuntimeCityClothCoverSpawnState RuntimeCityClothCoverSpawnState =>
+        RuntimeCityClothCoverSpawnSystem?.State ?? _fallbackRuntimeCityClothCoverSpawn;
+
+    private RuntimeCityClothCoverSpawnSystem RuntimeCityClothCoverSpawnSystem =>
+        _runtimeCityClothCoverSpawnSystem ??= ResolveRuntimeCityClothCoverSpawnSystem();
+
+    private RuntimeCityArchwaySpawnState RuntimeCityArchwaySpawnState =>
+        RuntimeCityArchwaySpawnSystem?.State ?? _fallbackRuntimeCityArchwaySpawn;
+
+    private RuntimeCityArchwaySpawnSystem RuntimeCityArchwaySpawnSystem =>
+        _runtimeCityArchwaySpawnSystem ??= ResolveRuntimeCityArchwaySpawnSystem();
+
+    private RuntimeCityFreeScatterDecorationState RuntimeCityFreeScatterDecorationState =>
+        RuntimeCityFreeScatterDecorationSystem?.State ?? _fallbackRuntimeCityFreeScatterDecoration;
+
+    private RuntimeCityFreeScatterDecorationSystem RuntimeCityFreeScatterDecorationSystem =>
+        _runtimeCityFreeScatterDecorationSystem ??= ResolveRuntimeCityFreeScatterDecorationSystem();
+
+    private RuntimeCityDecorationBuildingSpawnState RuntimeCityDecorationBuildingSpawnState =>
+        RuntimeCityDecorationBuildingSpawnSystem?.State ?? _fallbackRuntimeCityDecorationBuildingSpawn;
+
+    private RuntimeCityDecorationBuildingSpawnSystem RuntimeCityDecorationBuildingSpawnSystem =>
+        _runtimeCityDecorationBuildingSpawnSystem ??= ResolveRuntimeCityDecorationBuildingSpawnSystem();
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
@@ -554,6 +631,94 @@ public sealed class RuntimeCityCompositionSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityLandmarkOffsetSystem>()
+            : null;
+    }
+
+    private static RuntimeCityHallSpawnSystem ResolveRuntimeCityHallSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityHallSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityLandmarkSpawnSystem ResolveRuntimeCityLandmarkSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityLandmarkSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityEntryBuildingSpawnSystem ResolveRuntimeCityEntryBuildingSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityEntryBuildingSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityRoadsideBuildingSpawnSystem ResolveRuntimeCityRoadsideBuildingSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityRoadsideBuildingSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityRuralBuildingSpawnSystem ResolveRuntimeCityRuralBuildingSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityRuralBuildingSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityCorridorBuildingSpawnSystem ResolveRuntimeCityCorridorBuildingSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityCorridorBuildingSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityDecorationPrefabGroupSystem ResolveRuntimeCityDecorationPrefabGroupSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityDecorationPrefabGroupSystem>()
+            : null;
+    }
+
+    private static RuntimeCityClothCoverSpawnSystem ResolveRuntimeCityClothCoverSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityClothCoverSpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityArchwaySpawnSystem ResolveRuntimeCityArchwaySpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityArchwaySpawnSystem>()
+            : null;
+    }
+
+    private static RuntimeCityFreeScatterDecorationSystem ResolveRuntimeCityFreeScatterDecorationSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityFreeScatterDecorationSystem>()
+            : null;
+    }
+
+    private static RuntimeCityDecorationBuildingSpawnSystem ResolveRuntimeCityDecorationBuildingSpawnSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityDecorationBuildingSpawnSystem>()
             : null;
     }
 }

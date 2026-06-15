@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+using RoadsidePlan = RuntimeCityRoadsideBuildingSpawnSystem.Plan;
 
-internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
+internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBase
 {
     public readonly struct Plan
     {
@@ -19,20 +21,131 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
         }
     }
 
-    public Plan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    private readonly RuntimeCityRoadsideBuildingSpawnState _state = new();
+
+    public RuntimeCityRoadsideBuildingSpawnState State => _state;
+
+    protected override void OnCreate()
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
-        int centralShopTarget = Mathf.Min(config.ShopCount, Mathf.Max(0, Mathf.RoundToInt(config.ShopCount * 0.65f)));
-        int ruralHouseTarget = Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio));
-        int roadsideHouseTarget = Mathf.Max(0, config.HouseCount - ruralHouseTarget);
-        return new Plan(centralShopTarget, ruralHouseTarget, roadsideHouseTarget);
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    {
+        return _state.CreatePlan(context);
     }
 
     public void PlaceCentralShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
         List<PlotCandidate> centralPlots,
-        Plan plan,
+        RoadsidePlan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        _state.PlaceCentralShops(
+            context,
+            placementSystem,
+            centralPlots,
+            plan,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+
+    public void PlaceGasStations(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        _state.PlaceGasStations(
+            context,
+            placementSystem,
+            outerPlots,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints);
+    }
+
+    public void PlaceOuterShops(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        RoadsidePlan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        _state.PlaceOuterShops(
+            context,
+            placementSystem,
+            outerPlots,
+            plan,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+
+    public void PlaceRoadsideHouses(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        RoadsidePlan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints,
+        List<RectInt> houseFootprints)
+    {
+        _state.PlaceRoadsideHouses(
+            context,
+            placementSystem,
+            outerPlots,
+            plan,
+            roadCellSizeInGridCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints,
+            houseFootprints);
+    }
+}
+
+internal sealed class RuntimeCityRoadsideBuildingSpawnState
+{
+    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        int centralShopTarget = Mathf.Min(config.ShopCount, Mathf.Max(0, Mathf.RoundToInt(config.ShopCount * 0.65f)));
+        int ruralHouseTarget = Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio));
+        int roadsideHouseTarget = Mathf.Max(0, config.HouseCount - ruralHouseTarget);
+        return new RoadsidePlan(centralShopTarget, ruralHouseTarget, roadsideHouseTarget);
+    }
+
+    public void PlaceCentralShops(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> centralPlots,
+        RoadsidePlan plan,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
         List<Vector2Int> usedPlotCells,
@@ -85,7 +198,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
         List<PlotCandidate> outerPlots,
-        Plan plan,
+        RoadsidePlan plan,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
         List<Vector2Int> usedPlotCells,
@@ -113,7 +226,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
         List<PlotCandidate> outerPlots,
-        Plan plan,
+        RoadsidePlan plan,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
         List<Vector2Int> usedPlotCells,

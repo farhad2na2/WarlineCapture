@@ -1,9 +1,47 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 
-internal sealed class RuntimeCityCorridorBuildingSpawnSystem
+internal sealed partial class RuntimeCityCorridorBuildingSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityCorridorBuildingSpawnState _state = new();
+
+    public RuntimeCityCorridorBuildingSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void SpawnCorridorEntranceBuildings(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        CityLayoutData city,
+        Vector2Int connectorCell,
+        Vector2Int direction,
+        int corridorLength,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng)
+    {
+        _state.SpawnCorridorEntranceBuildings(
+            context,
+            placementSystem,
+            city,
+            connectorCell,
+            direction,
+            corridorLength,
+            roadCellSizeInGridCells,
+            ref rng);
+    }
+}
+
+internal sealed class RuntimeCityCorridorBuildingSpawnState
 {
     public void SpawnCorridorEntranceBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

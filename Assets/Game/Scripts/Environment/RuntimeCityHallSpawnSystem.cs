@@ -1,9 +1,37 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityHallSpawnSystem
+internal sealed partial class RuntimeCityHallSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityHallSpawnState _state = new();
+
+    public RuntimeCityHallSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void EnsureCityHall(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityLandmarkOffsetState offsetSystem,
+        CityLayoutData city,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng)
+    {
+        _state.EnsureCityHall(context, placementSystem, offsetSystem, city, roadCellSizeInGridCells, ref rng);
+    }
+}
+
+internal sealed class RuntimeCityHallSpawnState
 {
     public void EnsureCityHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,

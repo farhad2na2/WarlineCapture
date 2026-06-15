@@ -1,16 +1,70 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityDecorationBuildingSpawnSystem
+internal sealed partial class RuntimeCityDecorationBuildingSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityDecorationBuildingSpawnState _state = new();
+
+    public RuntimeCityDecorationBuildingSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void PlaceCityDecorationBuildings(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
+        RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
+        RuntimeCityArchwaySpawnState archwaySpawnSystem,
+        RuntimeCityFreeScatterDecorationState freeScatterDecorationSystem,
+        List<GameObject> prefabs,
+        int count,
+        Vector2Int centerRoadCell,
+        int townRadius,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        _state.PlaceCityDecorationBuildings(
+            context,
+            placementSystem,
+            decorationPrefabGroupSystem,
+            clothCoverSpawnSystem,
+            archwaySpawnSystem,
+            freeScatterDecorationSystem,
+            prefabs,
+            count,
+            centerRoadCell,
+            townRadius,
+            roadCellSizeInGridCells,
+            roadCells,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+}
+
+internal sealed class RuntimeCityDecorationBuildingSpawnState
 {
     public void PlaceCityDecorationBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementSystem placementSystem,
-        RuntimeCityDecorationPrefabGroupSystem decorationPrefabGroupSystem,
-        RuntimeCityClothCoverSpawnSystem clothCoverSpawnSystem,
-        RuntimeCityArchwaySpawnSystem archwaySpawnSystem,
-        RuntimeCityFreeScatterDecorationSystem freeScatterDecorationSystem,
+        RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
+        RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
+        RuntimeCityArchwaySpawnState archwaySpawnSystem,
+        RuntimeCityFreeScatterDecorationState freeScatterDecorationSystem,
         List<GameObject> prefabs,
         int count,
         Vector2Int centerRoadCell,

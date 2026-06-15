@@ -1,8 +1,44 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityClothCoverSpawnSystem
+internal sealed partial class RuntimeCityClothCoverSpawnSystem : SystemBase
+{
+    private readonly RuntimeCityClothCoverSpawnState _state = new();
+
+    public RuntimeCityClothCoverSpawnState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public int PlaceClothCoverBuildings(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<GameObject> clothCoverPrefabs,
+        int maxCount,
+        ref Unity.Mathematics.Random rng,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        return _state.PlaceClothCoverBuildings(
+            context,
+            placementSystem,
+            clothCoverPrefabs,
+            maxCount,
+            ref rng,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+}
+
+internal sealed class RuntimeCityClothCoverSpawnState
 {
     public int PlaceClothCoverBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

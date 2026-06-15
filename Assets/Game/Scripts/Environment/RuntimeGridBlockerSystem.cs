@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
+public sealed partial class RuntimeGridBlockerSystem : SystemBase, IRuntimeGridBlockerCellLookup
 {
     private enum BlockerPrefabKind
     {
@@ -66,6 +66,20 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
     public bool DependentsReadyForPlacement => _readyForDependents;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _blockerCount <= 0;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Dispose();
+    }
+
     public void Init(RuntimeGridBlockerSystemConfig config, Transform rootTransform, RuntimeCityReadModelSystem cityReadModel)
     {
         _rootTransform = rootTransform;
@@ -76,7 +90,7 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
         WriteDependencyState();
     }
 
-    public void Update()
+    public new void Update()
     {
         if (_finalizeAfterFrames >= 0)
         {

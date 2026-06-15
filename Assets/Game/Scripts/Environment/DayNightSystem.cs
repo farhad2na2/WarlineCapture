@@ -1,8 +1,9 @@
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public sealed class DayNightSystem
+public sealed partial class DayNightSystem : SystemBase
 {
     private const float MinFullDayDurationMinutes = 0.1f;
 
@@ -47,6 +48,7 @@ public sealed class DayNightSystem
     private WhiteBalance _whiteBalance;
     private Bloom _bloom;
     private bool _runtimeVisualsEnabled = true;
+    private bool _initialEnvironmentStateCaptured;
 
     public float FullDayDurationMinutes => fullDayDurationMinutes;
     public float CurrentHour => _currentHour;
@@ -56,6 +58,20 @@ public sealed class DayNightSystem
     public bool IsNightTime => IsHourWithinWrappedRange(_currentHour, nightStartsAtHour, morningStartsAtHour);
     public string FormattedTimeText => $"Day {_dayCount}  {GetHour24():00}:{GetMinute():00}";
     public bool RuntimeVisualsEnabled => _runtimeVisualsEnabled;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Dispose();
+    }
 
     public void Init(DayNightSystemConfig configAsset, Light sceneDirectionalLight, Volume sceneGlobalVolume)
     {
@@ -120,7 +136,7 @@ public sealed class DayNightSystem
         dynamicGIRefreshIntervalSeconds = Mathf.Max(1f, config.DynamicGIRefreshIntervalSeconds);
     }
 
-    public void Update()
+    public new void Update()
     {
         if (!_runtimeVisualsEnabled)
             return;
@@ -128,7 +144,7 @@ public sealed class DayNightSystem
         float clampedDurationMinutes = Mathf.Max(MinFullDayDurationMinutes, fullDayDurationMinutes);
         float hoursPerSecond = 24f / (clampedDurationMinutes * 60f);
         float previousHour = _currentHour;
-        _currentHour = Mathf.Repeat(_currentHour + (Time.deltaTime * hoursPerSecond), 24f);
+        _currentHour = Mathf.Repeat(_currentHour + (UnityEngine.Time.deltaTime * hoursPerSecond), 24f);
         if (_currentHour < previousHour)
             _dayCount++;
 
@@ -138,6 +154,7 @@ public sealed class DayNightSystem
     public void Dispose()
     {
         RestoreInitialEnvironmentState();
+        _initialEnvironmentStateCaptured = false;
     }
 
     private void CaptureInitialEnvironmentState()
@@ -157,10 +174,15 @@ public sealed class DayNightSystem
             _originalVolumeWeight = globalVolume.weight;
             _originalVolumeWeightCaptured = true;
         }
+
+        _initialEnvironmentStateCaptured = true;
     }
 
     private void RestoreInitialEnvironmentState()
     {
+        if (!_initialEnvironmentStateCaptured)
+            return;
+
         if (_originalSkyboxMaterial != null)
             RenderSettings.skybox = _originalSkyboxMaterial;
 
@@ -239,10 +261,10 @@ public sealed class DayNightSystem
         ApplySkybox(daylight, twilight);
         ApplyVolume(daylight, twilight, IsNightVisionActive(_currentHour));
 
-        if (updateDynamicGI && Time.unscaledTime >= _nextEnvironmentRefreshTime)
+        if (updateDynamicGI && UnityEngine.Time.unscaledTime >= _nextEnvironmentRefreshTime)
         {
             DynamicGI.UpdateEnvironment();
-            _nextEnvironmentRefreshTime = Time.unscaledTime + dynamicGIRefreshIntervalSeconds;
+            _nextEnvironmentRefreshTime = UnityEngine.Time.unscaledTime + dynamicGIRefreshIntervalSeconds;
         }
     }
 

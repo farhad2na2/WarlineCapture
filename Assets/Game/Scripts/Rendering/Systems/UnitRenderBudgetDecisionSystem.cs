@@ -3,9 +3,9 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Rendering;
 using Unity.Transforms;
-using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
+using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 
-public readonly struct UnitRenderBudgetDecisionSystem
+public readonly struct UnitRenderBudgetDecision
 {
     public struct Context
     {
@@ -41,22 +41,22 @@ public readonly struct UnitRenderBudgetDecisionSystem
         public float EnemyAlwaysDetailedDistanceSq;
         public float EnemyLowLodDistanceSq;
         public float EnemyImpostorDistanceSq;
-        public UnitRenderBudgetClassificationSystem ClassificationSystem;
-        public UnitRenderBudgetCharacterPolicySystem CharacterPolicySystem;
-        public UnitRenderBudgetLodReferenceSystem LodReferenceSystem;
-        public UnitRenderBudgetLodReferenceSystem.Lookups LodReferenceLookups;
-        public UnitRenderBudgetAnimationReadinessSystem AnimationReadinessSystem;
-        public UnitRenderBudgetAnimationReadinessSystem.Lookups AnimationReadinessLookups;
-        public UnitRenderBudgetRenderableQuerySystem RenderableQuerySystem;
-        public UnitRenderBudgetRenderableQuerySystem.Lookups RenderableQueryLookups;
-        public UnitRenderBudgetVisualStateSystem VisualStateSystem;
-        public UnitRenderBudgetReadinessSystem ReadinessSystem;
-        public UnitRenderBudgetReadinessSystem.Lookups ReadinessLookups;
-        public UnitRenderBudgetRenderSafetySystem RenderSafetySystem;
-        public UnitRenderBudgetRenderSafetySystem.Lookups RenderSafetyLookups;
-        public UnitRenderBudgetVisualPlanSystem VisualPlanSystem;
-        public UnitRenderBudgetVisibilityChangeSystem VisibilityChangeSystem;
-        public UnitRenderBudgetImpostorTagSystem ImpostorTagSystem;
+        public UnitRenderBudgetClassification ClassificationSystem;
+        public UnitRenderBudgetCharacterPolicy CharacterPolicySystem;
+        public UnitRenderBudgetLodReferences LodReferenceSystem;
+        public UnitRenderBudgetLodReferences.Lookups LodReferenceLookups;
+        public UnitRenderBudgetAnimationReadiness AnimationReadinessSystem;
+        public UnitRenderBudgetAnimationReadiness.Lookups AnimationReadinessLookups;
+        public UnitRenderBudgetRenderableState RenderableQuerySystem;
+        public UnitRenderBudgetRenderableState.Lookups RenderableQueryLookups;
+        public UnitRenderBudgetVisualState VisualStateSystem;
+        public UnitRenderBudgetReadiness ReadinessSystem;
+        public UnitRenderBudgetReadiness.Lookups ReadinessLookups;
+        public UnitRenderBudgetRenderSafety RenderSafetySystem;
+        public UnitRenderBudgetRenderSafety.Lookups RenderSafetyLookups;
+        public UnitRenderBudgetVisualPlan VisualPlanSystem;
+        public UnitRenderBudgetVisibilityChange VisibilityChangeSystem;
+        public UnitRenderBudgetImpostorTag ImpostorTagSystem;
         public int CurrentFrame;
     }
 
@@ -104,7 +104,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
             bool isMovingUnit =
                 context.MoveVisualLookup.HasComponent(unit) &&
                 context.MoveVisualLookup[unit].IsMoving != 0;
-            UnitRenderBudgetLodReferenceSystem.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
+            UnitRenderBudgetLodReferences.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
                 unit,
                 context.LodReferenceLookups);
             bool hasMidLodPrefab = lodReferences.HasMidLodPrefab;
@@ -135,11 +135,11 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 (isProtectedVisibleCharacter || context.RenderableQuerySystem.HasRenderableRecursive(lowRoot, context.ChildLookup, context.RenderableQueryLookups));
             bool midRootAnimatable = hasMidLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(midRoot, context.AnimationIndexLookup, context.ChildLookup);
             bool lowRootAnimatable = hasLowLodInstance && context.AnimationReadinessSystem.HasAnimationIndexRecursive(lowRoot, context.AnimationIndexLookup, context.ChildLookup);
-            UnitRenderBudgetVisualPlanSystem.Result visualPlan = context.VisualPlanSystem.CreateDesiredVisualPlan(
+            UnitRenderBudgetVisualPlan.Result visualPlan = context.VisualPlanSystem.CreateDesiredVisualPlan(
                 context.RenderStateEcb,
                 context.ReadyTaggedThisFrame,
                 context.ChildLookup,
-                new UnitRenderBudgetVisualPlanSystem.Request
+                new UnitRenderBudgetVisualPlan.Request
                 {
                     Unit = unit,
                     MidRoot = midRoot,
@@ -179,7 +179,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
                 context.ReadinessLookups,
                 context.AnimationReadinessLookups,
                 context.RenderableQueryLookups);
-            UnitRenderBudgetVisualPlanSystem.Counters planCounters = visualPlan.Counters;
+            UnitRenderBudgetVisualPlan.Counters planCounters = visualPlan.Counters;
             result.VisibleCharacterSafeGate += planCounters.VisibleCharacterSafeGate;
             result.VisibleCharacterMidInstances += planCounters.VisibleCharacterMidInstances;
             result.VisibleCharacterSafeMidInstances += planCounters.VisibleCharacterSafeMidInstances;

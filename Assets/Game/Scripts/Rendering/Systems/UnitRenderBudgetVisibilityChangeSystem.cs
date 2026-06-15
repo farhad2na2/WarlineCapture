@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Rendering;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetVisibilityChangeSystem
+public readonly struct UnitRenderBudgetVisibilityChange
 {
     public void CollectRenderVisibilityChanges(
         Entity root,

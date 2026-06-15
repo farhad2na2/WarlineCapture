@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-public readonly struct UnitRenderBudgetBandSystem
+public readonly struct UnitRenderBudgetBand
 {
     public struct Plan : IDisposable
     {
@@ -44,7 +44,7 @@ public readonly struct UnitRenderBudgetBandSystem
     }
 
     public Plan Create(
-        NativeList<UnitRenderBudgetDistanceSystem.UnitDistance> distances,
+        NativeList<UnitRenderBudgetDistance.UnitDistance> distances,
         int maxDetailedUnits,
         int maxMidLodUnits,
         int maxLowLodUnits,
@@ -75,7 +75,7 @@ public readonly struct UnitRenderBudgetBandSystem
     [BurstCompile]
     private struct BuildBandPlanJob : IJob
     {
-        [ReadOnly] public NativeArray<UnitRenderBudgetDistanceSystem.UnitDistance> Distances;
+        [ReadOnly] public NativeArray<UnitRenderBudgetDistance.UnitDistance> Distances;
         public NativeHashSet<Entity> DetailedUnits;
         public NativeHashSet<Entity> MidLodUnits;
         public NativeHashSet<Entity> LowLodUnits;

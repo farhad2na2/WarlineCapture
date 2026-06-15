@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class RuntimeCameraReferenceSystemTests
@@ -8,6 +9,43 @@ public sealed class RuntimeCameraReferenceSystemTests
     private World _previousWorld;
     private World _world;
     private GameObject _cameraObject;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new RuntimeCameraReferenceSystemTests();
+            RunCase(tests, nameof(SetWorldCamera_WritesManagedEcsReference), test => test.SetWorldCamera_WritesManagedEcsReference());
+            RunCase(tests, nameof(TryGetWorldCamera_ReadsManagedEcsReference), test => test.TryGetWorldCamera_ReadsManagedEcsReference());
+            RunCase(tests, nameof(ClearWorldCamera_ClearsManagedEcsReference), test => test.ClearWorldCamera_ClearsManagedEcsReference());
+            Debug.Log("[RuntimeCameraReferenceFocusedValidation] result=Passed tests=3");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RuntimeCameraReferenceFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(RuntimeCameraReferenceSystemTests tests, string name, System.Action<RuntimeCameraReferenceSystemTests> action)
+    {
+        tests.SetUp();
+        try
+        {
+            action(tests);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[RuntimeCameraReferenceFocusedValidation] result=Failed test={name} error={exception}");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -31,7 +69,7 @@ public sealed class RuntimeCameraReferenceSystemTests
     public void SetWorldCamera_WritesManagedEcsReference()
     {
         Camera camera = CreateCamera();
-        var runtimeCameraReferenceSystem = new RuntimeCameraReferenceSystem();
+        RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
 
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
 
@@ -46,7 +84,7 @@ public sealed class RuntimeCameraReferenceSystemTests
     public void TryGetWorldCamera_ReadsManagedEcsReference()
     {
         Camera camera = CreateCamera();
-        var runtimeCameraReferenceSystem = new RuntimeCameraReferenceSystem();
+        RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
         using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
 
@@ -60,7 +98,7 @@ public sealed class RuntimeCameraReferenceSystemTests
     public void ClearWorldCamera_ClearsManagedEcsReference()
     {
         Camera camera = CreateCamera();
-        var runtimeCameraReferenceSystem = new RuntimeCameraReferenceSystem();
+        RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
 
         runtimeCameraReferenceSystem.ClearWorldCamera();

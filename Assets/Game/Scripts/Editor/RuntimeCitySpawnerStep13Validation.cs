@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -64,16 +65,37 @@ public static class RuntimeCitySpawnerStep13Validation
             ValidateBlockerConfig(matchScene.RuntimeGridBlockerConfig);
             ValidateNoMissingScripts();
 
-            var runtimeCity = new RuntimeCityCompositionSystem();
-            runtimeCity.ConfigureForValidation(disabledConfig);
-            runtimeCity.Update(1);
+            World previousWorld = World.DefaultGameObjectInjectionWorld;
+            World validationWorld = null;
+            World world = previousWorld;
+            if (world == null || !world.IsCreated)
+            {
+                validationWorld = new World("RuntimeCityDisabledValidationWorld");
+                World.DefaultGameObjectInjectionWorld = validationWorld;
+                world = validationWorld;
+            }
 
-            AssertCondition(runtimeCity.SpawnOnStartEnabled, "Runtime city disabled validation must preserve spawn-on-start state.");
-            AssertCondition(runtimeCity.HasSpawned, "Runtime city composition must immediately report spawned/complete when cityCount is 0.");
-            AssertCondition(!runtimeCity.IsGenerating, "Runtime city composition must not generate when cityCount is 0.");
-            AssertCondition(runtimeCity.ReadModel.HasSpawned, "Runtime city read model must publish completed state when cityCount is 0.");
-            AssertCondition(!runtimeCity.ReadModel.IsGenerating, "Runtime city read model must publish non-generating state when cityCount is 0.");
-            runtimeCity.Dispose();
+            RuntimeCityCompositionSystem runtimeCity = world.GetOrCreateSystemManaged<RuntimeCityCompositionSystem>();
+            try
+            {
+                runtimeCity.ConfigureForValidation(disabledConfig);
+                runtimeCity.Update(1);
+
+                AssertCondition(runtimeCity.SpawnOnStartEnabled, "Runtime city disabled validation must preserve spawn-on-start state.");
+                AssertCondition(runtimeCity.HasSpawned, "Runtime city composition must immediately report spawned/complete when cityCount is 0.");
+                AssertCondition(!runtimeCity.IsGenerating, "Runtime city composition must not generate when cityCount is 0.");
+                AssertCondition(runtimeCity.ReadModel.HasSpawned, "Runtime city read model must publish completed state when cityCount is 0.");
+                AssertCondition(!runtimeCity.ReadModel.IsGenerating, "Runtime city read model must publish non-generating state when cityCount is 0.");
+                runtimeCity.Dispose();
+            }
+            finally
+            {
+                if (validationWorld != null)
+                {
+                    World.DefaultGameObjectInjectionWorld = previousWorld;
+                    validationWorld.Dispose();
+                }
+            }
 
             Debug.Log(
                 "[RuntimeCityDisabledValidation] result=Passed " +

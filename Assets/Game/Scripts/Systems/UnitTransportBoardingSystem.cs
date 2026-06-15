@@ -38,9 +38,9 @@ public partial struct UnitTransportBoardingSystem : ISystem
             },
             None = new[] { ComponentType.ReadOnly<Disabled>() }
         });
-        var diagnosticSystem = new UnitTransportBoardingDiagnosticSystem();
-        _diagnosticLogQueueQuery = diagnosticSystem.CreateDiagnosticLogQueueQuery(ref state);
-        _diagnosticsStateQuery = diagnosticSystem.CreateDiagnosticsStateQuery(ref state);
+        var diagnostics = new UnitTransportBoardingDiagnostics();
+        _diagnosticLogQueueQuery = diagnostics.CreateDiagnosticLogQueueQuery(ref state);
+        _diagnosticsStateQuery = diagnostics.CreateDiagnosticsStateQuery(ref state);
         _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
         _transportCapacityLookup = state.GetComponentLookup<UnitTransportCapacity>(true);
         _passengerLookup = state.GetBufferLookup<UnitTransportPassengerElement>(true);
@@ -73,8 +73,8 @@ public partial struct UnitTransportBoardingSystem : ISystem
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         EntityManager em = state.EntityManager;
-        var diagnosticSystem = new UnitTransportBoardingDiagnosticSystem();
-        bool shouldLogTransportBoarding = diagnosticSystem.ShouldQueueTransportBoardingDiagnostics(
+        var diagnostics = new UnitTransportBoardingDiagnostics();
+        bool shouldLogTransportBoarding = diagnostics.ShouldQueueTransportBoardingDiagnostics(
             em,
             _diagnosticsStateQuery);
         bool shouldLogPeriodicTransportBoarding =
@@ -104,7 +104,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
         state.Dependency = collectHandle;
 
         Entity diagnosticQueueEntity = shouldLogTransportBoarding
-            ? diagnosticSystem.EnsureTransportBoardingDiagnosticQueue(em, _diagnosticLogQueueQuery)
+            ? diagnostics.EnsureTransportBoardingDiagnosticQueue(em, _diagnosticLogQueueQuery)
             : Entity.Null;
 
         for (int i = 0; i < decisions.Length; i++)
@@ -114,18 +114,18 @@ public partial struct UnitTransportBoardingSystem : ISystem
             {
                 case BoardingDecisionKind.TransportMissingOrInvalid:
                     if (shouldLogTransportBoarding)
-                        diagnosticSystem.QueueCancelTransportMissingOrInvalid(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
+                        diagnostics.QueueCancelTransportMissingOrInvalid(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
                     ecb.RemoveComponent<UnitTransportBoardingTarget>(decision.Passenger);
                     break;
 
                 case BoardingDecisionKind.WaitingTransportNotLanded:
                     if (shouldLogPeriodicTransportBoarding)
-                        diagnosticSystem.QueueWaitingTransportNotLanded(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
+                        diagnostics.QueueWaitingTransportNotLanded(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
                     break;
 
                 case BoardingDecisionKind.NoSeats:
                     if (shouldLogTransportBoarding)
-                        diagnosticSystem.QueueCancelNoSeats(
+                        diagnostics.QueueCancelNoSeats(
                             em,
                             diagnosticQueueEntity,
                             decision.Passenger,
@@ -138,7 +138,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                 case BoardingDecisionKind.WaitingNotReached:
                     if (shouldLogPeriodicTransportBoarding)
                     {
-                        diagnosticSystem.QueueWaitingNotReached(
+                        diagnostics.QueueWaitingNotReached(
                             em,
                             diagnosticQueueEntity,
                             decision.Passenger,
@@ -155,7 +155,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                         !em.HasBuffer<UnitTransportPassengerElement>(decision.Transport))
                     {
                         if (shouldLogTransportBoarding)
-                            diagnosticSystem.QueueCancelTransportMissingOrInvalid(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
+                            diagnostics.QueueCancelTransportMissingOrInvalid(em, diagnosticQueueEntity, decision.Passenger, decision.Transport);
                         ecb.RemoveComponent<UnitTransportBoardingTarget>(decision.Passenger);
                         break;
                     }
@@ -165,7 +165,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                     if (passengers.Length >= capacity)
                     {
                         if (shouldLogTransportBoarding)
-                            diagnosticSystem.QueueCancelNoSeats(
+                            diagnostics.QueueCancelNoSeats(
                                 em,
                                 diagnosticQueueEntity,
                                 decision.Passenger,
@@ -183,7 +183,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
                         decision.Passenger,
                         decision.Transport);
                     if (shouldLogTransportBoarding)
-                        diagnosticSystem.QueueBoarded(em, diagnosticQueueEntity, decision.Passenger, decision.Transport, occupiedSeats, capacity);
+                        diagnostics.QueueBoarded(em, diagnosticQueueEntity, decision.Passenger, decision.Transport, occupiedSeats, capacity);
                     break;
             }
         }

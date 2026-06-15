@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Entities.Graphics;
 using Unity.Rendering;
 
-public readonly struct UnitRenderBudgetLodReferenceSystem
+public readonly struct UnitRenderBudgetLodReferences
 {
     public struct Lookups
     {

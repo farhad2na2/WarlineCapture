@@ -3,7 +3,7 @@ using Unity.Entities.Graphics;
 using Unity.Rendering;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetRenderableQuerySystem
+public readonly struct UnitRenderBudgetRenderableState
 {
     public struct Lookups
     {

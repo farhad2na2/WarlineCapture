@@ -1,4 +1,5 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class GameplayFeatureStartupSystem
@@ -42,8 +43,8 @@ internal sealed class GameplayFeatureStartupSystem
         CombinedMeshBaker decorationCombinedMeshBaker,
         GameplaySceneBindingSystem sceneBindingSystem)
     {
-        var runtimeCity = new RuntimeCityCompositionSystem();
-        runtimeCity.Configure(
+        RuntimeCityCompositionSystem runtimeCity = ResolveRuntimeCityCompositionSystem();
+        runtimeCity?.Configure(
             runtimeCitySpawnerConfig,
             roadRuntimeGenerationSystem,
             roadRuntimeGenerationContext,
@@ -52,8 +53,9 @@ internal sealed class GameplayFeatureStartupSystem
             runtimeCityRoot,
             mainMenu);
 
-        var runtimeGridBlockers = new RuntimeGridBlockerSystem();
-        runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCity.ReadModel);
+        RuntimeCityReadModelSystem runtimeCityReadModel = runtimeCity?.ReadModel;
+        RuntimeGridBlockerSystem runtimeGridBlockers = ResolveRuntimeGridBlockerSystem();
+        runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
         bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
         bindBuildingGameplayFeatures?.Invoke(
@@ -64,14 +66,38 @@ internal sealed class GameplayFeatureStartupSystem
             runtimeCity,
             citizenPopulationEventSystem);
 
-        var runtimeDecorations = new RuntimeDecorationSpawnerSystem();
-        runtimeDecorations.Init(
+        RuntimeDecorationSpawnerSystem runtimeDecorations = ResolveRuntimeDecorationSpawnerSystem();
+        runtimeDecorations?.Init(
             runtimeDecorationSpawnerConfig,
             decorationRoot,
             decorationCombinedMeshBaker,
-            runtimeCity.ReadModel,
+            runtimeCityReadModel,
             runtimeGridBlockers);
 
         return new Result(runtimeCity, runtimeGridBlockers, runtimeDecorations);
+    }
+
+    private static RuntimeGridBlockerSystem ResolveRuntimeGridBlockerSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeGridBlockerSystem>()
+            : null;
+    }
+
+    private static RuntimeCityCompositionSystem ResolveRuntimeCityCompositionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityCompositionSystem>()
+            : null;
+    }
+
+    private static RuntimeDecorationSpawnerSystem ResolveRuntimeDecorationSpawnerSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeDecorationSpawnerSystem>()
+            : null;
     }
 }

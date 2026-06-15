@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetVisualPlanSystem
+public readonly struct UnitRenderBudgetVisualPlan
 {
     public struct Request
     {
@@ -87,13 +87,13 @@ public readonly struct UnitRenderBudgetVisualPlanSystem
         NativeHashSet<Entity> readyTaggedThisFrame,
         BufferLookup<Child> childLookup,
         Request request,
-        UnitRenderBudgetCharacterPolicySystem characterPolicySystem,
-        UnitRenderBudgetReadinessSystem readinessSystem,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetReadinessSystem.Lookups readinessLookups,
-        UnitRenderBudgetAnimationReadinessSystem.Lookups animationReadinessLookups,
-        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups)
+        UnitRenderBudgetCharacterPolicy characterPolicySystem,
+        UnitRenderBudgetReadiness readinessSystem,
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetReadiness.Lookups readinessLookups,
+        UnitRenderBudgetAnimationReadiness.Lookups animationReadinessLookups,
+        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups)
     {
         return CreateDesiredVisualPlan(
             default,
@@ -117,13 +117,13 @@ public readonly struct UnitRenderBudgetVisualPlanSystem
         NativeHashSet<Entity> readyTaggedThisFrame,
         BufferLookup<Child> childLookup,
         Request request,
-        UnitRenderBudgetCharacterPolicySystem characterPolicySystem,
-        UnitRenderBudgetReadinessSystem readinessSystem,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetReadinessSystem.Lookups readinessLookups = default,
-        UnitRenderBudgetAnimationReadinessSystem.Lookups animationReadinessLookups = default,
-        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups = default,
+        UnitRenderBudgetCharacterPolicy characterPolicySystem,
+        UnitRenderBudgetReadiness readinessSystem,
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetReadiness.Lookups readinessLookups = default,
+        UnitRenderBudgetAnimationReadiness.Lookups animationReadinessLookups = default,
+        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups = default,
         bool useLookupReadiness = false)
     {
         bool shouldShowDetail = request.DetailedBand;

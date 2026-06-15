@@ -2,9 +2,9 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
+using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 
-public readonly struct UnitRenderBudgetLightDiagnosticSystem
+public readonly struct UnitRenderBudgetLightDiagnostic
 {
     public void LogRenderBudgetStateLight(
         EntityManager em,
@@ -12,8 +12,8 @@ public readonly struct UnitRenderBudgetLightDiagnosticSystem
         int detailedCount,
         bool cameraMotionActive,
         float alwaysDetailedDistanceSq,
-        UnitRenderBudgetClassificationSystem classificationSystem,
-        ref UnitRenderBudgetDiagnosticLogSystem diagnosticLogSystem)
+        UnitRenderBudgetClassification classificationSystem,
+        ref UnitRenderBudgetDiagnosticLog diagnosticLogSystem)
     {
         int targetDetail = 0;
         int targetMid = 0;

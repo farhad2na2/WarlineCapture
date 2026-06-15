@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetReadinessSystem
+public readonly struct UnitRenderBudgetReadiness
 {
     public struct Lookups
     {
@@ -21,11 +21,11 @@ public readonly struct UnitRenderBudgetReadinessSystem
         NativeHashSet<Entity> readyTaggedThisFrame,
         Entity root,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
         Lookups lookups,
-        UnitRenderBudgetAnimationReadinessSystem.Lookups animationReadinessLookups,
-        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups)
+        UnitRenderBudgetAnimationReadiness.Lookups animationReadinessLookups,
+        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups)
     {
         if (root == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(root))
             return false;
@@ -53,8 +53,8 @@ public readonly struct UnitRenderBudgetReadinessSystem
         NativeHashSet<Entity> readyTaggedThisFrame,
         Entity root,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem)
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem)
     {
         if (root == Entity.Null || !em.Exists(root))
             return false;
@@ -75,8 +75,8 @@ public readonly struct UnitRenderBudgetReadinessSystem
         EntityManager em,
         Entity root,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem)
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem)
     {
         if (root == Entity.Null || !em.Exists(root))
             return false;

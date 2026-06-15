@@ -1,9 +1,25 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RuntimeCameraReferenceSystem
+public sealed partial class RuntimeCameraReferenceSystem : SystemBase
 {
+    private World _ownerWorld;
     private Entity _cameraReferenceEntity;
+
+    protected override void OnCreate()
+    {
+        _ownerWorld = World;
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        ClearWorldCamera();
+    }
 
     public void SetWorldCamera(Camera camera)
     {
@@ -35,7 +51,7 @@ public sealed class RuntimeCameraReferenceSystem
     {
         entityManager = default;
         entity = Entity.Null;
-        World world = World.DefaultGameObjectInjectionWorld;
+        World world = _ownerWorld;
         if (world == null || !world.IsCreated)
             return false;
 
@@ -62,7 +78,7 @@ public sealed class RuntimeCameraReferenceSystem
         if (TryGetCameraReference(out entityManager, out entity))
             return true;
 
-        World world = World.DefaultGameObjectInjectionWorld;
+        World world = _ownerWorld;
         if (world == null || !world.IsCreated)
             return false;
 

@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public readonly struct UnitRenderBudgetClassificationSystem
+public readonly struct UnitRenderBudgetClassification
 {
     public bool IsCharacterUnit(EntityManager em, Entity unit)
     {

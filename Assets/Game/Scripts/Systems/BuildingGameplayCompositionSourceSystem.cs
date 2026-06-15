@@ -70,7 +70,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementRuntimeTickSystem BuildingPlacementRuntimeTickSystem = new();
     internal readonly BuildingPlacementInputRuntimeTickSystem BuildingPlacementInputRuntimeTickSystem = new();
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();
-    internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem = new();
+    internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
     internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem = new();
     internal readonly BuildingRuntimeResourcePrefabCompositionSystem BuildingRuntimeResourcePrefabCompositionSystem = new();
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
@@ -94,6 +94,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
+        RuntimeUnitPrefabSystem = ResolveRuntimeUnitPrefabSystem();
     }
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
@@ -141,6 +142,14 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingPlacementVisualSystem>()
+            : null;
+    }
+
+    private static RuntimeUnitPrefabSystem ResolveRuntimeUnitPrefabSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeUnitPrefabSystem>()
             : null;
     }
 }

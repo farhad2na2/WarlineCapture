@@ -20,7 +20,7 @@ internal sealed partial class RuntimeCityClothCoverSpawnSystem : SystemBase
 
     public int PlaceClothCoverBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> clothCoverPrefabs,
         int maxCount,
         ref Unity.Mathematics.Random rng,
@@ -42,7 +42,7 @@ internal sealed class RuntimeCityClothCoverSpawnState
 {
     public int PlaceClothCoverBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> clothCoverPrefabs,
         int maxCount,
         ref Unity.Mathematics.Random rng,
@@ -77,7 +77,7 @@ internal sealed class RuntimeCityClothCoverSpawnState
 
     private bool TrySpawnAdjacentDecoration(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         GameObject prefab,
         RectInt anchorRect,
         ref Unity.Mathematics.Random rng,

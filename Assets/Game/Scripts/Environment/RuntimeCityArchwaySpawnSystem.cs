@@ -20,7 +20,7 @@ internal sealed partial class RuntimeCityArchwaySpawnSystem : SystemBase
 
     public int PlaceCentralArchwayBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> archwayPrefabs,
         int maxCount,
         Vector2Int centerRoadCell,
@@ -48,7 +48,7 @@ internal sealed class RuntimeCityArchwaySpawnState
 {
     public int PlaceCentralArchwayBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> archwayPrefabs,
         int maxCount,
         Vector2Int centerRoadCell,

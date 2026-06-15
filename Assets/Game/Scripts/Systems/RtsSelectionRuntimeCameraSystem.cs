@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RtsSelectionRuntimeCameraSystem
+public sealed partial class RtsSelectionRuntimeCameraSystem : SystemBase
 {
     private const float MatchIntroZoomOutHeightOffset = 8f;
     private const float MatchIntroFieldOfViewOffset = 5f;
@@ -11,6 +11,15 @@ public sealed class RtsSelectionRuntimeCameraSystem
 
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate bool IsPointerOverGameplayUiAction(Vector2 screenPosition, out string source);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct Context
     {
@@ -117,6 +126,9 @@ public sealed class RtsSelectionRuntimeCameraSystem
     {
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         RtsCameraSystem camera = context.CameraSystem;
+        if (camera == null || context.CameraRequestSystem == null)
+            return false;
+
         if (!runtime.PlayRequested)
         {
             ResetCameraSession(context);
@@ -479,7 +491,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             defaultEntityManager,
             zoomDirection,
             context.ZoomSpeed,
-            Time.deltaTime,
+            UnityEngine.Time.deltaTime,
             context.MinZoomHeight,
             context.MaxZoomHeight);
         ProcessCameraRequests(context, defaultEntityManager);
@@ -501,7 +513,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             em,
             zoomDirection,
             context.ZoomSpeed,
-            Time.deltaTime,
+            UnityEngine.Time.deltaTime,
             context.MinZoomHeight,
             context.MaxZoomHeight);
         ProcessCameraRequests(context, em);

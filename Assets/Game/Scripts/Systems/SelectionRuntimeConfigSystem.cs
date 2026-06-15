@@ -1,6 +1,7 @@
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionRuntimeConfigSystem
+public sealed partial class SelectionRuntimeConfigSystem : SystemBase
 {
     private const float DefaultPanSensitivity = 0.03f;
     private const float DefaultZoomSpeed = 20f;
@@ -37,12 +38,26 @@ public sealed class SelectionRuntimeConfigSystem
 
     public State CreateState(RTSSelectionSystemConfig config, Camera fallbackWorldCamera)
     {
+        return CreateStateFromConfig(config, fallbackWorldCamera);
+    }
+
+    public static State CreateStateFromConfig(RTSSelectionSystemConfig config, Camera fallbackWorldCamera)
+    {
         State state = CreateDefaultState(fallbackWorldCamera);
         if (config != null)
             ApplyConfig(config, ref state);
 
         Normalize(ref state);
         return state;
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     private static State CreateDefaultState(Camera worldCamera)

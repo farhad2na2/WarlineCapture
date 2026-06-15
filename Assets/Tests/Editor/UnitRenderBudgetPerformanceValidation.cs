@@ -60,9 +60,9 @@ public sealed partial class UnitRenderBudgetPerformanceValidation
                 ComponentType.ReadOnly<LocalTransform>());
             using NativeArray<Entity> units = query.ToEntityArray(Allocator.TempJob);
             using NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-            using NativeList<UnitRenderBudgetDistanceSystem.UnitDistance> distances = new(UnitCount, Allocator.TempJob);
-            UnitRenderBudgetDistanceSystem distanceSystem = new();
-            UnitRenderBudgetSortSystem sortSystem = new();
+            using NativeList<UnitRenderBudgetDistance.UnitDistance> distances = new(UnitCount, Allocator.TempJob);
+            UnitRenderBudgetDistance distanceSystem = new();
+            UnitRenderBudgetSort sortSystem = new();
             UnitRenderBudgetLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetLookupSystem>();
 
             Assert.AreEqual(UnitCount, units.Length);
@@ -102,11 +102,11 @@ public sealed partial class UnitRenderBudgetPerformanceValidation
     private static void RunFrame(
         Camera camera,
         UnitRenderBudgetLookupSystem lookupSystem,
-        UnitRenderBudgetDistanceSystem distanceSystem,
-        UnitRenderBudgetSortSystem sortSystem,
+        UnitRenderBudgetDistance distanceSystem,
+        UnitRenderBudgetSort sortSystem,
         NativeArray<Entity> units,
         NativeArray<LocalTransform> transforms,
-        NativeList<UnitRenderBudgetDistanceSystem.UnitDistance> distances,
+        NativeList<UnitRenderBudgetDistance.UnitDistance> distances,
         int frame)
     {
         float angle = frame * 0.035f;

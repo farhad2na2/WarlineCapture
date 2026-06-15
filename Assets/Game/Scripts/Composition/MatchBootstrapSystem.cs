@@ -23,12 +23,12 @@ internal sealed class MatchBootstrapSystem
     }
 
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-    private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
-    private readonly VisualQualitySettingsSystem _visualQualitySettingsSystem = new();
+    private RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem;
+    private VisualQualitySettingsSystem _visualQualitySettingsSystem;
     private AIStartupSystem _aiStartupSystem;
     private InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem;
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
-    private readonly RuntimeRootSystem _runtimeRootSystem = new();
+    private RuntimeRootSystem _runtimeRootSystem;
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem;
@@ -169,9 +169,15 @@ internal sealed class MatchBootstrapSystem
         Initialize(view);
         _matchSceneReferenceSystem.Register(view);
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
+        _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
 
-        _runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeTransportsRoot, ref _runtimeUiRoot);
-        _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
+        ResolveRuntimeRootSystem(World.DefaultGameObjectInjectionWorld)?.Ensure(
+            ownerTransform,
+            ref _runtimeBlockerRoot,
+            ref _runtimeCityRoot,
+            ref _runtimeTransportsRoot,
+            ref _runtimeUiRoot);
+        _runtimeCameraReferenceSystem?.SetWorldCamera(WorldCamera);
     }
 
     public void Start()
@@ -213,7 +219,7 @@ internal sealed class MatchBootstrapSystem
             MainMenu,
             UnitImpostors,
             ref _gameplayStartPending);
-        _visualQualitySettingsSystem.Update();
+        _visualQualitySettingsSystem?.Update();
     }
 
     public void OnApplicationFocus(bool hasFocus)
@@ -274,7 +280,7 @@ internal sealed class MatchBootstrapSystem
             _runtimeCameraReferenceSystem,
             _performanceDiagnosticsSystem);
         gameplayRuntimeUpdateSystem.Dispose();
-        _visualQualitySettingsSystem.Dispose();
+        _visualQualitySettingsSystem?.Dispose();
         matchIntroStateQuery.Reset();
 
         MainMenu = null;
@@ -872,7 +878,7 @@ internal sealed class MatchBootstrapSystem
             case GameplayStartStep.FinalizeRuntimeState:
                 SetGameplayStartProgress(0.92f, "Focusing camera");
                 _gameplayStartPending = true;
-                _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
+                ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
                 _runtimeGameplayStateSystem.ResetForGameplayStart();
                 FocusInitialCameraOnConfiguredFactionBase(
                     World.DefaultGameObjectInjectionWorld,
@@ -940,6 +946,33 @@ internal sealed class MatchBootstrapSystem
 
         _aiStartupSystem = world.GetOrCreateSystemManaged<AIStartupSystem>();
         return _aiStartupSystem;
+    }
+
+    private RuntimeCameraReferenceSystem ResolveRuntimeCameraReferenceSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _runtimeCameraReferenceSystem = world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
+        return _runtimeCameraReferenceSystem;
+    }
+
+    private VisualQualitySettingsSystem ResolveVisualQualitySettingsSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _visualQualitySettingsSystem = world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+        return _visualQualitySettingsSystem;
+    }
+
+    private RuntimeRootSystem ResolveRuntimeRootSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _runtimeRootSystem = world.GetOrCreateSystemManaged<RuntimeRootSystem>();
+        return _runtimeRootSystem;
     }
 
     private static UnitAttackTraceSystem ResolveUnitAttackTraceSystem(World world)
@@ -1053,7 +1086,7 @@ internal sealed class MatchBootstrapSystem
         _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
         _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
         EnsureBuildingRuntimeBoundaryEntity();
-        _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
+        ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
         if (MainMenu != null)
         {
@@ -1096,7 +1129,11 @@ internal sealed class MatchBootstrapSystem
         if (_visualQualitySettingsInitialized)
             return;
 
-        _visualQualitySettingsSystem.Initialize(VisualQualityProfile, WorldCamera, DirectionalLight, GlobalVolume);
+        VisualQualitySettingsSystem visualQualitySettingsSystem = ResolveVisualQualitySettingsSystem(World.DefaultGameObjectInjectionWorld);
+        if (visualQualitySettingsSystem == null)
+            return;
+
+        visualQualitySettingsSystem.Initialize(VisualQualityProfile, WorldCamera, DirectionalLight, GlobalVolume);
         _visualQualitySettingsInitialized = true;
     }
 

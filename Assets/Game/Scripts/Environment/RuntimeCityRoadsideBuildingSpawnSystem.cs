@@ -41,7 +41,7 @@ internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBas
 
     public void PlaceCentralShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> centralPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,
@@ -64,7 +64,7 @@ internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBas
 
     public void PlaceGasStations(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
@@ -83,7 +83,7 @@ internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBas
 
     public void PlaceOuterShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,
@@ -106,7 +106,7 @@ internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBas
 
     public void PlaceRoadsideHouses(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,
@@ -143,7 +143,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
 
     public void PlaceCentralShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> centralPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,
@@ -171,7 +171,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
 
     public void PlaceGasStations(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
@@ -196,7 +196,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
 
     public void PlaceOuterShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,
@@ -224,7 +224,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
 
     public void PlaceRoadsideHouses(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
         int roadCellSizeInGridCells,

@@ -20,7 +20,7 @@ internal sealed partial class RuntimeCityRuralBuildingSpawnSystem : SystemBase
 
     public void PlaceRuralBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int count,
         Vector2Int centerRoadCell,
@@ -54,7 +54,7 @@ internal sealed class RuntimeCityRuralBuildingSpawnState
 {
     public void PlaceRuralBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int count,
         Vector2Int centerRoadCell,

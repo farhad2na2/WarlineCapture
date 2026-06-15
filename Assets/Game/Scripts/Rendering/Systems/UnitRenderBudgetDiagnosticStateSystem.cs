@@ -1,4 +1,4 @@
-public struct UnitRenderBudgetDiagnosticStateSystem
+public struct UnitRenderBudgetDiagnosticState
 {
     private static readonly bool EnableRenderBudgetDiagnostics = false;
     private const int DiagnosticIntervalFrames = 120;
@@ -37,8 +37,8 @@ public struct UnitRenderBudgetDiagnosticStateSystem
     }
 
     public FrameCounters CreateFrameCounters(
-        UnitRenderBudgetDecisionSystem.Result decisionResult,
-        UnitRenderBudgetVisibilityApplySystem.Result applyResult)
+        UnitRenderBudgetDecision.Result decisionResult,
+        UnitRenderBudgetVisibilityApply.Result applyResult)
     {
         return new FrameCounters
         {

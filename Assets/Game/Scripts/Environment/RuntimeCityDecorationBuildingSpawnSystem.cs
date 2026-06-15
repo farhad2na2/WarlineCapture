@@ -20,7 +20,7 @@ internal sealed partial class RuntimeCityDecorationBuildingSpawnSystem : SystemB
 
     public void PlaceCityDecorationBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
         RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
         RuntimeCityArchwaySpawnState archwaySpawnSystem,
@@ -60,7 +60,7 @@ internal sealed class RuntimeCityDecorationBuildingSpawnState
 {
     public void PlaceCityDecorationBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
         RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
         RuntimeCityArchwaySpawnState archwaySpawnSystem,

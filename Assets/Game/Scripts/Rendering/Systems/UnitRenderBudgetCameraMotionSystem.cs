@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public struct UnitRenderBudgetCameraMotionSystem
+public struct UnitRenderBudgetCameraMotion
 {
     private const int CameraSettleFrames = 8;
     private const float CameraMoveThresholdSq = 0.0004f;
@@ -12,8 +12,8 @@ public struct UnitRenderBudgetCameraMotionSystem
 
     public bool IsCameraMotionActive(
         Camera camera,
-        ref UnitRenderBudgetScheduleSystem scheduleSystem,
-        ref UnitRenderBudgetDiagnosticStateSystem diagnosticStateSystem,
+        ref UnitRenderBudgetSchedule scheduleSystem,
+        ref UnitRenderBudgetDiagnosticState diagnosticStateSystem,
         int frame)
     {
         Vector3 currentPosition = camera.transform.position;

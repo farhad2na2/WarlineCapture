@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public readonly struct UnitRenderBudgetImpostorTagSystem
+public readonly struct UnitRenderBudgetImpostorTag
 {
     public void CollectUnitImpostorTagRequest(
         EntityManager em,

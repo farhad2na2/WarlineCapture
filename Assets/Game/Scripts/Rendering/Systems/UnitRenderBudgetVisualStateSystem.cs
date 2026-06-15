@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public readonly struct UnitRenderBudgetVisualStateSystem
+public readonly struct UnitRenderBudgetVisualState
 {
     private const int VisualTransitionStableFrames = 2;
     private const int MaxVisualStateTransitionsPerUpdate = 32;

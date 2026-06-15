@@ -64,15 +64,17 @@ internal sealed class SelectionGameplayStartupSystem
         IMatchIntroStateQuery matchIntroStateQuery)
     {
         IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
-        var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
-        var selectionRuntimeConfigSystem = new SelectionRuntimeConfigSystem();
+        SelectionRuntimeDiagnosticsSystem selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
+        SelectionRuntimeConfigSystem selectionRuntimeConfigSystem = ResolveSelectionRuntimeConfigSystem();
         var selectionRuntimeQuerySystem = new SelectionRuntimeQuerySystem();
-        SelectionRuntimeConfigSystem.State runtimeConfig = selectionRuntimeConfigSystem.CreateState(rtsSelectionConfig, worldCamera);
+        SelectionRuntimeConfigSystem.State runtimeConfig = selectionRuntimeConfigSystem != null
+            ? selectionRuntimeConfigSystem.CreateState(rtsSelectionConfig, worldCamera)
+            : SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
         var rtsSelectionRuntimeInputContextSystem = new RtsSelectionRuntimeInputContextSystem();
-        var rtsSelectionRuntimeCameraSystem = new RtsSelectionRuntimeCameraSystem();
+        RtsSelectionRuntimeCameraSystem rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystem();
         var rtsSelectionRuntimeCameraContextSystem = new RtsSelectionRuntimeCameraContextSystem();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushSystem();
         var rtsSelectionCommandResultContextSystem = new RtsSelectionCommandResultContextSystem();
@@ -80,7 +82,7 @@ internal sealed class SelectionGameplayStartupSystem
         var rtsSelectionFocusCommandContextSystem = new RtsSelectionFocusCommandContextSystem();
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
         var rtsSelectionPointerTargetCommandContextSystem = new RtsSelectionPointerTargetCommandContextSystem();
-        var rtsCameraSystem = new RtsCameraSystem();
+        RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
@@ -328,8 +330,11 @@ internal sealed class SelectionGameplayStartupSystem
                     target));
 
             RtsSelectionRuntimeCameraSystem.Context cameraContext = GetRuntimeCameraContext();
-            if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+            if (rtsSelectionRuntimeCameraSystem != null &&
+                rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+            {
                 rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
+            }
         }
 
         RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()
@@ -374,8 +379,8 @@ internal sealed class SelectionGameplayStartupSystem
                 runtimeConfig,
                 () => explicitAttackTargetModeActive,
                 SetExplicitAttackTargetModeActive,
-                () => rtsCameraSystem.IsDragging,
-                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
+                () => rtsCameraSystem != null && rtsCameraSystem.IsDragging,
+                value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                 screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(
@@ -412,13 +417,13 @@ internal sealed class SelectionGameplayStartupSystem
                 screenPosition => rtsSelectionFocusCommandSystem.QueueFocusUnitCommand(
                     CreateFocusCommandContext(),
                     screenPosition),
-                screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(GetRuntimeCameraContext(), screenDelta),
+                screenDelta => rtsSelectionRuntimeCameraSystem?.PanCamera(GetRuntimeCameraContext(), screenDelta),
                 screenPosition => rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(
                     CreatePointerTargetCommandContext(),
                     screenPosition),
                 ProcessSelectionRectangleRequests,
                 () => selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext()),
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                LogSelectionClickDiagnostic,
                 pointerPosition => rtsSelectionPointerTargetCommandSystem.BuildClickDebugSummary(
                     CreatePointerTargetCommandContext(),
                     pointerPosition),
@@ -470,10 +475,10 @@ internal sealed class SelectionGameplayStartupSystem
                 ClearCurrentSelection,
                 SetExplicitAttackTargetModeActive,
                 ProcessSelectionRectangleRequests,
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                LogSelectionClickDiagnostic,
                 screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
                 screenPosition => selectionScreenMarkers?.RequestAttackOrderMarker(screenPosition),
-                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
+                value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
                 (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
                     em,
@@ -538,9 +543,9 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessSelectionRectangleRequests,
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
-                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
+                value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 SetExplicitAttackTargetModeActive,
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 screenPosition => rtsSelectionPointerTargetCommandSystem.TryFocusUnit(
                     CreatePointerTargetCommandContext(),
@@ -572,14 +577,14 @@ internal sealed class SelectionGameplayStartupSystem
                 CreateHudFeedbackContext(),
                 ClearCurrentSelection,
                 screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
-                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
+                value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
                 () => rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
                     GetCommandResultFlushContext(),
                     explicitAttackTargetModeActive),
                 () => rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext()),
                 () => rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext()),
                 () => rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext()),
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 visibleSelectionScratch);
         }
@@ -619,7 +624,7 @@ internal sealed class SelectionGameplayStartupSystem
                     "MatchHudSquadTray"),
                 applyHudSelectionAction,
                 applyHudSquadSelectionAction,
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                LogSelectionClickDiagnostic,
                 selectionStateSystem,
                 focusedUnitLifecycleSystem);
         }
@@ -651,6 +656,22 @@ internal sealed class SelectionGameplayStartupSystem
             focusedUnitLifecycleSystem.EnsureEntityQueries(em);
             selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
             transportBoardingCommandSystem.EnsureEntityQueries(em);
+        }
+
+        void EnqueueSelectionDiagnostic(string message)
+        {
+            if (selectionRuntimeDiagnosticsSystem != null)
+                selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic(message);
+            else
+                SelectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnosticMessage(message);
+        }
+
+        void LogSelectionClickDiagnostic(string message)
+        {
+            if (selectionRuntimeDiagnosticsSystem != null)
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(message);
+            else
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnosticMessage(message);
         }
 
         Sprite ResolveActiveSquadTrayPortraitSprite()
@@ -734,7 +755,7 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionStateSystem.CacheSelectedMoveEntities,
                 applyRectangleHudSelectionAction,
                 applyRectangleHudSquadSelectionAction,
-                selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
+                EnqueueSelectionDiagnostic,
                 () => buildingPlacementInteractionSystem?.ClearSelectedBuilding(
                     buildingPlacementInteractionContext,
                     "RTSSelection.SelectUnitsInRectangle"),
@@ -749,7 +770,7 @@ internal sealed class SelectionGameplayStartupSystem
                 em,
                 selectionStateSystem,
                 reason,
-                selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
+                EnqueueSelectionDiagnostic,
                 clearHudSelectionAction);
         }
 
@@ -802,11 +823,43 @@ internal sealed class SelectionGameplayStartupSystem
             : null;
     }
 
+    private static RtsCameraSystem ResolveRtsCameraSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
+            : null;
+    }
+
+    private static RtsSelectionRuntimeCameraSystem ResolveRtsSelectionRuntimeCameraSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RtsSelectionRuntimeCameraSystem>()
+            : null;
+    }
+
     private static SelectionScreenMarkerSystem ResolveSelectionScreenMarkerSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<SelectionScreenMarkerSystem>()
+            : null;
+    }
+
+    private static SelectionRuntimeConfigSystem ResolveSelectionRuntimeConfigSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<SelectionRuntimeConfigSystem>()
+            : null;
+    }
+
+    private static SelectionRuntimeDiagnosticsSystem ResolveSelectionRuntimeDiagnosticsSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<SelectionRuntimeDiagnosticsSystem>()
             : null;
     }
 

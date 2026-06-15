@@ -216,16 +216,24 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
             return;
         }
 
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<MapSurfaceComponent>(),
-            ComponentType.ReadOnly<MapSurfaceRuntimeBakedBlobTag>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
+        try
         {
-            Entity entity = entities[i];
-            DisposeOwnedSurfaceBlob(entityManager, entity);
-            if (entityManager.Exists(entity))
-                entityManager.DestroyEntity(entity);
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MapSurfaceComponent>(),
+                ComponentType.ReadOnly<MapSurfaceRuntimeBakedBlobTag>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                DisposeOwnedSurfaceBlob(entityManager, entity);
+                if (entityManager.Exists(entity))
+                    entityManager.DestroyEntity(entity);
+            }
+        }
+        catch (System.InvalidOperationException)
+        {
+            runtimeSurfaceDisposed = true;
+            return;
         }
 
         runtimeSurfaceDisposed = true;

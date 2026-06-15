@@ -21,7 +21,7 @@ internal sealed partial class RuntimeCityEntryBuildingSpawnSystem : SystemBase
 
     public void PlaceEntryShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
@@ -42,7 +42,7 @@ internal sealed partial class RuntimeCityEntryBuildingSpawnSystem : SystemBase
 
     public void PlaceEntryHouses(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
@@ -68,7 +68,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnState
 {
     public void PlaceEntryShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,
@@ -95,7 +95,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnState
 
     public void PlaceEntryHouses(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng,

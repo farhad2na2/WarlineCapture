@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionRuntimeDiagnosticsSystem
+public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
     public static readonly bool EnableMoveCommandTrace = false;
@@ -10,7 +10,21 @@ public sealed class SelectionRuntimeDiagnosticsSystem
     private const string SelectionClickPrefix = "[SelectionClick]";
     private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void EnqueueSelectionDiagnostic(string message)
+    {
+        EnqueueSelectionDiagnosticMessage(message);
+    }
+
+    public static void EnqueueSelectionDiagnosticMessage(string message)
     {
         World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
@@ -23,11 +37,16 @@ public sealed class SelectionRuntimeDiagnosticsSystem
 
     public void LogSelectionClickDiagnostic(string message)
     {
+        LogSelectionClickDiagnosticMessage(message);
+    }
+
+    public static void LogSelectionClickDiagnosticMessage(string message)
+    {
         if (!EnableSelectionClickDiagnostics)
             return;
 
         Debug.Log($"{SelectionClickPrefix} {message}");
-        EnqueueSelectionDiagnostic(message);
+        EnqueueSelectionDiagnosticMessage(message);
     }
 
     [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]

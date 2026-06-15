@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public readonly struct UnitTransportBoardingDiagnosticSystem
+public readonly struct UnitTransportBoardingDiagnostics
 {
     public EntityQuery CreateDiagnosticLogQueueQuery(ref SystemState state)
     {

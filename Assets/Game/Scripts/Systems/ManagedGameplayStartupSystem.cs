@@ -154,8 +154,8 @@ internal sealed class ManagedGameplayStartupSystem
         Transform mapVehicleAuthoringRoot,
         IMatchIntroStateQuery matchIntroStateQuery)
     {
-        var dayNight = new DayNightSystem();
-        dayNight.Init(dayNightConfig, directionalLight, globalVolume);
+        DayNightSystem dayNight = ResolveDayNightSystem();
+        dayNight?.Init(dayNightConfig, directionalLight, globalVolume);
 
         var factionVisuals = new FactionVisualSettings();
         factionVisuals.Init(factionVisualConfig);
@@ -333,5 +333,13 @@ internal sealed class ManagedGameplayStartupSystem
             selection.SelectionRectangleView,
             building.CitizenPopulationComposition,
             building.DisposeCitizenPopulation);
+    }
+
+    private static DayNightSystem ResolveDayNightSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<DayNightSystem>()
+            : null;
     }
 }

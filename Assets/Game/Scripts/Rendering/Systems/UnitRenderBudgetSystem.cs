@@ -6,7 +6,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using SnivelerCode.GpuAnimation.Scripts.Components;
-using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
+using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 
 [UpdateAfter(typeof(UnitMassRenderSettingsSystem))]
 public partial struct UnitRenderBudgetSystem : ISystem
@@ -26,40 +26,40 @@ public partial struct UnitRenderBudgetSystem : ISystem
     private const float VisibleCharacterViewportPadding = 0.35f;
     private const float VisibleCharacterEdgeSafetyMargin = 0.18f;
 
-    private UnitRenderBudgetQuerySystem _querySystem;
-    private UnitRenderBudgetQuerySystem.Context _queryContext;
-    private UnitRenderBudgetScheduleSystem _scheduleSystem;
-    private UnitRenderBudgetCameraMotionSystem _cameraMotionSystem;
-    private UnitRenderBudgetSnapshotSystem _snapshotSystem;
-    private UnitRenderBudgetDistanceSystem _distanceSystem;
-    private UnitRenderBudgetSortSystem _sortSystem;
-    private UnitRenderBudgetBandSystem _bandSystem;
-    private UnitRenderBudgetClassificationSystem _classificationSystem;
-    private UnitRenderBudgetCharacterPolicySystem _characterPolicySystem;
-    private UnitRenderBudgetLodReferenceSystem _lodReferenceSystem;
-    private UnitRenderBudgetAnimationReadinessSystem _animationReadinessSystem;
-    private UnitRenderBudgetRenderableQuerySystem _renderableQuerySystem;
-    private UnitRenderBudgetVisualStateSystem _visualStateSystem;
-    private UnitRenderBudgetReadinessSystem _readinessSystem;
-    private UnitRenderBudgetRenderSafetySystem _renderSafetySystem;
-    private UnitRenderBudgetVisualPlanSystem _visualPlanSystem;
-    private UnitRenderBudgetDecisionSystem _decisionSystem;
-    private UnitRenderBudgetVisibilityChangeSystem _visibilityChangeSystem;
-    private UnitRenderBudgetImpostorTagSystem _impostorTagSystem;
-    private UnitRenderBudgetVisibilityApplySystem _visibilityApplySystem;
-    private UnitRenderBudgetDiagnosticStateSystem _diagnosticStateSystem;
-    private UnitRenderBudgetDiagnosticLogSystem _diagnosticLogSystem;
-    private UnitRenderBudgetLightDiagnosticSystem _lightDiagnosticSystem;
-    private UnitRenderBudgetMismatchDiagnosticSystem _mismatchDiagnosticSystem;
-    private UnitRenderBudgetFreezeDiagnosticSystem _freezeDiagnosticSystem;
+    private UnitRenderBudgetSources _querySystem;
+    private UnitRenderBudgetSources.Context _queryContext;
+    private UnitRenderBudgetSchedule _scheduleSystem;
+    private UnitRenderBudgetCameraMotion _cameraMotionSystem;
+    private UnitRenderBudgetSnapshot _snapshotSystem;
+    private UnitRenderBudgetDistance _distanceSystem;
+    private UnitRenderBudgetSort _sortSystem;
+    private UnitRenderBudgetBand _bandSystem;
+    private UnitRenderBudgetClassification _classificationSystem;
+    private UnitRenderBudgetCharacterPolicy _characterPolicySystem;
+    private UnitRenderBudgetLodReferences _lodReferenceSystem;
+    private UnitRenderBudgetAnimationReadiness _animationReadinessSystem;
+    private UnitRenderBudgetRenderableState _renderableQuerySystem;
+    private UnitRenderBudgetVisualState _visualStateSystem;
+    private UnitRenderBudgetReadiness _readinessSystem;
+    private UnitRenderBudgetRenderSafety _renderSafetySystem;
+    private UnitRenderBudgetVisualPlan _visualPlanSystem;
+    private UnitRenderBudgetDecision _decisionSystem;
+    private UnitRenderBudgetVisibilityChange _visibilityChangeSystem;
+    private UnitRenderBudgetImpostorTag _impostorTagSystem;
+    private UnitRenderBudgetVisibilityApply _visibilityApplySystem;
+    private UnitRenderBudgetDiagnosticState _diagnosticStateSystem;
+    private UnitRenderBudgetDiagnosticLog _diagnosticLogSystem;
+    private UnitRenderBudgetLightDiagnostic _lightDiagnosticSystem;
+    private UnitRenderBudgetMismatchDiagnostic _mismatchDiagnosticSystem;
+    private UnitRenderBudgetFreezeDiagnostic _freezeDiagnosticSystem;
     private EntityQuery _renderableEntityQuery;
     private EntityStorageInfoLookup _entityStorageInfoLookup;
-    private UnitRenderBudgetLodReferenceSystem.Lookups _lodReferenceLookups;
-    private UnitRenderBudgetRenderableQuerySystem.Lookups _renderableQueryLookups;
-    private UnitRenderBudgetAnimationReadinessSystem.Lookups _animationReadinessLookups;
-    private UnitRenderBudgetReadinessSystem.Lookups _readinessLookups;
-    private UnitRenderBudgetRenderSafetySystem.Lookups _renderSafetyLookups;
-    private UnitRenderBudgetVisibilityApplySystem.Lookups _visibilityApplyLookups;
+    private UnitRenderBudgetLodReferences.Lookups _lodReferenceLookups;
+    private UnitRenderBudgetRenderableState.Lookups _renderableQueryLookups;
+    private UnitRenderBudgetAnimationReadiness.Lookups _animationReadinessLookups;
+    private UnitRenderBudgetReadiness.Lookups _readinessLookups;
+    private UnitRenderBudgetRenderSafety.Lookups _renderSafetyLookups;
+    private UnitRenderBudgetVisibilityApply.Lookups _visibilityApplyLookups;
     private ComponentLookup<UnitRenderVisualComponent> _visualStateLookup;
     private EntityTypeHandle _unitEntityTypeHandle;
     private ComponentTypeHandle<LocalTransform> _unitLocalTransformTypeHandle;
@@ -76,7 +76,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             }
         });
         _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
-        _lodReferenceLookups = new UnitRenderBudgetLodReferenceSystem.Lookups
+        _lodReferenceLookups = new UnitRenderBudgetLodReferences.Lookups
         {
             DetailedVisualReferenceLookup = state.GetComponentLookup<UnitDetailedVisualReference>(true),
             MidLodPrefabReferenceLookup = state.GetComponentLookup<UnitMidLodPrefabReference>(true),
@@ -84,7 +84,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             LowLodPrefabReferenceLookup = state.GetComponentLookup<UnitLowLodPrefabReference>(true),
             LowLodInstanceReferenceLookup = state.GetComponentLookup<UnitLowLodInstanceReference>(true)
         };
-        _renderableQueryLookups = new UnitRenderBudgetRenderableQuerySystem.Lookups
+        _renderableQueryLookups = new UnitRenderBudgetRenderableState.Lookups
         {
             EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
             RenderableEntityMask = _renderableEntityQuery.GetEntityQueryMask(),
@@ -93,18 +93,18 @@ public partial struct UnitRenderBudgetSystem : ISystem
             CulledTagLookup = state.GetComponentLookup<UnitRenderBudgetCulledTag>(true),
             SafeVisibleCharacterLodLookup = state.GetComponentLookup<UnitSafeVisibleCharacterLodTag>(true)
         };
-        _animationReadinessLookups = new UnitRenderBudgetAnimationReadinessSystem.Lookups
+        _animationReadinessLookups = new UnitRenderBudgetAnimationReadiness.Lookups
         {
             MeshLodLookup = state.GetComponentLookup<MeshLODComponent>(true),
             MaterialAlphaCompleteLookup = state.GetComponentLookup<MaterialAlphaCompleteTag>(true),
             HasGpuAnimationMaterialLookups = 1
         };
-        _readinessLookups = new UnitRenderBudgetReadinessSystem.Lookups
+        _readinessLookups = new UnitRenderBudgetReadiness.Lookups
         {
             EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
             VisualReadyLookup = state.GetComponentLookup<UnitRenderVisualReadyTag>(true)
         };
-        _renderSafetyLookups = new UnitRenderBudgetRenderSafetySystem.Lookups
+        _renderSafetyLookups = new UnitRenderBudgetRenderSafety.Lookups
         {
             EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
             SafetyPatchedLookup = state.GetComponentLookup<UnitRenderSafetyPatchedTag>(true),
@@ -112,7 +112,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             MeshLodLookup = state.GetComponentLookup<MeshLODComponent>(true),
             MeshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>(true)
         };
-        _visibilityApplyLookups = new UnitRenderBudgetVisibilityApplySystem.Lookups
+        _visibilityApplyLookups = new UnitRenderBudgetVisibilityApply.Lookups
         {
             EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
             CulledUnitLookup = state.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true),
@@ -171,7 +171,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         _unitEntityTypeHandle.Update(ref state);
         _unitLocalTransformTypeHandle.Update(ref state);
 
-        using UnitRenderBudgetSnapshotSystem.Snapshot snapshot = _snapshotSystem.Create(
+        using UnitRenderBudgetSnapshot.Snapshot snapshot = _snapshotSystem.Create(
             _queryContext.UnitQuery,
             _unitEntityTypeHandle,
             _unitLocalTransformTypeHandle,
@@ -213,7 +213,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         }
 
         _sortSystem.Sort(distances);
-        using UnitRenderBudgetBandSystem.Plan bandPlan = _bandSystem.Create(
+        using UnitRenderBudgetBand.Plan bandPlan = _bandSystem.Create(
             distances,
             MaxDetailedUnits,
             MaxMidLodUnits,
@@ -225,7 +225,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         NativeHashSet<Entity> lowLodUnits = bandPlan.LowLodUnits;
         int detailedCount = bandPlan.DetailedCount;
 
-        var decisionContext = new UnitRenderBudgetDecisionSystem.Context
+        var decisionContext = new UnitRenderBudgetDecision.Context
         {
             RenderStateEcb = renderStateEcb,
             SafetyTaggedThisFrame = safetyTaggedThisFrame,
@@ -277,9 +277,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
             ImpostorTagSystem = _impostorTagSystem,
             CurrentFrame = Time.frameCount
         };
-        UnitRenderBudgetDecisionSystem.Result decisionResult = _decisionSystem.Process(ref decisionContext);
+        UnitRenderBudgetDecision.Result decisionResult = _decisionSystem.Process(ref decisionContext);
 
-        UnitRenderBudgetVisibilityApplySystem.Result applyResult = _visibilityApplySystem.Apply(
+        UnitRenderBudgetVisibilityApply.Result applyResult = _visibilityApplySystem.Apply(
             em,
             renderStateEcb,
             unitsToShowDetailed,
@@ -287,7 +287,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             entitiesToShow,
             entitiesToHide,
             _visibilityApplyLookups);
-        UnitRenderBudgetDiagnosticStateSystem.FrameCounters counters = _diagnosticStateSystem.CreateFrameCounters(decisionResult, applyResult);
+        UnitRenderBudgetDiagnosticState.FrameCounters counters = _diagnosticStateSystem.CreateFrameCounters(decisionResult, applyResult);
 
         double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
         if (_diagnosticStateSystem.ShouldRunDiagnostics(Time.frameCount))

@@ -1,4 +1,4 @@
-public readonly struct UnitRenderBudgetCharacterPolicySystem
+public readonly struct UnitRenderBudgetCharacterPolicy
 {
     public UnitRenderVisualKind ResolveVisibleCharacterVisualKind(
         bool movingVisibleCharacter,

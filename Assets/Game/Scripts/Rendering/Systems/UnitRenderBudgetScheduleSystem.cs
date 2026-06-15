@@ -1,4 +1,4 @@
-public struct UnitRenderBudgetScheduleSystem
+public struct UnitRenderBudgetSchedule
 {
     private int _nextUpdateFrame;
     private int _lodResumeFrame;

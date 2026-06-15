@@ -21,7 +21,7 @@ internal sealed partial class RuntimeCityHouseYardWallSystem : SystemBase
 
     public void PlaceHouseYardWalls(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,
@@ -71,7 +71,7 @@ internal sealed class RuntimeCityHouseYardWallState
 {
     public void PlaceHouseYardWalls(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,
@@ -134,7 +134,7 @@ internal sealed class RuntimeCityHouseYardWallState
 
     private bool TryBuildHouseYardWall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,

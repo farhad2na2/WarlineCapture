@@ -21,7 +21,7 @@ internal sealed partial class RuntimeCityHallSpawnSystem : SystemBase
 
     public void EnsureCityHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         CityLayoutData city,
         int roadCellSizeInGridCells,
@@ -35,7 +35,7 @@ internal sealed class RuntimeCityHallSpawnState
 {
     public void EnsureCityHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         CityLayoutData city,
         int roadCellSizeInGridCells,
@@ -51,7 +51,7 @@ internal sealed class RuntimeCityHallSpawnState
 
     private static bool TrySpawnHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
         int roadCellSizeInGridCells,

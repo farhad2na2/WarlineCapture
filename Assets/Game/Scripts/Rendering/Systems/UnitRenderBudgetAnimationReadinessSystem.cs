@@ -4,7 +4,7 @@ using Unity.Entities.Graphics;
 using Unity.Rendering;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetAnimationReadinessSystem
+public readonly struct UnitRenderBudgetAnimationReadiness
 {
     public struct Lookups
     {
@@ -46,8 +46,8 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
     public bool IsAnimatedRenderReady(
         Entity root,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups,
         Lookups lookups)
     {
         if (root == Entity.Null || !renderableQueryLookups.EntityStorageInfoLookup.Exists(root))
@@ -63,7 +63,7 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
         EntityManager em,
         Entity root,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem)
+        UnitRenderBudgetRenderableState renderableQuerySystem)
     {
         if (root == Entity.Null || !em.Exists(root))
             return false;
@@ -98,8 +98,8 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
     private static void CheckVisualReadinessRecursive(
         Entity entity,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetRenderableQuerySystem.Lookups renderableQueryLookups,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups,
         Lookups lookups,
         ref bool hasRenderable,
         ref bool waitingForGpuAnimationMaterial)
@@ -138,7 +138,7 @@ public readonly struct UnitRenderBudgetAnimationReadinessSystem
         EntityManager em,
         Entity entity,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
         ref bool hasRenderable,
         ref bool waitingForGpuAnimationMaterial)
     {

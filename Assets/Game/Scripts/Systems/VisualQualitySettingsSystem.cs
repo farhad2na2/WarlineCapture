@@ -1,9 +1,9 @@
-using System;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public sealed class VisualQualitySettingsSystem : IDisposable
+public sealed partial class VisualQualitySettingsSystem : SystemBase
 {
     // Read by Game/Environment/GroundMacroVariation.shader (0 = on, 1 = off).
     private static readonly int GroundVariationDisabledId = Shader.PropertyToID("_GroundVariationDisabled");
@@ -40,6 +40,20 @@ public sealed class VisualQualitySettingsSystem : IDisposable
     private bool _hasAppliedMode;
     private bool _initialized;
     private bool _overrideApplied;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Dispose();
+    }
 
     public void Initialize(VisualQualityProfileAsset premiumProfile, Camera worldCamera, Light directionalLight, Volume globalVolume)
     {
@@ -101,7 +115,7 @@ public sealed class VisualQualitySettingsSystem : IDisposable
         Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
     }
 
-    public void Update()
+    public new void Update()
     {
         if (!_initialized)
             return;

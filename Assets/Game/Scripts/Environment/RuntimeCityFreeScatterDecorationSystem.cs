@@ -20,7 +20,7 @@ internal sealed partial class RuntimeCityFreeScatterDecorationSystem : SystemBas
 
     public void PlaceFreeScatterDecorations(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int remainingCount,
         Vector2Int centerRoadCell,
@@ -50,7 +50,7 @@ internal sealed class RuntimeCityFreeScatterDecorationState
 {
     public void PlaceFreeScatterDecorations(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int remainingCount,
         Vector2Int centerRoadCell,

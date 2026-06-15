@@ -3,9 +3,9 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-public readonly struct UnitRenderBudgetSortSystem
+public readonly struct UnitRenderBudgetSort
 {
-    public void Sort(NativeList<UnitRenderBudgetDistanceSystem.UnitDistance> distances)
+    public void Sort(NativeList<UnitRenderBudgetDistance.UnitDistance> distances)
     {
         if (distances.Length <= 1)
             return;
@@ -19,7 +19,7 @@ public readonly struct UnitRenderBudgetSortSystem
     [BurstCompile]
     private struct SortDistancesJob : IJob
     {
-        public NativeArray<UnitRenderBudgetDistanceSystem.UnitDistance> Distances;
+        public NativeArray<UnitRenderBudgetDistance.UnitDistance> Distances;
 
         public void Execute()
         {
@@ -27,9 +27,9 @@ public readonly struct UnitRenderBudgetSortSystem
         }
     }
 
-    private struct UnitDistanceComparer : IComparer<UnitRenderBudgetDistanceSystem.UnitDistance>
+    private struct UnitDistanceComparer : IComparer<UnitRenderBudgetDistance.UnitDistance>
     {
-        public int Compare(UnitRenderBudgetDistanceSystem.UnitDistance x, UnitRenderBudgetDistanceSystem.UnitDistance y)
+        public int Compare(UnitRenderBudgetDistance.UnitDistance x, UnitRenderBudgetDistance.UnitDistance y)
         {
             if (x.Priority < y.Priority)
                 return -1;

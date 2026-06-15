@@ -1,11 +1,81 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityIngressSystem
+internal sealed partial class RuntimeCityIngressSystem : SystemBase
 {
+    private readonly RuntimeCityIngressState _state = new();
+
+    public RuntimeCityIngressState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public CityLayoutData CreateCityLayout(
         Context context,
+        Vector2Int centerRoadCell,
+        int townRadius,
+        Vector2Int? incomingAnchorCell,
+        Vector2Int incomingOutwardDirection,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.CreateCityLayout(
+            context,
+            centerRoadCell,
+            townRadius,
+            incomingAnchorCell,
+            incomingOutwardDirection,
+            ref rng);
+    }
+
+    public Vector2Int GetCityInnerConnectionCell(
+        RuntimeCityConfigSystem.Snapshot cityConfig,
+        Vector2Int centerRoadCell,
+        Vector2Int outwardDirection)
+    {
+        return _state.GetCityInnerConnectionCell(cityConfig, centerRoadCell, outwardDirection);
+    }
+
+    public int GetCityConnectionOffset(RuntimeCityConfigSystem.Snapshot cityConfig, int townRadius)
+    {
+        return _state.GetCityConnectionOffset(cityConfig, townRadius);
+    }
+
+    public void PruneIngressCorridorStrokes(
+        CityLayoutData city,
+        Vector2Int incomingRoadAnchorCell,
+        Vector2Int inwardDirection,
+        int ingressRoadLength)
+    {
+        _state.PruneIngressCorridorStrokes(city, incomingRoadAnchorCell, inwardDirection, ingressRoadLength);
+    }
+
+    public readonly struct Context
+    {
+        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
+
+        public Context(
+            RuntimeCityConfigSystem.Snapshot cityConfig,
+            RuntimeCityRoadLayoutState roadLayoutSystem)
+        {
+            CityConfig = cityConfig;
+            RoadLayoutSystem = roadLayoutSystem;
+        }
+    }
+}
+
+internal sealed class RuntimeCityIngressState
+{
+    public CityLayoutData CreateCityLayout(
+        RuntimeCityIngressSystem.Context context,
         Vector2Int centerRoadCell,
         int townRadius,
         Vector2Int? incomingAnchorCell,
@@ -80,17 +150,4 @@ internal sealed class RuntimeCityIngressSystem
         }
     }
 
-    public readonly struct Context
-    {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
-        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
-
-        public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
-            RuntimeCityRoadLayoutState roadLayoutSystem)
-        {
-            CityConfig = cityConfig;
-            RoadLayoutSystem = roadLayoutSystem;
-        }
-    }
 }

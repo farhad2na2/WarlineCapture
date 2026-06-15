@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetQuerySystem
+public readonly struct UnitRenderBudgetSources
 {
     public readonly struct Context
     {

@@ -1,8 +1,87 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityChainSystem
+internal sealed partial class RuntimeCityChainSystem : SystemBase
+{
+    private readonly RuntimeCityChainState _state = new();
+
+    public RuntimeCityChainState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool TryPlanNextCity(
+        Context context,
+        List<CityLayoutData> existingCities,
+        HashSet<Vector2Int> occupiedRoadCells,
+        CityLayoutData currentCity,
+        Vector2Int? previousTravelDirection,
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int townRadius,
+        List<RectInt> baseExclusionRoadRects,
+        ref Unity.Mathematics.Random rng,
+        out List<Vector2Int> sourceExitRoad,
+        out List<Vector2Int> autobahnPath,
+        out Vector2Int travelDirection,
+        out CityLayoutData nextCity)
+    {
+        return _state.TryPlanNextCity(
+            context,
+            existingCities,
+            occupiedRoadCells,
+            currentCity,
+            previousTravelDirection,
+            grid,
+            roadCellSizeInGridCells,
+            townRadius,
+            baseExclusionRoadRects,
+            ref rng,
+            out sourceExitRoad,
+            out autobahnPath,
+            out travelDirection,
+            out nextCity);
+    }
+
+    public readonly struct Context
+    {
+        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly RuntimeCityLayoutState LayoutSystem;
+        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
+        public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
+        public readonly RuntimeCityRoadCommitState RoadCommitSystem;
+        public readonly RuntimeCityIngressState IngressSystem;
+        public readonly RuntimeCityIngressSystem.Context IngressContext;
+
+        public Context(
+            RuntimeCityConfigSystem.Snapshot cityConfig,
+            RuntimeCityLayoutState layoutSystem,
+            RuntimeCityRoadLayoutState roadLayoutSystem,
+            RuntimeCityPrefabSelectionState prefabSelectionSystem,
+            RuntimeCityRoadCommitState roadCommitSystem,
+            RuntimeCityIngressState ingressSystem,
+            RuntimeCityIngressSystem.Context ingressContext)
+        {
+            CityConfig = cityConfig;
+            LayoutSystem = layoutSystem;
+            RoadLayoutSystem = roadLayoutSystem;
+            PrefabSelectionSystem = prefabSelectionSystem;
+            RoadCommitSystem = roadCommitSystem;
+            IngressSystem = ingressSystem;
+            IngressContext = ingressContext;
+        }
+    }
+}
+
+internal sealed class RuntimeCityChainState
 {
     private static readonly Vector2Int North = new(0, 1);
     private static readonly Vector2Int East = new(1, 0);
@@ -11,7 +90,7 @@ internal sealed class RuntimeCityChainSystem
     private static readonly Vector2Int[] CardinalDirections = { North, East, South, West };
 
     public bool TryPlanNextCity(
-        Context context,
+        RuntimeCityChainSystem.Context context,
         List<CityLayoutData> existingCities,
         HashSet<Vector2Int> occupiedRoadCells,
         CityLayoutData currentCity,
@@ -231,32 +310,4 @@ internal sealed class RuntimeCityChainSystem
         return found;
     }
 
-    public readonly struct Context
-    {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
-        public readonly RuntimeCityLayoutState LayoutSystem;
-        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
-        public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
-        public readonly RuntimeCityRoadCommitSystem RoadCommitSystem;
-        public readonly RuntimeCityIngressSystem IngressSystem;
-        public readonly RuntimeCityIngressSystem.Context IngressContext;
-
-        public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
-            RuntimeCityLayoutState layoutSystem,
-            RuntimeCityRoadLayoutState roadLayoutSystem,
-            RuntimeCityPrefabSelectionState prefabSelectionSystem,
-            RuntimeCityRoadCommitSystem roadCommitSystem,
-            RuntimeCityIngressSystem ingressSystem,
-            RuntimeCityIngressSystem.Context ingressContext)
-        {
-            CityConfig = cityConfig;
-            LayoutSystem = layoutSystem;
-            RoadLayoutSystem = roadLayoutSystem;
-            PrefabSelectionSystem = prefabSelectionSystem;
-            RoadCommitSystem = roadCommitSystem;
-            IngressSystem = ingressSystem;
-            IngressContext = ingressContext;
-        }
-    }
 }

@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetRenderSafetySystem
+public readonly struct UnitRenderBudgetRenderSafety
 {
     private const int AlwaysVisibleLodMask = 0xFF;
     private const float AlwaysVisibleLodDistance = 1048576f;
@@ -54,7 +54,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
         NativeHashSet<Entity> taggedThisFrame,
         Entity entity,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetLodReferenceSystem lodReferenceSystem)
+        UnitRenderBudgetLodReferences lodReferenceSystem)
     {
         if (!em.Exists(entity))
             return 0;
@@ -118,7 +118,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
         EntityCommandBuffer ecb,
         Entity entity,
         BufferLookup<Child> childLookup,
-        UnitRenderBudgetLodReferenceSystem lodReferenceSystem)
+        UnitRenderBudgetLodReferences lodReferenceSystem)
     {
         if (!em.Exists(entity))
             return 0;
@@ -163,7 +163,7 @@ public readonly struct UnitRenderBudgetRenderSafetySystem
         EntityManager em,
         EntityCommandBuffer ecb,
         Entity group,
-        UnitRenderBudgetLodReferenceSystem lodReferenceSystem)
+        UnitRenderBudgetLodReferences lodReferenceSystem)
     {
         if (!lodReferenceSystem.TryResolveMeshLodGroup(em, group, out MeshLODGroupComponent lodGroup))
             return 0;

@@ -23,12 +23,12 @@ public sealed class SelectionUiCameraSystem
 
     public SelectionUiCameraSystem(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
     {
-        _cameraSystem = cameraSystem ?? new RtsCameraSystem();
+        _cameraSystem = cameraSystem ?? ResolveDefaultCameraSystem();
         _cameraRequestSystem = cameraRequestSystem ?? ResolveDefaultCameraRequestSystem();
     }
 
-    public bool IsNormalIsoModeActive => _cameraSystem.NormalIsoModeActive;
-    public bool IsCameraDragging => _cameraSystem.IsDragging;
+    public bool IsNormalIsoModeActive => _cameraSystem != null && _cameraSystem.NormalIsoModeActive;
+    public bool IsCameraDragging => _cameraSystem != null && _cameraSystem.IsDragging;
     public Camera WorldCamera => _worldCamera;
 
     public void Init(RTSSelectionSystemConfig config, Camera worldCamera)
@@ -63,6 +63,9 @@ public sealed class SelectionUiCameraSystem
 
     public void ToggleNormalIsoMode()
     {
+        if (_cameraSystem == null)
+            return;
+
         if (_cameraSystem.NormalIsoModeActive)
             ExitNormalIsoMode();
         else
@@ -115,7 +118,7 @@ public sealed class SelectionUiCameraSystem
 
     private void EnterNormalIsoMode()
     {
-        if (_worldCamera == null)
+        if (_cameraSystem == null || _worldCamera == null)
             return;
 
         Vector3 focusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
@@ -145,7 +148,7 @@ public sealed class SelectionUiCameraSystem
 
     private void ExitNormalIsoMode()
     {
-        if (_worldCamera == null)
+        if (_cameraSystem == null || _worldCamera == null)
             return;
 
         Vector3 focusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
@@ -172,10 +175,18 @@ public sealed class SelectionUiCameraSystem
 
     private void ProcessCameraRequests(EntityManager em)
     {
-        if (_cameraRequestSystem == null)
+        if (_cameraRequestSystem == null || _cameraSystem == null)
             return;
 
         _cameraRequestSystem.ProcessPendingRequests(em, _cameraSystem, _worldCamera);
+    }
+
+    private static RtsCameraSystem ResolveDefaultCameraSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
+            : null;
     }
 
     private static RtsCameraRequestSystem ResolveDefaultCameraRequestSystem()

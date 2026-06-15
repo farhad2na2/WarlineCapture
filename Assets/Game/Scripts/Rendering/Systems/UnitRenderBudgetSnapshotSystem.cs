@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetSnapshotSystem
+public readonly struct UnitRenderBudgetSnapshot
 {
     public struct Snapshot : IDisposable
     {

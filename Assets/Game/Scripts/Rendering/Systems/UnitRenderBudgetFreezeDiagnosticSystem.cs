@@ -2,9 +2,9 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
+using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 
-public readonly struct UnitRenderBudgetFreezeDiagnosticSystem
+public readonly struct UnitRenderBudgetFreezeDiagnostic
 {
     private static readonly bool EnableRenderBudgetFreezeLogs = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
@@ -15,11 +15,11 @@ public readonly struct UnitRenderBudgetFreezeDiagnosticSystem
         NativeList<UnitDistance> distances,
         int detailedCount,
         bool cameraMotionActive,
-        UnitRenderBudgetDiagnosticStateSystem.FrameCounters counters,
+        UnitRenderBudgetDiagnosticState.FrameCounters counters,
         float visibleCharacterLowDistanceSq,
         float visibleCharacterImpostorNearDistance,
         float visibleCharacterImpostorFarDistance,
-        ref UnitRenderBudgetDiagnosticLogSystem diagnosticLogSystem)
+        ref UnitRenderBudgetDiagnosticLog diagnosticLogSystem)
     {
         if (!EnableRenderBudgetFreezeLogs || elapsed < FreezeLogThresholdSeconds)
             return;

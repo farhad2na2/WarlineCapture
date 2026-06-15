@@ -50,7 +50,7 @@ internal sealed partial class RuntimeCityBulkBuildingSpawnRoutineSystem : System
 
     public IEnumerator SpawnRoutine(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityBulkPlotPlanState plotPlanSystem,
         RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,
         RuntimeCityRoadsideBuildingSpawnState roadsideBuildingSpawnSystem,
@@ -82,7 +82,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
 {
     public IEnumerator SpawnRoutine(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityBulkPlotPlanState plotPlanSystem,
         RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,
         RuntimeCityRoadsideBuildingSpawnState roadsideBuildingSpawnSystem,

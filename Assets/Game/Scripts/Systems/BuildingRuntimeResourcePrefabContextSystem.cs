@@ -95,7 +95,15 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
 
     public CitizenPrefabSystem.Context CreateCitizenPrefabContext(Source source)
     {
-        return source.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(CreateRuntimeUnitPrefabContext(source));
+        RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext = CreateRuntimeUnitPrefabContext(source);
+        return source.RuntimeUnitPrefabSystem != null
+            ? source.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext)
+            : new CitizenPrefabSystem.Context(
+                runtimeUnitPrefabContext.DefinitionSystem,
+                runtimeUnitPrefabContext.SpawnPrefabSystem,
+                runtimeUnitPrefabContext.TryGetEntityManager,
+                runtimeUnitPrefabContext.EnsureEntityQueries,
+                runtimeUnitPrefabContext.CreateSpawnPrefabContext);
     }
 
     public BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext(Source source)

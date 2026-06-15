@@ -8,6 +8,32 @@ using UnityEngine;
 public sealed class RtsCameraSystemTests
 {
     private readonly System.Collections.Generic.List<GameObject> _createdObjects = new();
+    private World _cameraSystemWorld;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(nameof(Dragging_CanBeSetAndCleared), test => test.Dragging_CanBeSetAndCleared());
+            RunCase(nameof(SetSmoothFocusTarget_StoresGroundTarget), test => test.SetSmoothFocusTarget_StoresGroundTarget());
+            RunCase(nameof(UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget), test => test.UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget());
+            RunCase(nameof(ResetSession_ClearsDragAndSmoothFocus), test => test.ResetSession_ClearsDragAndSmoothFocus());
+            RunCase(nameof(ResetCameraModeSession_ClearsModeTransitionState), test => test.ResetCameraModeSession_ClearsModeTransitionState());
+            RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
+            RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
+            RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
+            RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
+            RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
+            RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=11");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[RtsCameraFocusedValidation] result=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
 
     public static void RunMatchIntroValidation()
     {
@@ -30,18 +56,39 @@ public sealed class RtsCameraSystemTests
         }
     }
 
+    private static void RunCase(string name, Action<RtsCameraSystemTests> action)
+    {
+        var tests = new RtsCameraSystemTests();
+        try
+        {
+            action(tests);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[RtsCameraFocusedValidation] result=Failed test={name} error={exception}");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {
         for (int i = 0; i < _createdObjects.Count; i++)
             UnityEngine.Object.DestroyImmediate(_createdObjects[i]);
         _createdObjects.Clear();
+        if (_cameraSystemWorld != null && _cameraSystemWorld.IsCreated)
+            _cameraSystemWorld.Dispose();
+        _cameraSystemWorld = null;
     }
 
     [Test]
     public void Dragging_CanBeSetAndCleared()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
 
         cameraSystem.SetDragging(true);
         Assert.IsTrue(cameraSystem.IsDragging);
@@ -53,7 +100,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void SetSmoothFocusTarget_StoresGroundTarget()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
 
         cameraSystem.SetSmoothFocusTarget(new Vector3(3f, 12f, -4f), resetVelocity: true);
 
@@ -64,7 +111,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
         Vector3 target = new(5f, 0f, 7f);
         cameraSystem.SetSmoothFocusTarget(target, resetVelocity: true);
 
@@ -77,7 +124,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void ResetSession_ClearsDragAndSmoothFocus()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
         cameraSystem.SetDragging(true);
         cameraSystem.SetSmoothFocusTarget(new Vector3(1f, 0f, 2f), resetVelocity: true);
 
@@ -90,15 +137,13 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void ResetCameraModeSession_ClearsModeTransitionState()
     {
-        var cameraSystem = new RtsCameraSystem
-        {
-            WasPlayRequested = true,
-            WasBuildModeActive = true,
-            IsZoomTransitionActive = true,
-            NormalIsoModeActive = true,
-            FullscreenIsoTargetHeight = 20f,
-            FullscreenIsoTargetOrthographicSize = 12f
-        };
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        cameraSystem.WasPlayRequested = true;
+        cameraSystem.WasBuildModeActive = true;
+        cameraSystem.IsZoomTransitionActive = true;
+        cameraSystem.NormalIsoModeActive = true;
+        cameraSystem.FullscreenIsoTargetHeight = 20f;
+        cameraSystem.FullscreenIsoTargetOrthographicSize = 12f;
 
         cameraSystem.ResetCameraModeSession();
 
@@ -111,7 +156,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void PanCamera_MovesAlongFlattenedCameraAxes()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
         Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(45f, 0f, 0f));
 
         bool moved = cameraSystem.PanCamera(camera, new Vector2(10f, 0f), 0.1f);
@@ -125,7 +170,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
         Camera camera = CreateCamera(Vector3.zero, Quaternion.identity);
         camera.orthographic = true;
 
@@ -141,7 +186,7 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter()
     {
-        var cameraSystem = new RtsCameraSystem();
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
         Camera camera = CreateCamera(new Vector3(0f, 10f, 0f), Quaternion.Euler(90f, 0f, 0f));
 
         cameraSystem.MoveCameraGroundCenterTo(camera, new Vector3(5f, 0f, 7f));
@@ -155,11 +200,9 @@ public sealed class RtsCameraSystemTests
     [Test]
     public void UpdateFullscreenIsoZoom_ClampsTargets()
     {
-        var cameraSystem = new RtsCameraSystem
-        {
-            FullscreenIsoTargetHeight = 20f,
-            FullscreenIsoTargetOrthographicSize = 10f
-        };
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        cameraSystem.FullscreenIsoTargetHeight = 20f;
+        cameraSystem.FullscreenIsoTargetOrthographicSize = 10f;
 
         cameraSystem.UpdateFullscreenIsoZoom(1f, 100f, 1f, 10f, 45f);
 
@@ -179,9 +222,10 @@ public sealed class RtsCameraSystemTests
             var runtime = new RuntimeGameplayStateSystem();
             runtime.PlayRequested = true;
 
-            var cameraSystem = new RtsCameraSystem();
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
-            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystem();
+            RtsSelectionRuntimeCameraSystem runtimeCameraSystem =
+                world.GetOrCreateSystemManaged<RtsSelectionRuntimeCameraSystem>();
             Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(58f, 10f, 0f));
             camera.fieldOfView = 36f;
 
@@ -253,9 +297,10 @@ public sealed class RtsCameraSystemTests
             var runtime = new RuntimeGameplayStateSystem();
             runtime.PlayRequested = true;
 
-            var cameraSystem = new RtsCameraSystem();
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
-            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystem();
+            RtsSelectionRuntimeCameraSystem runtimeCameraSystem =
+                world.GetOrCreateSystemManaged<RtsSelectionRuntimeCameraSystem>();
             Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(58f, 10f, 0f));
             camera.fieldOfView = 36f;
 
@@ -325,6 +370,12 @@ public sealed class RtsCameraSystemTests
         camera.transform.position = position;
         camera.transform.rotation = rotation;
         return camera;
+    }
+
+    private RtsCameraSystem CreateCameraSystem()
+    {
+        _cameraSystemWorld ??= new World("RtsCameraSystemTests.CameraSystem");
+        return _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraSystem>();
     }
 
     private sealed class FakeMatchIntroStateQuery : IMatchIntroStateQuery

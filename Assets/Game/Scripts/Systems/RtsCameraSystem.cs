@@ -1,6 +1,7 @@
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class RtsCameraSystem
+public sealed partial class RtsCameraSystem : SystemBase
 {
     private const float SmoothFocusCompletionDistanceSq = 0.01f;
 
@@ -20,6 +21,15 @@ public sealed class RtsCameraSystem
     public float FullscreenIsoTargetHeight { get; set; }
     public float FullscreenIsoTargetOrthographicSize { get; set; }
     public bool NormalIsoModeActive { get; set; }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void SetDragging(bool isDragging)
     {

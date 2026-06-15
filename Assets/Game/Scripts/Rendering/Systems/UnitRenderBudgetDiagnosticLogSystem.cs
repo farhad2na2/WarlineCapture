@@ -1,14 +1,14 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public struct UnitRenderBudgetDiagnosticLogSystem
+public struct UnitRenderBudgetDiagnosticLog
 {
     private Entity _logQueueEntity;
 
     public void LogEmptyQueryState(
         EntityManager em,
         int frame,
-        UnitRenderBudgetQuerySystem.Context queryContext,
+        UnitRenderBudgetSources.Context queryContext,
         int unitCount,
         bool playRequested)
     {

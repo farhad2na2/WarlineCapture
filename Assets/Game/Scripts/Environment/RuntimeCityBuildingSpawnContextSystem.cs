@@ -51,7 +51,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
 
     public readonly struct Systems
     {
-        public readonly RuntimeCityBuildingPlacementSystem PlacementSystem;
+        public readonly RuntimeCityBuildingPlacementState PlacementSystem;
         public readonly RuntimeCityLandmarkOffsetState LandmarkOffsetSystem;
         public readonly RuntimeCityHallSpawnState HallSpawnSystem;
         public readonly RuntimeCityLandmarkSpawnState LandmarkSpawnSystem;
@@ -72,7 +72,7 @@ internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
         public readonly RuntimeCityDecorationBuildingSpawnState DecorationBuildingSpawnSystem;
 
         public Systems(
-            RuntimeCityBuildingPlacementSystem placementSystem,
+            RuntimeCityBuildingPlacementState placementSystem,
             RuntimeCityLandmarkOffsetState landmarkOffsetSystem,
             RuntimeCityHallSpawnState hallSpawnSystem,
             RuntimeCityLandmarkSpawnState landmarkSpawnSystem,

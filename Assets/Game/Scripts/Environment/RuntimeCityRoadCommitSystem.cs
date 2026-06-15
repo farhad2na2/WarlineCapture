@@ -1,10 +1,97 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityRoadCommitSystem
+internal sealed partial class RuntimeCityRoadCommitSystem : SystemBase
 {
+    private readonly RuntimeCityRoadCommitState _state = new();
+
+    public RuntimeCityRoadCommitState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void CommitCityRoadNetwork(Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
+    {
+        _state.CommitCityRoadNetwork(context, city, occupiedRoadCells);
+    }
+
+    public void PopulateCityRoadCells(CityLayoutData city)
+    {
+        _state.PopulateCityRoadCells(city);
+    }
+
+    public bool TryCommitSourceExitRoad(
+        Context context,
+        int cityNumber,
+        List<Vector2Int> sourceExitRoad,
+        CityLayoutData currentCity,
+        HashSet<Vector2Int> occupiedRoadCells)
+    {
+        return _state.TryCommitSourceExitRoad(context, cityNumber, sourceExitRoad, currentCity, occupiedRoadCells);
+    }
+
+    public bool TryCommitAutobahn(
+        Context context,
+        int cityNumber,
+        List<Vector2Int> autobahnPath,
+        Vector2Int travelDirection,
+        CityLayoutData currentCity,
+        HashSet<Vector2Int> occupiedRoadCells,
+        out List<Vector2Int> extendedAutobahnPath,
+        out Vector2Int endConnectorCell)
+    {
+        return _state.TryCommitAutobahn(
+            context,
+            cityNumber,
+            autobahnPath,
+            travelDirection,
+            currentCity,
+            occupiedRoadCells,
+            out extendedAutobahnPath,
+            out endConnectorCell);
+    }
+
+    public bool TryCreateStandaloneConnector(
+        Context context,
+        Vector2Int endConnectorCell,
+        Vector2Int travelDirection,
+        int roadLength,
+        out Vector2Int secondCityAnchorCell)
+    {
+        return _state.TryCreateStandaloneConnector(
+            context,
+            endConnectorCell,
+            travelDirection,
+            roadLength,
+            out secondCityAnchorCell);
+    }
+
+    public readonly struct Context
+    {
+        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
+        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+
+        public Context(
+            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
+            RuntimeCityDiagnosticSystem diagnostics)
+        {
+            RoadBuildBridgeSystem = roadBuildBridgeSystem;
+            Diagnostics = diagnostics;
+        }
+    }
+}
+
+internal sealed class RuntimeCityRoadCommitState
+{
+    public void CommitCityRoadNetwork(RuntimeCityRoadCommitSystem.Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
     {
         PopulateCityRoadCells(city);
         for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
@@ -32,7 +119,7 @@ internal sealed class RuntimeCityRoadCommitSystem
     }
 
     public bool TryCommitSourceExitRoad(
-        Context context,
+        RuntimeCityRoadCommitSystem.Context context,
         int cityNumber,
         List<Vector2Int> sourceExitRoad,
         CityLayoutData currentCity,
@@ -55,7 +142,7 @@ internal sealed class RuntimeCityRoadCommitSystem
     }
 
     public bool TryCommitAutobahn(
-        Context context,
+        RuntimeCityRoadCommitSystem.Context context,
         int cityNumber,
         List<Vector2Int> autobahnPath,
         Vector2Int travelDirection,
@@ -86,7 +173,7 @@ internal sealed class RuntimeCityRoadCommitSystem
     }
 
     public bool TryCreateStandaloneConnector(
-        Context context,
+        RuntimeCityRoadCommitSystem.Context context,
         Vector2Int endConnectorCell,
         Vector2Int travelDirection,
         int roadLength,
@@ -104,17 +191,4 @@ internal sealed class RuntimeCityRoadCommitSystem
         return context.RoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell(travelDirection, out secondCityAnchorCell);
     }
 
-    public readonly struct Context
-    {
-        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
-
-        public Context(
-            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
-            RuntimeCityDiagnosticSystem diagnostics)
-        {
-            RoadBuildBridgeSystem = roadBuildBridgeSystem;
-            Diagnostics = diagnostics;
-        }
-    }
 }

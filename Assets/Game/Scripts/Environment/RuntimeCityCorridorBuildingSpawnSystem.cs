@@ -21,7 +21,7 @@ internal sealed partial class RuntimeCityCorridorBuildingSpawnSystem : SystemBas
 
     public void SpawnCorridorEntranceBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         CityLayoutData city,
         Vector2Int connectorCell,
         Vector2Int direction,
@@ -45,7 +45,7 @@ internal sealed class RuntimeCityCorridorBuildingSpawnState
 {
     public void SpawnCorridorEntranceBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         CityLayoutData city,
         Vector2Int connectorCell,
         Vector2Int direction,

@@ -6,7 +6,7 @@ using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
 
-public readonly struct UnitRenderBudgetDistanceSystem
+public readonly struct UnitRenderBudgetDistance
 {
     public struct UnitDistance
     {

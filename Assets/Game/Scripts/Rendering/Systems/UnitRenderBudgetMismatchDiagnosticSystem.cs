@@ -4,9 +4,9 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
-using UnitDistance = UnitRenderBudgetDistanceSystem.UnitDistance;
+using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 
-public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
+public readonly struct UnitRenderBudgetMismatchDiagnostic
 {
     public void LogMidLodDiagnostics(
         EntityManager em,
@@ -17,17 +17,17 @@ public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
         BufferLookup<Child> childLookup,
         int detailedCount,
         bool cameraMotionActive,
-        UnitRenderBudgetClassificationSystem classificationSystem,
-        UnitRenderBudgetLodReferenceSystem lodReferenceSystem,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetReadinessSystem readinessSystem,
-        UnitRenderBudgetVisualPlanSystem visualPlanSystem,
-        UnitRenderBudgetDiagnosticStateSystem diagnosticStateSystem,
+        UnitRenderBudgetClassification classificationSystem,
+        UnitRenderBudgetLodReferences lodReferenceSystem,
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetReadiness readinessSystem,
+        UnitRenderBudgetVisualPlan visualPlanSystem,
+        UnitRenderBudgetDiagnosticState diagnosticStateSystem,
         float visibleCharacterLowDistanceSq,
         float visibleCharacterImpostorNearDistance,
         float visibleCharacterImpostorFarDistance,
-        ref UnitRenderBudgetDiagnosticLogSystem diagnosticLogSystem)
+        ref UnitRenderBudgetDiagnosticLog diagnosticLogSystem)
     {
         int targetDetail = 0;
         int targetMid = 0;
@@ -69,7 +69,7 @@ public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
             if (!em.Exists(unit))
                 continue;
 
-            UnitRenderBudgetLodReferenceSystem.UnitReferences lodReferences = lodReferenceSystem.ResolveUnitReferences(em, unit);
+            UnitRenderBudgetLodReferences.UnitReferences lodReferences = lodReferenceSystem.ResolveUnitReferences(em, unit);
             bool hasMidPrefab = lodReferences.HasMidLodPrefab;
             bool hasMidInstance = lodReferences.HasMidLodInstance;
             if (hasMidPrefab && !hasMidInstance)
@@ -241,9 +241,9 @@ public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
         Entity midRoot,
         Entity lowRoot,
         bool farVisible,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem,
-        UnitRenderBudgetDiagnosticStateSystem diagnosticStateSystem)
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem,
+        UnitRenderBudgetDiagnosticState diagnosticStateSystem)
     {
         if (!diagnosticStateSystem.ShouldAppendDiagnosticSample(sample))
             return;
@@ -265,8 +265,8 @@ public readonly struct UnitRenderBudgetMismatchDiagnosticSystem
         EntityManager em,
         BufferLookup<Child> childLookup,
         Entity root,
-        UnitRenderBudgetAnimationReadinessSystem animationReadinessSystem,
-        UnitRenderBudgetRenderableQuerySystem renderableQuerySystem)
+        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+        UnitRenderBudgetRenderableState renderableQuerySystem)
     {
         if (root == Entity.Null)
             return "null";

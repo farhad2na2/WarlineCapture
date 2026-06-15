@@ -1,10 +1,26 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
+using PlacementRequest = RuntimeCityBuildingPlacementSystem.Request;
+using PlacementResult = RuntimeCityBuildingPlacementSystem.Result;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityBuildingPlacementSystem
+internal sealed partial class RuntimeCityBuildingPlacementSystem : SystemBase
 {
+    private readonly RuntimeCityBuildingPlacementState _state = new();
+
+    public RuntimeCityBuildingPlacementState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Request
     {
         public readonly GameObject Prefab;
@@ -67,6 +83,62 @@ internal sealed class RuntimeCityBuildingPlacementSystem
         List<RectInt> placementAnchors = null,
         List<RectInt> secondaryPlacementAnchors = null)
     {
+        return _state.TrySpawnAndReserve(
+            context,
+            request,
+            out result,
+            placementAnchors,
+            secondaryPlacementAnchors);
+    }
+
+    public Vector2Int GetFootprint(RuntimeCityBuildingSpawnContextSystem.Context context, GameObject prefab)
+    {
+        return _state.GetFootprint(context, prefab);
+    }
+
+    public void PlaceFromPlots(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        List<GameObject> prefabs,
+        List<PlotCandidate> candidates,
+        int count,
+        int minPlotSpacing,
+        int roadCellSizeInGridCells,
+        string fallbackDisplayName,
+        string fallbackDescription,
+        int maxHealth,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> placementAnchors = null,
+        List<RectInt> secondaryPlacementAnchors = null)
+    {
+        _state.PlaceFromPlots(
+            context,
+            prefabs,
+            candidates,
+            count,
+            minPlotSpacing,
+            roadCellSizeInGridCells,
+            fallbackDisplayName,
+            fallbackDescription,
+            maxHealth,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            placementAnchors,
+            secondaryPlacementAnchors);
+    }
+}
+
+internal sealed class RuntimeCityBuildingPlacementState
+{
+    public bool TrySpawnAndReserve(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        PlacementRequest request,
+        out PlacementResult result,
+        List<RectInt> placementAnchors = null,
+        List<RectInt> secondaryPlacementAnchors = null)
+    {
         result = default;
         if (request.Prefab == null)
             return false;
@@ -101,7 +173,7 @@ internal sealed class RuntimeCityBuildingPlacementSystem
         context.WalkabilitySystem.ReserveFootprint(request.ReservedFootprints, actualOrigin, actualFootprint, request.ReservationPadding);
         placementAnchors?.Add(actualRect);
         secondaryPlacementAnchors?.Add(actualRect);
-        result = new Result(buildingId, actualOrigin, actualFootprint);
+        result = new PlacementResult(buildingId, actualOrigin, actualFootprint);
         return true;
     }
 
@@ -144,7 +216,7 @@ internal sealed class RuntimeCityBuildingPlacementSystem
             Vector2Int preferredOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(candidate.PlotCell, footprint, roadCellSizeInGridCells);
             if (!TrySpawnAndReserve(
                     context,
-                    new Request(
+                    new PlacementRequest(
                         prefab,
                         preferredOrigin,
                         footprint,
@@ -163,7 +235,7 @@ internal sealed class RuntimeCityBuildingPlacementSystem
         }
     }
 
-    private static bool OverlapsRoad(RuntimeCityBuildingSpawnContextSystem.Context context, RectInt rect, Request request)
+    private static bool OverlapsRoad(RuntimeCityBuildingSpawnContextSystem.Context context, RectInt rect, PlacementRequest request)
     {
         return request.RoadCells != null &&
                context.WalkabilitySystem.DoesRectOverlapRoadCells(rect, request.RoadCellSizeInGridCells, request.RoadCells);

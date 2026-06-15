@@ -1,11 +1,114 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityGenerationSystem
+internal sealed partial class RuntimeCityGenerationSystem : SystemBase
 {
+    private readonly RuntimeCityGenerationState _state = new();
+
+    public RuntimeCityGenerationState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public bool TryBegin(Context context)
+    {
+        return _state.TryBegin(context);
+    }
+
+    public delegate List<RectInt> CollectInitialBaseExclusionRoadRectsDelegate(int roadCellSizeInGridCells);
+
+    public delegate bool ShouldYieldDelegate(int completedWorkItems);
+
+    public readonly struct Context
+    {
+        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly GridConfig Grid;
+        public readonly int RoadCellSizeInGridCells;
+        public readonly RuntimeCityLifecycleState LifecycleState;
+        public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
+        public readonly RuntimeCityLayoutState LayoutSystem;
+        public readonly RuntimeCityWalkabilityState WalkabilitySystem;
+        public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
+        public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
+        public readonly RuntimeCityBuildingPlacementState BuildingPlacementSystem;
+        public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
+        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
+        public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
+        public readonly RuntimeCityChainState ChainSystem;
+        public readonly RuntimeCityChainSystem.Context ChainContext;
+        public readonly RuntimeCityRoadCommitState RoadCommitSystem;
+        public readonly RuntimeCityRoadCommitSystem.Context RoadCommitContext;
+        public readonly RuntimeCityIngressState IngressSystem;
+        public readonly RuntimeCityIngressSystem.Context IngressContext;
+        public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
+        public readonly ShouldYieldDelegate ShouldYield;
+        public readonly RuntimeCityMinimapEventSystem MinimapEvents;
+        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+
+        public Context(
+            RuntimeCityConfigSystem.Snapshot cityConfig,
+            GridConfig grid,
+            int roadCellSizeInGridCells,
+            RuntimeCityLifecycleState lifecycleState,
+            RuntimeCityLifecycleSystem.Context lifecycleContext,
+            RuntimeCityLayoutState layoutSystem,
+            RuntimeCityWalkabilityState walkabilitySystem,
+            RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
+            RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
+            RuntimeCityBuildingPlacementState buildingPlacementSystem,
+            RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
+            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
+            RuntimeCitySpawnBridgeState spawnBridgeSystem,
+            RuntimeCityChainState chainSystem,
+            RuntimeCityChainSystem.Context chainContext,
+            RuntimeCityRoadCommitState roadCommitSystem,
+            RuntimeCityRoadCommitSystem.Context roadCommitContext,
+            RuntimeCityIngressState ingressSystem,
+            RuntimeCityIngressSystem.Context ingressContext,
+            CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,
+            ShouldYieldDelegate shouldYield,
+            RuntimeCityMinimapEventSystem minimapEvents,
+            RuntimeCityDiagnosticSystem diagnostics)
+        {
+            CityConfig = cityConfig;
+            Grid = grid;
+            RoadCellSizeInGridCells = roadCellSizeInGridCells;
+            LifecycleState = lifecycleState;
+            LifecycleContext = lifecycleContext;
+            LayoutSystem = layoutSystem;
+            WalkabilitySystem = walkabilitySystem;
+            BuildingSpawnSystems = buildingSpawnSystems;
+            BuildingSpawnContext = buildingSpawnContext;
+            BuildingPlacementSystem = buildingPlacementSystem;
+            CorridorBuildingSpawnSystem = corridorBuildingSpawnSystem;
+            RoadBuildBridgeSystem = roadBuildBridgeSystem;
+            SpawnBridgeSystem = spawnBridgeSystem;
+            ChainSystem = chainSystem;
+            ChainContext = chainContext;
+            RoadCommitSystem = roadCommitSystem;
+            RoadCommitContext = roadCommitContext;
+            IngressSystem = ingressSystem;
+            IngressContext = ingressContext;
+            CollectInitialBaseExclusionRoadRects = collectInitialBaseExclusionRoadRects;
+            ShouldYield = shouldYield;
+            MinimapEvents = minimapEvents;
+            Diagnostics = diagnostics;
+        }
+    }
+}
+
+internal sealed class RuntimeCityGenerationState
+{
+    public bool TryBegin(RuntimeCityGenerationSystem.Context context)
     {
         if (context.LifecycleState == null)
             return false;
@@ -17,7 +120,7 @@ internal sealed class RuntimeCityGenerationSystem
         return context.LifecycleState.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext);
     }
 
-    private IEnumerator GenerateCityRoutine(Context context)
+    private IEnumerator GenerateCityRoutine(RuntimeCityGenerationSystem.Context context)
     {
         RuntimeCityConfigSystem.Snapshot cityConfig = context.CityConfig;
         if (context.LifecycleState.IsSpawned)
@@ -187,7 +290,7 @@ internal sealed class RuntimeCityGenerationSystem
         }
     }
 
-    private static void EnsureCityHall(Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    private static void EnsureCityHall(RuntimeCityGenerationSystem.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
     {
         context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
             context.BuildingSpawnContext,
@@ -198,7 +301,7 @@ internal sealed class RuntimeCityGenerationSystem
             ref rng);
     }
 
-    private static void SpawnCityImportantBuildings(Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    private static void SpawnCityImportantBuildings(RuntimeCityGenerationSystem.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
     {
         context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
             context.BuildingSpawnContext,
@@ -218,7 +321,7 @@ internal sealed class RuntimeCityGenerationSystem
             city.ReservedFootprints);
     }
 
-    private static IEnumerator SpawnCityBulkBuildingsRoutine(Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng)
+    private static IEnumerator SpawnCityBulkBuildingsRoutine(RuntimeCityGenerationSystem.Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng)
     {
         return context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(
             context.BuildingSpawnContext,
@@ -274,84 +377,4 @@ internal sealed class RuntimeCityGenerationSystem
                     shopAndHouseFootprints));
     }
 
-    public delegate List<RectInt> CollectInitialBaseExclusionRoadRectsDelegate(int roadCellSizeInGridCells);
-
-    public delegate bool ShouldYieldDelegate(int completedWorkItems);
-
-    public readonly struct Context
-    {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
-        public readonly GridConfig Grid;
-        public readonly int RoadCellSizeInGridCells;
-        public readonly RuntimeCityLifecycleState LifecycleState;
-        public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
-        public readonly RuntimeCityLayoutState LayoutSystem;
-        public readonly RuntimeCityWalkabilityState WalkabilitySystem;
-        public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
-        public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
-        public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;
-        public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
-        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
-        public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
-        public readonly RuntimeCityChainSystem ChainSystem;
-        public readonly RuntimeCityChainSystem.Context ChainContext;
-        public readonly RuntimeCityRoadCommitSystem RoadCommitSystem;
-        public readonly RuntimeCityRoadCommitSystem.Context RoadCommitContext;
-        public readonly RuntimeCityIngressSystem IngressSystem;
-        public readonly RuntimeCityIngressSystem.Context IngressContext;
-        public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
-        public readonly ShouldYieldDelegate ShouldYield;
-        public readonly RuntimeCityMinimapEventSystem MinimapEvents;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
-
-        public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
-            GridConfig grid,
-            int roadCellSizeInGridCells,
-            RuntimeCityLifecycleState lifecycleState,
-            RuntimeCityLifecycleSystem.Context lifecycleContext,
-            RuntimeCityLayoutState layoutSystem,
-            RuntimeCityWalkabilityState walkabilitySystem,
-            RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
-            RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
-            RuntimeCityBuildingPlacementSystem buildingPlacementSystem,
-            RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
-            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
-            RuntimeCitySpawnBridgeState spawnBridgeSystem,
-            RuntimeCityChainSystem chainSystem,
-            RuntimeCityChainSystem.Context chainContext,
-            RuntimeCityRoadCommitSystem roadCommitSystem,
-            RuntimeCityRoadCommitSystem.Context roadCommitContext,
-            RuntimeCityIngressSystem ingressSystem,
-            RuntimeCityIngressSystem.Context ingressContext,
-            CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,
-            ShouldYieldDelegate shouldYield,
-            RuntimeCityMinimapEventSystem minimapEvents,
-            RuntimeCityDiagnosticSystem diagnostics)
-        {
-            CityConfig = cityConfig;
-            Grid = grid;
-            RoadCellSizeInGridCells = roadCellSizeInGridCells;
-            LifecycleState = lifecycleState;
-            LifecycleContext = lifecycleContext;
-            LayoutSystem = layoutSystem;
-            WalkabilitySystem = walkabilitySystem;
-            BuildingSpawnSystems = buildingSpawnSystems;
-            BuildingSpawnContext = buildingSpawnContext;
-            BuildingPlacementSystem = buildingPlacementSystem;
-            CorridorBuildingSpawnSystem = corridorBuildingSpawnSystem;
-            RoadBuildBridgeSystem = roadBuildBridgeSystem;
-            SpawnBridgeSystem = spawnBridgeSystem;
-            ChainSystem = chainSystem;
-            ChainContext = chainContext;
-            RoadCommitSystem = roadCommitSystem;
-            RoadCommitContext = roadCommitContext;
-            IngressSystem = ingressSystem;
-            IngressContext = ingressContext;
-            CollectInitialBaseExclusionRoadRects = collectInitialBaseExclusionRoadRects;
-            ShouldYield = shouldYield;
-            MinimapEvents = minimapEvents;
-            Diagnostics = diagnostics;
-        }
-    }
 }

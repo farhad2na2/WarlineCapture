@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RuntimeCityCompositionSystem
+public sealed partial class RuntimeCityCompositionSystem : SystemBase
 {
     private RuntimeCitySpawnerSystemConfig _config;
     private readonly List<GameObject> _fallbackCityPrefabs = new();
@@ -19,7 +19,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
     private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
     private RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem;
-    private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();
+    private RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem;
+    private readonly RuntimeCityBuildingPlacementState _fallbackRuntimeCityBuildingPlacement = new();
     private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
     private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
     private RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem;
@@ -66,11 +67,15 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityStartupSystem _runtimeCityStartupSystem;
     private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
     private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
-    private readonly RuntimeCityGenerationSystem _runtimeCityGenerationSystem = new();
-    private readonly RuntimeCityChainSystem _runtimeCityChainSystem = new();
-    private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new();
+    private RuntimeCityGenerationSystem _runtimeCityGenerationSystem;
+    private readonly RuntimeCityGenerationState _fallbackRuntimeCityGeneration = new();
+    private RuntimeCityChainSystem _runtimeCityChainSystem;
+    private readonly RuntimeCityChainState _fallbackRuntimeCityChain = new();
+    private RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem;
+    private readonly RuntimeCityRoadCommitState _fallbackRuntimeCityRoadCommit = new();
     private RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem;
-    private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new();
+    private RuntimeCityIngressSystem _runtimeCityIngressSystem;
+    private readonly RuntimeCityIngressState _fallbackRuntimeCityIngress = new();
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
     private RuntimeCityReadModelSystem _runtimeCityReadModelSystem;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
@@ -78,6 +83,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
     private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;
     private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;
+    private bool _configured;
 
     private RuntimeCityConfigSystem.Snapshot cityConfig => RuntimeCityConfigSystem?.Current ?? _fallbackCityConfig;
     private bool spawnOnStart => cityConfig.SpawnOnStart;
@@ -101,6 +107,20 @@ public sealed class RuntimeCityCompositionSystem
         _tryGetGridData = TryGetGridConfig;
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Dispose();
+    }
+
     public string DescribeStartupBlocker(int frameCount)
     {
         return global::RuntimeCityStartupSystem.DescribeStartupBlocker(CreateStartupContext(frameCount));
@@ -121,6 +141,7 @@ public sealed class RuntimeCityCompositionSystem
         Transform runtimeRoot,
         IMatchRuntimeUi mainMenuPlayUi)
     {
+        _configured = true;
         _config = configAsset;
         RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
@@ -146,12 +167,16 @@ public sealed class RuntimeCityCompositionSystem
 
     public void Dispose()
     {
-        RuntimeCityLifecycleState.CancelGeneration();
-        RuntimeCityVisualSystem?.Dispose();
-        RuntimeCitySpawnBridgeState.Clear();
-        RuntimeCityRoadBuildBridgeState.Clear();
-        RuntimeCityReadinessQuerySystem?.Clear();
-        RuntimeCityMinimapEventSystem?.Clear();
+        if (!_configured)
+            return;
+
+        (_runtimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
+        _runtimeCityVisualSystem?.Dispose();
+        (_runtimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
+        (_runtimeCityRoadBuildBridgeSystem?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
+        _runtimeCityReadinessQuerySystem?.Clear();
+        _runtimeCityMinimapEventSystem?.Clear();
+        _configured = false;
     }
 
     public bool IsConfiguredHousePrefab(GameObject prefab)
@@ -227,7 +252,7 @@ public sealed class RuntimeCityCompositionSystem
 
     private void GenerateCity(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
     {
-        _runtimeCityGenerationSystem.TryBegin(CreateGenerationContext(grid, roadCellSizeInGridCells, frameCount));
+        RuntimeCityGenerationState.TryBegin(CreateGenerationContext(grid, roadCellSizeInGridCells, frameCount));
     }
 
     private bool ShouldYield(int completedWorkItems)
@@ -278,15 +303,15 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityWalkabilityState,
             CreateBuildingSpawnSystems(),
             _runtimeCityBuildingSpawnContext,
-            _runtimeCityBuildingPlacementSystem,
+            RuntimeCityBuildingPlacementState,
             RuntimeCityCorridorBuildingSpawnState,
             RuntimeCityRoadBuildBridgeState,
             RuntimeCitySpawnBridgeState,
-            _runtimeCityChainSystem,
+            RuntimeCityChainState,
             CreateChainContext(),
-            _runtimeCityRoadCommitSystem,
+            RuntimeCityRoadCommitState,
             CreateRoadCommitContext(),
-            _runtimeCityIngressSystem,
+            RuntimeCityIngressState,
             CreateIngressContext(),
             CollectInitialBaseExclusionRoadRects,
             ShouldYield,
@@ -297,7 +322,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()
     {
         return new RuntimeCityBuildingSpawnContextSystem.Systems(
-            _runtimeCityBuildingPlacementSystem,
+            RuntimeCityBuildingPlacementState,
             RuntimeCityLandmarkOffsetState,
             RuntimeCityHallSpawnState,
             RuntimeCityLandmarkSpawnState,
@@ -325,8 +350,8 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityLayoutState,
             RuntimeCityRoadLayoutState,
             RuntimeCityPrefabSelectionState,
-            _runtimeCityRoadCommitSystem,
-            _runtimeCityIngressSystem,
+            RuntimeCityRoadCommitState,
+            RuntimeCityIngressState,
             CreateIngressContext());
     }
 
@@ -512,6 +537,12 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityDecorationBuildingSpawnSystem RuntimeCityDecorationBuildingSpawnSystem =>
         _runtimeCityDecorationBuildingSpawnSystem ??= ResolveRuntimeCityDecorationBuildingSpawnSystem();
 
+    private RuntimeCityBuildingPlacementState RuntimeCityBuildingPlacementState =>
+        RuntimeCityBuildingPlacementSystem?.State ?? _fallbackRuntimeCityBuildingPlacement;
+
+    private RuntimeCityBuildingPlacementSystem RuntimeCityBuildingPlacementSystem =>
+        _runtimeCityBuildingPlacementSystem ??= ResolveRuntimeCityBuildingPlacementSystem();
+
     private RuntimeCitySpawnBridgeState RuntimeCitySpawnBridgeState =>
         RuntimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge;
 
@@ -523,6 +554,30 @@ public sealed class RuntimeCityCompositionSystem
 
     private RuntimeCityRoadBuildBridgeSystem RuntimeCityRoadBuildBridgeSystem =>
         _runtimeCityRoadBuildBridgeSystem ??= ResolveRuntimeCityRoadBuildBridgeSystem();
+
+    private RuntimeCityGenerationState RuntimeCityGenerationState =>
+        RuntimeCityGenerationSystem?.State ?? _fallbackRuntimeCityGeneration;
+
+    private RuntimeCityGenerationSystem RuntimeCityGenerationSystem =>
+        _runtimeCityGenerationSystem ??= ResolveRuntimeCityGenerationSystem();
+
+    private RuntimeCityChainState RuntimeCityChainState =>
+        RuntimeCityChainSystem?.State ?? _fallbackRuntimeCityChain;
+
+    private RuntimeCityChainSystem RuntimeCityChainSystem =>
+        _runtimeCityChainSystem ??= ResolveRuntimeCityChainSystem();
+
+    private RuntimeCityRoadCommitState RuntimeCityRoadCommitState =>
+        RuntimeCityRoadCommitSystem?.State ?? _fallbackRuntimeCityRoadCommit;
+
+    private RuntimeCityRoadCommitSystem RuntimeCityRoadCommitSystem =>
+        _runtimeCityRoadCommitSystem ??= ResolveRuntimeCityRoadCommitSystem();
+
+    private RuntimeCityIngressState RuntimeCityIngressState =>
+        RuntimeCityIngressSystem?.State ?? _fallbackRuntimeCityIngress;
+
+    private RuntimeCityIngressSystem RuntimeCityIngressSystem =>
+        _runtimeCityIngressSystem ??= ResolveRuntimeCityIngressSystem();
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
@@ -829,6 +884,46 @@ public sealed class RuntimeCityCompositionSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityRoadBuildBridgeSystem>()
+            : null;
+    }
+
+    private static RuntimeCityBuildingPlacementSystem ResolveRuntimeCityBuildingPlacementSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingPlacementSystem>()
+            : null;
+    }
+
+    private static RuntimeCityGenerationSystem ResolveRuntimeCityGenerationSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityGenerationSystem>()
+            : null;
+    }
+
+    private static RuntimeCityChainSystem ResolveRuntimeCityChainSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityChainSystem>()
+            : null;
+    }
+
+    private static RuntimeCityRoadCommitSystem ResolveRuntimeCityRoadCommitSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityRoadCommitSystem>()
+            : null;
+    }
+
+    private static RuntimeCityIngressSystem ResolveRuntimeCityIngressSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityIngressSystem>()
             : null;
     }
 }

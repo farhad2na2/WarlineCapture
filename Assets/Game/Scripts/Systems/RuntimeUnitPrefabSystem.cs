@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeUnitPrefabSystem
+internal sealed partial class RuntimeUnitPrefabSystem : SystemBase
 {
     public readonly struct Context
     {
@@ -39,6 +39,15 @@ internal sealed class RuntimeUnitPrefabSystem
             context.TryGetEntityManager,
             context.EnsureEntityQueries,
             context.CreateSpawnPrefabContext);
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public bool TryResolveConfiguredUnitPrefabEntity(Context context, GameObject unitPrefab, out Entity prefabEntity)

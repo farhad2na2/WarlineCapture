@@ -19,7 +19,7 @@ internal sealed partial class RuntimeCityYardWallVisualSystem : SystemBase
 
     public void BuildYardBoundaryVisuals(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCityYardGateState gateSystem,
@@ -49,7 +49,7 @@ internal sealed class RuntimeCityYardWallVisualState
 {
     public void BuildYardBoundaryVisuals(
         RuntimeCityBuildingSpawnContextSystem.Context context,
-        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCityYardGateState gateSystem,

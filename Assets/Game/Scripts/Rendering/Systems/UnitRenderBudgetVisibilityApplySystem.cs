@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 
-public readonly struct UnitRenderBudgetVisibilityApplySystem
+public readonly struct UnitRenderBudgetVisibilityApply
 {
     public struct Lookups
     {

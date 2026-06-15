@@ -62,10 +62,15 @@ internal sealed class BuildingUiCompositionSystem
                 camera != null ? camera : source.BuildingPlacementStartupSystem.WorldCamera,
                 Screen.width,
                 Screen.height),
-            (Entity unitEntity, out GameObject prefab) => source.RuntimeUnitPrefabSystem.TryResolveLiveUnitPreviewPrefab(
-                source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(source.BuildingRuntimeResourcePrefabCompositionSystem.Create(source)),
-                unitEntity,
-                out prefab),
+            (Entity unitEntity, out GameObject prefab) =>
+            {
+                prefab = null;
+                return source.RuntimeUnitPrefabSystem != null &&
+                       source.RuntimeUnitPrefabSystem.TryResolveLiveUnitPreviewPrefab(
+                           source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(source.BuildingRuntimeResourcePrefabCompositionSystem.Create(source)),
+                           unitEntity,
+                           out prefab);
+            },
             () => EnqueueAndProcessConfirmBuildingPlacement(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),

@@ -1,7 +1,23 @@
-internal sealed class RuntimeCityMinimapEventSystem
+using Unity.Entities;
+
+internal sealed partial class RuntimeCityMinimapEventSystem : SystemBase
 {
     private IMatchRuntimeUi _mainMenuPlayUi;
     private bool _staticMinimapChanged;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Clear();
+    }
 
     public void Configure(IMatchRuntimeUi mainMenuPlayUi)
     {

@@ -42,7 +42,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new();
     private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new();
     private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new();
-    private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new();
+    private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
     private readonly RuntimeCityReadModelSystem _runtimeCityReadModelSystem = new();
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
@@ -95,7 +95,7 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityRoadBuildBridgeSystem.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         _runtimeCitySpawnBridgeSystem.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
         RuntimeCityVisualSystem?.SetRuntimeRoot(runtimeRoot);
-        _runtimeCityMinimapEventSystem.Configure(mainMenuPlayUi);
+        RuntimeCityMinimapEventSystem?.Configure(mainMenuPlayUi);
         ApplyConfigIfAvailable();
         PublishReadModel();
     }
@@ -109,7 +109,7 @@ public sealed class RuntimeCityCompositionSystem
     {
         ApplyConfigIfAvailable();
         _runtimeCityLifecycleSystem.Tick(CreateLifecycleContext(frameCount));
-        _runtimeCityMinimapEventSystem.Flush();
+        RuntimeCityMinimapEventSystem?.Flush();
         TryAutoSpawn(frameCount);
         PublishReadModel();
     }
@@ -121,7 +121,7 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCitySpawnBridgeSystem.Clear();
         _runtimeCityRoadBuildBridgeSystem.Clear();
         _runtimeCityReadinessQuerySystem.Clear();
-        _runtimeCityMinimapEventSystem.Clear();
+        RuntimeCityMinimapEventSystem?.Clear();
     }
 
     public bool IsConfiguredHousePrefab(GameObject prefab)
@@ -229,7 +229,7 @@ public sealed class RuntimeCityCompositionSystem
             CreateIngressContext(),
             _runtimeCityReadinessQuerySystem.CollectInitialBaseExclusionRoadRects,
             ShouldYield,
-            _runtimeCityMinimapEventSystem,
+            RuntimeCityMinimapEventSystem,
             _runtimeCityDiagnosticSystem);
     }
 
@@ -286,11 +286,22 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityVisualSystem RuntimeCityVisualSystem =>
         _runtimeCityVisualSystem ??= ResolveRuntimeCityVisualSystem();
 
+    private RuntimeCityMinimapEventSystem RuntimeCityMinimapEventSystem =>
+        _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
+
     private static RuntimeCityVisualSystem ResolveRuntimeCityVisualSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityVisualSystem>()
+            : null;
+    }
+
+    private static RuntimeCityMinimapEventSystem ResolveRuntimeCityMinimapEventSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<RuntimeCityMinimapEventSystem>()
             : null;
     }
 }

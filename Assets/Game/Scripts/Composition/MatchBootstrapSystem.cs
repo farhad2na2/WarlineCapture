@@ -25,7 +25,7 @@ internal sealed class MatchBootstrapSystem
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly VisualQualitySettingsSystem _visualQualitySettingsSystem = new();
-    private readonly AIStartupSystem _aiStartupSystem = new();
+    private AIStartupSystem _aiStartupSystem;
     private InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem;
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
@@ -340,6 +340,7 @@ internal sealed class MatchBootstrapSystem
         _mapSurfaceRuntimeBootstrapSystem = null;
         _initialFactionSpawnCellSystem = null;
         _customGameStartupSystem = null;
+        _aiStartupSystem = null;
         _gameplayStartRequested = false;
         _gameplayStartComplete = false;
         _managedRuntimeInitialized = false;
@@ -480,19 +481,29 @@ internal sealed class MatchBootstrapSystem
         }
 
         initialFactionSpawnCellSystem.Configure(buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
+        if (aiStartupSystem == null)
+        {
+            Debug.LogWarning("[MatchBootstrap] missingAIStartupSystem");
+            return;
+        }
+
         aiStartupSystem.LogConfigValidation(aiControllerConfigs, aiSettings);
     }
 
     public AIStartupSystem.Result InitializeAiStartupConfig(
-        World world,
         AIStartupSystem aiStartupSystem,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig aiPlanEntryConfig,
         AISettingsSnapshot aiSettings,
         AIStartupSystem.TryResolveFactionSpawnCell tryResolveFactionSpawnCell)
     {
+        if (aiStartupSystem == null)
+        {
+            Debug.LogWarning("[MatchBootstrap] missingAIStartupSystem");
+            return default;
+        }
+
         return aiStartupSystem.Initialize(
-            world,
             aiControllerConfigs,
             aiPlanEntryConfig,
             tryResolveFactionSpawnCell,
@@ -808,7 +819,7 @@ internal sealed class MatchBootstrapSystem
                     MapSurfaceAuthoring,
                     ResolveInitialFactionSpawnCellSystem(World.DefaultGameObjectInjectionWorld),
                     BuildingPlacementConfig,
-                    _aiStartupSystem,
+                    ResolveAIStartupSystem(World.DefaultGameObjectInjectionWorld),
                     AIControllerConfigs,
                     _pendingAiSettingsSnapshot);
                 _gameplayStartStep = GameplayStartStep.CustomGameStartup;
@@ -834,8 +845,7 @@ internal sealed class MatchBootstrapSystem
             case GameplayStartStep.AiStartup:
                 SetGameplayStartProgress(0.52f, "Preparing AI factions");
                 _pendingAiStartupResult = InitializeAiStartupConfig(
-                    World.DefaultGameObjectInjectionWorld,
-                    _aiStartupSystem,
+                    ResolveAIStartupSystem(World.DefaultGameObjectInjectionWorld),
                     AIControllerConfigs,
                     AIPlanEntryConfig,
                     _pendingAiSettingsSnapshot,
@@ -921,6 +931,15 @@ internal sealed class MatchBootstrapSystem
 
         _customGameStartupSystem = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
         return _customGameStartupSystem;
+    }
+
+    private AIStartupSystem ResolveAIStartupSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _aiStartupSystem = world.GetOrCreateSystemManaged<AIStartupSystem>();
+        return _aiStartupSystem;
     }
 
     private static ISelectionRectangleView EnsureSelectionRectangleView(

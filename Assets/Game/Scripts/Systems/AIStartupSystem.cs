@@ -4,7 +4,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class AIStartupSystem
+[UpdateInGroup(typeof(InitializationSystemGroup))]
+public sealed partial class AIStartupSystem : SystemBase
 {
     private readonly RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem = new();
     private readonly FactionEconomyStartupSystem _factionEconomyStartupSystem = new();
@@ -25,14 +26,21 @@ public sealed class AIStartupSystem
         }
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public Result Initialize(
-        World world,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
         return Initialize(
-            world,
             aiControllerConfigs,
             planEntryConfig,
             resolveFactionSpawnCell,
@@ -40,17 +48,14 @@ public sealed class AIStartupSystem
     }
 
     public Result Initialize(
-        World world,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell,
         AISettingsSnapshot aiSettings)
     {
         Result result = default;
-        if (world == null || !world.IsCreated)
-            return result;
 
-        EntityManager em = world.EntityManager;
+        EntityManager em = EntityManager;
         if (aiControllerConfigs != null)
         {
             _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
@@ -137,11 +142,7 @@ public sealed class AIStartupSystem
 
     private bool TryEnqueueAIDiagnostic(FixedString512Bytes message, byte severity = AIDiagnosticLogComponent.LogSeverity)
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
+        EntityManager em = EntityManager;
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -171,12 +172,11 @@ public sealed class AIStartupSystem
         if (!queuedDiagnostics)
             return;
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        if (World == null || !World.IsCreated)
             return;
 
-        SystemHandle flushSystem = world.GetOrCreateSystem<AIDiagnosticLogFlushSystem>();
-        flushSystem.Update(world.Unmanaged);
+        SystemHandle flushSystem = World.GetOrCreateSystem<AIDiagnosticLogFlushSystem>();
+        flushSystem.Update(World.Unmanaged);
     }
 
     private void EnsureAIBuildPlansInitialized(

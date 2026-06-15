@@ -1,12 +1,38 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEngine;
 
 public sealed class AIStartupSystemValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new AIStartupSystemValidationTests();
+            tests.SetUp();
+            try
+            {
+                tests.Initialize_ProjectsSceneAIConfigsIntoEcsStartupData();
+                Debug.Log("[AIStartupSystemFocusedValidation] result=Passed tests=1");
+            }
+            finally
+            {
+                tests.TearDown();
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[AIStartupSystemFocusedValidation] result=Failed");
+            Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -33,9 +59,8 @@ public sealed class AIStartupSystemValidationTests
         aiSettings.EnemyAICount = 1;
         AISettingsRuntimeState.ResetDefaults();
 
-        AIStartupSystem system = new();
+        AIStartupSystem system = world.GetOrCreateSystemManaged<AIStartupSystem>();
         AIStartupSystem.Result result = system.Initialize(
-            world,
             new[] { enemy, playerAuto },
             planEntryConfig,
             TryResolveFactionSpawnCell,

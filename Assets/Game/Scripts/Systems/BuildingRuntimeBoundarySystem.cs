@@ -367,6 +367,7 @@ public sealed class BuildingRuntimeBoundarySystem
         if (forcePublish || buildingSetChanged)
         {
             PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
+            PublishFactionRunwaysReadModel(em, boundaryEntity, runtimeBuildings);
             _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
             _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
         }
@@ -770,6 +771,86 @@ public sealed class BuildingRuntimeBoundarySystem
                 WorldPosition = new float3(world.x, world.y, world.z)
             });
         }
+    }
+
+    private void PublishFactionRunwaysReadModel(
+        EntityManager em,
+        Entity boundaryEntity,
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+    {
+        DynamicBuffer<BuildingFactionRunwayReadModel> buffer =
+            EnsureBoundaryBuffer<BuildingFactionRunwayReadModel>(em, boundaryEntity);
+        buffer.Clear();
+
+        if (!TryGetGridConfig(em, out GridConfig grid))
+            return;
+
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                PublishFactionRunwayForBuilding(buffer, grid, entry.Value);
+        }
+        else
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+                PublishFactionRunwayForBuilding(buffer, grid, entry.Value);
+        }
+    }
+
+    private void PublishFactionRunwayForBuilding(
+        DynamicBuffer<BuildingFactionRunwayReadModel> buffer,
+        GridConfig grid,
+        RuntimeBuildingEntity building)
+    {
+        if (building == null ||
+            building.IsDestroyed ||
+            !building.HasOwnerFaction ||
+            building.Instance == null ||
+            building.Definition == null ||
+            building.Definition.Prefab == null ||
+            !building.Definition.HasRunway)
+        {
+            return;
+        }
+
+        Transform transform = building.Instance.transform;
+        Vector3 center = transform.TransformPoint(building.Definition.RunwayLocalPosition);
+        Quaternion rotation = transform.rotation * building.Definition.RunwayLocalRotation;
+        Vector3 direction = rotation * Vector3.forward;
+        direction.y = 0f;
+        if (direction.sqrMagnitude <= 0.0001f)
+            direction = Vector3.forward;
+        direction.Normalize();
+
+        Vector3 scaledHalfExtents = Vector3.Scale(building.Definition.RunwayHalfExtents, transform.lossyScale);
+        float halfWidth = Mathf.Max(1f, Mathf.Abs(scaledHalfExtents.x));
+        float halfLength = Mathf.Max(8f, Mathf.Abs(scaledHalfExtents.z));
+        Vector3 takeoffPosition = center - direction * halfLength;
+        Vector3 landingPosition = center + direction * halfLength;
+        takeoffPosition.y = center.y;
+        landingPosition.y = center.y;
+
+        int2 takeoffCell = GridUtils.WorldToCell(grid, new float3(takeoffPosition.x, takeoffPosition.y, takeoffPosition.z));
+        int2 landingCell = GridUtils.WorldToCell(grid, new float3(landingPosition.x, landingPosition.y, landingPosition.z));
+        if (!GridUtils.InBounds(takeoffCell, grid.Width, grid.Height) ||
+            !GridUtils.InBounds(landingCell, grid.Width, grid.Height))
+        {
+            return;
+        }
+
+        buffer.Add(new BuildingFactionRunwayReadModel
+        {
+            FactionId = building.OwnerFactionId,
+            BuildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName),
+            BuildingRuntimeId = building.Id,
+            TakeoffCell = takeoffCell,
+            LandingCell = landingCell,
+            TakeoffPosition = new float3(takeoffPosition.x, takeoffPosition.y, takeoffPosition.z),
+            LandingPosition = new float3(landingPosition.x, landingPosition.y, landingPosition.z),
+            Center = new float3(center.x, center.y, center.z),
+            Direction = new float3(direction.x, direction.y, direction.z),
+            HalfExtents = new float2(halfWidth, halfLength)
+        });
     }
 
     private static bool TryResolveConfiguredBuildingDefinition(

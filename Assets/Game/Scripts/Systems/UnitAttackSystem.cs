@@ -64,6 +64,7 @@ public partial struct UnitAttackSystem : ISystem
         public byte TargetIsStaticGridBlocker;
         public byte IsDebugFireTarget;
         public byte HasAnimationOrder;
+        public byte AircraftAttackWindowBlocked;
     }
 
     private struct StandardAttackPlan
@@ -149,6 +150,7 @@ public partial struct UnitAttackSystem : ISystem
                 bool targetHasTransform = targetExists && em.HasComponent<LocalTransform>(target);
                 bool targetIsStaticGridBlocker = targetExists && em.HasComponent<StaticGridBlocker>(target);
                 bool standardIsDebugFireTarget = targetExists && IsDebugFireTargetForSource(em, target, entity);
+                float3 targetPosition = targetHasTransform ? em.GetComponentData<LocalTransform>(target).Position : float3.zero;
 
                 standardAttackCandidates.Add(new StandardAttackCandidate
                 {
@@ -162,7 +164,7 @@ public partial struct UnitAttackSystem : ISystem
                     SelfHealth = selfHealth.ValueRO.Current,
                     TargetHealth = targetHasHealth ? em.GetComponentData<UnitHealth>(target).Current : 0,
                     AttackerPosition = selfTransform.ValueRO.Position,
-                    TargetPosition = targetHasTransform ? em.GetComponentData<LocalTransform>(target).Position : float3.zero,
+                    TargetPosition = targetPosition,
                     AttackerCell = GridUtils.WorldToCell(grid, selfTransform.ValueRO.Position),
                     TargetCell = engageRw.Cell,
                     SelfCombatRadius = footprintLookup.HasComponent(entity)
@@ -177,7 +179,14 @@ public partial struct UnitAttackSystem : ISystem
                     TargetHasTransform = (byte)(targetHasTransform ? 1 : 0),
                     TargetIsStaticGridBlocker = (byte)(targetIsStaticGridBlocker ? 1 : 0),
                     IsDebugFireTarget = (byte)(standardIsDebugFireTarget ? 1 : 0),
-                    HasAnimationOrder = (byte)(em.HasBuffer<UnitAnimationOrderEntry>(entity) ? 1 : 0)
+                    HasAnimationOrder = (byte)(em.HasBuffer<UnitAnimationOrderEntry>(entity) ? 1 : 0),
+                    AircraftAttackWindowBlocked = (byte)(IsRunwayAircraftAttackWindowBlocked(
+                        em,
+                        entity,
+                        selfTransform.ValueRO,
+                        attackRo,
+                        targetPosition,
+                        targetHasTransform) ? 1 : 0)
                 });
                 continue;
             }
@@ -550,6 +559,12 @@ public partial struct UnitAttackSystem : ISystem
                 return;
             }
 
+            if (candidate.AircraftAttackWindowBlocked != 0)
+            {
+                Plans[index] = plan;
+                return;
+            }
+
             float3 delta = candidate.TargetPosition - candidate.AttackerPosition;
             delta.y = 0f;
             float range = attackRange + candidate.SelfCombatRadius + candidate.TargetCombatRadius + CellSize * 0.25f;
@@ -587,6 +602,55 @@ public partial struct UnitAttackSystem : ISystem
             plan.ShowTracer = (byte)(tracerShown ? 1 : 0);
             Plans[index] = plan;
         }
+    }
+
+    private static bool IsRunwayAircraftAttackWindowBlocked(
+        EntityManager em,
+        Entity entity,
+        LocalTransform transform,
+        UnitAttack attack,
+        float3 targetPosition,
+        bool hasTargetPosition)
+    {
+        if (!hasTargetPosition ||
+            !em.HasComponent<UnitAirComponent>(entity) ||
+            !em.HasComponent<UnitSourcePrefabKey>(entity))
+        {
+            return false;
+        }
+
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
+        if (airState.UsesRunway == 0 ||
+            !FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(em.GetComponentData<UnitSourcePrefabKey>(entity).Value))
+        {
+            return false;
+        }
+
+        if (airState.Airborne == 0 || airState.AttackRunActive == 0)
+            return true;
+
+        return !IsFacingOrNearAttackTarget(transform, targetPosition, attack.Range);
+    }
+
+    private static bool IsFacingOrNearAttackTarget(LocalTransform transform, float3 targetPosition, float attackRange)
+    {
+        float3 toTarget = targetPosition - transform.Position;
+        toTarget.y = 0f;
+        float distanceSq = math.lengthsq(toTarget);
+        if (distanceSq <= 1e-4f)
+            return true;
+
+        float distance = math.sqrt(distanceSq);
+        float3 targetDirection = toTarget / distance;
+        float3 forward = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
+        forward.y = 0f;
+        forward = math.normalizesafe(forward, targetDirection);
+        float alignment = math.dot(forward, targetDirection);
+        if (alignment >= 0.88f)
+            return true;
+
+        float nearDistance = math.clamp(math.max(0f, attackRange) * 0.45f, 12f, 45f);
+        return distance <= nearDistance && alignment >= 0.15f;
     }
 
     private static float GetCombatRadius(int2 footprintSize, float cellSize)

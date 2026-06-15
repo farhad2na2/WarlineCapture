@@ -58,6 +58,20 @@ public struct BuildingFactionProductionSpawnPointReadModel : IBufferElementData
     public float3 WorldPosition;
 }
 
+public struct BuildingFactionRunwayReadModel : IBufferElementData
+{
+    public byte FactionId;
+    public FixedString128Bytes BuildingId;
+    public int BuildingRuntimeId;
+    public int2 TakeoffCell;
+    public int2 LandingCell;
+    public float3 TakeoffPosition;
+    public float3 LandingPosition;
+    public float3 Center;
+    public float3 Direction;
+    public float2 HalfExtents;
+}
+
 public struct BuildingRuntimeSurfaceOverlay : IBufferElementData
 {
     public int BuildingRuntimeId;

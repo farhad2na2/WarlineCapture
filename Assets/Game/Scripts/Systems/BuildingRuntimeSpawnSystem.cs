@@ -349,13 +349,13 @@ internal sealed class BuildingRuntimeSpawnSystem
             Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - placementFootprint.y)));
 
         RectInt preferredPlacementRect = context.GetEffectivePlacementRect(definition, clampedPreferred, grid, rotateVertical);
+        int footprintSearchRadius = Mathf.Max(placementFootprint.x, placementFootprint.y) * 4;
         int maxSearchRadius = Mathf.Max(
             24,
             Mathf.Min(
                 160,
                 Mathf.Max(
-                    placementFootprint.x,
-                    placementFootprint.y,
+                    footprintSearchRadius,
                     preferredPlacementRect.width,
                     preferredPlacementRect.height)));
         for (int radius = 0; radius <= maxSearchRadius; radius++)

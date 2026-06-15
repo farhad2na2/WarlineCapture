@@ -446,9 +446,19 @@ public partial struct UnitAirMovementSystem : ISystem
 
                         if (stateRw.ReturnApproachInitialized == 0)
                         {
-                            transform.ValueRW.Position = approachPoint;
+                            bool reachedApproachPoint = FlyTowards(
+                                ref transform.ValueRW,
+                                ref unitGrid.ValueRW,
+                                grid,
+                                move.ValueRO.Speed,
+                                dt,
+                                cruiseY,
+                                approachPoint,
+                                true);
+                            if (!reachedApproachPoint)
+                                continue;
+
                             transform.ValueRW.Rotation = quaternion.LookRotationSafe(runwayDirection, math.up());
-                            unitGrid.ValueRW.Cell = GridUtils.WorldToCell(grid, approachPoint);
                             stateRw.ReturnApproachInitialized = 1;
                         }
 

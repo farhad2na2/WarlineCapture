@@ -768,6 +768,7 @@ internal sealed class MatchBootstrapSystem
         EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
         EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
         EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(em, entity);
+        EnsureBuffer<BuildingFactionRunwayReadModel>(em, entity);
         EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
         EnsureBuffer<BuildingFactionResourceSellRequest>(em, entity);
         EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);

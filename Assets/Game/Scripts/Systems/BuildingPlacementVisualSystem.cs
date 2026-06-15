@@ -1,10 +1,20 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementVisualSystem
+internal sealed partial class BuildingPlacementVisualSystem : SystemBase
 {
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
     public delegate bool ShouldAlignGateToNearbyWallDelegate(Vector2Int originCell, BuildingDefinition definition, out bool gateVertical);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
     {

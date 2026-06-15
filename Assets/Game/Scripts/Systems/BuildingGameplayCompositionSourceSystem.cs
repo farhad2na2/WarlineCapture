@@ -52,7 +52,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingDefinitionSystem BuildingDefinitionSystem = new();
     internal readonly BuildingPlacementLifecycleSystem BuildingPlacementLifecycleSystem = new();
     internal readonly BuildingPlacementGridSystem BuildingPlacementGridSystem = new();
-    internal readonly BuildingPlacementVisualSystem BuildingPlacementVisualSystem = new();
+    internal readonly BuildingPlacementVisualSystem BuildingPlacementVisualSystem;
     internal readonly BuildingRuntimeSpawnSystem BuildingRuntimeSpawnSystem = new();
     internal readonly BuildingRuntimeSpawnCommandBoundary BuildingRuntimeSpawnCommandBoundary = new();
     internal readonly BuildingRuntimeContextSystem BuildingRuntimeContextSystem = new();
@@ -93,6 +93,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
+        BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
     }
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
@@ -132,6 +133,14 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>()
+            : null;
+    }
+
+    private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualSystem>()
             : null;
     }
 }

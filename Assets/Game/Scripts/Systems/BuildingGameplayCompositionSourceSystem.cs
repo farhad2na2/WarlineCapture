@@ -1,11 +1,13 @@
+using Unity.Entities;
+
 internal sealed class BuildingGameplayCompositionSourceSystem
 {
     internal readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     internal readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
-    internal readonly BuildingVisualSystem BuildingVisualSystem = new();
+    internal readonly BuildingVisualSystem BuildingVisualSystem;
     internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem = new();
     internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();
-    internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem = new();
+    internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
     internal readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem = new();
     internal readonly BuildingCombatSystem BuildingCombatSystem = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
@@ -83,4 +85,26 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
     internal BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
+
+    public BuildingGameplayCompositionSourceSystem()
+    {
+        BuildingVisualSystem = ResolveBuildingVisualSystem();
+        BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
+    }
+
+    private static BuildingVisualSystem ResolveBuildingVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingVisualSystem>()
+            : null;
+    }
+
+    private static BuildingFactionVisualSystem ResolveBuildingFactionVisualSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>()
+            : null;
+    }
 }

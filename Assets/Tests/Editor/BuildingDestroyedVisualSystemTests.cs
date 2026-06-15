@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,6 +12,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     private GameObject _building;
     private GameObject _aliveRoot;
     private GameObject _destroyedPrefab;
+    private World _world;
 
     public static void RunFocusedValidation()
     {
@@ -79,6 +81,9 @@ public sealed class BuildingDestroyedVisualSystemTests
             Object.DestroyImmediate(_root);
         if (_destroyedPrefab != null)
             Object.DestroyImmediate(_destroyedPrefab);
+        if (_world != null && _world.IsCreated)
+            _world.Dispose();
+        _world = null;
     }
 
     [Test]
@@ -87,7 +92,7 @@ public sealed class BuildingDestroyedVisualSystemTests
         RuntimeBuildingEntity building = CreateBuilding();
         var system = new BuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
-            new BuildingVisualSystem(),
+            CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
 
         system.BeginDestroyedVisual(context, building);
@@ -111,7 +116,7 @@ public sealed class BuildingDestroyedVisualSystemTests
         RuntimeBuildingEntity building = CreateBuilding();
         var system = new BuildingDestroyedVisualSystem();
         var context = new BuildingDestroyedVisualSystem.Context(
-            new BuildingVisualSystem(),
+            CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
 
         system.BeginDestroyedVisual(context, building);
@@ -127,6 +132,12 @@ public sealed class BuildingDestroyedVisualSystemTests
 
         Assert.IsNull(building.DestroyedVisualInstance);
         Assert.IsTrue(firstInstance == null);
+    }
+
+    private BuildingVisualSystem CreateBuildingVisualSystem()
+    {
+        _world ??= new World(nameof(BuildingDestroyedVisualSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
     }
 
     private RuntimeBuildingEntity CreateBuilding()

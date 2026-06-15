@@ -204,7 +204,9 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 
     public void DisposeRuntimeSurface()
     {
-        EntityManager entityManager = EntityManager;
+        if (!TryGetLiveEntityManager(out EntityManager entityManager))
+            return;
+
         using EntityQuery query = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<MapSurfaceComponent>(),
             ComponentType.ReadOnly<MapSurfaceRuntimeBakedBlobTag>());
@@ -215,6 +217,20 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
             DisposeOwnedSurfaceBlob(entityManager, entity);
             if (entityManager.Exists(entity))
                 entityManager.DestroyEntity(entity);
+        }
+    }
+
+    private bool TryGetLiveEntityManager(out EntityManager entityManager)
+    {
+        entityManager = default;
+        try
+        {
+            entityManager = EntityManager;
+            return true;
+        }
+        catch (System.InvalidOperationException)
+        {
+            return false;
         }
     }
 

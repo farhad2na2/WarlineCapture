@@ -1,10 +1,12 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class BuildingVisualSystemTests
 {
     private GameObject _root;
+    private World _world;
 
     [TearDown]
     public void TearDown()
@@ -12,6 +14,9 @@ public sealed class BuildingVisualSystemTests
         if (_root != null)
             Object.DestroyImmediate(_root);
         _root = null;
+        if (_world != null && _world.IsCreated)
+            _world.Dispose();
+        _world = null;
     }
 
     [Test]
@@ -23,7 +28,7 @@ public sealed class BuildingVisualSystemTests
         branch.transform.SetParent(_root.transform);
         target.transform.SetParent(branch.transform);
 
-        var system = new BuildingVisualSystem();
+        BuildingVisualSystem system = CreateSystem();
         Assert.AreSame(target.transform, system.FindDescendantByName(_root.transform, "Target"));
     }
 
@@ -32,7 +37,7 @@ public sealed class BuildingVisualSystemTests
     {
         _root = new GameObject("Root");
 
-        var system = new BuildingVisualSystem();
+        BuildingVisualSystem system = CreateSystem();
         system.SetTransformVisible(_root.transform, false);
         Assert.IsFalse(_root.activeSelf);
 
@@ -47,7 +52,7 @@ public sealed class BuildingVisualSystemTests
         GameObject animated = new("Pump_Y_30");
         animated.transform.SetParent(_root.transform);
 
-        var system = new BuildingVisualSystem();
+        BuildingVisualSystem system = CreateSystem();
         BuildingVisualSystem.AnimatedPart[] parts = system.FindAnimatedBuildingParts(_root.transform);
 
         Assert.IsNotNull(parts);
@@ -61,6 +66,12 @@ public sealed class BuildingVisualSystemTests
 
         system.UpdateAnimatedBuildingParts(parts, false, 1f);
         Assert.Less(Mathf.Abs(Mathf.DeltaAngle(0f, animated.transform.localEulerAngles.y)), 0.01f);
+    }
+
+    private BuildingVisualSystem CreateSystem()
+    {
+        _world ??= new World(nameof(BuildingVisualSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
     }
 }
 #endif

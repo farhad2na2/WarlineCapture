@@ -15,7 +15,8 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         {
             var tests = new MapSurfaceRuntimeBootstrapSystemTests();
             tests.EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset();
-            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=1");
+            tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
+            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=2");
         }
         catch (Exception exception)
         {
@@ -81,6 +82,17 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
             UnityEngine.Object.DestroyImmediate(asset);
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow()
+    {
+        World world = new("MapSurfaceRuntimeBootstrapSystemDisposeTests");
+        MapSurfaceRuntimeBootstrapSystem bootstrap = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
+
+        world.Dispose();
+
+        Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
     }
 
     private static MapSurfaceComponent CreateSurfaceComponent(BlobAssetReference<MapSurfaceBlob> blob)

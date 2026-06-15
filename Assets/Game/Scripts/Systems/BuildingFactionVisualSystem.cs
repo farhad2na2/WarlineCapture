@@ -1,6 +1,7 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingFactionVisualSystem
+internal sealed partial class BuildingFactionVisualSystem : SystemBase
 {
     public readonly struct Context
     {
@@ -17,6 +18,15 @@ internal sealed class BuildingFactionVisualSystem
             PropertyBlock = propertyBlock;
             TintStrength = Mathf.Clamp01(tintStrength);
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void CacheBuildingRenderers(RuntimeBuildingEntity building, Transform visualRoot, Transform destroyedVisual)

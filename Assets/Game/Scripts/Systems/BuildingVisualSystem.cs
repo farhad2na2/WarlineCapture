@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Globalization;
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class BuildingVisualSystem
+public sealed partial class BuildingVisualSystem : SystemBase
 {
     private const string BaseColorProperty = "_BaseColor";
     private const string LegacyColorProperty = "_Color";
@@ -16,6 +17,15 @@ public sealed class BuildingVisualSystem
         public Vector3 Axis;
         public float AngleLimit;
         public float PhaseOffset;
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void ApplyMarkerColor(Renderer[] renderers, Color color, MaterialPropertyBlock propertyBlock)

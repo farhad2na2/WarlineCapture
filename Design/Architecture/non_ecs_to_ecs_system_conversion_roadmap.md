@@ -34,19 +34,19 @@ The first implementation phase must replace this quick scan with an authoritativ
 Always update this section when implementation begins or a phase completes.
 
 - Checklist progress: `99 / 113 complete (87.6%)`.
-- In progress: `0`.
-- Remaining open: `14`.
+- In progress: `1`.
+- Remaining open: `13` unchecked (`14` not complete including in-progress).
 - Phase progress: `11 / 13 phases complete; 1 in progress; 1 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `346` after excluding `113` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `344` after excluding `115` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `251` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `249` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
-- Converted to `SystemBase`: `7`.
+- Converted to `SystemBase`: `9`.
 - Folded into ECS owners/jobs: `37`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `346`.
+- Remaining plain runtime gameplay `*System` classes: `344`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 converted the RTS camera request/data owner to a managed ECS boundary and kept camera application managed.
+- Last implementation update: 2026-06-15 converted building visual renderer/tint helpers to managed ECS boundaries and kept Phase 11 visual inventory in progress.
 
 ## Architecture Rules
 
@@ -677,7 +677,7 @@ Implementation steps:
 
 - [x] Inventory camera systems and convert only request/data parts to ECS.
 - [x] Keep camera application in managed boundary code.
-- [ ] Inventory building/unit visual systems and split ECS read-model updates from GameObject visual application.
+- [~] Inventory building/unit visual systems and split ECS read-model updates from GameObject visual application.
 - [ ] Inventory runtime city/environment generation systems.
 - [ ] Split runtime city planning/data from prefab spawning and coroutine/yield boundaries.
 - [ ] Keep editor-only tooling out of runtime conversion.
@@ -692,6 +692,7 @@ Acceptance checks:
 Progress notes:
 
 - 2026-06-15: Began Phase 11 by inventorying the RTS camera boundary. Converted `RtsCameraRequestSystem` from a plain helper into a disabled managed `SystemBase` resolved from `World.DefaultGameObjectInjectionWorld`, preserving the existing ECS request queue/state components while keeping `RtsCameraSystem`, `SelectionUiCameraSystem`, and `RtsSelectionRuntimeCameraSystem` as managed camera/UI application boundaries. Updated focused camera validation to resolve the request owner from its temporary ECS world and regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `346`, Unity ECS exclusions are now `113`, and converted-to-`SystemBase` count is now `7`.
+- 2026-06-15: Continued the Phase 11 visual boundary inventory by converting `BuildingVisualSystem` and `BuildingFactionVisualSystem` into disabled managed `SystemBase` boundaries resolved from `World.DefaultGameObjectInjectionWorld`. Building runtime composition now keeps renderer traversal, material property blocks, selection marker sizing, owner tinting, and destroyed-visual setup in managed ECS boundaries while leaving `BuildingRuntimeVisualSystem`, `BuildingRuntimeOwnershipSystem`, and marker/destroyed visual orchestration as managed callers for the remaining split. Added focused validation entry points for building faction visuals and updated existing building visual tests to resolve the managed boundaries from temporary ECS worlds. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `344`, Unity ECS exclusions are now `115`, and converted-to-`SystemBase` count is now `9`.
 
 ## Phase 12: Final Guardrails And Cleanup
 

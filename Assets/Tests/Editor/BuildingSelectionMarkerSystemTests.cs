@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public sealed class BuildingSelectionMarkerSystemTests
 
     private GameObject _markerPrefab;
     private GameObject _root;
+    private World _world;
     private readonly System.Collections.Generic.List<GameObject> _objects = new();
 
     public static void RunFocusedValidation()
@@ -66,6 +68,9 @@ public sealed class BuildingSelectionMarkerSystemTests
             Object.DestroyImmediate(_markerPrefab);
         if (_root != null)
             Object.DestroyImmediate(_root);
+        if (_world != null && _world.IsCreated)
+            _world.Dispose();
+        _world = null;
     }
 
     [Test]
@@ -199,8 +204,8 @@ public sealed class BuildingSelectionMarkerSystemTests
         var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity> { { 1, building } };
         var context = new BuildingRuntimeVisualSystem.Context(
             runtimeBuildings,
-            new BuildingVisualSystem(),
-            new BuildingFactionVisualSystem(),
+            CreateBuildingVisualSystem(),
+            CreateBuildingFactionVisualSystem(),
             new BuildingBarrierSystem(),
             null,
             new MaterialPropertyBlock(),
@@ -272,10 +277,22 @@ public sealed class BuildingSelectionMarkerSystemTests
                 (origin.y + footprint.y * 0.5f) * resolvedGrid.CellSize),
             _markerPrefab,
             _root.transform,
-            new BuildingVisualSystem(),
+            CreateBuildingVisualSystem(),
             null,
             new MaterialPropertyBlock(),
             Object.DestroyImmediate);
+    }
+
+    private BuildingVisualSystem CreateBuildingVisualSystem()
+    {
+        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
+    }
+
+    private BuildingFactionVisualSystem CreateBuildingFactionVisualSystem()
+    {
+        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>();
     }
 
     private RuntimeBuildingEntity CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)

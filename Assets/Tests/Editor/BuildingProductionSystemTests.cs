@@ -996,6 +996,7 @@ public sealed class BuildingProductionSystemTests
     {
         GameObject runtimeRoot = new("RuntimeTransports_Test");
         GameObject airPrefab = new("Unit_Veh_Jet_02");
+        using var world = new World(nameof(PrewarmConfiguredProductionTransportPools_ParentsSelfArrivingAirUnitsUnderRuntimeRoot));
         try
         {
             UnitGridAuthoring airAuthoring = airPrefab.AddComponent<UnitGridAuthoring>();
@@ -1014,7 +1015,7 @@ public sealed class BuildingProductionSystemTests
                 new[] { airPrefab },
                 new Dictionary<string, GameObject> { ["unit_veh_jet_02"] = airPrefab },
                 null,
-                new BuildingVisualSystem());
+                world.GetOrCreateSystemManaged<BuildingVisualSystem>());
 
             Assert.AreEqual(2, runtimeRoot.transform.childCount, "Self-arriving air transport prewarm should still keep the default warm pool size.");
             for (int i = 0; i < runtimeRoot.transform.childCount; i++)

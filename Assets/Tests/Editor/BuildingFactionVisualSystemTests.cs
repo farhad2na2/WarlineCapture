@@ -1,11 +1,58 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
+using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public sealed class BuildingFactionVisualSystemTests
 {
     private GameObject _root;
     private Material _material;
+    private World _world;
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(nameof(CacheBuildingRenderersExcludesDestroyedVisual),
+                test => test.CacheBuildingRenderersExcludesDestroyedVisual());
+            RunCase(nameof(CacheBuildingRenderersExcludesRunwayVisualsForAirportBuildings),
+                test => test.CacheBuildingRenderersExcludesRunwayVisualsForAirportBuildings());
+            RunCase(nameof(FactionVisualSettingsUsesNeutralPlayerEnemyFactionMapping),
+                test => test.FactionVisualSettingsUsesNeutralPlayerEnemyFactionMapping());
+            RunCase(nameof(ApplyOwnerFactionTintsCachedRenderersAndClearRestoresBaseColor),
+                test => test.ApplyOwnerFactionTintsCachedRenderersAndClearRestoresBaseColor());
+            Debug.Log("[BuildingFactionVisualFocusedValidation] result=Passed tests=4");
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BuildingFactionVisualFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunCase(string name, Action<BuildingFactionVisualSystemTests> action)
+    {
+        BuildingFactionVisualSystemTests tests = new();
+        tests.SetUp();
+        try
+        {
+            action(tests);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BuildingFactionVisualFocusedValidation] result=Failed test={name} error={exception}");
+            throw;
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -26,6 +73,9 @@ public sealed class BuildingFactionVisualSystemTests
             Object.DestroyImmediate(_root);
         if (_material != null)
             Object.DestroyImmediate(_material);
+        if (_world != null && _world.IsCreated)
+            _world.Dispose();
+        _world = null;
     }
 
     [Test]
@@ -37,7 +87,7 @@ public sealed class BuildingFactionVisualSystemTests
         destroyed.transform.SetParent(_root.transform, false);
         Renderer destroyedRenderer = CreateRenderer("DestroyedModel", destroyed.transform);
 
-        var system = new BuildingFactionVisualSystem();
+        BuildingFactionVisualSystem system = CreateSystem();
         system.CacheBuildingRenderers(building, _root.transform, destroyed.transform);
 
         Assert.AreEqual(1, building.FactionVisualRenderers.Length);
@@ -58,7 +108,7 @@ public sealed class BuildingFactionVisualSystemTests
         Renderer runwayRenderer = CreateRenderer("Runway_Surface", runway.transform);
         Renderer barrierRenderer = CreateRenderer("SM_Prop_Runway_Barrier_02", _root.transform);
 
-        var system = new BuildingFactionVisualSystem();
+        BuildingFactionVisualSystem system = CreateSystem();
         system.CacheBuildingRenderers(building, _root.transform, null);
 
         Assert.AreEqual(1, building.FactionVisualRenderers.Length);
@@ -90,7 +140,7 @@ public sealed class BuildingFactionVisualSystemTests
         };
         _root.AddComponent<MapAuthoredBuildingVisualComponent>();
 
-        var system = new BuildingFactionVisualSystem();
+        BuildingFactionVisualSystem system = CreateSystem();
         MaterialPropertyBlock propertyBlock = new();
         system.CacheBuildingRenderers(building, _root.transform, null);
 
@@ -119,6 +169,12 @@ public sealed class BuildingFactionVisualSystemTests
         Assert.That(restored.r, Is.EqualTo(1f).Within(0.001f));
         Assert.That(restored.g, Is.EqualTo(1f).Within(0.001f));
         Assert.That(restored.b, Is.EqualTo(1f).Within(0.001f));
+    }
+
+    private BuildingFactionVisualSystem CreateSystem()
+    {
+        _world ??= new World(nameof(BuildingFactionVisualSystemTests));
+        return _world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>();
     }
 
     private Renderer CreateRenderer(string name, Transform parent)

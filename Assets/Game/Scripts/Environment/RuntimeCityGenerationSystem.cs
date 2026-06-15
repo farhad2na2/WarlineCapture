@@ -7,20 +7,20 @@ internal sealed class RuntimeCityGenerationSystem
 {
     public bool TryBegin(Context context)
     {
-        if (context.LifecycleSystem == null)
+        if (context.LifecycleState == null)
             return false;
-        if (context.LifecycleSystem.IsSpawned || context.LifecycleSystem.IsGenerating)
+        if (context.LifecycleState.IsSpawned || context.LifecycleState.IsGenerating)
             return false;
         if (context.CityConfig.CityCount <= 0)
             return false;
 
-        return context.LifecycleSystem.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext);
+        return context.LifecycleState.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext);
     }
 
     private IEnumerator GenerateCityRoutine(Context context)
     {
         RuntimeCityConfigSystem.Snapshot cityConfig = context.CityConfig;
-        if (context.LifecycleSystem.IsSpawned)
+        if (context.LifecycleState.IsSpawned)
             yield break;
 
         if (cityConfig.CityCount <= 0)
@@ -177,7 +177,7 @@ internal sealed class RuntimeCityGenerationSystem
                 context.SpawnBridgeSystem.EndDeferredSideEffects();
 
             context.MinimapEvents?.PublishStaticMinimapChanged();
-            context.LifecycleSystem.CompleteGeneration(cities.Count, context.LifecycleContext);
+            context.LifecycleState.CompleteGeneration(cities.Count, context.LifecycleContext);
         }
         finally
         {
@@ -283,9 +283,9 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
         public readonly GridConfig Grid;
         public readonly int RoadCellSizeInGridCells;
-        public readonly RuntimeCityLifecycleSystem LifecycleSystem;
+        public readonly RuntimeCityLifecycleState LifecycleState;
         public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
-        public readonly RuntimeCityLayoutSystem LayoutSystem;
+        public readonly RuntimeCityLayoutState LayoutSystem;
         public readonly RuntimeCityWalkabilitySystem WalkabilitySystem;
         public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
         public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
@@ -308,9 +308,9 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityConfigSystem.Snapshot cityConfig,
             GridConfig grid,
             int roadCellSizeInGridCells,
-            RuntimeCityLifecycleSystem lifecycleSystem,
+            RuntimeCityLifecycleState lifecycleState,
             RuntimeCityLifecycleSystem.Context lifecycleContext,
-            RuntimeCityLayoutSystem layoutSystem,
+            RuntimeCityLayoutState layoutSystem,
             RuntimeCityWalkabilitySystem walkabilitySystem,
             RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
             RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
@@ -332,7 +332,7 @@ internal sealed class RuntimeCityGenerationSystem
             CityConfig = cityConfig;
             Grid = grid;
             RoadCellSizeInGridCells = roadCellSizeInGridCells;
-            LifecycleSystem = lifecycleSystem;
+            LifecycleState = lifecycleState;
             LifecycleContext = lifecycleContext;
             LayoutSystem = layoutSystem;
             WalkabilitySystem = walkabilitySystem;

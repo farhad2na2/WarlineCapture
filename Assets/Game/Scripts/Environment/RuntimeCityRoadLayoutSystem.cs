@@ -1,10 +1,71 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityRoadLayoutSystem
+internal sealed partial class RuntimeCityRoadLayoutSystem : SystemBase
+{
+    private readonly RuntimeCityRoadLayoutState _state = new();
+
+    public RuntimeCityRoadLayoutState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public List<List<Vector2Int>> BuildTownRoadStrokes(
+        Vector2Int center,
+        int townRadius,
+        int plazaRadius,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.BuildTownRoadStrokes(center, townRadius, plazaRadius, ref rng);
+    }
+
+    public List<Vector2Int> BuildStraightRoadPath(Vector2Int start, Vector2Int end)
+    {
+        return _state.BuildStraightRoadPath(start, end);
+    }
+
+    public List<Vector2Int> BuildCityToCityAutobahnPath(
+        CityLayoutData fromCity,
+        CityLayoutData toCity,
+        CityChainAxis chainAxis)
+    {
+        return _state.BuildCityToCityAutobahnPath(fromCity, toCity, chainAxis);
+    }
+
+    public List<Vector2Int> BuildAutobahnPath(
+        HashSet<Vector2Int> roadCells,
+        Vector2Int centerRoadCell,
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int autobahnEdgeMarginRoadCells,
+        int autobahnMinLengthRoadCells)
+    {
+        return _state.BuildAutobahnPath(
+            roadCells,
+            centerRoadCell,
+            grid,
+            roadCellSizeInGridCells,
+            autobahnEdgeMarginRoadCells,
+            autobahnMinLengthRoadCells);
+    }
+
+    public void AddStroke(List<List<Vector2Int>> strokes, Vector2Int start, Vector2Int end)
+    {
+        _state.AddStroke(strokes, start, end);
+    }
+}
+
+internal sealed class RuntimeCityRoadLayoutState
 {
     public struct AutobahnAnchorCandidate
     {

@@ -60,8 +60,8 @@ internal sealed class RuntimeCityChainSystem
             Vector2Int sourceInnerConnection = context.IngressSystem.GetCityInnerConnectionCell(context.CityConfig, currentCity.CenterRoadCell, direction);
             Vector2Int targetCenter = currentCity.CenterRoadCell + direction * (autobahnLength + cityConnectionOffset * 2);
 
-            if (!RuntimeCityLayoutSystem.IsRoadCellWithinBounds(sourceInnerConnection, minRoadX, maxRoadX, minRoadY, maxRoadY) ||
-                !RuntimeCityLayoutSystem.IsRoadCellWithinBounds(targetCenter, minRoadX, maxRoadX, minRoadY, maxRoadY))
+            if (!RuntimeCityLayoutState.IsRoadCellWithinBounds(sourceInnerConnection, minRoadX, maxRoadX, minRoadY, maxRoadY) ||
+                !RuntimeCityLayoutState.IsRoadCellWithinBounds(targetCenter, minRoadX, maxRoadX, minRoadY, maxRoadY))
             {
                 continue;
             }
@@ -85,8 +85,8 @@ internal sealed class RuntimeCityChainSystem
                 continue;
             }
 
-            if (!RuntimeCityLayoutSystem.IsRoadCellWithinBounds(sourceConnectionCell, minRoadX, maxRoadX, minRoadY, maxRoadY) ||
-                !RuntimeCityLayoutSystem.IsRoadCellWithinBounds(targetConnectionCell, minRoadX, maxRoadX, minRoadY, maxRoadY))
+            if (!RuntimeCityLayoutState.IsRoadCellWithinBounds(sourceConnectionCell, minRoadX, maxRoadX, minRoadY, maxRoadY) ||
+                !RuntimeCityLayoutState.IsRoadCellWithinBounds(targetConnectionCell, minRoadX, maxRoadX, minRoadY, maxRoadY))
             {
                 continue;
             }
@@ -234,8 +234,8 @@ internal sealed class RuntimeCityChainSystem
     public readonly struct Context
     {
         public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
-        public readonly RuntimeCityLayoutSystem LayoutSystem;
-        public readonly RuntimeCityRoadLayoutSystem RoadLayoutSystem;
+        public readonly RuntimeCityLayoutState LayoutSystem;
+        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
         public readonly RuntimeCityPrefabSelectionSystem PrefabSelectionSystem;
         public readonly RuntimeCityRoadCommitSystem RoadCommitSystem;
         public readonly RuntimeCityIngressSystem IngressSystem;
@@ -243,8 +243,8 @@ internal sealed class RuntimeCityChainSystem
 
         public Context(
             RuntimeCityConfigSystem.Snapshot cityConfig,
-            RuntimeCityLayoutSystem layoutSystem,
-            RuntimeCityRoadLayoutSystem roadLayoutSystem,
+            RuntimeCityLayoutState layoutSystem,
+            RuntimeCityRoadLayoutState roadLayoutSystem,
             RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
             RuntimeCityRoadCommitSystem roadCommitSystem,
             RuntimeCityIngressSystem ingressSystem,

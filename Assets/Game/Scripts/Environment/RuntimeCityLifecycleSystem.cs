@@ -1,6 +1,84 @@
 using System.Collections;
+using Unity.Entities;
 
-internal sealed class RuntimeCityLifecycleSystem
+internal sealed partial class RuntimeCityLifecycleSystem : SystemBase
+{
+    private readonly RuntimeCityLifecycleState _state = new();
+
+    public RuntimeCityLifecycleState State => _state;
+
+    public bool IsSpawned => _state.IsSpawned;
+    public bool IsGenerating => _state.IsGenerating;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public bool HasSpawned(int cityCount)
+    {
+        return _state.HasSpawned(cityCount);
+    }
+
+    public bool ShouldYield(int completedWorkItems, int generationYieldInterval)
+    {
+        return _state.ShouldYield(completedWorkItems, generationYieldInterval);
+    }
+
+    public void MarkSpawned()
+    {
+        _state.MarkSpawned();
+    }
+
+    public void CancelGeneration()
+    {
+        _state.CancelGeneration();
+    }
+
+    public bool TryBeginGeneration(IEnumerator generationRoutine, Context context)
+    {
+        return _state.TryBeginGeneration(generationRoutine, context);
+    }
+
+    public void Tick(Context context)
+    {
+        _state.Tick(context);
+    }
+
+    public void CompleteGeneration(int generatedCityCount, Context context)
+    {
+        _state.CompleteGeneration(generatedCityCount, context);
+    }
+
+    public readonly struct Context
+    {
+        public readonly int FrameCount;
+        public readonly int CityCount;
+        public readonly bool GenerateBuildings;
+        public readonly int GenerationYieldInterval;
+        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+
+        public Context(
+            int frameCount,
+            int cityCount,
+            bool generateBuildings,
+            int generationYieldInterval,
+            RuntimeCityDiagnosticSystem diagnostics)
+        {
+            FrameCount = frameCount;
+            CityCount = cityCount;
+            GenerateBuildings = generateBuildings;
+            GenerationYieldInterval = generationYieldInterval;
+            Diagnostics = diagnostics;
+        }
+    }
+}
+
+internal sealed class RuntimeCityLifecycleState
 {
     private IEnumerator _generationRoutine;
     private int _generationStartedFrame = -1;
@@ -34,7 +112,7 @@ internal sealed class RuntimeCityLifecycleSystem
         _generationRoutine = null;
     }
 
-    public bool TryBeginGeneration(IEnumerator generationRoutine, Context context)
+    public bool TryBeginGeneration(IEnumerator generationRoutine, RuntimeCityLifecycleSystem.Context context)
     {
         if (_spawned || _generationRoutine != null || generationRoutine == null)
             return false;
@@ -55,7 +133,7 @@ internal sealed class RuntimeCityLifecycleSystem
         return true;
     }
 
-    public void Tick(Context context)
+    public void Tick(RuntimeCityLifecycleSystem.Context context)
     {
         if (_generationRoutine == null)
             return;
@@ -87,7 +165,7 @@ internal sealed class RuntimeCityLifecycleSystem
             _spawned);
     }
 
-    public void CompleteGeneration(int generatedCityCount, Context context)
+    public void CompleteGeneration(int generatedCityCount, RuntimeCityLifecycleSystem.Context context)
     {
         _spawned = true;
         _generationRoutine = null;
@@ -99,26 +177,4 @@ internal sealed class RuntimeCityLifecycleSystem
             generatedCityCount);
     }
 
-    public readonly struct Context
-    {
-        public readonly int FrameCount;
-        public readonly int CityCount;
-        public readonly bool GenerateBuildings;
-        public readonly int GenerationYieldInterval;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
-
-        public Context(
-            int frameCount,
-            int cityCount,
-            bool generateBuildings,
-            int generationYieldInterval,
-            RuntimeCityDiagnosticSystem diagnostics)
-        {
-            FrameCount = frameCount;
-            CityCount = cityCount;
-            GenerateBuildings = generateBuildings;
-            GenerationYieldInterval = generationYieldInterval;
-            Diagnostics = diagnostics;
-        }
-    }
 }

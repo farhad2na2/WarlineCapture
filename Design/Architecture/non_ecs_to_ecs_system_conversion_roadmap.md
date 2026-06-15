@@ -37,16 +37,16 @@ Always update this section when implementation begins or a phase completes.
 - In progress: `2`.
 - Remaining open: `11` unchecked (`13` not complete including in-progress).
 - Phase progress: `11 / 13 phases complete; 1 in progress; 1 not started`.
-- Authoritative non-ECS runtime `*System` inventory: `327` after excluding `132` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
+- Authoritative non-ECS runtime `*System` inventory: `324` after excluding `135` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
-- Proposed inventory dispositions: `6` ConvertToISystem, `232` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
+- Proposed inventory dispositions: `6` ConvertToISystem, `229` ConvertToSystemBase, `68` FoldIntoOwner, `21` PassiveBoundary, and `0` ReviewRequired.
 - Converted to `ISystem`: `17`.
-- Converted to `SystemBase`: `26`.
+- Converted to `SystemBase`: `29`.
 - Folded into ECS owners/jobs: `37`.
 - Kept as passive view/config/authoring/editor boundary: `5`.
-- Remaining plain runtime gameplay `*System` classes: `327`.
+- Remaining plain runtime gameplay `*System` classes: `324`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-15 converted runtime city startup gating to managed ECS and kept runtime city split work open.
+- Last implementation update: 2026-06-15 converted runtime city layout planning to managed ECS and kept runtime city split work open.
 
 ## Architecture Rules
 
@@ -709,6 +709,9 @@ Progress notes:
 - 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityDiagnosticSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Runtime city lifecycle/startup/generation diagnostics remain gated in the diagnostics boundary, and validation/no-world paths continue to tolerate a missing diagnostics boundary through nullable context references. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `329`, Unity ECS exclusions are now `130`, and converted-to-`SystemBase` count is now `24`.
 - 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityBuildingSpawnContextSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Building spawn context projection now prefers the ECS-managed boundary while retaining a static fallback factory for validation/no-world paths that need to build the same managed prefab/visual/spawn context before a world exists. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `328`, Unity ECS exclusions are now `131`, and converted-to-`SystemBase` count is now `25`.
 - 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityStartupSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Startup gating, manual generation gating, blocker description, and the initial-spawn wait diagnostic throttle now live behind the ECS-managed startup boundary, while composition keeps a narrow `RuntimeCityStartupState` fallback for validation/no-world paths. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `327`, Unity ECS exclusions are now `132`, and converted-to-`SystemBase` count is now `26`.
+- 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityLifecycleSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Coroutine generation state, spawned/generating read state, generation cancellation, lifecycle diagnostics, and yield cadence now live behind the ECS-managed lifecycle boundary, while composition keeps a narrow `RuntimeCityLifecycleState` fallback for validation/no-world paths and `RuntimeCityGenerationSystem` consumes the state instead of constructing the former plain system. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `326`, Unity ECS exclusions are now `133`, and converted-to-`SystemBase` count is now `27`.
+- 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityRoadLayoutSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Town road stroke creation, straight road path creation, autobahn anchor/path selection, and stroke appending now live behind an ECS-managed road-layout boundary, while composition keeps a narrow `RuntimeCityRoadLayoutState` fallback for validation/no-world paths and chain/ingress contexts consume the state instead of constructing the former plain system. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `325`, Unity ECS exclusions are now `134`, and converted-to-`SystemBase` count is now `28`.
+- 2026-06-15: Continued the runtime city planning/data split by converting `RuntimeCityLayoutSystem` into a disabled managed `SystemBase` boundary resolved by `RuntimeCityCompositionSystem`. Town radius calculation, city-chain axis selection, center planning, buildable-road bounds, base-exclusion avoidance, and city-spacing checks now live behind `RuntimeCityLayoutState`, while composition keeps a no-world fallback and generation/chain contexts consume the state instead of constructing the former plain system. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `324`, Unity ECS exclusions are now `135`, and converted-to-`SystemBase` count is now `29`.
 
 ## Phase 12: Final Guardrails And Cleanup
 

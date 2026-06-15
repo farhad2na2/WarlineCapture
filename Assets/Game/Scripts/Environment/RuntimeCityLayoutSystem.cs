@@ -1,9 +1,25 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
+using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
+using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityLayoutSystem
+internal sealed partial class RuntimeCityLayoutSystem : SystemBase
 {
+    private readonly RuntimeCityLayoutState _state = new();
+
+    public RuntimeCityLayoutState State => _state;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public enum CityChainAxis
     {
         Horizontal,
@@ -24,6 +40,106 @@ internal sealed class RuntimeCityLayoutSystem
         public List<ReservedFootprint> ReservedFootprints = new();
     }
 
+    public int CalculateTownRadius(RuntimeCityConfigSystem.Snapshot config)
+    {
+        return _state.CalculateTownRadius(config);
+    }
+
+    public CityChainAxis ChooseCityChainAxis(
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int hallPlazaRadiusRoadCells)
+    {
+        return _state.ChooseCityChainAxis(grid, roadCellSizeInGridCells, hallPlazaRadiusRoadCells);
+    }
+
+    public List<Vector2Int> BuildCityCenters(
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int townRadius,
+        CityChainAxis chainAxis,
+        RuntimeCityConfigSystem.Snapshot config,
+        ref Unity.Mathematics.Random rng)
+    {
+        return _state.BuildCityCenters(grid, roadCellSizeInGridCells, townRadius, chainAxis, config, ref rng);
+    }
+
+    public Vector2Int ClampRoadCellToBuildableArea(
+        Vector2Int roadCell,
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int townRadius,
+        int hallPlazaRadiusRoadCells)
+    {
+        return _state.ClampRoadCellToBuildableArea(
+            roadCell,
+            grid,
+            roadCellSizeInGridCells,
+            townRadius,
+            hallPlazaRadiusRoadCells);
+    }
+
+    public Vector2Int FindNearestRoadCellOutsideBaseExclusions(
+        Vector2Int roadCell,
+        List<RectInt> baseExclusionRoadRects,
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int townRadius,
+        int hallPlazaRadiusRoadCells)
+    {
+        return _state.FindNearestRoadCellOutsideBaseExclusions(
+            roadCell,
+            baseExclusionRoadRects,
+            grid,
+            roadCellSizeInGridCells,
+            townRadius,
+            hallPlazaRadiusRoadCells);
+    }
+
+    public bool IsCityCenterFarEnough(
+        Vector2Int candidateCenter,
+        List<CityLayoutData> existingCities,
+        int townRadius,
+        List<RectInt> baseExclusionRoadRects,
+        RuntimeCityConfigSystem.Snapshot config)
+    {
+        return _state.IsCityCenterFarEnough(candidateCenter, existingCities, townRadius, baseExclusionRoadRects, config);
+    }
+
+    public void GetRoadGridBounds(
+        GridConfig grid,
+        int roadCellSizeInGridCells,
+        int townRadius,
+        int hallPlazaRadiusRoadCells,
+        out int minRoadX,
+        out int maxRoadX,
+        out int minRoadY,
+        out int maxRoadY)
+    {
+        _state.GetRoadGridBounds(
+            grid,
+            roadCellSizeInGridCells,
+            townRadius,
+            hallPlazaRadiusRoadCells,
+            out minRoadX,
+            out maxRoadX,
+            out minRoadY,
+            out maxRoadY);
+    }
+
+    public static bool IsRoadCellInsideAnyBaseExclusion(Vector2Int roadCell, List<RectInt> baseExclusionRoadRects)
+    {
+        return RuntimeCityLayoutState.IsRoadCellInsideAnyBaseExclusion(roadCell, baseExclusionRoadRects);
+    }
+
+    public static bool IsRoadCellWithinBounds(Vector2Int cell, int minRoadX, int maxRoadX, int minRoadY, int maxRoadY)
+    {
+        return RuntimeCityLayoutState.IsRoadCellWithinBounds(cell, minRoadX, maxRoadX, minRoadY, maxRoadY);
+    }
+}
+
+internal sealed class RuntimeCityLayoutState
+{
     public int CalculateTownRadius(RuntimeCityConfigSystem.Snapshot config)
     {
         int totalBuildings = 1 +

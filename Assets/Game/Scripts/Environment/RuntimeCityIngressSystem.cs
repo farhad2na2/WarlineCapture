@@ -83,11 +83,11 @@ internal sealed class RuntimeCityIngressSystem
     public readonly struct Context
     {
         public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
-        public readonly RuntimeCityRoadLayoutSystem RoadLayoutSystem;
+        public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
 
         public Context(
             RuntimeCityConfigSystem.Snapshot cityConfig,
-            RuntimeCityRoadLayoutSystem roadLayoutSystem)
+            RuntimeCityRoadLayoutState roadLayoutSystem)
         {
             CityConfig = cityConfig;
             RoadLayoutSystem = roadLayoutSystem;

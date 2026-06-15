@@ -1,10 +1,20 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenPrefabSelectionSystem
+internal sealed partial class CitizenPrefabSelectionSystem : SystemBase
 {
     private GameObject[] _maleCitizenPrefabs;
     private GameObject[] _femaleCitizenPrefabs;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Init(CitizenPrefabSystem citizenPrefabSystem, CitizenPrefabSystem.Context citizenPrefabContext)
     {

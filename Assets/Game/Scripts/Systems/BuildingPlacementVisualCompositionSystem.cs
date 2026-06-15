@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed class BuildingPlacementVisualCompositionSystem
+internal sealed partial class BuildingPlacementVisualCompositionSystem : SystemBase
 {
     internal delegate bool TryGetGridCellDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -36,6 +36,15 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void UpdatePlacement(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
@@ -49,6 +58,9 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
+        if (source?.BuildingPlacementVisualUpdateSystem == null)
+            return;
+
         source.BuildingPlacementVisualUpdateSystem.UpdatePlacement(
             CreateUpdateContext(
                 source,
@@ -122,6 +134,9 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
+        if (source?.BuildingPlacementVisualUpdateSystem == null)
+            return;
+
         source.BuildingPlacementVisualUpdateSystem.FocusActivePlacement(
             CreateUpdateContext(
                 source,
@@ -150,6 +165,9 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
+        if (source?.BuildingPlacementVisualUpdateSystem == null)
+            return false;
+
         return source.BuildingPlacementVisualUpdateSystem.ValidateActivePlacementForConfirm(
             CreateUpdateContext(
                 source,
@@ -180,6 +198,9 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
+        if (source?.BuildingPlacementVisualUpdateSystem == null)
+            return;
+
         source.BuildingPlacementVisualUpdateSystem.UpdatePlacementVisual(
             CreateUpdateContext(
                 source,
@@ -210,6 +231,9 @@ internal sealed class BuildingPlacementVisualCompositionSystem
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
+        if (source?.BuildingPlacementVisualUpdateSystem == null)
+            return;
+
         source.BuildingPlacementVisualUpdateSystem.PlaceBuilding(
             CreateUpdateContext(
                 source,

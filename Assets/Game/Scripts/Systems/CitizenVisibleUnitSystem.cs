@@ -232,6 +232,9 @@ internal sealed class CitizenVisibleUnitSystem
         CitizenRecordComponent citizen,
         Vector3 worldPosition)
     {
+        if (prefabSelectionSystem == null || citizenPrefabSystem == null)
+            return;
+
         GameObject prefab = prefabSelectionSystem.GetCitizenPrefab(citizen);
         if (prefab == null || !ecsProjection.HasWorld)
             return;

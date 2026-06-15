@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingSpawnPrefabSystem
+internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
 {
     public delegate string ResolveSpawnableLookupKeyDelegate(GameObject prefab);
 
@@ -29,6 +29,15 @@ internal sealed class BuildingSpawnPrefabSystem
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
             ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public bool TryResolveSpawnUnitPrefabFromRegistry(Context context, EntityManager em, Entity prefabEntity, out GameObject spawnUnitPrefab)

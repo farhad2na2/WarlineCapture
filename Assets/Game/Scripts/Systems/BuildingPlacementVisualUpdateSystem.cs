@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed class BuildingPlacementVisualUpdateSystem
+internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
 {
     internal delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     internal delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
@@ -81,6 +81,15 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         }
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal void FocusActivePlacement(Context context, PlacementState placement)
     {
         if (placement != null &&
@@ -135,7 +144,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
             updateCellFromPointer,
             screenPosition,
             grid,
-            Time.time,
+            UnityEngine.Time.time,
             context.TryGetGridCell,
             BuildingPlacementGridSystem.CenterCellToOrigin);
 

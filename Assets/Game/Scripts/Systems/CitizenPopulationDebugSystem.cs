@@ -1,8 +1,17 @@
 using Unity.Entities;
 
-internal sealed class CitizenPopulationDebugSystem
+internal sealed partial class CitizenPopulationDebugSystem : SystemBase
 {
     public delegate bool KillCitizenAction(int citizenId, string reason);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public bool TryGetCitizenDebugSnapshot(
         CitizenPopulationStateSystem state,

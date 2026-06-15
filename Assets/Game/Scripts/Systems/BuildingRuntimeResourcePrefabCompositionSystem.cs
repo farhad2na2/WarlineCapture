@@ -1,9 +1,34 @@
-internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
+using Unity.Entities;
+
+internal sealed partial class BuildingRuntimeResourcePrefabCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public static BuildingRuntimeResourcePrefabContextSystem.Source Create(
+        BuildingRuntimeResourcePrefabCompositionSystem system,
+        BuildingGameplayCompositionSourceSystem source)
+    {
+        return system != null ? system.Create(source) : CreateSource(source);
+    }
+
     public BuildingRuntimeResourcePrefabContextSystem.Source Create(
         BuildingGameplayCompositionSourceSystem source)
     {
-        return source.BuildingRuntimeResourcePrefabContextSystem.CreateSource(
+        return CreateSource(source);
+    }
+
+    private static BuildingRuntimeResourcePrefabContextSystem.Source CreateSource(
+        BuildingGameplayCompositionSourceSystem source)
+    {
+        return BuildingRuntimeResourcePrefabContextSystem.CreateSource(
+            source.BuildingRuntimeResourcePrefabContextSystem,
             source.RuntimeResourceSystem,
             source.RuntimeUnitPrefabSystem,
             source.BuildingDefinitionSystem,
@@ -15,6 +40,6 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
             source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
             source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
             resolveSpawnableLookupKey: source.ResolveSpawnableLookupKey,
-            createCurrentSource: () => Create(source));
+            createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionSystem, source));
     }
 }

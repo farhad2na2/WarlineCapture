@@ -9,9 +9,9 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingGameplayChildSystem _childSystem = new();
     private readonly BuildingGameplayStartupCompositionSystem _startupCompositionSystem = new();
     private readonly BuildingGameplayBindingSystem _bindingSystem = new();
-    private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = new();
+    private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
     private readonly BuildingGameplayDisposalCompositionSystem _disposalCompositionSystem = new();
-    private readonly BuildingMarkerVisualCompositionSystem _markerVisualCompositionSystem = new();
+    private readonly BuildingMarkerVisualCompositionSystem _markerVisualCompositionSystem = ResolveBuildingMarkerVisualCompositionSystem();
     private readonly BuildingRuntimeTickCompositionSystem _runtimeTickCompositionSystem = new();
     private readonly BuildingPlacementInputTickCompositionSystem _placementInputTickCompositionSystem = new();
     private readonly BuildingRuntimeBoundaryCompositionSystem _runtimeBoundaryCompositionSystem = new();
@@ -40,7 +40,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
     {
-        MaterialPropertyBlock markerPropertyBlock = _markerVisualCompositionSystem.GetMarkerPropertyBlock();
+        MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualCompositionSystem.GetMarkerPropertyBlock(_markerVisualCompositionSystem);
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
         childSystems.BuildingDefinitionSystem.ConfigureAuthoringMetadataResolvers(
             tryGetBuildingDefinitionMetadata,
@@ -58,7 +58,9 @@ internal sealed class BuildingGameplayCompositionSystem
             factionVisuals,
             dayNight);
         BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource =
-            childSystems.BuildingRuntimeResourcePrefabCompositionSystem.Create(childSystems);
+            BuildingRuntimeResourcePrefabCompositionSystem.Create(
+                childSystems.BuildingRuntimeResourcePrefabCompositionSystem,
+                childSystems);
         bool tryGetEntityManager(out EntityManager entityManager)
         {
             return childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager);
@@ -245,7 +247,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingPlacementVisualCompositionSystem.CreatePlacementContextSourceDelegate createPlacementContextSource = null;
         BuildingPlacementCommandCompositionSystem.UpdatePlacementVisualDelegate updatePlacementVisual =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement, updateCellFromPointer, screenPosition) =>
-                source.BuildingPlacementVisualCompositionSystem.UpdatePlacementVisual(
+                source.BuildingPlacementVisualCompositionSystem?.UpdatePlacementVisual(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -261,7 +263,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystem.FocusActivePlacementDelegate focusActivePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                source.BuildingPlacementVisualCompositionSystem.FocusActivePlacement(
+                source.BuildingPlacementVisualCompositionSystem?.FocusActivePlacement(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -275,6 +277,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystem.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
+                source.BuildingPlacementVisualCompositionSystem != null &&
                 source.BuildingPlacementVisualCompositionSystem.ValidateActivePlacementForConfirm(
                     source,
                     placementInteractionContext,
@@ -289,7 +292,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystem.PlaceBuildingDelegate placeBuilding =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                source.BuildingPlacementVisualCompositionSystem.PlaceBuilding(
+                source.BuildingPlacementVisualCompositionSystem?.PlaceBuilding(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -303,7 +306,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystem.UpdatePlacementDelegate updatePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
-                source.BuildingPlacementVisualCompositionSystem.UpdatePlacement(
+                source.BuildingPlacementVisualCompositionSystem?.UpdatePlacement(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -381,9 +384,9 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingRuntimeContextSystem.Source buildingRuntimeContextSource =
             createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary =
-            _citizenPopulationCompositionSystem.CreateBoundary();
+            BuildingCitizenPopulationCompositionSystem.CreateBoundary(_citizenPopulationCompositionSystem);
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition =
-            _citizenPopulationCompositionSystem.Create();
+            BuildingCitizenPopulationCompositionSystem.Create(_citizenPopulationCompositionSystem);
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
@@ -487,7 +490,9 @@ internal sealed class BuildingGameplayCompositionSystem
                     (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                     {
                         RuntimeUnitPrefabSystem.Context mapVehiclePrefabContext =
-                            source.BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(runtimeResourcePrefabSource);
+                            BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
+                                source.BuildingRuntimeResourcePrefabContextSystem,
+                                runtimeResourcePrefabSource);
 
                         bool TryGetMapGridData(
                             out Entity gridEntity,
@@ -578,4 +583,19 @@ internal sealed class BuildingGameplayCompositionSystem
                 () => createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock)));
     }
 
+    private static BuildingMarkerVisualCompositionSystem ResolveBuildingMarkerVisualCompositionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingMarkerVisualCompositionSystem>()
+            : null;
+    }
+
+    private static BuildingCitizenPopulationCompositionSystem ResolveBuildingCitizenPopulationCompositionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingCitizenPopulationCompositionSystem>()
+            : null;
+    }
 }

@@ -201,7 +201,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
 
         public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)
         {
-            CitizenPopulationCompositionBridge.Initialize(
+            BuildingCitizenPopulationCompositionSystem.Initialize(
+                CitizenPopulationCompositionBridge,
                 CitizenPopulationCompositionBoundary,
                 CitizenPopulationComposition,
                 RuntimeResourcePrefabContextSystem,
@@ -215,7 +216,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
 
         public void DisposeCitizenPopulation()
         {
-            CitizenPopulationCompositionBridge.Dispose(
+            BuildingCitizenPopulationCompositionSystem.Dispose(
+                CitizenPopulationCompositionBridge,
                 CitizenPopulationCompositionBoundary,
                 CitizenPopulationComposition);
         }
@@ -226,7 +228,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
             CitizenPopulationEventSystem citizenPopulationEventSystem)
         {
-            CitizenPopulationCompositionBridge.Bind(
+            BuildingCitizenPopulationCompositionSystem.Bind(
+                CitizenPopulationCompositionBridge,
                 DependencySystem,
                 dayNight,
                 selectionUiCameraSystem,

@@ -233,7 +233,11 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingProductionSystem,
             source.BuildingProductionSlotSystem,
             source.BuildingSpawnPrefabSystem,
-            source.BuildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(source.BuildingRuntimeResourcePrefabCompositionSystem.Create(source)),
+            BuildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(
+                source.BuildingRuntimeResourcePrefabContextSystem,
+                BuildingRuntimeResourcePrefabCompositionSystem.Create(
+                    source.BuildingRuntimeResourcePrefabCompositionSystem,
+                    source)),
             source.BuildingVisualSystem,
             source.BuildingRuntimeVisualSystem,
             source.BuildingFactionVisualSystem,

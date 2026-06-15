@@ -15,7 +15,7 @@ internal sealed class CitizenPopulationReadModelSystem
         CitizenPopulationEcsProjectionSystem ecsProjection,
         bool syncSummaryEntity)
     {
-        _totals = totalsSystem.Calculate(state, ecsProjection);
+        _totals = CitizenPopulationTotalsSystem.Calculate(totalsSystem, state, ecsProjection);
         if (syncSummaryEntity)
             ecsProjection.TryPublishSummary(_totals);
     }

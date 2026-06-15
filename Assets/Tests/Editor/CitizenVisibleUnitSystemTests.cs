@@ -81,7 +81,7 @@ public sealed class CitizenVisibleUnitSystemTests
                 ComponentType.ReadOnly<Faction>());
 
             var configuredPrefabs = new List<GameObject> { prefab };
-            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var spawnPrefabSystem = world.GetOrCreateSystemManaged<BuildingSpawnPrefabSystem>();
             var spawnPrefabContext = new BuildingSpawnPrefabSystem.Context(
                 configuredPrefabs,
                 registryQuery,
@@ -93,7 +93,8 @@ public sealed class CitizenVisibleUnitSystemTests
                 TryGetEntityManager,
                 null,
                 () => spawnPrefabContext);
-            var prefabSelectionSystem = new CitizenPrefabSelectionSystem();
+            var citizenPrefabSystem = world.GetOrCreateSystemManaged<CitizenPrefabSystem>();
+            var prefabSelectionSystem = world.GetOrCreateSystemManaged<CitizenPrefabSelectionSystem>();
             SetCitizenPrefabs(prefabSelectionSystem, prefab);
 
             var state = new CitizenPopulationStateSystem();
@@ -114,7 +115,7 @@ public sealed class CitizenVisibleUnitSystemTests
             new CitizenVisibleUnitSystem().SpawnVisibleCitizen(
                 state,
                 projection,
-                new CitizenPrefabSystem(),
+                citizenPrefabSystem,
                 citizenPrefabContext,
                 prefabSelectionSystem,
                 new CitizenTravelSystem(),

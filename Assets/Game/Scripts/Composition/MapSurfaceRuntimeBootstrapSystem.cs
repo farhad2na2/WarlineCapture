@@ -8,10 +8,12 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
 {
     private const float SceneOverlayPadding = 0.1f;
 
+    private World createdWorld;
     private bool runtimeSurfaceDisposed;
 
     protected override void OnCreate()
     {
+        createdWorld = World;
         Enabled = false;
     }
 
@@ -22,6 +24,7 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
     protected override void OnDestroy()
     {
         DisposeRuntimeSurface();
+        createdWorld = null;
     }
 
     public bool Ensure(MapSurfaceAuthoring authoring)
@@ -242,9 +245,13 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
     private bool TryGetLiveEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
+        World world = createdWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
         try
         {
-            entityManager = EntityManager;
+            entityManager = world.EntityManager;
             return true;
         }
         catch (System.InvalidOperationException)

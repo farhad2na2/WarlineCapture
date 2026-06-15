@@ -18,7 +18,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingProductionTransportBridgeSystem BuildingProductionTransportBridgeSystem = new();
     internal readonly BuildingProductionContextSystem BuildingProductionContextSystem = new();
     internal readonly BuildingSpawnSystem BuildingSpawnSystem = new();
-    internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem = new();
+    internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem;
     internal readonly BuildingProductionSlotSystem BuildingProductionSlotSystem = new();
     internal readonly BuildingPlacementQuerySystem BuildingPlacementQuerySystem = new();
     internal readonly BuildingPlacementQueryCompositionSystem BuildingPlacementQueryCompositionSystem = new();
@@ -31,8 +31,8 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingRunwaySystem BuildingRunwaySystem = new();
     internal readonly BuildingPlacementValidationSystem BuildingPlacementValidationSystem = new();
     internal readonly BuildingPlacementPreviewSystem BuildingPlacementPreviewSystem = new();
-    internal readonly BuildingPlacementVisualUpdateSystem BuildingPlacementVisualUpdateSystem = new();
-    internal readonly BuildingPlacementVisualCompositionSystem BuildingPlacementVisualCompositionSystem = new();
+    internal readonly BuildingPlacementVisualUpdateSystem BuildingPlacementVisualUpdateSystem;
+    internal readonly BuildingPlacementVisualCompositionSystem BuildingPlacementVisualCompositionSystem;
     internal readonly BuildingPlacementAdapterSystem BuildingPlacementAdapterSystem = new();
     internal readonly BuildingPlacementCommitSystem BuildingPlacementCommitSystem = new();
     internal readonly BuildingPlacementInputSystem BuildingPlacementInputSystem = new();
@@ -71,8 +71,8 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementInputRuntimeTickSystem BuildingPlacementInputRuntimeTickSystem = new();
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();
     internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
-    internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem = new();
-    internal readonly BuildingRuntimeResourcePrefabCompositionSystem BuildingRuntimeResourcePrefabCompositionSystem = new();
+    internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem;
+    internal readonly BuildingRuntimeResourcePrefabCompositionSystem BuildingRuntimeResourcePrefabCompositionSystem;
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
     internal readonly BuildingGameplayDependencySystem BuildingGameplayDependencySystem = new();
     internal readonly BuildingRuntimeObjectSystem BuildingRuntimeObjectSystem = new();
@@ -93,8 +93,13 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
+        BuildingSpawnPrefabSystem = ResolveBuildingSpawnPrefabSystem();
+        BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
+        BuildingPlacementVisualCompositionSystem = ResolveBuildingPlacementVisualCompositionSystem();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
         RuntimeUnitPrefabSystem = ResolveRuntimeUnitPrefabSystem();
+        BuildingRuntimeResourcePrefabContextSystem = ResolveBuildingRuntimeResourcePrefabContextSystem();
+        BuildingRuntimeResourcePrefabCompositionSystem = ResolveBuildingRuntimeResourcePrefabCompositionSystem();
     }
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
@@ -137,6 +142,14 @@ internal sealed class BuildingGameplayCompositionSourceSystem
             : null;
     }
 
+    private static BuildingSpawnPrefabSystem ResolveBuildingSpawnPrefabSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingSpawnPrefabSystem>()
+            : null;
+    }
+
     private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
@@ -145,11 +158,43 @@ internal sealed class BuildingGameplayCompositionSourceSystem
             : null;
     }
 
+    private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualUpdateSystem>()
+            : null;
+    }
+
+    private static BuildingPlacementVisualCompositionSystem ResolveBuildingPlacementVisualCompositionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualCompositionSystem>()
+            : null;
+    }
+
     private static RuntimeUnitPrefabSystem ResolveRuntimeUnitPrefabSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeUnitPrefabSystem>()
+            : null;
+    }
+
+    private static BuildingRuntimeResourcePrefabCompositionSystem ResolveBuildingRuntimeResourcePrefabCompositionSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabCompositionSystem>()
+            : null;
+    }
+
+    private static BuildingRuntimeResourcePrefabContextSystem ResolveBuildingRuntimeResourcePrefabContextSystem()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        return world != null && world.IsCreated
+            ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabContextSystem>()
             : null;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenPrefabSystem
+internal sealed partial class CitizenPrefabSystem : SystemBase
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
@@ -28,6 +28,15 @@ internal sealed class CitizenPrefabSystem
             EnsureEntityQueries = ensureEntityQueries;
             CreateSpawnPrefabContext = createSpawnPrefabContext;
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void LoadConfiguredUnitSpawnPrefabs(Context context, IReadOnlyList<string> unitNames, List<GameObject> results)

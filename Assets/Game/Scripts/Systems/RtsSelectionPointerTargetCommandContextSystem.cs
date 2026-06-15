@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public sealed class RtsSelectionPointerTargetCommandContextSystem
         SelectionStateSystem selectionStateSystem,
         FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
         FocusableUnitLookupSystem focusableUnitLookupSystem,
+        SelectionUiQuerySystem selectionUiQuerySystem,
+        VisibleUnitSelectionSystem visibleUnitSelectionSystem,
         TransportBoardingCommandSystem transportBoardingCommandSystem,
         UnitTransportCapacitySystem unitTransportCapacitySystem,
         UnitTransportAirPickupSystem unitTransportAirPickupSystem,
@@ -31,7 +34,8 @@ public sealed class RtsSelectionPointerTargetCommandContextSystem
         Func<bool> processTransportCommandRequests,
         Action processMoveCommandRequests,
         Action<string> logSelectionDiagnostic,
-        FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity)
+        FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
+        List<Entity> visibleSelectionScratch)
     {
         return new RtsSelectionPointerTargetCommandSystem.Context(
             runtimeGameplayStateSystem,
@@ -63,6 +67,9 @@ public sealed class RtsSelectionPointerTargetCommandContextSystem
             processTransportCommandRequests,
             processMoveCommandRequests,
             logSelectionDiagnostic,
-            describeEntity);
+            describeEntity,
+            selectionUiQuerySystem,
+            visibleUnitSelectionSystem,
+            visibleSelectionScratch);
     }
 }

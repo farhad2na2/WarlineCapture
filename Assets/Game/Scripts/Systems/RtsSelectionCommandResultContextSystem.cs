@@ -30,11 +30,12 @@ public sealed class RtsSelectionCommandResultContextSystem
         Action<Vector2> requestAttackOrderScreenMarker,
         Action<bool> setCameraDragging,
         Action<SelectionStateSystem> clearFocusedUnit,
+        RtsSelectionCommandResultFlushSystem.RefreshFocusedUnitAction refreshFocusedUnit,
+        RtsSelectionCommandResultFlushSystem.SetFocusedUnitAction setFocusedUnit,
         SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetMoveClickedUnitEntity,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
         AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
-        AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
         TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
         TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
     {
@@ -53,6 +54,7 @@ public sealed class RtsSelectionCommandResultContextSystem
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,
             querySystem.SelectedMoveQuery,
+            querySystem.SelectedTagQuery,
             querySystem.GridConfigQuery,
             querySystem.MapSurfaceQuery,
             tryGetDefaultEntityManager,
@@ -63,6 +65,7 @@ public sealed class RtsSelectionCommandResultContextSystem
                 hudFeedbackSystem.ApplyBoardCommandMode(hudFeedbackContext, direction, boardAllInteractable),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
             () => hudFeedbackSystem.ClearSelection(hudFeedbackContext),
+            (em, entity) => hudFeedbackSystem.ApplySelection(hudFeedbackContext, em, entity),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
             setExplicitAttackTargetModeActive,
             visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
@@ -72,11 +75,12 @@ public sealed class RtsSelectionCommandResultContextSystem
             requestAttackOrderScreenMarker,
             setCameraDragging,
             clearFocusedUnit,
+            refreshFocusedUnit,
+            setFocusedUnit,
             tryGetMoveClickedUnitEntity,
             tryGetMoveClickedCell,
             tryGetScanClickedCell,
             tryGetAttackClickedUnitEntity,
-            collectSelectedAttackSources,
             tryGetTransportClickedUnitEntity,
             tryGetTransportClickedCell);
     }

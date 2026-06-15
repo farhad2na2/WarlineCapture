@@ -23,7 +23,6 @@ public sealed class RtsSelectionFocusCommandContextSystem
         Action<bool> setExplicitAttackTargetModeActive,
         Action<string> logSelectionDiagnostic,
         FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
-        RtsSelectionFocusCommandSystem.ValidateControllableEntityDelegate validateControllableEntity,
         Func<Vector2, bool> tryFocusScreenPosition)
     {
         return new RtsSelectionFocusCommandSystem.Context(
@@ -49,7 +48,6 @@ public sealed class RtsSelectionFocusCommandContextSystem
             setExplicitAttackTargetModeActive,
             logSelectionDiagnostic,
             describeEntity,
-            validateControllableEntity,
             tryFocusScreenPosition);
     }
 }

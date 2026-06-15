@@ -1998,8 +1998,8 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardPreview_UsesTransportOnlyPredicateForPassengerFirstMode()
     {
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
-        string previewTarget = ExtractBlockAfter(startup, "bool IsValidBoardTransportPreviewTarget");
+        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
+        string previewTarget = ExtractBlockAfter(pointerTarget, "public bool IsValidBoardTransportPreviewTarget");
 
         StringAssert.Contains("IsBoardTransportWithAvailableSeats(em, target)", previewTarget);
         Assert.IsFalse(
@@ -2087,15 +2087,15 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void ImmediateSelectedUnitCommandFeedback_MapsEcsResultsToHudResults()
     {
-        Assert.IsTrue(SelectionGameplayStartupSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsTrue(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.HoldPosition,
             out TacticalCommandMode holdMode));
         Assert.AreEqual(TacticalCommandMode.Hold, holdMode);
-        Assert.IsTrue(SelectionGameplayStartupSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsTrue(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.Stop,
             out TacticalCommandMode stopMode));
         Assert.AreEqual(TacticalCommandMode.Stop, stopMode);
-        Assert.IsFalse(SelectionGameplayStartupSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsFalse(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.ReturnToBase,
             out TacticalCommandMode returnMode));
         Assert.AreEqual(TacticalCommandMode.None, returnMode);
@@ -2851,7 +2851,7 @@ public sealed class RtsSelectionInputSystemTests
         TacticalCommandReasonCode expectedReason,
         string expectedMessage)
     {
-        TacticalCommandResult result = SelectionGameplayStartupSystem.BuildImmediateSelectedUnitCommandResult(
+        TacticalCommandResult result = RtsSelectionCommandResultFlushSystem.BuildImmediateSelectedUnitCommandResult(
             kind,
             accepted,
             rejectionReason,

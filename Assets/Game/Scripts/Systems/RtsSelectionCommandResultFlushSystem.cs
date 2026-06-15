@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class RtsSelectionCommandResultFlushSystem
 {
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
+    public delegate void RefreshFocusedUnitAction(EntityManager em, SelectionStateSystem selectionStateSystem);
+    public delegate void SetFocusedUnitAction(SelectionStateSystem selectionStateSystem, Entity entity);
+    public delegate void ApplyHudSelectionAction(EntityManager em, Entity entity);
 
     private readonly List<RtsSelectionCommandResultElement> _moveCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _attackCommandResultScratch = new();
@@ -30,6 +36,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly EntityQuery SelectedMoveQuery;
+        public readonly EntityQuery SelectedTagQuery;
         public readonly EntityQuery GridConfigQuery;
         public readonly EntityQuery MapSurfaceQuery;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
@@ -39,6 +46,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly Action<BoardCommandModeDirection, bool> ApplyHudBoardCommandMode;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
         public readonly Action ClearHudSelection;
+        public readonly ApplyHudSelectionAction ApplyHudSelection;
         public readonly Action ClearHudCommandMode;
         public readonly Action<bool> SetExplicitAttackTargetModeActive;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -48,11 +56,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly Action<Vector2> RequestAttackOrderScreenMarker;
         public readonly Action<bool> SetCameraDragging;
         public readonly Action<SelectionStateSystem> ClearFocusedUnit;
+        public readonly RefreshFocusedUnitAction RefreshFocusedUnit;
+        public readonly SetFocusedUnitAction SetFocusedUnit;
         public readonly SelectedMoveOrderCommandSystem.ClickedUnitResolver TryGetMoveClickedUnitEntity;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetMoveClickedCell;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate TryGetAttackClickedUnitEntity;
-        public readonly AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate CollectSelectedAttackSources;
         public readonly TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate TryGetTransportClickedUnitEntity;
         public readonly TransportBoardingCommandSystem.TryGetClickedCellDelegate TryGetTransportClickedCell;
 
@@ -71,6 +80,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             EntityQuery selectedMoveQuery,
+            EntityQuery selectedTagQuery,
             EntityQuery gridConfigQuery,
             EntityQuery mapSurfaceQuery,
             TryGetEntityManagerAction tryGetDefaultEntityManager,
@@ -80,6 +90,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             Action<BoardCommandModeDirection, bool> applyHudBoardCommandMode,
             Action<TacticalCommandResult> applyHudCommandResult,
             Action clearHudSelection,
+            ApplyHudSelectionAction applyHudSelection,
             Action clearHudCommandMode,
             Action<bool> setExplicitAttackTargetModeActive,
             Action<bool> setHudWorldMarkersVisible,
@@ -89,11 +100,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             Action<Vector2> requestAttackOrderScreenMarker,
             Action<bool> setCameraDragging,
             Action<SelectionStateSystem> clearFocusedUnit,
+            RefreshFocusedUnitAction refreshFocusedUnit,
+            SetFocusedUnitAction setFocusedUnit,
             SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetMoveClickedUnitEntity,
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
             AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
-            AttackOrderCommandSystem.CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
             TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
             TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
         {
@@ -111,6 +123,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             SelectedMoveQuery = selectedMoveQuery;
+            SelectedTagQuery = selectedTagQuery;
             GridConfigQuery = gridConfigQuery;
             MapSurfaceQuery = mapSurfaceQuery;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
@@ -120,6 +133,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             ApplyHudBoardCommandMode = applyHudBoardCommandMode;
             ApplyHudCommandResult = applyHudCommandResult;
             ClearHudSelection = clearHudSelection;
+            ApplyHudSelection = applyHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
             SetExplicitAttackTargetModeActive = setExplicitAttackTargetModeActive;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
@@ -129,14 +143,95 @@ public sealed class RtsSelectionCommandResultFlushSystem
             RequestAttackOrderScreenMarker = requestAttackOrderScreenMarker;
             SetCameraDragging = setCameraDragging;
             ClearFocusedUnit = clearFocusedUnit;
+            RefreshFocusedUnit = refreshFocusedUnit;
+            SetFocusedUnit = setFocusedUnit;
             TryGetMoveClickedUnitEntity = tryGetMoveClickedUnitEntity;
             TryGetMoveClickedCell = tryGetMoveClickedCell;
             TryGetScanClickedCell = tryGetScanClickedCell;
             TryGetAttackClickedUnitEntity = tryGetAttackClickedUnitEntity;
-            CollectSelectedAttackSources = collectSelectedAttackSources;
             TryGetTransportClickedUnitEntity = tryGetTransportClickedUnitEntity;
             TryGetTransportClickedCell = tryGetTransportClickedCell;
         }
+    }
+
+    public bool ProcessFocusedMissileLauncherRadarAttack(Context context, Entity launcher)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionMissileLauncherRadarAttackCommandSystem.TryIssuePendingFocusedRadarAttack(
+                em,
+                launcher,
+                out float3 targetPosition))
+        {
+            return false;
+        }
+
+        context.OrderMarkerSystem?.ShowAttackOrderMarker(
+            em,
+            new Vector3(targetPosition.x, targetPosition.y, targetPosition.z));
+        context.ClearCurrentSelection?.Invoke(em, "MissileLauncherRadarAttack");
+        if (context.SelectionStateSystem != null)
+            context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, launcher);
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.SetCameraDragging?.Invoke(false);
+        context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success());
+        context.ClearHudCommandMode?.Invoke();
+        context.SetHudWorldMarkersVisible?.Invoke(true);
+        context.ApplyHudSelection?.Invoke(em, launcher);
+        return true;
+    }
+
+    public void UpdateCommandPreviewMarkers(
+        Context context,
+        bool explicitAttackTargetModeActive,
+        SelectionOrderMarkerSystem.IsPreviewTargetValidWithSourceDelegate isValidBoardTransportPreviewTarget,
+        SelectionOrderMarkerSystem.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTarget)
+    {
+        if (context.OrderMarkerSystem == null)
+            return;
+
+        if (!explicitAttackTargetModeActive)
+        {
+            context.OrderMarkerSystem.UpdateAttackTargetPreviewMarkers(default, false);
+        }
+        else if (context.TryGetDefaultEntityManager(out EntityManager attackPreviewEm))
+        {
+            context.EnsureEntityQueries?.Invoke(attackPreviewEm);
+            context.OrderMarkerSystem.UpdateAttackTargetPreviewMarkers(attackPreviewEm, true);
+        }
+
+        if (context.InputSystem == null ||
+            !context.InputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport))
+        {
+            if (!explicitAttackTargetModeActive)
+                context.OrderMarkerSystem.UpdateBoardTargetPreviewMarkers(default, false, Entity.Null, null);
+            return;
+        }
+
+        if (!context.TryGetDefaultEntityManager(out EntityManager boardPreviewEm))
+            return;
+
+        context.EnsureEntityQueries?.Invoke(boardPreviewEm);
+        if (direction == BoardCommandModeDirection.PassengerToTransport)
+        {
+            context.OrderMarkerSystem.UpdateBoardTargetPreviewMarkers(
+                boardPreviewEm,
+                true,
+                Entity.Null,
+                isValidBoardTransportPreviewTarget);
+            return;
+        }
+
+        if (direction == BoardCommandModeDirection.TransportToPassenger)
+        {
+            context.OrderMarkerSystem.UpdateBoardTargetPreviewMarkers(
+                boardPreviewEm,
+                true,
+                transport,
+                isValidBoardPassengerPreviewTarget);
+            return;
+        }
+
+        context.OrderMarkerSystem.UpdateBoardTargetPreviewMarkers(default, false, Entity.Null, null);
     }
 
     public bool ProcessSelectAllCommandRequests(Context context)
@@ -177,6 +272,75 @@ public sealed class RtsSelectionCommandResultFlushSystem
         context.BuildingPlacementInteractionSystem.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
         context.ClearHudSelection?.Invoke();
         context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Destroyed selected building."));
+        return true;
+    }
+
+    public bool ProcessImmediateSelectedUnitCommandRequests(Context context, Entity focusedUnit)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+                em,
+                focusedUnit,
+                out RtsSelectionCommandIntentKind processedKind,
+                out bool accepted,
+                out TacticalCommandReasonCode rejectionReason,
+                out int issuedCount))
+        {
+            return false;
+        }
+
+        bool hasCommandMode = TryGetImmediateSelectedUnitCommandMode(processedKind, out TacticalCommandMode mode);
+        bool destroyFocusedUnit = processedKind == RtsSelectionCommandIntentKind.DestroyFocusedUnit;
+        if (hasCommandMode)
+            context.ApplyHudCommandMode?.Invoke(mode);
+        if (!accepted)
+        {
+            if (TryProcessSelectedBuildingDestroyFallback(
+                    context,
+                    processedKind,
+                    accepted,
+                    rejectionReason))
+            {
+                return true;
+            }
+
+            context.ApplyHudCommandResult?.Invoke(
+                BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+            if (hasCommandMode)
+                context.ClearHudCommandMode?.Invoke();
+            return true;
+        }
+
+        if (destroyFocusedUnit)
+        {
+            if (context.SelectionStateSystem != null)
+                context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
+            context.ClearHudSelection?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(
+                BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+            return true;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        if (hasCommandMode)
+        {
+            context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                context.BuildingPlacementInteractionContext,
+                $"SelectionUiCommandSystem.{mode}");
+            context.SetCameraDragging?.Invoke(false);
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(
+                BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+            if (context.SelectionStateSystem != null)
+                context.RefreshFocusedUnit?.Invoke(em, context.SelectionStateSystem);
+            return true;
+        }
+
+        context.ApplyHudCommandResult?.Invoke(
+            BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
         return true;
     }
 
@@ -254,6 +418,65 @@ public sealed class RtsSelectionCommandResultFlushSystem
         {
             context.LogSelectionClickDiagnostic?.Invoke($"moveModeEntered result=True frame={currentFrame}");
         }
+        return true;
+    }
+
+    public bool ProcessAttackTargetModeCommandRequests(Context context, int currentFrame, Entity focusedUnit)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
+            !RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
+                em,
+                currentFrame,
+                focusedUnit,
+                out RtsSelectionCommandIntentKind processedKind,
+                out bool accepted,
+                out bool airDefenseAutoEngageOnly,
+                out TacticalCommandReasonCode rejectionReason))
+        {
+            return false;
+        }
+
+        bool enterAttackTargetMode = processedKind == RtsSelectionCommandIntentKind.EnterAttackTargetMode;
+        bool toggleAttackTargetMode = processedKind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode;
+        if (enterAttackTargetMode)
+        {
+            context.SetExplicitAttackTargetModeActive?.Invoke(false);
+            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                context.BuildingPlacementInteractionContext,
+                "SelectionUiCommandSystem.EnterAttackTargetMode");
+        }
+
+        if (enterAttackTargetMode || accepted)
+            context.SetCameraDragging?.Invoke(false);
+
+        if (airDefenseAutoEngageOnly)
+        {
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(
+                TacticalCommandResult.Success("Air defense auto-engages aircraft and incoming missiles."));
+            context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"attackModeEntered result=False reason=AirDefenseAutoEngage frame={currentFrame}");
+            return true;
+        }
+
+        if (!accepted)
+        {
+            if (enterAttackTargetMode)
+                context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
+            if (enterAttackTargetMode)
+                context.SetHudWorldMarkersVisible?.Invoke(false);
+            context.LogSelectionClickDiagnostic?.Invoke(
+                $"{(toggleAttackTargetMode ? "attackModeToggled" : "attackModeEntered")} result=False reason={rejectionReason} frame={currentFrame}");
+            return true;
+        }
+
+        context.SetExplicitAttackTargetModeActive?.Invoke(true);
+        context.SetHudWorldMarkersVisible?.Invoke(true);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Attack);
+        context.LogSelectionClickDiagnostic?.Invoke(
+            $"{(toggleAttackTargetMode ? "attackModeToggled" : "attackModeEntered")} result=True frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
         return true;
     }
 
@@ -576,7 +799,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             commandRequests,
             commandResults,
             context.TryGetAttackClickedUnitEntity,
-            context.CollectSelectedAttackSources,
+            (sourceEm, sources) => CollectSelectedAttackSources(context, sourceEm, sources),
             context.BuildingPlacementInteractionSystem,
             context.BuildingPlacementInteractionContext,
             _selectedAttackSourceScratch);
@@ -612,6 +835,67 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         return issued;
+    }
+
+    private static void CollectSelectedAttackSources(Context context, EntityManager em, List<Entity> sources)
+    {
+        if (sources == null || em.World == null || !em.World.IsCreated)
+            return;
+
+        context.EnsureEntityQueries?.Invoke(em);
+        TryAddAttackSource(em, context.SelectionStateSystem.FocusedUnit, sources);
+
+        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < cached.Count; i++)
+            TryAddAttackSource(em, cached[i], sources);
+
+        EntityQuery selectedTagQuery = context.SelectedTagQuery;
+        if (selectedTagQuery.IsEmptyIgnoreFilter)
+            return;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
+                TryAddAttackSource(em, selectedEntities[i], sources);
+        }
+    }
+
+    private static bool TryAddAttackSource(EntityManager em, Entity entity, List<Entity> sources)
+    {
+        if (entity == Entity.Null ||
+            !em.Exists(entity) ||
+            sources.Contains(entity) ||
+            em.HasComponent<Disabled>(entity) ||
+            em.HasComponent<UnitTransportPassenger>(entity) ||
+            !em.HasComponent<UnitAttack>(entity) ||
+            !em.HasComponent<LocalTransform>(entity))
+        {
+            return false;
+        }
+
+        if (!IsAttackSourceEntity(em, entity))
+            return false;
+
+        sources.Add(entity);
+        return true;
+    }
+
+    private static bool IsAttackSourceEntity(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<Faction>(entity) ||
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
+            !em.HasComponent<UnitMove>(entity) ||
+            !em.HasComponent<UnitCombat>(entity) ||
+            em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
+        {
+            return false;
+        }
+
+        return !em.HasComponent<UnitHealth>(entity) ||
+               em.GetComponentData<UnitHealth>(entity).Current > 0;
     }
 
     public bool ProcessScanCommandRequests(Context context)
@@ -808,6 +1092,45 @@ public sealed class RtsSelectionCommandResultFlushSystem
         return result.Accepted != 0
             ? TacticalCommandResult.Success(message)
             : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode, message);
+    }
+
+    internal static bool TryGetImmediateSelectedUnitCommandMode(
+        RtsSelectionCommandIntentKind kind,
+        out TacticalCommandMode mode)
+    {
+        switch (kind)
+        {
+            case RtsSelectionCommandIntentKind.HoldPosition:
+                mode = TacticalCommandMode.Hold;
+                return true;
+            case RtsSelectionCommandIntentKind.Stop:
+                mode = TacticalCommandMode.Stop;
+                return true;
+            default:
+                mode = TacticalCommandMode.None;
+                return false;
+        }
+    }
+
+    internal static TacticalCommandResult BuildImmediateSelectedUnitCommandResult(
+        RtsSelectionCommandIntentKind kind,
+        bool accepted,
+        TacticalCommandReasonCode rejectionReason,
+        int issuedCount)
+    {
+        if (!accepted)
+            return TacticalCommandResult.Rejected(rejectionReason);
+
+        return kind switch
+        {
+            RtsSelectionCommandIntentKind.HoldPosition => TacticalCommandResult.Success("Holding current position."),
+            RtsSelectionCommandIntentKind.Stop => TacticalCommandResult.Success("Stopped selected units."),
+            RtsSelectionCommandIntentKind.ReturnToBase => TacticalCommandResult.Success(
+                issuedCount == 1 ? "Unit returning to base." : $"{issuedCount} units returning to base."),
+            RtsSelectionCommandIntentKind.DestroyFocusedUnit => TacticalCommandResult.Success(
+                issuedCount == 1 ? "Destroyed selected unit." : $"Destroyed {issuedCount} selected units."),
+            _ => TacticalCommandResult.Success()
+        };
     }
 
     private static Vector2 SelectionPointerPosition(Context context)

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -111,10 +109,8 @@ internal sealed class SelectionGameplayStartupSystem
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
-        var selectedAttackSourceScratch = new List<Entity>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         IMatchRuntimeUi mainMenuPlayUi = null;
-        IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
         IMatchHudSquadTrayView matchHudSquadTrayView = null;
         RtsSelectionRuntimeInputSystem.Context runtimeInputContext = default;
         bool hasRuntimeInputContext = false;
@@ -180,7 +176,6 @@ internal sealed class SelectionGameplayStartupSystem
 
         void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
         {
-            matchHudSelectionPanelView = view;
             selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
             selectionBuildingInteraction.BindMatchHudSelectionPanel(view);
             hasCommandResultFlushContext = false;
@@ -251,11 +246,56 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
             RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
             rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
-            RefreshFocusedSelectionReadModels();
-            UpdateMatchHudSelectionPanel();
+            selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
+                CreateHudFeedbackContext(),
+                selectionStateSystem,
+                focusedUnitUiReadModelSystem,
+                unitTransportCapacitySystem,
+                EnsureRuntimeSelectionDependencies,
+                (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
+                    em,
+                    state,
+                    applyHudSelectionAction),
+                Time.time);
+            selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
+                CreateHudFeedbackContext(),
+                selectionStateSystem,
+                focusedUnitLifecycleSystem,
+                focusedUnitUiReadModelSystem,
+                selectionSummaryQuerySystem,
+                transportPassengerPanelItems,
+                EnsureRuntimeSelectionDependencies,
+                CountSelectedTags,
+                TryGetAttackModeOrderSnapshot,
+                resolveSelectionCardPortraitSprite,
+                resolveSelectedBuildingPortraitSprite,
+                ResolveActiveSquadTrayPortraitSprite,
+                () => buildingPlacementInteractionSystem != null &&
+                      buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext),
+                () => buildingPlacementInteractionSystem != null
+                    ? buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext)
+                    : string.Empty,
+                (em, entity) => rtsSelectionPointerTargetCommandSystem.IsBoardCommandAvailable(
+                    CreatePointerTargetCommandContext(),
+                    em,
+                    entity),
+                em => rtsSelectionPointerTargetCommandSystem.HasSelectedBoardAction(
+                    CreatePointerTargetCommandContext(),
+                    em));
             rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
-            UpdateAttackTargetPreviewMarkers();
-            UpdateBoardTargetPreviewMarkers();
+            rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
+                GetCommandResultFlushContext(),
+                explicitAttackTargetModeActive,
+                (em, source, target) => rtsSelectionPointerTargetCommandSystem.IsValidBoardTransportPreviewTarget(
+                    CreatePointerTargetCommandContext(),
+                    em,
+                    source,
+                    target),
+                (em, source, target) => rtsSelectionPointerTargetCommandSystem.IsValidBoardPassengerPreviewTarget(
+                    CreatePointerTargetCommandContext(),
+                    em,
+                    source,
+                    target));
 
             RtsSelectionRuntimeCameraSystem.Context cameraContext = GetRuntimeCameraContext();
             if (rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
@@ -287,75 +327,24 @@ internal sealed class SelectionGameplayStartupSystem
             if (!TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
-            if (RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(em) &&
-                IssueFocusedMissileLauncherRadarAttack())
-            {
-                RtsSelectionAttackTargetModeCommandSystem.ConsumeToggleAttackTargetModeRequest(em);
-                return;
-            }
-
             Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
                 em,
                 selectionStateSystem,
                 out Entity resolvedFocusedUnit)
                 ? resolvedFocusedUnit
                 : Entity.Null;
-            if (!RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
-                    em,
-                    Time.frameCount,
-                    focusedUnit,
-                    out RtsSelectionCommandIntentKind processedKind,
-                    out bool accepted,
-                    out bool airDefenseAutoEngageOnly,
-                    out TacticalCommandReasonCode rejectionReason))
+            if (RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(em) &&
+                rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
+                    GetCommandResultFlushContext(),
+                    focusedUnit))
             {
                 return;
             }
 
-            bool enterAttackTargetMode = processedKind == RtsSelectionCommandIntentKind.EnterAttackTargetMode;
-            bool toggleAttackTargetMode = processedKind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode;
-            if (enterAttackTargetMode)
-            {
-                SetExplicitAttackTargetModeActive(false);
-                buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                    buildingPlacementInteractionContext,
-                    "SelectionUiCommandSystem.EnterAttackTargetMode");
-            }
-
-            if (enterAttackTargetMode || accepted)
-                rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-
-            if (airDefenseAutoEngageOnly)
-            {
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    TacticalCommandResult.Success("Air defense auto-engages aircraft and incoming missiles."));
-                selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"attackModeEntered result=False reason=AirDefenseAutoEngage frame={Time.frameCount}");
-                return;
-            }
-
-            if (!accepted)
-            {
-                if (enterAttackTargetMode)
-                    selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(rejectionReason));
-                if (enterAttackTargetMode)
-                    selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                    $"{(toggleAttackTargetMode ? "attackModeToggled" : "attackModeEntered")} result=False reason={rejectionReason} frame={Time.frameCount}");
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(true);
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
-            selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Attack);
-            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(
-                $"{(toggleAttackTargetMode ? "attackModeToggled" : "attackModeEntered")} result=True frame={Time.frameCount} dragReset={rtsSelectionInputSystem.LastPointerPosition}");
+            rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
+                GetCommandResultFlushContext(),
+                Time.frameCount,
+                focusedUnit);
         }
 
         void ProcessScanTargetModeCommandRequests()
@@ -379,75 +368,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ProcessImmediateSelectedUnitCommandRequests()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
-                    em,
-                    selectionStateSystem.FocusedUnit,
-                    out RtsSelectionCommandIntentKind processedKind,
-                    out bool accepted,
-                    out TacticalCommandReasonCode rejectionReason,
-                    out int issuedCount))
-            {
-                return;
-            }
-
-            bool hasCommandMode = TryGetImmediateSelectedUnitCommandMode(processedKind, out TacticalCommandMode mode);
-            bool destroyFocusedUnit = processedKind == RtsSelectionCommandIntentKind.DestroyFocusedUnit;
-            if (hasCommandMode)
-                selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode);
-            if (!accepted)
-            {
-                if (rtsSelectionCommandResultFlushSystem.TryProcessSelectedBuildingDestroyFallback(
-                        GetCommandResultFlushContext(),
-                        processedKind,
-                        accepted,
-                        rejectionReason))
-                {
-                    return;
-                }
-
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
-                if (hasCommandMode)
-                    selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                return;
-            }
-
-            if (destroyFocusedUnit)
-            {
-                focusedUnitLifecycleSystem.ClearFocusedUnit(selectionStateSystem);
-                selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
-                return;
-            }
-
-            SetExplicitAttackTargetModeActive(false);
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
-            if (hasCommandMode)
-            {
-                buildingPlacementInteractionSystem?.ExitBuildMode(buildingPlacementInteractionContext);
-                buildingPlacementInteractionSystem?.CancelBuildingPlacement(buildingPlacementInteractionContext);
-                buildingPlacementInteractionSystem?.ClearSelectedBuilding(
-                    buildingPlacementInteractionContext,
-                    $"SelectionUiCommandSystem.{mode}");
-                rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), false);
-                selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
-                focusedUnitLifecycleSystem.RefreshFocusedUnit(
-                    em,
-                    selectionStateSystem,
-                    applyHudSelectionAction);
-                return;
-            }
-
-            selectionHudFeedbackSystem.ApplyCommandResult(
-                CreateHudFeedbackContext(),
-                BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
+            rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
+                GetCommandResultFlushContext(),
+                selectionStateSystem.FocusedUnit);
         }
 
         void ProcessDeselectAllCommandRequests()
@@ -508,16 +431,27 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetClickedCell,
                 visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
                 TryIssueBoardTransportOrderToClickedUnit,
-                TryIssueBoardSelectedTransportOrderToClickedUnit,
-                TryIssueBoardSelectedTransportOrdersToPassengerRect,
-                IsBoardSelectedTransportPassengerTarget,
+                (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.TryIssueBoardSelectedTransportOrderToClickedUnit(
+                    CreatePointerTargetCommandContext(),
+                    transport,
+                    pointerPosition),
+                (transport, screenRect) => rtsSelectionPointerTargetCommandSystem.TryIssueBoardSelectedTransportOrdersToPassengerRect(
+                    CreatePointerTargetCommandContext(),
+                    transport,
+                    screenRect),
+                (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.IsBoardSelectedTransportPassengerTarget(
+                    CreatePointerTargetCommandContext(),
+                    transport,
+                    pointerPosition),
                 QueueFocusUnitCommand,
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(GetRuntimeCameraContext(), screenDelta),
                 IssueMoveOrder,
                 ProcessSelectionRectangleRequests,
                 ClearSelectionCommandMode,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
-                BuildClickDebugSummary,
+                pointerPosition => rtsSelectionPointerTargetCommandSystem.BuildClickDebugSummary(
+                    CreatePointerTargetCommandContext(),
+                    pointerPosition),
                 IsMatchIntroGameplayInputLocked);
         }
 
@@ -542,6 +476,9 @@ internal sealed class SelectionGameplayStartupSystem
 
         RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
         {
+            if (TryGetDefaultEntityManager(out EntityManager em))
+                EnsureRuntimeSelectionDependencies(em);
+
             return rtsSelectionCommandResultContextSystem.Create(
                 rtsSelectionInputSystem,
                 selectionHudFeedbackSystem,
@@ -568,11 +505,15 @@ internal sealed class SelectionGameplayStartupSystem
                 RequestAttackOrderScreenMarker,
                 SetCameraDragging,
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
+                (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
+                    em,
+                    state,
+                    applyHudSelectionAction),
+                focusedUnitLifecycleSystem.SetFocusedUnit,
                 TryGetClickedUnitEntity,
                 TryGetMoveCommandCell,
                 TryGetClickedCell,
                 TryGetClickedAttackTargetEntity,
-                CollectSelectedAttackSources,
                 TryGetClickedUnitEntity,
                 TryGetClickedCell);
         }
@@ -598,7 +539,6 @@ internal sealed class SelectionGameplayStartupSystem
                 SetExplicitAttackTargetModeActive,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
-                ValidateControllableEntity,
                 TryFocusUnitDirect);
         }
 
@@ -610,6 +550,8 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionStateSystem,
                 focusedUnitLifecycleSystem,
                 focusableUnitLookupSystem,
+                selectionUiQuerySystem,
+                visibleUnitSelectionSystem,
                 transportBoardingCommandSystem,
                 unitTransportCapacitySystem,
                 unitTransportAirPickupSystem,
@@ -631,7 +573,8 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessTransportCommandRequests,
                 ProcessMoveCommandRequests,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
-                DescribeTransportBoardingEntity);
+                DescribeTransportBoardingEntity,
+                visibleSelectionScratch);
         }
 
         SelectionHudFeedbackBoundary.Context CreateHudFeedbackContext()
@@ -674,71 +617,6 @@ internal sealed class SelectionGameplayStartupSystem
                 focusedUnitLifecycleSystem);
         }
 
-        void UpdateAttackTargetPreviewMarkers()
-        {
-            if (!explicitAttackTargetModeActive)
-            {
-                selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(default, false);
-                return;
-            }
-
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            EnsureRuntimeSelectionDependencies(em);
-            selectionOrderMarkerSystem.UpdateAttackTargetPreviewMarkers(em, true);
-        }
-
-        void UpdateBoardTargetPreviewMarkers()
-        {
-            if (!rtsSelectionInputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport))
-            {
-                if (!explicitAttackTargetModeActive)
-                    selectionOrderMarkerSystem.UpdateBoardTargetPreviewMarkers(default, false, Entity.Null, null);
-                return;
-            }
-
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            EnsureRuntimeSelectionDependencies(em);
-            if (direction == BoardCommandModeDirection.PassengerToTransport)
-            {
-                selectionOrderMarkerSystem.UpdateBoardTargetPreviewMarkers(em, true, Entity.Null, IsValidBoardTransportPreviewTarget);
-                return;
-            }
-
-            if (direction == BoardCommandModeDirection.TransportToPassenger)
-            {
-                selectionOrderMarkerSystem.UpdateBoardTargetPreviewMarkers(
-                    em,
-                    true,
-                    transport,
-                    IsValidBoardPassengerPreviewTarget);
-                return;
-            }
-
-            selectionOrderMarkerSystem.UpdateBoardTargetPreviewMarkers(default, false, Entity.Null, null);
-        }
-
-        bool IsValidBoardTransportPreviewTarget(EntityManager em, Entity source, Entity target)
-        {
-            return IsBoardTransportWithAvailableSeats(em, target);
-        }
-
-        bool IsValidBoardPassengerPreviewTarget(EntityManager em, Entity transport, Entity passenger)
-        {
-            if (transport == Entity.Null ||
-                passenger == Entity.Null ||
-                transport == passenger ||
-                !IsBoardCommandAvailable(em, transport))
-            {
-                return false;
-            }
-
-            return TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger);
-        }
-
         bool TryGetDefaultEntityManager(out EntityManager em)
         {
             em = default;
@@ -768,177 +646,6 @@ internal sealed class SelectionGameplayStartupSystem
             transportBoardingCommandSystem.EnsureEntityQueries(em);
         }
 
-        void RefreshFocusedSelectionReadModels()
-        {
-            RefreshFocusedUnit();
-            PublishFocusedUnitUiReadModel();
-        }
-
-        void UpdateMatchHudSelectionPanel()
-        {
-            if (matchHudSelectionPanelView == null)
-                return;
-
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-            {
-                matchHudSelectionPanelView.Apply(MatchHudSelectionPanelModel.Hidden);
-                return;
-            }
-
-            EnsureRuntimeSelectionDependencies(em);
-            int selectedCount = CountSelectedTags(em);
-            if (selectedCount > 1)
-            {
-                matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
-                return;
-            }
-
-            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
-                em.Exists(focusedUnit))
-            {
-                matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(em, focusedUnit));
-                matchHudSelectionPanelView.ApplyTransportPassengers(BuildTransportPassengersPanelModel(em, focusedUnit));
-                return;
-            }
-
-            if (selectedCount > 0)
-            {
-                matchHudSelectionPanelView.Apply(BuildSquadPanelModel(em, selectedCount));
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
-                return;
-            }
-
-            if (buildingPlacementInteractionSystem != null &&
-                buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
-            {
-                matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel());
-                matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
-                return;
-            }
-
-            matchHudSelectionPanelView.Apply(MatchHudSelectionPanelModel.Hidden);
-            matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
-        }
-
-        MatchHudSelectionPanelModel BuildFocusedUnitPanelModel(EntityManager em, Entity entity)
-        {
-            Sprite portraitSprite = resolveSelectionPortraitSprite?.Invoke(em, entity);
-            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
-            bool owned = selectionUiQuerySystem.IsOwnedByPlayer(em, entity);
-            bool movable = em.HasComponent<UnitMove>(entity);
-            bool vehicle = selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
-            TryGetHealthModel(em, entity, out string healthLabel, out float health01);
-            string orderText = ResolveFocusedUnitOrderText(em, entity);
-            if (TryGetAttackModeOrderSnapshot(out string attackModeOrderText))
-                orderText = attackModeOrderText;
-
-            return new MatchHudSelectionPanelModel(
-                true,
-                selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
-                selectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity),
-                orderText,
-                healthLabel,
-                health01,
-                portraitSprite,
-                !vehicle,
-                null,
-                owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
-                owned,
-                IsBoardCommandAvailable(em, entity));
-        }
-
-        MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(EntityManager em, Entity transport)
-        {
-            transportPassengerPanelItems.Clear();
-            if (!focusedUnitUiReadModelSystem.TryRead(
-                    em,
-                    out FocusedUnitUiReadModelComponent focusedModel,
-                    out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers) ||
-                focusedModel.HasFocusedUnit == 0 ||
-                focusedModel.FocusedUnit != transport ||
-                focusedModel.OwnedByPlayer == 0 ||
-                focusedModel.TransportPassengerCapacity <= 0)
-            {
-                return MatchHudTransportPassengersModel.Hidden;
-            }
-
-            int capacity = math.max(0, focusedModel.TransportPassengerCapacity);
-            if (capacity <= 0)
-                return MatchHudTransportPassengersModel.Hidden;
-
-            for (int i = 0; i < passengers.Length; i++)
-            {
-                FocusedUnitPassengerUiReadModelElement passengerModel = passengers[i];
-                Entity passenger = passengerModel.Passenger;
-                if (!em.Exists(passenger))
-                    continue;
-
-                BuildHealthModelFromValues(passengerModel.HealthCurrent, passengerModel.HealthMax, out string healthLabel, out float health01);
-                Sprite portrait = resolveSelectionCardPortraitSprite?.Invoke(em, passenger);
-                portrait ??= resolveSelectionPortraitSprite?.Invoke(em, passenger);
-                portrait ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
-                transportPassengerPanelItems.Add(new MatchHudSelectionPanelPassengerItemModel(
-                    ToUiHandle(passenger),
-                    passengerModel.DisplayName.ToString(),
-                    ResolvePassengerRoleText(em, passenger),
-                    healthLabel,
-                    health01,
-                    portrait,
-                    true));
-            }
-
-            return new MatchHudTransportPassengersModel(
-                true,
-                false,
-                ToUiHandle(transport),
-                transportPassengerPanelItems.Count,
-                capacity,
-                transportPassengerPanelItems.Count > 0,
-                transportPassengerPanelItems);
-        }
-
-        string ResolvePassengerRoleText(EntityManager em, Entity passenger)
-        {
-            if (!em.Exists(passenger))
-                return "UNIT";
-
-            if (selectionUiQuerySystem.IsVehicleForVisibleSelection(em, passenger))
-                return "VEHICLE";
-
-            return "SOLDIER";
-        }
-
-        MatchHudSelectionPanelModel BuildSquadPanelModel(EntityManager em, int selectedCount)
-        {
-            bool includeSelectedBuilding = buildingPlacementInteractionSystem != null &&
-                                           buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
-            SelectionSummaryQuerySystem.Summary summary = selectionSummaryQuerySystem.BuildSelectedSummary(
-                em,
-                selectionUiQuerySystem,
-                includeSelectedBuilding);
-            string orderText = TryGetAttackModeOrderSnapshot(out string attackModeOrderText)
-                ? attackModeOrderText
-                : summary.OrderText;
-            Sprite portraitSprite = matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
-            portraitSprite ??= ResolveActiveSquadTrayPortraitSprite();
-            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
-            return new MatchHudSelectionPanelModel(
-                true,
-                summary.Title,
-                summary.Subtitle,
-                orderText,
-                summary.HealthText,
-                summary.Health01,
-                portraitSprite,
-                summary.PortraitKind,
-                false,
-                null,
-                selectedCount > 0,
-                selectedCount > 0,
-                HasSelectedBoardAction(em));
-        }
-
         Sprite ResolveActiveSquadTrayPortraitSprite()
         {
             if (matchHudSquadTrayView == null)
@@ -947,47 +654,6 @@ internal sealed class SelectionGameplayStartupSystem
             return matchHudSquadTrayView.TryGetPortraitSprite(matchHudSquadTraySelectionSystem.ActiveSlot, out Sprite sprite)
                 ? sprite
                 : null;
-        }
-
-        MatchHudSelectionPanelModel BuildSelectedBuildingPanelModel()
-        {
-            string label = buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext);
-            Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
-            portraitSprite ??= matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
-            return new MatchHudSelectionPanelModel(
-                true,
-                string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
-                "Base Structure",
-                "Structure selected",
-                "-",
-                0f,
-                portraitSprite,
-                false,
-                null,
-                false,
-                true,
-                false);
-        }
-
-        string ResolveFocusedUnitOrderText(EntityManager em, Entity entity)
-        {
-            if (em.HasComponent<UnitTransportPassenger>(entity))
-                return "In transport";
-            if (em.HasComponent<UnitTransportBoardingTarget>(entity))
-                return "Boarding transport";
-
-            return selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity) switch
-            {
-                SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
-                SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
-                _ => "Idle"
-            };
         }
 
         bool TryGetAttackModeOrderSnapshot(out string orderText)
@@ -1034,7 +700,10 @@ internal sealed class SelectionGameplayStartupSystem
             if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
                 em.Exists(focusedUnit))
             {
-                return ResolveFocusedUnitOrderText(em, focusedUnit);
+                return SelectionHudFeedbackBoundary.ResolveFocusedUnitOrderText(
+                    em,
+                    focusedUnit,
+                    selectionUiQuerySystem);
             }
 
             int selectedCount = CountSelectedTags(em);
@@ -1057,133 +726,11 @@ internal sealed class SelectionGameplayStartupSystem
             return "Idle";
         }
 
-        void TryGetHealthModel(EntityManager em, Entity entity, out string healthLabel, out float health01)
-        {
-            if (!selectionUiQuerySystem.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
-            {
-                healthLabel = "Health: -";
-                health01 = 0f;
-                return;
-            }
-
-            BuildHealthModelFromValues(current, max, out healthLabel, out health01);
-        }
-
-        static void BuildHealthModelFromValues(int current, int max, out string healthLabel, out float health01)
-        {
-            if (max <= 0)
-            {
-                healthLabel = "Health: -";
-                health01 = 0f;
-                return;
-            }
-
-            healthLabel = $"Health: {math.max(0, current)}/{max}";
-            health01 = math.saturate((float)current / max);
-        }
-
-        static UiEntityHandle ToUiHandle(Entity entity)
-        {
-            return entity == Entity.Null
-                ? UiEntityHandle.Null
-                : new UiEntityHandle(entity.Index, entity.Version);
-        }
-
         static Entity ToEntity(UiEntityHandle handle)
         {
             return handle.IsNull
                 ? Entity.Null
                 : new Entity { Index = handle.Index, Version = handle.Version };
-        }
-
-        bool IsBoardCommandAvailable(EntityManager em, Entity entity)
-        {
-            if (!selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
-                return false;
-
-            if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
-                return true;
-
-            return IsBoardTransportWithAvailableSeats(em, entity);
-        }
-
-        bool IsBoardTransportWithAvailableSeats(EntityManager em, Entity entity)
-        {
-            if (!selectionUiQuerySystem.IsOwnedByPlayer(em, entity))
-                return false;
-
-            if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity))
-                return false;
-
-            int capacity = em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity;
-            int passengers = em.HasBuffer<UnitTransportPassengerElement>(entity)
-                ? em.GetBuffer<UnitTransportPassengerElement>(entity).Length
-                : 0;
-            return capacity > passengers + CountPendingBoardingOrders(em, entity);
-        }
-
-        bool HasSelectedBoardAction(EntityManager em)
-        {
-            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
-                em.Exists(focusedUnit) &&
-                TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, focusedUnit) &&
-                IsBoardCommandAvailable(em, focusedUnit))
-            {
-                return true;
-            }
-
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (!em.Exists(entity))
-                        continue;
-
-                    if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
-                        return true;
-
-                    if (TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity) &&
-                        IsBoardCommandAvailable(em, entity))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        void PublishFocusedUnitUiReadModel()
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            focusedUnitUiReadModelSystem.Publish(
-                em,
-                selectionStateSystem,
-                selectionUiQuerySystem,
-                unitTransportCapacitySystem,
-                Time.time);
-        }
-
-        void RefreshFocusedUnit()
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            EnsureRuntimeSelectionDependencies(em);
-            focusedUnitLifecycleSystem.RefreshFocusedUnit(
-                em,
-                selectionStateSystem,
-                applyHudSelectionAction);
         }
 
         void ProcessSelectionRectangleRequests()
@@ -1276,59 +823,6 @@ internal sealed class SelectionGameplayStartupSystem
             return rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
         }
 
-        bool TryIssueBoardSelectedTransportOrderToClickedUnit(Entity transport, Vector2 screenPosition)
-        {
-            if (!rtsSelectionInputSystem.QueueBoardSelectedTransportCommandRequest(transport, screenPosition, Time.frameCount))
-                return false;
-
-            return ProcessTransportCommandRequests();
-        }
-
-        bool TryIssueBoardSelectedTransportOrdersToPassengerRect(Entity transport, Rect screenRect)
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return false;
-
-            EnsureRuntimeSelectionDependencies(em);
-            visibleUnitSelectionSystem.CollectVisiblePlayerUnits(
-                em,
-                runtimeConfig.WorldCamera,
-                selectionUiQuerySystem,
-                screenRect,
-                VisibleUnitSelectionSystem.Filter.Soldiers,
-                visibleSelectionScratch);
-
-            int queued = 0;
-            for (int i = 0; i < visibleSelectionScratch.Count; i++)
-            {
-                Entity passenger = visibleSelectionScratch[i];
-                if (!IsValidBoardPassengerPreviewTarget(em, transport, passenger))
-                    continue;
-
-                if (rtsSelectionInputSystem.QueueBoardSelectedTransportPassengerCommandRequest(transport, passenger, screenRect, Time.frameCount))
-                    queued++;
-            }
-
-            if (queued <= 0)
-            {
-                selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Tap units to board."));
-                return false;
-            }
-
-            return ProcessTransportCommandRequests();
-        }
-
-        bool IsBoardSelectedTransportPassengerTarget(Entity transport, Vector2 screenPosition)
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return false;
-
-            return TryGetClickedUnitEntity(screenPosition, em, out Entity passenger) &&
-                   IsValidBoardPassengerPreviewTarget(em, transport, passenger);
-        }
-
         bool QueueFocusUnitCommand(Vector2 screenPosition)
         {
             if (!rtsSelectionInputSystem.QueueFocusUnitCommandRequest(screenPosition, Time.frameCount))
@@ -1395,175 +889,10 @@ internal sealed class SelectionGameplayStartupSystem
                 out bestEntity);
         }
 
-        void CollectSelectedAttackSources(EntityManager em, List<Entity> sources)
-        {
-            if (sources == null || em.World == null || !em.World.IsCreated)
-                return;
-
-            EnsureRuntimeSelectionDependencies(em);
-            TryAddAttackSource(em, selectionStateSystem.FocusedUnit, sources);
-
-            List<Entity> cached = selectionStateSystem.CachedSelectedMoveEntities;
-            for (int i = 0; i < cached.Count; i++)
-                TryAddAttackSource(em, cached[i], sources);
-
-            EntityQuery selectedTagQuery = selectionRuntimeQuerySystem.SelectedTagQuery;
-            if (selectedTagQuery.IsEmptyIgnoreFilter)
-                return;
-
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = selectedTagQuery.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < selectedEntities.Length; i++)
-                    TryAddAttackSource(em, selectedEntities[i], sources);
-            }
-        }
-
-        bool TryAddAttackSource(EntityManager em, Entity entity, List<Entity> sources)
-        {
-            if (entity == Entity.Null ||
-                !em.Exists(entity) ||
-                sources.Contains(entity) ||
-                em.HasComponent<Disabled>(entity) ||
-                em.HasComponent<UnitTransportPassenger>(entity) ||
-                !em.HasComponent<UnitAttack>(entity) ||
-                !em.HasComponent<LocalTransform>(entity))
-            {
-                return false;
-            }
-
-            if (!IsAttackSourceEntity(em, entity))
-                return false;
-
-            sources.Add(entity);
-            return true;
-        }
-
-        static bool IsAttackSourceEntity(EntityManager em, Entity entity)
-        {
-            if (!em.HasComponent<Faction>(entity) ||
-                !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
-                !em.HasComponent<UnitMove>(entity) ||
-                !em.HasComponent<UnitCombat>(entity) ||
-                em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-            {
-                return false;
-            }
-
-            return !em.HasComponent<UnitHealth>(entity) ||
-                   em.GetComponentData<UnitHealth>(entity).Current > 0;
-        }
-
-        string BuildClickDebugSummary(Vector2 screenPosition)
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return "world=missing";
-
-            EnsureRuntimeSelectionDependencies(em);
-            string clickedCell = TryGetClickedCell(screenPosition, em, out int2 cell, out Vector3 worldPoint)
-                ? $"{cell}@{worldPoint.x:F1},{worldPoint.y:F1},{worldPoint.z:F1}"
-                : "none";
-            string focused = DescribeClickDebugEntity(em, selectionStateSystem.FocusedUnit);
-            List<Entity> cached = selectionStateSystem.CachedSelectedMoveEntities;
-            string selected0 = cached.Count > 0 ? DescribeClickDebugEntity(em, cached[0]) : "none";
-            int selectedTagCount = CountSelectedTags(em);
-            return $"clickedCell={clickedCell} focused={focused} cachedCount={cached.Count} selectedTags={selectedTagCount} selected0={selected0} suppress={runtimeGameplayStateSystem.SuppressNextWorldClick} ignoreUntil={rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame}";
-        }
-
         int CountSelectedTags(EntityManager em)
         {
             EnsureRuntimeSelectionDependencies(em);
             return selectionRuntimeQuerySystem.SelectedTagQuery.CalculateEntityCount();
-        }
-
-        string DescribeClickDebugEntity(EntityManager em, Entity entity)
-        {
-            if (entity == Entity.Null || !em.Exists(entity))
-                return "null";
-
-            string source = em.HasComponent<UnitSourcePrefabKey>(entity)
-                ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
-                : em.GetName(entity);
-            byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-            string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
-            string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
-            string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
-            bool selected = em.HasComponent<SelectedUnitTag>(entity);
-            bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
-            bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
-            bool engage = em.HasComponent<EngageTarget>(entity);
-            return $"{entity}/{source}/faction={faction}/selected={selected}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/manual={manual}/engage={engage}";
-        }
-
-        bool TryGetFocusedUnitEntity(out EntityManager em, out Entity entity)
-        {
-            em = default;
-            entity = Entity.Null;
-            if (!TryGetDefaultEntityManager(out em))
-                return false;
-
-            return focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out entity);
-        }
-
-        int CountPendingBoardingOrders(EntityManager em, Entity transport)
-        {
-            int count = 0;
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
-            if (query.IsEmptyIgnoreFilter)
-                return 0;
-
-            ComponentTypeHandle<UnitTransportBoardingTarget> targetType = em.GetComponentTypeHandle<UnitTransportBoardingTarget>(true);
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<UnitTransportBoardingTarget> targets = chunks[chunkIndex].GetNativeArray(ref targetType);
-                for (int i = 0; i < targets.Length; i++)
-                    if (targets[i].Transport == transport)
-                        count++;
-            }
-
-            return count;
-        }
-
-        bool IssueFocusedMissileLauncherRadarAttack()
-        {
-            if (!TryGetFocusedUnitEntity(out EntityManager em, out Entity launcher))
-                return false;
-            if (!RtsSelectionMissileLauncherRadarAttackCommandSystem.TryIssuePendingFocusedRadarAttack(
-                    em,
-                    launcher,
-                    out float3 targetPosition))
-            {
-                return false;
-            }
-
-            selectionOrderMarkerSystem.ShowAttackOrderMarker(em, targetPosition);
-            ClearCurrentSelection(em, "MissileLauncherRadarAttack");
-            focusedUnitLifecycleSystem.SetFocusedUnit(selectionStateSystem, launcher);
-            SetExplicitAttackTargetModeActive(false);
-            SetCameraDragging(false);
-            selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
-            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
-            selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), em, launcher);
-            return true;
-        }
-
-        TacticalCommandResult ValidateControllableEntity(Entity entity)
-        {
-            if (entity == Entity.Null || !TryGetDefaultEntityManager(out EntityManager em))
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-
-            if (!em.Exists(entity) || !em.HasComponent<Faction>(entity) || !em.HasComponent<UnitMove>(entity))
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-            if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-            if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-
-            return TacticalCommandResult.Success();
         }
 
         void SetCameraDragging(bool isDragging)
@@ -1622,45 +951,6 @@ internal sealed class SelectionGameplayStartupSystem
             return mainMenuPlayUi != null &&
                    mainMenuPlayUi.IsPointerOverRaycastableUi(screenPosition, out source);
         }
-    }
-
-    internal static bool TryGetImmediateSelectedUnitCommandMode(
-        RtsSelectionCommandIntentKind kind,
-        out TacticalCommandMode mode)
-    {
-        switch (kind)
-        {
-            case RtsSelectionCommandIntentKind.HoldPosition:
-                mode = TacticalCommandMode.Hold;
-                return true;
-            case RtsSelectionCommandIntentKind.Stop:
-                mode = TacticalCommandMode.Stop;
-                return true;
-            default:
-                mode = TacticalCommandMode.None;
-                return false;
-        }
-    }
-
-    internal static TacticalCommandResult BuildImmediateSelectedUnitCommandResult(
-        RtsSelectionCommandIntentKind kind,
-        bool accepted,
-        TacticalCommandReasonCode rejectionReason,
-        int issuedCount)
-    {
-        if (!accepted)
-            return TacticalCommandResult.Rejected(rejectionReason);
-
-        return kind switch
-        {
-            RtsSelectionCommandIntentKind.HoldPosition => TacticalCommandResult.Success("Holding current position."),
-            RtsSelectionCommandIntentKind.Stop => TacticalCommandResult.Success("Stopped selected units."),
-            RtsSelectionCommandIntentKind.ReturnToBase => TacticalCommandResult.Success(
-                issuedCount == 1 ? "Unit returning to base." : $"{issuedCount} units returning to base."),
-            RtsSelectionCommandIntentKind.DestroyFocusedUnit => TacticalCommandResult.Success(
-                issuedCount == 1 ? "Destroyed selected unit." : $"Destroyed {issuedCount} selected units."),
-            _ => TacticalCommandResult.Success()
-        };
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)

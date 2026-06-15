@@ -6,7 +6,6 @@ using UnityEngine;
 public sealed class RtsSelectionFocusCommandSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
-    public delegate TacticalCommandResult ValidateControllableEntityDelegate(Entity entity);
 
     public readonly struct Context
     {
@@ -32,7 +31,6 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action<bool> SetExplicitAttackTargetModeActive;
         public readonly Action<string> LogSelectionDiagnostic;
         public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
-        public readonly ValidateControllableEntityDelegate ValidateControllableEntity;
         public readonly Func<Vector2, bool> TryFocusScreenPosition;
 
         public Context(
@@ -58,7 +56,6 @@ public sealed class RtsSelectionFocusCommandSystem
             Action<bool> setExplicitAttackTargetModeActive,
             Action<string> logSelectionDiagnostic,
             FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
-            ValidateControllableEntityDelegate validateControllableEntity,
             Func<Vector2, bool> tryFocusScreenPosition)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
@@ -83,7 +80,6 @@ public sealed class RtsSelectionFocusCommandSystem
             SetExplicitAttackTargetModeActive = setExplicitAttackTargetModeActive;
             LogSelectionDiagnostic = logSelectionDiagnostic;
             DescribeEntity = describeEntity;
-            ValidateControllableEntity = validateControllableEntity;
             TryFocusScreenPosition = tryFocusScreenPosition;
         }
     }
@@ -217,7 +213,7 @@ public sealed class RtsSelectionFocusCommandSystem
 
     public TacticalCommandResult TrySelectRuntimeEntity(Context context, Entity entity)
     {
-        TacticalCommandResult result = context.ValidateControllableEntity(entity);
+        TacticalCommandResult result = ValidateControllableEntity(context, entity);
         if (!result.Accepted)
         {
             context.ApplyHudCommandResult?.Invoke(result);
@@ -229,6 +225,31 @@ public sealed class RtsSelectionFocusCommandSystem
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         context.ApplyHudCommandResult?.Invoke(result);
         return result;
+    }
+
+    private static TacticalCommandResult ValidateControllableEntity(Context context, Entity entity)
+    {
+        if (entity == Entity.Null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
+
+        if (!em.Exists(entity) ||
+            !em.HasComponent<Faction>(entity) ||
+            !em.HasComponent<UnitMove>(entity))
+        {
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
+
+        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+
+        if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+
+        return TacticalCommandResult.Success();
     }
 
     private static bool IsExternalSelectionCommand(RtsSelectionCommandIntentKind kind)

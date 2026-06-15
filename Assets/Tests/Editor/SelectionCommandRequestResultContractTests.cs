@@ -31,9 +31,17 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.AttackCommandFlush_ShowsAcceptedTargetMarkerFromResult();
             tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
             tests.ImmediateDestroyFallback_DeletesSelectedBuildingThroughResultBoundary();
+            tests.ImmediateSelectedUnitFlush_AcceptedHoldCleansPresentationAndRefreshesFocus();
+            tests.ImmediateSelectedUnitFlush_RejectedHoldClearsCommandFeedbackOnly();
+            tests.ImmediateSelectedUnitFlush_DestroyFocusedUnitClearsFocusedPresentation();
             tests.SelectionModeFlush_EnterAppliesPresentationCleanup();
             tests.SelectionModeFlush_ExitAppliesPresentationCleanup();
             tests.ScanTargetModeFlush_AppliesPresentationCleanup();
+            tests.AttackTargetModeFlush_AppliesAcceptedEnterPresentationCleanup();
+            tests.AttackTargetModeFlush_AppliesRejectedEnterPresentationCleanup();
+            tests.AttackTargetModeFlush_AppliesAirDefenseAutoEngagePresentationCleanup();
+            tests.AttackTargetModeFlush_AppliesAcceptedTogglePresentationCleanup();
+            tests.FocusedMissileLauncherRadarAttackFlush_AppliesPresentationCleanup();
             tests.BoardTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.BoardTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.BoardTargetModeFlush_AppliesToggleOffPresentationCleanup();
@@ -42,7 +50,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=27");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=35");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -51,6 +59,297 @@ public sealed class SelectionCommandRequestResultContractTests
             UnityEngine.Debug.LogError("[SelectionCommandRequestResultContractValidation] result=Failed");
             EditorApplication.Exit(1);
         }
+    }
+
+    [Test]
+    public void ImmediateSelectedUnitFlush_AcceptedHoldCleansPresentationAndRefreshesFocus()
+    {
+        using World world = new("ImmediateSelectedUnitFlush_AcceptedHoldCleansPresentationAndRefreshesFocus");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 110,
+            Frame = 129
+        });
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.HoldPosition,
+            RequestId = 111,
+            Frame = 130
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Attack,
+            ActiveCommandModeFrame = 32,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1,
+            HasQueuedMoveOrder = 1,
+            QueuedMoveOrderFrame = 32,
+            QueuedMoveOrderScreenPosition = new float2(16f, 17f)
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+        Entity selectedUnit = CreateSelectedMovableUnit(em);
+
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = true;
+        int exitBuildModeCount = 0;
+        int cancelBuildingPlacementCount = 0;
+        int clearBuildingCount = 0;
+        string clearBuildingReason = string.Empty;
+        int commandModeCount = 0;
+        TacticalCommandMode appliedCommandMode = TacticalCommandMode.None;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = true;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int refreshFocusedCount = 0;
+        var buildingInteraction = new BuildingPlacementInteractionSystem();
+        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            null,
+            null,
+            () => true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            () => cancelBuildingPlacementCount++,
+            null,
+            null,
+            reason =>
+            {
+                clearBuildingCount++;
+                clearBuildingReason = reason;
+            },
+            () => exitBuildModeCount++,
+            null,
+            null);
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            applyHudCommandMode: mode =>
+            {
+                commandModeCount++;
+                appliedCommandMode = mode;
+            },
+            clearHudCommandMode: () => clearCommandModeCount++,
+            buildingPlacementInteractionSystem: buildingInteraction,
+            buildingPlacementInteractionContext: buildingContext,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            refreshFocusedUnit: (_, _) => refreshFocusedCount++);
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+            flushContext,
+            focusedUnit: Entity.Null);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual((int)TacticalCommandMode.None, inputState.ActiveCommandMode);
+        Assert.AreEqual(0, inputState.HasQueuedMoveOrder);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(selectedUnit));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(selectedUnit));
+        Assert.AreEqual(1, commandModeCount);
+        Assert.AreEqual(TacticalCommandMode.Hold, appliedCommandMode);
+        Assert.AreEqual(1, explicitAttackModeCount);
+        Assert.IsFalse(explicitAttackModeActive);
+        Assert.AreEqual(1, exitBuildModeCount);
+        Assert.AreEqual(1, cancelBuildingPlacementCount);
+        Assert.AreEqual(1, clearBuildingCount);
+        Assert.AreEqual("SelectionUiCommandSystem.Hold", clearBuildingReason);
+        Assert.AreEqual(1, clearCommandModeCount);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsTrue(commandResult.Accepted);
+        Assert.AreEqual("Holding current position.", commandResult.Message);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsFalse(worldMarkersVisible);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, refreshFocusedCount);
+    }
+
+    [Test]
+    public void ImmediateSelectedUnitFlush_RejectedHoldClearsCommandFeedbackOnly()
+    {
+        using World world = new("ImmediateSelectedUnitFlush_RejectedHoldClearsCommandFeedbackOnly");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.HoldPosition,
+            RequestId = 112,
+            Frame = 131
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Attack,
+            ActiveCommandModeFrame = 33,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+
+        int explicitAttackModeCount = 0;
+        int commandModeCount = 0;
+        TacticalCommandMode appliedCommandMode = TacticalCommandMode.None;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        int cameraDraggingCount = 0;
+        int refreshFocusedCount = 0;
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            applyHudCommandMode: mode =>
+            {
+                commandModeCount++;
+                appliedCommandMode = mode;
+            },
+            clearHudCommandMode: () => clearCommandModeCount++,
+            setExplicitAttackTargetModeActive: _ => explicitAttackModeCount++,
+            setHudWorldMarkersVisible: _ => worldMarkerVisibilityCount++,
+            setCameraDragging: _ => cameraDraggingCount++,
+            refreshFocusedUnit: (_, _) => refreshFocusedCount++);
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+            flushContext,
+            focusedUnit: Entity.Null);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual((int)TacticalCommandMode.None, inputState.ActiveCommandMode);
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+        Assert.AreEqual(1, commandModeCount);
+        Assert.AreEqual(TacticalCommandMode.Hold, appliedCommandMode);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsFalse(commandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.NoSelection, commandResult.ReasonCode);
+        Assert.AreEqual(1, clearCommandModeCount);
+        Assert.AreEqual(0, explicitAttackModeCount);
+        Assert.AreEqual(0, worldMarkerVisibilityCount);
+        Assert.AreEqual(0, cameraDraggingCount);
+        Assert.AreEqual(0, refreshFocusedCount);
+    }
+
+    [Test]
+    public void ImmediateSelectedUnitFlush_DestroyFocusedUnitClearsFocusedPresentation()
+    {
+        using World world = new("ImmediateSelectedUnitFlush_DestroyFocusedUnitClearsFocusedPresentation");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DestroyFocusedUnit,
+            RequestId = 113,
+            Frame = 132
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent());
+        em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        Entity focusedUnit = em.CreateEntity(typeof(Faction));
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+
+        int clearFocusedCount = 0;
+        int clearSelectionCount = 0;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int explicitAttackModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        int cameraDraggingCount = 0;
+        var selectionStateSystem = new SelectionStateSystem();
+        selectionStateSystem.SetFocusedUnit(focusedUnit);
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            selectionStateSystem: selectionStateSystem,
+            clearHudSelection: () => clearSelectionCount++,
+            setExplicitAttackTargetModeActive: _ => explicitAttackModeCount++,
+            setHudWorldMarkersVisible: _ => worldMarkerVisibilityCount++,
+            setCameraDragging: _ => cameraDraggingCount++,
+            clearFocusedUnit: state =>
+            {
+                clearFocusedCount++;
+                state.ClearFocusedUnit();
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+            flushContext,
+            focusedUnit);
+
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.IsFalse(em.Exists(focusedUnit));
+        Assert.AreEqual(Entity.Null, selectionStateSystem.FocusedUnit);
+        Assert.AreEqual(1, clearFocusedCount);
+        Assert.AreEqual(1, clearSelectionCount);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsTrue(commandResult.Accepted);
+        Assert.AreEqual("Destroyed selected unit.", commandResult.Message);
+        Assert.AreEqual(0, explicitAttackModeCount);
+        Assert.AreEqual(0, worldMarkerVisibilityCount);
+        Assert.AreEqual(0, cameraDraggingCount);
     }
 
     [Test]
@@ -455,6 +754,627 @@ public sealed class SelectionCommandRequestResultContractTests
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    [Test]
+    public void AttackTargetModeFlush_AppliesAcceptedEnterPresentationCleanup()
+    {
+        using World world = new("AttackTargetModeFlush_AppliesAcceptedEnterPresentationCleanup");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 104,
+            Frame = 123
+        });
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.EnterAttackTargetMode,
+            RequestId = 105,
+            Frame = 124
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Move,
+            ActiveCommandModeFrame = 28,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1,
+            HasQueuedMoveOrder = 1,
+            QueuedMoveOrderFrame = 28,
+            QueuedMoveOrderScreenPosition = new float2(14f, 15f),
+            LastKnownPointerPosition = new float2(64f, 74f),
+            HasLastKnownPointerPosition = 1
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+        CreateSelectedAttackUnit(em);
+
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = true;
+        int clearBuildingCount = 0;
+        string clearBuildingReason = string.Empty;
+        int commandModeCount = 0;
+        TacticalCommandMode appliedCommandMode = TacticalCommandMode.None;
+        int commandResultCount = 0;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = false;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int diagnosticCount = 0;
+        string lastDiagnostic = string.Empty;
+        var buildingInteraction = new BuildingPlacementInteractionSystem();
+        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            null,
+            null,
+            () => true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            reason =>
+            {
+                clearBuildingCount++;
+                clearBuildingReason = reason;
+            },
+            null,
+            null,
+            null);
+        var inputSystem = new RtsSelectionInputSystem();
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            inputSystem,
+            default,
+            default,
+            default,
+            _ => commandResultCount++,
+            em,
+            applyHudCommandMode: mode =>
+            {
+                commandModeCount++;
+                appliedCommandMode = mode;
+            },
+            clearHudCommandMode: () => clearCommandModeCount++,
+            buildingPlacementInteractionSystem: buildingInteraction,
+            buildingPlacementInteractionContext: buildingContext,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            logSelectionClickDiagnostic: message =>
+            {
+                diagnosticCount++;
+                lastDiagnostic = message;
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+            flushContext,
+            currentFrame: 326,
+            focusedUnit: Entity.Null);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual((int)TacticalCommandMode.Attack, inputState.ActiveCommandMode);
+        Assert.AreEqual(326, inputState.ActiveCommandModeFrame);
+        Assert.AreEqual(1, inputState.ActiveCommandModeOneShot);
+        Assert.AreEqual(1, inputState.ActiveCommandModeRequiresWorldTarget);
+        Assert.AreEqual(0, inputState.HasQueuedMoveOrder);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.AreEqual(2, explicitAttackModeCount);
+        Assert.IsTrue(explicitAttackModeActive);
+        Assert.AreEqual(1, clearBuildingCount);
+        Assert.AreEqual("SelectionUiCommandSystem.EnterAttackTargetMode", clearBuildingReason);
+        Assert.AreEqual(1, commandModeCount);
+        Assert.AreEqual(TacticalCommandMode.Attack, appliedCommandMode);
+        Assert.AreEqual(0, commandResultCount);
+        Assert.AreEqual(0, clearCommandModeCount);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, diagnosticCount);
+        StringAssert.Contains("attackModeEntered result=True", lastDiagnostic);
+    }
+
+    [Test]
+    public void AttackTargetModeFlush_AppliesRejectedEnterPresentationCleanup()
+    {
+        using World world = new("AttackTargetModeFlush_AppliesRejectedEnterPresentationCleanup");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.EnterAttackTargetMode,
+            RequestId = 106,
+            Frame = 125
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Move,
+            ActiveCommandModeFrame = 29,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+        CreateSelectedNonAttackUnit(em);
+
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = true;
+        int clearBuildingCount = 0;
+        int commandModeCount = 0;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = true;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int diagnosticCount = 0;
+        string lastDiagnostic = string.Empty;
+        var buildingInteraction = new BuildingPlacementInteractionSystem();
+        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            null,
+            null,
+            () => true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            _ => clearBuildingCount++,
+            null,
+            null,
+            null);
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            applyHudCommandMode: _ => commandModeCount++,
+            clearHudCommandMode: () => clearCommandModeCount++,
+            buildingPlacementInteractionSystem: buildingInteraction,
+            buildingPlacementInteractionContext: buildingContext,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            logSelectionClickDiagnostic: message =>
+            {
+                diagnosticCount++;
+                lastDiagnostic = message;
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+            flushContext,
+            currentFrame: 327,
+            focusedUnit: Entity.Null);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual((int)TacticalCommandMode.None, inputState.ActiveCommandMode);
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+        Assert.AreEqual(1, explicitAttackModeCount);
+        Assert.IsFalse(explicitAttackModeActive);
+        Assert.AreEqual(1, clearBuildingCount);
+        Assert.AreEqual(0, commandModeCount);
+        Assert.AreEqual(1, clearCommandModeCount);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsFalse(commandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, commandResult.ReasonCode);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsFalse(worldMarkersVisible);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, diagnosticCount);
+        StringAssert.Contains("attackModeEntered result=False reason=TargetNotAttackable", lastDiagnostic);
+    }
+
+    [Test]
+    public void AttackTargetModeFlush_AppliesAirDefenseAutoEngagePresentationCleanup()
+    {
+        using World world = new("AttackTargetModeFlush_AppliesAirDefenseAutoEngagePresentationCleanup");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.EnterAttackTargetMode,
+            RequestId = 107,
+            Frame = 126
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Move,
+            ActiveCommandModeFrame = 30,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1,
+            HasQueuedMoveOrder = 1,
+            QueuedMoveOrderFrame = 30
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+        CreateSelectedAirDefenseLauncher(em);
+
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = true;
+        int clearBuildingCount = 0;
+        int commandModeCount = 0;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = true;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int diagnosticCount = 0;
+        string lastDiagnostic = string.Empty;
+        var buildingInteraction = new BuildingPlacementInteractionSystem();
+        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            null,
+            null,
+            () => true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            _ => clearBuildingCount++,
+            null,
+            null,
+            null);
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            applyHudCommandMode: _ => commandModeCount++,
+            clearHudCommandMode: () => clearCommandModeCount++,
+            buildingPlacementInteractionSystem: buildingInteraction,
+            buildingPlacementInteractionContext: buildingContext,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            logSelectionClickDiagnostic: message =>
+            {
+                diagnosticCount++;
+                lastDiagnostic = message;
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+            flushContext,
+            currentFrame: 328,
+            focusedUnit: Entity.Null);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual((int)TacticalCommandMode.None, inputState.ActiveCommandMode);
+        Assert.AreEqual(0, inputState.HasQueuedMoveOrder);
+        Assert.AreEqual(1, runtimeState.SelectionModeActive);
+        Assert.AreEqual(0, runtimeState.SuppressNextWorldClick);
+        Assert.AreEqual(1, explicitAttackModeCount);
+        Assert.IsFalse(explicitAttackModeActive);
+        Assert.AreEqual(1, clearBuildingCount);
+        Assert.AreEqual(0, commandModeCount);
+        Assert.AreEqual(1, clearCommandModeCount);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsTrue(commandResult.Accepted);
+        Assert.AreEqual("Air defense auto-engages aircraft and incoming missiles.", commandResult.Message);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsFalse(worldMarkersVisible);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, diagnosticCount);
+        StringAssert.Contains("attackModeEntered result=False reason=AirDefenseAutoEngage", lastDiagnostic);
+    }
+
+    [Test]
+    public void AttackTargetModeFlush_AppliesAcceptedTogglePresentationCleanup()
+    {
+        using World world = new("AttackTargetModeFlush_AppliesAcceptedTogglePresentationCleanup");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            RequestId = 108,
+            Frame = 127
+        });
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.ToggleAttackTargetMode,
+            RequestId = 109,
+            Frame = 128
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Move,
+            ActiveCommandModeFrame = 31,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1,
+            HasQueuedMoveOrder = 1,
+            QueuedMoveOrderFrame = 31,
+            LastKnownPointerPosition = new float2(84f, 94f),
+            HasLastKnownPointerPosition = 1
+        });
+        Entity runtimeStateEntity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(runtimeStateEntity, new RuntimeGameplayStateComponent
+        {
+            SelectionModeActive = 1,
+            SuppressNextWorldClick = 0
+        });
+        Entity focusedUnit = CreateFocusedAttackUnit(em);
+
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = false;
+        int clearBuildingCount = 0;
+        int commandModeCount = 0;
+        TacticalCommandMode appliedCommandMode = TacticalCommandMode.None;
+        int commandResultCount = 0;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = false;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int diagnosticCount = 0;
+        string lastDiagnostic = string.Empty;
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            new RtsSelectionInputSystem(),
+            default,
+            default,
+            default,
+            _ => commandResultCount++,
+            em,
+            applyHudCommandMode: mode =>
+            {
+                commandModeCount++;
+                appliedCommandMode = mode;
+            },
+            clearHudCommandMode: () => clearCommandModeCount++,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            logSelectionClickDiagnostic: message =>
+            {
+                diagnosticCount++;
+                lastDiagnostic = message;
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+            flushContext,
+            currentFrame: 329,
+            focusedUnit);
+
+        RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(handled);
+        Assert.AreEqual(1, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Move, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity)[0].Kind);
+        Assert.AreEqual((int)TacticalCommandMode.Attack, inputState.ActiveCommandMode);
+        Assert.AreEqual(329, inputState.ActiveCommandModeFrame);
+        Assert.AreEqual(1, inputState.HasQueuedMoveOrder);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        Assert.AreEqual(1, explicitAttackModeCount);
+        Assert.IsTrue(explicitAttackModeActive);
+        Assert.AreEqual(0, clearBuildingCount);
+        Assert.AreEqual(1, commandModeCount);
+        Assert.AreEqual(TacticalCommandMode.Attack, appliedCommandMode);
+        Assert.AreEqual(0, commandResultCount);
+        Assert.AreEqual(0, clearCommandModeCount);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, diagnosticCount);
+        StringAssert.Contains("attackModeToggled result=True", lastDiagnostic);
+    }
+
+    [Test]
+    public void FocusedMissileLauncherRadarAttackFlush_AppliesPresentationCleanup()
+    {
+        using World world = new("FocusedMissileLauncherRadarAttackFlush_AppliesPresentationCleanup");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.ToggleAttackTargetMode,
+            RequestId = 130,
+            Frame = 150
+        });
+        em.SetComponentData(commandEntity, new RtsSelectionInputStateComponent
+        {
+            ActiveCommandMode = (int)TacticalCommandMode.Attack,
+            ActiveCommandModeFrame = 149,
+            ActiveCommandModeOneShot = 1,
+            ActiveCommandModeRequiresWorldTarget = 1
+        });
+        Entity launcher = CreateRadarAttackLauncher(em, new int2(10, 10));
+        CreateThreatDetector(em, FactionIdentitySystem.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
+        Entity groundTarget = CreateRadarAttackTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(35, 20));
+        var selectionState = new SelectionStateSystem();
+
+        int clearSelectionCount = 0;
+        string clearReason = string.Empty;
+        int setFocusedUnitCount = 0;
+        Entity focusedUnit = Entity.Null;
+        int explicitAttackModeCount = 0;
+        bool explicitAttackModeActive = true;
+        int cameraDraggingCount = 0;
+        bool cameraDragging = true;
+        int commandResultCount = 0;
+        TacticalCommandResult commandResult = default;
+        int clearCommandModeCount = 0;
+        int worldMarkerVisibilityCount = 0;
+        bool worldMarkersVisible = false;
+        int applySelectionCount = 0;
+        Entity appliedSelection = Entity.Null;
+        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            null,
+            default,
+            default,
+            default,
+            result =>
+            {
+                commandResultCount++;
+                commandResult = result;
+            },
+            em,
+            selectionStateSystem: selectionState,
+            clearCurrentSelection: (_, reason) =>
+            {
+                clearSelectionCount++;
+                clearReason = reason;
+            },
+            clearHudCommandMode: () => clearCommandModeCount++,
+            setExplicitAttackTargetModeActive: active =>
+            {
+                explicitAttackModeCount++;
+                explicitAttackModeActive = active;
+            },
+            setHudWorldMarkersVisible: visible =>
+            {
+                worldMarkerVisibilityCount++;
+                worldMarkersVisible = visible;
+            },
+            setCameraDragging: dragging =>
+            {
+                cameraDraggingCount++;
+                cameraDragging = dragging;
+            },
+            applyHudSelection: (_, entity) =>
+            {
+                applySelectionCount++;
+                appliedSelection = entity;
+            },
+            setFocusedUnit: (state, entity) =>
+            {
+                setFocusedUnitCount++;
+                focusedUnit = entity;
+                state.SetFocusedUnit(entity);
+            });
+
+        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessFocusedMissileLauncherRadarAttack(
+            flushContext,
+            launcher);
+
+        Assert.IsTrue(handled);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
+        EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);
+        Assert.AreEqual(groundTarget, engage.Target);
+        Assert.AreEqual(new int2(35, 20), engage.Cell);
+        Assert.AreEqual(1, engage.IsCommanded);
+        Assert.AreEqual(1, clearSelectionCount);
+        Assert.AreEqual("MissileLauncherRadarAttack", clearReason);
+        Assert.AreEqual(1, setFocusedUnitCount);
+        Assert.AreEqual(launcher, focusedUnit);
+        Assert.AreEqual(launcher, selectionState.FocusedUnit);
+        Assert.AreEqual(1, explicitAttackModeCount);
+        Assert.IsFalse(explicitAttackModeActive);
+        Assert.AreEqual(1, cameraDraggingCount);
+        Assert.IsFalse(cameraDragging);
+        Assert.AreEqual(1, commandResultCount);
+        Assert.IsTrue(commandResult.Accepted);
+        Assert.AreEqual(1, clearCommandModeCount);
+        Assert.AreEqual(1, worldMarkerVisibilityCount);
+        Assert.IsTrue(worldMarkersVisible);
+        Assert.AreEqual(1, applySelectionCount);
+        Assert.AreEqual(launcher, appliedSelection);
     }
 
     [Test]
@@ -2275,6 +3195,151 @@ public sealed class SelectionCommandRequestResultContractTests
         return marker;
     }
 
+    private static Entity CreateSelectedAttackUnit(EntityManager em)
+    {
+        Entity attackUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(attackUnit, LocalTransform.FromPosition(float3.zero));
+        return attackUnit;
+    }
+
+    private static Entity CreateSelectedMovableUnit(EntityManager em)
+    {
+        Entity unit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitCombat));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 3) });
+        em.SetComponentData(unit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
+        return unit;
+    }
+
+    private static Entity CreateRadarAttackLauncher(EntityManager em, int2 cell)
+    {
+        Entity launcher = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(UnitMove),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new UnitGrid { Cell = cell });
+        em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(launcher, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(launcher, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Missle_Launcher_Ground") });
+        em.SetComponentData(launcher, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(launcher, new UnitAttack { Range = 600f, CooldownSeconds = 1f, Damage = 100, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(launcher, LocalTransform.FromPosition(new float3(cell.x, 0f, cell.y)));
+        return launcher;
+    }
+
+    private static Entity CreateRadarAttackTarget(EntityManager em, byte factionId, int2 cell)
+    {
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(UnitMove),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = factionId });
+        em.SetComponentData(target, new UnitGrid { Cell = cell });
+        em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(target, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(cell.x, 0f, cell.y)));
+        return target;
+    }
+
+    private static Entity CreateThreatDetector(EntityManager em, byte factionId, ThreatDetectionKind kind, int2 cell, int radiusCells)
+    {
+        Entity detector = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(ThreatDetector));
+        em.SetComponentData(detector, new Faction { Id = factionId });
+        em.SetComponentData(detector, new UnitGrid { Cell = cell });
+        em.SetComponentData(detector, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(detector, new ThreatDetector
+        {
+            Kind = (byte)kind,
+            RadiusCells = radiusCells
+        });
+        return detector;
+    }
+
+    private static Entity CreateFocusedAttackUnit(EntityManager em)
+    {
+        Entity attackUnit = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(attackUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(attackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(attackUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(attackUnit, new UnitAttack { Range = 100f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(attackUnit, LocalTransform.FromPosition(float3.zero));
+        return attackUnit;
+    }
+
+    private static Entity CreateSelectedNonAttackUnit(EntityManager em)
+    {
+        Entity unit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitMove));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(unit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        return unit;
+    }
+
+    private static Entity CreateSelectedAirDefenseLauncher(EntityManager em)
+    {
+        Entity launcher = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(AirMissileLauncherComponent),
+            typeof(AirMissileLauncherStateComponent));
+        em.SetComponentData(launcher, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(launcher, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(launcher, new AirMissileLauncherComponent
+        {
+            MinRange = 8f,
+            BaseDetectionRange = 220f,
+            MaxDetectionRange = 420f,
+            LockSeconds = 0.35f,
+            LaunchDelaySeconds = 0.12f,
+            ReloadSeconds = 1.8f,
+            MissileSpeed = 95f,
+            MissileTurnRateDegreesPerSecond = 220f,
+            MissileLifetimeSeconds = 7f,
+            ProximityFuseRadius = 4f,
+            AirTargetDamage = 120,
+            IncomingMissileDamage = 9999,
+            TrackingQuality = 0.75f
+        });
+        em.SetComponentData(launcher, new AirMissileLauncherStateComponent { Phase = (byte)AirMissileLauncherPhase.Idle });
+        return launcher;
+    }
+
     private static bool TryGetNoClickedUnit(UnityEngine.Vector2 screenPosition, EntityManager em, out Entity entity)
     {
         entity = Entity.Null;
@@ -2370,7 +3435,11 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action<bool> setCameraDragging = null,
         System.Action processSelectionRectangleRequests = null,
         System.Action<string> logSelectionClickDiagnostic = null,
-        System.Action<SelectionStateSystem> clearFocusedUnit = null)
+        System.Action<SelectionStateSystem> clearFocusedUnit = null,
+        RtsSelectionCommandResultFlushSystem.RefreshFocusedUnitAction refreshFocusedUnit = null,
+        RtsSelectionCommandResultFlushSystem.SetFocusedUnitAction setFocusedUnit = null,
+        RtsSelectionCommandResultFlushSystem.ApplyHudSelectionAction applyHudSelection = null,
+        RtsSelectionCommandResultFlushSystem.ClearCurrentSelectionAction clearCurrentSelection = null)
     {
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
@@ -2387,15 +3456,17 @@ public sealed class SelectionCommandRequestResultContractTests
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,
             selectedMoveQuery,
+            selectedMoveQuery,
             gridConfigQuery,
             mapSurfaceQuery,
             TryGetEntityManager,
             ensureEntityQueries,
-            null,
+            clearCurrentSelection,
             applyHudCommandMode,
             applyHudBoardCommandMode,
             applyHudCommandResult,
             clearHudSelection,
+            applyHudSelection,
             clearHudCommandMode,
             setExplicitAttackTargetModeActive,
             setHudWorldMarkersVisible,
@@ -2405,7 +3476,8 @@ public sealed class SelectionCommandRequestResultContractTests
             requestAttackOrderScreenMarker,
             setCameraDragging,
             clearFocusedUnit,
-            null,
+            refreshFocusedUnit,
+            setFocusedUnit,
             null,
             null,
             null,

@@ -21,6 +21,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
         public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
+        public readonly SelectionUiQuerySystem SelectionUiQuerySystem;
+        public readonly VisibleUnitSelectionSystem VisibleUnitSelectionSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
@@ -46,6 +48,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly Action ProcessMoveCommandRequests;
         public readonly Action<string> LogSelectionDiagnostic;
         public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
+        public readonly List<Entity> VisibleSelectionScratch;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -77,13 +80,18 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             Func<bool> processTransportCommandRequests,
             Action processMoveCommandRequests,
             Action<string> logSelectionDiagnostic,
-            FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity)
+            FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
+            SelectionUiQuerySystem selectionUiQuerySystem = null,
+            VisibleUnitSelectionSystem visibleUnitSelectionSystem = null,
+            List<Entity> visibleSelectionScratch = null)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
             FocusableUnitLookupSystem = focusableUnitLookupSystem;
+            SelectionUiQuerySystem = selectionUiQuerySystem;
+            VisibleUnitSelectionSystem = visibleUnitSelectionSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
@@ -109,6 +117,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             ProcessMoveCommandRequests = processMoveCommandRequests;
             LogSelectionDiagnostic = logSelectionDiagnostic;
             DescribeEntity = describeEntity;
+            VisibleSelectionScratch = visibleSelectionScratch;
         }
     }
 
@@ -403,6 +412,187 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => targetBoundary.TryGetClickedCell(position, entityManager, out cell, out worldPoint));
     }
 
+    public bool TryIssueBoardSelectedTransportOrderToClickedUnit(Context context, Entity transport, Vector2 screenPosition)
+    {
+        if (context.InputSystem == null ||
+            !context.InputSystem.QueueBoardSelectedTransportCommandRequest(transport, screenPosition, Time.frameCount))
+        {
+            return false;
+        }
+
+        return context.ProcessTransportCommandRequests?.Invoke() == true;
+    }
+
+    public bool TryIssueBoardSelectedTransportOrdersToPassengerRect(Context context, Entity transport, Rect screenRect)
+    {
+        if (context.VisibleUnitSelectionSystem == null ||
+            context.SelectionUiQuerySystem == null ||
+            context.VisibleSelectionScratch == null ||
+            context.WorldCamera == null ||
+            context.InputSystem == null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return false;
+        }
+
+        context.VisibleUnitSelectionSystem.CollectVisiblePlayerUnits(
+            em,
+            context.WorldCamera,
+            context.SelectionUiQuerySystem,
+            screenRect,
+            VisibleUnitSelectionSystem.Filter.Soldiers,
+            context.VisibleSelectionScratch);
+
+        int queued = 0;
+        for (int i = 0; i < context.VisibleSelectionScratch.Count; i++)
+        {
+            Entity passenger = context.VisibleSelectionScratch[i];
+            if (!IsValidBoardPassengerPreviewTarget(context, em, transport, passenger))
+                continue;
+
+            if (context.InputSystem.QueueBoardSelectedTransportPassengerCommandRequest(transport, passenger, screenRect, Time.frameCount))
+                queued++;
+        }
+
+        if (queued <= 0)
+        {
+            context.ApplyHudCommandResult?.Invoke(
+                TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Tap units to board."));
+            return false;
+        }
+
+        return context.ProcessTransportCommandRequests?.Invoke() == true;
+    }
+
+    public bool IsBoardSelectedTransportPassengerTarget(Context context, Entity transport, Vector2 screenPosition)
+    {
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return false;
+        }
+
+        return TryGetClickedUnitEntity(context, screenPosition, em, out Entity passenger) &&
+               IsValidBoardPassengerPreviewTarget(context, em, transport, passenger);
+    }
+
+    public bool IsValidBoardTransportPreviewTarget(Context context, EntityManager em, Entity source, Entity target)
+    {
+        return IsBoardTransportWithAvailableSeats(em, target);
+    }
+
+    public bool IsValidBoardPassengerPreviewTarget(Context context, EntityManager em, Entity transport, Entity passenger)
+    {
+        if (transport == Entity.Null ||
+            passenger == Entity.Null ||
+            transport == passenger ||
+            !IsBoardCommandAvailable(context, em, transport))
+        {
+            return false;
+        }
+
+        return TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger);
+    }
+
+    public bool IsBoardCommandAvailable(Context context, EntityManager em, Entity entity)
+    {
+        if (!IsOwnedByPlayer(em, entity))
+            return false;
+
+        if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
+            return true;
+
+        return IsBoardTransportWithAvailableSeats(em, entity);
+    }
+
+    public bool HasSelectedBoardAction(Context context, EntityManager em)
+    {
+        if (context.FocusedUnitLifecycleSystem != null &&
+            context.SelectionStateSystem != null &&
+            context.FocusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
+                em,
+                context.SelectionStateSystem,
+                out Entity focusedUnit) &&
+            em.Exists(focusedUnit) &&
+            TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, focusedUnit) &&
+            IsBoardCommandAvailable(context, em, focusedUnit))
+        {
+            return true;
+        }
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!em.Exists(entity))
+                    continue;
+
+                if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
+                    return true;
+
+                if (TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity) &&
+                    IsBoardCommandAvailable(context, em, entity))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsBoardTransportWithAvailableSeats(EntityManager em, Entity entity)
+    {
+        if (!IsOwnedByPlayer(em, entity))
+            return false;
+
+        if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity))
+            return false;
+
+        int capacity = em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity;
+        int passengers = em.HasBuffer<UnitTransportPassengerElement>(entity)
+            ? em.GetBuffer<UnitTransportPassengerElement>(entity).Length
+            : 0;
+        return capacity > passengers + CountPendingBoardingOrders(em, entity);
+    }
+
+    private static bool IsOwnedByPlayer(EntityManager em, Entity entity)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               em.HasComponent<Faction>(entity) &&
+               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
+    }
+
+    private static int CountPendingBoardingOrders(EntityManager em, Entity transport)
+    {
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
+        if (query.IsEmptyIgnoreFilter)
+            return 0;
+
+        ComponentTypeHandle<UnitTransportBoardingTarget> targetType = em.GetComponentTypeHandle<UnitTransportBoardingTarget>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<UnitTransportBoardingTarget> targets = chunks[chunkIndex].GetNativeArray(ref targetType);
+            for (int i = 0; i < targets.Length; i++)
+                if (targets[i].Transport == transport)
+                    count++;
+        }
+
+        return count;
+    }
+
     public bool TryIssueMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
@@ -518,6 +708,32 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return CreatePointerTargetBoundaryPass(context).TryGetClickedAttackTargetEntity(screenPosition, em, out bestEntity);
     }
 
+    public string BuildClickDebugSummary(Context context, Vector2 screenPosition)
+    {
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return "world=missing";
+        }
+
+        string clickedCell = TryGetClickedCell(context, screenPosition, em, out int2 cell, out Vector3 worldPoint)
+            ? $"{cell}@{worldPoint.x:F1},{worldPoint.y:F1},{worldPoint.z:F1}"
+            : "none";
+        SelectionStateSystem selectionState = context.SelectionStateSystem;
+        Entity focusedUnit = selectionState != null ? selectionState.FocusedUnit : Entity.Null;
+        string focused = DescribeClickDebugEntity(em, focusedUnit);
+        List<Entity> cached = selectionState?.CachedSelectedMoveEntities;
+        int cachedCount = cached?.Count ?? 0;
+        string selected0 = cachedCount > 0 ? DescribeClickDebugEntity(em, cached[0]) : "none";
+        int selectedTagCount = CountSelectedTags(em);
+        bool suppressNextWorldClick = context.RuntimeGameplayStateSystem != null &&
+                                      context.RuntimeGameplayStateSystem.SuppressNextWorldClick;
+        int ignoreWorldCommandsUntilFrame = context.InputSystem != null
+            ? context.InputSystem.IgnoreWorldCommandsUntilFrame
+            : 0;
+        return $"clickedCell={clickedCell} focused={focused} cachedCount={cachedCount} selectedTags={selectedTagCount} selected0={selected0} suppress={suppressNextWorldClick} ignoreUntil={ignoreWorldCommandsUntilFrame}";
+    }
+
     private bool TryGetClickedAttackTargetEntityFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
         if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
@@ -565,6 +781,39 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         bool disabled = em.HasComponent<Disabled>(entity);
         bool passenger = em.HasComponent<UnitTransportPassenger>(entity);
         return $"{entity}/{source}/faction={faction}/selected={selected}/move={hasMove}/grid={hasGrid}/disabled={disabled}/passenger={passenger}";
+    }
+
+    private static int CountSelectedTags(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        return query.CalculateEntityCount();
+    }
+
+    private static string DescribeClickDebugEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
+            : (byte)0;
+        string grid = em.HasComponent<UnitGrid>(entity)
+            ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
+            : "none";
+        string target = em.HasComponent<UnitTarget>(entity)
+            ? em.GetComponentData<UnitTarget>(entity).Cell.ToString()
+            : "none";
+        string pathRequest = em.HasComponent<UnitPathRequest>(entity)
+            ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString()
+            : "none";
+        bool selected = em.HasComponent<SelectedUnitTag>(entity);
+        bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+        bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        bool engage = em.HasComponent<EngageTarget>(entity);
+        return $"{entity}/{source}/faction={faction}/selected={selected}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/manual={manual}/engage={engage}";
     }
 
     private bool TryGetFlatClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell)

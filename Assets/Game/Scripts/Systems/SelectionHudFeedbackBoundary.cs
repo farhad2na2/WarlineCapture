@@ -1,11 +1,19 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class SelectionHudFeedbackBoundary
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);
+    public delegate void EnsureEntityQueriesDelegate(EntityManager em);
+    public delegate void RefreshFocusedUnitDelegate(EntityManager em, SelectionStateSystem selectionStateSystem);
+    public delegate int CountSelectedTagsDelegate(EntityManager em);
+    public delegate bool TryGetAttackModeOrderSnapshotDelegate(out string orderText);
+    public delegate bool IsBoardCommandAvailableDelegate(EntityManager em, Entity entity);
+    public delegate bool HasSelectedBoardActionDelegate(EntityManager em);
 
     public readonly struct Context
     {
@@ -203,6 +211,354 @@ public sealed class SelectionHudFeedbackBoundary
     public void ApplyBuildingSelection(Sprite portraitSprite)
     {
         _matchHudSelectionPanelView?.SetSelectionVisible(true, portraitSprite);
+    }
+
+    public void RefreshFocusedSelectionReadModels(
+        Context context,
+        SelectionStateSystem selectionStateSystem,
+        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        UnitTransportCapacitySystem unitTransportCapacitySystem,
+        EnsureEntityQueriesDelegate ensureEntityQueries,
+        RefreshFocusedUnitDelegate refreshFocusedUnit,
+        float timeSeconds)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ensureEntityQueries?.Invoke(em);
+        refreshFocusedUnit?.Invoke(em, selectionStateSystem);
+        focusedUnitUiReadModelSystem?.Publish(
+            em,
+            selectionStateSystem,
+            context.SelectionUiQuerySystem,
+            unitTransportCapacitySystem,
+            timeSeconds);
+    }
+
+    public void UpdateMatchHudSelectionPanel(
+        Context context,
+        SelectionStateSystem selectionStateSystem,
+        FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
+        List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
+        EnsureEntityQueriesDelegate ensureEntityQueries,
+        CountSelectedTagsDelegate countSelectedTags,
+        TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
+        ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
+        System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
+        System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
+        System.Func<bool> hasSelectedBuilding,
+        System.Func<string> selectedBuildingLabel,
+        IsBoardCommandAvailableDelegate isBoardCommandAvailable,
+        HasSelectedBoardActionDelegate hasSelectedBoardAction)
+    {
+        if (_matchHudSelectionPanelView == null)
+            return;
+
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+        {
+            ApplySelectionPanelHidden();
+            return;
+        }
+
+        ensureEntityQueries?.Invoke(em);
+        int selectedCount = countSelectedTags != null ? countSelectedTags(em) : 0;
+        if (selectedCount > 1)
+        {
+            _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                context,
+                em,
+                selectedCount,
+                selectionSummaryQuerySystem,
+                tryGetAttackModeOrderSnapshot,
+                resolveActiveSquadTrayPortraitSprite,
+                hasSelectedBuilding,
+                hasSelectedBoardAction));
+            _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            return;
+        }
+
+        if (focusedUnitLifecycleSystem != null &&
+            focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
+            em.Exists(focusedUnit))
+        {
+            _matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(
+                context,
+                em,
+                focusedUnit,
+                tryGetAttackModeOrderSnapshot,
+                isBoardCommandAvailable));
+            _matchHudSelectionPanelView.ApplyTransportPassengers(BuildTransportPassengersPanelModel(
+                context,
+                em,
+                focusedUnit,
+                focusedUnitUiReadModelSystem,
+                transportPassengerPanelItems,
+                resolveSelectionCardPortraitSprite));
+            return;
+        }
+
+        if (selectedCount > 0)
+        {
+            _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                context,
+                em,
+                selectedCount,
+                selectionSummaryQuerySystem,
+                tryGetAttackModeOrderSnapshot,
+                resolveActiveSquadTrayPortraitSprite,
+                hasSelectedBuilding,
+                hasSelectedBoardAction));
+            _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            return;
+        }
+
+        if (hasSelectedBuilding != null && hasSelectedBuilding())
+        {
+            _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
+                selectedBuildingLabel,
+                resolveSelectedBuildingPortraitSprite));
+            _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            return;
+        }
+
+        ApplySelectionPanelHidden();
+    }
+
+    private void ApplySelectionPanelHidden()
+    {
+        _matchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);
+        _matchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+    }
+
+    private MatchHudSelectionPanelModel BuildFocusedUnitPanelModel(
+        Context context,
+        EntityManager em,
+        Entity entity,
+        TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
+        IsBoardCommandAvailableDelegate isBoardCommandAvailable)
+    {
+        Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
+        portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
+        bool owned = context.SelectionUiQuerySystem.IsOwnedByPlayer(em, entity);
+        bool movable = em.HasComponent<UnitMove>(entity);
+        bool vehicle = context.SelectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
+        TryGetHealthModel(context, em, entity, out string healthLabel, out float health01);
+        string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiQuerySystem);
+        if (tryGetAttackModeOrderSnapshot != null &&
+            tryGetAttackModeOrderSnapshot(out string attackModeOrderText))
+        {
+            orderText = attackModeOrderText;
+        }
+
+        return new MatchHudSelectionPanelModel(
+            true,
+            context.SelectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
+            context.SelectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity),
+            orderText,
+            healthLabel,
+            health01,
+            portraitSprite,
+            !vehicle,
+            null,
+            owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
+            owned,
+            isBoardCommandAvailable != null && isBoardCommandAvailable(em, entity));
+    }
+
+    private MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(
+        Context context,
+        EntityManager em,
+        Entity transport,
+        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
+        ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite)
+    {
+        transportPassengerPanelItems?.Clear();
+        if (focusedUnitUiReadModelSystem == null ||
+            transportPassengerPanelItems == null ||
+            !focusedUnitUiReadModelSystem.TryRead(
+                em,
+                out FocusedUnitUiReadModelComponent focusedModel,
+                out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers) ||
+            focusedModel.HasFocusedUnit == 0 ||
+            focusedModel.FocusedUnit != transport ||
+            focusedModel.OwnedByPlayer == 0 ||
+            focusedModel.TransportPassengerCapacity <= 0)
+        {
+            return MatchHudTransportPassengersModel.Hidden;
+        }
+
+        int capacity = math.max(0, focusedModel.TransportPassengerCapacity);
+        if (capacity <= 0)
+            return MatchHudTransportPassengersModel.Hidden;
+
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            FocusedUnitPassengerUiReadModelElement passengerModel = passengers[i];
+            Entity passenger = passengerModel.Passenger;
+            if (!em.Exists(passenger))
+                continue;
+
+            BuildHealthModelFromValues(
+                passengerModel.HealthCurrent,
+                passengerModel.HealthMax,
+                out string healthLabel,
+                out float health01);
+            Sprite portrait = resolveSelectionCardPortraitSprite?.Invoke(em, passenger);
+            portrait ??= context.ResolveSelectionPortraitSprite?.Invoke(em, passenger);
+            portrait ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers);
+            transportPassengerPanelItems.Add(new MatchHudSelectionPanelPassengerItemModel(
+                ToUiHandle(passenger),
+                passengerModel.DisplayName.ToString(),
+                ResolvePassengerRoleText(context, em, passenger),
+                healthLabel,
+                health01,
+                portrait,
+                true));
+        }
+
+        return new MatchHudTransportPassengersModel(
+            true,
+            false,
+            ToUiHandle(transport),
+            transportPassengerPanelItems.Count,
+            capacity,
+            transportPassengerPanelItems.Count > 0,
+            transportPassengerPanelItems);
+    }
+
+    private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)
+    {
+        if (!em.Exists(passenger))
+            return "UNIT";
+
+        if (context.SelectionUiQuerySystem.IsVehicleForVisibleSelection(em, passenger))
+            return "VEHICLE";
+
+        return "SOLDIER";
+    }
+
+    private MatchHudSelectionPanelModel BuildSquadPanelModel(
+        Context context,
+        EntityManager em,
+        int selectedCount,
+        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
+        TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
+        System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
+        System.Func<bool> hasSelectedBuilding,
+        HasSelectedBoardActionDelegate hasSelectedBoardAction)
+    {
+        bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
+        SelectionSummaryQuerySystem.Summary summary = selectionSummaryQuerySystem.BuildSelectedSummary(
+            em,
+            context.SelectionUiQuerySystem,
+            includeSelectedBuilding);
+        string orderText = tryGetAttackModeOrderSnapshot != null &&
+                           tryGetAttackModeOrderSnapshot(out string attackModeOrderText)
+            ? attackModeOrderText
+            : summary.OrderText;
+        Sprite portraitSprite = _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
+        portraitSprite ??= resolveActiveSquadTrayPortraitSprite?.Invoke();
+        portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
+        return new MatchHudSelectionPanelModel(
+            true,
+            summary.Title,
+            summary.Subtitle,
+            orderText,
+            summary.HealthText,
+            summary.Health01,
+            portraitSprite,
+            summary.PortraitKind,
+            false,
+            null,
+            selectedCount > 0,
+            selectedCount > 0,
+            hasSelectedBoardAction != null && hasSelectedBoardAction(em));
+    }
+
+    private MatchHudSelectionPanelModel BuildSelectedBuildingPanelModel(
+        System.Func<string> selectedBuildingLabel,
+        System.Func<Sprite> resolveSelectedBuildingPortraitSprite)
+    {
+        string label = selectedBuildingLabel?.Invoke();
+        Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
+        portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
+        return new MatchHudSelectionPanelModel(
+            true,
+            string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
+            "Base Structure",
+            "Structure selected",
+            "-",
+            0f,
+            portraitSprite,
+            false,
+            null,
+            false,
+            true,
+            false);
+    }
+
+    internal static string ResolveFocusedUnitOrderText(
+        EntityManager em,
+        Entity entity,
+        SelectionUiQuerySystem selectionUiQuerySystem)
+    {
+        if (em.HasComponent<UnitTransportPassenger>(entity))
+            return "In transport";
+        if (em.HasComponent<UnitTransportBoardingTarget>(entity))
+            return "Boarding transport";
+
+        return selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity) switch
+        {
+            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => "Engaging target",
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => "Moving",
+            _ => "Idle"
+        };
+    }
+
+    private static void TryGetHealthModel(
+        Context context,
+        EntityManager em,
+        Entity entity,
+        out string healthLabel,
+        out float health01)
+    {
+        if (!context.SelectionUiQuerySystem.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
+        {
+            healthLabel = "Health: -";
+            health01 = 0f;
+            return;
+        }
+
+        BuildHealthModelFromValues(current, max, out healthLabel, out health01);
+    }
+
+    private static void BuildHealthModelFromValues(int current, int max, out string healthLabel, out float health01)
+    {
+        if (max <= 0)
+        {
+            healthLabel = "Health: -";
+            health01 = 0f;
+            return;
+        }
+
+        healthLabel = $"Health: {math.max(0, current)}/{max}";
+        health01 = math.saturate((float)current / max);
+    }
+
+    private static UiEntityHandle ToUiHandle(Entity entity)
+    {
+        return entity == Entity.Null
+            ? UiEntityHandle.Null
+            : new UiEntityHandle(entity.Index, entity.Version);
     }
 
     public void ClearSelection(EntityManager em)

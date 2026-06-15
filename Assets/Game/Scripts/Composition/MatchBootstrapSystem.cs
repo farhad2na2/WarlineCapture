@@ -26,13 +26,13 @@ internal sealed class MatchBootstrapSystem
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly VisualQualitySettingsSystem _visualQualitySettingsSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
-    private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
+    private InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem;
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem;
-    private readonly CustomGameStartupSystem _customGameStartupSystem = new();
+    private CustomGameStartupSystem _customGameStartupSystem;
     private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
@@ -338,6 +338,8 @@ internal sealed class MatchBootstrapSystem
         RuntimeCity = null;
         _runtimeGridBootstrapSystem = null;
         _mapSurfaceRuntimeBootstrapSystem = null;
+        _initialFactionSpawnCellSystem = null;
+        _customGameStartupSystem = null;
         _gameplayStartRequested = false;
         _gameplayStartComplete = false;
         _managedRuntimeInitialized = false;
@@ -471,9 +473,13 @@ internal sealed class MatchBootstrapSystem
         }
 
         mapSurfaceRuntimeBootstrapSystem.Ensure(mapSurfaceAuthoring);
-        initialFactionSpawnCellSystem.Configure(
-            world,
-            buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
+        if (initialFactionSpawnCellSystem == null)
+        {
+            Debug.LogWarning("[MatchBootstrap] missingInitialFactionSpawnCellSystem");
+            return;
+        }
+
+        initialFactionSpawnCellSystem.Configure(buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         aiStartupSystem.LogConfigValidation(aiControllerConfigs, aiSettings);
     }
 
@@ -800,7 +806,7 @@ internal sealed class MatchBootstrapSystem
                     ResolveMapSurfaceRuntimeBootstrapSystem(World.DefaultGameObjectInjectionWorld),
                     RuntimeGridConfig,
                     MapSurfaceAuthoring,
-                    _initialFactionSpawnCellSystem,
+                    ResolveInitialFactionSpawnCellSystem(World.DefaultGameObjectInjectionWorld),
                     BuildingPlacementConfig,
                     _aiStartupSystem,
                     AIControllerConfigs,
@@ -810,10 +816,18 @@ internal sealed class MatchBootstrapSystem
 
             case GameplayStartStep.CustomGameStartup:
                 SetGameplayStartProgress(0.38f, "Preparing unit prefabs");
-                _customGameStartupSystem.InitializeFromLegacyConfigs(
-                    World.DefaultGameObjectInjectionWorld,
-                    BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
-                    BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
+                CustomGameStartupSystem customGameStartupSystem = ResolveCustomGameStartupSystem(World.DefaultGameObjectInjectionWorld);
+                if (customGameStartupSystem != null)
+                {
+                    customGameStartupSystem.InitializeFromLegacyConfigs(
+                        BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
+                        BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
+                }
+                else
+                {
+                    Debug.LogWarning("[MatchBootstrap] missingCustomGameStartupSystem");
+                }
+
                 _gameplayStartStep = GameplayStartStep.AiStartup;
                 break;
 
@@ -825,7 +839,9 @@ internal sealed class MatchBootstrapSystem
                     AIControllerConfigs,
                     AIPlanEntryConfig,
                     _pendingAiSettingsSnapshot,
-                    _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
+                    _initialFactionSpawnCellSystem != null
+                        ? new AIStartupSystem.TryResolveFactionSpawnCell(_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell)
+                        : null);
                 if (_pendingAiStartupResult.HasPlayerAutoMode)
                     _runtimeGameplayStateSystem.PlayerAutoModeEnabled = _pendingAiStartupResult.PlayerAutoModeEnabled;
                 _gameplayStartStep = GameplayStartStep.BindMainMenu;
@@ -851,7 +867,9 @@ internal sealed class MatchBootstrapSystem
                 FocusInitialCameraOnConfiguredFactionBase(
                     World.DefaultGameObjectInjectionWorld,
                     SelectionUiCamera,
-                    _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
+                    _initialFactionSpawnCellSystem != null
+                        ? new TryResolveFactionSpawnCell(_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell)
+                        : null,
                     0);
                 _gameplayStartStep = GameplayStartStep.Complete;
                 break;
@@ -885,6 +903,24 @@ internal sealed class MatchBootstrapSystem
 
         _mapSurfaceRuntimeBootstrapSystem = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
         return _mapSurfaceRuntimeBootstrapSystem;
+    }
+
+    private InitialFactionSpawnCellSystem ResolveInitialFactionSpawnCellSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _initialFactionSpawnCellSystem = world.GetOrCreateSystemManaged<InitialFactionSpawnCellSystem>();
+        return _initialFactionSpawnCellSystem;
+    }
+
+    private CustomGameStartupSystem ResolveCustomGameStartupSystem(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return null;
+
+        _customGameStartupSystem = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        return _customGameStartupSystem;
     }
 
     private static ISelectionRectangleView EnsureSelectionRectangleView(

@@ -2,14 +2,21 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public sealed class InitialFactionSpawnCellSystem
+public sealed partial class InitialFactionSpawnCellSystem : SystemBase
 {
-    private World _world;
     private InitialUnitsSpawnerAuthoringConfig _fallbackInitialUnitsConfig;
 
-    public void Configure(World world, InitialUnitsSpawnerAuthoringConfig fallbackInitialUnitsConfig)
+    protected override void OnCreate()
     {
-        _world = world;
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public void Configure(InitialUnitsSpawnerAuthoringConfig fallbackInitialUnitsConfig)
+    {
         _fallbackInitialUnitsConfig = fallbackInitialUnitsConfig;
     }
 
@@ -23,13 +30,7 @@ public sealed class InitialFactionSpawnCellSystem
 
     private bool TryGetBakedFactionSpawnCell(byte factionId, out int2 spawnCell)
     {
-        if (_world == null || !_world.IsCreated)
-        {
-            spawnCell = default;
-            return false;
-        }
-
-        EntityManager em = _world.EntityManager;
+        EntityManager em = EntityManager;
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsFactionSpawnEntry>());

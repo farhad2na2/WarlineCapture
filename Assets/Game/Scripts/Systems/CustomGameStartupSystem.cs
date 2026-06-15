@@ -4,7 +4,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class CustomGameStartupSystem
+[UpdateInGroup(typeof(InitializationSystemGroup))]
+public sealed partial class CustomGameStartupSystem : SystemBase
 {
     public readonly struct Result
     {
@@ -38,12 +39,21 @@ public sealed class CustomGameStartupSystem
         }
     }
 
-    public Result Initialize(World world, CustomGameStartupConfig config)
+    protected override void OnCreate()
     {
-        if (world == null || !world.IsCreated || config == null)
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    public Result Initialize(CustomGameStartupConfig config)
+    {
+        if (config == null)
             return default;
 
-        EntityManager em = world.EntityManager;
+        EntityManager em = EntityManager;
         Entity entity = GetOrCreateStartupEntity(em);
         CustomGameMapConfig map = config.MapConfig;
 
@@ -102,14 +112,10 @@ public sealed class CustomGameStartupSystem
     }
 
     public Result InitializeFromLegacyConfigs(
-        World world,
         InitialUnitsSpawnerAuthoringConfig initialUnitsConfig,
         UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig)
     {
-        if (world == null || !world.IsCreated)
-            return default;
-
-        EntityManager em = world.EntityManager;
+        EntityManager em = EntityManager;
         Entity entity = GetOrCreateLegacyStartupEntity(em);
         RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
         Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, initialUnitsConfig, unitPrefabRegistryConfig, entity);

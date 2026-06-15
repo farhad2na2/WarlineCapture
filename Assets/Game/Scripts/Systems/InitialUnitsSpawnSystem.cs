@@ -245,7 +245,13 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     }
                     else
                     {
-                        allInitialBuildingsSpawned = ProcessInitialBuildingCompletion(state.EntityManager, boundaryEntity, entity, baseGrid, InitialBaseCoreRequestEntryIndex);
+                        allInitialBuildingsSpawned = ProcessInitialBuildingCompletion(
+                            state.EntityManager,
+                            boundaryEntity,
+                            entity,
+                            baseGrid,
+                            InitialBaseCoreRequestEntryIndex,
+                            ref _diagnosticLogWriter);
                     }
                 }
                 else
@@ -1038,12 +1044,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 continue;
             }
 
-            if (!TryResolveConfiguredBuildingSpawnableReadModel(em, boundaryEntity, buildingId, out _))
-            {
-                diagnosticLogWriter.EnqueueWarning(em, $"[InitialSpawn] skipping unresolved initial building entry. faction={building.FactionId} buildingId={buildingId}");
-                continue;
-            }
-
             int2 origin = factionSpawnCell + building.OriginOffset;
             EnqueueConfiguredInitialBuildingSpawnRequest(
                 em,
@@ -1056,33 +1056,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         }
 
         return true;
-    }
-
-    private static bool TryResolveConfiguredBuildingSpawnableReadModel(
-        EntityManager em,
-        Entity boundaryEntity,
-        string buildingId,
-        out BuildingConfiguredSpawnableReadModel model)
-    {
-        model = default;
-        if (boundaryEntity == Entity.Null ||
-            !em.HasBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity))
-            return false;
-
-        DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables =
-            em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true);
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
-        for (int i = 0; i < spawnables.Length; i++)
-        {
-            BuildingConfiguredSpawnableReadModel candidate = spawnables[i];
-            if (candidate.BuildingId.ToString() != normalized)
-                continue;
-
-            model = candidate;
-            return true;
-        }
-
-        return false;
     }
 
     private static void EnqueueConfiguredInitialBuildingSpawnRequest(
@@ -1386,7 +1359,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         Entity boundaryEntity,
         Entity configEntity,
         GridConfig grid,
-        int initialBaseCoreRequestEntryIndex)
+        int initialBaseCoreRequestEntryIndex,
+        ref InitialSpawnDiagnosticLogWriter diagnosticLogWriter)
     {
         if (boundaryEntity == Entity.Null ||
             !em.HasBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity))
@@ -1420,6 +1394,12 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 InitialUnitsRuntimeState.InitialCameraFocusWorld = coreFocus;
                 InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
             }
+            else if (request.Status == BuildingRuntimeSpawnRequest.Failed)
+            {
+                diagnosticLogWriter.EnqueueWarning(
+                    em,
+                    $"[InitialSpawn] initial building request failed. faction={request.FactionId} buildingId={request.BuildingId.ToString()} result={DescribeRuntimeSpawnRequestResult(request.ResultCode)} origin=({request.PreferredOrigin.x},{request.PreferredOrigin.y})");
+            }
 
             requests.RemoveAt(i);
         }
@@ -1428,6 +1408,16 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             return false;
 
         return sawRequest;
+    }
+
+    private static string DescribeRuntimeSpawnRequestResult(byte resultCode)
+    {
+        return resultCode switch
+        {
+            BuildingRuntimeSpawnRequest.MissingConfig => "MissingConfig",
+            BuildingRuntimeSpawnRequest.Blocked => "Blocked",
+            _ => $"Unknown({resultCode})"
+        };
     }
 
     private static Vector3 GetInitialBuildingFootprintCenterWorld(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)

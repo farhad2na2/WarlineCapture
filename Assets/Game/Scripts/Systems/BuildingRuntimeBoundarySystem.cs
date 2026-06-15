@@ -234,15 +234,19 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingRuntimeSpawnRequest.Pending)
                 continue;
 
-            processedRequests++;
             if (!TryResolveConfiguredBuildingDefinition(definitionSystem, request.BuildingId.ToString(), out BuildingDefinition definition))
             {
+                if (definitionSystem.ConfiguredSpawnableCount == 0)
+                    continue;
+
+                processedRequests++;
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
                 request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
                 WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                 continue;
             }
 
+            processedRequests++;
             if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
                 spawnable = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
             if (spawnable.Prefab == null || !spawnable.CanRequest)

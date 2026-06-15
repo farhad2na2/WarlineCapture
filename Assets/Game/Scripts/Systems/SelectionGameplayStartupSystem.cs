@@ -265,7 +265,6 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionSummaryQuerySystem,
                 transportPassengerPanelItems,
                 EnsureRuntimeSelectionDependencies,
-                CountSelectedTags,
                 TryGetAttackModeOrderSnapshot,
                 resolveSelectionCardPortraitSprite,
                 resolveSelectedBuildingPortraitSprite,
@@ -424,13 +423,19 @@ internal sealed class SelectionGameplayStartupSystem
                 value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
-                TryIssueAttackOrderToClickedUnit,
-                TryIssueScanOrder,
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(
+                    CreatePointerTargetCommandContext(),
+                    screenPosition),
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueScanOrder(
+                    CreatePointerTargetCommandContext(),
+                    screenPosition),
                 selectionOrderMarkerSystem,
                 TryGetDefaultEntityManager,
                 TryGetClickedCell,
                 visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
-                TryIssueBoardTransportOrderToClickedUnit,
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
+                    CreatePointerTargetCommandContext(),
+                    screenPosition),
                 (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.TryIssueBoardSelectedTransportOrderToClickedUnit(
                     CreatePointerTargetCommandContext(),
                     transport,
@@ -443,11 +448,15 @@ internal sealed class SelectionGameplayStartupSystem
                     CreatePointerTargetCommandContext(),
                     transport,
                     pointerPosition),
-                QueueFocusUnitCommand,
+                screenPosition => rtsSelectionFocusCommandSystem.QueueFocusUnitCommand(
+                    CreateFocusCommandContext(),
+                    screenPosition),
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(GetRuntimeCameraContext(), screenDelta),
-                IssueMoveOrder,
+                screenPosition => rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(
+                    CreatePointerTargetCommandContext(),
+                    screenPosition),
                 ProcessSelectionRectangleRequests,
-                ClearSelectionCommandMode,
+                () => selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext()),
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 pointerPosition => rtsSelectionPointerTargetCommandSystem.BuildClickDebugSummary(
                     CreatePointerTargetCommandContext(),
@@ -470,8 +479,8 @@ internal sealed class SelectionGameplayStartupSystem
                 TryGetDefaultEntityManager,
                 resolvedMatchIntroStateQuery,
                 IsPointerOverGameplayUi,
-                UpdateLastKnownPointerPosition,
-                HideOrderScreenMarkers);
+                pointerPosition => rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition),
+                () => selectionScreenMarkers.RequestHideOrderMarkers());
         }
 
         RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
@@ -501,9 +510,9 @@ internal sealed class SelectionGameplayStartupSystem
                 SetExplicitAttackTargetModeActive,
                 ProcessSelectionRectangleRequests,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
-                RequestMoveOrderScreenMarker,
-                RequestAttackOrderScreenMarker,
-                SetCameraDragging,
+                screenPosition => selectionScreenMarkers.RequestMoveOrderMarker(screenPosition),
+                screenPosition => selectionScreenMarkers.RequestAttackOrderMarker(screenPosition),
+                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 focusedUnitLifecycleSystem.ClearFocusedUnit,
                 (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
                     em,
@@ -535,11 +544,13 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessSelectionRectangleRequests,
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
-                SetCameraDragging,
+                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 SetExplicitAttackTargetModeActive,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
-                TryFocusUnitDirect);
+                screenPosition => rtsSelectionPointerTargetCommandSystem.TryFocusUnit(
+                    CreatePointerTargetCommandContext(),
+                    screenPosition));
         }
 
         RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
@@ -566,8 +577,8 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionHudFeedbackSystem,
                 CreateHudFeedbackContext(),
                 ClearCurrentSelection,
-                RequestMoveOrderScreenMarker,
-                SetCameraDragging,
+                screenPosition => selectionScreenMarkers.RequestMoveOrderMarker(screenPosition),
+                value => rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), value),
                 ProcessAttackCommandRequests,
                 ProcessScanCommandRequests,
                 ProcessTransportCommandRequests,
@@ -681,7 +692,14 @@ internal sealed class SelectionGameplayStartupSystem
 
         void CaptureAttackModeOrderSnapshot()
         {
-            attackModeOrderSnapshotText = ResolveCurrentSelectionOrderTextSnapshot();
+            attackModeOrderSnapshotText = selectionHudFeedbackSystem.ResolveCurrentSelectionOrderTextSnapshot(
+                CreateHudFeedbackContext(),
+                selectionStateSystem,
+                focusedUnitLifecycleSystem,
+                selectionSummaryQuerySystem,
+                EnsureRuntimeSelectionDependencies,
+                () => buildingPlacementInteractionSystem != null &&
+                      buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext));
             attackModeOrderSnapshotActive = true;
         }
 
@@ -689,41 +707,6 @@ internal sealed class SelectionGameplayStartupSystem
         {
             attackModeOrderSnapshotActive = false;
             attackModeOrderSnapshotText = string.Empty;
-        }
-
-        string ResolveCurrentSelectionOrderTextSnapshot()
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return "Idle";
-
-            EnsureRuntimeSelectionDependencies(em);
-            if (focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
-                em.Exists(focusedUnit))
-            {
-                return SelectionHudFeedbackBoundary.ResolveFocusedUnitOrderText(
-                    em,
-                    focusedUnit,
-                    selectionUiQuerySystem);
-            }
-
-            int selectedCount = CountSelectedTags(em);
-            if (selectedCount > 0)
-            {
-                bool includeSelectedBuilding = buildingPlacementInteractionSystem != null &&
-                                               buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
-                return selectionSummaryQuerySystem.BuildSelectedSummary(
-                    em,
-                    selectionUiQuerySystem,
-                    includeSelectedBuilding).OrderText;
-            }
-
-            if (buildingPlacementInteractionSystem != null &&
-                buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext))
-            {
-                return "Structure selected";
-            }
-
-            return "Idle";
         }
 
         static Entity ToEntity(UiEntityHandle handle)
@@ -766,12 +749,6 @@ internal sealed class SelectionGameplayStartupSystem
             buildingPlacementInteractionSystem?.ClearSelectedBuilding(buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
         }
 
-        void ClearSelectionCommandMode()
-        {
-            rtsSelectionInputSystem.ClearActiveCommandMode();
-            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-        }
-
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
         {
             matchHudSquadTraySelectionSystem.ClearActiveSlot(matchHudSquadTrayView);
@@ -789,11 +766,6 @@ internal sealed class SelectionGameplayStartupSystem
             VisibleUnitSelectionSystem.Filter filter = VisibleUnitSelectionSystem.Filter.All)
         {
             rtsSelectionInputSystem.QueueSelectionRectangleRequest(kind, screenRect, Time.frameCount, filter);
-        }
-
-        void IssueMoveOrder(Vector2 screenPosition)
-        {
-            rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(CreatePointerTargetCommandContext(), screenPosition);
         }
 
         void ProcessMoveCommandRequests()
@@ -816,39 +788,6 @@ internal sealed class SelectionGameplayStartupSystem
         bool ProcessTransportCommandRequests()
         {
             return rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
-        }
-
-        bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
-        }
-
-        bool QueueFocusUnitCommand(Vector2 screenPosition)
-        {
-            if (!rtsSelectionInputSystem.QueueFocusUnitCommandRequest(screenPosition, Time.frameCount))
-            {
-                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic($"focusCommandEnqueue result=False pos={screenPosition} frame={Time.frameCount}");
-                return false;
-            }
-
-            bool processed = rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic($"focusCommandProcessed result={processed} pos={screenPosition} frame={Time.frameCount}");
-            return processed;
-        }
-
-        bool TryFocusUnitDirect(Vector2 screenPosition)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryFocusUnit(CreatePointerTargetCommandContext(), screenPosition);
-        }
-
-        bool TryIssueAttackOrderToClickedUnit(Vector2 screenPosition)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
-        }
-
-        bool TryIssueScanOrder(Vector2 screenPosition)
-        {
-            return rtsSelectionPointerTargetCommandSystem.TryIssueScanOrder(CreatePointerTargetCommandContext(), screenPosition);
         }
 
         bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
@@ -889,43 +828,12 @@ internal sealed class SelectionGameplayStartupSystem
                 out bestEntity);
         }
 
-        int CountSelectedTags(EntityManager em)
-        {
-            EnsureRuntimeSelectionDependencies(em);
-            return selectionRuntimeQuerySystem.SelectedTagQuery.CalculateEntityCount();
-        }
-
-        void SetCameraDragging(bool isDragging)
-        {
-            rtsSelectionRuntimeCameraSystem.SetCameraDragging(GetRuntimeCameraContext(), isDragging);
-        }
-
-        void HideOrderScreenMarkers()
-        {
-            selectionScreenMarkers.RequestHideOrderMarkers();
-        }
-
-        void RequestMoveOrderScreenMarker(Vector2 screenPosition)
-        {
-            selectionScreenMarkers.RequestMoveOrderMarker(screenPosition);
-        }
-
-        void RequestAttackOrderScreenMarker(Vector2 screenPosition)
-        {
-            selectionScreenMarkers.RequestAttackOrderMarker(screenPosition);
-        }
-
-        void UpdateLastKnownPointerPosition(Vector2 pointerPosition)
-        {
-            rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition);
-        }
-
         bool TryGetPointerPosition(out Vector2 pointerPosition)
         {
             if (GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
             {
                 pointerPosition = pointer.Position;
-                UpdateLastKnownPointerPosition(pointerPosition);
+                rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition);
                 return true;
             }
 

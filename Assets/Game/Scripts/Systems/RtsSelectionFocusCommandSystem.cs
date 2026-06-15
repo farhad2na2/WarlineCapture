@@ -86,6 +86,20 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
 
+    public bool QueueFocusUnitCommand(Context context, Vector2 screenPosition)
+    {
+        if (context.InputSystem == null ||
+            !context.InputSystem.QueueFocusUnitCommandRequest(screenPosition, Time.frameCount))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"focusCommandEnqueue result=False pos={screenPosition} frame={Time.frameCount}");
+            return false;
+        }
+
+        bool processed = ProcessExternalSelectionCommandRequests(context);
+        context.LogSelectionDiagnostic?.Invoke($"focusCommandProcessed result={processed} pos={screenPosition} frame={Time.frameCount}");
+        return processed;
+    }
+
     public bool ProcessExternalSelectionCommandRequests(Context context)
     {
         if (!context.InputSystem.TryGetCommandBuffers(

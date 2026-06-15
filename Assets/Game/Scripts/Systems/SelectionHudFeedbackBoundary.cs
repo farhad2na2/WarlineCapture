@@ -10,7 +10,6 @@ public sealed class SelectionHudFeedbackBoundary
     public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);
     public delegate void EnsureEntityQueriesDelegate(EntityManager em);
     public delegate void RefreshFocusedUnitDelegate(EntityManager em, SelectionStateSystem selectionStateSystem);
-    public delegate int CountSelectedTagsDelegate(EntityManager em);
     public delegate bool TryGetAttackModeOrderSnapshotDelegate(out string orderText);
     public delegate bool IsBoardCommandAvailableDelegate(EntityManager em, Entity entity);
     public delegate bool HasSelectedBoardActionDelegate(EntityManager em);
@@ -243,7 +242,6 @@ public sealed class SelectionHudFeedbackBoundary
         SelectionSummaryQuerySystem selectionSummaryQuerySystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
         EnsureEntityQueriesDelegate ensureEntityQueries,
-        CountSelectedTagsDelegate countSelectedTags,
         TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
         ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
@@ -263,7 +261,7 @@ public sealed class SelectionHudFeedbackBoundary
         }
 
         ensureEntityQueries?.Invoke(em);
-        int selectedCount = countSelectedTags != null ? countSelectedTags(em) : 0;
+        int selectedCount = CountSelectedTags(em);
         if (selectedCount > 1)
         {
             _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
@@ -324,6 +322,50 @@ public sealed class SelectionHudFeedbackBoundary
         }
 
         ApplySelectionPanelHidden();
+    }
+
+    public string ResolveCurrentSelectionOrderTextSnapshot(
+        Context context,
+        SelectionStateSystem selectionStateSystem,
+        FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+        SelectionSummaryQuerySystem selectionSummaryQuerySystem,
+        EnsureEntityQueriesDelegate ensureEntityQueries,
+        System.Func<bool> hasSelectedBuilding)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return "Idle";
+
+        ensureEntityQueries?.Invoke(em);
+        if (focusedUnitLifecycleSystem != null &&
+            focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
+            em.Exists(focusedUnit))
+        {
+            return ResolveFocusedUnitOrderText(
+                em,
+                focusedUnit,
+                context.SelectionUiQuerySystem);
+        }
+
+        int selectedCount = CountSelectedTags(em);
+        if (selectedCount > 0)
+        {
+            bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
+            return selectionSummaryQuerySystem.BuildSelectedSummary(
+                em,
+                context.SelectionUiQuerySystem,
+                includeSelectedBuilding).OrderText;
+        }
+
+        if (hasSelectedBuilding != null && hasSelectedBuilding())
+            return "Structure selected";
+
+        return "Idle";
+    }
+
+    private static int CountSelectedTags(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        return query.CalculateEntityCount();
     }
 
     private void ApplySelectionPanelHidden()

@@ -340,17 +340,29 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
         context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanTargetTap pos={screenPosition} frame={UnityEngine.Time.frameCount}");
 
         bool queued = TryQueueResolvedScanCommand(context, screenPosition, out bool queuedResolvedTarget);
         if (!queued)
         {
             context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanTargetTapQueued result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
             return false;
         }
 
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanTargetTapQueued result=True resolvedTarget={queuedResolvedTarget} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+
         if (!queuedResolvedTarget)
-            return context.ProcessScanCommandRequests?.Invoke() == true;
+        {
+            bool processed = context.ProcessScanCommandRequests?.Invoke() == true;
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanTargetTapProcessedImmediately result={processed} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+            return processed;
+        }
 
         return true;
     }
@@ -362,14 +374,22 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanTargetResolveSkipped reason=NoEntityManager pos={screenPosition} frame={frame}");
             return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
         }
 
         PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
+        {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanTargetResolveSkipped reason=NoClickedCell pos={screenPosition} frame={frame}");
             return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
+        }
 
         queuedResolvedTarget = context.InputSystem.QueueScanCommandRequest(screenPosition, targetCell, worldPoint, frame);
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanTargetResolved queued={queuedResolvedTarget} cell={targetCell} world={worldPoint} pos={screenPosition} frame={frame}");
         return queuedResolvedTarget;
     }
 

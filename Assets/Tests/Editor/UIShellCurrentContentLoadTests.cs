@@ -240,7 +240,7 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(controls.StopButton.interactable, "Stop should follow the focused-unit read-model capability.");
         if (controls.CommandWheelStopButton != null)
             Assert.IsTrue(controls.CommandWheelStopButton.interactable, "Command wheel Stop should share the Stop capability model.");
-        Assert.IsFalse(controls.ScanButton.interactable, "Scan should be disabled when the read model reports ScanUnavailable.");
+        Assert.IsTrue(controls.ScanButton.interactable, "Scan should stay pressable when unavailable so the HUD can show rejection feedback.");
 
         readModel.CanHold = false;
         readModel.HoldReason = TacticalCommandReasonCode.CommandUnavailable;

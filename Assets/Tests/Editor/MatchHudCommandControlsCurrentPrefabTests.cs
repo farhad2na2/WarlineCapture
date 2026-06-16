@@ -13,6 +13,40 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     private World _world;
     private GameObject _instance;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunValidationStep(nameof(MatchHudCommandControlsHaveSerializedButtonReferences), tests => tests.MatchHudCommandControlsHaveSerializedButtonReferences());
+            RunValidationStep(nameof(MatchHudScanCommandHasOwnRaycastTarget), tests => tests.MatchHudScanCommandHasOwnRaycastTarget());
+            RunValidationStep(nameof(MatchHudCommandButtonsSubmitSelectionCommandRequests), tests => tests.MatchHudCommandButtonsSubmitSelectionCommandRequests());
+            RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=4");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudCommandControlsCurrentPrefabValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void RunValidationStep(string name, System.Action<MatchHudCommandControlsCurrentPrefabTests> step)
+    {
+        var tests = new MatchHudCommandControlsCurrentPrefabTests();
+        tests.SetUp();
+        try
+        {
+            step(tests);
+            Debug.Log($"[MatchHudCommandControlsCurrentPrefabValidation] step={name} result=Passed");
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -55,6 +89,20 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
+    public void MatchHudScanCommandHasOwnRaycastTarget()
+    {
+        MatchOverlayCommandControlsView controls = LoadControls();
+        Button scanButton = controls.ScanButton;
+        Assert.NotNull(scanButton, "Scan command button must be serialized.");
+
+        Image rootImage = scanButton.GetComponent<Image>();
+        Assert.NotNull(rootImage, "Scan command must have the same transparent root Image hit target as the working command buttons.");
+        Assert.IsTrue(rootImage.raycastTarget, "Scan command root Image must receive raycasts.");
+        Assert.AreSame(rootImage, scanButton.targetGraphic, "Scan command Button.targetGraphic must point to its own root hit target, not another tab frame.");
+        Assert.IsTrue(scanButton.targetGraphic.transform.IsChildOf(scanButton.transform), "Scan command target graphic must belong to the ScanCommand hierarchy.");
+    }
+
+    [Test]
     public void MatchHudCommandButtonsSubmitSelectionCommandRequests()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
@@ -71,11 +119,42 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         inputSystem.Unbind(controls);
     }
 
+    [Test]
+    public void LegacySupportCommandTabRoutesToScanCommandMode()
+    {
+        MatchOverlayCommandControlsView controls = LoadControls();
+        Button supportButton = FindCommandTabButton(controls, "SupportCommand");
+        Assert.NotNull(supportButton, "SCN08 Match HUD currently exposes SupportCommand as the legacy scan/support tab.");
+
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        inputSystem.Bind(controls, new SelectionUiCommandSystem());
+
+        AssertClickQueues(supportButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);
+
+        inputSystem.Unbind(controls);
+    }
+
     private MatchOverlayCommandControlsView LoadControls()
     {
         MatchOverlayCommandControlsView controls = _instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
         Assert.NotNull(controls, "SCN08_MatchHudContent must expose MatchOverlayCommandControlsView through its serialized content hierarchy.");
         return controls;
+    }
+
+    private static Button FindCommandTabButton(MatchOverlayCommandControlsView controls, string buttonName)
+    {
+        MatchOverlayCommandTabView[] tabs = controls.CommandTabGroup != null ? controls.CommandTabGroup.Tabs : null;
+        if (tabs == null)
+            return null;
+
+        for (int i = 0; i < tabs.Length; i++)
+        {
+            Button button = tabs[i]?.Button;
+            if (button != null && button.name == buttonName)
+                return button;
+        }
+
+        return null;
     }
 
     private void AssertClickQueues(Button button, RtsSelectionCommandIntentKind expectedKind)

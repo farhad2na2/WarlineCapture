@@ -25,8 +25,9 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
             RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
+            RunValidationStep(nameof(ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing), tests => tests.ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
-            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=12");
+            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=13");
             EditorApplication.Exit(0);
         }
         catch (System.Exception exception)
@@ -427,6 +428,53 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
+    public void ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing()
+    {
+        _root = new GameObject("ScanButtonFeedbackBoundary");
+        var controlsObject = new GameObject("Controls");
+        var scanButtonObject = new GameObject("ScanButton");
+        var feedbackObject = new GameObject("FeedbackView");
+        var panel = new GameObject("FeedbackPanel");
+        var textNode = new GameObject("FeedbackText");
+
+        controlsObject.transform.SetParent(_root.transform);
+        scanButtonObject.transform.SetParent(controlsObject.transform);
+        feedbackObject.transform.SetParent(_root.transform);
+        panel.transform.SetParent(feedbackObject.transform);
+        textNode.transform.SetParent(panel.transform);
+
+        var controls = controlsObject.AddComponent<MatchOverlayCommandControlsView>();
+        Button scanButton = scanButtonObject.AddComponent<Button>();
+        var feedbackView = feedbackObject.AddComponent<BattleHudRuntimeFeedbackView>();
+        TMP_Text text = textNode.AddComponent<TextMeshProUGUI>();
+
+        SetPrivateField(controls, "scanButton", scanButton);
+        SetPrivateField(feedbackView, "feedbackPanel", panel);
+        SetPrivateField(feedbackView, "feedbackText", text);
+
+        var commandSink = new RecordingSelectionUiCommand();
+        var readModel = new FakeSelectionUiReadModel
+        {
+            CanScan = false,
+            ScanReason = TacticalCommandReasonCode.ScanUnavailable
+        };
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        inputSystem.Bind(
+            controls,
+            commandSink,
+            feedbackView,
+            selectionUiReadModel: readModel);
+
+        Assert.IsTrue(scanButton.interactable, "Scan must remain pressable so unavailable commands can show feedback.");
+
+        scanButton.onClick.Invoke();
+
+        Assert.AreEqual(0, commandSink.ScanModeRequests, "Rejected Scan must not queue scan target mode.");
+        Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
+        Assert.AreEqual("Scan unavailable.", text.text);
+    }
+
+    [Test]
     public void MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
@@ -549,6 +597,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
     private sealed class RecordingSelectionUiCommand : ISelectionUiCommand
     {
         public int EnterSelectionModeRequests { get; private set; }
+        public int ScanModeRequests { get; private set; }
 
         public void CaptureUiClickSequence()
         {
@@ -568,7 +617,11 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         public bool RequestAttackCommandMode() => true;
 
-        public bool RequestScanCommandMode() => true;
+        public bool RequestScanCommandMode()
+        {
+            ScanModeRequests++;
+            return true;
+        }
 
         public bool RequestHoldPosition() => true;
 
@@ -577,5 +630,22 @@ public sealed class MatchHudCommandFeedbackPanelTests
         public bool RequestBoardAllSelectedTransport() => true;
 
         public bool RequestCancelActiveCommandMode() => true;
+    }
+
+    private sealed class FakeSelectionUiReadModel : ISelectionUiReadModel
+    {
+        public bool CanHold;
+        public bool CanStop;
+        public bool CanScan;
+        public TacticalCommandReasonCode HoldReason;
+        public TacticalCommandReasonCode StopReason;
+        public TacticalCommandReasonCode ScanReason;
+
+        public bool FocusedUnitCanHold => CanHold;
+        public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
+        public bool FocusedUnitCanStop => CanStop;
+        public TacticalCommandReasonCode FocusedUnitStopDisabledReason => StopReason;
+        public bool FocusedUnitCanScan => CanScan;
+        public TacticalCommandReasonCode FocusedUnitScanDisabledReason => ScanReason;
     }
 }

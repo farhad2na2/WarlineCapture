@@ -6,9 +6,11 @@ public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
     public static readonly bool EnableMoveCommandTrace = false;
+    public static readonly bool EnableScanCommandTrace = true;
 
     private const string SelectionClickPrefix = "[SelectionClick]";
     private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
+    private const string ScanCommandTracePrefix = "[ScanCommandTrace]";
 
     protected override void OnCreate()
     {
@@ -61,6 +63,14 @@ public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
             return;
 
         Debug.Log($"{MoveCommandTracePrefix} {message}");
+    }
+
+    public static void LogScanCommandTrace(string message)
+    {
+        if (!EnableScanCommandTrace)
+            return;
+
+        Debug.Log($"{ScanCommandTracePrefix} {message}");
     }
 
     private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)

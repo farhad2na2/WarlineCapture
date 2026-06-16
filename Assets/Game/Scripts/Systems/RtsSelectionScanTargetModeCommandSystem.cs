@@ -49,6 +49,9 @@ public partial struct RtsSelectionScanTargetModeCommandSystem : ISystem
         if (!HasRequest(commandRequests, RtsSelectionCommandIntentKind.EnterScanTargetMode))
             return false;
 
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanTargetModeRequestFound requests={commandRequests.Length} frame={currentFrame}");
+
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
@@ -68,6 +71,10 @@ public partial struct RtsSelectionScanTargetModeCommandSystem : ISystem
         ApplyEnterScanTargetMode(ref inputState, ref runtimeState, currentFrame);
         em.SetComponentData(commandEntity, inputState);
         em.SetComponentData(runtimeEntity, runtimeState);
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanTargetModeApplied activeMode={(TacticalCommandMode)inputState.ActiveCommandMode} " +
+            $"requiresTarget={inputState.ActiveCommandModeRequiresWorldTarget} oneShot={inputState.ActiveCommandModeOneShot} " +
+            $"ignoreWorldUntil={inputState.IgnoreWorldCommandsUntilFrame} frame={currentFrame}");
         return true;
     }
 

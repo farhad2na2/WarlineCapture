@@ -523,13 +523,25 @@ public partial struct ScanIntelCommandSystem : ISystem
         hasSourceEntity = request.HasSourceEntity != 0 && IsValidScanSource(em, request.SourceEntity);
         deferredToSource = false;
 
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanApply begin request={request.RequestId} cell={centerCell} hasWorld={hasWorldPosition} " +
+            $"requestedSource={request.SourceEntity} hasValidSource={hasSourceEntity} deferRequested={request.DeferRevealUntilSourceArrives} frame={request.Frame}");
+
         if (gridConfigQuery.IsEmptyIgnoreFilter)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanApply rejected request={request.RequestId} reason=NoGridConfig frame={request.Frame}");
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+        }
 
         Entity gridEntity = gridConfigQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         if (!GridUtils.InBounds(centerCell, grid.Width, grid.Height))
+        {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanApply rejected request={request.RequestId} reason=TargetOutOfBounds cell={centerCell} grid={grid.Width}x{grid.Height} frame={request.Frame}");
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetOutOfBounds);
+        }
 
         if (!hasWorldPosition)
         {
@@ -538,12 +550,18 @@ public partial struct ScanIntelCommandSystem : ISystem
         }
 
         if (request.HasSourceEntity != 0 && !hasSourceEntity)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanApply rejected request={request.RequestId} reason=InvalidSource source={request.SourceEntity} frame={request.Frame}");
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+        }
 
         if (hasSourceEntity && request.DeferRevealUntilSourceArrives != 0)
         {
             IssueSelectedUnitScanOrder(em, sourceEntity, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells);
             deferredToSource = true;
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanApply deferredToSource request={request.RequestId} source={sourceEntity} cell={centerCell} radius={radiusCells} frame={request.Frame}");
             return TacticalCommandResult.Success();
         }
 
@@ -582,6 +600,8 @@ public partial struct ScanIntelCommandSystem : ISystem
         }
 
         revealedCount = candidates.Length;
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanApply revealed request={request.RequestId} count={revealedCount} cell={centerCell} radius={radiusCells} frame={request.Frame}");
         AppendFeedEntry(
             em,
             feedQueueQuery,
@@ -818,19 +838,30 @@ public partial struct ScanIntelCommandSystem : ISystem
         sourceEntity = Entity.Null;
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
         if (query.IsEmptyIgnoreFilter)
+        {
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace("scanSourceResolve result=False reason=NoSelectedUnits");
             return false;
+        }
 
         using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < selectedEntities.Length; i++)
         {
             Entity candidate = selectedEntities[i];
             if (!IsValidScanSource(em, candidate))
+            {
+                SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                    $"scanSourceResolve candidateRejected index={i} entity={candidate}");
                 continue;
+            }
 
             sourceEntity = candidate;
+            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                $"scanSourceResolve result=True index={i} entity={candidate} selectedCount={selectedEntities.Length}");
             return true;
         }
 
+        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            $"scanSourceResolve result=False reason=NoScanCapableSelected selectedCount={selectedEntities.Length}");
         return false;
     }
 

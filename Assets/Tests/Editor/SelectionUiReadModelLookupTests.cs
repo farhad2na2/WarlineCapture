@@ -167,17 +167,23 @@ public sealed class SelectionUiReadModelLookupTests
     [Test]
     public void CommandCapabilities_ReturnTypedReasonsForHoldStopAndScan()
     {
-        Entity soldier = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Rifle Squad");
+        Entity soldier = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Rifle Squad", typeof(UnitCombat));
+        _entityManager.SetComponentData(soldier, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         Assert.IsTrue(_lookup.CanHoldPosition(_entityManager, soldier, out TacticalCommandReasonCode holdReason));
         Assert.AreEqual(TacticalCommandReasonCode.None, holdReason);
         Assert.IsTrue(_lookup.CanStop(_entityManager, soldier, out TacticalCommandReasonCode stopReason));
         Assert.AreEqual(TacticalCommandReasonCode.None, stopReason);
-        Assert.IsFalse(_lookup.CanScan(_entityManager, soldier, out TacticalCommandReasonCode soldierScanReason));
-        Assert.AreEqual(TacticalCommandReasonCode.ScanUnavailable, soldierScanReason);
+        Assert.IsTrue(_lookup.CanScan(_entityManager, soldier, out TacticalCommandReasonCode soldierScanReason));
+        Assert.AreEqual(TacticalCommandReasonCode.None, soldierScanReason);
 
-        Entity scoutDrone = CreateCommandableUnit("Unit_Veh_Drone_Recon", "Recon Drone", typeof(UnitAirMovement));
+        Entity scoutDrone = CreateCommandableUnit("Unit_Veh_Drone_Recon", "Recon Drone", typeof(UnitAirMovement), typeof(UnitCombat));
+        _entityManager.SetComponentData(scoutDrone, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         Assert.IsTrue(_lookup.CanScan(_entityManager, scoutDrone, out TacticalCommandReasonCode droneScanReason));
         Assert.AreEqual(TacticalCommandReasonCode.None, droneScanReason);
+
+        Entity truck = CreateCommandableUnit("Unit_Veh_Truck_Canopy", "Cargo Truck");
+        Assert.IsFalse(_lookup.CanScan(_entityManager, truck, out TacticalCommandReasonCode truckScanReason));
+        Assert.AreEqual(TacticalCommandReasonCode.ScanUnavailable, truckScanReason);
 
         Entity passenger = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Passenger", typeof(UnitTransportPassenger));
         Assert.IsFalse(_lookup.CanHoldPosition(_entityManager, passenger, out TacticalCommandReasonCode passengerHoldReason));

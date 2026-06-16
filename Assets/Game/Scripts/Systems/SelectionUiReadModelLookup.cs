@@ -229,7 +229,7 @@ public sealed class SelectionUiReadModelLookup
 
     public bool CanScan(EntityManager entityManager, Entity entity, out TacticalCommandReasonCode reason)
     {
-        if (!CanAcceptLivingOwnedUnit(entityManager, entity, out reason))
+        if (!CanAcceptImmediateSelectedUnitCommand(entityManager, entity, out reason))
             return false;
 
         if (IsSelectedUnitScanCapable(entityManager, entity))
@@ -576,6 +576,13 @@ public sealed class SelectionUiReadModelLookup
     }
 
     public static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)
+    {
+        return entityManager.Exists(entity) &&
+               entityManager.HasComponent<UnitCombat>(entity) &&
+               entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
+    }
+
+    public static bool IsSelectedUnitScanSpecialist(EntityManager entityManager, Entity entity)
     {
         string source = ResolveScanCapabilitySource(entityManager, entity);
         if (ContainsToken(source, "Drone") ||

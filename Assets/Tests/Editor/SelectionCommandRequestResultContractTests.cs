@@ -28,6 +28,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
             tests.ScanCommandSystem_RevealsEnemyBuildingInsideRadius();
             tests.ScanCommandSystem_SelectedScannerQueuesUnitScanOrder();
+            tests.ScanCommandSystem_SelectedCombatUnitQueuesReducedRadiusScanOrder();
             tests.UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea();
             tests.UnitScanOrderExecutionSystem_GroundScannerPatrolsScanAreaAfterArrival();
             tests.UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon();
@@ -63,7 +64,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=47");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=48");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -2979,6 +2980,58 @@ public sealed class SelectionCommandRequestResultContractTests
     }
 
     [Test]
+    public void ScanCommandSystem_SelectedCombatUnitQueuesReducedRadiusScanOrder()
+    {
+        using World world = new("SelectionCommandSelectedCombatScanOrderTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity scanner = CreateSelectedCombatScanUnit(em, new int2(2, 2));
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            RequestId = 79,
+            Frame = 90,
+            TargetCell = new int2(20, 20),
+            WorldPosition = new float3(20.5f, 0f, 20.5f),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1
+        });
+
+        SystemHandle system = world.CreateSystem<ScanIntelCommandSystem>();
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Scan, results[0].Kind);
+        Assert.AreEqual(79, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasSourceEntity);
+        Assert.AreEqual(scanner, results[0].SourceEntity);
+        Assert.AreEqual(ScanIntelCommandSystem.DefaultCombatUnitScanRadiusCells, results[0].RadiusCells);
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+        Assert.AreEqual(
+            ScanIntelCommandSystem.DefaultCombatUnitScanRadiusCells,
+            em.GetComponentData<UnitScanOrder>(scanner).RadiusCells);
+    }
+
+    [Test]
     public void UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea()
     {
         using World world = new("UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea");
@@ -4032,14 +4085,37 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(Faction),
             typeof(UnitGrid),
             typeof(UnitMove),
+            typeof(UnitCombat),
             typeof(UnitHealth),
             typeof(UnitSourcePrefabKey),
             typeof(LocalTransform));
         em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = cell });
         em.SetComponentData(unit, new UnitMove { Speed = 8f, WalkSpeed = 8f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
         em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(unit, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Drone_Recon") });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return unit;
+    }
+
+    private static Entity CreateSelectedCombatScanUnit(EntityManager em, int2 cell)
+    {
+        Entity unit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitHealth),
+            typeof(UnitSourcePrefabKey),
+            typeof(LocalTransform));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = cell });
+        em.SetComponentData(unit, new UnitMove { Speed = 4f, WalkSpeed = 4f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(unit, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Chr_Rifle_Squad") });
         em.SetComponentData(unit, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
         return unit;
     }

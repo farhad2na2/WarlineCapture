@@ -6,7 +6,7 @@ public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
     public static readonly bool EnableMoveCommandTrace = false;
-    public static readonly bool EnableScanCommandTrace = true;
+    public static readonly bool EnableScanCommandTrace = false;
 
     private const string SelectionClickPrefix = "[SelectionClick]";
     private const string MoveCommandTracePrefix = "[MoveCommandTrace]";

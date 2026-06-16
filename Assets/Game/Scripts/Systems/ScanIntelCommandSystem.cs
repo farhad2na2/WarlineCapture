@@ -7,6 +7,7 @@ using UnityEngine;
 public partial struct ScanIntelCommandSystem : ISystem
 {
     public const int DefaultScanRadiusCells = 12;
+    public const int DefaultCombatUnitScanRadiusCells = 6;
     public const float DefaultSelectedUnitScanDurationSeconds = 8f;
 
     public readonly struct Result
@@ -194,7 +195,8 @@ public partial struct ScanIntelCommandSystem : ISystem
             return Result.Rejected(TacticalCommandReasonCode.TargetOutOfBounds);
 
         bool hasSourceEntity = TryResolveSelectedScanSource(em, out Entity sourceEntity);
-        EnqueueScan(em, requestId, frame, centerCell, centerWorld, sourceEntity, hasSourceEntity, hasSourceEntity);
+        int radiusCells = hasSourceEntity ? ResolveSelectedUnitScanRadiusCells(em, sourceEntity) : DefaultScanRadiusCells;
+        EnqueueScan(em, requestId, frame, centerCell, centerWorld, sourceEntity, hasSourceEntity, hasSourceEntity, radiusCells);
         ProcessPendingRequests(em);
         return TryGetResult(em, requestId, out ScanIntelCommandResultElement result)
             ? ToResult(result)
@@ -291,11 +293,16 @@ public partial struct ScanIntelCommandSystem : ISystem
                 HasSourceEntity = request.HasSourceEntity,
                 DeferRevealUntilSourceArrives = request.HasSourceEntity
             };
-            if (scanRequest.HasSourceEntity == 0 && TryResolveSelectedScanSource(em, out Entity selectedScanSource))
+            if (scanRequest.HasSourceEntity != 0 && IsValidScanSource(em, scanRequest.SourceEntity))
+            {
+                scanRequest.RadiusCells = ResolveSelectedUnitScanRadiusCells(em, scanRequest.SourceEntity);
+            }
+            else if (TryResolveSelectedScanSource(em, out Entity selectedScanSource))
             {
                 scanRequest.SourceEntity = selectedScanSource;
                 scanRequest.HasSourceEntity = 1;
                 scanRequest.DeferRevealUntilSourceArrives = 1;
+                scanRequest.RadiusCells = ResolveSelectedUnitScanRadiusCells(em, selectedScanSource);
             }
 
             TacticalCommandResult commandResult = TryApplyScan(
@@ -887,6 +894,13 @@ public partial struct ScanIntelCommandSystem : ISystem
         }
 
         return SelectionUiReadModelLookup.IsSelectedUnitScanCapable(em, sourceEntity);
+    }
+
+    private static int ResolveSelectedUnitScanRadiusCells(EntityManager em, Entity sourceEntity)
+    {
+        return SelectionUiReadModelLookup.IsSelectedUnitScanSpecialist(em, sourceEntity)
+            ? DefaultScanRadiusCells
+            : DefaultCombatUnitScanRadiusCells;
     }
 
     private static void IssueSelectedUnitScanOrder(

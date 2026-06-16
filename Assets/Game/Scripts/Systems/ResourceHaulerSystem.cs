@@ -1,8 +1,18 @@
 using Unity.Mathematics;
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class ResourceHaulerSystem
+public sealed partial class ResourceHaulerSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public enum TimedActionState : byte
     {
         Started = 0,

@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingUiContextSystem
+internal sealed partial class BuildingUiContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Source
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
@@ -216,7 +225,7 @@ internal sealed class BuildingUiContextSystem
             source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
             buildingId,
             pendingProductionIndex,
-            source.GetNow?.Invoke() ?? Time.time);
+            source.GetNow?.Invoke() ?? UnityEngine.Time.time);
     }
 
     private static BuildingUiCommandBoundary.CampRequestFailure RequestCampItem(

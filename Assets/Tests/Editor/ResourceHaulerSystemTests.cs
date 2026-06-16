@@ -1,9 +1,36 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using Unity.Mathematics;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
 
 public sealed class ResourceHaulerSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new ResourceHaulerSystemTests();
+        try
+        {
+            tests.CreateOrder_InitializesTravelToSource();
+            tests.SetTravelPhase_UpdatesTargetAndClearsTimer();
+            tests.AdvanceTimedAction_StartsWaitsThenCompletes();
+            tests.TryCompleteLoad_MovesOilFromSourceIntoHaulerCargo();
+            tests.TryCompleteLoad_DoesNotLoadWhenSourceIsShort();
+            tests.RevertLoad_ReturnsCargoToSource();
+            tests.TryCompleteUnload_ClampsDestinationCapacityAndClearsCargo();
+            tests.TryCompleteUnload_WaitsWhenDestinationCannotFitCargo();
+            tests.Classification_DetectsHaulerSourceAndDestinationRoles();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=9");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ResourceHaulerFocusedValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void CreateOrder_InitializesTravelToSource()
     {

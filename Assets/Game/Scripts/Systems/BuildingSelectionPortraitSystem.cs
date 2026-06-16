@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal static class BuildingSelectionPortraitSystem
+internal sealed partial class BuildingSelectionPortraitSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public static Sprite Resolve(
         RuntimeBuildingEntity building,
         Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab)

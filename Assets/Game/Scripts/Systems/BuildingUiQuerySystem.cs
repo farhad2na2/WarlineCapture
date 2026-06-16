@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class BuildingUiQuerySystem
+public sealed partial class BuildingUiQuerySystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
     public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);
@@ -332,7 +341,7 @@ public sealed class BuildingUiQuerySystem
             building.PendingProductions,
             em,
             context.ProductionSystem,
-            context.GetNow != null ? context.GetNow() : Time.time,
+            context.GetNow != null ? context.GetNow() : UnityEngine.Time.time,
             entries);
     }
 
@@ -380,7 +389,7 @@ public sealed class BuildingUiQuerySystem
         if (context.RuntimeBuildings == null)
             return;
 
-        float now = context.GetNow != null ? context.GetNow() : Time.time;
+        float now = context.GetNow != null ? context.GetNow() : UnityEngine.Time.time;
         foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
         {
             RuntimeBuildingEntity building = pair.Value;

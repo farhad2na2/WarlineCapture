@@ -13,8 +13,11 @@ public sealed class BuildingProductionSystemTests
 {
     public static void RunBuildingGameplayCompositionRuntimeSmokeValidation()
     {
+        World previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("BuildingGameplayCompositionRuntimeSmokeValidation");
         try
         {
+            World.DefaultGameObjectInjectionWorld = world;
             var tests = new BuildingProductionSystemTests();
             tests.BuildingGameplayComposition_InitializesRuntimeDollarsFromInitialUnitsConfig();
             tests.BuildingGameplayComposition_CampBuildingRequestStartsConfiguredPlacement();
@@ -26,6 +29,12 @@ public sealed class BuildingProductionSystemTests
             Debug.LogException(ex);
             Debug.LogError("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousDefaultWorld;
+            if (world.IsCreated)
+                world.Dispose();
         }
     }
 

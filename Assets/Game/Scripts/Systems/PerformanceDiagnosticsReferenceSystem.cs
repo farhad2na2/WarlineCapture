@@ -1,8 +1,17 @@
 using Unity.Entities;
 
-public sealed class PerformanceDiagnosticsReferenceSystem
+public sealed partial class PerformanceDiagnosticsReferenceSystem : SystemBase
 {
     private Entity _referenceEntity;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Register(PerformanceDiagnosticsSystem diagnostics)
     {

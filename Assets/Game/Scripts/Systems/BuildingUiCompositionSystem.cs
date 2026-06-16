@@ -2,8 +2,17 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingUiCompositionSystem
+internal sealed partial class BuildingUiCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public BuildingUiContextSystem.Source CreateSource(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
@@ -27,9 +36,9 @@ internal sealed class BuildingUiCompositionSystem
                     interactionContext,
                     markerPropertyBlock)),
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
-            () => Time.frameCount,
+            () => UnityEngine.Time.frameCount,
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
-            () => Time.time,
+            () => UnityEngine.Time.time,
             source.RuntimeBuildingSystem.HasSelectedBuilding,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
             () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement,

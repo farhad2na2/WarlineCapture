@@ -1,0 +1,162 @@
+.ui-shell-app-canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    color: rgb(232, 226, 198);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.ui-shell-app-canvas Button {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-text-align: middle-center;
+}
+
+.safe-area-root,
+.content-root,
+.modal-overlay,
+.tooltip-layer,
+.shell-slot {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.safe-area-root {
+    overflow: hidden;
+}
+
+.shell-hidden {
+    display: none;
+}
+
+.header-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 12%;
+    background-color: rgba(8, 13, 15, 0.82);
+}
+
+.footer-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 12%;
+    background-color: rgba(8, 13, 15, 0.82);
+}
+
+.content-root {
+    overflow: hidden;
+}
+
+.menu-background-region {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.loading-layer {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.header-region,
+.left-region,
+.middle-region,
+.right-region,
+.footer-region {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.58);
+}
+
+.placeholder-popup {
+    position: absolute;
+    left: 32%;
+    right: 32%;
+    top: 26%;
+    bottom: 26%;
+    background-color: rgba(6, 9, 11, 0.98);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(108, 142, 153, 0.58);
+    border-right-color: rgba(108, 142, 153, 0.58);
+    border-top-color: rgba(108, 142, 153, 0.58);
+    border-bottom-color: rgba(108, 142, 153, 0.58);
+}
+
+.placeholder-title {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 10%;
+    height: 18%;
+    font-size: 36px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(245, 241, 220);
+}
+
+.placeholder-body {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    top: 32%;
+    height: 42%;
+    font-size: 24px;
+    -unity-text-align: upper-left;
+    white-space: normal;
+    color: rgb(199, 224, 235);
+}
+
+.placeholder-close-button {
+    position: absolute;
+    left: 34%;
+    right: 34%;
+    bottom: 8%;
+    height: 12%;
+    background-color: rgba(18, 26, 31, 0.96);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(145, 180, 194, 0.58);
+    border-right-color: rgba(145, 180, 194, 0.58);
+    border-top-color: rgba(145, 180, 194, 0.58);
+    border-bottom-color: rgba(145, 180, 194, 0.58);
+}
+
+.placeholder-close-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 244, 255);
+}
+
+.tooltip-layer {
+    background-color: rgba(0, 0, 0, 0);
+}

@@ -2,8 +2,18 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public readonly struct UnitTransportCapacitySystem
+[DisableAutoCreation]
+public partial struct UnitTransportCapacitySystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
+
     public bool TryEnsureTransportCapacity(EntityManager em, Entity transport)
     {
         if (!em.Exists(transport))

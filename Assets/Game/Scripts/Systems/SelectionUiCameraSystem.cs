@@ -1,7 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiCameraSystem
+[DisableAutoCreation]
+public sealed partial class SelectionUiCameraSystem : SystemBase
 {
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
@@ -25,6 +26,15 @@ public sealed class SelectionUiCameraSystem
     {
         _cameraSystem = cameraSystem ?? ResolveDefaultCameraSystem();
         _cameraRequestSystem = cameraRequestSystem ?? ResolveDefaultCameraRequestSystem();
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public bool IsNormalIsoModeActive => _cameraSystem != null && _cameraSystem.NormalIsoModeActive;
@@ -183,7 +193,7 @@ public sealed class SelectionUiCameraSystem
 
     private static RtsCameraSystem ResolveDefaultCameraSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
             : null;
@@ -191,7 +201,7 @@ public sealed class SelectionUiCameraSystem
 
     private static RtsCameraRequestSystem ResolveDefaultCameraRequestSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
             : null;
@@ -200,7 +210,7 @@ public sealed class SelectionUiCameraSystem
     private static bool TryGetDefaultEntityManager(out EntityManager em)
     {
         em = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

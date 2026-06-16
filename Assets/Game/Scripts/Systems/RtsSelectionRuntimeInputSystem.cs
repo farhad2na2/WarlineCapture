@@ -3,9 +3,19 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RtsSelectionRuntimeInputSystem
+[DisableAutoCreation]
+public sealed partial class RtsSelectionRuntimeInputSystem : SystemBase
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct Context
     {
@@ -109,51 +119,51 @@ public sealed class RtsSelectionRuntimeInputSystem
             context.InputSystem.ClearQueuedMoveOrder();
             int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
             if (removedMoveCommands > 0)
-                context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=IntroInputLocked removed={removedMoveCommands} frame={Time.frameCount}");
+                context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=IntroInputLocked removed={removedMoveCommands} frame={UnityEngine.Time.frameCount}");
             return;
         }
 
-        if (!context.InputSystem.TryConsumeQueuedMoveOrder(Time.frameCount, out Vector2 screenPosition))
+        if (!context.InputSystem.TryConsumeQueuedMoveOrder(UnityEngine.Time.frameCount, out Vector2 screenPosition))
             return;
 
         if (!context.InputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode) ||
             activeMode != TacticalCommandMode.Move)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queuedMoveCanceled reason=MoveModeInactive activeMode={activeMode} pos={screenPosition} frame={Time.frameCount}");
-            context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=MoveModeInactive activeMode={activeMode} pos={screenPosition} frame={Time.frameCount}");
+                $"queuedMoveCanceled reason=MoveModeInactive activeMode={activeMode} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+            context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=MoveModeInactive activeMode={activeMode} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return;
         }
 
         if (!context.RuntimeGameplayStateSystem.PlayRequested || context.RuntimeGameplayStateSystem.BuildModeActive)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queuedMoveCanceled reason={(context.RuntimeGameplayStateSystem.PlayRequested ? "BuildMode" : "NotPlaying")} pos={screenPosition} frame={Time.frameCount}");
+                $"queuedMoveCanceled reason={(context.RuntimeGameplayStateSystem.PlayRequested ? "BuildMode" : "NotPlaying")} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             context.LogClickDiagnostic?.Invoke(
-                $"queuedMoveCanceled reason={(context.RuntimeGameplayStateSystem.PlayRequested ? "BuildMode" : "NotPlaying")} pos={screenPosition} frame={Time.frameCount}");
+                $"queuedMoveCanceled reason={(context.RuntimeGameplayStateSystem.PlayRequested ? "BuildMode" : "NotPlaying")} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return;
         }
 
-        if (Time.frameCount <= context.InputSystem.IgnoreWorldCommandsUntilFrame)
+        if (UnityEngine.Time.frameCount <= context.InputSystem.IgnoreWorldCommandsUntilFrame)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queuedMoveCanceled reason=IgnoreWorldCommandsUntilFrame current={Time.frameCount} until={context.InputSystem.IgnoreWorldCommandsUntilFrame} pos={screenPosition}");
+                $"queuedMoveCanceled reason=IgnoreWorldCommandsUntilFrame current={UnityEngine.Time.frameCount} until={context.InputSystem.IgnoreWorldCommandsUntilFrame} pos={screenPosition}");
             context.LogClickDiagnostic?.Invoke(
-                $"queuedMoveCanceled reason=IgnoreWorldCommandsUntilFrame current={Time.frameCount} until={context.InputSystem.IgnoreWorldCommandsUntilFrame} pos={screenPosition}");
+                $"queuedMoveCanceled reason=IgnoreWorldCommandsUntilFrame current={UnityEngine.Time.frameCount} until={context.InputSystem.IgnoreWorldCommandsUntilFrame} pos={screenPosition}");
             return;
         }
 
         if (context.RuntimeGameplayStateSystem.SuppressNextWorldClick)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queuedMoveCanceled reason=SuppressNextWorldClick pos={screenPosition} frame={Time.frameCount}");
-            context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=SuppressNextWorldClick pos={screenPosition} frame={Time.frameCount}");
+                $"queuedMoveCanceled reason=SuppressNextWorldClick pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+            context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=SuppressNextWorldClick pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return;
         }
 
         SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"queuedMoveIssue pos={screenPosition} frame={Time.frameCount}");
-        context.LogClickDiagnostic?.Invoke($"queuedMoveIssue pos={screenPosition} frame={Time.frameCount}");
+            $"queuedMoveIssue pos={screenPosition} frame={UnityEngine.Time.frameCount}");
+        context.LogClickDiagnostic?.Invoke($"queuedMoveIssue pos={screenPosition} frame={UnityEngine.Time.frameCount}");
         context.RequestMoveOrder?.Invoke(screenPosition);
     }
 
@@ -167,7 +177,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         if (IsGameplayInputLocked(context))
         {
             if (pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame)
-                context.LogClickDiagnostic?.Invoke($"worldInputBlocked reason=IntroInputLocked pressed={pointer.WasPressedThisFrame} released={pointer.WasReleasedThisFrame} pos={pointer.Position} frame={Time.frameCount}");
+                context.LogClickDiagnostic?.Invoke($"worldInputBlocked reason=IntroInputLocked pressed={pointer.WasPressedThisFrame} released={pointer.WasReleasedThisFrame} pos={pointer.Position} frame={UnityEngine.Time.frameCount}");
 
             input.ClearQueuedMoveOrder();
             input.ClearPendingMoveCommandRequests();
@@ -182,7 +192,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         {
             if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
             {
-                context.LogClickDiagnostic?.Invoke($"ignoreUiClickUntilRelease cleared pos={pointer.Position} frame={Time.frameCount}");
+                context.LogClickDiagnostic?.Invoke($"ignoreUiClickUntilRelease cleared pos={pointer.Position} frame={UnityEngine.Time.frameCount}");
                 input.IgnoreUiClickUntilRelease = false;
                 input.IgnoreNextLeftMouseRelease = false;
                 input.SkipNextWorldReleaseAfterSelection = false;
@@ -191,10 +201,10 @@ public sealed class RtsSelectionRuntimeInputSystem
             return;
         }
 
-        if (Time.frameCount <= input.IgnoreWorldCommandsUntilFrame)
+        if (UnityEngine.Time.frameCount <= input.IgnoreWorldCommandsUntilFrame)
         {
             if (pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame)
-                context.LogClickDiagnostic?.Invoke($"worldClickIgnoredUntilFrame current={Time.frameCount} until={input.IgnoreWorldCommandsUntilFrame} pressed={pointer.WasPressedThisFrame} released={pointer.WasReleasedThisFrame} pos={pointer.Position}");
+                context.LogClickDiagnostic?.Invoke($"worldClickIgnoredUntilFrame current={UnityEngine.Time.frameCount} until={input.IgnoreWorldCommandsUntilFrame} pressed={pointer.WasPressedThisFrame} released={pointer.WasReleasedThisFrame} pos={pointer.Position}");
             return;
         }
 
@@ -204,7 +214,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         if (pointer.WasReleasedThisFrame && input.IgnoreNextLeftMouseRelease)
         {
-            context.LogClickDiagnostic?.Invoke($"releaseIgnored reason=IgnoreNextLeftMouseRelease pos={pointerPosition} frame={Time.frameCount}");
+            context.LogClickDiagnostic?.Invoke($"releaseIgnored reason=IgnoreNextLeftMouseRelease pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             input.IgnoreNextLeftMouseRelease = false;
             input.SkipNextWorldReleaseAfterSelection = false;
             runtime.SuppressNextWorldClick = false;
@@ -235,7 +245,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         IMatchRuntimeUi mainMenu = context.MainMenuPlayUi;
         if (mainMenu != null && mainMenu.IsPointerOverSelectionCancelUi(pointerPosition))
         {
-            context.LogClickDiagnostic?.Invoke($"pressSelectionCancelUi pos={pointerPosition} frame={Time.frameCount}");
+            context.LogClickDiagnostic?.Invoke($"pressSelectionCancelUi pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             mainMenu.TriggerSelectionCancel();
             input.PointerPressedOverUi = true;
             input.IsDraggingSelection = false;
@@ -249,12 +259,12 @@ public sealed class RtsSelectionRuntimeInputSystem
         bool pointerOverBlockingUi = runtime.PlayRequested ? pointerOverGameplayUi : (pointerOverAnyUi || pointerOverGameplayUi);
         bool hasPressActiveWorldTarget = input.HasActiveWorldTargetCommandMode(out TacticalCommandMode pressActiveMode);
         SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"pointerPress pos={pointerPosition} frame={Time.frameCount} play={runtime.PlayRequested} " +
+            $"pointerPress pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} " +
             $"activeWorldTarget={hasPressActiveWorldTarget}:{pressActiveMode} " +
             $"selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} " +
             $"blockingUi={pointerOverBlockingUi} ignoreUntil={input.IgnoreWorldCommandsUntilFrame}");
         context.LogClickDiagnostic?.Invoke(
-            $"press pos={pointerPosition} frame={Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} blockingUi={pointerOverBlockingUi}");
+            $"press pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} blockingUi={pointerOverBlockingUi}");
         input.BeginPointerPress(pointerPosition, pointerOverBlockingUi);
         context.SetCameraDragging?.Invoke(false);
 
@@ -273,7 +283,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         if (!input.PointerPressedOverUi)
         {
             context.SetCameraDragging?.Invoke(true);
-            input.ArmSelectionModeHold(Time.unscaledTime);
+            input.ArmSelectionModeHold(UnityEngine.Time.unscaledTime);
         }
         else
         {
@@ -302,7 +312,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                     input.QueueSelectionRectangleRequest(
                         RtsSelectionPointerRequestKind.SelectionRectUpdated,
                         liveRect,
-                        Time.frameCount,
+                        UnityEngine.Time.frameCount,
                         VisibleUnitSelectionSystem.Filter.All);
                     context.ProcessSelectionRectangleRequests?.Invoke();
                     input.LastLiveSelectionRect = liveRect;
@@ -351,18 +361,18 @@ public sealed class RtsSelectionRuntimeInputSystem
         float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);
         bool hasActiveWorldTarget = input.HasActiveWorldTargetCommandMode(out TacticalCommandMode releaseActiveMode);
         SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"pointerRelease pos={pointerPosition} frame={Time.frameCount} play={runtime.PlayRequested} " +
+            $"pointerRelease pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} " +
             $"activeWorldTarget={hasActiveWorldTarget}:{releaseActiveMode} selectionMode={runtime.SelectionModeActive} " +
             $"drag={dragDistance:F1}/{context.DragThresholdPixels:F1} pressedOverUi={input.PointerPressedOverUi} " +
             $"blockingUi={releasePointerOverBlockingUi} suppress={runtime.SuppressNextWorldClick} " +
             $"skip={input.SkipNextWorldReleaseAfterSelection} ignoreUntil={input.IgnoreWorldCommandsUntilFrame}");
         context.LogClickDiagnostic?.Invoke(
-            $"release pos={pointerPosition} frame={Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} drag={dragDistance:F1}/{context.DragThresholdPixels:F1} pressedOverUi={input.PointerPressedOverUi} anyUi={releasePointerOverAnyUi} gameplayUi={releasePointerOverGameplayUi} blockingUi={releasePointerOverBlockingUi} suppress={runtime.SuppressNextWorldClick} skip={input.SkipNextWorldReleaseAfterSelection} dragging={input.IsDraggingSelection} liveRect={input.HasLiveSelectionRect}");
+            $"release pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} drag={dragDistance:F1}/{context.DragThresholdPixels:F1} pressedOverUi={input.PointerPressedOverUi} anyUi={releasePointerOverAnyUi} gameplayUi={releasePointerOverGameplayUi} blockingUi={releasePointerOverBlockingUi} suppress={runtime.SuppressNextWorldClick} skip={input.SkipNextWorldReleaseAfterSelection} dragging={input.IsDraggingSelection} liveRect={input.HasLiveSelectionRect}");
 
         if (input.PointerPressedOverUi || releasePointerOverBlockingUi)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"pointerReleaseBlocked reason={(input.PointerPressedOverUi ? "PressedOverUi" : "ReleasedOverBlockingUi")} pos={pointerPosition} frame={Time.frameCount}");
+                $"pointerReleaseBlocked reason={(input.PointerPressedOverUi ? "PressedOverUi" : "ReleasedOverBlockingUi")} pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             context.LogClickDiagnostic?.Invoke($"releaseBlocked reason={(input.PointerPressedOverUi ? "PressedOverUi" : "ReleasedOverBlockingUi")} pos={pointerPosition}");
             LogOneClickDebug(context, pointerPosition, "ReleaseBlocked");
             input.PointerPressedOverUi = false;
@@ -377,7 +387,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         if (input.SkipNextWorldReleaseAfterSelection)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"pointerReleaseSkipped reason=SkipNextWorldReleaseAfterSelection pos={pointerPosition} frame={Time.frameCount}");
+                $"pointerReleaseSkipped reason=SkipNextWorldReleaseAfterSelection pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             context.LogClickDiagnostic?.Invoke($"releaseSkipped reason=SkipNextWorldReleaseAfterSelection pos={pointerPosition}");
             LogOneClickDebug(context, pointerPosition, "ReleaseSkipped");
             input.SkipNextWorldReleaseAfterSelection = false;
@@ -400,7 +410,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                     input.QueueSelectionRectangleRequest(
                         RtsSelectionPointerRequestKind.SelectionRectCommitted,
                         GetScreenRect(input.DragStart, input.DragCurrent),
-                        Time.frameCount,
+                        UnityEngine.Time.frameCount,
                         VisibleUnitSelectionSystem.Filter.All);
                     context.ProcessSelectionRectangleRequests?.Invoke();
                 }
@@ -424,7 +434,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         {
             if (runtime.SuppressNextWorldClick)
             {
-                bool sameGuardWindow = Time.frameCount <= input.IgnoreWorldCommandsUntilFrame;
+                bool sameGuardWindow = UnityEngine.Time.frameCount <= input.IgnoreWorldCommandsUntilFrame;
                 bool focusedWhileSuppressed = sameGuardWindow && context.TryFocusUnit?.Invoke(pointerPosition) == true;
                 context.LogClickDiagnostic?.Invoke($"clickSuppressed reason=SuppressNextWorldClick sameGuardWindow={sameGuardWindow} focusOverride={focusedWhileSuppressed} pos={pointerPosition}");
                 runtime.SuppressNextWorldClick = false;
@@ -444,7 +454,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                     return;
                 }
 
-                context.LogClickDiagnostic?.Invoke($"staleSuppressCleared action=ContinueWorldClick pos={pointerPosition} frame={Time.frameCount}");
+                context.LogClickDiagnostic?.Invoke($"staleSuppressCleared action=ContinueWorldClick pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             }
 
             if (!releasePointerOverBlockingUi)
@@ -452,7 +462,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 if (input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode))
                 {
                     SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                        $"pointerReleaseWorldTarget activeMode={activeMode} pos={pointerPosition} frame={Time.frameCount}");
+                        $"pointerReleaseWorldTarget activeMode={activeMode} pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
                     bool handledCommandTarget = HandleWorldTargetCommand(context, input, activeMode, pointerPosition);
                     context.LogClickDiagnostic?.Invoke($"clickWorldTargetCommand mode={activeMode} result={handledCommandTarget} pos={pointerPosition}");
                     LogOneClickDebug(context, pointerPosition, handledCommandTarget ? $"{activeMode}Target" : $"{activeMode}TargetUnhandled");
@@ -464,7 +474,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                     input.BoardPassengerDragArmed = false;
                     return;
                 }
-                else if (input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime))
+                else if (input.IsMoveTargetDoubleClick(pointerPosition, UnityEngine.Time.unscaledTime))
                 {
                     bool handledDoubleClick = HandlePersistentMoveTargetDoubleClick(context, input, pointerPosition);
                     context.LogClickDiagnostic?.Invoke($"clickMoveDoubleClickRetain result={handledDoubleClick} pos={pointerPosition}");
@@ -481,7 +491,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 else if (context.TryFocusUnit?.Invoke(pointerPosition) == true)
                 {
                     SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                        $"pointerReleaseFocusUnit result=True pos={pointerPosition} frame={Time.frameCount}");
+                        $"pointerReleaseFocusUnit result=True pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
                     context.LogClickDiagnostic?.Invoke($"clickFocus result=True pos={pointerPosition}");
                     input.ClearQueuedMoveOrder();
                     int removedMoveCommands = input.ClearPendingMoveCommandRequests();
@@ -493,7 +503,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 else
                 {
                     SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                        $"pointerReleaseNoCommand reason=NoActiveModeNoFocusableUnit pos={pointerPosition} frame={Time.frameCount}");
+                        $"pointerReleaseNoCommand reason=NoActiveModeNoFocusableUnit pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
                     context.LogClickDiagnostic?.Invoke($"clickFocus result=False action=NoCommand pos={pointerPosition}");
                     LogOneClickDebug(context, pointerPosition, "NoCommand");
                 }
@@ -525,28 +535,28 @@ public sealed class RtsSelectionRuntimeInputSystem
             if (context.RequestMoveOrder == null)
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"handleWorldTargetCommandMove result=False reason=NoIssueMoveOrderDelegate pos={pointerPosition} frame={Time.frameCount}");
+                    $"handleWorldTargetCommandMove result=False reason=NoIssueMoveOrderDelegate pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
                 input.ClearActiveCommandMode();
                 context.ClearCommandMode?.Invoke();
                 return false;
             }
 
-            bool persistentMove = input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime);
+            bool persistentMove = input.IsMoveTargetDoubleClick(pointerPosition, UnityEngine.Time.unscaledTime);
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"handleWorldTargetCommandMove result=Begin pos={pointerPosition} persistent={persistentMove} frame={Time.frameCount}");
+                $"handleWorldTargetCommandMove result=Begin pos={pointerPosition} persistent={persistentMove} frame={UnityEngine.Time.frameCount}");
             if (persistentMove)
             {
                 input.ArmCommandMode(
                     TacticalCommandMode.Move,
-                    Time.frameCount,
+                    UnityEngine.Time.frameCount,
                     oneShot: false,
                     requiresWorldTarget: true);
             }
 
-            input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
+            input.RecordMoveTargetClick(pointerPosition, UnityEngine.Time.unscaledTime);
             context.RequestMoveOrder.Invoke(pointerPosition);
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"handleWorldTargetCommandMove result=True pos={pointerPosition} frame={Time.frameCount}");
+                $"handleWorldTargetCommandMove result=True pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
             return true;
         }
 
@@ -712,10 +722,10 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         input.ArmCommandMode(
             TacticalCommandMode.Move,
-            Time.frameCount,
+            UnityEngine.Time.frameCount,
             oneShot: false,
             requiresWorldTarget: true);
-        input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
+        input.RecordMoveTargetClick(pointerPosition, UnityEngine.Time.unscaledTime);
         context.RequestMoveOrder.Invoke(pointerPosition);
         return true;
     }
@@ -735,7 +745,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     private static void LogOneClickDebug(Context context, Vector2 pointerPosition, string action)
     {
         string summary = context.BuildClickDebugSummary?.Invoke(pointerPosition) ?? "summary=unavailable";
-        context.LogClickDiagnostic?.Invoke($"ONE_CLICK_DEBUG action={action} pos={pointerPosition} frame={Time.frameCount} {summary}");
+        context.LogClickDiagnostic?.Invoke($"ONE_CLICK_DEBUG action={action} pos={pointerPosition} frame={UnityEngine.Time.frameCount} {summary}");
     }
 
     private static void UpdateSelectionModeHold(Context context, bool pointerPressed, Vector2 pointerPosition)
@@ -776,7 +786,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             return;
         }
 
-        if (Time.unscaledTime - input.SelectionModeHoldStartTime < context.SelectionModeHoldSeconds)
+        if (UnityEngine.Time.unscaledTime - input.SelectionModeHoldStartTime < context.SelectionModeHoldSeconds)
             return;
 
         input.SelectionModeHoldArmed = false;

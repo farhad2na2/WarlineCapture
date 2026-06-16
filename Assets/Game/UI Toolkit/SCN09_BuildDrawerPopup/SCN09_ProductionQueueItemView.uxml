@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SCN09_BuildDrawerPopup.uss" />
+    <ui:VisualElement name="ProductionItemView" class="production-item-view">
+        <ui:Button name="NumberPanel" class="queue-number-panel" text="">
+            <ui:VisualElement name="Frame" class="queue-small-frame" />
+            <ui:Label name="Number" class="queue-number" text="2" />
+        </ui:Button>
+        <ui:VisualElement name="Image" class="queue-thumb" />
+        <ui:Label name="Name" class="queue-name" text="UNIT NAME" />
+        <ui:Label name="TimeText" class="queue-time" text="00:30" />
+        <ui:Button name="OrderButton" class="queue-order-button" text="">
+            <ui:VisualElement name="Frame" class="queue-small-frame" />
+            <ui:VisualElement name="Icon" class="queue-order-icon" />
+        </ui:Button>
+    </ui:VisualElement>
+</ui:UXML>

@@ -18,7 +18,7 @@ internal sealed partial class BuildingUiContextSystem : SystemBase
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
         public readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
@@ -50,7 +50,7 @@ internal sealed partial class BuildingUiContextSystem : SystemBase
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
             BuildingDefinitionSystem definitionSystem,
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionRequestBoundary productionRequestSystem,
             Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
@@ -115,7 +115,7 @@ internal sealed partial class BuildingUiContextSystem : SystemBase
     public Source CreateSource(
         RuntimeResourceSystem runtimeResourceSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionSystem productionSystem,
         BuildingProductionRequestBoundary productionRequestSystem,
         Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,

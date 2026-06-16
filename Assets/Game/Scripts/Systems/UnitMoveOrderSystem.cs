@@ -5,7 +5,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 
-public sealed class UnitMoveOrderSystem
+[DisableAutoCreation]
+public partial struct UnitMoveOrderSystem : ISystem
 {
     private const int ManualMoveGoalSearchRadiusInfantry = 12;
     private const int ManualMoveGoalSearchRadiusVehicle = 20;
@@ -21,6 +22,15 @@ public sealed class UnitMoveOrderSystem
         public int StaggeredPathRequests;
         public int MaxStaggerDelayFrames;
         public int AirUnits;
+    }
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
     }
 
     public MoveOrderCommandResult IssueGroupedManualMoveOrder(

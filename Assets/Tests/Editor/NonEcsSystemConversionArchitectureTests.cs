@@ -59,21 +59,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
     };
 
-    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
-    {
-        ["Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs|IssueImmediateSelectedUnitOrder"] = 2,
-        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestBoardSelectedTransportOrdersToPassengerRect"] = 1,
-        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
-        ["Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
-        ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|ClearMovementOrderComponents"] = 2,
-        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueGroupedManualMoveOrder"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueImmediateMoveCommand"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs|IssueTargetOnlyMoveCommand"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|ClearCommandedAttackOrderComponents"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|IssueAttackTarget"] = 1,
-        ["Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs|IssueDirectAttackTarget"] = 1
-    };
+    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal);
 
     private static readonly HashSet<string> ApprovedTopLevelNamingEscapeTypes = new(StringComparer.Ordinal)
     {

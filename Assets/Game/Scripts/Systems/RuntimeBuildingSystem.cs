@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public sealed class RuntimeBuildingSystem<TBuilding>
+public sealed class RuntimeBuildingCollection<TBuilding>
 {
     private readonly Dictionary<int, TBuilding> _buildings = new();
     private int _nextBuildingId = 1;

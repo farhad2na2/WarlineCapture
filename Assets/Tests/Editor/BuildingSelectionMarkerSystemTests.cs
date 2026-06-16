@@ -76,7 +76,7 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshMovesSingleMarkerBetweenSelectedBuildings()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity buildingA = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
         RuntimeBuildingEntity buildingB = CreateBuilding(2, new Vector2Int(20, 8), new Vector2Int(10, 8), 0.5f);
         runtimeBuildings.AddBuilding(buildingA.Id, buildingA);
@@ -107,7 +107,7 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, Vector2Int.zero, new Vector2Int(4, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
@@ -131,7 +131,7 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshAppliesHologramCompatibleMarkerColorProperties()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
@@ -157,7 +157,7 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(4, 4), 0.25f);
         building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>();
 
@@ -221,7 +221,7 @@ public sealed class BuildingSelectionMarkerSystemTests
     [Test]
     public void RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding()
     {
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
         GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Object.DestroyImmediate(model.GetComponent<Collider>());
@@ -254,7 +254,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         system.Dispose(context);
     }
 
-    private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildings)
+    private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings)
     {
         GridConfig grid = new()
         {

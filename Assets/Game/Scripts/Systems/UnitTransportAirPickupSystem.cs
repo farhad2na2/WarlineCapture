@@ -4,9 +4,19 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-public readonly struct UnitTransportAirPickupSystem
+[DisableAutoCreation]
+public partial struct UnitTransportAirPickupSystem : ISystem
 {
     private const float AirBoardingGroundedHeightTolerance = TransportBoardingData.AirBoardingGroundedHeightTolerance;
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
 
     public bool TryPrepareAirTransportPickupForBoarding(
         EntityManager em,

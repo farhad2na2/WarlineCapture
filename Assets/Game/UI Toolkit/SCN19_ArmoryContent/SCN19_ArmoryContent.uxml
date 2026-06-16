@@ -1,0 +1,185 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SCN19_ArmoryContent.uss" />
+    <ui:Template name="ArmoryItemView" src="SCN19_ArmoryItemView.uxml" />
+
+    <ui:VisualElement name="SCN19_ArmoryContent" class="scn19-armory-content">
+        <ui:VisualElement name="Background" class="background" />
+
+        <ui:VisualElement name="LeftContent" class="left-content">
+            <ui:VisualElement name="ArmoryTitleBlock" class="title-block">
+                <ui:Button name="BackHotspot" class="back-hotspot" text="">
+                    <ui:VisualElement name="BackFrame" class="back-frame" />
+                    <ui:VisualElement name="BackIcon" class="back-icon" />
+                    <ui:Label name="Title" class="back-title" text="BACK" />
+                    <ui:Label name="Subtitle" class="back-subtitle" text="Main Menu" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="LeftNavPanel" class="left-nav-panel">
+                <ui:Button name="Nav_Support" class="nav-item nav-item-selected" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon support-icon" />
+                    <ui:Label name="Text" class="nav-label" text="Support" />
+                </ui:Button>
+                <ui:Button name="Nav_Aircrafts" class="nav-item" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon aircraft-icon" />
+                    <ui:Label name="Text" class="nav-label" text="Aircrafts" />
+                </ui:Button>
+                <ui:Button name="Nav_Characters" class="nav-item" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon character-icon" />
+                    <ui:Label name="Text" class="nav-label" text="Characters" />
+                </ui:Button>
+                <ui:Button name="Nav_Vehicles" class="nav-item" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon vehicle-icon" />
+                    <ui:Label name="Text" class="nav-label" text="Vehicles" />
+                </ui:Button>
+                <ui:Button name="Nav_Buildings" class="nav-item" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon building-icon" />
+                    <ui:Label name="Text" class="nav-label" text="Buildings" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="MiddleContent" class="middle-content">
+            <ui:Button name="FilterDropdown" class="dropdown filter-dropdown" text="">
+                <ui:Label name="Label" class="dropdown-label" text="FILTER: ALL" />
+                <ui:VisualElement name="Chevron" class="dropdown-chevron" />
+            </ui:Button>
+
+            <ui:Button name="SortDropdown" class="dropdown sort-dropdown" text="">
+                <ui:Label name="Label" class="dropdown-label" text="SORT: RARITY" />
+                <ui:VisualElement name="Chevron" class="dropdown-chevron" />
+            </ui:Button>
+
+            <ui:ScrollView name="Scroll_View" class="armory-scroll-view" mode="Vertical">
+                <ui:VisualElement name="Content" class="armory-catalog-grid">
+                    <ui:Instance name="ItemView" template="ArmoryItemView" />
+                    <ui:Instance name="ItemView_Vehicle" template="ArmoryItemView" />
+                    <ui:Instance name="ItemView_Aircraft" template="ArmoryItemView" />
+                    <ui:Instance name="ItemView_Building" template="ArmoryItemView" />
+                    <ui:Instance name="ItemView_Locked" template="ArmoryItemView" />
+                    <ui:Instance name="ItemView_Upgrade" template="ArmoryItemView" />
+                </ui:VisualElement>
+            </ui:ScrollView>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="RightContent" class="right-content">
+            <ui:VisualElement name="InspectionPanel" class="inspection-panel">
+                <ui:VisualElement name="Frame" class="inspection-frame" />
+                <ui:VisualElement name="PortraitBackground" class="inspection-art-background character-art-background" />
+                <ui:VisualElement name="PortraitArt" class="inspection-portrait-art" />
+
+                <ui:Label name="Name" class="inspection-name" text="RIFLEMAN MALE II" />
+                <ui:Label name="Type" class="inspection-type" text="INFANTRY" />
+                <ui:Label name="Description" class="inspection-description" text="Reliable frontline infantry equipped for a variety of combat situations." />
+
+                <ui:VisualElement name="StatsPanel" class="stats-panel">
+                    <ui:VisualElement name="Stat_Health" class="stat-row">
+                        <ui:VisualElement class="stat-icon health-icon" />
+                        <ui:Label class="stat-name" text="HEALTH" />
+                        <ui:Label class="stat-value" text="220" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Stat_Damage" class="stat-row">
+                        <ui:VisualElement class="stat-icon damage-icon" />
+                        <ui:Label class="stat-name" text="DAMAGE" />
+                        <ui:Label class="stat-value" text="220" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Stat_Range" class="stat-row">
+                        <ui:VisualElement class="stat-icon range-icon" />
+                        <ui:Label class="stat-name" text="RANGE" />
+                        <ui:Label class="stat-value" text="220" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Stat_Speed" class="stat-row">
+                        <ui:VisualElement class="stat-icon speed-icon" />
+                        <ui:Label class="stat-name" text="SPEED" />
+                        <ui:Label class="stat-value" text="220" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="AbilitiesPanel" class="abilities-panel">
+                    <ui:VisualElement name="Ability_Move" class="ability-cell">
+                        <ui:VisualElement class="ability-icon move-icon" />
+                        <ui:Label class="ability-label" text="MOVE" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Ability_Attack" class="ability-cell">
+                        <ui:VisualElement class="ability-icon attack-icon" />
+                        <ui:Label class="ability-label" text="ATTACK" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Ability_Hold" class="ability-cell">
+                        <ui:VisualElement class="ability-icon hold-icon" />
+                        <ui:Label class="ability-label" text="HOLD" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Ability_Patrol" class="ability-cell">
+                        <ui:VisualElement class="ability-icon patrol-icon" />
+                        <ui:Label class="ability-label" text="PATROL" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:Label name="SourceLabel" class="source-label" text="SOURCE / UNLOCK" />
+                <ui:Label name="SourceValue" class="source-value" text="Barracks Level 4" />
+
+                <ui:VisualElement name="ProgressPanel" class="inspection-progress">
+                    <ui:Label name="ProgressLabel" class="progress-heading" text="UPGRADE TRACK" />
+                    <ui:Label name="TierValue" class="tier-value" text="TIER II >>>" />
+                    <ui:Label name="PartsLabel" class="parts-label" text="BLUEPRINT PARTS" />
+                    <ui:VisualElement name="PartsTrack" class="parts-track">
+                        <ui:VisualElement name="PartsFill" class="parts-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="PartsValue" class="parts-value" text="38 / 60" />
+                </ui:VisualElement>
+
+                <ui:Button name="UpgradeButton" class="cta-button primary-cta" text="">
+                    <ui:Label name="Label" class="cta-label" text="UPGRADE" />
+                </ui:Button>
+                <ui:Button name="InspectAbilitiesButton" class="cta-button secondary-cta inspect-abilities-cta" text="">
+                    <ui:Label name="Label" class="cta-label" text="INSPECT ABILITIES" />
+                </ui:Button>
+                <ui:Button name="EquipButton" class="cta-button secondary-cta equip-cta" text="">
+                    <ui:Label name="Label" class="cta-label" text="EQUIP" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="FooterContent" class="footer-content">
+            <ui:VisualElement name="CommsStatusPanel" class="comms-status-panel">
+                <ui:VisualElement name="Frame" class="comms-frame" />
+                <ui:VisualElement name="Icon" class="comms-icon" />
+                <ui:Label name="Label" class="comms-label" text="COMMS ONLINE" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="BottomNavPanel" class="bottom-nav-panel">
+                <ui:Button name="OwnedTab" class="bottom-tab bottom-tab-selected" text="">
+                    <ui:VisualElement name="Frame" class="bottom-tab-frame" />
+                    <ui:VisualElement name="Icon" class="bottom-tab-icon units-icon" />
+                    <ui:Label name="Label" class="bottom-tab-label" text="OWNED" />
+                </ui:Button>
+                <ui:Button name="UpgradeTracksTab" class="bottom-tab" text="">
+                    <ui:VisualElement name="Frame" class="bottom-tab-frame" />
+                    <ui:VisualElement name="Icon" class="bottom-tab-icon upgrades-icon" />
+                    <ui:Label name="Label" class="bottom-tab-label" text="UPGRADE TRACKS" />
+                </ui:Button>
+                <ui:Button name="PartsTab" class="bottom-tab" text="">
+                    <ui:VisualElement name="Frame" class="bottom-tab-frame" />
+                    <ui:VisualElement name="Icon" class="bottom-tab-icon parts-icon" />
+                    <ui:Label name="Label" class="bottom-tab-label" text="PARTS" />
+                </ui:Button>
+                <ui:Button name="GearModulesTab" class="bottom-tab" text="">
+                    <ui:VisualElement name="Frame" class="bottom-tab-frame" />
+                    <ui:VisualElement name="Icon" class="bottom-tab-icon gear-icon" />
+                    <ui:Label name="Label" class="bottom-tab-label" text="GEAR MODULES" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="RouteStrip" class="route-strip">
+                <ui:VisualElement name="Frame" class="route-frame" />
+                <ui:Label name="Label" class="route-label" text="MAIN MENU  &gt;  COMMANDER PROFILE  &gt;  ARMORY" />
+                <ui:Button name="MainMenuHotspot" class="route-hotspot main-menu-hotspot" text="" />
+                <ui:Button name="CommanderHotspot" class="route-hotspot commander-hotspot" text="" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

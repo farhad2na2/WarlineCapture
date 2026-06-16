@@ -16,7 +16,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
 
     public readonly struct RuntimeSource
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionSlotSystem ProductionSlotSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
@@ -56,7 +56,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
         public readonly bool EnableDestroyDiagnostics;
 
         public RuntimeSource(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionSlotSystem productionSlotSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
@@ -152,7 +152,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
         public readonly BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate PositionBuildingObject;
         public readonly BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
         public readonly BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly Func<bool> IsDeferringSideEffects;
@@ -191,7 +191,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
             BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate positionBuildingObject,
             BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
             BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             Func<bool> isDeferringSideEffects,

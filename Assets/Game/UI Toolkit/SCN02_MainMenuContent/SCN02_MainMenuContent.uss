@@ -1,0 +1,757 @@
+.scn02-main-menu-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    color: rgb(219, 214, 189);
+}
+
+.scn02-main-menu-content Button {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-text-align: middle-center;
+}
+
+.menu-background-content,
+.background-viewport,
+.background-art,
+.background-art-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.background-art {
+    left: -2.5%;
+    right: -2.5%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_background_art.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.background-art-overlay {
+    background-color: rgba(0, 0, 0, 0.42);
+}
+
+.header-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 12.96%;
+}
+
+.header-back-plate {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(5, 6, 5, 0.88);
+}
+
+.header-logo-panel {
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 19.8%;
+    height: 86.8%;
+}
+
+.header-logo-frame,
+.header-logo,
+.header-actions-frame {
+    position: absolute;
+}
+
+.header-logo-frame {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_logo_panel_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 34;
+    -unity-slice-right: 34;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.header-logo {
+    left: 13.7%;
+    right: 13.7%;
+    top: 22.8%;
+    bottom: 22.8%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_brand_logo_lockup.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.header-resource-area {
+    position: absolute;
+    right: 12.65%;
+    top: 14px;
+    width: 47.08%;
+    height: 86.8%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_resource_panel_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 40;
+    -unity-slice-right: 40;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.resource-panel {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 32.52%;
+}
+
+.credits-panel {
+    left: 0;
+}
+
+.supplies-panel {
+    left: 33.74%;
+}
+
+.command-panel {
+    left: 67.26%;
+}
+
+.resource-icon {
+    position: absolute;
+    left: 9.5%;
+    top: 20%;
+    width: 23%;
+    height: 62%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.credits-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_coin_badge.png");
+}
+
+.supplies-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_supplies_crate.png");
+}
+
+.command-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
+}
+
+.resource-label {
+    position: absolute;
+    left: 34%;
+    top: 20%;
+    width: 60%;
+    height: 50px;
+    font-size: 36px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.resource-value {
+    position: absolute;
+    left: 34%;
+    top: 43%;
+    width: 60%;
+    height: 84px;
+    font-size: 58px;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.credits-value {
+    color: rgb(235, 179, 65);
+}
+
+.supplies-value {
+    color: rgb(161, 166, 105);
+}
+
+.command-value {
+    color: rgb(119, 180, 215);
+}
+
+.header-actions-panel {
+    position: absolute;
+    right: 0;
+    top: 14px;
+    width: 12.67%;
+    height: 86.8%;
+}
+
+.header-actions-frame {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_right_actions_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 34;
+    -unity-slice-right: 34;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.header-icon-button {
+    position: absolute;
+    width: 26%;
+    height: 62.5%;
+    top: 18.5%;
+    left: 22%;
+}
+
+.settings-button {
+    left: 57%;
+}
+
+.inbox-icon,
+.settings-icon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.inbox-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_inbox_envelope.png");
+}
+
+.settings-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_settings_gear.png");
+}
+
+.left-content {
+    position: absolute;
+    left: 0;
+    top: 13%;
+    bottom: 11.2%;
+    width: 15%;
+}
+
+.left-nav-panel {
+    position: absolute;
+    left: 50px;
+    top: 13.2%;
+    width: 79.7%;
+    height: 72.9%;
+}
+
+.nav-item {
+    position: relative;
+    width: 100%;
+    height: 19.6%;
+    margin-bottom: 0;
+}
+
+.nav-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Final/scn02_nav_button_inactive_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.nav-item-selected .nav-frame {
+    -unity-background-image-tint-color: rgb(235, 179, 65);
+}
+
+.nav-icon {
+    position: absolute;
+    left: 8%;
+    top: 23%;
+    width: 20%;
+    height: 54%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_operations_pin.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.nav-text {
+    position: absolute;
+    left: 32%;
+    right: 5%;
+    top: 0;
+    bottom: 0;
+    font-size: 34px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.middle-content {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    top: 13%;
+    bottom: 11.2%;
+}
+
+.mode-cards-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 86.93%;
+    height: 60.06%;
+    translate: -50% -50%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.mode-card {
+    position: relative;
+    width: 30.68%;
+    height: 100%;
+}
+
+.mode-card-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_card_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 54;
+    -unity-slice-right: 54;
+    -unity-slice-top: 54;
+    -unity-slice-bottom: 54;
+}
+
+.mode-title-icon {
+    position: absolute;
+    left: 6.1%;
+    top: 3.55%;
+    width: 9.4%;
+    height: 6.5%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.campaign-title-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_campaign_crosshair.png");
+}
+
+.operations-title-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_operations_pin.png");
+}
+
+.skirmish-title-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_skirmish_blades.png");
+}
+
+.mode-title {
+    position: absolute;
+    left: 23%;
+    right: 14%;
+    top: 3.3%;
+    height: 6.3%;
+    font-size: 58px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+}
+
+.mode-thumbnail-viewport {
+    position: absolute;
+    left: 4.1%;
+    right: 4.1%;
+    top: 11%;
+    height: 52.5%;
+    overflow: hidden;
+}
+
+.mode-thumbnail {
+    position: absolute;
+    left: -60%;
+    right: -60%;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.campaign-thumbnail {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png");
+}
+
+.operations-thumbnail {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png");
+}
+
+.skirmish-thumbnail {
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png");
+}
+
+.mode-description {
+    position: absolute;
+    left: 12.2%;
+    right: 12.2%;
+    bottom: 7.75%;
+    height: 10.2%;
+    font-size: 40px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.progress-meter {
+    position: absolute;
+    left: 20.9%;
+    width: 58.1%;
+    bottom: 21%;
+    height: 6.35%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_progress_meter_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 20;
+    -unity-slice-right: 20;
+    -unity-slice-top: 10;
+    -unity-slice-bottom: 10;
+}
+
+.progress-label {
+    position: absolute;
+    left: 0;
+    top: -36px;
+    width: 66%;
+    height: 54px;
+    font-size: 28px;
+    color: rgb(158, 156, 138);
+    -unity-text-align: middle-left;
+}
+
+.progress-value {
+    position: absolute;
+    right: 0;
+    top: -36px;
+    width: 34%;
+    height: 54px;
+    font-size: 34px;
+    color: rgb(245, 168, 41);
+    -unity-text-align: middle-right;
+}
+
+.progress-segments {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 50%;
+    height: 18px;
+    translate: 0 -50%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.progress-segment {
+    width: 7%;
+    height: 18px;
+    background-color: rgba(46, 48, 41, 0.92);
+}
+
+.progress-gold .progress-on {
+    background-color: rgb(245, 168, 41);
+}
+
+.progress-blue .progress-on {
+    background-color: rgb(97, 191, 217);
+}
+
+.progress-green .progress-on {
+    background-color: rgb(159, 174, 62);
+}
+
+.right-content {
+    position: absolute;
+    right: 0;
+    top: 13%;
+    bottom: 11.2%;
+    width: 15%;
+}
+
+.commander-panel {
+    position: absolute;
+    left: 0;
+    top: 4.8%;
+    width: 99.9%;
+    height: 90.4%;
+}
+
+.commander-portrait {
+    position: absolute;
+    left: 11.5%;
+    right: 15%;
+    top: 11%;
+    height: 34.2%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_commander_portrait_art.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.commander-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_commander_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 44;
+    -unity-slice-right: 44;
+    -unity-slice-top: 44;
+    -unity-slice-bottom: 44;
+}
+
+.commander-title-icon {
+    position: absolute;
+    left: 13%;
+    top: 5.3%;
+    width: 11%;
+    height: 6.6%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.commander-title {
+    position: absolute;
+    left: 29.7%;
+    right: 7%;
+    top: 5.7%;
+    height: 82px;
+    font-size: 52px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+}
+
+.identity-panel {
+    position: absolute;
+    left: 11%;
+    right: 11%;
+    top: 51%;
+    height: 9.6%;
+}
+
+.identity-badge {
+    position: absolute;
+    left: 3%;
+    top: 23%;
+    width: 16%;
+    height: 65%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.identity-name,
+.identity-level {
+    position: absolute;
+    left: 20%;
+    right: 0;
+    height: 54px;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+}
+
+.identity-name {
+    top: 20%;
+    font-size: 40px;
+    color: rgb(219, 214, 189);
+}
+
+.identity-level {
+    top: 51%;
+    font-size: 34px;
+    color: rgb(245, 168, 41);
+}
+
+.readiness-panel {
+    position: absolute;
+    left: 8.8%;
+    right: 8.8%;
+    top: 61%;
+    height: 8.8%;
+}
+
+.readiness-label {
+    position: absolute;
+    left: 4.8%;
+    top: 5.7%;
+    width: 45%;
+    height: 58px;
+    font-size: 36px;
+    color: rgb(219, 214, 189);
+    -unity-text-align: middle-left;
+}
+
+.readiness-segments {
+    position: absolute;
+    left: 2.1%;
+    right: 8.4%;
+    top: 41%;
+    height: 48px;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_readiness_segments.png");
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.locked-rows-container {
+    position: absolute;
+    left: 6.6%;
+    right: 6.6%;
+    top: 73.1%;
+    height: 23.5%;
+}
+
+.locked-row {
+    position: relative;
+    width: 100%;
+    height: 45.4%;
+}
+
+.lock-icon {
+    position: absolute;
+    left: 12%;
+    top: 20%;
+    width: 12%;
+    height: 56%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lock.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.locked-label {
+    position: absolute;
+    left: 26%;
+    right: 4%;
+    top: 0;
+    bottom: 0;
+    font-size: 34px;
+    color: rgb(158, 156, 138);
+    -unity-text-align: middle-left;
+    white-space: normal;
+}
+
+.footer-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 11.1%;
+}
+
+.comms-status-panel {
+    position: absolute;
+    left: 45px;
+    bottom: 45px;
+    width: 14.18%;
+    height: 95.8%;
+}
+
+.comms-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_comms_status_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.comms-status-icon {
+    position: absolute;
+    left: 8%;
+    top: 29%;
+    width: 12%;
+    height: 42%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lightning_small.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.comms-label,
+.comms-detail {
+    position: absolute;
+    left: 25%;
+    right: 8%;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.comms-label {
+    top: 32%;
+    height: 64px;
+    font-size: 34px;
+    color: rgb(245, 168, 41);
+}
+
+.comms-detail {
+    top: 58%;
+    height: 48px;
+    font-size: 24px;
+    color: rgb(158, 156, 138);
+}
+
+.deploy-operation-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 23.77%;
+    height: 110%;
+}
+
+.deploy-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_cta_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 20;
+    -unity-slice-bottom: 20;
+}
+
+.deploy-text {
+    position: absolute;
+    left: 12%;
+    right: 22%;
+    top: 0;
+    bottom: 0;
+    font-size: 64px;
+    color: rgb(0, 0, 0);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+}
+
+.deploy-chevrons {
+    position: absolute;
+    right: 7%;
+    top: 29.5%;
+    width: 13%;
+    height: 41%;
+    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_chevrons.png");
+    -unity-background-scale-mode: scale-to-fit;
+}

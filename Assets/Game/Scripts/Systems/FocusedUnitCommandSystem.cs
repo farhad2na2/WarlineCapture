@@ -2,19 +2,41 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public sealed class FocusedUnitCommandSystem
+[DisableAutoCreation]
+public partial struct FocusedUnitCommandSystem : ISystem
 {
-    private World _queryWorld;
+    private ulong _queryWorldSequenceNumber;
+    private bool _queriesInitialized;
     private EntityQuery _respawnQueueQuery;
     private EntityQuery _selectedMoveQuery;
 
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+        _queryWorldSequenceNumber = state.WorldUnmanaged.SequenceNumber;
+        _queriesInitialized = true;
+        _respawnQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<RespawnQueueTag>(),
+            ComponentType.ReadOnly<RespawnQueueComponent>());
+        _selectedMoveQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
+
     public void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
-        if (_queryWorld == world && world != null && world.IsCreated)
+        Unity.Entities.World world = em.World;
+        ulong worldSequenceNumber = world != null && world.IsCreated ? world.SequenceNumber : 0;
+        if (_queriesInitialized && _queryWorldSequenceNumber == worldSequenceNumber)
             return;
 
-        _queryWorld = world;
+        _queryWorldSequenceNumber = worldSequenceNumber;
+        _queriesInitialized = true;
         _respawnQueueQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<RespawnQueueTag>(),
             ComponentType.ReadOnly<RespawnQueueComponent>());

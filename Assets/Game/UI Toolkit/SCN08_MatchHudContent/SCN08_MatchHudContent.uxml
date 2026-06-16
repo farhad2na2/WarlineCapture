@@ -1,0 +1,293 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SCN08_MatchHudContent.uss" />
+    <ui:Template name="PassengerItemViewTemplate" src="SCN08_PassengerItemView.uxml" />
+
+    <ui:VisualElement name="SCN08_MatchHudContent" class="scn08-match-hud-content">
+        <ui:VisualElement name="HeaderContent" class="header-content">
+            <ui:VisualElement name="HeaderBackPlate" class="header-back-plate" />
+
+            <ui:VisualElement name="ObjectivesPanel" class="objectives-panel">
+                <ui:VisualElement name="Frame" class="objectives-frame">
+                    <ui:Label name="Title" class="objectives-title" text="OBJECTIVES" />
+                    <ui:VisualElement name="NeutralizeHostiles" class="objective-row">
+                        <ui:VisualElement name="Icon" class="objective-icon objective-unchecked" />
+                        <ui:Label name="Text" class="objective-text" text="Neutralize hostile patrol" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="ProtectCivilians" class="objective-row objective-row-second">
+                        <ui:VisualElement name="Icon" class="objective-icon objective-checked" />
+                        <ui:Label name="Text" class="objective-text" text="Protect civilians" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="KeepLossesLow" class="objective-row objective-row-third">
+                        <ui:VisualElement name="Icon" class="objective-icon objective-star" />
+                        <ui:Label name="Text" class="objective-text" text="Keep losses low" />
+                    </ui:VisualElement>
+                    <ui:Label name="Elapsed" class="objectives-elapsed" text="Elapsed: 07:42" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="ResourceStrip" class="resource-strip">
+                <ui:VisualElement name="Frame" class="resource-frame" />
+                <ui:VisualElement name="CreditsSlot" class="resource-slot credits-slot">
+                    <ui:VisualElement name="Icon" class="resource-icon credits-icon" />
+                    <ui:Label name="Label" class="resource-label" text="Credits" />
+                    <ui:Label name="Value" class="resource-value" text="187,540" />
+                </ui:VisualElement>
+                <ui:VisualElement name="FuelSlot" class="resource-slot fuel-slot">
+                    <ui:VisualElement name="Icon" class="resource-icon fuel-icon" />
+                    <ui:Label name="Label" class="resource-label" text="Fuel" />
+                    <ui:Label name="Value" class="resource-value" text="2,860" />
+                </ui:VisualElement>
+                <ui:VisualElement name="SupplySlot" class="resource-slot supply-slot">
+                    <ui:VisualElement name="Icon" class="resource-icon supply-icon" />
+                    <ui:Label name="Label" class="resource-label" text="Supply" />
+                    <ui:Label name="Value" class="resource-value" text="92/120" />
+                </ui:VisualElement>
+                <ui:VisualElement name="CivilianRiskSlot" class="resource-slot civilian-risk-slot">
+                    <ui:VisualElement name="Icon" class="resource-icon civilian-icon" />
+                    <ui:Label name="Label" class="resource-label" text="Civilian Risk" />
+                    <ui:Label name="Value" class="resource-value" text="MED" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="CurrentOrderBanner" class="current-order-banner">
+                <ui:VisualElement name="Frame" class="current-order-frame" />
+                <ui:VisualElement name="Chevrons" class="current-order-chevrons" />
+                <ui:Label name="OrderText" class="current-order-text" text="MOVE ORDER" />
+                <ui:Label name="SquadText" class="current-order-squad" text="Rifle Squad" />
+            </ui:VisualElement>
+
+            <ui:Button name="SettingsButton" class="header-icon-button settings-button" text="">
+                <ui:VisualElement name="Frame" class="header-icon-frame" />
+                <ui:VisualElement name="Icon" class="settings-icon" />
+            </ui:Button>
+            <ui:Button name="PauseButton" class="header-icon-button pause-button" text="">
+                <ui:VisualElement name="Frame" class="header-icon-frame" />
+                <ui:VisualElement name="Icon" class="pause-icon" />
+            </ui:Button>
+            <ui:Button name="MenuButton" class="header-icon-button menu-button" text="">
+                <ui:VisualElement name="Frame" class="header-icon-frame" />
+                <ui:VisualElement name="Icon" class="menu-icon" />
+            </ui:Button>
+
+            <ui:VisualElement name="BattlefieldLayer" class="battlefield-layer">
+                <ui:VisualElement name="CivilianRiskZone" class="civilian-risk-zone" />
+                <ui:VisualElement name="MovePath" class="move-path" />
+                <ui:VisualElement name="ObjectivePin" class="objective-pin" />
+                <ui:VisualElement name="ThreatPin" class="threat-pin" />
+                <ui:VisualElement name="HostileMarkerA" class="hostile-marker hostile-marker-a" />
+                <ui:VisualElement name="HostileMarkerB" class="hostile-marker hostile-marker-b" />
+                <ui:VisualElement name="SelectedSquadRing" class="selected-squad-ring" />
+                <ui:VisualElement name="CommandFocus" class="command-focus" />
+                <ui:VisualElement name="MoveDestination" class="move-destination" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="LeftContent" class="left-content">
+            <ui:VisualElement name="SelectedSquadPanel" class="selected-squad-panel">
+                <ui:VisualElement name="Frame" class="selected-squad-frame">
+                    <ui:VisualElement name="Portrait" class="selected-portrait" />
+                    <ui:VisualElement name="PortraitFrame" class="selected-portrait-frame" />
+                    <ui:VisualElement name="Badge" class="selected-badge" />
+                    <ui:Label name="Title" class="selected-title" text="RIFLE SQUAD" />
+                    <ui:Label name="Subtitle" class="selected-subtitle" text="Squad  |  Anti-Infantry" />
+
+                    <ui:VisualElement name="HealthFrame" class="selected-health-frame">
+                        <ui:VisualElement name="HealthFill" class="selected-health-fill" />
+                        <ui:Label name="HealthText" class="selected-health-text" text="120 / 120" />
+                    </ui:VisualElement>
+
+                    <ui:Label name="OrderLabel" class="order-label" text="ORDER">
+                        <ui:Label name="OrderValue" class="order-value" text="Moving" />
+                    </ui:Label>
+
+                    <ui:VisualElement name="CommandButtons" class="selected-command-buttons">
+                        <ui:Button name="ReturnButton" class="selected-action-button" text="">
+                            <ui:VisualElement name="Frame" class="selected-action-frame" />
+                            <ui:VisualElement name="Icon" class="return-icon" />
+                            <ui:Label name="Label" class="selected-action-label" text="RETURN" />
+                            <ui:VisualElement name="Status" class="selected-action-status" />
+                        </ui:Button>
+                        <ui:Button name="DestroyButton" class="selected-action-button" text="">
+                            <ui:VisualElement name="Frame" class="selected-action-frame" />
+                            <ui:VisualElement name="Icon" class="destroy-icon" />
+                            <ui:Label name="Label" class="selected-action-label" text="DESTROY" />
+                            <ui:VisualElement name="Status" class="selected-action-status" />
+                        </ui:Button>
+                        <ui:Button name="BoardButton" class="selected-action-button" text="">
+                            <ui:VisualElement name="Frame" class="selected-action-frame" />
+                            <ui:VisualElement name="Icon" class="board-icon" />
+                            <ui:Label name="Label" class="selected-action-label" text="BOARD" />
+                            <ui:VisualElement name="Status" class="selected-action-status" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Button name="PassengerChip" class="passenger-chip" text="">
+                        <ui:Label name="Label" class="passenger-chip-label" text="PASSENGERS 0/0" />
+                    </ui:Button>
+
+                    <ui:VisualElement name="TransportPassengerDrawer" class="transport-passenger-drawer">
+                        <ui:Label name="Header" class="passenger-drawer-header" text="PASSENGERS 0/0" />
+                        <ui:VisualElement name="EmptyState" class="passenger-empty-state">
+                            <ui:Label name="Label" class="passenger-empty-label" text="NO PASSENGERS ONBOARD" />
+                        </ui:VisualElement>
+                        <ui:ScrollView name="Scroll_View" class="passenger-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
+                            <ui:VisualElement name="Content" class="passenger-content">
+                                <ui:Instance name="PassengerItemView" template="PassengerItemViewTemplate" />
+                                <ui:Instance name="PassengerItemView_02" template="PassengerItemViewTemplate" />
+                                <ui:Instance name="PassengerItemView_03" template="PassengerItemViewTemplate" />
+                            </ui:VisualElement>
+                        </ui:ScrollView>
+                        <ui:VisualElement name="Footer" class="passenger-footer">
+                            <ui:Button name="ExitAllButton" class="passenger-footer-button exit-all-button" text="">
+                                <ui:Label name="Label" class="passenger-footer-label" text="EXIT ALL" />
+                            </ui:Button>
+                            <ui:Button name="CloseButton" class="passenger-footer-button close-button" text="">
+                                <ui:Label name="Label" class="passenger-footer-label" text="CLOSE" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="RightContent" class="right-content">
+            <ui:VisualElement name="ThreatJumpPanel" class="threat-jump-panel">
+                <ui:VisualElement name="Frame" class="threat-jump-frame" />
+                <ui:VisualElement name="WarningIcon" class="threat-warning-icon" />
+                <ui:Label name="Title" class="threat-title" text="HOSTILE CELL SPOTTED" />
+                <ui:Label name="Subtitle" class="threat-subtitle" text="Market quarter, 140m" />
+                <ui:VisualElement name="JumpFrame" class="jump-frame" />
+                <ui:VisualElement name="JumpIcon" class="jump-icon" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="RightQuickRail" class="right-quick-rail">
+                <ui:VisualElement name="Frame" class="right-quick-frame">
+                    <ui:Button name="BuildCommand" class="quick-command" text="">
+                        <ui:VisualElement name="Frame" class="quick-command-frame" />
+                        <ui:VisualElement name="Icon" class="build-icon" />
+                        <ui:Label name="Label" class="quick-command-label" text="BUILD" />
+                    </ui:Button>
+                    <ui:Button name="SupportCommand" class="quick-command" text="">
+                        <ui:VisualElement name="Frame" class="quick-command-frame" />
+                        <ui:VisualElement name="Icon" class="support-icon" />
+                        <ui:Label name="Label" class="quick-command-label" text="SUPPORT" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="FooterContent" class="footer-content">
+            <ui:VisualElement name="SquadTray" class="squad-tray">
+                <ui:VisualElement name="Frame" class="squad-tray-frame">
+                    <ui:Button name="SquadCard1" class="squad-card squad-card-selected" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-1">
+                                <ui:VisualElement name="Overlay" class="squad-portrait-overlay" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
+                            <ui:VisualElement name="NumberBadge" class="squad-number-badge"><ui:Label name="Number" class="squad-number" text="1" /></ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="SquadCard2" class="squad-card" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-2"><ui:VisualElement name="Overlay" class="squad-portrait-overlay" /></ui:VisualElement>
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
+                            <ui:VisualElement name="NumberBadge" class="squad-number-badge"><ui:Label name="Number" class="squad-number" text="2" /></ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="SquadCard3" class="squad-card" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-3"><ui:VisualElement name="Overlay" class="squad-portrait-overlay" /></ui:VisualElement>
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
+                            <ui:VisualElement name="NumberBadge" class="squad-number-badge"><ui:Label name="Number" class="squad-number" text="3" /></ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="SquadCard4" class="squad-card" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-4"><ui:VisualElement name="Overlay" class="squad-portrait-overlay" /></ui:VisualElement>
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
+                            <ui:VisualElement name="NumberBadge" class="squad-number-badge"><ui:Label name="Number" class="squad-number" text="4" /></ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="SquadCard5" class="squad-card" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-5"><ui:VisualElement name="Overlay" class="squad-portrait-overlay" /></ui:VisualElement>
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
+                            <ui:VisualElement name="NumberBadge" class="squad-number-badge"><ui:Label name="Number" class="squad-number" text="5" /></ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="CommandRail" class="command-rail">
+                <ui:VisualElement name="Frame" class="command-rail-frame">
+                    <ui:Button name="SelectCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="select-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="SELECT" />
+                    </ui:Button>
+                    <ui:Button name="StopCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="stop-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="STOP" />
+                    </ui:Button>
+                    <ui:Button name="HoldCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="hold-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="HOLD" />
+                    </ui:Button>
+                    <ui:Button name="AttackCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="attack-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="ATTACK" />
+                    </ui:Button>
+                    <ui:Button name="MoveCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="move-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="MOVE" />
+                    </ui:Button>
+                    <ui:Button name="ScanCommand" class="command-button" text="">
+                        <ui:VisualElement name="Frame" class="command-button-frame" />
+                        <ui:VisualElement name="Icon" class="scan-command-icon" />
+                        <ui:Label name="Label" class="command-button-label" text="SCAN" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="MinimapPanel" class="minimap-panel">
+                <ui:VisualElement name="Map" class="minimap-map" />
+                <ui:VisualElement name="MapOverlay" class="minimap-overlay" />
+                <ui:VisualElement name="Frame" class="minimap-frame">
+                    <ui:VisualElement name="Viewport" class="minimap-viewport" />
+                    <ui:VisualElement name="FriendlyA" class="minimap-dot friendly-a" />
+                    <ui:VisualElement name="FriendlyB" class="minimap-dot friendly-b" />
+                    <ui:VisualElement name="HostileA" class="minimap-dot hostile-a" />
+                    <ui:VisualElement name="Civilian" class="minimap-dot civilian-dot" />
+                    <ui:VisualElement name="North" class="minimap-north" />
+                    <ui:VisualElement name="Focus" class="minimap-focus" />
+                    <ui:Button name="ZoomIn" class="minimap-control zoom-in" text="">
+                        <ui:VisualElement name="Frame" class="minimap-control-frame"><ui:VisualElement name="Icon" class="zoom-plus-icon" /></ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="ZoomOut" class="minimap-control zoom-out" text="">
+                        <ui:VisualElement name="Frame" class="minimap-control-frame"><ui:VisualElement name="Icon" class="zoom-minus-icon" /></ui:VisualElement>
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="FeedbackPanel" class="feedback-panel">
+                <ui:VisualElement name="Frame" class="feedback-frame">
+                    <ui:VisualElement name="Icon" class="feedback-icon" />
+                    <ui:Label name="Feedback" class="feedback-text" text="Feedback" />
+                    <ui:VisualElement name="Actions" class="feedback-actions">
+                        <ui:Button name="BoardAllButton" class="feedback-action board-all-action" text="">
+                            <ui:Label name="Label" class="feedback-action-label" text="BOARD ALL" />
+                        </ui:Button>
+                        <ui:Button name="CancelButton" class="feedback-action cancel-action" text="">
+                            <ui:Label name="Label" class="feedback-action-label" text="CANCEL" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,1481 @@
+.scn08-match-hud-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    color: rgb(220, 216, 192);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.scn08-match-hud-content Button {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-text-align: middle-center;
+}
+
+.header-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 10.4%;
+}
+
+.header-back-plate {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background-color: rgba(7, 10, 10, 0.78);
+}
+
+.objectives-panel {
+    position: absolute;
+    left: 0.35%;
+    top: 5.8%;
+    width: 13.95%;
+    height: 192%;
+}
+
+.objectives-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_objective_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 44;
+    -unity-slice-right: 44;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+}
+
+.objectives-title {
+    position: absolute;
+    left: 9%;
+    right: 9%;
+    top: 5%;
+    height: 12%;
+    font-size: 28px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(232, 227, 203);
+}
+
+.objective-row {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 24%;
+    height: 16%;
+}
+
+.objective-row-second {
+    top: 43.5%;
+}
+
+.objective-row-third {
+    top: 63%;
+}
+
+.objective-icon {
+    position: absolute;
+    left: 3%;
+    top: 17%;
+    width: 9%;
+    height: 66%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.objective-unchecked {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_checkbox_empty.png");
+}
+
+.objective-checked {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_checkbox_checked.png");
+}
+
+.objective-star {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_objective_star.png");
+}
+
+.objective-text {
+    position: absolute;
+    left: 17%;
+    right: 2%;
+    top: 0;
+    bottom: 0;
+    font-size: 22px;
+    -unity-text-align: middle-left;
+    color: rgba(218, 222, 208, 0.9);
+}
+
+.objectives-elapsed {
+    position: absolute;
+    left: 13%;
+    right: 13%;
+    bottom: 5%;
+    height: 9.5%;
+    font-size: 20px;
+    -unity-text-align: middle-center;
+    color: rgba(202, 214, 205, 0.78);
+}
+
+.resource-strip {
+    position: absolute;
+    right: 11.5%;
+    top: 6.4%;
+    width: 33.5%;
+    height: 53.6%;
+}
+
+.resource-frame,
+.current-order-frame,
+.header-icon-frame,
+.threat-jump-frame,
+.right-quick-frame,
+.quick-command-frame,
+.selected-squad-frame,
+.selected-portrait-frame,
+.command-rail-frame,
+.squad-tray-frame,
+.minimap-frame,
+.feedback-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.resource-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_strip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 44;
+    -unity-slice-right: 44;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.resource-slot {
+    position: absolute;
+    top: 7%;
+    width: 21.8%;
+    height: 86%;
+}
+
+.credits-slot {
+    left: 5%;
+}
+
+.fuel-slot {
+    left: 29.3%;
+}
+
+.supply-slot {
+    left: 53.6%;
+}
+
+.civilian-risk-slot {
+    left: 77.9%;
+}
+
+.resource-icon {
+    position: absolute;
+    left: 1%;
+    top: 15%;
+    width: 26%;
+    height: 70%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.credits-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_credits_coin.png");
+}
+
+.fuel-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_fuel_can.png");
+}
+
+.supply-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_supply_crate.png");
+}
+
+.civilian-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_civilian_group.png");
+}
+
+.resource-label {
+    position: absolute;
+    left: 32%;
+    right: 0;
+    top: 9%;
+    height: 34%;
+    font-size: 18px;
+    -unity-text-align: middle-left;
+    color: rgba(197, 211, 199, 0.82);
+}
+
+.resource-value {
+    position: absolute;
+    left: 32%;
+    right: 0;
+    bottom: 8%;
+    height: 42%;
+    font-size: 25px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(235, 227, 194);
+}
+
+.current-order-banner {
+    position: absolute;
+    left: 31.6%;
+    top: 6.4%;
+    width: 14.6%;
+    height: 53.6%;
+}
+
+.current-order-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_mode_banner_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 38;
+    -unity-slice-right: 38;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.current-order-chevrons {
+    position: absolute;
+    left: 8%;
+    top: 30%;
+    width: 16%;
+    height: 40%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_current_order_chevrons.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.current-order-text {
+    position: absolute;
+    left: 29%;
+    right: 7%;
+    top: 11%;
+    height: 42%;
+    font-size: 25px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(232, 225, 196);
+}
+
+.current-order-squad {
+    position: absolute;
+    left: 29%;
+    right: 7%;
+    bottom: 11%;
+    height: 34%;
+    font-size: 18px;
+    -unity-text-align: middle-left;
+    color: rgba(197, 211, 199, 0.82);
+}
+
+.header-icon-button {
+    position: absolute;
+    top: 6.4%;
+    width: 3.12%;
+    height: 53.6%;
+}
+
+.settings-button {
+    right: 7.25%;
+}
+
+.pause-button {
+    right: 3.88%;
+}
+
+.menu-button {
+    right: 0.5%;
+}
+
+.header-icon-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_top_icon_button_frame_b.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+}
+
+.settings-icon,
+.pause-icon,
+.menu-icon {
+    position: absolute;
+    left: 24%;
+    right: 24%;
+    top: 22%;
+    bottom: 22%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.settings-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_settings_gear.png");
+}
+
+.pause-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_pause.png");
+}
+
+.menu-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_menu_list.png");
+}
+
+.battlefield-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 964%;
+}
+
+.civilian-risk-zone,
+.move-path,
+.objective-pin,
+.threat-pin,
+.hostile-marker,
+.selected-squad-ring,
+.command-focus,
+.move-destination {
+    position: absolute;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.civilian-risk-zone {
+    left: 18%;
+    top: 57%;
+    width: 11.7%;
+    height: 13.3%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_civilian_risk_zone.png");
+}
+
+.move-path {
+    left: 43%;
+    top: 58%;
+    width: 18.8%;
+    height: 2.3%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_path_line.png");
+}
+
+.objective-pin {
+    left: 28%;
+    top: 30%;
+    width: 3.1%;
+    height: 6.6%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_objective_star_pin.png");
+}
+
+.threat-pin {
+    left: 76%;
+    top: 31%;
+    width: 2.8%;
+    height: 6%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_threat_warning_pin.png");
+}
+
+.hostile-marker {
+    width: 2.5%;
+    height: 4.4%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_hostile_diamond.png");
+}
+
+.hostile-marker-a {
+    left: 67%;
+    top: 38%;
+}
+
+.hostile-marker-b {
+    left: 72.5%;
+    top: 30%;
+}
+
+.selected-squad-ring {
+    left: 41%;
+    top: 63.5%;
+    width: 11.25%;
+    height: 6.3%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_selection_ring.png");
+}
+
+.command-focus {
+    left: 39%;
+    top: 60%;
+    width: 15%;
+    height: 9.6%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_command_focus_brackets.png");
+}
+
+.move-destination {
+    left: 61%;
+    top: 56%;
+    width: 3.75%;
+    height: 6.7%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_move_destination.png");
+}
+
+.left-content {
+    position: absolute;
+    left: 0;
+    top: 10.4%;
+    bottom: 8.9%;
+    width: 15%;
+}
+
+.selected-squad-panel {
+    position: absolute;
+    left: 2.2%;
+    top: 22%;
+    width: 95.8%;
+    height: 46%;
+}
+
+.selected-squad-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_selected_entity_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 48;
+    -unity-slice-right: 48;
+    -unity-slice-top: 42;
+    -unity-slice-bottom: 42;
+}
+
+.selected-portrait-frame {
+    left: 7.5%;
+    right: 7.5%;
+    top: 7.8%;
+    height: 43.5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_selected_entity_portrait_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
+}
+
+.selected-portrait {
+    position: absolute;
+    left: 15.8%;
+    right: 15.8%;
+    top: 10.8%;
+    height: 37.5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_portrait_rifle_squad.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selected-badge {
+    position: absolute;
+    left: 10%;
+    top: 54%;
+    width: 10.5%;
+    height: 8%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_shield_rank_badge.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selected-title {
+    position: absolute;
+    left: 27%;
+    right: 9%;
+    top: 52.5%;
+    height: 6%;
+    font-size: 26px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(235, 228, 198);
+}
+
+.selected-subtitle {
+    position: absolute;
+    left: 27%;
+    right: 9%;
+    top: 59%;
+    height: 4.8%;
+    font-size: 17px;
+    -unity-text-align: middle-left;
+    color: rgba(202, 213, 202, 0.82);
+}
+
+.selected-health-frame {
+    position: absolute;
+    left: 10.5%;
+    right: 10.5%;
+    top: 66.5%;
+    height: 5.4%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_health_bar_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 22;
+    -unity-slice-right: 22;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+}
+
+.selected-health-fill {
+    position: absolute;
+    left: 6%;
+    top: 44%;
+    width: 62%;
+    height: 16%;
+    background-color: rgb(92, 204, 116);
+}
+
+.selected-health-text {
+    position: absolute;
+    left: 70%;
+    right: 4%;
+    top: 0;
+    bottom: 0;
+    font-size: 14px;
+    -unity-text-align: middle-right;
+    color: rgb(230, 224, 196);
+}
+
+.order-label {
+    position: absolute;
+    left: 10.5%;
+    right: 10.5%;
+    top: 73%;
+    height: 7%;
+    font-size: 18px;
+    -unity-text-align: middle-left;
+    color: rgba(200, 213, 202, 0.78);
+}
+
+.order-value {
+    position: absolute;
+    left: 39%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 21px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(232, 226, 197);
+}
+
+.selected-command-buttons {
+    position: absolute;
+    left: 9.5%;
+    right: 9.5%;
+    bottom: 12.5%;
+    height: 16%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.selected-action-button {
+    position: relative;
+    width: 30.2%;
+    height: 100%;
+}
+
+.selected-action-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 78%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_ability_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+}
+
+.return-icon,
+.destroy-icon,
+.board-icon {
+    position: absolute;
+    left: 27%;
+    right: 27%;
+    top: 12%;
+    height: 37%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.return-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_scan_radar.png");
+}
+
+.destroy-icon {
+    background-image: url("../../../Synty/InterfaceMilitaryCombatHUD/Sprites/Badges/SPR_MilitaryCombat_Badge_Element_Skull_01_Bronze.png");
+}
+
+.board-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_board_vehicle.png");
+}
+
+.selected-action-label {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 52%;
+    height: 17%;
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.selected-action-status {
+    position: absolute;
+    left: 17%;
+    right: 17%;
+    bottom: 1%;
+    height: 12%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_status_segment_strip.png");
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.passenger-chip {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: 3.7%;
+    height: 7.2%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_gold_action_button_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 14;
+    -unity-slice-bottom: 14;
+}
+
+.passenger-chip-label {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 0;
+    bottom: 0;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(48, 42, 22);
+}
+
+.transport-passenger-drawer {
+    position: absolute;
+    left: 93%;
+    top: 10%;
+    width: 75%;
+    height: 79.5%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_card_frame_default_a.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 42;
+    -unity-slice-right: 42;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+}
+
+.passenger-drawer-header {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 3.5%;
+    height: 6%;
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(232, 226, 197);
+}
+
+.passenger-empty-state {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 43%;
+    height: 8%;
+}
+
+.passenger-empty-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+    color: rgba(200, 213, 202, 0.68);
+}
+
+.passenger-scroll-view {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 13%;
+    bottom: 15%;
+}
+
+.passenger-scroll-view .unity-scroll-view__vertical-scroller,
+.passenger-scroll-view .unity-scroll-view__horizontal-scroller {
+    display: none;
+}
+
+.passenger-content {
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 8px;
+    padding-right: 0;
+}
+
+.passenger-item-view {
+    position: relative;
+    width: 100%;
+    height: 92px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background-image: url("../../Art/UI/Panels/scn09_panel_secondary_button_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 22;
+    -unity-slice-right: 22;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+}
+
+.passenger-name {
+    position: absolute;
+    left: 6%;
+    top: 10%;
+    width: 50%;
+    height: 34%;
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(232, 226, 197);
+}
+
+.passenger-role {
+    position: absolute;
+    left: 6%;
+    top: 48%;
+    width: 32%;
+    height: 30%;
+    font-size: 13px;
+    -unity-text-align: middle-left;
+    color: rgba(201, 213, 203, 0.78);
+}
+
+.passenger-health-frame {
+    position: absolute;
+    left: 40%;
+    top: 53%;
+    width: 31%;
+    height: 18%;
+    background-color: rgba(16, 20, 18, 0.92);
+}
+
+.passenger-health-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(87, 197, 112);
+}
+
+.passenger-health-text {
+    position: absolute;
+    left: 40%;
+    top: 17%;
+    width: 31%;
+    height: 28%;
+    font-size: 13px;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.passenger-exit-button {
+    position: absolute;
+    right: 6%;
+    top: 20%;
+    width: 18%;
+    height: 60%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_close_button_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+}
+
+.passenger-exit-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.passenger-footer {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 4%;
+    height: 8.9%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.passenger-footer-button {
+    position: relative;
+    width: 48%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+}
+
+.exit-all-button {
+    background-image: url("../../Art/UI/Panels/scn09_panel_small_gold_button_bg.png");
+}
+
+.close-button {
+    background-image: url("../../Art/UI/Panels/scn09_panel_small_status_chip_bg.png");
+}
+
+.passenger-footer-label {
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    top: 0;
+    bottom: 0;
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.right-content {
+    position: absolute;
+    right: 0;
+    top: 10.4%;
+    bottom: 8.9%;
+    width: 15%;
+}
+
+.threat-jump-panel {
+    position: absolute;
+    right: 3.5%;
+    top: 2.5%;
+    width: 111%;
+    height: 10%;
+}
+
+.threat-jump-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_rule_toast_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+}
+
+.threat-warning-icon {
+    position: absolute;
+    left: 5%;
+    top: 25%;
+    width: 10%;
+    height: 50%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_threat_warning.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.threat-title {
+    position: absolute;
+    left: 20%;
+    right: 24%;
+    top: 15%;
+    height: 34%;
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(235, 228, 198);
+}
+
+.threat-subtitle {
+    position: absolute;
+    left: 20%;
+    right: 24%;
+    bottom: 14%;
+    height: 30%;
+    font-size: 15px;
+    -unity-text-align: middle-left;
+    color: rgba(202, 213, 202, 0.82);
+}
+
+.jump-frame {
+    position: absolute;
+    right: 7%;
+    top: 22%;
+    width: 18%;
+    height: 56%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_jump_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 10;
+    -unity-slice-bottom: 10;
+}
+
+.jump-icon {
+    position: absolute;
+    right: 11%;
+    top: 32%;
+    width: 10%;
+    height: 36%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_jump_arrow.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.right-quick-rail {
+    position: absolute;
+    right: 4.9%;
+    top: 29%;
+    width: 46%;
+    height: 42%;
+}
+
+.right-quick-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_right_quick_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 38;
+    -unity-slice-right: 38;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 9%;
+    padding-right: 9%;
+    padding-top: 6%;
+    padding-bottom: 6%;
+}
+
+.quick-command {
+    position: relative;
+    width: 100%;
+    height: 46%;
+}
+
+.quick-command-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 28;
+    -unity-slice-right: 28;
+    -unity-slice-top: 20;
+    -unity-slice-bottom: 20;
+}
+
+.build-icon,
+.support-icon {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 15%;
+    height: 39%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.build-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_build_tools.png");
+}
+
+.support-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_support_parachute.png");
+}
+
+.quick-command-label {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 19%;
+    height: 19%;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.footer-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 22.6%;
+}
+
+.squad-tray {
+    position: absolute;
+    left: 0.35%;
+    bottom: 18.8%;
+    width: 36.3%;
+    height: 78.7%;
+}
+
+.squad-tray-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_tray_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 36;
+    -unity-slice-bottom: 36;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 2.4%;
+    padding-right: 2.4%;
+    padding-top: 7%;
+    padding-bottom: 7%;
+}
+
+.squad-card {
+    position: relative;
+    width: 18.4%;
+    height: 100%;
+}
+
+.squad-card-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_normal_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
+}
+
+.squad-card-selected .squad-card-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_selected_frame.png");
+}
+
+.squad-portrait {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 8%;
+    height: 61%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.squad-portrait-1 {
+    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card1_RifleSquad.png");
+}
+
+.squad-portrait-2 {
+    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card2_CombatVehicles.png");
+}
+
+.squad-portrait-3 {
+    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card3_AttackHelicopter.png");
+}
+
+.squad-portrait-4 {
+    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card4_FighterJet.png");
+}
+
+.squad-portrait-5 {
+    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card5_Transport.png");
+}
+
+.squad-portrait-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 36%;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.squad-health-frame {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 12.5%;
+    height: 12.5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_health_bar_small_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 10;
+    -unity-slice-bottom: 10;
+}
+
+.squad-health-fill {
+    position: absolute;
+    left: 9%;
+    right: 9%;
+    top: 43%;
+    height: 26%;
+    background-color: rgb(86, 196, 112);
+}
+
+.squad-number-badge {
+    position: absolute;
+    left: 8%;
+    top: 8%;
+    width: 17%;
+    height: 13%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_number_badge_frame.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.squad-number {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(235, 228, 198);
+}
+
+.command-rail {
+    position: absolute;
+    left: 30%;
+    bottom: 8%;
+    width: 39.9%;
+    height: 53%;
+}
+
+.command-rail-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_bar_rail_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+.command-button {
+    position: relative;
+    width: 15.1%;
+    height: 100%;
+}
+
+.command-button-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 28;
+    -unity-slice-right: 28;
+    -unity-slice-top: 20;
+    -unity-slice-bottom: 20;
+}
+
+.select-command-icon,
+.stop-command-icon,
+.hold-command-icon,
+.attack-command-icon,
+.move-command-icon,
+.scan-command-icon {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 15%;
+    height: 39%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.select-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_select_cursor.png");
+}
+
+.stop-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_stop_hand.png");
+}
+
+.hold-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_hold_shield.png");
+}
+
+.attack-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_attack_crosshair.png");
+}
+
+.move-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_move_chevrons.png");
+}
+
+.scan-command-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_scan_radar.png");
+}
+
+.command-button-label {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    bottom: 19%;
+    height: 19%;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}
+
+.minimap-panel {
+    position: absolute;
+    right: 0.35%;
+    bottom: 2.6%;
+    width: 18.75%;
+    height: 99.7%;
+}
+
+.minimap-map,
+.minimap-overlay,
+.minimap-frame {
+    position: absolute;
+}
+
+.minimap-map {
+    left: 4.8%;
+    right: 4.8%;
+    top: 5%;
+    bottom: 5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_content.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.minimap-overlay {
+    left: 4.8%;
+    right: 4.8%;
+    top: 5%;
+    bottom: 5%;
+    background-color: rgba(0, 0, 0, 0.16);
+}
+
+.minimap-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 48;
+    -unity-slice-right: 48;
+    -unity-slice-top: 38;
+    -unity-slice-bottom: 38;
+}
+
+.minimap-viewport,
+.minimap-dot,
+.minimap-north,
+.minimap-focus,
+.minimap-control {
+    position: absolute;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.minimap-viewport {
+    left: 43%;
+    top: 36%;
+    width: 28%;
+    height: 25%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_minimap_viewport_rect.png");
+}
+
+.minimap-dot {
+    width: 4.2%;
+    height: 6.2%;
+}
+
+.friendly-a {
+    left: 34%;
+    top: 43%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_friendly_minimap_dot.png");
+}
+
+.friendly-b {
+    left: 52%;
+    top: 62%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_friendly_minimap_dot.png");
+}
+
+.hostile-a {
+    left: 70%;
+    top: 30%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_hostile_minimap_dot.png");
+}
+
+.civilian-dot {
+    left: 22%;
+    top: 67%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_civilian_minimap_dot.png");
+}
+
+.minimap-north {
+    left: 41%;
+    top: 62%;
+    width: 7.1%;
+    height: 10.5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_north_arrow.png");
+}
+
+.minimap-focus {
+    left: 43.5%;
+    bottom: 6.5%;
+    width: 10%;
+    height: 14.8%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_focus_target_icon.png");
+}
+
+.minimap-control {
+    bottom: 11.5%;
+    width: 10.2%;
+    height: 15.2%;
+}
+
+.zoom-in {
+    right: 34%;
+}
+
+.zoom-out {
+    right: 19.8%;
+}
+
+.minimap-control-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 14;
+    -unity-slice-bottom: 14;
+}
+
+.zoom-plus-icon,
+.zoom-minus-icon {
+    position: absolute;
+    left: 23%;
+    right: 23%;
+    top: 23%;
+    bottom: 23%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.zoom-plus-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_plus_icon.png");
+}
+
+.zoom-minus-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_minus_icon.png");
+}
+
+.feedback-panel {
+    position: absolute;
+    left: 39%;
+    bottom: 68%;
+    width: 20.75%;
+    height: 27%;
+}
+
+.feedback-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_rule_toast_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+}
+
+.feedback-icon {
+    position: absolute;
+    left: 7%;
+    top: 25%;
+    width: 8.2%;
+    height: 50%;
+    background-image: url("../../Art/UI/Icons/Icon_BuildDrawer_Info_512.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.feedback-text {
+    position: absolute;
+    left: 18%;
+    top: 15%;
+    width: 46%;
+    height: 70%;
+    font-size: 18px;
+    -unity-text-align: middle-left;
+    color: rgb(232, 226, 197);
+}
+
+.feedback-actions {
+    position: absolute;
+    right: 4%;
+    top: 23%;
+    width: 46.6%;
+    height: 54%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.feedback-action {
+    position: relative;
+    height: 100%;
+    width: 48%;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+}
+
+.board-all-action {
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_04_tab_selected_bg.png");
+}
+
+.cancel-action {
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_05_tab_idle_bg.png");
+}
+
+.feedback-action-label {
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    top: 0;
+    bottom: 0;
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(232, 226, 197);
+}

@@ -2,7 +2,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class SelectionBuildingInteractionSystem
+[DisableAutoCreation]
+public sealed partial class SelectionBuildingInteractionSystem : SystemBase
 {
     private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();
@@ -14,9 +15,18 @@ public sealed class SelectionBuildingInteractionSystem
     private SelectionStateSystem _selectionStateSystem;
     private SelectionScreenMarkerSystem _screenMarkerSystem;
     private Camera _worldCamera;
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _mapSurfaceQuery;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Init(
         SelectionStateSystem selectionStateSystem,
@@ -102,7 +112,7 @@ public sealed class SelectionBuildingInteractionSystem
 
     private void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 
@@ -172,7 +182,7 @@ public sealed class SelectionBuildingInteractionSystem
     private static bool TryGetDefaultEntityManager(out EntityManager em)
     {
         em = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

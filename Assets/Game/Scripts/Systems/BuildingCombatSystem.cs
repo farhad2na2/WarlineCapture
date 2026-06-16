@@ -46,7 +46,7 @@ public sealed partial class BuildingCombatSystem : SystemBase
     public readonly struct Context<TBuilding>
         where TBuilding : class, IRuntimeBuildingVisualState
     {
-        public readonly RuntimeBuildingSystem<TBuilding> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<TBuilding> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, TBuilding> RuntimeBuildings;
         public readonly Dictionary<int, TBuilding> RuntimeBuildingMap;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
@@ -61,7 +61,7 @@ public sealed partial class BuildingCombatSystem : SystemBase
         public readonly bool EnableDestroyDiagnostics;
 
         public Context(
-            RuntimeBuildingSystem<TBuilding> runtimeBuildingSystem,
+            RuntimeBuildingCollection<TBuilding> runtimeBuildingSystem,
             IReadOnlyDictionary<int, TBuilding> runtimeBuildings,
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingAction<TBuilding> rememberOpenBaseBreach,

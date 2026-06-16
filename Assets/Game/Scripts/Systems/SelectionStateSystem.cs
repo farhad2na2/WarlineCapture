@@ -1,11 +1,21 @@
 using System.Collections.Generic;
 using Unity.Entities;
 
-public sealed class SelectionStateSystem
+[DisableAutoCreation]
+public sealed partial class SelectionStateSystem : SystemBase
 {
     public Entity FocusedUnit { get; private set; } = Entity.Null;
     public List<Entity> CachedSelectedMoveEntities { get; } = new();
     public string LastSelectionLifecycleDebug { get; private set; } = "none";
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void SetFocusedUnit(Entity entity)
     {

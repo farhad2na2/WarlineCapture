@@ -30,7 +30,7 @@ public sealed class RuntimeBuildingSystemTests
     [Test]
     public void AllocateId_IsSequentialAndResetsOnClear()
     {
-        var system = new RuntimeBuildingSystem<string>();
+        var system = new RuntimeBuildingCollection<string>();
 
         Assert.AreEqual(1, system.AllocateId());
         Assert.AreEqual(2, system.AllocateId());
@@ -45,7 +45,7 @@ public sealed class RuntimeBuildingSystemTests
     [Test]
     public void SelectionTracksOnlyExistingBuildings()
     {
-        var system = new RuntimeBuildingSystem<string>();
+        var system = new RuntimeBuildingCollection<string>();
         system.AddBuilding(10, "HQ");
         system.SelectBuilding(10);
 
@@ -61,7 +61,7 @@ public sealed class RuntimeBuildingSystemTests
     [Test]
     public void RemovingOtherBuilding_PreservesCurrentSelection()
     {
-        var system = new RuntimeBuildingSystem<string>();
+        var system = new RuntimeBuildingCollection<string>();
         system.AddBuilding(1, "Barracks");
         system.AddBuilding(2, "HQ");
         system.SelectBuilding(2);
@@ -76,7 +76,7 @@ public sealed class RuntimeBuildingSystemTests
     public void BuildingUiSelectionCommandRequest_DeletesSelectedBuildingAndWritesResult()
     {
         using World world = new("BuildingUiSelectionCommandDeleteTest");
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = new() { Id = 7 };
         runtimeBuildings.AddBuilding(building.Id, building);
         runtimeBuildings.SelectBuilding(building.Id);
@@ -110,7 +110,7 @@ public sealed class RuntimeBuildingSystemTests
     public void BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult()
     {
         using World world = new("BuildingUiSelectionCommandClearTest");
-        var runtimeBuildings = new RuntimeBuildingSystem<RuntimeBuildingEntity>();
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = new() { Id = 9 };
         runtimeBuildings.AddBuilding(building.Id, building);
         runtimeBuildings.SelectBuilding(building.Id);
@@ -134,7 +134,7 @@ public sealed class RuntimeBuildingSystemTests
     }
 
     private static BuildingSelectionSystem.Context CreateSelectionContext(
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildings,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings,
         BuildingSelectionSystem.RuntimeAction refreshMarkers = null)
     {
         var selectionSystem = new BuildingSelectionSystem();

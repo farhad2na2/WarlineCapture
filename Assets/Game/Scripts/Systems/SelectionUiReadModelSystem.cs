@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiReadModelSystem
+[DisableAutoCreation]
+public sealed partial class SelectionUiReadModelSystem : SystemBase
 {
     public readonly struct TransportPassengerUiInfo
     {
@@ -37,8 +38,17 @@ public sealed class SelectionUiReadModelSystem
     private readonly SelectionUiReadModelLookup _selectionUiReadModelLookup = new();
     private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
 
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _selectedTagQuery;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public bool HasFocusedUnit =>
         TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
@@ -186,7 +196,7 @@ public sealed class SelectionUiReadModelSystem
 
     private void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 
@@ -198,7 +208,7 @@ public sealed class SelectionUiReadModelSystem
     private static bool TryGetDefaultEntityManager(out EntityManager em)
     {
         em = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

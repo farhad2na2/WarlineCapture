@@ -14,7 +14,7 @@ internal sealed partial class BuildingGameplayDisposalSystem : SystemBase
 
     internal readonly struct Source
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementStartupSystem PlacementStartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
@@ -23,7 +23,7 @@ internal sealed partial class BuildingGameplayDisposalSystem : SystemBase
         public readonly Action ExitBuildMode;
 
         public Source(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementStartupSystem placementStartupSystem,
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementPreviewSystem placementPreviewSystem,

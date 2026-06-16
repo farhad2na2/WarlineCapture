@@ -17,7 +17,7 @@ internal sealed partial class BuildingSelectionSystem : SystemBase
 
     public readonly struct Source
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
@@ -33,7 +33,7 @@ internal sealed partial class BuildingSelectionSystem : SystemBase
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Source(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
@@ -67,7 +67,7 @@ internal sealed partial class BuildingSelectionSystem : SystemBase
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
@@ -83,7 +83,7 @@ internal sealed partial class BuildingSelectionSystem : SystemBase
         public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
@@ -340,7 +340,7 @@ internal sealed partial class BuildingSelectionSystem : SystemBase
     }
 
     public Context CreateContext(
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Camera worldCamera,
         TryGetGridDelegate tryGetGrid,

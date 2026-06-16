@@ -8,7 +8,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
@@ -22,7 +22,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             RuntimeResourceSystem runtimeResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionSystem definitionSystem,
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
@@ -61,7 +61,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         Action<EntityManager> ensureEntityQueries,
@@ -104,7 +104,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         Action<EntityManager> ensureEntityQueries,
@@ -133,7 +133,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionSystem definitionSystem,
-        RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+        RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         Action<EntityManager> ensureEntityQueries,

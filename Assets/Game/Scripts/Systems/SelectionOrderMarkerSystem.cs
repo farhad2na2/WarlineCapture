@@ -6,12 +6,13 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class SelectionOrderMarkerSystem
+[DisableAutoCreation]
+public sealed partial class SelectionOrderMarkerSystem : SystemBase
 {
     public delegate bool IsPreviewTargetValidWithSourceDelegate(EntityManager em, Entity source, Entity target);
     public delegate bool TryResolveRuntimeBuildingInstanceDelegate(Entity combatEntity, int runtimeBuildingId, out GameObject instance);
 
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _gridBlockerQuery;
     private GameObject _moveOrderMarker;
     private Renderer[] _moveOrderMarkerRenderers;
@@ -72,9 +73,23 @@ public sealed class SelectionOrderMarkerSystem
     private static readonly Color BoardPreviewMarkerAccentColor = new(0.72f, 1f, 0.88f, 1f);
     private const int ScanMarkerSegments = 72;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        Dispose();
+    }
+
     public void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 
@@ -189,7 +204,7 @@ public sealed class SelectionOrderMarkerSystem
         if (_moveOrderMarker == null || _moveOrderMarkerHideTime < 0f)
             return;
 
-        if (Time.time < _moveOrderMarkerHideTime)
+        if (UnityEngine.Time.time < _moveOrderMarkerHideTime)
             return;
 
         _moveOrderMarker.SetActive(false);
@@ -203,7 +218,7 @@ public sealed class SelectionOrderMarkerSystem
         if ((_attackOrderMarker == null && _attackTargetRingMarker == null && _attackTargetSelectionMarker == null) || _attackOrderMarkerHideTime < 0f)
             return;
 
-        if (Time.time < _attackOrderMarkerHideTime)
+        if (UnityEngine.Time.time < _attackOrderMarkerHideTime)
             return;
 
         if (_attackOrderMarker != null)
@@ -222,7 +237,7 @@ public sealed class SelectionOrderMarkerSystem
         if (_scanOrderMarker == null || _scanOrderMarkerHideTime < 0f)
             return;
 
-        if (Time.time < _scanOrderMarkerHideTime)
+        if (UnityEngine.Time.time < _scanOrderMarkerHideTime)
             return;
 
         _scanOrderMarker.SetActive(false);
@@ -280,7 +295,7 @@ public sealed class SelectionOrderMarkerSystem
             renderer.SetPropertyBlock(_moveOrderMarkerPropertyBlock);
         }
 
-        _moveOrderMarkerHideTime = Time.time + _orderMarkerVisibleSeconds;
+        _moveOrderMarkerHideTime = UnityEngine.Time.time + _orderMarkerVisibleSeconds;
     }
 
     public void ShowAttackOrderMarker(EntityManager em, Vector3 worldPoint, float visibleSeconds = -1f)
@@ -338,7 +353,7 @@ public sealed class SelectionOrderMarkerSystem
             renderer.SetPropertyBlock(_attackOrderMarkerPropertyBlock);
         }
 
-        _attackOrderMarkerHideTime = Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
+        _attackOrderMarkerHideTime = UnityEngine.Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
     }
 
     private bool ShowAttackTargetSelectionMarker(
@@ -396,7 +411,7 @@ public sealed class SelectionOrderMarkerSystem
             _attackTargetRingMarker.SetActive(false);
 
         float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
-        _attackOrderMarkerHideTime = Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
+        _attackOrderMarkerHideTime = UnityEngine.Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
 
         return true;
     }
@@ -432,7 +447,7 @@ public sealed class SelectionOrderMarkerSystem
 
         _attackTargetRingMarker.SetActive(true);
         float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
-        _attackOrderMarkerHideTime = Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
+        _attackOrderMarkerHideTime = UnityEngine.Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
     }
 
     private static Vector3 ResolveAttackMarkerWorldPosition(EntityManager em, Entity targetEntity, GridConfig grid, Vector3 fallbackWorldPoint)
@@ -505,7 +520,7 @@ public sealed class SelectionOrderMarkerSystem
         }
 
         _scanOrderMarker.SetActive(true);
-        _scanOrderMarkerHideTime = Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
+        _scanOrderMarkerHideTime = UnityEngine.Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
     }
 
     public void UpdateAttackTargetPreviewMarkers(EntityManager em, bool visible)
@@ -518,11 +533,11 @@ public sealed class SelectionOrderMarkerSystem
             return;
         }
 
-        if (_attackTargetPreviewVisible && Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
+        if (_attackTargetPreviewVisible && UnityEngine.Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
             return;
 
         _attackTargetPreviewVisible = true;
-        _nextAttackTargetPreviewUpdateTime = Time.unscaledTime + AttackTargetPreviewUpdateSeconds;
+        _nextAttackTargetPreviewUpdateTime = UnityEngine.Time.unscaledTime + AttackTargetPreviewUpdateSeconds;
 
         EnsureEntityQueries(em);
         if (_attackTargetPreviewQuery.IsEmptyIgnoreFilter)
@@ -559,11 +574,11 @@ public sealed class SelectionOrderMarkerSystem
             return;
         }
 
-        if (_attackTargetPreviewVisible && Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
+        if (_attackTargetPreviewVisible && UnityEngine.Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
             return;
 
         _attackTargetPreviewVisible = true;
-        _nextAttackTargetPreviewUpdateTime = Time.unscaledTime + AttackTargetPreviewUpdateSeconds;
+        _nextAttackTargetPreviewUpdateTime = UnityEngine.Time.unscaledTime + AttackTargetPreviewUpdateSeconds;
 
         EnsureEntityQueries(em);
         if (_attackTargetPreviewQuery.IsEmptyIgnoreFilter)

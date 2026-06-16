@@ -4,8 +4,18 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-internal sealed class SelectionGameplayStartupSystem
+[DisableAutoCreation]
+internal sealed partial class SelectionGameplayStartupSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Result
     {
         public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
@@ -113,7 +123,7 @@ internal sealed class SelectionGameplayStartupSystem
         bool hasRuntimeCameraContext = false;
         RtsSelectionCommandResultFlushSystem.Context commandResultFlushContext = default;
         bool hasCommandResultFlushContext = false;
-        World selectionRuntimeQueryWorld = null;
+        Unity.Entities.World selectionRuntimeQueryWorld = null;
         EntityQuery selectedMoveQuery = default;
         EntityQuery selectedTagQuery = default;
         EntityQuery gridConfigQuery = default;
@@ -237,10 +247,10 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
             rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
                 GetCommandResultFlushContext(),
-                Time.frameCount);
+                UnityEngine.Time.frameCount);
             rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
                 GetCommandResultFlushContext(),
-                Time.frameCount);
+                UnityEngine.Time.frameCount);
             if (TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
             {
                 Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
@@ -256,16 +266,16 @@ internal sealed class SelectionGameplayStartupSystem
                 {
                     rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
                         GetCommandResultFlushContext(),
-                        Time.frameCount,
+                        UnityEngine.Time.frameCount,
                         focusedUnit);
                 }
             }
             rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
                 GetCommandResultFlushContext(),
-                Time.frameCount);
+                UnityEngine.Time.frameCount);
             rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
                 GetCommandResultFlushContext(),
-                Time.frameCount);
+                UnityEngine.Time.frameCount);
             rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
             rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
                 GetCommandResultFlushContext(),
@@ -287,7 +297,7 @@ internal sealed class SelectionGameplayStartupSystem
                     em,
                     state,
                     applyHudSelectionAction),
-                Time.time);
+                UnityEngine.Time.time);
             selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
                 CreateHudFeedbackContext(),
                 selectionStateSystem,
@@ -669,7 +679,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void EnsureSelectionRuntimeEntityQueries(EntityManager em)
         {
-            World world = em.World;
+            Unity.Entities.World world = em.World;
             if (selectionRuntimeQueryWorld == world && world != null && world.IsCreated)
                 return;
 
@@ -686,7 +696,7 @@ internal sealed class SelectionGameplayStartupSystem
         bool TryGetDefaultEntityManager(out EntityManager em)
         {
             em = default;
-            World world = World.DefaultGameObjectInjectionWorld;
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)
                 return false;
 
@@ -832,7 +842,7 @@ internal sealed class SelectionGameplayStartupSystem
             RtsSelectionPointerRequestKind kind,
             VisibleUnitSelectionSystem.Filter filter = VisibleUnitSelectionSystem.Filter.All)
         {
-            rtsSelectionInputSystem.QueueSelectionRectangleRequest(kind, screenRect, Time.frameCount, filter);
+            rtsSelectionInputSystem.QueueSelectionRectangleRequest(kind, screenRect, UnityEngine.Time.frameCount, filter);
         }
 
         bool TryGetPointerPosition(out Vector2 pointerPosition)
@@ -853,7 +863,7 @@ internal sealed class SelectionGameplayStartupSystem
                 mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source))
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"gameplayUiHit source={source} pos={screenPosition} frame={Time.frameCount}");
+                    $"gameplayUiHit source={source} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
                 return true;
             }
 
@@ -870,7 +880,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static RtsCameraRequestSystem ResolveRtsCameraRequestSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
             : null;
@@ -878,7 +888,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static RtsCameraSystem ResolveRtsCameraSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
             : null;
@@ -886,7 +896,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static RtsSelectionRuntimeCameraSystem ResolveRtsSelectionRuntimeCameraSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RtsSelectionRuntimeCameraSystem>()
             : null;
@@ -894,7 +904,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static SelectionScreenMarkerSystem ResolveSelectionScreenMarkerSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<SelectionScreenMarkerSystem>()
             : null;
@@ -902,7 +912,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static SelectionRuntimeConfigSystem ResolveSelectionRuntimeConfigSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<SelectionRuntimeConfigSystem>()
             : null;
@@ -910,7 +920,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static SelectionRuntimeDiagnosticsSystem ResolveSelectionRuntimeDiagnosticsSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<SelectionRuntimeDiagnosticsSystem>()
             : null;

@@ -7,7 +7,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class VisibleUnitSelectionSystem
+[DisableAutoCreation]
+public sealed partial class VisibleUnitSelectionSystem : SystemBase
 {
     public enum Filter
     {
@@ -16,12 +17,21 @@ public sealed class VisibleUnitSelectionSystem
         Vehicles
     }
 
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _visiblePlayerUnitQuery;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 

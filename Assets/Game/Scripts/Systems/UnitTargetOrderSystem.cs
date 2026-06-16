@@ -3,7 +3,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-public sealed class UnitTargetOrderSystem
+[DisableAutoCreation]
+public partial struct UnitTargetOrderSystem : ISystem
 {
     public delegate bool TryResolveBaseBreachTargetDelegate(
         byte factionId,
@@ -28,6 +29,15 @@ public sealed class UnitTargetOrderSystem
             TargetEntity = targetEntity;
             TargetPosition = targetPosition;
         }
+    }
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
     }
 
     public bool TryFindRadarTargetForMissileLauncher(

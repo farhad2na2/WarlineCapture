@@ -6,7 +6,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class RtsSelectionPointerTargetCommandSystem
+[DisableAutoCreation]
+public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
 {
     private const float UnitClickScreenFallbackRadiusPixels = 54f;
     private const int TraversableTargetSearchRadius = 24;
@@ -121,7 +122,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         }
     }
 
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _mapSurfaceQuery;
     private EntityQuery _runtimeBuildingCombatQuery;
@@ -130,6 +131,15 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private readonly MapSurfacePathfindingSnapshot _mapSurfaceReadSystem = new();
     private readonly UnitMoveOrderSystem _mapSurfaceMoveOrderSystem = new();
     private readonly List<Entity> _mapSurfaceSelectedMoveEntities = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct MapSurfaceCommandTargetResult
     {
@@ -199,13 +209,13 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"issueMoveOrderEnter screen={screenPosition} frame={Time.frameCount} " +
+                $"issueMoveOrderEnter screen={screenPosition} frame={UnityEngine.Time.frameCount} " +
                 $"hasInput={context.InputSystem != null} hasProcess={context.ProcessMoveCommandRequests != null}");
         }
 
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
-        context.LogSelectionDiagnostic?.Invoke($"moveAttempt pos={screenPosition} frame={Time.frameCount}");
+        context.LogSelectionDiagnostic?.Invoke($"moveAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
 
         bool queued = TryQueueResolvedMoveCommand(context, screenPosition, out bool queuedResolvedTarget);
         if (!queued)
@@ -213,10 +223,10 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             {
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"issueMoveOrderQueueFailed screen={screenPosition} frame={Time.frameCount}");
+                    $"issueMoveOrderQueueFailed screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             }
 
-            context.LogSelectionDiagnostic?.Invoke($"moveAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
+            context.LogSelectionDiagnostic?.Invoke($"moveAttempt result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
@@ -224,19 +234,19 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         }
 
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={Time.frameCount}");
+            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={UnityEngine.Time.frameCount}");
         if (!queuedResolvedTarget)
         {
             context.ProcessMoveCommandRequests?.Invoke();
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={Time.frameCount}");
+                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={UnityEngine.Time.frameCount}");
         }
     }
 
     private bool TryQueueResolvedMoveCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
     {
         queuedResolvedTarget = false;
-        int frame = Time.frameCount;
+        int frame = UnityEngine.Time.frameCount;
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
@@ -281,7 +291,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         out bool queuedResolvedTarget)
     {
         queuedResolvedTarget = false;
-        int frame = Time.frameCount;
+        int frame = UnityEngine.Time.frameCount;
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
@@ -329,12 +339,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
-        context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={Time.frameCount}");
+        context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
 
         bool queued = TryQueueResolvedScanCommand(context, screenPosition, out bool queuedResolvedTarget);
         if (!queued)
         {
-            context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
+            context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
             return false;
         }
@@ -348,7 +358,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private bool TryQueueResolvedScanCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
     {
         queuedResolvedTarget = false;
-        int frame = Time.frameCount;
+        int frame = UnityEngine.Time.frameCount;
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
@@ -377,7 +387,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     private bool TryQueueResolvedBoardTransportCommand(Context context, Vector2 screenPosition, out bool queuedResolvedTarget)
     {
         queuedResolvedTarget = false;
-        int frame = Time.frameCount;
+        int frame = UnityEngine.Time.frameCount;
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
@@ -415,7 +425,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     public bool TryRequestBoardSelectedTransportOrderToClickedUnit(Context context, Entity transport, Vector2 screenPosition)
     {
         if (context.InputSystem == null ||
-            !context.InputSystem.QueueBoardSelectedTransportCommandRequest(transport, screenPosition, Time.frameCount))
+            !context.InputSystem.QueueBoardSelectedTransportCommandRequest(transport, screenPosition, UnityEngine.Time.frameCount))
         {
             return false;
         }
@@ -451,7 +461,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             if (!IsValidBoardPassengerPreviewTarget(context, em, transport, passenger))
                 continue;
 
-            if (context.InputSystem.QueueBoardSelectedTransportPassengerCommandRequest(transport, passenger, screenRect, Time.frameCount))
+            if (context.InputSystem.QueueBoardSelectedTransportPassengerCommandRequest(transport, passenger, screenRect, UnityEngine.Time.frameCount))
                 queued++;
         }
 
@@ -616,11 +626,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     {
         if (!context.TryGetEntityManager(out EntityManager em))
         {
-            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=NoEntityManager pos={screenPosition} frame={Time.frameCount}");
+            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=NoEntityManager pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
-        context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={Time.frameCount}");
+        context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
         PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         if (!context.FocusedUnitLifecycleSystem.TryFocusUnit(
                 em,
@@ -635,14 +645,14 @@ public sealed class RtsSelectionPointerTargetCommandSystem
                 context.ApplyHudSelection,
                 out _))
         {
-            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=TryFocusUnitFailed pos={screenPosition} frame={Time.frameCount}");
+            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=TryFocusUnitFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;
         context.SetCameraDragging?.Invoke(false);
         context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=True pos={screenPosition} ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} clearedMoveCommands={removedMoveCommands}");
         return true;
@@ -1475,7 +1485,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     private void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 

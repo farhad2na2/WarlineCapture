@@ -13,7 +13,7 @@ internal sealed partial class RoadBuildPlacementStorageSystem : SystemBase
     {
     }
 
-    private readonly RuntimeBuildingSystem<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
+    private readonly RuntimeBuildingCollection<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
 
     public IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings => _runtimeBuildingSystem.Buildings;
     public BuildingDefinition SoldierBaseDefinition { get; private set; }

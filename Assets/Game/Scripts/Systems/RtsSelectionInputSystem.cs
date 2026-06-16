@@ -2,12 +2,22 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RtsSelectionInputSystem
+[DisableAutoCreation]
+public sealed partial class RtsSelectionInputSystem : SystemBase
 {
     public const float MoveTargetDoubleClickSeconds = 0.35f;
     public const float MoveTargetDoubleClickPixels = 48f;
 
     private readonly RtsSelectionInputStateSystem _inputStateSystem = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public Vector2 DragStart
     {
@@ -335,7 +345,7 @@ public sealed class RtsSelectionInputSystem
         state.HasQueuedMoveOrder = 0;
         state.QueuedMoveOrderScreenPosition = default;
         state.QueuedMoveOrderFrame = -1;
-        state.IgnoreWorldCommandsUntilFrame = math.max(state.IgnoreWorldCommandsUntilFrame, Time.frameCount + 1);
+        state.IgnoreWorldCommandsUntilFrame = math.max(state.IgnoreWorldCommandsUntilFrame, UnityEngine.Time.frameCount + 1);
         state.IgnoreUiClickUntilRelease = 1;
         state.IgnoreNextLeftMouseRelease = 1;
         state.PointerPressedOverUi = 1;
@@ -403,7 +413,7 @@ public sealed class RtsSelectionInputSystem
 
         if (removed > 0 && SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"pendingMoveRequestsCleared removed={removed} frame={Time.frameCount}");
+                $"pendingMoveRequestsCleared removed={removed} frame={UnityEngine.Time.frameCount}");
 
         return removed;
     }
@@ -464,7 +474,7 @@ public sealed class RtsSelectionInputSystem
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+                $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={UnityEngine.Time.frameCount}");
         }
 
         return queued;
@@ -487,7 +497,7 @@ public sealed class RtsSelectionInputSystem
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"queueResolvedMoveCommandRequest queued={queued} screen={screenPosition} cell={targetCell} world={worldPosition} requestFrame={frame} currentFrame={Time.frameCount}");
+                $"queueResolvedMoveCommandRequest queued={queued} screen={screenPosition} cell={targetCell} world={worldPosition} requestFrame={frame} currentFrame={UnityEngine.Time.frameCount}");
         }
 
         return queued;

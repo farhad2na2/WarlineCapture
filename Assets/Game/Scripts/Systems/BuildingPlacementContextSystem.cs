@@ -23,7 +23,7 @@ internal sealed partial class BuildingPlacementContextSystem : SystemBase
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewSystem PreviewSystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly Transform BuildingRoot;
         public readonly BuildingPlacementLifecycleSystem.CreatePreviewDelegate CreatePreview;
         public readonly BuildingPlacementLifecycleSystem.DestroyPreviewDelegate DestroyPreview;
@@ -55,7 +55,7 @@ internal sealed partial class BuildingPlacementContextSystem : SystemBase
             BuildingPlacementInputSystem inputSystem,
             BuildingPlacementPreviewSystem previewSystem,
             BuildingPlacementValidationSystem placementValidationSystem,
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             Transform buildingRoot,
             BuildingPlacementLifecycleSystem.CreatePreviewDelegate createPreview,
             BuildingPlacementLifecycleSystem.DestroyPreviewDelegate destroyPreview,

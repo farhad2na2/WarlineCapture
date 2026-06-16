@@ -18,7 +18,7 @@ internal sealed partial class BuildingSelectionMarkerSystem : SystemBase
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
@@ -30,7 +30,7 @@ internal sealed partial class BuildingSelectionMarkerSystem : SystemBase
         public readonly DestroyObjectDelegate DestroyObject;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,

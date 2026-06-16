@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RtsSelectionFocusCommandSystem
+[DisableAutoCreation]
+public sealed partial class RtsSelectionFocusCommandSystem : SystemBase
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 
@@ -86,17 +87,26 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public bool QueueFocusUnitCommand(Context context, Vector2 screenPosition)
     {
         if (context.InputSystem == null ||
-            !context.InputSystem.QueueFocusUnitCommandRequest(screenPosition, Time.frameCount))
+            !context.InputSystem.QueueFocusUnitCommandRequest(screenPosition, UnityEngine.Time.frameCount))
         {
-            context.LogSelectionDiagnostic?.Invoke($"focusCommandEnqueue result=False pos={screenPosition} frame={Time.frameCount}");
+            context.LogSelectionDiagnostic?.Invoke($"focusCommandEnqueue result=False pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
         bool processed = ProcessExternalSelectionCommandRequests(context);
-        context.LogSelectionDiagnostic?.Invoke($"focusCommandProcessed result={processed} pos={screenPosition} frame={Time.frameCount}");
+        context.LogSelectionDiagnostic?.Invoke($"focusCommandProcessed result={processed} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
         return processed;
     }
 
@@ -108,7 +118,7 @@ public sealed class RtsSelectionFocusCommandSystem
                 out _))
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"externalSelectionCommandsNoBuffers frame={Time.frameCount}");
+                $"externalSelectionCommandsNoBuffers frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
@@ -215,11 +225,11 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreNextLeftMouseRelease = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;
         context.RuntimeGameplayStateSystem.SuppressNextWorldClick = false;
         context.SetCameraDragging?.Invoke(false);
         context.LogSelectionDiagnostic?.Invoke(
-            $"focusEntityInputGuard entity={entity} frame={Time.frameCount} " +
+            $"focusEntityInputGuard entity={entity} frame={UnityEngine.Time.frameCount} " +
             $"ignoreRelease={context.InputSystem.IgnoreNextLeftMouseRelease} ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} " +
             $"suppress={context.RuntimeGameplayStateSystem.SuppressNextWorldClick} clearedMoveCommands={removedMoveCommands}");
         return true;
@@ -322,13 +332,13 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ResetSelectionDragState(pointerPosition);
         context.InputSystem.IgnoreNextLeftMouseRelease = true;
         context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;
         context.RuntimeGameplayStateSystem.SelectionModeActive = true;
         context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
         context.SetCameraDragging?.Invoke(false);
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Select);
-        context.LogSelectionDiagnostic?.Invoke($"selectionModeEntered source=ui frame={Time.frameCount} dragReset={pointerPosition}");
+        context.LogSelectionDiagnostic?.Invoke($"selectionModeEntered source=ui frame={UnityEngine.Time.frameCount} dragReset={pointerPosition}");
     }
 
     private static void ExitExplicitSelectionMode(Context context)
@@ -340,13 +350,13 @@ public sealed class RtsSelectionFocusCommandSystem
         context.InputSystem.ResetSelectionDragState(pointerPosition);
         context.InputSystem.IgnoreNextLeftMouseRelease = true;
         context.InputSystem.SkipNextWorldReleaseAfterSelection = false;
-        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;
         context.RuntimeGameplayStateSystem.SelectionModeActive = false;
         context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
         context.SetCameraDragging?.Invoke(false);
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ClearHudCommandMode?.Invoke();
-        context.LogSelectionDiagnostic?.Invoke($"selectionModeExited source=ui frame={Time.frameCount} dragReset={pointerPosition}");
+        context.LogSelectionDiagnostic?.Invoke($"selectionModeExited source=ui frame={UnityEngine.Time.frameCount} dragReset={pointerPosition}");
     }
 
 }

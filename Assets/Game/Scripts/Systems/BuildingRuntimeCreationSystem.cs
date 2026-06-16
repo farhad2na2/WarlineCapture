@@ -29,7 +29,7 @@ internal sealed partial class BuildingRuntimeCreationSystem : SystemBase
 
     public readonly struct Context
     {
-        public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
+        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly bool DeferSideEffects;
@@ -47,7 +47,7 @@ internal sealed partial class BuildingRuntimeCreationSystem : SystemBase
         public readonly RuntimeAction RefreshMarkers;
 
         public Context(
-            RuntimeBuildingSystem<RuntimeBuildingEntity> runtimeBuildingSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             bool deferSideEffects,

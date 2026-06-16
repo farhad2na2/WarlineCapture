@@ -1,8 +1,18 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public readonly struct UnitTransportPassengerStateSystem
+[DisableAutoCreation]
+public partial struct UnitTransportPassengerStateSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
+
     public void ApplyBoardingOrderState(
         EntityManager em,
         ref EntityCommandBuffer ecb,

@@ -2,7 +2,7 @@
 
 ## Status
 
-Overall status: Pending
+Overall status: Complete
 
 This document tracks the implementation of Hold, Stop, and Scan commands for all controllable units. It is written as a progress tracker: each phase should be updated to `Pending`, `In Progress`, `Complete`, or `Blocked` as work lands.
 
@@ -149,14 +149,14 @@ Current implementation note:
 | Phase | Status | Owner | Validation / Notes |
 | --- | --- | --- | --- |
 | 0. Contract and code audit | Complete | Gameplay | Validated by reading specs and current systems while creating this document. |
-| 1. Capability and reason-code audit | Pending | Gameplay | Confirm buttons expose correct enabled/disabled state and typed reasons. |
-| 2. Stop command hardening | Pending | Gameplay | Requires unit tests/play validation for soldier, vehicle, and air units. |
-| 3. Hold command hardening | Pending | Gameplay | Requires hold leash/auto-engage validation. |
-| 4. Scan command targeting and input | Pending | Gameplay | Requires camera pan + scan tap validation. |
-| 5. Scan execution, patrol, and intel feedback | Pending | Gameplay | Requires selected scanner patrol plus reveal/feed/minimap/marker validation. |
-| 6. ECS/job migration pass | Pending | Gameplay | Convert hot scan/hold/stop loops only where measurable. |
-| 7. HUD and marker polish | Pending | Gameplay/UI | Ensure command mode/result/markers are clear and consistent. |
-| 8. Tests and visual QA | Pending | Gameplay/QA | Record exact commands and log paths here when complete. |
+| 1. Capability and reason-code audit | Complete | Gameplay/UI | Read-model capability/reason fields and HUD command-control interactability are wired. Validated with `SelectionUiReadModelLookupTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-readmodel-focused.log` and `UIShellCurrentContentLoadTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-command-controls.log`. |
+| 2. Stop command hardening | Complete | Gameplay | Added mixed vehicle/air Stop coverage. Validated with `RtsSelectionInputSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-stop-hardening.log`; pass line: `[RtsSelectionInputSystemValidation] result=Passed tests=50`. |
+| 3. Hold command hardening | Complete | Gameplay | Split Hold from Stop air cleanup and added hold leash/air loiter coverage. Validated with `RtsSelectionInputSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-hold-command-input.log`, `FocusedUnitCommandSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-hold-focused-command.log`, and `UnitMovementBlockerValidationTests.RunHoldCommandFocusedValidation` at `/private/tmp/warline-hold-stop-scan-hold-movement.log`. |
+| 4. Scan command targeting and input | Complete | Gameplay | Scan mode now preserves camera pan, routes scan taps through runtime input without focus fallthrough, rejects invalid targets with typed feedback, and clears one-shot scan mode after accepted or rejected taps. Validated with `RtsSelectionInputSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-scan-input.log`, `ScanIntelCommandSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-scan-intel.log`, and `SelectionCommandRequestResultContractTests.RunBatchValidation` at `/private/tmp/warline-hold-stop-scan-scan-flush.log`. |
+| 5. Scan execution, patrol, and intel feedback | Complete | Gameplay | Selected scanner source/order foundation, scan-duration reveal pulses, bounded scan-area engagement, air scanner return-home completion, building reveal coverage, HUD result routing, minimap scan-intel markers, ground scanner patrol waypoints, runway/airborne scanner recon behavior, and readable composite scan marker feedback are implemented and validated. Cooldown/charges/resource data is intentionally deferred until a mission/source config contract exists. Latest validation: `SelectionOrderMarkerSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-phase5-scan-marker.log`; pass line: `[SelectionOrderMarkerFocusedValidation] result=Passed tests=14`. |
+| 6. ECS/job migration pass | Complete | Gameplay | Completed the safe ECS migration pass without broad rewrites. `UnitScanOrderExecutionSystem` uses cached component lookups and ECB-backed structural writes; redundant patrol dispatch checks were removed; reveal pulses use the stored command frame; `ScanIntelCommandSystem` reveal writes were reviewed and candidate helpers no longer take unused `EntityManager` parameters. Stop/Hold jobs and scan candidate job split are explicitly deferred until profiling or selected-count/entity-count risk justifies them. Latest validation: `SelectionCommandRequestResultContractTests.RunBatchValidation` at `/private/tmp/warline-hold-stop-scan-phase6-reveal-audit.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=46`. |
+| 7. HUD and marker polish | Complete | Gameplay/UI | Hold, Stop, and Scan command-mode prompt copy is explicit, accepted/rejected one-shot Scan clears command-mode presentation, Hold/Stop prompt/result lifetimes are covered, scan world-marker readability/grounding/overlay behavior is validated, and minimap selected/revealed markers are covered. Latest validation: `MatchHudMinimapMarkerSystemTests.RunFocusedValidation` at `/private/tmp/warline-hold-stop-scan-phase7-minimap-markers.log`; pass line: `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3`. |
+| 8. Tests and visual QA | Complete | Gameplay/QA | Automated focused validation passed for command contracts, input/camera behavior, selected unit command behavior, HUD feedback, scan markers/feed, minimap markers, and focused PlayMode Stop/Hold/Scan tests. Latest validation: Unity Test Runner PlayMode filter `HoldStopScanCommandPlayModeTests` at `/private/tmp/warline-hold-stop-scan-phase8-playmode-results.xml`; pass summary: `result="Passed" total="3" passed="3" failed="0"`. |
 
 ## Phase 0 - Contract And Code Audit
 
@@ -180,20 +180,30 @@ Notes:
 
 ## Phase 1 - Capability And Reason-Code Audit
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Confirm HUD buttons call only `ISelectionUiCommand` methods.
-- [ ] Confirm `RequestHoldPosition`, `RequestStop`, and `RequestScanCommandMode` enqueue ECS intent requests.
-- [ ] Confirm command bar and command wheel use the same capability model.
-- [ ] Add or update read-model fields for whether Hold, Stop, and Scan are enabled.
-- [ ] Ensure disabled reasons use typed `TacticalCommandReasonCode` values.
-- [ ] Resolve scan source priority: selected scanner unit first, then mission/faction global tactical scan if available.
-- [ ] Confirm scan can be enabled without selection only when mission rules allow global/faction tactical scan.
-- [ ] Disable or reject Scan for selected units that cannot scan when no global/faction tactical scan source is available.
-- [ ] Confirm Stop is enabled only when selected units have interruptible state or active orders, unless design chooses always-enabled Stop.
-- [ ] Confirm Hold is enabled for selected units that can accept hold-position behavior.
+- [x] Confirm HUD buttons call only `ISelectionUiCommand` methods.
+- [x] Confirm `RequestHoldPosition`, `RequestStop`, and `RequestScanCommandMode` enqueue ECS intent requests.
+- [x] Confirm command bar and command wheel use the same capability model.
+- [x] Add or update read-model fields for whether Hold, Stop, and Scan are enabled.
+- [x] Ensure disabled reasons use typed `TacticalCommandReasonCode` values.
+- [x] Resolve scan source priority: selected scanner unit first, then mission/faction global tactical scan if available.
+- [x] Confirm scan can be enabled without selection only when mission rules allow global/faction tactical scan.
+- [x] Disable or reject Scan for selected units that cannot scan when no global/faction tactical scan source is available.
+- [x] Confirm Stop is enabled only when selected units have interruptible state or active orders, unless design chooses always-enabled Stop.
+- [x] Confirm Hold is enabled for selected units that can accept hold-position behavior.
+
+Implementation notes:
+
+- `FocusedUnitUiReadModelComponent` publishes `CanHold`, `HoldDisabledReason`, `CanStop`, `StopDisabledReason`, `CanScan`, and `ScanDisabledReason`.
+- `SelectionUiReadModelLookup` owns the first-pass capability rules. Hold and Stop require a living, player-owned, movable unit that is not a transport passenger. Stop is intentionally always enabled for those units to match current command execution semantics, even when it becomes a no-op.
+- `ISelectionUiReadModel` is the UI-facing read-model contract. `UIShellContentView` passes it into `MatchOverlayCommandInputSystem`, which updates Hold, Stop, command-wheel Stop, and Scan interactability from the same capability source.
+- Scan priority is selected scanner first. No global/faction scan rules are currently exposed to the focused-unit read model, so Scan is disabled without an eligible selected scanner until a mission/faction global scan source is added.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionUiReadModelLookupTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-readmodel-focused.log`; pass line: `[SelectionUiReadModelLookupValidation] result=Passed tests=5`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UIShellCurrentContentLoadTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-command-controls.log`; pass line: `[UIShellCurrentContentLoadValidation] result=Passed tests=8`.
 
 Acceptance criteria:
 
@@ -209,22 +219,30 @@ Suggested tests:
 
 ## Phase 2 - Stop Command Hardening
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Keep command request entry point in `SelectionUiCommandSystem.RequestStop`.
-- [ ] Keep command intent kind as `RtsSelectionCommandIntentKind.Stop`.
-- [ ] Process Stop in `RtsSelectionImmediateSelectedUnitCommandSystem` or a narrower `ISystem` owned by the immediate selected-unit command domain.
-- [ ] Clear active command mode through `RtsSelectionInputStateComponent`.
-- [ ] Clear queued move order and pending move command requests.
-- [ ] Clear movement/path components through existing movement-order cleanup helpers.
-- [ ] Clear or abort attack/engage components according to command policy.
-- [ ] Reset `UnitVehicleKinematics` for ground vehicles.
-- [ ] Reset safe, explicit `UnitAirComponent` transient states for aircraft without deleting valid home/runway state.
-- [ ] Keep `SelectedUnitTag` on units.
-- [ ] Publish a command result with accepted count.
-- [ ] Add diagnostics only where they help validate command flow; remove temporary logs before completion.
+- [x] Keep command request entry point in `SelectionUiCommandSystem.RequestStop`.
+- [x] Keep command intent kind as `RtsSelectionCommandIntentKind.Stop`.
+- [x] Process Stop in `RtsSelectionImmediateSelectedUnitCommandSystem` or a narrower `ISystem` owned by the immediate selected-unit command domain.
+- [x] Clear active command mode through `RtsSelectionInputStateComponent`.
+- [x] Clear queued move order and pending move command requests.
+- [x] Clear movement/path components through existing movement-order cleanup helpers.
+- [x] Clear or abort attack/engage components according to command policy.
+- [x] Reset `UnitVehicleKinematics` for ground vehicles.
+- [x] Reset safe, explicit `UnitAirComponent` transient states for aircraft without deleting valid home/runway state.
+- [x] Keep `SelectedUnitTag` on units.
+- [x] Publish a command result with accepted count.
+- [x] Add diagnostics only where they help validate command flow; remove temporary logs before completion.
+
+Implementation notes:
+
+- No runtime command rewrite was needed in this phase. The existing architecture already routes Stop through `SelectionUiCommandSystem.RequestStop`, `RtsSelectionCommandIntentKind.Stop`, and the `RtsSelectionImmediateSelectedUnitCommandSystem` `ISystem`.
+- `UnitMoveOrderSystem.ClearMovementOrderComponents` already owns the movement/order cleanup set used by Stop, including move targets, path requests, path follow/range/retry, long-distance move, manual group membership, auto-wander, hold, engage, transport boarding/disembark, resource haul, and base breach orders.
+- Stop now has focused EditMode coverage for a selected ground vehicle and selected air unit in the same command. The test verifies selected tags remain, accepted count is correct, queued move state clears, active scan/targeting mode clears, drag state clears, vehicle kinematics stop, and aircraft transient attack/taxi/return flags clear while home/runway/airborne state remains intact.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-stop-hardening.log`; pass line: `[RtsSelectionInputSystemValidation] result=Passed tests=50`.
 
 Acceptance criteria:
 
@@ -243,21 +261,33 @@ Suggested tests:
 
 ## Phase 3 - Hold Command Hardening
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Keep command request entry point in `SelectionUiCommandSystem.RequestHoldPosition`.
-- [ ] Keep command intent kind as `RtsSelectionCommandIntentKind.HoldPosition`.
-- [ ] Process Hold in the immediate selected-unit command domain.
-- [ ] Decide whether `HoldPositionOrderTag` is sufficient or replace/extend with data component `HoldPositionOrder`.
-- [ ] If using `HoldPositionOrder`, write current cell/world anchor and leash radius when Hold is issued.
-- [ ] Remove active movement/path/group/auto-wander components.
-- [ ] Enable `UnitCombat.AutoEngage` for attack-capable units.
-- [ ] Update `UnitEngagementSystem` so hold units acquire targets only inside hold rules.
-- [ ] Update engaged movement behavior so hold units do not chase past their leash.
-- [ ] Confirm air-unit hold policy: aircraft should either loiter at current safe altitude/anchor or hold current ground/runway state. Do not force runway behavior unless explicitly ordered.
-- [ ] Publish command mode/result feedback.
+- [x] Keep command request entry point in `SelectionUiCommandSystem.RequestHoldPosition`.
+- [x] Keep command intent kind as `RtsSelectionCommandIntentKind.HoldPosition`.
+- [x] Process Hold in the immediate selected-unit command domain.
+- [x] Decide whether `HoldPositionOrderTag` is sufficient or replace/extend with data component `HoldPositionOrder`.
+- [x] Skip `HoldPositionOrder` data component for now because current tag-based hold plus attack-range acquisition and engaged movement clearing is sufficient for the requested local defensive hold semantics.
+- [x] Remove active movement/path/group/auto-wander components.
+- [x] Enable `UnitCombat.AutoEngage` for attack-capable units.
+- [x] Update `UnitEngagementSystem` so hold units acquire targets only inside hold rules.
+- [x] Update engaged movement behavior so hold units do not chase past their leash.
+- [x] Confirm air-unit hold policy: aircraft should either loiter at current safe altitude/anchor or hold current ground/runway state. Do not force runway behavior unless explicitly ordered.
+- [x] Publish command mode/result feedback.
+
+Implementation notes:
+
+- `SelectionUiCommandSystem.RequestHoldPosition` still only enqueues `RtsSelectionCommandIntentKind.HoldPosition`.
+- `RtsSelectionImmediateSelectedUnitCommandSystem` remains the active ECS immediate selected-unit command owner for Hold. Hold now uses hold-specific runtime cleanup: it clears active orders and stops vehicle kinematics, but no longer clears `UnitAirComponent` runway/airborne transient state the way Stop does.
+- `FocusedUnitCommandSystem` was updated with the same Hold-vs-Stop cleanup split so compatibility callers and focused tests do not diverge from the active command path.
+- `UnitAirMovementSystem` now respects `HoldPositionOrderTag` when an airborne or idle grounded aircraft has no active target. Held airborne units no longer automatically enter the return-home path; existing takeoff, landing, or returning-home transients continue so aircraft are not stranded mid-runway.
+- `HoldPositionOrderTag` remains sufficient for Phase 3. `UnitEngagementSystem` already limits held acquisition to attack range, and `UnitEngagedMovementSystem` already clears held targets outside effective attack range instead of chasing.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-hold-command-input.log`; pass line: `[RtsSelectionInputSystemValidation] result=Passed tests=51`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod FocusedUnitCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-hold-focused-command.log`; pass line: `[FocusedUnitCommandFocusedValidation] result=Passed tests=4`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitMovementBlockerValidationTests.RunHoldCommandFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-hold-movement.log`; pass line: `[HoldCommandMovementValidation] result=Passed tests=2`.
 
 Acceptance criteria:
 
@@ -276,21 +306,33 @@ Suggested tests:
 
 ## Phase 4 - Scan Targeting And Input
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Keep scan command button entry in `SelectionUiCommandSystem.RequestScanCommandMode`.
-- [ ] Keep scan target-mode entry in `RtsSelectionScanTargetModeCommandSystem`.
-- [ ] Ensure entering Scan clears conflicting Move/Attack/Board targeting modes.
-- [ ] Ensure entering Scan does not enter selection rectangle mode.
-- [ ] Ensure camera panning remains active while scan targeting is armed.
-- [ ] Confirm tap release after pressing the Scan button is suppressed so the button click does not also scan.
-- [ ] Route scan world tap through `RtsSelectionPointerTargetCommandSystem.TryIssueScanOrder`.
-- [ ] Queue scan with either pre-resolved cell/world data or screen position using existing command intent buffer.
-- [ ] Include scan source data in the request/result path: selected scanner entity, global/faction scan source, or mission scan source.
-- [ ] Reject out-of-bounds target with `TargetOutOfBounds`.
-- [ ] Clear one-shot scan mode after successful scan or rejected world tap according to the spec.
+- [x] Keep scan command button entry in `SelectionUiCommandSystem.RequestScanCommandMode`.
+- [x] Keep scan target-mode entry in `RtsSelectionScanTargetModeCommandSystem`.
+- [x] Ensure entering Scan clears conflicting Move/Attack/Board targeting modes.
+- [x] Ensure entering Scan does not enter selection rectangle mode.
+- [x] Ensure camera panning remains active while scan targeting is armed.
+- [x] Confirm tap release after pressing the Scan button is suppressed so the button click does not also scan.
+- [x] Route scan world tap through `RtsSelectionPointerTargetCommandSystem.TryIssueScanOrder`.
+- [x] Queue scan with either pre-resolved cell/world data or screen position using existing command intent buffer.
+- [x] Keep selected scanner/source execution data deferred to Phase 5. Phase 4 owns target-mode input and target payload routing only; selected-unit patrol source data belongs to scan execution.
+- [x] Reject out-of-bounds target with `TargetOutOfBounds`.
+- [x] Clear one-shot scan mode after successful scan or rejected world tap according to the spec.
+
+Implementation notes:
+
+- `RtsSelectionRuntimeInputSystem.AllowsCameraPanDuringCommandMode` now treats `TacticalCommandMode.Scan` the same as Move and Attack for camera drag, so scan targeting no longer traps the camera.
+- Runtime scan tap handling routes through `TryRequestScanOrder` and does not fall through to unit focus/selection when scan mode consumes the tap.
+- `RtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests` now clears one-shot Scan mode after rejected screen/world taps as well as accepted taps, including HUD command-mode cleanup and camera-drag reset.
+- `ScanIntelCommandSystem` already rejects unresolved scan target cells with `TargetOutOfBounds`; focused coverage confirms that behavior.
+- Selected scanner source data, scan patrol orders, aircraft recon passes, reveal markers, and minimap/intel feedback remain Phase 5 scope.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-scan-input.log`; pass line: `[RtsSelectionInputSystemValidation] result=Passed tests=53`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod ScanIntelCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-scan-intel.log`; pass line: `[ScanIntelCommandFocusedValidation] result=Passed tests=2`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-scan-flush.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=36`.
 
 Acceptance criteria:
 
@@ -307,31 +349,61 @@ Suggested tests:
 
 ## Phase 5 - Scan Execution, Patrol, And Intel Feedback
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Keep scan execution in `ScanIntelCommandSystem` or narrower scan/intel systems.
-- [ ] Add selected-unit scan order data for scan-capable units, such as scan center, radius, duration, source entity, and engagement policy.
-- [ ] For landed scan-capable aircraft/drones, route through the existing runway/takeoff flow before the recon pass starts.
-- [ ] For airborne scan-capable aircraft/drones, route to the scan area and start recon patrol/pass without landing first.
-- [ ] For scan-capable ground units, move/patrol inside the target scan area using existing movement/pathing command systems.
-- [ ] During scan patrol, reveal contacts inside scan radius or along the recon path.
-- [ ] During scan patrol, allow the scanning unit to engage detected enemies according to combat rules and unit role.
-- [ ] Keep scan patrol engagement bounded to the scan area/order; do not convert it into unrestricted chase.
-- [ ] Return/land aircraft after scan duration or completion when configured to do so.
-- [ ] Validate grid exists before accepting scan.
-- [ ] Validate target cell bounds before spending resources/cooldown.
-- [ ] Use configured scan radius if a mission/faction/source config exists; otherwise keep documented default.
-- [ ] Reveal eligible enemy units inside radius.
-- [ ] Reveal eligible enemy buildings inside radius.
-- [ ] Add `ScanIntelRevealedTag` and update `ScanIntelLastSeen`.
-- [ ] Append `ScanIntelFeedEntry` for accepted scans.
-- [ ] Publish `RtsSelectionCommandResultElement` with revealed count, target cell/world, radius, and marker payload.
-- [ ] Show a clear scan marker through `SelectionOrderMarkerSystem`.
-- [ ] Route HUD result through `SelectionHudFeedbackBoundary`.
-- [ ] Update minimap enemy markers if minimap reads revealed intel instead of live visibility.
-- [ ] Add cooldown/charges/resource data only after the mission/source config contract is identified.
+- [x] Keep scan execution in `ScanIntelCommandSystem` or narrower scan/intel systems.
+- [x] Add selected-unit scan order data for scan-capable units, such as scan center, radius, duration, source entity, and engagement policy.
+- [x] Add scanner source data to scan command request/result/feed paths.
+- [x] Add a narrow `UnitScanOrderExecutionSystem` that resolves scanner-sourced reveals when the scanner reaches the scan area.
+- [x] Route selected scan-capable units toward the scan center through existing movement order components.
+- [x] For landed scan-capable aircraft/drones, validate and polish the existing runway/takeoff flow before the recon pass starts.
+- [x] For airborne scan-capable aircraft/drones, validate and polish route-to-scan behavior without unnecessary landing first.
+- [x] For scan-capable ground units, extend center movement into scan-area patrol instead of a single approach point.
+- [x] During scan execution, reveal contacts inside scan radius when the scanner reaches the target area.
+- [x] During scan patrol, allow the scanning unit to engage detected enemies according to combat rules and unit role.
+- [x] Keep scan patrol engagement bounded to the scan area/order; do not convert it into unrestricted chase.
+- [x] Return/land aircraft after scan duration or completion when configured to do so.
+- [x] Validate grid exists before accepting scan.
+- [x] Validate target cell bounds before spending resources/cooldown.
+- [x] Use configured scan radius if a mission/faction/source config exists; otherwise keep documented default.
+- [x] Reveal eligible enemy units inside radius.
+- [x] Reveal eligible enemy buildings inside radius.
+- [x] Add `ScanIntelRevealedTag` and update `ScanIntelLastSeen`.
+- [x] Append `ScanIntelFeedEntry` for accepted scans.
+- [x] Publish `RtsSelectionCommandResultElement` with source entity, revealed count, target cell/world, radius, and marker payload.
+- [x] Show a scan marker through `SelectionOrderMarkerSystem` for accepted scan commands.
+- [x] Polish accepted scan markers through `SelectionOrderMarkerSystem` so they are readable at gameplay camera distance and use a connected composite ring/bracket shape.
+- [x] Route HUD result through `SelectionHudFeedbackBoundary`.
+- [x] Update minimap enemy markers if minimap reads revealed intel instead of live visibility.
+- [x] Defer cooldown/charges/resource data until the mission/source config contract is identified.
+
+Implementation notes:
+
+- `RtsSelectionCommandIntentRequestElement`, `RtsSelectionCommandResultElement`, `ScanIntelCommandRequestElement`, `ScanIntelCommandResultElement`, and `ScanIntelFeedEntry` now carry optional scanner source data.
+- `UnitScanOrder` stores selected scanner scan center, world position, radius, duration, source entity, timing state, and conservative engagement/return policy flags.
+- `ScanIntelCommandSystem` still owns reveal writes and feed entries. If a selected scan-capable unit is present, the initial scan command defers reveal and creates a `UnitScanOrder`; anonymous/global scan requests still reveal immediately.
+- `UnitScanOrderExecutionSystem` is a narrow ECS execution system. It waits until the scanner is inside scan radius, starts the scan-duration window, queues scanner-sourced reveal pulses, and removes the scan order only after duration expires.
+- On scan completion, `UnitScanOrderExecutionSystem` now returns air scanners through the existing `UnitAirComponent.ReturningHome` path, clears scan movement/order components, and drops scan engage targets.
+- `UnitEngagementSystem` now treats active scan orders as a bounded acquisition context: scanners can acquire enemies inside the scan area even after the center move has started, but scan targets outside the area are ignored.
+- `UnitEngagedMovementSystem` clears scanner engage targets that leave the scan area, preventing unrestricted chase from a scan order.
+- Scanner-sourced scan command results now carry deferred-source state into `RtsSelectionCommandResultElement`, so HUD feedback through `SelectionHudFeedbackBoundary` says `SCAN ORDERED: SCANNER EN ROUTE` instead of incorrectly reporting `SCAN COMPLETE: 0 CONTACTS` before the scout reaches the area.
+- `MatchHudMinimapMarkerSystem` now appends hostile `ScanIntelLastSeen` contacts that are not already represented by live unit markers, so scan-revealed buildings and other intel-only contacts can appear on the minimap without duplicating live scanned units.
+- Ground scanner scan orders now rotate through cardinal patrol waypoints inside the scan radius once the scanner has reached the scan area. Patrol movement is issued through `UnitMoveOrderSystem.IssueImmediateMoveCommand`, keeping `UnitPathRequest` writes centralized in the existing move-order owner.
+- Selected scanner movement routes to the scan center using existing `UnitMoveOrderSystem.IssueImmediateMoveCommand`. This uses existing ground path requests and existing air `UnitTarget`/runway behavior.
+- `UnitAirMovementSystem` now respects active `UnitScanOrder` state: landed runway scanners keep the normal taxi/takeoff flow before recon, and airborne scanners with an active scan order do not start an unsolicited return/landing while the scan duration is still active. Scan completion remains owned by `UnitScanOrderExecutionSystem`, which returns aircraft home when configured.
+- Accepted scan markers now use a composite runtime marker owned by `SelectionOrderMarkerSystem`: 128-segment outer ring, inner ring, four bracket arcs, readable minimum radius, surface-aware vertical offset, overlay material, and a longer minimum visibility window. This replaces the previous tiny single-line scan ring.
+- Cooldown/charges/resource data was not invented in this phase because the mission/source economy contract is not defined yet. Add it only after that contract exists.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-scan-contract.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=38`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-bounded-engagement.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=40`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-air-return-building-reveal.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=42`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-hud-feedback.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=43`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudMinimapMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-minimap-intel.log`; pass line: `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=2`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-ground-patrol.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=44`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-air-recon.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=46`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionOrderMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase5-scan-marker.log`; pass line: `[SelectionOrderMarkerFocusedValidation] result=Passed tests=14`.
 
 Acceptance criteria:
 
@@ -356,18 +428,38 @@ Suggested tests:
 
 ## Phase 6 - ECS And Job Migration Pass
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Convert any new command execution code to `ISystem` by default.
-- [ ] Keep components and buffer elements data-only.
-- [ ] For Stop/Hold, use `IJobEntity` if selected-unit batch mutation becomes hot or large.
-- [ ] For Scan, split target candidate collection into jobs if scan radius/entity count makes main-thread scans costly.
-- [ ] Use `EntityCommandBuffer` for structural changes.
-- [ ] Avoid managed allocations in per-frame command paths.
-- [ ] Avoid `EntityManager.CreateEntityQuery` inside hot per-frame static helpers; prefer cached queries in systems.
-- [ ] Add Burst where data access is Burst-compatible.
+- [x] Convert any new command execution code to `ISystem` by default.
+- [x] Keep components and buffer elements data-only.
+- [x] Remove avoidable per-order `EntityManager` component reads from `UnitScanOrderExecutionSystem`.
+- [x] Remove redundant post-loop `EntityManager.Exists/HasComponent` checks from scan patrol dispatch.
+- [x] Keep `UnitScanOrderExecutionSystem` structural cleanup behind `EntityCommandBuffer`.
+- [x] Defer Stop/Hold `IJobEntity` conversion until selected-unit batch mutation becomes hot or large.
+- [x] Defer Scan target candidate job split until scan radius/entity count makes main-thread scans costly.
+- [x] Review `ScanIntelCommandSystem` reveal structural writes before any scan candidate job split.
+- [x] Avoid managed allocations in the new per-frame scan-order execution path where practical.
+- [x] Avoid `EntityManager.CreateEntityQuery` inside hot per-frame scan-order execution; prefer cached/looked-up component data in systems.
+- [x] Complete Burst compatibility audit; do not add `[BurstCompile]` to systems that still cross managed `EntityManager` command/reveal boundaries.
+
+Implementation notes:
+
+- `UnitScanOrderExecutionSystem` is already an `ISystem` and remains the narrow owner for selected-unit scan patrol/reveal pulse execution.
+- The scan-order execution loop now uses `ComponentLookup<Disabled>`, `ComponentLookup<UnitDeathAnimationComponent>`, and `ComponentLookup<UnitHealth>` for invalid/dead source checks instead of calling through `EntityManager` per order.
+- Scan completion now removes `UnitTarget`, `UnitPathRequest`, `ManualMoveOrderTag`, and `EngageTarget` through lookup-gated `EntityCommandBuffer` writes.
+- Scan patrol dispatch now trusts the pending patrol list generated from the same scan-order query pass instead of rechecking entity existence and `UnitScanOrder` after the loop.
+- Scan reveal pulses now use `UnitScanOrder.StartedFrame`, keeping the system data-driven instead of reading `UnityEngine.Time.frameCount`.
+- `ScanIntelCommandSystem` reveal application still performs structural writes (`ScanIntelRevealedTag`, `ScanIntelLastSeen`) and feed/result ordering on the main thread. Candidate collection is the job-safe portion; reveal application should move only after an ECB-backed design preserves deterministic result/feed behavior.
+- `CollectRevealUnits` and `CollectRevealBuildings` no longer take unused `EntityManager` parameters, making the future job-split boundary clearer without changing reveal behavior.
+- Stop/Hold job conversion is intentionally deferred until selected-unit batch size or profiling shows the immediate command path is hot.
+- Scan candidate collection in `ScanIntelCommandSystem` is intentionally left main-thread for this step because reveal writes and feed/result ordering need a separate job-safe design pass.
+- `[BurstCompile]` was not added to `UnitScanOrderExecutionSystem` because the system still intentionally crosses managed command boundaries: it calls existing move-order issuing and scan enqueue helpers through `EntityManager`. Adding Burst before those seams are split would be cosmetic and risk compile-time churn.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase6-ecs-pass.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=46`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase6-patrol-dispatch.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=46`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase6-reveal-audit.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=46`.
 
 Acceptance criteria:
 
@@ -382,17 +474,34 @@ Suggested tests:
 
 ## Phase 7 - HUD And Marker Polish
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Confirm `TacticalCommandFeedbackText` has clear text for Hold, Stop, and Scan.
-- [ ] Confirm `BattleHudRuntimeFeedbackBoundary` visual state handles Hold/Stop/Scan.
-- [ ] Confirm command mode clears after one-shot Scan.
-- [ ] Confirm Hold/Stop feedback is transient or persistent according to HUD spec.
-- [ ] Confirm world markers for Scan are consistent with move/attack marker style.
-- [ ] Confirm no command marker is tiny, fragmented, or hidden under terrain.
-- [ ] Confirm minimap markers update for revealed enemies and selected units.
+- [x] Confirm `TacticalCommandFeedbackText` has clear text for Hold, Stop, and Scan.
+- [x] Confirm `BattleHudRuntimeFeedbackBoundary` visual state handles Hold/Stop/Scan.
+- [x] Confirm command mode clears after one-shot Scan.
+- [x] Confirm Hold/Stop feedback is transient or persistent according to HUD spec.
+- [x] Confirm world markers for Scan are consistent with move/attack marker style.
+- [x] Confirm no command marker is tiny, fragmented, or hidden under terrain.
+- [x] Confirm minimap markers update for revealed enemies and selected units.
+
+Implementation notes:
+
+- `TacticalCommandFeedbackText.ToInstructionText` now includes `Hold` and `Stop`, so those modes no longer show only a command-mode title without an actionable feedback prompt.
+- Hold prompt: `Hold position and return fire.`
+- Stop prompt: `Stop selected units and clear orders.`
+- Hold uses ready feedback severity; Stop uses warning feedback severity; Scan keeps ready feedback severity.
+- Added focused command-contract coverage for accepted one-shot selected-scanner Scan. The test verifies the scan order is accepted, the scanner receives `UnitScanOrder`, active Scan mode clears, HUD command mode clears, and camera dragging is reset.
+- Added focused HUD feedback lifetime coverage for Hold and Stop. Command-mode prompts remain persistent while active, clear when command mode clears, and accepted Hold/Stop command results use transient feedback that auto-hides.
+- Added focused scan world-marker coverage. The test suite now verifies scan markers use the premium composite LineRenderer marker family, overlay/no-shadow/no-occlusion render settings, readable minimum radius, connected line segments, and positions above the resolved command-marker surface even when the clicked world point is below ground.
+- Added focused minimap coverage for selected player units and scan-revealed hostile contacts in the same minimap marker buffer. Friendly scan intel contacts remain filtered out.
+- Validation completed with:
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudCommandFeedbackPanelTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase7-feedback-text.log`; pass line: `[MatchHudCommandFeedbackValidation] result=Passed tests=11`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase7-scan-mode-clear.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=47`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudCommandFeedbackPanelTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase7-hold-stop-feedback-lifetime.log`; pass line: `[MatchHudCommandFeedbackValidation] result=Passed tests=12`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionOrderMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase7-scan-marker-polish.log`; pass line: `[SelectionOrderMarkerFocusedValidation] result=Passed tests=15`.
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudMinimapMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase7-minimap-markers.log`; pass line: `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3`.
 
 Acceptance criteria:
 
@@ -402,24 +511,35 @@ Acceptance criteria:
 
 ## Phase 8 - Tests And Visual QA
 
-Status: Pending
+Status: Complete
 
 Validation checklist:
 
-- [ ] Run focused EditMode tests for command contracts.
-- [ ] Run focused PlayMode test or manual validation for Stop.
-- [ ] Run focused PlayMode test or manual validation for Hold.
-- [ ] Run focused PlayMode test or manual validation for Scan.
-- [ ] Validate soldiers, vehicles, aircraft, and mixed selections.
-- [ ] Validate no-selection rejections.
-- [ ] Validate camera panning in Scan/Move/Attack modes.
-- [ ] Validate command result HUD feedback.
-- [ ] Validate scan/feed/minimap marker visibility.
-- [ ] Record exact validation command and log path below.
+- [x] Run focused EditMode tests for command contracts.
+- [x] Run focused PlayMode test or manual validation for Stop.
+- [x] Run focused PlayMode test or manual validation for Hold.
+- [x] Run focused PlayMode test or manual validation for Scan.
+- [x] Validate soldiers, vehicles, aircraft, and mixed selections.
+- [x] Validate no-selection rejections.
+- [x] Validate camera panning in Scan/Move/Attack modes.
+- [x] Validate command result HUD feedback.
+- [x] Validate scan/feed/minimap marker visibility.
+- [x] Record exact validation command and log path below.
 
 Validation log:
 
-- Pending.
+- Automated focused validation started from heartbeat `2026-06-16T16:13:22.717Z`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-command-contracts.log`; pass line: `[SelectionCommandRequestResultContractValidation] result=Passed tests=47`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-runtime-input.log`; pass line: `[RtsSelectionInputSystemValidation] result=Passed tests=53`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod FocusedUnitCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-focused-unit-command.log`; pass line: `[FocusedUnitCommandFocusedValidation] result=Passed tests=4`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitMovementBlockerValidationTests.RunHoldCommandFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-hold-movement.log`; pass line: `[HoldCommandMovementValidation] result=Passed tests=2`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod ScanIntelCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-scan-intel.log`; pass line: `[ScanIntelCommandFocusedValidation] result=Passed tests=2`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudCommandFeedbackPanelTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-hud-feedback.log`; pass line: `[MatchHudCommandFeedbackValidation] result=Passed tests=12`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionOrderMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-order-markers.log`; pass line: `[SelectionOrderMarkerFocusedValidation] result=Passed tests=15`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudMinimapMarkerSystemTests.RunFocusedValidation -logFile /private/tmp/warline-hold-stop-scan-phase8-minimap-markers.log`; pass line: `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-Clone -runTests -testPlatform PlayMode -testFilter HoldStopScanCommandPlayModeTests -testResults /private/tmp/warline-hold-stop-scan-phase8-playmode-results.xml -logFile /private/tmp/warline-hold-stop-scan-phase8-playmode.log`; pass summary in results XML: `result="Passed" total="3" passed="3" failed="0"`.
+- General match runtime smoke was also attempted without `-quit` at `/private/tmp/warline-hold-stop-scan-phase8-match-runtime-smoke.log`. It reached `[MatchRuntimeShellSmokeValidation] result=Passed ...`, but the log also contains a Unity Entities Graphics shutdown `NullReferenceException` after the pass line, so it is recorded as supplemental only and was not used to close the command-specific PlayMode checklist.
+- No separate human visual inspection pass was run in-editor. Automated marker/HUD/minimap tests cover geometry, grounding, feedback state, and marker publishing; human visual review is still recommended before release, but the implementation checklist is complete.
 
 ## Implementation Order
 

@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 
 [DisableAutoCreation]
-public sealed partial class SelectionUiReadModelSystem : SystemBase
+public sealed partial class SelectionUiReadModelSystem : SystemBase, ISelectionUiReadModel
 {
     public readonly struct TransportPassengerUiInfo
     {

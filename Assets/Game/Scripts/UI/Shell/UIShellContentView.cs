@@ -15,6 +15,7 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private ISelectionUiCommand _selectionUiCommandSystem;
+    private ISelectionUiReadModel _selectionUiReadModelSystem;
     private IBuildingUiCommand _buildingUiCommandSystem;
     private IBuildingUiQuery _buildingUiQuerySystem;
     private IQuickCustomGameConfigStore _quickCustomGameConfigStore;
@@ -91,9 +92,11 @@ public sealed class UIShellContentView : MonoBehaviour
         MainMenuPlayUI mainMenuPlayUi = null,
         System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel = null,
         IBuildingUiCommand buildingUiCommandSystem = null,
-        ISelectionDiagnosticsSink selectionDiagnosticsSink = null)
+        ISelectionDiagnosticsSink selectionDiagnosticsSink = null,
+        ISelectionUiReadModel selectionUiReadModelSystem = null)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _selectionUiReadModelSystem = selectionUiReadModelSystem;
         _buildingUiCommandSystem = buildingUiCommandSystem;
         _selectionDiagnosticsSink = selectionDiagnosticsSink;
         _mainMenuPlayUi = mainMenuPlayUi;
@@ -102,6 +105,16 @@ public sealed class UIShellContentView : MonoBehaviour
         BindMatchHudFooter(_matchHudFooterContentView);
         BindMatchHudRightQuickRail(_rightQuickRailView);
         BindBuildPlacementConfirmationBarInRegion();
+    }
+
+    public void RefreshMatchHudCommandControlState()
+    {
+        _matchOverlayCommandInputSystem.RefreshCommandControlState(_selectionUiReadModelSystem);
+    }
+
+    private void Update()
+    {
+        RefreshMatchHudCommandControlState();
     }
 
     public void BindBuildDrawerRuntimeQueries(IBuildingUiQuery buildingUiQuerySystem)
@@ -332,14 +345,16 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         if (view != null)
         {
-        _matchOverlayCommandInputSystem.Bind(
-            view,
-            _selectionUiCommandSystem,
-            _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
-            () => InstallBuildDrawerPopup(),
-            CloseBuildDrawerPopup,
-            _selectionDiagnosticsSink);
+            _matchOverlayCommandInputSystem.Bind(
+                view,
+                _selectionUiCommandSystem,
+                _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
+                () => InstallBuildDrawerPopup(),
+                CloseBuildDrawerPopup,
+                _selectionDiagnosticsSink,
+                _selectionUiReadModelSystem);
             _mainMenuPlayUi?.BindMatchHudCommandControls(view);
+            RefreshMatchHudCommandControlState();
         }
     }
 

@@ -35,6 +35,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         var staticBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
         var debugFireTargetLookup = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true);
+        var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
 
         var handle = new EngagedMoveJob
         {
@@ -50,7 +51,8 @@ public partial struct UnitEngagedMovementSystem : ISystem
             HealthLookup = healthLookup,
             StaticBlockerLookup = staticBlockerLookup,
             HoldPositionLookup = holdPositionLookup,
-            DebugFireTargetLookup = debugFireTargetLookup
+            DebugFireTargetLookup = debugFireTargetLookup,
+            ScanOrderLookup = scanOrderLookup
         }.ScheduleParallel(state.Dependency);
 
         state.Dependency = handle;
@@ -76,6 +78,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
         [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticBlockerLookup;
         [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
         [ReadOnly] public ComponentLookup<DebugFireTargetTag> DebugFireTargetLookup;
+        [ReadOnly] public ComponentLookup<UnitScanOrder> ScanOrderLookup;
 
         public void Execute(
             Entity entity,
@@ -119,6 +122,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
             }
 
             bool holdingPosition = HoldPositionLookup.HasComponent(entity);
+            bool scanning = TryGetActiveScanOrder(entity, out UnitScanOrder scanOrder);
 
             // Keep UnitGrid in sync for engaged units so occupancy reflects actual positions (prevents "pushing").
             int2 selfWorldCell = GridUtils.WorldToCell(Grid, transform.Position);
@@ -138,6 +142,16 @@ public partial struct UnitEngagedMovementSystem : ISystem
             float chaseLeash = math.max(
                 math.max(0f, combat.ChaseBreakDistance),
                 math.max(0, combat.AggroRangeCells) * Grid.CellSize);
+
+            if (scanning && !IsTargetInsideScanArea(engage.Position, scanOrder))
+            {
+                engage.Target = Entity.Null;
+                engage.Cell = default;
+                engage.Position = default;
+                engage.IsCommanded = 0;
+                vehicleKinematics.CurrentSpeed = 0f;
+                return;
+            }
 
             if (holdingPosition && distSq > effectiveAttackRange * effectiveAttackRange)
             {
@@ -242,6 +256,32 @@ public partial struct UnitEngagedMovementSystem : ISystem
             float halfWidth = math.max(0f, (clamped.x - 1) * 0.5f * cellSize);
             float halfDepth = math.max(0f, (clamped.y - 1) * 0.5f * cellSize);
             return math.max(halfWidth, halfDepth);
+        }
+
+        private bool TryGetActiveScanOrder(Entity entity, out UnitScanOrder scanOrder)
+        {
+            scanOrder = default;
+            if (!ScanOrderLookup.HasComponent(entity))
+                return false;
+
+            scanOrder = ScanOrderLookup[entity];
+            return scanOrder.HasStarted != 0 &&
+                   scanOrder.RadiusCells > 0;
+        }
+
+        private bool IsTargetInsideScanArea(float3 targetPosition, in UnitScanOrder scanOrder)
+        {
+            int2 targetCell = GridUtils.WorldToCell(Grid, targetPosition);
+            if (!GridUtils.InBounds(targetCell, Grid.Width, Grid.Height))
+                return false;
+
+            return ChebyshevDistance(targetCell, scanOrder.CenterCell) <= math.max(1, scanOrder.RadiusCells);
+        }
+
+        private static int ChebyshevDistance(int2 a, int2 b)
+        {
+            int2 delta = math.abs(a - b);
+            return math.max(delta.x, delta.y);
         }
 
         private bool CanMoveAlongSegment(float3 startPosition, float3 endPosition, int2 footprintSize, int2 currentCell, byte factionId)

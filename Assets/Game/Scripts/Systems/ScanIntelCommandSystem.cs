@@ -7,6 +7,7 @@ using UnityEngine;
 public partial struct ScanIntelCommandSystem : ISystem
 {
     public const int DefaultScanRadiusCells = 12;
+    public const float DefaultSelectedUnitScanDurationSeconds = 8f;
 
     public readonly struct Result
     {
@@ -15,7 +16,10 @@ public partial struct ScanIntelCommandSystem : ISystem
         public readonly float3 CenterWorld;
         public readonly int RadiusCells;
         public readonly int RevealedCount;
+        public readonly Entity SourceEntity;
         public readonly bool HasWorldPosition;
+        public readonly bool HasSourceEntity;
+        public readonly bool DeferredToSource;
 
         private Result(
             TacticalCommandResult commandResult,
@@ -23,24 +27,46 @@ public partial struct ScanIntelCommandSystem : ISystem
             float3 centerWorld,
             int radiusCells,
             int revealedCount,
-            bool hasWorldPosition)
+            Entity sourceEntity,
+            bool hasWorldPosition,
+            bool hasSourceEntity,
+            bool deferredToSource)
         {
             CommandResult = commandResult;
             CenterCell = centerCell;
             CenterWorld = centerWorld;
             RadiusCells = radiusCells;
             RevealedCount = revealedCount;
+            SourceEntity = sourceEntity;
             HasWorldPosition = hasWorldPosition;
+            HasSourceEntity = hasSourceEntity;
+            DeferredToSource = deferredToSource;
         }
 
-        public static Result Success(int2 centerCell, float3 centerWorld, int radiusCells, int revealedCount)
+        public static Result Success(
+            int2 centerCell,
+            float3 centerWorld,
+            int radiusCells,
+            int revealedCount,
+            Entity sourceEntity = default,
+            bool hasSourceEntity = false,
+            bool deferredToSource = false)
         {
-            return new Result(TacticalCommandResult.Success(), centerCell, centerWorld, radiusCells, revealedCount, true);
+            return new Result(
+                TacticalCommandResult.Success(),
+                centerCell,
+                centerWorld,
+                radiusCells,
+                revealedCount,
+                sourceEntity,
+                true,
+                hasSourceEntity,
+                deferredToSource);
         }
 
         public static Result Rejected(TacticalCommandReasonCode reasonCode)
         {
-            return new Result(TacticalCommandResult.Rejected(reasonCode), default, default, DefaultScanRadiusCells, 0, false);
+            return new Result(TacticalCommandResult.Rejected(reasonCode), default, default, DefaultScanRadiusCells, 0, default, false, false, false);
         }
 
         public static Result FromCommandResult(
@@ -49,9 +75,21 @@ public partial struct ScanIntelCommandSystem : ISystem
             float3 centerWorld,
             int radiusCells,
             int revealedCount,
-            bool hasWorldPosition)
+            Entity sourceEntity,
+            bool hasWorldPosition,
+            bool hasSourceEntity,
+            bool deferredToSource)
         {
-            return new Result(commandResult, centerCell, centerWorld, radiusCells, revealedCount, hasWorldPosition);
+            return new Result(
+                commandResult,
+                centerCell,
+                centerWorld,
+                radiusCells,
+                revealedCount,
+                sourceEntity,
+                hasWorldPosition,
+                hasSourceEntity,
+                deferredToSource);
         }
     }
 
@@ -155,7 +193,8 @@ public partial struct ScanIntelCommandSystem : ISystem
         if (!GridUtils.InBounds(centerCell, grid.Width, grid.Height))
             return Result.Rejected(TacticalCommandReasonCode.TargetOutOfBounds);
 
-        EnqueueScan(em, requestId, frame, centerCell, centerWorld);
+        bool hasSourceEntity = TryResolveSelectedScanSource(em, out Entity sourceEntity);
+        EnqueueScan(em, requestId, frame, centerCell, centerWorld, sourceEntity, hasSourceEntity, hasSourceEntity);
         ProcessPendingRequests(em);
         return TryGetResult(em, requestId, out ScanIntelCommandResultElement result)
             ? ToResult(result)
@@ -244,10 +283,21 @@ public partial struct ScanIntelCommandSystem : ISystem
             {
                 RequestId = request.RequestId,
                 Frame = request.Frame,
+                SourceEntity = request.SourceEntity,
                 CenterCell = request.TargetCell,
                 CenterWorld = request.WorldPosition,
-                HasWorldPosition = request.HasWorldPosition
+                RadiusCells = DefaultScanRadiusCells,
+                HasWorldPosition = request.HasWorldPosition,
+                HasSourceEntity = request.HasSourceEntity,
+                DeferRevealUntilSourceArrives = request.HasSourceEntity
             };
+            if (scanRequest.HasSourceEntity == 0 && TryResolveSelectedScanSource(em, out Entity selectedScanSource))
+            {
+                scanRequest.SourceEntity = selectedScanSource;
+                scanRequest.HasSourceEntity = 1;
+                scanRequest.DeferRevealUntilSourceArrives = 1;
+            }
+
             TacticalCommandResult commandResult = TryApplyScan(
                 em,
                 gridConfigQuery,
@@ -265,7 +315,10 @@ public partial struct ScanIntelCommandSystem : ISystem
                 out float3 centerWorld,
                 out int radiusCells,
                 out int revealedCount,
-                out bool hasWorldPosition);
+                out Entity sourceEntity,
+                out bool hasWorldPosition,
+                out bool hasSourceEntity,
+                out bool deferredToSource);
 
             Result result = Result.FromCommandResult(
                 commandResult,
@@ -273,7 +326,10 @@ public partial struct ScanIntelCommandSystem : ISystem
                 centerWorld,
                 radiusCells,
                 revealedCount,
-                hasWorldPosition);
+                sourceEntity,
+                hasWorldPosition,
+                hasSourceEntity,
+                deferredToSource);
             AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
             if (em.Exists(commandEntity))
             {
@@ -299,6 +355,20 @@ public partial struct ScanIntelCommandSystem : ISystem
         int2 centerCell,
         float3 centerWorld)
     {
+        return EnqueueScan(em, requestId, frame, centerCell, centerWorld, Entity.Null, false, false);
+    }
+
+    public static int EnqueueScan(
+        EntityManager em,
+        int requestId,
+        int frame,
+        int2 centerCell,
+        float3 centerWorld,
+        Entity sourceEntity,
+        bool hasSourceEntity,
+        bool deferRevealUntilSourceArrives,
+        int radiusCells = DefaultScanRadiusCells)
+    {
         Entity queueEntity = EnsureCommandEntity(em);
         ScanIntelCommandQueueComponent queue = em.GetComponentData<ScanIntelCommandQueueComponent>(queueEntity);
         queue.LastRequestId = math.max(queue.LastRequestId, requestId);
@@ -308,9 +378,13 @@ public partial struct ScanIntelCommandSystem : ISystem
         {
             RequestId = requestId,
             Frame = frame,
+            SourceEntity = sourceEntity,
             CenterCell = centerCell,
             CenterWorld = centerWorld,
-            HasWorldPosition = 1
+            RadiusCells = radiusCells,
+            HasWorldPosition = 1,
+            HasSourceEntity = hasSourceEntity ? (byte)1 : (byte)0,
+            DeferRevealUntilSourceArrives = deferRevealUntilSourceArrives ? (byte)1 : (byte)0
         });
         return requestId;
     }
@@ -391,7 +465,10 @@ public partial struct ScanIntelCommandSystem : ISystem
                 out float3 centerWorld,
                 out int radiusCells,
                 out int revealedCount,
-                out bool hasWorldPosition);
+                out Entity sourceEntity,
+                out bool hasWorldPosition,
+                out bool hasSourceEntity,
+                out bool deferredToSource);
 
             if (!em.Exists(queueEntity) || !em.HasBuffer<ScanIntelCommandResultElement>(queueEntity))
                 continue;
@@ -401,13 +478,16 @@ public partial struct ScanIntelCommandSystem : ISystem
             {
                 RequestId = request.RequestId,
                 Frame = request.Frame,
+                SourceEntity = sourceEntity,
                 CenterCell = centerCell,
                 CenterWorld = centerWorld,
                 RadiusCells = radiusCells,
                 RevealedCount = revealedCount,
                 ReasonCode = (int)commandResult.ReasonCode,
                 Accepted = commandResult.Accepted ? (byte)1 : (byte)0,
-                HasWorldPosition = hasWorldPosition ? (byte)1 : (byte)0
+                HasWorldPosition = hasWorldPosition ? (byte)1 : (byte)0,
+                HasSourceEntity = hasSourceEntity ? (byte)1 : (byte)0,
+                DeferredToSource = deferredToSource ? (byte)1 : (byte)0
             });
         }
     }
@@ -429,13 +509,19 @@ public partial struct ScanIntelCommandSystem : ISystem
         out float3 centerWorld,
         out int radiusCells,
         out int revealedCount,
-        out bool hasWorldPosition)
+        out Entity sourceEntity,
+        out bool hasWorldPosition,
+        out bool hasSourceEntity,
+        out bool deferredToSource)
     {
         centerCell = request.CenterCell;
         centerWorld = request.CenterWorld;
-        radiusCells = DefaultScanRadiusCells;
+        radiusCells = request.RadiusCells > 0 ? request.RadiusCells : DefaultScanRadiusCells;
         revealedCount = 0;
+        sourceEntity = request.SourceEntity;
         hasWorldPosition = request.HasWorldPosition != 0;
+        hasSourceEntity = request.HasSourceEntity != 0 && IsValidScanSource(em, request.SourceEntity);
+        deferredToSource = false;
 
         if (gridConfigQuery.IsEmptyIgnoreFilter)
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
@@ -451,13 +537,22 @@ public partial struct ScanIntelCommandSystem : ISystem
             hasWorldPosition = true;
         }
 
+        if (request.HasSourceEntity != 0 && !hasSourceEntity)
+            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+
+        if (hasSourceEntity && request.DeferRevealUntilSourceArrives != 0)
+        {
+            IssueSelectedUnitScanOrder(em, sourceEntity, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells);
+            deferredToSource = true;
+            return TacticalCommandResult.Success();
+        }
+
         int expectedCandidates = math.max(
             1,
             (unitScanTargetQuery.IsEmptyIgnoreFilter ? 0 : unitScanTargetQuery.CalculateEntityCount()) +
             (buildingScanTargetQuery.IsEmptyIgnoreFilter ? 0 : buildingScanTargetQuery.CalculateEntityCount()));
         using NativeList<ScanRevealCandidate> candidates = new(expectedCandidates, Allocator.Temp);
         CollectRevealUnits(
-            em,
             unitScanTargetQuery,
             entityType,
             factionType,
@@ -470,7 +565,6 @@ public partial struct ScanIntelCommandSystem : ISystem
             radiusCells,
             candidates);
         CollectRevealBuildings(
-            em,
             buildingScanTargetQuery,
             entityType,
             factionType,
@@ -488,7 +582,17 @@ public partial struct ScanIntelCommandSystem : ISystem
         }
 
         revealedCount = candidates.Length;
-        AppendFeedEntry(em, feedQueueQuery, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells, revealedCount);
+        AppendFeedEntry(
+            em,
+            feedQueueQuery,
+            request.RequestId,
+            request.Frame,
+            sourceEntity,
+            hasSourceEntity,
+            centerCell,
+            centerWorld,
+            radiusCells,
+            revealedCount);
 
         return TacticalCommandResult.Success();
     }
@@ -513,7 +617,14 @@ public partial struct ScanIntelCommandSystem : ISystem
     private static Result ToResult(ScanIntelCommandResultElement result)
     {
         return result.Accepted != 0
-            ? Result.Success(result.CenterCell, result.CenterWorld, result.RadiusCells, result.RevealedCount)
+            ? Result.Success(
+                result.CenterCell,
+                result.CenterWorld,
+                result.RadiusCells,
+                result.RevealedCount,
+                result.SourceEntity,
+                result.HasSourceEntity != 0,
+                result.DeferredToSource != 0)
             : Result.Rejected((TacticalCommandReasonCode)result.ReasonCode);
     }
 
@@ -542,6 +653,7 @@ public partial struct ScanIntelCommandSystem : ISystem
             Kind = request.Kind,
             RequestId = request.RequestId,
             Frame = request.Frame,
+            SourceEntity = result.SourceEntity,
             TargetCell = result.CenterCell,
             ScreenPosition = request.ScreenPosition,
             WorldPosition = result.CenterWorld,
@@ -554,6 +666,8 @@ public partial struct ScanIntelCommandSystem : ISystem
             ReasonCode = (int)commandResult.ReasonCode,
             FeedbackLifetime = RtsSelectionCommandFeedbackLifetime.Transient,
             EmitScreenMarker = commandResult.Accepted ? (byte)1 : (byte)0,
+            HasSourceEntity = result.HasSourceEntity ? (byte)1 : (byte)0,
+            DeferredToSource = result.DeferredToSource ? (byte)1 : (byte)0,
             HasTargetCell = commandResult.Accepted ? (byte)1 : (byte)0,
             HasWorldPosition = result.HasWorldPosition ? (byte)1 : (byte)0,
             ShowWorldMarkers = commandResult.Accepted ? (byte)1 : (byte)0,
@@ -593,7 +707,6 @@ public partial struct ScanIntelCommandSystem : ISystem
     }
 
     private static void CollectRevealUnits(
-        EntityManager em,
         EntityQuery unitScanTargetQuery,
         EntityTypeHandle entityType,
         ComponentTypeHandle<Faction> factionType,
@@ -645,7 +758,6 @@ public partial struct ScanIntelCommandSystem : ISystem
     }
 
     private static void CollectRevealBuildings(
-        EntityManager em,
         EntityQuery buildingScanTargetQuery,
         EntityTypeHandle entityType,
         ComponentTypeHandle<Faction> factionType,
@@ -701,6 +813,86 @@ public partial struct ScanIntelCommandSystem : ISystem
         return FactionIdentity.IsHostileToPlayer(faction.Id);
     }
 
+    private static bool TryResolveSelectedScanSource(EntityManager em, out Entity sourceEntity)
+    {
+        sourceEntity = Entity.Null;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity candidate = selectedEntities[i];
+            if (!IsValidScanSource(em, candidate))
+                continue;
+
+            sourceEntity = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsValidScanSource(EntityManager em, Entity sourceEntity)
+    {
+        if (sourceEntity == Entity.Null ||
+            !em.Exists(sourceEntity) ||
+            !em.HasComponent<Faction>(sourceEntity) ||
+            !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(sourceEntity).Id) ||
+            !em.HasComponent<UnitGrid>(sourceEntity) ||
+            !em.HasComponent<UnitMove>(sourceEntity) ||
+            em.HasComponent<Disabled>(sourceEntity) ||
+            em.HasComponent<UnitDeathAnimationComponent>(sourceEntity) ||
+            em.HasComponent<UnitTransportPassenger>(sourceEntity))
+        {
+            return false;
+        }
+
+        if (em.HasComponent<UnitHealth>(sourceEntity) &&
+            em.GetComponentData<UnitHealth>(sourceEntity).Current <= 0)
+        {
+            return false;
+        }
+
+        return SelectionUiReadModelLookup.IsSelectedUnitScanCapable(em, sourceEntity);
+    }
+
+    private static void IssueSelectedUnitScanOrder(
+        EntityManager em,
+        Entity sourceEntity,
+        int requestId,
+        int frame,
+        int2 centerCell,
+        float3 centerWorld,
+        int radiusCells)
+    {
+        new UnitMoveOrderSystem().IssueImmediateMoveCommand(em, sourceEntity, centerCell);
+
+        UnitScanOrder scanOrder = new()
+        {
+            RequestId = requestId,
+            StartedFrame = frame,
+            SourceEntity = sourceEntity,
+            CenterCell = centerCell,
+            CenterWorld = centerWorld,
+            RadiusCells = math.max(1, radiusCells),
+            StartedTimeSeconds = 0f,
+            NextRevealTimeSeconds = 0f,
+            NextPatrolMoveTimeSeconds = 0f,
+            DurationSeconds = DefaultSelectedUnitScanDurationSeconds,
+            PatrolWaypointIndex = 0,
+            EngageDetectedTargets = 1,
+            ReturnHomeAfterCompletion = em.HasComponent<UnitAirMovement>(sourceEntity) ? (byte)1 : (byte)0,
+            HasStarted = 0
+        };
+
+        if (em.HasComponent<UnitScanOrder>(sourceEntity))
+            em.SetComponentData(sourceEntity, scanOrder);
+        else
+            em.AddComponentData(sourceEntity, scanOrder);
+    }
+
     private static void RevealEntity(EntityManager em, Entity entity, int2 cell, float3 position, int frame)
     {
         if (!em.HasComponent<ScanIntelRevealedTag>(entity))
@@ -725,6 +917,8 @@ public partial struct ScanIntelCommandSystem : ISystem
         EntityQuery feedQueueQuery,
         int requestId,
         int frame,
+        Entity sourceEntity,
+        bool hasSourceEntity,
         int2 centerCell,
         float3 centerWorld,
         int radiusCells,
@@ -736,10 +930,12 @@ public partial struct ScanIntelCommandSystem : ISystem
         {
             RequestId = requestId,
             Frame = frame,
+            SourceEntity = sourceEntity,
             CenterCell = centerCell,
             CenterWorld = centerWorld,
             RadiusCells = radiusCells,
-            RevealedCount = revealedCount
+            RevealedCount = revealedCount,
+            HasSourceEntity = hasSourceEntity ? (byte)1 : (byte)0
         });
     }
 

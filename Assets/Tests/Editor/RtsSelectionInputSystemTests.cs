@@ -43,8 +43,10 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.CancelActiveCommandModeSystem_ClearsCommandAndSelectionMode());
             RunCase(test => test.CancelActiveCommandModeSystem_CancelAttackTargetModeClearsAttackMode());
             RunCase(test => test.HoldPositionCommandSystem_HoldsSelectedMovableUnitsAndClearsQueuedMoveCommands());
+            RunCase(test => test.HoldPositionCommandSystem_PreservesAirTransientState());
             RunCase(test => test.HoldPositionCommandSystem_RejectsWithoutSelectedMoveUnit());
             RunCase(test => test.StopCommandSystem_StopsSelectedMovableUnitsAndClearsQueuedMoveCommands());
+            RunCase(test => test.StopCommandSystem_StopsVehicleAndAirUnitsWithoutDeselecting());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsFocusedPlayerUnitToRespawnSpawnPoint());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsSelectedPlayerUnitsWhenFocusedUnitMissing());
             RunCase(test => test.ReturnToBaseCommandSystem_RejectsWithoutSelectedPlayerUnit());
@@ -60,13 +62,15 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
+            RunCase(test => test.RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting());
+            RunCase(test => test.RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
             RunCase(test => test.BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation());
             RunCase(test => test.BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats());
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=49");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=53");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -814,6 +818,24 @@ public sealed class RtsSelectionInputSystemTests
             out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
             out _));
         Assert.AreEqual(0, requests.Length);
+    }
+
+    private static void AssertClearedStopOrderComponents(EntityManager em, Entity entity)
+    {
+        Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(entity));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(entity));
+        Assert.IsFalse(em.HasComponent<UnitTarget>(entity));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(entity));
+        Assert.IsFalse(em.HasComponent<UnitPathFollow>(entity));
+        Assert.IsFalse(em.HasComponent<UnitPathRange>(entity));
+        Assert.IsFalse(em.HasComponent<UnitPathRetryCooldown>(entity));
+        Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(entity));
+        Assert.IsFalse(em.HasComponent<ManualMoveGroupMemberTag>(entity));
+        Assert.IsFalse(em.HasComponent<AutoWanderMoveTag>(entity));
+        Assert.IsFalse(em.HasComponent<BaseBreachOrder>(entity));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(entity));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(entity));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(entity));
     }
 
     [Test]
@@ -1583,6 +1605,95 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void HoldPositionCommandSystem_PreservesAirTransientState()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity airUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitAirMovement),
+            typeof(UnitAirComponent),
+            typeof(UnitCombat),
+            typeof(EngageTarget),
+            typeof(UnitTarget),
+            typeof(UnitPathRequest));
+        em.SetComponentData(airUnit, new UnitGrid { Cell = new int2(12, 13) });
+        em.SetComponentData(airUnit, new UnitMove { Speed = 16f, WalkSpeed = 16f, ArriveDistance = 0.1f });
+        em.SetComponentData(airUnit, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 4f });
+        em.SetComponentData(airUnit, new UnitAirComponent
+        {
+            HomeInitialized = 1,
+            HomeCell = new int2(10, 11),
+            HomePosition = new float3(10f, 0f, 11f),
+            Airborne = 1,
+            UsesRunway = 1,
+            ReturningHome = 1,
+            TakeoffRolling = 1,
+            LandingRolling = 1,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1,
+            RunwayTakeoffCell = new int2(14, 15),
+            RunwayLandingCell = new int2(16, 17)
+        });
+        em.SetComponentData(airUnit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
+        em.SetComponentData(airUnit, new EngageTarget { Target = Entity.Null, Cell = new int2(18, 19), IsCommanded = 1 });
+        em.SetComponentData(airUnit, new UnitTarget { Cell = new int2(20, 21) });
+        em.SetComponentData(airUnit, new UnitPathRequest { Goal = new int2(22, 23) });
+
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Attack,
+            frame: 453,
+            oneShot: true,
+            requiresWorldTarget: true);
+        inputSystem.QueueMoveOrder(new Vector2(12f, 24f), executeFrame: 454);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(13f, 26f), frame: 455));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.HoldPosition, frame: 456));
+
+        bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+            em,
+            Entity.Null,
+            out RtsSelectionCommandIntentKind processedKind,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.HoldPosition, processedKind);
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.AreEqual(1, issuedCount);
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(airUnit));
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(airUnit));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(airUnit));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(airUnit));
+        Assert.IsFalse(em.HasComponent<UnitTarget>(airUnit));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(airUnit));
+        Assert.AreEqual(1, em.GetComponentData<UnitCombat>(airUnit).AutoEngage);
+
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(airUnit);
+        Assert.AreEqual(1, airState.HomeInitialized);
+        Assert.AreEqual(new int2(10, 11), airState.HomeCell);
+        Assert.AreEqual(new int2(14, 15), airState.RunwayTakeoffCell);
+        Assert.AreEqual(new int2(16, 17), airState.RunwayLandingCell);
+        Assert.AreEqual(1, airState.Airborne);
+        Assert.AreEqual(1, airState.UsesRunway);
+        Assert.AreEqual(1, airState.ReturningHome);
+        Assert.AreEqual(1, airState.TakeoffRolling);
+        Assert.AreEqual(1, airState.LandingRolling);
+        Assert.AreEqual(1, airState.AttackRunActive);
+        Assert.AreEqual(1, airState.ReturnApproachInitialized);
+        Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
     public void HoldPositionCommandSystem_RejectsWithoutSelectedMoveUnit()
     {
         EntityManager em = _testWorld.EntityManager;
@@ -1654,21 +1765,156 @@ public sealed class RtsSelectionInputSystemTests
 
         bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
             em,
+            Entity.Null,
             out RtsSelectionCommandIntentKind processedKind,
             out bool accepted,
-            out TacticalCommandReasonCode rejectionReason);
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount);
 
         RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
         Assert.IsTrue(processed);
         Assert.AreEqual(RtsSelectionCommandIntentKind.Stop, processedKind);
         Assert.IsTrue(accepted);
         Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.AreEqual(1, issuedCount);
         Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
         Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+        AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
+    public void StopCommandSystem_StopsVehicleAndAirUnitsWithoutDeselecting()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        Entity vehicle = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitCombat),
+            typeof(UnitVehicleKinematics),
+            typeof(HoldPositionOrderTag),
+            typeof(EngageTarget),
+            typeof(UnitTarget),
+            typeof(UnitPathRequest),
+            typeof(UnitPathFollow),
+            typeof(UnitPathRange),
+            typeof(UnitPathRetryCooldown),
+            typeof(UnitLongDistanceMove),
+            typeof(ManualMoveGroupMemberTag),
+            typeof(AutoWanderMoveTag),
+            typeof(BaseBreachOrder),
+            typeof(UnitTransportBoardingTarget),
+            typeof(UnitTransportRopeDisembarkRequest),
+            typeof(UnitResourceHaulOrder));
+        em.SetComponentData(vehicle, new UnitGrid { Cell = new int2(1, 2) });
+        em.SetComponentData(vehicle, new UnitMove { Speed = 7f, WalkSpeed = 5f, ArriveDistance = 0.1f });
+        em.SetComponentData(vehicle, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(vehicle, new UnitVehicleKinematics { CurrentSpeed = 4.5f, StallSeconds = 2f });
+        em.SetComponentData(vehicle, new EngageTarget { Target = Entity.Null, Cell = new int2(3, 4), IsCommanded = 1 });
+        em.SetComponentData(vehicle, new UnitTarget { Cell = new int2(5, 6) });
+        em.SetComponentData(vehicle, new UnitPathRequest { Goal = new int2(7, 8) });
+        em.SetComponentData(vehicle, new UnitPathFollow { PathIndex = 2 });
+        em.SetComponentData(vehicle, new UnitPathRange { Start = 1, Length = 3 });
+        em.SetComponentData(vehicle, new UnitPathRetryCooldown { ResumeFrame = 99 });
+        em.SetComponentData(vehicle, new UnitLongDistanceMove { FinalGoal = new int2(11, 12) });
+        em.SetComponentData(vehicle, new BaseBreachOrder { FinalCell = new int2(13, 14), IsCommanded = 1 });
+        em.SetComponentData(vehicle, new UnitTransportBoardingTarget { Transport = Entity.Null, Goal = new int2(15, 16) });
+        em.SetComponentData(vehicle, new UnitTransportRopeDisembarkRequest
+        {
+            ReferenceCell = new int2(17, 18),
+            DropCount = 2,
+            DropIntervalSeconds = 0.5f
+        });
+        em.SetComponentData(vehicle, new UnitResourceHaulOrder { TargetCell = new int2(19, 20), Phase = 2 });
+
+        Entity airUnit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitAirMovement),
+            typeof(UnitAirComponent),
+            typeof(EngageTarget),
+            typeof(UnitTarget),
+            typeof(UnitPathRequest));
+        em.SetComponentData(airUnit, new UnitGrid { Cell = new int2(21, 22) });
+        em.SetComponentData(airUnit, new UnitMove { Speed = 12f, WalkSpeed = 12f, ArriveDistance = 0.1f });
+        em.SetComponentData(airUnit, new UnitAirMovement { CruiseHeight = 14f, RunwayTaxiSpeed = 5f });
+        em.SetComponentData(airUnit, new UnitAirComponent
+        {
+            HomeInitialized = 1,
+            HomeCell = new int2(30, 31),
+            HomePosition = new float3(30f, 0f, 31f),
+            Airborne = 1,
+            UsesRunway = 1,
+            ReturningHome = 1,
+            TakeoffRolling = 1,
+            LandingRolling = 1,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1,
+            RunwayTakeoffCell = new int2(32, 33),
+            RunwayLandingCell = new int2(34, 35)
+        });
+        em.SetComponentData(airUnit, new EngageTarget { Target = Entity.Null, Cell = new int2(23, 24), IsCommanded = 1 });
+        em.SetComponentData(airUnit, new UnitTarget { Cell = new int2(25, 26) });
+        em.SetComponentData(airUnit, new UnitPathRequest { Goal = new int2(27, 28) });
+
+        var inputSystem = new RtsSelectionInputSystem();
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Scan,
+            frame: 493,
+            oneShot: true,
+            requiresWorldTarget: true);
+        inputSystem.IsDraggingSelection = true;
+        inputSystem.QueueMoveOrder(new Vector2(12f, 24f), executeFrame: 494);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(13f, 26f), frame: 495));
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.Stop, frame: 496));
+
+        bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+            em,
+            Entity.Null,
+            out RtsSelectionCommandIntentKind processedKind,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Stop, processedKind);
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.AreEqual(2, issuedCount);
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(vehicle));
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(airUnit));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(vehicle));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(airUnit));
+        AssertClearedStopOrderComponents(em, vehicle);
+        AssertClearedStopOrderComponents(em, airUnit);
+        Assert.AreEqual(0, em.GetComponentData<UnitCombat>(vehicle).AutoEngage);
+        UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(vehicle);
+        Assert.AreEqual(0f, kinematics.CurrentSpeed, 0.0001f);
+        Assert.AreEqual(0f, kinematics.StallSeconds, 0.0001f);
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(airUnit);
+        Assert.AreEqual(1, airState.HomeInitialized);
+        Assert.AreEqual(new int2(30, 31), airState.HomeCell);
+        Assert.AreEqual(new int2(32, 33), airState.RunwayTakeoffCell);
+        Assert.AreEqual(new int2(34, 35), airState.RunwayLandingCell);
+        Assert.AreEqual(1, airState.Airborne);
+        Assert.AreEqual(1, airState.UsesRunway);
+        Assert.AreEqual(0, airState.ReturningHome);
+        Assert.AreEqual(0, airState.TakeoffRolling);
+        Assert.AreEqual(0, airState.LandingRolling);
+        Assert.AreEqual(0, airState.AttackRunActive);
+        Assert.AreEqual(0, airState.ReturnApproachInitialized);
         Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
         Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
@@ -2243,6 +2489,7 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.IsBoardSelectedTransportPassengerTarget.Invoke(transport, pointerPosition)", passengerPress);
         StringAssert.Contains("activeMode == TacticalCommandMode.Move", commandPan);
         StringAssert.Contains("activeMode == TacticalCommandMode.Attack", commandPan);
+        StringAssert.Contains("activeMode == TacticalCommandMode.Scan", commandPan);
         StringAssert.Contains("return !input.BoardPassengerDragArmed;", commandPan);
         StringAssert.Contains("direction == BoardCommandModeDirection.PassengerToTransport", commandPan);
         StringAssert.Contains("float dragDistance = Vector2.Distance(input.DragStart, pointerPosition);", pointerReleased);
@@ -2428,6 +2675,101 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.AreEqual(1, panCalls);
         Assert.AreEqual(heldPosition - pressPosition, panDelta);
+    }
+
+    [Test]
+    public void RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pressPosition = new(16f, 24f);
+        Vector2 heldPosition = new(22f, 31f);
+        bool cameraDragging = false;
+        int panCalls = 0;
+        Vector2 panDelta = default;
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Scan,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            panCamera: delta =>
+            {
+                panCalls++;
+                panDelta = delta;
+            });
+
+        InvokeRuntimePointerPressed(context, pressPosition);
+        Assert.IsTrue(cameraDragging);
+
+        InvokeRuntimePointerHeld(context, heldPosition);
+
+        Assert.AreEqual(1, panCalls);
+        Assert.AreEqual(heldPosition - pressPosition, panDelta);
+    }
+
+    [Test]
+    public void RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pointer = new(220f, 140f);
+        inputSystem.BeginPointerPress(pointer, pointerPressedOverUi: false);
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Scan,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        int scanCalls = 0;
+        int focusCalls = 0;
+        bool cameraDragging = true;
+
+        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            tryIssueScanOrder: _ =>
+            {
+                scanCalls++;
+                return true;
+            },
+            tryFocusUnit: _ =>
+            {
+                focusCalls++;
+                return true;
+            });
+
+        InvokeRuntimePointerRelease(context, pointer);
+
+        Assert.AreEqual(1, scanCalls);
+        Assert.AreEqual(0, focusCalls);
+        Assert.IsFalse(cameraDragging);
+        Assert.IsFalse(inputSystem.PointerPressedOverUi);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Scan, activeMode);
     }
 
     [Test]
@@ -2766,7 +3108,9 @@ public sealed class RtsSelectionInputSystemTests
         Func<bool> getCameraDragging = null,
         Action<bool> setCameraDragging = null,
         Action<Vector2> panCamera = null,
-        Func<Entity, Vector2, bool> isBoardSelectedTransportPassengerTarget = null)
+        Func<Entity, Vector2, bool> isBoardSelectedTransportPassengerTarget = null,
+        Func<Vector2, bool> tryIssueScanOrder = null,
+        Func<Vector2, bool> tryFocusUnit = null)
     {
         return new RtsSelectionRuntimeInputSystem.Context(
             runtimeGameplayStateSystem: runtimeState,
@@ -2781,7 +3125,7 @@ public sealed class RtsSelectionInputSystemTests
             isPointerOverAnyUi: _ => false,
             isPointerOverGameplayUi: _ => false,
             tryIssueAttackOrderToClickedUnit: null,
-            tryIssueScanOrder: null,
+            tryIssueScanOrder: tryIssueScanOrder,
             orderMarkerSystem: null,
             tryGetDefaultEntityManager: null,
             tryGetScanClickedCell: null,
@@ -2790,7 +3134,7 @@ public sealed class RtsSelectionInputSystemTests
             tryIssueBoardSelectedTransportOrderToClickedUnit: null,
             tryIssueBoardSelectedTransportOrderToPassengerRect: null,
             isBoardSelectedTransportPassengerTarget: isBoardSelectedTransportPassengerTarget,
-            tryFocusUnit: null,
+            tryFocusUnit: tryFocusUnit,
             panCamera: panCamera,
             issueMoveOrder: null,
             processSelectionRectangleRequests: null,

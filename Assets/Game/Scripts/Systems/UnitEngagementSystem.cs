@@ -109,6 +109,7 @@ public partial struct UnitEngagementSystem : ISystem
         var pathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
+        var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
@@ -126,6 +127,7 @@ public partial struct UnitEngagementSystem : ISystem
             PathFollowLookup = pathFollowLookup,
             PathRequestLookup = pathRequestLookup,
             HoldPositionLookup = holdPositionLookup,
+            ScanOrderLookup = scanOrderLookup,
             Ecb = ecb
         }.ScheduleParallel(buildHandle);
 
@@ -169,6 +171,7 @@ public partial struct UnitEngagementSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
         [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
         [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
+        [ReadOnly] public ComponentLookup<UnitScanOrder> ScanOrderLookup;
         public EntityCommandBuffer.ParallelWriter Ecb;
 
         public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in UnitGrid selfGrid, in Faction selfFaction, in UnitCombat combat, in UnitAttack attack, in LocalTransform selfTransform)
@@ -183,12 +186,15 @@ public partial struct UnitEngagementSystem : ISystem
                 (PathFollowLookup.HasComponent(entity) || PathRequestLookup.HasComponent(entity));
 
             bool holdingPosition = HoldPositionLookup.HasComponent(entity);
+            bool scanning = TryGetActiveScanOrder(entity, out UnitScanOrder scanOrder);
             int attackRangeCells = Grid.CellSize > 1e-6f && attack.Range > 0f
                 ? (int)math.ceil(attack.Range / Grid.CellSize)
                 : 0;
             int scanRangeCells = holdingPosition
                 ? attackRangeCells
                 : math.max(math.max(0, combat.AggroRangeCells), attackRangeCells);
+            if (scanning)
+                scanRangeCells = math.max(scanRangeCells, math.max(1, scanOrder.RadiusCells));
 
             if (scanRangeCells <= 0)
                 return;
@@ -198,6 +204,8 @@ public partial struct UnitEngagementSystem : ISystem
                 : scanRangeCells * Grid.CellSize;
             if (!holdingPosition && attack.Range > 0f)
                 maxDist = math.max(maxDist, attack.Range);
+            if (scanning)
+                maxDist = math.max(maxDist, math.max(1, scanOrder.RadiusCells) * Grid.CellSize * 2f);
             float maxDistSq = maxDist * maxDist;
 
             float bestScore = float.MaxValue;
@@ -206,7 +214,10 @@ public partial struct UnitEngagementSystem : ISystem
             if (RecentAttackerLookup.HasComponent(entity))
             {
                 RecentAttacker recent = RecentAttackerLookup[entity];
-                if (!hasActiveManualMove && IsValidRetaliationTarget(recent.Attacker, selfFaction.Id))
+                bool movementBlocksCombat = hasActiveManualMove && !scanning;
+                if (!movementBlocksCombat &&
+                    IsValidRetaliationTarget(recent.Attacker, selfFaction.Id) &&
+                    (!scanning || IsTargetInsideScanArea(recent.Attacker, scanOrder)))
                 {
                     float3 recentPos = TransformLookup[recent.Attacker].Position;
                     float3 recentDelta = recentPos - selfTransform.Position;
@@ -233,21 +244,23 @@ public partial struct UnitEngagementSystem : ISystem
                 Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
             }
 
-            if (hasActiveManualMove)
+            if (hasActiveManualMove && !scanning)
                 return;
 
             int2 c0 = GridUtils.WorldToCell(Grid, selfTransform.Position);
             if (!GridUtils.InBounds(c0, Grid.Width, Grid.Height))
                 c0 = selfGrid.Cell;
-            for (int dy = -scanRangeCells; dy <= scanRangeCells; dy++)
+            int2 searchCenter = scanning ? scanOrder.CenterCell : c0;
+            int searchRangeCells = scanning ? math.max(1, scanOrder.RadiusCells) : scanRangeCells;
+            for (int dy = -searchRangeCells; dy <= searchRangeCells; dy++)
             {
-                int y = c0.y + dy;
+                int y = searchCenter.y + dy;
                 if ((uint)y >= (uint)Grid.Height)
                     continue;
 
-                for (int dx = -scanRangeCells; dx <= scanRangeCells; dx++)
+                for (int dx = -searchRangeCells; dx <= searchRangeCells; dx++)
                 {
-                    int x = c0.x + dx;
+                    int x = searchCenter.x + dx;
                     if ((uint)x >= (uint)Grid.Width)
                         continue;
 
@@ -272,13 +285,13 @@ public partial struct UnitEngagementSystem : ISystem
                                 var allyEngage = EngageLookup[candidate];
                                 if (allyEngage.Target != Entity.Null)
                                 {
-                                    EvaluateEnemyCandidate(allyEngage.Target, selfFaction.Id, selfTransform.Position, maxDistSq, ref bestScore, ref best);
+                                    EvaluateEnemyCandidate(allyEngage.Target, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                                 }
                             }
                             continue;
                         }
 
-                        EvaluateEnemyCandidate(candidate, selfFaction.Id, selfTransform.Position, maxDistSq, ref bestScore, ref best);
+                        EvaluateEnemyCandidate(candidate, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                     } while (SpatialMap.TryGetNextValue(out candidate, ref it));
                 }
             }
@@ -297,7 +310,15 @@ public partial struct UnitEngagementSystem : ISystem
             Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
         }
 
-        private void EvaluateEnemyCandidate(Entity candidate, byte selfFactionId, float3 selfPos, float maxDistSq, ref float bestScore, ref Entity best)
+        private void EvaluateEnemyCandidate(
+            Entity candidate,
+            byte selfFactionId,
+            float3 selfPos,
+            float maxDistSq,
+            bool scanning,
+            in UnitScanOrder scanOrder,
+            ref float bestScore,
+            ref Entity best)
         {
             if (!FactionLookup.HasComponent(candidate) || !TransformLookup.HasComponent(candidate))
                 return;
@@ -310,6 +331,9 @@ public partial struct UnitEngagementSystem : ISystem
                 return;
 
             float3 otherPos = TransformLookup[candidate].Position;
+            if (scanning && !IsPositionInsideScanArea(otherPos, scanOrder))
+                return;
+
             float3 delta = otherPos - selfPos;
             delta.y = 0f;
             float distSq = math.lengthsq(delta);
@@ -325,6 +349,39 @@ public partial struct UnitEngagementSystem : ISystem
                 bestScore = score;
                 best = candidate;
             }
+        }
+
+        private bool TryGetActiveScanOrder(Entity entity, out UnitScanOrder scanOrder)
+        {
+            scanOrder = default;
+            if (!ScanOrderLookup.HasComponent(entity))
+                return false;
+
+            scanOrder = ScanOrderLookup[entity];
+            return scanOrder.HasStarted != 0 &&
+                   scanOrder.EngageDetectedTargets != 0 &&
+                   scanOrder.RadiusCells > 0;
+        }
+
+        private bool IsTargetInsideScanArea(Entity target, in UnitScanOrder scanOrder)
+        {
+            return TransformLookup.HasComponent(target) &&
+                   IsPositionInsideScanArea(TransformLookup[target].Position, scanOrder);
+        }
+
+        private bool IsPositionInsideScanArea(float3 position, in UnitScanOrder scanOrder)
+        {
+            int2 cell = GridUtils.WorldToCell(Grid, position);
+            if (!GridUtils.InBounds(cell, Grid.Width, Grid.Height))
+                return false;
+
+            return ChebyshevDistance(cell, scanOrder.CenterCell) <= math.max(1, scanOrder.RadiusCells);
+        }
+
+        private static int ChebyshevDistance(int2 a, int2 b)
+        {
+            int2 delta = math.abs(a - b);
+            return math.max(delta.x, delta.y);
         }
 
         private bool IsValidRetaliationTarget(Entity candidate, byte selfFactionId)

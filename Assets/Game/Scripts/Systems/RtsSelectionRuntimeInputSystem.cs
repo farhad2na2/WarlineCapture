@@ -659,7 +659,8 @@ public sealed partial class RtsSelectionRuntimeInputSystem : SystemBase
     {
         if (input.TryGetActiveCommandMode(out TacticalCommandMode activeMode) &&
             (activeMode == TacticalCommandMode.Move ||
-             activeMode == TacticalCommandMode.Attack))
+             activeMode == TacticalCommandMode.Attack ||
+             activeMode == TacticalCommandMode.Scan))
         {
             return true;
         }

@@ -35,6 +35,11 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
             CollectMode = CollectEnemyMarkers,
             Markers = markerScratch
         }.Run();
+        new CollectScanIntelMarkersJob
+        {
+            MaxMarkers = MaxMarkers,
+            Markers = markerScratch
+        }.Run();
 
         for (int i = 0; i < markerScratch.Length; i++)
             markers.Add(markerScratch[i]);
@@ -86,6 +91,27 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
                                        factionId != FactionIdentity.PlayerFactionId,
                 _ => false
             };
+        }
+    }
+
+    [BurstCompile]
+    [WithAll(typeof(ScanIntelRevealedTag))]
+    [WithNone(typeof(UnitHealth))]
+    private partial struct CollectScanIntelMarkersJob : IJobEntity
+    {
+        public int MaxMarkers;
+        public NativeList<MatchHudMinimapMarkerElement> Markers;
+
+        private void Execute(in ScanIntelLastSeen lastSeen)
+        {
+            if (Markers.Length >= MaxMarkers || !FactionIdentity.IsHostileToPlayer(lastSeen.FactionId))
+                return;
+
+            Markers.Add(new MatchHudMinimapMarkerElement
+            {
+                Position = lastSeen.Position,
+                FactionId = lastSeen.FactionId
+            });
         }
     }
 }

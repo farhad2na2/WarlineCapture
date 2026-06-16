@@ -16,7 +16,9 @@ public sealed class MatchHudMinimapMarkerSystemTests
         {
             var tests = new MatchHudMinimapMarkerSystemTests();
             tests.MinimapMarkerSystemPublishesLiveCombatMarkersWithPlayerPriorityAndCap();
-            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=1");
+            tests.MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers();
+            tests.MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether();
+            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -74,12 +76,110 @@ public sealed class MatchHudMinimapMarkerSystemTests
         Assert.AreEqual(0, neutralCount);
     }
 
-    private static void CreateUnit(EntityManager em, byte factionId, float3 position, int health)
+    [Test]
+    public void MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers()
+    {
+        using var world = new World(nameof(MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers));
+        EntityManager em = world.EntityManager;
+        float3 revealedBuildingPosition = new(40f, 0f, 55f);
+        float3 friendlyIntelPosition = new(80f, 0f, 90f);
+        float3 liveScannedEnemyPosition = new(100f, 0f, 110f);
+
+        CreateScanIntelContact(em, FactionIdentity.EnemyFactionId, revealedBuildingPosition);
+        CreateScanIntelContact(em, FactionIdentity.PlayerFactionId, friendlyIntelPosition);
+
+        Entity liveScannedEnemy = em.CreateEntity(
+            typeof(UnitHealth),
+            typeof(LocalTransform),
+            typeof(Faction),
+            typeof(ScanIntelRevealedTag),
+            typeof(ScanIntelLastSeen));
+        em.SetComponentData(liveScannedEnemy, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(liveScannedEnemy, LocalTransform.FromPosition(liveScannedEnemyPosition));
+        em.SetComponentData(liveScannedEnemy, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(liveScannedEnemy, new ScanIntelLastSeen
+        {
+            Position = liveScannedEnemyPosition,
+            FactionId = FactionIdentity.EnemyFactionId
+        });
+
+        SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        using EntityQuery markerQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        Entity markerEntity = markerQuery.GetSingletonEntity();
+        DynamicBuffer<MatchHudMinimapMarkerElement> markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity);
+
+        Assert.AreEqual(2, markers.Length);
+        AssertMarkerCount(markers, revealedBuildingPosition, 1);
+        AssertMarkerCount(markers, liveScannedEnemyPosition, 1);
+        AssertMarkerCount(markers, friendlyIntelPosition, 0);
+    }
+
+    [Test]
+    public void MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether()
+    {
+        using var world = new World(nameof(MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether));
+        EntityManager em = world.EntityManager;
+        float3 selectedSoldierPosition = new(12f, 0f, 14f);
+        float3 selectedVehiclePosition = new(18f, 0f, 22f);
+        float3 revealedHostilePosition = new(90f, 0f, 96f);
+        float3 friendlyIntelPosition = new(100f, 0f, 106f);
+
+        Entity selectedSoldier = CreateUnit(em, FactionIdentity.PlayerFactionId, selectedSoldierPosition, 100);
+        Entity selectedVehicle = CreateUnit(em, FactionIdentity.PlayerFactionId, selectedVehiclePosition, 100);
+        em.AddComponent<SelectedUnitTag>(selectedSoldier);
+        em.AddComponent<SelectedUnitTag>(selectedVehicle);
+        CreateScanIntelContact(em, FactionIdentity.EnemyFactionId, revealedHostilePosition);
+        CreateScanIntelContact(em, FactionIdentity.PlayerFactionId, friendlyIntelPosition);
+
+        SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        using EntityQuery markerQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        Entity markerEntity = markerQuery.GetSingletonEntity();
+        DynamicBuffer<MatchHudMinimapMarkerElement> markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity);
+
+        Assert.AreEqual(3, markers.Length);
+        AssertMarkerCount(markers, selectedSoldierPosition, 1);
+        AssertMarkerCount(markers, selectedVehiclePosition, 1);
+        AssertMarkerCount(markers, revealedHostilePosition, 1);
+        AssertMarkerCount(markers, friendlyIntelPosition, 0);
+    }
+
+    private static Entity CreateUnit(EntityManager em, byte factionId, float3 position, int health)
     {
         Entity unit = em.CreateEntity(typeof(UnitHealth), typeof(LocalTransform), typeof(Faction));
         em.SetComponentData(unit, new UnitHealth { Current = health, Max = 100 });
         em.SetComponentData(unit, LocalTransform.FromPosition(position));
         em.SetComponentData(unit, new Faction { Id = factionId });
+        return unit;
+    }
+
+    private static void CreateScanIntelContact(EntityManager em, byte factionId, float3 position)
+    {
+        Entity contact = em.CreateEntity(typeof(ScanIntelRevealedTag), typeof(ScanIntelLastSeen));
+        em.SetComponentData(contact, new ScanIntelLastSeen
+        {
+            Position = position,
+            FactionId = factionId
+        });
+    }
+
+    private static void AssertMarkerCount(DynamicBuffer<MatchHudMinimapMarkerElement> markers, float3 position, int expectedCount)
+    {
+        int count = 0;
+        for (int i = 0; i < markers.Length; i++)
+        {
+            if (math.distance(markers[i].Position, position) < 0.001f)
+                count++;
+        }
+
+        Assert.AreEqual(expectedCount, count);
     }
 }
 #endif

@@ -36,6 +36,10 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.InstalledMatchHudSelectionPanelActivatesThroughRuntimeBinding(),
                 ref passed);
             RunValidationStep(
+                nameof(InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities),
+                test => test.InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities(),
+                ref passed);
+            RunValidationStep(
                 nameof(RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup),
                 test => test.RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup(),
                 ref passed);
@@ -202,6 +206,55 @@ public sealed class UIShellCurrentContentLoadTests
         feedback.ApplySelection(_world.EntityManager, unit, new SelectionUiReadModelLookup());
 
         Assert.IsTrue(selectedPanel.gameObject.activeSelf, "Selecting a valid unit must activate the active Match HUD SelectedSquadPanel.");
+    }
+
+    [Test]
+    public void InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
+        });
+
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
+        Assert.NotNull(controls);
+
+        var readModel = new FakeSelectionUiReadModel
+        {
+            CanHold = true,
+            CanStop = true,
+            CanScan = false,
+            ScanReason = TacticalCommandReasonCode.ScanUnavailable
+        };
+        content.BindGameplayRuntimeDependencies(
+            new SelectionUiCommandSystem(),
+            selectionUiReadModelSystem: readModel);
+        content.RefreshMatchHudCommandControlState();
+
+        Assert.IsTrue(controls.HoldButton.interactable, "Hold should follow the focused-unit read-model capability.");
+        Assert.IsTrue(controls.StopButton.interactable, "Stop should follow the focused-unit read-model capability.");
+        if (controls.CommandWheelStopButton != null)
+            Assert.IsTrue(controls.CommandWheelStopButton.interactable, "Command wheel Stop should share the Stop capability model.");
+        Assert.IsFalse(controls.ScanButton.interactable, "Scan should be disabled when the read model reports ScanUnavailable.");
+
+        readModel.CanHold = false;
+        readModel.HoldReason = TacticalCommandReasonCode.CommandUnavailable;
+        readModel.CanStop = false;
+        readModel.StopReason = TacticalCommandReasonCode.CommandUnavailable;
+        readModel.CanScan = true;
+        readModel.ScanReason = TacticalCommandReasonCode.None;
+        content.RefreshMatchHudCommandControlState();
+
+        Assert.IsFalse(controls.HoldButton.interactable, "Hold should disable when the read model rejects hold.");
+        Assert.IsFalse(controls.StopButton.interactable, "Stop should disable when the read model rejects stop.");
+        if (controls.CommandWheelStopButton != null)
+            Assert.IsFalse(controls.CommandWheelStopButton.interactable, "Command wheel Stop should keep sharing the Stop capability model.");
+        Assert.IsTrue(controls.ScanButton.interactable, "Scan should enable when the read model allows scan.");
     }
 
     [Test]
@@ -605,5 +658,22 @@ public sealed class UIShellCurrentContentLoadTests
         SerializedProperty property = serialized.FindProperty(propertyName);
         Assert.NotNull(property, $"{propertyName} must exist on BuildPlacementConfirmationBarView.");
         Assert.NotNull(property.objectReferenceValue, $"{propertyName} must be assigned on the placement bar prefab.");
+    }
+
+    private sealed class FakeSelectionUiReadModel : ISelectionUiReadModel
+    {
+        public bool CanHold;
+        public bool CanStop;
+        public bool CanScan;
+        public TacticalCommandReasonCode HoldReason;
+        public TacticalCommandReasonCode StopReason;
+        public TacticalCommandReasonCode ScanReason;
+
+        public bool FocusedUnitCanHold => CanHold;
+        public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
+        public bool FocusedUnitCanStop => CanStop;
+        public TacticalCommandReasonCode FocusedUnitStopDisabledReason => StopReason;
+        public bool FocusedUnitCanScan => CanScan;
+        public TacticalCommandReasonCode FocusedUnitScanDisabledReason => ScanReason;
     }
 }

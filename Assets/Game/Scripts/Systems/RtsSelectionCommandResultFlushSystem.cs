@@ -942,6 +942,13 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
             RtsSelectionCommandResultElement result = _scanCommandResultScratch[i];
             if (result.Accepted == 0)
             {
+                bool clearRejectedInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
+                if (clearRejectedInputCommandMode)
+                {
+                    context.InputSystem.ClearActiveCommandMode();
+                    context.SetCameraDragging?.Invoke(false);
+                    context.ClearHudCommandMode?.Invoke();
+                }
                 if (result.HasCommandResult != 0)
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                 continue;
@@ -1154,6 +1161,9 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
     {
         if (result.Accepted == 0)
             return TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+
+        if (result.DeferredToSource != 0)
+            return TacticalCommandResult.Success("SCAN ORDERED: SCANNER EN ROUTE");
 
         string contacts = result.RevealedCount == 1
             ? "1 CONTACT"

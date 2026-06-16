@@ -27,6 +27,8 @@ public partial struct UnitAirMovementSystem : ISystem
         var debugFireTargetLookup = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true);
         var transitLookup = SystemAPI.GetComponentLookup<UnitSpawnTransitTag>(true);
         var ropeDisembarkLookup = SystemAPI.GetComponentLookup<UnitTransportRopeDisembarkRequest>(true);
+        var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
+        var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
 
         foreach (var (transform, unitGrid, move, attack, airMovement, airState, entity) in SystemAPI
                      .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAttack>, RefRO<UnitAirMovement>, RefRW<UnitAirComponent>>()
@@ -253,6 +255,8 @@ public partial struct UnitAirMovementSystem : ISystem
             }
 
             stateRw.AttackRunActive = 0;
+            bool hasActiveScanOrder = scanOrderLookup.HasComponent(entity);
+            bool holdingPosition = holdPositionLookup.HasComponent(entity);
 
             bool hasDirectTarget = targetLookup.HasComponent(entity);
             if (hasDirectTarget)
@@ -384,7 +388,8 @@ public partial struct UnitAirMovementSystem : ISystem
                         if (completedPass)
                         {
                             stateRw.AttackRunActive = 0;
-                            stateRw.ReturningHome = 1;
+                            if (!hasActiveScanOrder)
+                                stateRw.ReturningHome = 1;
                             stateRw.ReturnApproachInitialized = 0;
                         }
                     }
@@ -424,10 +429,44 @@ public partial struct UnitAirMovementSystem : ISystem
                     }
                     else if (stateRw.UsesRunway == 0)
                     {
-                        stateRw.ReturningHome = 1;
+                        if (!hasActiveScanOrder)
+                            stateRw.ReturningHome = 1;
                     }
                 }
                 continue;
+            }
+
+            if (hasActiveScanOrder &&
+                stateRw.Airborne != 0 &&
+                stateRw.ReturningHome == 0 &&
+                stateRw.TakeoffRolling == 0 &&
+                stateRw.LandingRolling == 0)
+            {
+                stateRw.AttackRunActive = 0;
+                stateRw.ReturnApproachInitialized = 0;
+                continue;
+            }
+
+            if (holdingPosition)
+            {
+                stateRw.AttackRunActive = 0;
+                if (stateRw.Airborne != 0 &&
+                    stateRw.ReturningHome == 0 &&
+                    stateRw.TakeoffRolling == 0 &&
+                    stateRw.LandingRolling == 0)
+                {
+                    stateRw.ReturnApproachInitialized = 0;
+                    continue;
+                }
+
+                if (stateRw.Airborne == 0 &&
+                    stateRw.ReturningHome == 0 &&
+                    stateRw.TakeoffRolling == 0 &&
+                    stateRw.LandingRolling == 0)
+                {
+                    stateRw.ReturnApproachInitialized = 0;
+                    continue;
+                }
             }
 
             if (stateRw.ReturningHome != 0 || stateRw.Airborne != 0 || stateRw.LandingRolling != 0 || stateRw.TakeoffRolling != 0)

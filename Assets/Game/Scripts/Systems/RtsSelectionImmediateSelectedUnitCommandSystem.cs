@@ -304,7 +304,7 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
                 if (!em.Exists(entity))
                     continue;
 
-                ClearImmediateOrderComponents(em, ecb, entity);
+                ClearImmediateOrderComponents(em, ecb, entity, holdPosition);
                 if (holdPosition)
                 {
                     if (!em.HasComponent<HoldPositionOrderTag>(entity))
@@ -395,21 +395,27 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         return removedAny;
     }
 
-    private static void ClearImmediateOrderComponents(EntityManager em, EntityCommandBuffer ecb, Entity entity)
+    private static void ClearImmediateOrderComponents(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity entity,
+        bool holdPosition)
     {
         UnitMoveOrderRequestSystem.ClearMovementOrderComponents(em, ecb, entity);
-        StopRuntimeMotion(em, ecb, entity);
+        if (holdPosition)
+            HoldRuntimeMotion(em, ecb, entity);
+        else
+            StopRuntimeMotion(em, ecb, entity);
+    }
+
+    private static void HoldRuntimeMotion(EntityManager em, EntityCommandBuffer ecb, Entity entity)
+    {
+        StopVehicleKinematics(em, ecb, entity);
     }
 
     private static void StopRuntimeMotion(EntityManager em, EntityCommandBuffer ecb, Entity entity)
     {
-        if (em.HasComponent<UnitVehicleKinematics>(entity))
-        {
-            UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(entity);
-            kinematics.CurrentSpeed = 0f;
-            kinematics.StallSeconds = 0f;
-            ecb.SetComponent(entity, kinematics);
-        }
+        StopVehicleKinematics(em, ecb, entity);
 
         if (!em.HasComponent<UnitAirComponent>(entity))
             return;
@@ -421,6 +427,17 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         airState.AttackRunActive = 0;
         airState.ReturnApproachInitialized = 0;
         ecb.SetComponent(entity, airState);
+    }
+
+    private static void StopVehicleKinematics(EntityManager em, EntityCommandBuffer ecb, Entity entity)
+    {
+        if (em.HasComponent<UnitVehicleKinematics>(entity))
+        {
+            UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(entity);
+            kinematics.CurrentSpeed = 0f;
+            kinematics.StallSeconds = 0f;
+            ecb.SetComponent(entity, kinematics);
+        }
     }
 
     private static bool RemoveRequests(

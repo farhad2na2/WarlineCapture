@@ -33,6 +33,8 @@ public sealed class SelectionOrderMarkerSystemTests
         {
             RunCase(test => test.ShowMoveOrderMarker_ShowsUpgradedMoveMarker());
             RunCase(test => test.TryShowCommandResultMarker_ConsumesMoveAttackScanAndBoardResults());
+            RunCase(test => test.ShowScanOrderMarker_UsesReadableCompositeMarker());
+            RunCase(test => test.ShowScanOrderMarker_UsesOverlayAndStaysReadableAboveSurface());
             RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForBuildingTargets());
             RunCase(test => test.ShowAttackOrderMarker_UsesRuntimeBuildingBoundsWhenAvailable());
             RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForEntityTargets());
@@ -44,7 +46,7 @@ public sealed class SelectionOrderMarkerSystemTests
             RunCase(test => test.MoveMarkerPrefab_UsesCleanConnectedWaypointPieces());
             RunCase(test => test.SelectionHologramShader_DefinesDotsInstancingVariant());
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=13");
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=15");
         }
         catch (System.Exception ex)
         {
@@ -176,6 +178,106 @@ public sealed class SelectionOrderMarkerSystemTests
         {
             Object.DestroyImmediate(movePrefab);
             Object.DestroyImmediate(attackPrefab);
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void ShowScanOrderMarker_UsesReadableCompositeMarker()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_ScanMarker");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(null, null, null, null, 1f, runtimeRoot.transform);
+            markers.ShowScanOrderMarker(
+                em,
+                new int2(3, 3),
+                new float3(3f, 1.2f, 3f),
+                radiusCells: 1,
+                visibleSeconds: 0.25f);
+
+            Transform scanMarker = FindChildByNameForTest(runtimeRoot.transform, "ScanOrderMarkerRuntime");
+            Assert.IsNotNull(scanMarker);
+            Assert.IsTrue(scanMarker.gameObject.activeSelf);
+
+            LineRenderer[] renderers = scanMarker.GetComponentsInChildren<LineRenderer>(true);
+            Assert.GreaterOrEqual(renderers.Length, 6);
+
+            LineRenderer outerRing = AssertScanRenderer(scanMarker, "ScanOrderMarker_OuterRing", loop: true);
+            LineRenderer innerRing = AssertScanRenderer(scanMarker, "ScanOrderMarker_InnerRing", loop: true);
+            Assert.AreEqual(128, outerRing.positionCount);
+            Assert.AreEqual(128, innerRing.positionCount);
+            Assert.That(outerRing.widthMultiplier, Is.GreaterThanOrEqualTo(0.2f));
+            Assert.That(innerRing.widthMultiplier, Is.GreaterThanOrEqualTo(0.08f));
+
+            Vector3 outerPosition = outerRing.GetPosition(0);
+            float visibleRadius = new Vector2(outerPosition.x - 3f, outerPosition.z - 3f).magnitude;
+            Assert.That(visibleRadius, Is.GreaterThanOrEqualTo(2.99f));
+            Assert.That(outerPosition.y, Is.GreaterThan(1.2f));
+
+            for (int i = 0; i < 4; i++)
+            {
+                LineRenderer bracket = AssertScanRenderer(scanMarker, $"ScanOrderMarker_Bracket_{i}", loop: false);
+                Assert.AreEqual(12, bracket.positionCount);
+                Assert.That(bracket.widthMultiplier, Is.GreaterThanOrEqualTo(0.18f));
+            }
+        }
+        finally
+        {
+            markers.Dispose();
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void ShowScanOrderMarker_UsesOverlayAndStaysReadableAboveSurface()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_ScanMarkerGrounding");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em, width: 16, height: 16, cellSize: 2f, originY: 5f);
+
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(null, null, null, null, 1f, runtimeRoot.transform);
+            markers.ShowScanOrderMarker(
+                em,
+                new int2(3, 4),
+                new float3(6f, -10f, 8f),
+                radiusCells: 0,
+                visibleSeconds: 0.1f);
+
+            Transform scanMarker = FindChildByNameForTest(runtimeRoot.transform, "ScanOrderMarkerRuntime");
+            Assert.IsNotNull(scanMarker);
+            Assert.IsTrue(scanMarker.gameObject.activeSelf);
+
+            LineRenderer outerRing = AssertScanRenderer(scanMarker, "ScanOrderMarker_OuterRing", loop: true);
+            LineRenderer innerRing = AssertScanRenderer(scanMarker, "ScanOrderMarker_InnerRing", loop: true);
+            AssertScanLineStaysAboveY(outerRing, 5f + 0.18f);
+            AssertScanLineStaysAboveY(innerRing, 5f + 0.18f);
+
+            Vector3 outerPosition = outerRing.GetPosition(0);
+            float visibleRadius = new Vector2(outerPosition.x - 6f, outerPosition.z - 8f).magnitude;
+            Assert.That(visibleRadius, Is.GreaterThanOrEqualTo(5.99f));
+            AssertScanLineIsConnected(outerRing, maxSegmentLength: 0.6f);
+            AssertScanLineIsConnected(innerRing, maxSegmentLength: 0.4f);
+
+            for (int i = 0; i < 4; i++)
+            {
+                LineRenderer bracket = AssertScanRenderer(scanMarker, $"ScanOrderMarker_Bracket_{i}", loop: false);
+                AssertScanLineStaysAboveY(bracket, 5f + 0.18f);
+                AssertScanLineIsConnected(bracket, maxSegmentLength: 0.7f);
+            }
+        }
+        finally
+        {
+            markers.Dispose();
             Object.DestroyImmediate(runtimeRoot);
         }
     }
@@ -628,18 +730,18 @@ public sealed class SelectionOrderMarkerSystemTests
         return count;
     }
 
-    private static Entity CreateMarkerGrid(EntityManager em)
+    private static Entity CreateMarkerGrid(EntityManager em, int width = 32, int height = 32, float cellSize = 1f, float originY = 0f)
     {
         Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
         em.SetComponentData(gridEntity, new GridConfig
         {
-            Width = 32,
-            Height = 32,
-            CellSize = 1f,
-            Origin = new float3(0f, 0f, 0f)
+            Width = width,
+            Height = height,
+            CellSize = cellSize,
+            Origin = new float3(0f, originY, 0f)
         });
         DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
-        for (int i = 0; i < 32 * 32; i++)
+        for (int i = 0; i < width * height; i++)
             walkable.Add(new GridWalkable { Value = 1 });
         return gridEntity;
     }
@@ -680,6 +782,48 @@ public sealed class SelectionOrderMarkerSystemTests
         Assert.AreEqual(ReflectionProbeUsage.Off, renderer.reflectionProbeUsage);
         Assert.AreEqual(MotionVectorGenerationMode.ForceNoMotion, renderer.motionVectorGenerationMode);
         Assert.AreEqual(materialPath, AssetDatabase.GetAssetPath(renderer.sharedMaterial));
+    }
+
+    private static LineRenderer AssertScanRenderer(Transform scanMarker, string childName, bool loop)
+    {
+        Transform child = scanMarker.Find(childName);
+        Assert.IsNotNull(child, $"Missing scan marker child {childName}");
+        LineRenderer renderer = child.GetComponent<LineRenderer>();
+        Assert.IsNotNull(renderer, $"{childName} must have a LineRenderer");
+        Assert.AreEqual(loop, renderer.loop, $"{childName} loop mismatch");
+        Assert.IsTrue(renderer.useWorldSpace, $"{childName} must use world-space positions");
+        Assert.AreEqual(ShadowCastingMode.Off, renderer.shadowCastingMode);
+        Assert.IsFalse(renderer.receiveShadows);
+        Assert.AreEqual(LightProbeUsage.Off, renderer.lightProbeUsage);
+        Assert.AreEqual(ReflectionProbeUsage.Off, renderer.reflectionProbeUsage);
+        Assert.AreEqual(MotionVectorGenerationMode.ForceNoMotion, renderer.motionVectorGenerationMode);
+        Assert.IsFalse(renderer.allowOcclusionWhenDynamic);
+        Assert.IsNotNull(renderer.sharedMaterial);
+        Assert.That(renderer.sharedMaterial.renderQueue, Is.GreaterThanOrEqualTo((int)RenderQueue.Overlay));
+        return renderer;
+    }
+
+    private static void AssertScanLineStaysAboveY(LineRenderer renderer, float minimumY)
+    {
+        for (int i = 0; i < renderer.positionCount; i++)
+            Assert.That(renderer.GetPosition(i).y, Is.GreaterThanOrEqualTo(minimumY - 0.001f));
+    }
+
+    private static void AssertScanLineIsConnected(LineRenderer renderer, float maxSegmentLength)
+    {
+        for (int i = 1; i < renderer.positionCount; i++)
+        {
+            float distance = Vector3.Distance(renderer.GetPosition(i - 1), renderer.GetPosition(i));
+            Assert.That(distance, Is.LessThanOrEqualTo(maxSegmentLength));
+        }
+
+        if (!renderer.loop || renderer.positionCount <= 1)
+            return;
+
+        float closingDistance = Vector3.Distance(
+            renderer.GetPosition(renderer.positionCount - 1),
+            renderer.GetPosition(0));
+        Assert.That(closingDistance, Is.LessThanOrEqualTo(maxSegmentLength));
     }
 
     private static void AssertTargetLockPropertyBlock(MaterialPropertyBlock propertyBlock)

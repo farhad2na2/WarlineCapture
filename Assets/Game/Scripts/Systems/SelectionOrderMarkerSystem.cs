@@ -31,6 +31,8 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
     private PremiumWorldSelectionBoundaryView _attackTargetSelectionBoundaryView;
     private GameObject _scanOrderMarker;
     private LineRenderer _scanOrderMarkerRenderer;
+    private LineRenderer _scanOrderMarkerInnerRenderer;
+    private readonly LineRenderer[] _scanOrderMarkerBracketRenderers = new LineRenderer[4];
     private float _scanOrderMarkerHideTime = -1f;
     private GameObject _moveOrderMarkerPrefab;
     private GameObject _attackOrderMarkerPrefab;
@@ -71,7 +73,20 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
     private static readonly Color BoardPreviewMarkerColor = new(0.2f, 1f, 0.78f, 0.68f);
     private static readonly Color BoardPreviewMarkerEmissionColor = new(0.04f, 0.34f, 0.25f, 1f);
     private static readonly Color BoardPreviewMarkerAccentColor = new(0.72f, 1f, 0.88f, 1f);
-    private const int ScanMarkerSegments = 72;
+    private const int ScanMarkerRingSegments = 128;
+    private const int ScanMarkerBracketSegments = 12;
+    private const float ScanMarkerVerticalOffset = 0.18f;
+    private const float ScanMarkerMinimumRadiusCells = 3f;
+    private const float ScanMarkerInnerRadiusScale = 0.62f;
+    private const float ScanMarkerBracketRadiusScale = 1.08f;
+    private const float ScanMarkerBracketArcHalfRadians = 0.22f;
+    private const float ScanMarkerOuterWidth = 0.22f;
+    private const float ScanMarkerInnerWidth = 0.085f;
+    private const float ScanMarkerBracketWidth = 0.2f;
+    private const float ScanMarkerMinimumVisibleSeconds = 3.5f;
+    private static readonly Color ScanMarkerOuterColor = new(0.22f, 1f, 0.9f, 0.98f);
+    private static readonly Color ScanMarkerInnerColor = new(0.12f, 0.72f, 1f, 0.66f);
+    private static readonly Color ScanMarkerBracketColor = new(0.54f, 1f, 0.96f, 1f);
 
     protected override void OnCreate()
     {
@@ -161,21 +176,13 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
 
     public void Dispose()
     {
-        if (_moveOrderMarker != null)
-            UnityEngine.Object.Destroy(_moveOrderMarker);
-        if (_attackOrderMarker != null)
-            UnityEngine.Object.Destroy(_attackOrderMarker);
-        if (_attackTargetRingMarker != null)
-            UnityEngine.Object.Destroy(_attackTargetRingMarker);
-        if (_attackTargetSelectionMarker != null)
-            UnityEngine.Object.Destroy(_attackTargetSelectionMarker);
-        if (_scanOrderMarker != null)
-            UnityEngine.Object.Destroy(_scanOrderMarker);
+        DestroyRuntimeObject(_moveOrderMarker);
+        DestroyRuntimeObject(_attackOrderMarker);
+        DestroyRuntimeObject(_attackTargetRingMarker);
+        DestroyRuntimeObject(_attackTargetSelectionMarker);
+        DestroyRuntimeObject(_scanOrderMarker);
         for (int i = 0; i < _attackTargetPreviewMarkers.Count; i++)
-        {
-            if (_attackTargetPreviewMarkers[i] != null)
-                UnityEngine.Object.Destroy(_attackTargetPreviewMarkers[i]);
-        }
+            DestroyRuntimeObject(_attackTargetPreviewMarkers[i]);
 
         _moveOrderMarker = null;
         _moveOrderMarkerRenderers = null;
@@ -189,6 +196,9 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
         _attackTargetSelectionBoundaryView = null;
         _scanOrderMarker = null;
         _scanOrderMarkerRenderer = null;
+        _scanOrderMarkerInnerRenderer = null;
+        for (int i = 0; i < _scanOrderMarkerBracketRenderers.Length; i++)
+            _scanOrderMarkerBracketRenderers[i] = null;
         _attackTargetPreviewMarkers.Clear();
         _attackTargetPreviewMarkerRenderers.Clear();
         _attackTargetPreviewVisible = false;
@@ -503,24 +513,22 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
             return;
 
         EnsureScanOrderMarker();
-        if (_scanOrderMarker == null || _scanOrderMarkerRenderer == null)
+        if (_scanOrderMarker == null || _scanOrderMarkerRenderer == null || _scanOrderMarkerInnerRenderer == null)
             return;
 
-        float radius = Mathf.Max(grid.CellSize, radiusCells * grid.CellSize);
-        Vector3 center = new(worldPoint.x, grid.Origin.y + 0.08f, worldPoint.z);
+        float cellSize = Mathf.Max(0.01f, grid.CellSize);
+        float radius = Mathf.Max(cellSize * ScanMarkerMinimumRadiusCells, Mathf.Max(1, radiusCells) * cellSize);
+        float markerSurfaceY = ResolveCommandMarkerSurfaceY(grid, new Vector3(worldPoint.x, worldPoint.y, worldPoint.z));
+        Vector3 center = new(worldPoint.x, markerSurfaceY + ScanMarkerVerticalOffset, worldPoint.z);
         _scanOrderMarker.transform.position = Vector3.zero;
         _scanOrderMarker.transform.rotation = Quaternion.identity;
-        _scanOrderMarkerRenderer.positionCount = ScanMarkerSegments;
-        for (int i = 0; i < ScanMarkerSegments; i++)
-        {
-            float t = (i / (float)ScanMarkerSegments) * Mathf.PI * 2f;
-            _scanOrderMarkerRenderer.SetPosition(
-                i,
-                center + new Vector3(Mathf.Cos(t) * radius, 0f, Mathf.Sin(t) * radius));
-        }
+        WriteScanRing(_scanOrderMarkerRenderer, center, radius);
+        WriteScanRing(_scanOrderMarkerInnerRenderer, center, radius * ScanMarkerInnerRadiusScale);
+        WriteScanBrackets(center, radius * ScanMarkerBracketRadiusScale);
 
         _scanOrderMarker.SetActive(true);
-        _scanOrderMarkerHideTime = UnityEngine.Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
+        float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
+        _scanOrderMarkerHideTime = UnityEngine.Time.time + Mathf.Max(duration, ScanMarkerMinimumVisibleSeconds);
     }
 
     public void UpdateAttackTargetPreviewMarkers(EntityManager em, bool visible)
@@ -734,32 +742,150 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
 
     private void EnsureScanOrderMarker()
     {
-        if (_scanOrderMarker != null && _scanOrderMarkerRenderer != null)
+        if (_scanOrderMarker != null &&
+            _scanOrderMarkerRenderer != null &&
+            _scanOrderMarkerInnerRenderer != null &&
+            AreScanBracketRenderersReady())
+        {
             return;
+        }
+
+        DestroyRuntimeObject(_scanOrderMarker);
 
         _scanOrderMarker = new GameObject("ScanOrderMarkerRuntime");
         if (_runtimeRoot != null)
             _scanOrderMarker.transform.SetParent(_runtimeRoot, false);
 
-        _scanOrderMarkerRenderer = _scanOrderMarker.AddComponent<LineRenderer>();
-        _scanOrderMarkerRenderer.useWorldSpace = true;
-        _scanOrderMarkerRenderer.loop = true;
-        _scanOrderMarkerRenderer.positionCount = ScanMarkerSegments;
-        _scanOrderMarkerRenderer.widthMultiplier = 0.18f;
-        _scanOrderMarkerRenderer.numCornerVertices = 4;
-        _scanOrderMarkerRenderer.numCapVertices = 4;
-        _scanOrderMarkerRenderer.alignment = LineAlignment.View;
-        _scanOrderMarkerRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        _scanOrderMarkerRenderer.receiveShadows = false;
-        _scanOrderMarkerRenderer.lightProbeUsage = LightProbeUsage.Off;
-        _scanOrderMarkerRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
-        _scanOrderMarkerRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
-        Shader shader = Shader.Find("Sprites/Default");
-        if (shader != null)
-            _scanOrderMarkerRenderer.material = new Material(shader);
-        _scanOrderMarkerRenderer.startColor = new Color(0.25f, 1f, 0.85f, 0.95f);
-        _scanOrderMarkerRenderer.endColor = new Color(0.12f, 0.65f, 1f, 0.95f);
+        Material markerMaterial = CreateScanOrderMarkerMaterial();
+        _scanOrderMarkerRenderer = CreateScanLineRenderer(
+            "ScanOrderMarker_OuterRing",
+            loop: true,
+            ScanMarkerOuterWidth,
+            ScanMarkerOuterColor,
+            ScanMarkerOuterColor,
+            markerMaterial);
+        _scanOrderMarkerInnerRenderer = CreateScanLineRenderer(
+            "ScanOrderMarker_InnerRing",
+            loop: true,
+            ScanMarkerInnerWidth,
+            ScanMarkerInnerColor,
+            ScanMarkerInnerColor,
+            markerMaterial);
+        for (int i = 0; i < _scanOrderMarkerBracketRenderers.Length; i++)
+        {
+            _scanOrderMarkerBracketRenderers[i] = CreateScanLineRenderer(
+                $"ScanOrderMarker_Bracket_{i}",
+                loop: false,
+                ScanMarkerBracketWidth,
+                ScanMarkerBracketColor,
+                ScanMarkerBracketColor,
+                markerMaterial);
+        }
+
         _scanOrderMarker.SetActive(false);
+    }
+
+    private bool AreScanBracketRenderersReady()
+    {
+        for (int i = 0; i < _scanOrderMarkerBracketRenderers.Length; i++)
+        {
+            if (_scanOrderMarkerBracketRenderers[i] == null)
+                return false;
+        }
+
+        return true;
+    }
+
+    private LineRenderer CreateScanLineRenderer(
+        string objectName,
+        bool loop,
+        float width,
+        Color startColor,
+        Color endColor,
+        Material markerMaterial)
+    {
+        var lineObject = new GameObject(objectName);
+        lineObject.transform.SetParent(_scanOrderMarker.transform, false);
+        LineRenderer renderer = lineObject.AddComponent<LineRenderer>();
+        renderer.useWorldSpace = true;
+        renderer.loop = loop;
+        renderer.positionCount = loop ? ScanMarkerRingSegments : ScanMarkerBracketSegments;
+        renderer.widthMultiplier = width;
+        renderer.numCornerVertices = 6;
+        renderer.numCapVertices = 6;
+        renderer.alignment = LineAlignment.View;
+        renderer.shadowCastingMode = ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        renderer.lightProbeUsage = LightProbeUsage.Off;
+        renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        renderer.allowOcclusionWhenDynamic = false;
+        if (markerMaterial != null)
+            renderer.sharedMaterial = markerMaterial;
+        renderer.startColor = startColor;
+        renderer.endColor = endColor;
+        return renderer;
+    }
+
+    private static Material CreateScanOrderMarkerMaterial()
+    {
+        Shader shader = Shader.Find("Hidden/Internal-Colored");
+        if (shader == null)
+            shader = Shader.Find("Sprites/Default");
+        if (shader == null)
+            return null;
+
+        var material = new Material(shader)
+        {
+            name = "ScanOrderMarkerOverlayMaterial",
+            hideFlags = HideFlags.HideAndDontSave,
+            renderQueue = (int)RenderQueue.Overlay
+        };
+        material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+        material.SetInt("_Cull", (int)CullMode.Off);
+        material.SetInt("_ZWrite", 0);
+        material.SetInt("_ZTest", (int)CompareFunction.Always);
+        material.SetColor(LegacyColorProperty, ScanMarkerOuterColor);
+        material.SetColor(BaseColorProperty, ScanMarkerOuterColor);
+        material.SetColor(EmissionColorProperty, ScanMarkerBracketColor);
+        material.SetColor(AccentColorProperty, ScanMarkerInnerColor);
+        return material;
+    }
+
+    private static void WriteScanRing(LineRenderer renderer, Vector3 center, float radius)
+    {
+        if (renderer == null)
+            return;
+
+        renderer.positionCount = ScanMarkerRingSegments;
+        for (int i = 0; i < ScanMarkerRingSegments; i++)
+        {
+            float t = (i / (float)ScanMarkerRingSegments) * Mathf.PI * 2f;
+            renderer.SetPosition(i, center + new Vector3(Mathf.Cos(t) * radius, 0f, Mathf.Sin(t) * radius));
+        }
+    }
+
+    private void WriteScanBrackets(Vector3 center, float radius)
+    {
+        for (int i = 0; i < _scanOrderMarkerBracketRenderers.Length; i++)
+        {
+            LineRenderer renderer = _scanOrderMarkerBracketRenderers[i];
+            if (renderer == null)
+                continue;
+
+            renderer.positionCount = ScanMarkerBracketSegments;
+            float baseAngle = (i * Mathf.PI * 0.5f) + (Mathf.PI * 0.25f);
+            float startAngle = baseAngle - ScanMarkerBracketArcHalfRadians;
+            float angleStep = (ScanMarkerBracketArcHalfRadians * 2f) / (ScanMarkerBracketSegments - 1);
+            for (int pointIndex = 0; pointIndex < ScanMarkerBracketSegments; pointIndex++)
+            {
+                float angle = startAngle + angleStep * pointIndex;
+                renderer.SetPosition(
+                    pointIndex,
+                    center + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius));
+            }
+        }
     }
 
     private void EnsureAttackTargetSelectionMarker()
@@ -1157,6 +1283,17 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
     {
         if (marker != null && marker.activeSelf != active)
             marker.SetActive(active);
+    }
+
+    private static void DestroyRuntimeObject(GameObject instance)
+    {
+        if (instance == null)
+            return;
+
+        if (Application.isPlaying)
+            UnityEngine.Object.Destroy(instance);
+        else
+            UnityEngine.Object.DestroyImmediate(instance);
     }
 
     private bool TryGetMarkerGroundY(EntityManager em, out float y)

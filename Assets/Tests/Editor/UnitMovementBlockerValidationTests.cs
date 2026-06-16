@@ -43,6 +43,24 @@ public sealed class UnitMovementBlockerValidationTests
         }
     }
 
+    public static void RunHoldCommandFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitMovementBlockerValidationTests();
+            tests.HeldEngagedCombatMovementClearsTargetOutsideAttackRange();
+            tests.AirHoldPositionDoesNotAutoReturnHomeWithoutTarget();
+            Debug.Log("[HoldCommandMovementValidation] result=Passed tests=2");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[HoldCommandMovementValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void UnitMovementTargetRejectsBuildingBlockerCells()
     {
@@ -275,6 +293,80 @@ public sealed class UnitMovementBlockerValidationTests
     }
 
     [Test]
+    public void HeldEngagedCombatMovementClearsTargetOutsideAttackRange()
+    {
+        using var world = new World("HeldEngagedCombatMovementValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+
+        try
+        {
+            CreateGrid(em, 16, 3, out blockerCounts, out blocked, out friendlyPassFactionIds);
+
+            Entity target = em.CreateEntity(
+                typeof(UnitHealth),
+                typeof(UnitFootprint));
+            em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(target, new UnitFootprint { Size = new int2(1, 1) });
+
+            Entity attacker = em.CreateEntity(
+                typeof(Faction),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitMove),
+                typeof(UnitMovementBehavior),
+                typeof(UnitVehicleMovement),
+                typeof(UnitVehicleKinematics),
+                typeof(UnitCombat),
+                typeof(UnitAttack),
+                typeof(EngageTarget),
+                typeof(HoldPositionOrderTag),
+                typeof(LocalTransform));
+            em.SetComponentData(attacker, new Faction { Id = 1 });
+            em.SetComponentData(attacker, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(attacker, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(attacker, new UnitMove { Speed = 4f, WalkSpeed = 4f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(attacker, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+            em.SetComponentData(attacker, new UnitVehicleMovement());
+            em.SetComponentData(attacker, new UnitVehicleKinematics { CurrentSpeed = 2f });
+            em.SetComponentData(attacker, new UnitCombat { AggroRangeCells = 12, ChaseBreakDistance = 30f, CanAttack = 1, AutoEngage = 1 });
+            em.SetComponentData(attacker, new UnitAttack { Range = 1f, CooldownSeconds = 1f, Damage = 1 });
+            em.SetComponentData(attacker, new EngageTarget
+            {
+                Target = target,
+                Cell = new int2(8, 1),
+                Position = new float3(8.5f, 0f, 1.5f),
+                IsCommanded = 0
+            });
+            em.SetComponentData(attacker, LocalTransform.FromPosition(new float3(1.5f, 0f, 1.5f)));
+
+            SystemHandle engagedMoveSystem = world.CreateSystem<UnitEngagedMovementSystem>();
+            world.SetTime(new TimeData(0.4d, 0.4f));
+            engagedMoveSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            float3 position = em.GetComponentData<LocalTransform>(attacker).Position;
+            EngageTarget engage = em.GetComponentData<EngageTarget>(attacker);
+            Assert.AreEqual(Entity.Null, engage.Target, "Held units must drop targets outside their effective attack range instead of chasing.");
+            Assert.AreEqual(1.5f, position.x, 0.001f);
+            Assert.AreEqual(1.5f, position.z, 0.001f);
+            Assert.AreEqual(0f, em.GetComponentData<UnitVehicleKinematics>(attacker).CurrentSpeed, 0.001f);
+        }
+        finally
+        {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
     public void AirMovementDoesNotMoveTowardDebugFireTarget()
     {
         using var world = new World("AirMovementDebugFireValidation");
@@ -418,6 +510,78 @@ public sealed class UnitMovementBlockerValidationTests
             Assert.AreEqual(0, airState.ReturningHome);
             Assert.AreEqual(1, airState.Airborne);
             Assert.IsTrue(em.HasComponent<UnitTarget>(helicopter), "Debug fire should pause existing air movement orders instead of consuming them.");
+        }
+        finally
+        {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void AirHoldPositionDoesNotAutoReturnHomeWithoutTarget()
+    {
+        using var world = new World("AirHoldPositionValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+
+        try
+        {
+            CreateGrid(em, 16, 8, out blockerCounts, out blocked, out friendlyPassFactionIds);
+
+            Entity jet = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAttack),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(HoldPositionOrderTag),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(8.5f, 6f, 3.5f);
+            em.SetComponentData(jet, new UnitGrid { Cell = new int2(8, 3) });
+            em.SetComponentData(jet, new UnitMove { Speed = 12f, WalkSpeed = 12f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(jet, new UnitAttack { Range = 12f, CooldownSeconds = 1f, Damage = 1 });
+            em.SetComponentData(jet, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 4f });
+            em.SetComponentData(jet, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1,
+                UsesRunway = 1,
+                AttackRunActive = 1,
+                ReturningHome = 0,
+                TakeoffRolling = 0,
+                LandingRolling = 0,
+                ReturnApproachInitialized = 1,
+                RunwayTakeoffPosition = new float3(1.5f, 0f, 3.5f),
+                RunwayTakeoffCell = new int2(1, 3),
+                RunwayLandingPosition = new float3(5.5f, 0f, 3.5f),
+                RunwayLandingCell = new int2(5, 3)
+            });
+            em.SetComponentData(jet, LocalTransform.FromPosition(startPosition));
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.4d, 0.4f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            float3 position = em.GetComponentData<LocalTransform>(jet).Position;
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(jet);
+            Assert.AreEqual(startPosition.x, position.x, 0.001f, "Held airborne units should not auto-return to runway when no target remains.");
+            Assert.AreEqual(startPosition.y, position.y, 0.001f);
+            Assert.AreEqual(startPosition.z, position.z, 0.001f);
+            Assert.AreEqual(1, airState.Airborne);
+            Assert.AreEqual(0, airState.ReturningHome);
+            Assert.AreEqual(0, airState.AttackRunActive);
+            Assert.AreEqual(0, airState.ReturnApproachInitialized);
         }
         finally
         {

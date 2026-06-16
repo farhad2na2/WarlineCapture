@@ -15,16 +15,18 @@ public sealed class MatchHudCommandFeedbackPanelTests
         try
         {
             RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons), tests => tests.RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_HoldStopAndScanUseClearCommandPrompts), tests => tests.RuntimeFeedbackSystem_HoldStopAndScanUseClearCommandPrompts());
             RunValidationStep(nameof(MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned), tests => tests.MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned());
             RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesBoardFeedbackActions), tests => tests.RuntimeFeedbackSystem_AppliesBoardFeedbackActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide), tests => tests.RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_HoldStopPromptsClearAndResultsAutoHide), tests => tests.RuntimeFeedbackSystem_HoldStopPromptsClearAndResultsAutoHide());
             RunValidationStep(nameof(RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration), tests => tests.RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration());
             RunValidationStep(nameof(RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration), tests => tests.RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
             RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
-            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=10");
+            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=12");
             EditorApplication.Exit(0);
         }
         catch (System.Exception exception)
@@ -99,6 +101,30 @@ public sealed class MatchHudCommandFeedbackPanelTests
             TacticalCommandResult.Success("Destroyed selected unit."));
         Assert.AreEqual("Destroyed selected unit.", text.text);
         Assert.AreSame(warning, icon.sprite);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_HoldStopAndScanUseClearCommandPrompts()
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Hold);
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Hold position and return fire.", text.text);
+        Assert.AreEqual(CommandFeedbackSeverity.Ready, TacticalCommandFeedbackText.ToInstructionSeverity(TacticalCommandMode.Hold));
+        Assert.AreEqual(TacticalCommandMode.Hold, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Stop);
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Stop selected units and clear orders.", text.text);
+        Assert.AreEqual(CommandFeedbackSeverity.Warning, TacticalCommandFeedbackText.ToInstructionSeverity(TacticalCommandMode.Stop));
+        Assert.AreEqual(TacticalCommandMode.Stop, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Scan);
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Tap scan area.", text.text);
+        Assert.AreEqual(CommandFeedbackSeverity.Ready, TacticalCommandFeedbackText.ToInstructionSeverity(TacticalCommandMode.Scan));
+        Assert.AreEqual(TacticalCommandMode.Scan, view.CurrentCommandMode);
     }
 
     [Test]
@@ -214,6 +240,45 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         Assert.IsTrue(panel.activeSelf);
         Assert.AreEqual("Choose destination.", text.text);
+    }
+
+    [Test]
+    public void RuntimeFeedbackSystem_HoldStopPromptsClearAndResultsAutoHide()
+    {
+        BattleHudRuntimeFeedbackView view = CreateFeedbackView(out GameObject panel, out TMP_Text text);
+        float now = Time.unscaledTime;
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Hold);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + 20f);
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Hold position and return fire.", text.text);
+        Assert.AreEqual(TacticalCommandMode.Hold, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(view);
+        Assert.IsFalse(panel.activeSelf);
+        Assert.AreEqual(TacticalCommandMode.None, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, TacticalCommandResult.Success("Holding current position."));
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Holding current position.", text.text);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.SuccessFeedbackDurationSeconds + 1f);
+        Assert.IsFalse(panel.activeSelf);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, TacticalCommandMode.Stop);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + 30f);
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Stop selected units and clear orders.", text.text);
+        Assert.AreEqual(TacticalCommandMode.Stop, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(view);
+        Assert.IsFalse(panel.activeSelf);
+        Assert.AreEqual(TacticalCommandMode.None, view.CurrentCommandMode);
+
+        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, TacticalCommandResult.Success("Stopped selected units."));
+        Assert.IsTrue(panel.activeSelf);
+        Assert.AreEqual("Stopped selected units.", text.text);
+        BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds + 1f);
+        Assert.IsFalse(panel.activeSelf);
     }
 
     [Test]

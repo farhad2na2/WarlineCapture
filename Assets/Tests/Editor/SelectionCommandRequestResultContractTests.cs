@@ -2,6 +2,7 @@
 using System;
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -25,8 +26,20 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.AttackCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.AttackCommandSystem_OnUpdateConsumesPreResolvedEntityRequest();
             tests.ScanCommandSystem_OnUpdateConsumesPreResolvedCellRequest();
+            tests.ScanCommandSystem_RevealsEnemyBuildingInsideRadius();
+            tests.ScanCommandSystem_SelectedScannerQueuesUnitScanOrder();
+            tests.UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea();
+            tests.UnitScanOrderExecutionSystem_GroundScannerPatrolsScanAreaAfterArrival();
+            tests.UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon();
+            tests.UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan();
+            tests.UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires();
+            tests.UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea();
+            tests.UnitEngagedMovementSystem_ClearsScanTargetsOutsideScanArea();
             tests.TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds();
             tests.ScanCommandFlush_DrainsResultsOnceAndDoesNotDuplicateFeedback();
+            tests.ScanCommandFlush_DeferredSelectedScannerFeedbackSaysScannerEnRoute();
+            tests.ScanCommandFlush_AcceptedOneShotScanClearsCommandMode();
+            tests.ScanCommandFlush_RejectedOneShotScanClearsCommandMode();
             tests.MoveCommandFlush_ShowsAcceptedWorldMarkerFromResult();
             tests.AttackCommandFlush_ShowsAcceptedTargetMarkerFromResult();
             tests.MoveCommandFlush_ReacquiresCommandBuffersAfterQuerySetupStructuralChange();
@@ -50,7 +63,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=35");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=47");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -2352,6 +2365,8 @@ public sealed class SelectionCommandRequestResultContractTests
             FeedbackDurationSeconds = 2.25f,
             EmitScreenMarker = 1,
             MarkerFactionId = 2,
+            HasSourceEntity = 1,
+            DeferredToSource = 1,
             HasTargetEntity = 1,
             HasTargetCell = 1,
             HasWorldPosition = 1,
@@ -2371,6 +2386,8 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(2.25f, result.FeedbackDurationSeconds);
         Assert.AreEqual(1, result.EmitScreenMarker);
         Assert.AreEqual(1, result.ShowWorldMarkers);
+        Assert.AreEqual(1, result.HasSourceEntity);
+        Assert.AreEqual(1, result.DeferredToSource);
         Assert.AreEqual("Transport is full.", result.Message.ToString());
     }
 
@@ -2836,6 +2853,540 @@ public sealed class SelectionCommandRequestResultContractTests
     }
 
     [Test]
+    public void ScanCommandSystem_RevealsEnemyBuildingInsideRadius()
+    {
+        using World world = new("SelectionCommandScanBuildingRevealTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 32,
+            Height = 32,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity building = em.CreateEntity(
+            typeof(Faction),
+            typeof(RuntimeBuildingCombatInfo),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(building, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(building, new RuntimeBuildingCombatInfo
+        {
+            RuntimeBuildingId = 9,
+            OwnerFactionId = FactionIdentity.EnemyFactionId,
+            OriginCell = new int2(8, 7),
+            FootprintCells = new int2(2, 2)
+        });
+        em.SetComponentData(building, new UnitHealth { Current = 150, Max = 150 });
+        em.SetComponentData(building, LocalTransform.FromPosition(new float3(8.5f, 0f, 7.5f)));
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            RequestId = 82,
+            Frame = 93,
+            TargetCell = new int2(7, 7),
+            WorldPosition = new float3(7.5f, 0f, 7.5f),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1
+        });
+
+        SystemHandle system = world.CreateSystem<ScanIntelCommandSystem>();
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].RevealedCount);
+        Assert.IsTrue(em.HasComponent<ScanIntelRevealedTag>(building));
+        Assert.IsTrue(em.HasComponent<ScanIntelLastSeen>(building));
+        ScanIntelLastSeen lastSeen = em.GetComponentData<ScanIntelLastSeen>(building);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, lastSeen.FactionId);
+    }
+
+    [Test]
+    public void ScanCommandSystem_SelectedScannerQueuesUnitScanOrder()
+    {
+        using World world = new("SelectionCommandSelectedScannerOrderTests");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(2, 2));
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(target, new UnitGrid { Cell = new int2(21, 20) });
+        em.SetComponentData(target, new UnitHealth { Current = 10, Max = 10 });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(21.5f, 0f, 20.5f)));
+
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Scan,
+            RequestId = 78,
+            Frame = 89,
+            TargetCell = new int2(20, 20),
+            WorldPosition = new float3(20.5f, 0f, 20.5f),
+            TargetKind = RtsSelectionCommandTargetKind.Cell,
+            HasTargetCell = 1,
+            HasWorldPosition = 1
+        });
+
+        SystemHandle system = world.CreateSystem<ScanIntelCommandSystem>();
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results =
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Scan, results[0].Kind);
+        Assert.AreEqual(78, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasSourceEntity);
+        Assert.AreEqual(scanner, results[0].SourceEntity);
+        Assert.AreEqual(0, results[0].RevealedCount);
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+        Assert.IsTrue(em.HasComponent<UnitTarget>(scanner));
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(scanner));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(scanner));
+        Assert.AreEqual(new int2(20, 20), em.GetComponentData<UnitTarget>(scanner).Cell);
+        Assert.IsFalse(em.HasComponent<ScanIntelRevealedTag>(target));
+    }
+
+    [Test]
+    public void UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea()
+    {
+        using World world = new("UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(2d, 0.1f));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(18, 20));
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 79,
+            StartedFrame = 90,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            DurationSeconds = 2f,
+            EngageDetectedTargets = 1
+        });
+
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(target, new UnitGrid { Cell = new int2(21, 20) });
+        em.SetComponentData(target, new UnitHealth { Current = 10, Max = 10 });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(21.5f, 0f, 20.5f)));
+
+        SystemHandle orderSystem = world.CreateSystem<UnitScanOrderExecutionSystem>();
+        orderSystem.Update(world.Unmanaged);
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+        UnitScanOrder activeOrder = em.GetComponentData<UnitScanOrder>(scanner);
+        Assert.AreEqual(1, activeOrder.HasStarted);
+        Assert.AreEqual(2f, activeOrder.StartedTimeSeconds, 0.001f);
+
+        SystemHandle scanSystem = world.CreateSystem<ScanIntelCommandSystem>();
+        scanSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<ScanIntelRevealedTag>(target));
+        Assert.IsTrue(em.HasComponent<ScanIntelLastSeen>(target));
+
+        using EntityQuery feedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<ScanIntelFeedQueueTag>(),
+            ComponentType.ReadOnly<ScanIntelFeedEntry>());
+        Assert.IsFalse(feedQuery.IsEmptyIgnoreFilter);
+        Entity feedEntity = feedQuery.GetSingletonEntity();
+        DynamicBuffer<ScanIntelFeedEntry> feed = em.GetBuffer<ScanIntelFeedEntry>(feedEntity);
+        Assert.AreEqual(1, feed.Length);
+        Assert.AreEqual(79, feed[0].RequestId);
+        Assert.AreEqual(1, feed[0].HasSourceEntity);
+        Assert.AreEqual(scanner, feed[0].SourceEntity);
+        Assert.AreEqual(1, feed[0].RevealedCount);
+
+        world.SetTime(new TimeData(4.2d, 0.1f));
+        orderSystem.Update(world.Unmanaged);
+        Assert.IsFalse(em.HasComponent<UnitScanOrder>(scanner));
+    }
+
+    [Test]
+    public void UnitScanOrderExecutionSystem_GroundScannerPatrolsScanAreaAfterArrival()
+    {
+        using World world = new("UnitScanOrderExecutionSystem_GroundScannerPatrolsScanAreaAfterArrival");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(6d, 0.1f));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(20, 20));
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 84,
+            StartedFrame = 95,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            StartedTimeSeconds = 5f,
+            NextRevealTimeSeconds = 7f,
+            DurationSeconds = 10f,
+            EngageDetectedTargets = 1,
+            HasStarted = 1
+        });
+
+        SystemHandle orderSystem = world.CreateSystem<UnitScanOrderExecutionSystem>();
+        orderSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+        Assert.IsTrue(em.HasComponent<UnitTarget>(scanner));
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(scanner));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(scanner));
+
+        UnitScanOrder order = em.GetComponentData<UnitScanOrder>(scanner);
+        int2 targetCell = em.GetComponentData<UnitTarget>(scanner).Cell;
+        Assert.AreEqual(new int2(23, 20), targetCell);
+        Assert.AreEqual(targetCell, em.GetComponentData<UnitPathRequest>(scanner).Goal);
+        Assert.AreEqual(1, order.PatrolWaypointIndex);
+        Assert.Greater(order.NextPatrolMoveTimeSeconds, 6f);
+        Assert.LessOrEqual(math.cmax(math.abs(targetCell - order.CenterCell)), order.RadiusCells);
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon()
+    {
+        using World world = new("UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(1d, 0.25f));
+        CreateAirMovementGrid(em);
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(2, 3));
+        em.AddComponentData(scanner, new UnitAttack { Range = 6f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.AddComponentData(scanner, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(scanner, new UnitAirComponent
+        {
+            HomePosition = new float3(2.5f, 0f, 3.5f),
+            HomeCell = new int2(2, 3),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 0,
+            TakeoffRolling = 0,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(7.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(7, 3)
+        });
+        em.SetComponentData(scanner, LocalTransform.FromPosition(new float3(2.5f, 0f, 3.5f)));
+        em.AddComponentData(scanner, new UnitTarget { Cell = new int2(20, 20) });
+        em.AddComponent<ManualMoveOrderTag>(scanner);
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 85,
+            StartedFrame = 96,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            DurationSeconds = 8f
+        });
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        airMovementSystem.Update(world.Unmanaged);
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(scanner);
+        Assert.AreEqual(1, air.TakeoffRolling);
+        Assert.AreEqual(0, air.Airborne);
+        Assert.AreEqual(0, air.ReturningHome);
+        Assert.IsTrue(em.HasComponent<UnitTarget>(scanner));
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan()
+    {
+        using World world = new("UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(2d, 0.25f));
+        CreateAirMovementGrid(em);
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(20, 20));
+        em.AddComponentData(scanner, new UnitAttack { Range = 6f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.AddComponentData(scanner, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(scanner, new UnitAirComponent
+        {
+            HomePosition = new float3(2.5f, 0f, 3.5f),
+            HomeCell = new int2(2, 3),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 1,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(7.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(7, 3)
+        });
+        float3 startPosition = new(20.5f, 12f, 20.5f);
+        em.SetComponentData(scanner, LocalTransform.FromPosition(startPosition));
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 86,
+            StartedFrame = 97,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            StartedTimeSeconds = 2f,
+            NextRevealTimeSeconds = 3f,
+            DurationSeconds = 8f,
+            HasStarted = 1,
+            ReturnHomeAfterCompletion = 1
+        });
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        airMovementSystem.Update(world.Unmanaged);
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(scanner);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(scanner);
+        Assert.AreEqual(1, air.Airborne);
+        Assert.AreEqual(0, air.ReturningHome);
+        Assert.AreEqual(0, air.LandingRolling);
+        Assert.AreEqual(0, air.ReturnApproachInitialized);
+        Assert.AreEqual(startPosition, transform.Position);
+        Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+    }
+
+    [Test]
+    public void UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires()
+    {
+        using World world = new("UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(5d, 0.1f));
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(20, 20));
+        em.AddComponentData(scanner, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(scanner, new UnitAirComponent
+        {
+            HomePosition = new float3(3.5f, 0f, 3.5f),
+            HomeCell = new int2(3, 3),
+            HomeInitialized = 1,
+            ReturningHome = 0,
+            Airborne = 1,
+            UsesRunway = 1,
+            TakeoffRolling = 1,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(7.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(7, 3)
+        });
+        em.AddComponentData(scanner, new UnitTarget { Cell = new int2(20, 20) });
+        em.AddComponentData(scanner, new UnitPathRequest { Goal = new int2(20, 20) });
+        em.AddComponent<ManualMoveOrderTag>(scanner);
+
+        Entity target = CreateScanEngagementTarget(em, new int2(22, 20));
+        em.AddComponentData(scanner, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(22, 20),
+            Position = em.GetComponentData<LocalTransform>(target).Position,
+            IsCommanded = 0
+        });
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 83,
+            StartedFrame = 94,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            StartedTimeSeconds = 1f,
+            DurationSeconds = 2f,
+            EngageDetectedTargets = 1,
+            ReturnHomeAfterCompletion = 1,
+            HasStarted = 1
+        });
+
+        SystemHandle orderSystem = world.CreateSystem<UnitScanOrderExecutionSystem>();
+        orderSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitScanOrder>(scanner));
+        Assert.IsFalse(em.HasComponent<UnitTarget>(scanner));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(scanner));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(scanner));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(scanner));
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(scanner);
+        Assert.AreEqual(1, air.ReturningHome);
+        Assert.AreEqual(1, air.Airborne);
+        Assert.AreEqual(0, air.AttackRunActive);
+        Assert.AreEqual(0, air.TakeoffRolling);
+        Assert.AreEqual(0, air.ReturnApproachInitialized);
+    }
+
+    [Test]
+    public void UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea()
+    {
+        using World world = new("UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea");
+        EntityManager em = world.EntityManager;
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+
+        Entity scanner = CreateSelectedScanCapableUnit(em, new int2(20, 20));
+        em.AddComponentData(scanner, new UnitCombat { CanAttack = 1, AutoEngage = 1, AggroRangeCells = 1 });
+        em.AddComponentData(scanner, new UnitAttack { Range = 4f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.AddComponentData(scanner, new UnitScanOrder
+        {
+            RequestId = 80,
+            StartedFrame = 91,
+            SourceEntity = scanner,
+            CenterCell = new int2(20, 20),
+            CenterWorld = new float3(20.5f, 0f, 20.5f),
+            RadiusCells = 4,
+            DurationSeconds = 5f,
+            EngageDetectedTargets = 1,
+            HasStarted = 1
+        });
+
+        Entity insideTarget = CreateScanEngagementTarget(em, new int2(23, 20));
+        Entity outsideTarget = CreateScanEngagementTarget(em, new int2(30, 20));
+
+        var endSimulation = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        SystemHandle engagementSystem = world.CreateSystem<UnitEngagementSystem>();
+
+        world.SetTime(new TimeData(1d, 0.2f));
+        engagementSystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        endSimulation.Update();
+
+        Assert.IsTrue(em.HasComponent<EngageTarget>(scanner));
+        EngageTarget engage = em.GetComponentData<EngageTarget>(scanner);
+        Assert.AreEqual(insideTarget, engage.Target);
+        Assert.AreNotEqual(outsideTarget, engage.Target);
+    }
+
+    [Test]
+    public void UnitEngagedMovementSystem_ClearsScanTargetsOutsideScanArea()
+    {
+        using World world = new("UnitEngagedMovementSystem_ClearsScanTargetsOutsideScanArea");
+        EntityManager em = world.EntityManager;
+        NativeArray<int> blockerCounts = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            CreateWalkableGrid(em, 64, 64, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
+
+            Entity scanner = CreateSelectedScanCapableUnit(em, new int2(20, 20));
+            em.AddComponentData(scanner, new UnitCombat { CanAttack = 1, AutoEngage = 1, AggroRangeCells = 1, ChaseBreakDistance = 100f });
+            em.AddComponentData(scanner, new UnitAttack { Range = 4f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+            em.AddComponentData(scanner, new UnitFootprint { Size = new int2(1, 1) });
+            em.AddComponentData(scanner, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+            em.AddComponentData(scanner, new UnitVehicleMovement
+            {
+                TurnSpeedDegrees = 180f,
+                Acceleration = 10f,
+                Braking = 10f
+            });
+            em.AddComponentData(scanner, new UnitVehicleKinematics());
+            em.AddComponentData(scanner, new UnitScanOrder
+            {
+                RequestId = 81,
+                StartedFrame = 92,
+                SourceEntity = scanner,
+                CenterCell = new int2(20, 20),
+                CenterWorld = new float3(20.5f, 0f, 20.5f),
+                RadiusCells = 4,
+                DurationSeconds = 5f,
+                EngageDetectedTargets = 1,
+                HasStarted = 1
+            });
+
+            Entity outsideTarget = CreateScanEngagementTarget(em, new int2(30, 20));
+            float3 outsidePosition = em.GetComponentData<LocalTransform>(outsideTarget).Position;
+            em.AddComponentData(scanner, new EngageTarget
+            {
+                Target = outsideTarget,
+                Cell = new int2(30, 20),
+                Position = outsidePosition,
+                IsCommanded = 0
+            });
+
+            SystemHandle movementSystem = world.CreateSystem<UnitEngagedMovementSystem>();
+            world.SetTime(new TimeData(1d, 0.2f));
+            movementSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            EngageTarget engage = em.GetComponentData<EngageTarget>(scanner);
+            Assert.AreEqual(Entity.Null, engage.Target);
+            Assert.AreEqual(default(int2), engage.Cell);
+            Assert.AreEqual(default(float3), engage.Position);
+        }
+        finally
+        {
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+        }
+    }
+
+    [Test]
     public void TransportCommandProcessor_ConsumesMatchingRequestsOnceAndLeavesOtherKinds()
     {
         using World world = new("SelectionCommandTransportProcessorTests");
@@ -2939,6 +3490,253 @@ public sealed class SelectionCommandRequestResultContractTests
             Assert.AreEqual(0, requests.Length);
             Assert.AreEqual(0, results.Length);
             Assert.AreEqual(2, feedbackCount);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void ScanCommandFlush_DeferredSelectedScannerFeedbackSaysScannerEnRoute()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandScanDeferredFeedbackTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(10f, 20f), 70));
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(0, results.Length);
+
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 64,
+                Height = 64,
+                CellSize = 1f,
+                Origin = float3.zero
+            });
+            Entity scanner = CreateSelectedScanCapableUnit(em, new int2(2, 2));
+
+            using EntityQuery selectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            int feedbackCount = 0;
+            TacticalCommandResult lastResult = TacticalCommandResult.Success();
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                selectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                result =>
+                {
+                    feedbackCount++;
+                    lastResult = result;
+                },
+                em,
+                tryGetScanClickedCell: (UnityEngine.Vector2 screenPosition, EntityManager entityManager, out int2 cell, out UnityEngine.Vector3 worldPoint) =>
+                {
+                    cell = new int2(20, 20);
+                    worldPoint = new UnityEngine.Vector3(20.5f, 0f, 20.5f);
+                    return true;
+                });
+
+            bool processed = flushSystem.ProcessScanCommandRequests(context);
+
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            Assert.IsTrue(processed);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(0, results.Length);
+            Assert.AreEqual(1, feedbackCount);
+            Assert.IsTrue(lastResult.Accepted);
+            Assert.AreEqual("SCAN ORDERED: SCANNER EN ROUTE", lastResult.Message);
+            Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void ScanCommandFlush_AcceptedOneShotScanClearsCommandMode()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandScanAcceptedOneShotClearTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            var inputSystem = new RtsSelectionInputSystem();
+            inputSystem.ArmCommandMode(
+                TacticalCommandMode.Scan,
+                frame: 90,
+                oneShot: true,
+                requiresWorldTarget: true);
+            Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(10f, 20f), 91));
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(0, results.Length);
+
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 64,
+                Height = 64,
+                CellSize = 1f,
+                Origin = float3.zero
+            });
+            Entity scanner = CreateSelectedScanCapableUnit(em, new int2(2, 2));
+
+            using EntityQuery selectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            int feedbackCount = 0;
+            TacticalCommandResult lastResult = TacticalCommandResult.Success();
+            int clearHudCount = 0;
+            int cameraDraggingCount = 0;
+            bool cameraDragging = true;
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                selectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                result =>
+                {
+                    feedbackCount++;
+                    lastResult = result;
+                },
+                em,
+                clearHudCommandMode: () => clearHudCount++,
+                setCameraDragging: dragging =>
+                {
+                    cameraDraggingCount++;
+                    cameraDragging = dragging;
+                },
+                tryGetScanClickedCell: (UnityEngine.Vector2 screenPosition, EntityManager entityManager, out int2 cell, out UnityEngine.Vector3 worldPoint) =>
+                {
+                    cell = new int2(20, 20);
+                    worldPoint = new UnityEngine.Vector3(20.5f, 0f, 20.5f);
+                    return true;
+                });
+
+            bool processed = flushSystem.ProcessScanCommandRequests(context);
+
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            Assert.IsTrue(processed);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(0, results.Length);
+            Assert.AreEqual(1, feedbackCount);
+            Assert.IsTrue(lastResult.Accepted);
+            Assert.AreEqual("SCAN ORDERED: SCANNER EN ROUTE", lastResult.Message);
+            Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+            Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+            Assert.AreEqual(1, clearHudCount);
+            Assert.AreEqual(1, cameraDraggingCount);
+            Assert.IsFalse(cameraDragging);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void ScanCommandFlush_RejectedOneShotScanClearsCommandMode()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new("SelectionCommandScanRejectedFlushTests");
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            var inputSystem = new RtsSelectionInputSystem();
+            inputSystem.ArmCommandMode(
+                TacticalCommandMode.Scan,
+                frame: 80,
+                oneShot: true,
+                requiresWorldTarget: true);
+            Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(10f, 20f), 81));
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out Entity commandEntity,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(0, results.Length);
+
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 16,
+                Height = 16,
+                CellSize = 1f,
+                Origin = float3.zero
+            });
+
+            using EntityQuery emptySelectedMoveQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            using EntityQuery gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            int feedbackCount = 0;
+            TacticalCommandResult lastResult = TacticalCommandResult.Success();
+            int clearHudCount = 0;
+            int cameraDraggingCount = 0;
+            bool cameraDragging = true;
+            var flushSystem = new RtsSelectionCommandResultFlushSystem();
+            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+                inputSystem,
+                emptySelectedMoveQuery,
+                gridConfigQuery,
+                emptyMapSurfaceQuery,
+                result =>
+                {
+                    feedbackCount++;
+                    lastResult = result;
+                },
+                em,
+                clearHudCommandMode: () => clearHudCount++,
+                setCameraDragging: dragging =>
+                {
+                    cameraDraggingCount++;
+                    cameraDragging = dragging;
+                },
+                tryGetScanClickedCell: (UnityEngine.Vector2 screenPosition, EntityManager entityManager, out int2 cell, out UnityEngine.Vector3 worldPoint) =>
+                {
+                    cell = default;
+                    worldPoint = default;
+                    return false;
+                });
+
+            bool processed = flushSystem.ProcessScanCommandRequests(context);
+
+            requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            Assert.IsTrue(processed);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(0, results.Length);
+            Assert.AreEqual(1, feedbackCount);
+            Assert.IsFalse(lastResult.Accepted);
+            Assert.AreEqual(TacticalCommandReasonCode.TargetOutOfBounds, lastResult.ReasonCode);
+            Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+            Assert.AreEqual(1, clearHudCount);
+            Assert.AreEqual(1, cameraDraggingCount);
+            Assert.IsFalse(cameraDragging);
         }
         finally
         {
@@ -3227,6 +4025,56 @@ public sealed class SelectionCommandRequestResultContractTests
         return unit;
     }
 
+    private static Entity CreateSelectedScanCapableUnit(EntityManager em, int2 cell)
+    {
+        Entity unit = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitHealth),
+            typeof(UnitSourcePrefabKey),
+            typeof(LocalTransform));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = cell });
+        em.SetComponentData(unit, new UnitMove { Speed = 8f, WalkSpeed = 8f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(unit, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Drone_Recon") });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return unit;
+    }
+
+    private static Entity CreateAirMovementGrid(EntityManager em)
+    {
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+        return gridEntity;
+    }
+
+    private static Entity CreateScanEngagementTarget(EntityManager em, int2 cell)
+    {
+        Entity target = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(LocalTransform));
+        em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(target, new UnitGrid { Cell = cell });
+        em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(target, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(target, new UnitAttack { Range = 4f, CooldownSeconds = 1f, Damage = 10, TraceVisibleSeconds = 0.1f });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return target;
+    }
+
     private static Entity CreateRadarAttackLauncher(EntityManager em, int2 cell)
     {
         Entity launcher = em.CreateEntity(
@@ -3383,7 +4231,10 @@ public sealed class SelectionCommandRequestResultContractTests
             typeof(GridConfig),
             typeof(DynamicBlockerComponent),
             typeof(DynamicOccupancyComponent),
-            typeof(GridWalkable));
+            typeof(GridWalkable),
+            typeof(GridRoad),
+            typeof(GridRoadSidewalk),
+            typeof(GridRoadDirt));
         em.SetComponentData(gridEntity, new GridConfig
         {
             Width = width,
@@ -3408,6 +4259,19 @@ public sealed class SelectionCommandRequestResultContractTests
         walkable.ResizeUninitialized(gridSize);
         for (int i = 0; i < gridSize; i++)
             walkable[i] = new GridWalkable { Value = 1 };
+
+        DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+        DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+        DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+        roads.ResizeUninitialized(gridSize);
+        sidewalks.ResizeUninitialized(gridSize);
+        dirtRoads.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+        {
+            roads[i] = new GridRoad { Value = 0 };
+            sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+            dirtRoads[i] = new GridRoadDirt { Value = 0 };
+        }
 
         return gridEntity;
     }
@@ -3439,7 +4303,8 @@ public sealed class SelectionCommandRequestResultContractTests
         RtsSelectionCommandResultFlushSystem.RefreshFocusedUnitAction refreshFocusedUnit = null,
         RtsSelectionCommandResultFlushSystem.SetFocusedUnitAction setFocusedUnit = null,
         RtsSelectionCommandResultFlushSystem.ApplyHudSelectionAction applyHudSelection = null,
-        RtsSelectionCommandResultFlushSystem.ClearCurrentSelectionAction clearCurrentSelection = null)
+        RtsSelectionCommandResultFlushSystem.ClearCurrentSelectionAction clearCurrentSelection = null,
+        SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell = null)
     {
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
@@ -3480,7 +4345,7 @@ public sealed class SelectionCommandRequestResultContractTests
             setFocusedUnit,
             null,
             null,
-            null,
+            tryGetScanClickedCell,
             null,
             null,
             null);

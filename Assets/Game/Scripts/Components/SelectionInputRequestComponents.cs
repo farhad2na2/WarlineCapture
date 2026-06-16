@@ -125,6 +125,7 @@ public struct RtsSelectionCommandIntentRequestElement : IBufferElementData
     public RtsSelectionCommandIntentKind Kind;
     public int RequestId;
     public int Frame;
+    public Entity SourceEntity;
     public Entity TargetEntity;
     public Entity SecondaryTargetEntity;
     public int2 TargetCell;
@@ -134,6 +135,7 @@ public struct RtsSelectionCommandIntentRequestElement : IBufferElementData
     public float2 DragCurrent;
     public RtsSelectionCommandTargetKind TargetKind;
     public byte ExplicitAttackTargetMode;
+    public byte HasSourceEntity;
     public byte HasTargetEntity;
     public byte HasSecondaryTargetEntity;
     public byte HasTargetCell;
@@ -147,6 +149,7 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public RtsSelectionCommandIntentKind Kind;
     public int RequestId;
     public int Frame;
+    public Entity SourceEntity;
     public Entity TargetEntity;
     public int2 TargetCell;
     public float2 ScreenPosition;
@@ -160,6 +163,8 @@ public struct RtsSelectionCommandResultElement : IBufferElementData
     public float FeedbackDurationSeconds;
     public byte EmitScreenMarker;
     public byte MarkerFactionId;
+    public byte HasSourceEntity;
+    public byte DeferredToSource;
     public byte HasTargetEntity;
     public byte HasTargetCell;
     public byte HasWorldPosition;

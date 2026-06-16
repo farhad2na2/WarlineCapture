@@ -12,7 +12,8 @@ public sealed class MatchOverlayCommandInputSystem
         BattleHudRuntimeFeedbackView runtimeFeedbackView = null,
         Action showBuildDrawer = null,
         Action closeBuildDrawer = null,
-        ISelectionDiagnosticsSink diagnosticsSink = null)
+        ISelectionDiagnosticsSink diagnosticsSink = null,
+        ISelectionUiReadModel selectionUiReadModel = null)
     {
         if (view == null)
             return;
@@ -20,7 +21,14 @@ public sealed class MatchOverlayCommandInputSystem
         Unbind(view);
         ResetCommandControlRuntimeListeners(view);
 
-        var binding = new Binding(view, selectionUiCommandSystem, runtimeFeedbackView, showBuildDrawer, closeBuildDrawer, diagnosticsSink);
+        var binding = new Binding(
+            view,
+            selectionUiCommandSystem,
+            runtimeFeedbackView,
+            showBuildDrawer,
+            closeBuildDrawer,
+            diagnosticsSink,
+            selectionUiReadModel);
         binding.Bind();
         _bindings.Add(view, binding);
     }
@@ -32,6 +40,12 @@ public sealed class MatchOverlayCommandInputSystem
 
         binding.Unbind();
         _bindings.Remove(view);
+    }
+
+    public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
+    {
+        foreach (Binding binding in _bindings.Values)
+            binding.RefreshCommandControlState(selectionUiReadModel);
     }
 
     private static void ResetCommandControlRuntimeListeners(MatchOverlayCommandControlsView view)
@@ -66,6 +80,7 @@ public sealed class MatchOverlayCommandInputSystem
         private readonly Action _showBuildDrawer;
         private readonly Action _closeBuildDrawer;
         private readonly ISelectionDiagnosticsSink _diagnosticsSink;
+        private readonly ISelectionUiReadModel _selectionUiReadModel;
         private bool _buildDrawerOpen;
 
         public Binding(
@@ -74,7 +89,8 @@ public sealed class MatchOverlayCommandInputSystem
             BattleHudRuntimeFeedbackView runtimeFeedbackView,
             Action showBuildDrawer,
             Action closeBuildDrawer,
-            ISelectionDiagnosticsSink diagnosticsSink)
+            ISelectionDiagnosticsSink diagnosticsSink,
+            ISelectionUiReadModel selectionUiReadModel)
         {
             _view = view;
             _selectionUiCommandSystem = selectionUiCommandSystem;
@@ -82,6 +98,7 @@ public sealed class MatchOverlayCommandInputSystem
             _showBuildDrawer = showBuildDrawer;
             _closeBuildDrawer = closeBuildDrawer;
             _diagnosticsSink = diagnosticsSink;
+            _selectionUiReadModel = selectionUiReadModel;
         }
 
         public void Bind()
@@ -101,6 +118,7 @@ public sealed class MatchOverlayCommandInputSystem
             _view.HoldButton?.onClick.AddListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.AddListener(OnStopButtonClicked);
             _view.CommandWheelStopButton?.onClick.AddListener(OnCommandWheelStopButtonClicked);
+            RefreshCommandControlState();
         }
 
         private static string DescribeButton(Button button)
@@ -187,6 +205,9 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnScanButtonClicked()
         {
+            if (!TryAcceptCapability(CommandCapability.Scan))
+                return;
+
             CloseBuildDrawerIfOpen();
             bool queued = _selectionUiCommandSystem != null &&
                 _selectionUiCommandSystem.RequestScanCommandMode();
@@ -218,18 +239,71 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnHoldButtonClicked()
         {
+            if (!TryAcceptCapability(CommandCapability.Hold))
+                return;
+
             _selectionUiCommandSystem?.RequestHoldPosition();
         }
 
         private void OnStopButtonClicked()
         {
+            if (!TryAcceptCapability(CommandCapability.Stop))
+                return;
+
             _selectionUiCommandSystem?.RequestStop();
         }
 
         private void OnCommandWheelStopButtonClicked()
         {
+            if (!TryAcceptCapability(CommandCapability.Stop))
+                return;
+
             _view.CommandWheelPanel?.Close();
             _selectionUiCommandSystem?.RequestStop();
+        }
+
+        public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
+        {
+            ISelectionUiReadModel readModel = selectionUiReadModel ?? _selectionUiReadModel;
+            ApplyButtonInteractable(_view.HoldButton, readModel == null || readModel.FocusedUnitCanHold);
+            ApplyButtonInteractable(_view.StopButton, readModel == null || readModel.FocusedUnitCanStop);
+            ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || readModel.FocusedUnitCanStop);
+            ApplyButtonInteractable(_view.ScanButton, readModel == null || readModel.FocusedUnitCanScan);
+        }
+
+        private bool TryAcceptCapability(CommandCapability capability)
+        {
+            ISelectionUiReadModel readModel = _selectionUiReadModel;
+            if (readModel == null)
+                return true;
+
+            bool accepted = capability switch
+            {
+                CommandCapability.Hold => readModel.FocusedUnitCanHold,
+                CommandCapability.Stop => readModel.FocusedUnitCanStop,
+                CommandCapability.Scan => readModel.FocusedUnitCanScan,
+                _ => true
+            };
+            if (accepted)
+                return true;
+
+            TacticalCommandReasonCode reason = capability switch
+            {
+                CommandCapability.Hold => readModel.FocusedUnitHoldDisabledReason,
+                CommandCapability.Stop => readModel.FocusedUnitStopDisabledReason,
+                CommandCapability.Scan => readModel.FocusedUnitScanDisabledReason,
+                _ => TacticalCommandReasonCode.CommandUnavailable
+            };
+            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
+                _runtimeFeedbackView,
+                TacticalCommandResult.Rejected(reason));
+            return false;
+        }
+
+        private static void ApplyButtonInteractable(Button button, bool interactable)
+        {
+            if (button != null)
+                button.interactable = interactable;
         }
 
         private void OnBoardAllFeedbackClicked()
@@ -257,6 +331,13 @@ public sealed class MatchOverlayCommandInputSystem
         private void LogMoveCommandTrace(string message)
         {
             _diagnosticsSink?.LogMoveCommandTrace(message);
+        }
+
+        private enum CommandCapability
+        {
+            Hold,
+            Stop,
+            Scan
         }
     }
 }

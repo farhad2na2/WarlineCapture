@@ -227,6 +227,8 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Select => "Select units or a building.",
             TacticalCommandMode.Move => "Choose destination.",
             TacticalCommandMode.Attack => "Tap hostile target.",
+            TacticalCommandMode.Hold => "Hold position and return fire.",
+            TacticalCommandMode.Stop => "Stop selected units and clear orders.",
             TacticalCommandMode.Scan => "Tap scan area.",
             TacticalCommandMode.Board => "Tap a transport.",
             TacticalCommandMode.Build => "Choose what to build, produce, or recruit.",
@@ -241,9 +243,11 @@ public static class TacticalCommandFeedbackText
         {
             TacticalCommandMode.Move or
             TacticalCommandMode.Attack or
+            TacticalCommandMode.Hold or
             TacticalCommandMode.Scan or
             TacticalCommandMode.Board or
             TacticalCommandMode.Build => CommandFeedbackSeverity.Ready,
+            TacticalCommandMode.Stop => CommandFeedbackSeverity.Warning,
             TacticalCommandMode.Select or
             TacticalCommandMode.Special => CommandFeedbackSeverity.Neutral,
             _ => CommandFeedbackSeverity.Neutral

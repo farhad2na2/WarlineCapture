@@ -575,7 +575,7 @@ public sealed class SelectionUiReadModelLookup
         return true;
     }
 
-    private static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)
+    public static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)
     {
         string source = ResolveScanCapabilitySource(entityManager, entity);
         if (ContainsToken(source, "Drone") ||

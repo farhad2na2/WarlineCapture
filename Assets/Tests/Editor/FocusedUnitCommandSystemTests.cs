@@ -52,6 +52,59 @@ public sealed class FocusedUnitCommandSystemTests
     }
 
     [Test]
+    public void IssueImmediateSelectedUnitOrder_HoldPreservesAirTransientState()
+    {
+        Entity unit = CreateSelectedMoveUnit();
+        _entityManager.AddComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
+        _entityManager.AddComponentData(unit, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 4f });
+        _entityManager.AddComponentData(unit, new UnitAirComponent
+        {
+            HomeInitialized = 1,
+            HomeCell = new int2(10, 11),
+            HomePosition = new float3(10f, 0f, 11f),
+            Airborne = 1,
+            UsesRunway = 1,
+            ReturningHome = 1,
+            TakeoffRolling = 1,
+            LandingRolling = 1,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1,
+            RunwayTakeoffCell = new int2(14, 15),
+            RunwayLandingCell = new int2(16, 17)
+        });
+        _entityManager.AddComponentData(unit, new EngageTarget { Target = Entity.Null, Cell = new int2(2, 3), IsCommanded = 1 });
+        _entityManager.AddComponentData(unit, new UnitTarget { Cell = new int2(4, 5) });
+        _entityManager.AddComponentData(unit, new UnitPathRequest { Goal = new int2(4, 5) });
+
+        bool issued = new FocusedUnitCommandSystem().IssueImmediateSelectedUnitOrder(
+            _entityManager,
+            clearEngageTarget: true,
+            holdPosition: true,
+            new UnitMoveOrderSystem());
+
+        Assert.IsTrue(issued);
+        Assert.IsTrue(_entityManager.HasComponent<HoldPositionOrderTag>(unit));
+        Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(unit));
+        Assert.AreEqual(1, _entityManager.GetComponentData<UnitCombat>(unit).AutoEngage);
+
+        UnitAirComponent airState = _entityManager.GetComponentData<UnitAirComponent>(unit);
+        Assert.AreEqual(1, airState.HomeInitialized);
+        Assert.AreEqual(new int2(10, 11), airState.HomeCell);
+        Assert.AreEqual(new int2(14, 15), airState.RunwayTakeoffCell);
+        Assert.AreEqual(new int2(16, 17), airState.RunwayLandingCell);
+        Assert.AreEqual(1, airState.Airborne);
+        Assert.AreEqual(1, airState.UsesRunway);
+        Assert.AreEqual(1, airState.ReturningHome);
+        Assert.AreEqual(1, airState.TakeoffRolling);
+        Assert.AreEqual(1, airState.LandingRolling);
+        Assert.AreEqual(1, airState.AttackRunActive);
+        Assert.AreEqual(1, airState.ReturnApproachInitialized);
+    }
+
+    [Test]
     public void IssueImmediateSelectedUnitOrder_StopClearsHoldAndDisablesAutoEngage()
     {
         Entity unit = CreateSelectedMoveUnit();
@@ -98,9 +151,10 @@ public sealed class FocusedUnitCommandSystemTests
         try
         {
             RunCase(test => test.IssueImmediateSelectedUnitOrder_HoldStopsMovementAndEnablesAutoEngage());
+            RunCase(test => test.IssueImmediateSelectedUnitOrder_HoldPreservesAirTransientState());
             RunCase(test => test.IssueImmediateSelectedUnitOrder_StopClearsHoldAndDisablesAutoEngage());
             RunCase(test => test.EnableFocusedUnitAutoAttack_ClearsCommandedAttackOrderThroughRequest());
-            Debug.Log("[FocusedUnitCommandFocusedValidation] result=Passed tests=3");
+            Debug.Log("[FocusedUnitCommandFocusedValidation] result=Passed tests=4");
         }
         catch (System.Exception ex)
         {

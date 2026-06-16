@@ -46,6 +46,7 @@ internal sealed class MenuBootstrapSystem
     private bool matchLoadQueuedForCurrentRoute;
     private MatchSceneView boundMatchRuntimeView;
     private SelectionUiCommandSystem boundSelectionUiCommand;
+    private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
     private int boundContentVersion = -1;
 
@@ -373,10 +374,12 @@ internal sealed class MenuBootstrapSystem
         SelectionUiCommandSystem selectionUiCommand = matchBootstrap.SelectionUiCommand;
         if (selectionUiCommand == null)
             return;
+        SelectionUiReadModelSystem selectionUiReadModel = matchBootstrap.SelectionUiReadModel;
 
         int contentVersion = view.ContentSystem.ContentVersion;
         if (boundMatchRuntimeView == matchScene &&
             boundSelectionUiCommand == selectionUiCommand &&
+            boundSelectionUiReadModel == selectionUiReadModel &&
             boundMainMenu == mainMenu &&
             boundContentVersion == contentVersion)
         {
@@ -388,11 +391,13 @@ internal sealed class MenuBootstrapSystem
             mainMenu,
             matchBootstrap.BindMatchHudSelectionPanel,
             matchBootstrap.BuildingUiCommandContract,
-            matchBootstrap.SelectionDiagnosticsSink);
+            matchBootstrap.SelectionDiagnosticsSink,
+            selectionUiReadModel);
         view.ContentSystem.BindBuildDrawerRuntimeQueries(matchBootstrap.BuildingUiQueryContract);
         view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
         boundMatchRuntimeView = matchScene;
         boundSelectionUiCommand = selectionUiCommand;
+        boundSelectionUiReadModel = selectionUiReadModel;
         boundMainMenu = mainMenu;
         boundContentVersion = contentVersion;
     }
@@ -401,6 +406,7 @@ internal sealed class MenuBootstrapSystem
     {
         boundMatchRuntimeView = null;
         boundSelectionUiCommand = null;
+        boundSelectionUiReadModel = null;
         boundMainMenu = null;
         boundContentVersion = -1;
     }

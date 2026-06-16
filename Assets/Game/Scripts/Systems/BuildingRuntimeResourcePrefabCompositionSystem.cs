@@ -39,7 +39,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabCompositionSystem : S
             source.BuildingGameplayEcsQuerySystem.UnitPrefabRegistryQuery,
             source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
             source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
-            resolveSpawnableLookupKey: source.ResolveSpawnableLookupKey,
             createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionSystem, source));
     }
 }

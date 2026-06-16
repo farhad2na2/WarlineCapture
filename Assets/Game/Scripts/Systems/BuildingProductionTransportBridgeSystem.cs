@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -98,11 +99,11 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
 
     private static int2 ResolveUnitFootprint(Context context, EntityManager em, GameObject spawnUnitPrefab)
     {
-        if (context.SpawnContext.SpawnPrefabSystem != null &&
-            context.SpawnContext.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
+        FixedString64Bytes sourceKey = GetUnitPrefabSourceKey(spawnUnitPrefab);
+        if (context.SpawnContext.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
                 context.SpawnContext.SpawnPrefabContext,
                 em,
-                spawnUnitPrefab,
+                sourceKey,
                 out Entity prefabEntity) &&
             prefabEntity != Entity.Null &&
             em.HasComponent<UnitFootprint>(prefabEntity))
@@ -111,6 +112,12 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
         }
 
         return new int2(1, 1);
+    }
+
+    private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
+    {
+        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
+        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 
     public void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingEntity building, int2 goalCell)

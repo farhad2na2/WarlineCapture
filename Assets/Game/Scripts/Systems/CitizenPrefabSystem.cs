@@ -1,28 +1,24 @@
 using System;
-using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
-internal sealed partial class CitizenPrefabSystem : SystemBase
+internal partial struct CitizenPrefabSystem : ISystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     public readonly struct Context
     {
-        public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly Func<BuildingSpawnPrefabSystem.Context> CreateSpawnPrefabContext;
 
         public Context(
-            BuildingDefinitionSystem definitionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
             Func<BuildingSpawnPrefabSystem.Context> createSpawnPrefabContext)
         {
-            DefinitionSystem = definitionSystem;
             SpawnPrefabSystem = spawnPrefabSystem;
             TryGetEntityManager = tryGetEntityManager;
             EnsureEntityQueries = ensureEntityQueries;
@@ -30,38 +26,28 @@ internal sealed partial class CitizenPrefabSystem : SystemBase
         }
     }
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
-    public void LoadConfiguredUnitSpawnPrefabs(Context context, IReadOnlyList<string> unitNames, List<GameObject> results)
+    public bool TryResolveConfiguredUnitPrefabEntity(Context context, string unitPrefabSourceKey, out Entity prefabEntity)
     {
-        if (results == null)
-            return;
-
-        results.Clear();
-        if (context.DefinitionSystem == null || unitNames == null)
-            return;
-
-        for (int i = 0; i < unitNames.Count; i++)
-        {
-            if (!context.DefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(unitNames[i], out GameObject prefab))
-                continue;
-            if (prefab != null)
-                results.Add(prefab);
-        }
+        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefabSourceKey);
+        return TryResolveConfiguredUnitPrefabEntity(
+            context,
+            string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey),
+            out prefabEntity);
     }
 
-    public bool TryResolveConfiguredUnitPrefabEntity(Context context, GameObject unitPrefab, out Entity prefabEntity)
+    public bool TryResolveConfiguredUnitPrefabEntity(Context context, FixedString64Bytes unitPrefabSourceKey, out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        if (unitPrefab == null ||
-            context.SpawnPrefabSystem == null ||
+        if (unitPrefabSourceKey.Length == 0 ||
             context.TryGetEntityManager == null ||
             context.CreateSpawnPrefabContext == null ||
             !context.TryGetEntityManager(out EntityManager em))
@@ -73,7 +59,7 @@ internal sealed partial class CitizenPrefabSystem : SystemBase
         return context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
             context.CreateSpawnPrefabContext(),
             em,
-            unitPrefab,
+            unitPrefabSourceKey,
             out prefabEntity);
     }
 }

@@ -251,8 +251,8 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             return false;
 
         GameObject spawnUnitPrefab = context.GetProductionPrefab(building.Definition, productionIndex);
-        if (context.SpawnPrefabSystem == null ||
-            !context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(context.SpawnPrefabContext, em, spawnUnitPrefab, out Entity prefabEntity))
+        FixedString64Bytes spawnUnitSourceKey = GetUnitPrefabSourceKey(spawnUnitPrefab);
+        if (!context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(context.SpawnPrefabContext, em, spawnUnitSourceKey, out Entity prefabEntity))
         {
 #if UNITY_EDITOR
             Debug.LogWarning($"[BuildingSpawn] Could not resolve ECS prefab entity for spawn prefab '{(spawnUnitPrefab != null ? spawnUnitPrefab.name : "<null>")}' from building '{building.Definition.DisplayName}'.");
@@ -1096,5 +1096,11 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
     private static string NormalizeSpawnableKey(string value)
     {
         return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
+    }
+
+    private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
+    {
+        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
+        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 }

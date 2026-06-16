@@ -31,6 +31,7 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,
         CitizenPrefabSelectionSystem prefabSelectionSystem,
+        CitizenPrefabSelectionSystem.State prefabSelectionState,
         CitizenTravelSystem travelSystem,
         Camera worldCamera,
         bool hasCitizenData,
@@ -76,6 +77,7 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
                 citizenPrefabSystem,
                 citizenPrefabContext,
                 prefabSelectionSystem,
+                prefabSelectionState,
                 travelSystem,
                 buildingReadSystem,
                 statusTransitionSystem,
@@ -235,19 +237,17 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,
         CitizenPrefabSelectionSystem prefabSelectionSystem,
+        CitizenPrefabSelectionSystem.State prefabSelectionState,
         CitizenTravelSystem travelSystem,
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 worldPosition)
     {
-        if (prefabSelectionSystem == null || citizenPrefabSystem == null)
+        if (!prefabSelectionSystem.TryGetCitizenPrefabSourceKey(prefabSelectionState, citizen, out FixedString64Bytes sourceKey) ||
+            !ecsProjection.HasWorld)
             return;
-
-        GameObject prefab = prefabSelectionSystem.GetCitizenPrefab(citizen);
-        if (prefab == null || !ecsProjection.HasWorld)
-            return;
-        if (!citizenPrefabSystem.TryResolveConfiguredUnitPrefabEntity(citizenPrefabContext, prefab, out Entity prefabEntity) || prefabEntity == Entity.Null)
+        if (!citizenPrefabSystem.TryResolveConfiguredUnitPrefabEntity(citizenPrefabContext, sourceKey, out Entity prefabEntity) || prefabEntity == Entity.Null)
             return;
         if (!CitizenTravelSystem.TryWorldToCell(travelSystem, ecsProjection, worldPosition, out int2 spawnCell))
             return;

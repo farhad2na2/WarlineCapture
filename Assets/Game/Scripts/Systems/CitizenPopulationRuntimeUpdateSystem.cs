@@ -295,6 +295,7 @@ internal sealed partial class CitizenPopulationRuntimeUpdateSystem : SystemBase
             _systems.CitizenPrefabSystem,
             _systems.CitizenPrefabContext,
             _systems.PrefabSelectionSystem,
+            _systems.PrefabSelectionState,
             _systems.TravelSystem,
             _systems.WorldCamera,
             HasCitizenData(),

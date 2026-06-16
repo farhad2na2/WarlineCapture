@@ -33,20 +33,20 @@ The first implementation phase must replace this quick scan with an authoritativ
 
 Always update this section when implementation begins or a phase completes.
 
-- Checklist progress: `113 / 113 complete (100.0%)`.
-- In progress: `0`.
-- Remaining open: `0` unchecked (`0` not complete including in-progress).
-- Phase progress: `13 / 13 phases complete; 0 in progress; 0 not started`.
+- Checklist progress: `117 / 121 complete (96.7%)`.
+- In progress: `1`.
+- Remaining open: `3` unchecked (`4` not complete including in-progress).
+- Phase progress: `13 / 13 phases complete; post-roadmap prefab conversion track in progress`.
 - Authoritative non-ECS runtime `*System` inventory: `19` after excluding `370` Unity ECS systems, `1` MonoBehaviour system, and `8` editor-only systems.
 - Generated inventory artifact: `Design/Architecture/non_ecs_to_ecs_system_inventory.md`.
 - Proposed inventory dispositions: `0` ConvertToISystem, `0` ConvertToSystemBase, `0` FoldIntoOwner, `19` PassiveBoundary, and `0` ReviewRequired.
-- Converted to `ISystem`: `28`.
-- Converted to `SystemBase`: `253`.
+- Converted to `ISystem`: `33`.
+- Converted to `SystemBase`: `248`.
 - Folded into ECS owners/jobs: `106`.
 - Kept as passive view/config/authoring/editor boundary: `25`.
 - Remaining plain runtime gameplay `*System` classes: `0`.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
-- Last implementation update: 2026-06-16 audited post-roadmap `SystemBase` classes for minor `ISystem` conversions and converted three stateless building composition helpers.
+- Last implementation update: 2026-06-16 converted `CitizenPrefabSystem` and `CitizenPrefabSelectionSystem` to disabled unmanaged `ISystem` value helpers backed by prefab entity source keys.
 
 ## Architecture Rules
 
@@ -847,6 +847,27 @@ Progress notes:
 - 2026-06-16: Converted `SelectionGameplayStartupSystem` into a disabled managed `SystemBase` selection composition/runtime boundary while preserving UI binding, selection runtime update orchestration, command-result draining, pointer/input/camera context construction, HUD read-model refresh, and direct construction by `ManagedGameplayStartupSystem`. Unity frame/time reads and default-world resolution now use explicit `UnityEngine.Time` and `Unity.Entities.World` references so direct-call paths do not bind to `SystemBase` members. Regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`: runtime non-ECS denominator is now `19`, Unity ECS exclusions are now `370`, proposed `ConvertToSystemBase` rows are now `0`, and converted-to-`SystemBase` count is now `256`. The remaining `19` runtime non-ECS `*System` rows are documented passive UI/composition boundaries, not runtime gameplay systems, which closes the final Phase 11 checklist item.
 - 2026-06-16: Completed final validation in the shadow project because the main Unity project remained locked by an open editor. Validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=8`, `[RtsSelectionInputSystemValidation] result=Passed tests=49`, `[SelectionCommandRequestResultContractValidation] result=Passed tests=35`, `[MatchHudCommandFeedbackValidation] result=Passed tests=10`, `[UnitMoveOrderFocusedValidation] result=Passed tests=13`, `[UnitTargetOrderFocusedValidation] result=Passed tests=12`, `[ScanIntelCommandFocusedValidation] result=Passed tests=2`, `[UnitTransportValidation] result=Passed tests=20`, `[BuildingProductionRequestValidation] result=Passed tests=10`, `[BuildingPlacementCommandRequestValidation] result=Passed tests=11`, and `[RoadBuildCommandRequestValidation] result=Passed tests=6`; `git diff --check` is clean.
 - 2026-06-16: Audited the remaining `SystemBase` classes for low-risk post-roadmap `ISystem` conversions. Converted `BuildingStartupConfigProjectionSystem`, `BuildingGameplayChildSystem`, and `BuildingPlacementQueryCompositionSystem` from disabled stateless `SystemBase` classes into disabled unmanaged `ISystem` value systems while preserving their public helper APIs and direct construction sites. The audit intentionally left managed stateful, `GetOrCreateSystemManaged<T>()`-resolved, interface-backed, UI/camera/GameObject/prefab/object-lifetime, and serialized/config bootstrap boundaries on `SystemBase`; `BuildingRuntimeObjectSystem` remains managed because it owns UnityEngine object destruction. The authoritative non-ECS denominator remains `19`, Unity ECS exclusions remain `370`, converted-to-`ISystem` count is now `28`, and converted-to-`SystemBase` count is now `253`.
+- 2026-06-16: Converted `BuildingEntityManagerAccessSystem` and `BuildingGridCompositionSystem` from disabled stateless `SystemBase` classes into disabled unmanaged `ISystem` value systems while preserving their direct construction sites and query/grid helper APIs. Removed the obsolete nullable class check for `BuildingEntityManagerAccessSystem` from placement input tick composition now that the boundary is a value system. The authoritative non-ECS denominator remains `19`, Unity ECS exclusions remain `370`, converted-to-`ISystem` count is now `30`, and converted-to-`SystemBase` count is now `251`.
+- 2026-06-16: Converted `BuildingSpawnPrefabSystem` from a disabled managed `SystemBase` prefab bridge into a disabled unmanaged `ISystem` value resolver that accepts only prefab entity/source-key data. Managed production/citizen callers now translate existing `GameObject` config references to normalized source keys before calling the resolver, and runtime unit preview reverse lookup reads `UnitSourcePrefabKey` from prefab entities before crossing back into the managed definition boundary. Removed the obsolete managed-world lookup for `BuildingSpawnPrefabSystem` from building gameplay composition. The authoritative non-ECS denominator remains `19`, Unity ECS exclusions remain `370`, converted-to-`ISystem` count is now `31`, and converted-to-`SystemBase` count is now `250`. Focused validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=8`, `[BuildingProductionRequestValidation] result=Passed tests=10`, `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`, and `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`; `git diff --check` is clean.
+- 2026-06-16: Converted `CitizenPrefabSystem` and `CitizenPrefabSelectionSystem` from disabled managed `SystemBase` citizen prefab helpers into disabled unmanaged `ISystem` value helpers. Citizen prefab selection now caches normalized ECS source keys in explicit composition state, and visible-citizen spawn resolves those keys directly to prefab entities before instantiating the managed presentation entity. This removes citizen prefab selection's managed `GameObject` arrays and the reflection-backed focused test setup while preserving deterministic gender/id selection over available configured prefab entities. The authoritative non-ECS denominator remains `19`, Unity ECS exclusions remain `370`, converted-to-`ISystem` count is now `33`, and converted-to-`SystemBase` count is now `248`. Focused validation passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=8`, `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`, and `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`; `git diff --check` is clean.
+
+## Post-Roadmap Pure ECS Prefab Conversion Track
+
+Status: [~]
+
+Purpose:
+Remove pre-UI-work `GameObject`/prefab dependencies from gameplay prefab lookup code only when the behavior can be represented by ECS prefab entities, source keys, requests, or explicit managed presentation boundaries.
+
+Progress:
+
+- [x] Convert `BuildingSpawnPrefabSystem` to an unmanaged source-key-to-prefab-entity resolver.
+- [x] Convert building production and spawn callers that can pass prefab source keys instead of managed prefab objects.
+- [x] Convert `CitizenPrefabSystem` to an unmanaged source-key-to-prefab-entity helper.
+- [x] Convert `CitizenPrefabSelectionSystem` to unmanaged source-key selection state.
+- [~] Split `RuntimeUnitPrefabSystem` into pure entity lookup and managed UI/live-preview fallback, or leave it managed until UI Toolkit replacement removes preview prefab needs.
+- [ ] Audit `MapVehiclePlacementSpawnSystem` for a source-key placement data projection so authored vehicle prefab references are not needed during spawn execution.
+- [ ] Audit production `ProducedUnitPrefabs` dictionaries and UI preview callers; replace gameplay lookups with `UnitSourcePrefabKey`/entity data while keeping preview sprite/prefab mapping at the managed UI boundary.
+- [ ] Re-run architecture validation, citizen visible-unit validation, building production validation, and gameplay composition smoke after each slice.
 
 ## Phase 12: Final Guardrails And Cleanup
 

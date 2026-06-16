@@ -45,7 +45,7 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
         Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab = null,
         BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
-        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null,
+        Func<GameObject, string> resolveSpawnableLookupKey = null,
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
     {
@@ -57,7 +57,6 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
         childSystems.BuildingProductionSystem.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
         childSystems.BuildingProductionTransportSystem.SetRuntimeRoot(runtimeTransportsRoot);
         childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
-        childSystems.ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
         _startupCompositionSystem.Initialize(
             childSystems,
             buildingPlacementConfig,

@@ -1,14 +1,14 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingGridCompositionSystem : SystemBase
+internal partial struct BuildingGridCompositionSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 

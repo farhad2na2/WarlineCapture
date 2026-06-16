@@ -27,7 +27,7 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
     internal readonly BuildingProductionTransportBridgeSystem BuildingProductionTransportBridgeSystem = new();
     internal readonly BuildingProductionContextSystem BuildingProductionContextSystem = new();
     internal readonly BuildingSpawnSystem BuildingSpawnSystem = new();
-    internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem;
+    internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem = new();
     internal readonly BuildingProductionSlotSystem BuildingProductionSlotSystem = new();
     internal readonly BuildingPlacementQuerySystem BuildingPlacementQuerySystem = new();
     internal readonly BuildingPlacementQueryCompositionSystem BuildingPlacementQueryCompositionSystem = new();
@@ -93,7 +93,6 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
     internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
     internal readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
-    internal BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
 
     public BuildingGameplayCompositionSourceSystem()
     {
@@ -102,7 +101,6 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
-        BuildingSpawnPrefabSystem = ResolveBuildingSpawnPrefabSystem();
         BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
         BuildingPlacementVisualCompositionSystem = ResolveBuildingPlacementVisualCompositionSystem();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
@@ -148,14 +146,6 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
         Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>()
-            : null;
-    }
-
-    private static BuildingSpawnPrefabSystem ResolveBuildingSpawnPrefabSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingSpawnPrefabSystem>()
             : null;
     }
 

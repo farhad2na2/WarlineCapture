@@ -156,7 +156,7 @@ internal sealed partial class ManagedGameplayStartupSystem : SystemBase
         System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
         BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
-        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey,
+        System.Func<GameObject, string> resolveSpawnableLookupKey,
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
         Transform mapBuildingAuthoringRoot,

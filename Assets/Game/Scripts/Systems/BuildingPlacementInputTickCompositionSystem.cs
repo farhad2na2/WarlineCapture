@@ -51,7 +51,6 @@ internal sealed partial class BuildingPlacementInputTickCompositionSystem : Syst
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
     {
         if (source?.BuildingPlacementCommandSystem == null ||
-            source.BuildingEntityManagerAccessSystem == null ||
             createPlacementCommandContext == null ||
             !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
         {

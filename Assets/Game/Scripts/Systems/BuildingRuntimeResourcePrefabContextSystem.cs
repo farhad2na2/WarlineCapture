@@ -15,7 +15,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         public readonly EntityQuery UnitPrefabRegistryQuery;
         public readonly EntityQuery SpawnPrefabCandidatesQuery;
         public readonly EntityQuery LivePlayerUnitsQuery;
-        public readonly BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
         public readonly Func<Source> CreateCurrentSource;
 
         public Source(
@@ -29,7 +28,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             EntityQuery unitPrefabRegistryQuery,
             EntityQuery spawnPrefabCandidatesQuery,
             EntityQuery livePlayerUnitsQuery,
-            BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null,
             Func<Source> createCurrentSource = null)
         {
             RuntimeResourceSystem = runtimeResourceSystem;
@@ -42,7 +40,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             UnitPrefabRegistryQuery = unitPrefabRegistryQuery;
             SpawnPrefabCandidatesQuery = spawnPrefabCandidatesQuery;
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
-            ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
             CreateCurrentSource = createCurrentSource;
         }
     }
@@ -68,7 +65,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         EntityQuery unitPrefabRegistryQuery,
         EntityQuery spawnPrefabCandidatesQuery,
         EntityQuery livePlayerUnitsQuery,
-        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null,
         Func<Source> createCurrentSource = null)
     {
         return system != null
@@ -83,7 +79,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
                 unitPrefabRegistryQuery,
                 spawnPrefabCandidatesQuery,
                 livePlayerUnitsQuery,
-                resolveSpawnableLookupKey,
                 createCurrentSource)
             : CreateSourceState(
                 runtimeResourceSystem,
@@ -96,7 +91,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
                 unitPrefabRegistryQuery,
                 spawnPrefabCandidatesQuery,
                 livePlayerUnitsQuery,
-                resolveSpawnableLookupKey,
                 createCurrentSource);
     }
 
@@ -111,7 +105,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         EntityQuery unitPrefabRegistryQuery,
         EntityQuery spawnPrefabCandidatesQuery,
         EntityQuery livePlayerUnitsQuery,
-        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null,
         Func<Source> createCurrentSource = null)
     {
         return CreateSourceState(
@@ -125,7 +118,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             unitPrefabRegistryQuery,
             spawnPrefabCandidatesQuery,
             livePlayerUnitsQuery,
-            resolveSpawnableLookupKey,
             createCurrentSource);
     }
 
@@ -140,7 +132,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         EntityQuery unitPrefabRegistryQuery,
         EntityQuery spawnPrefabCandidatesQuery,
         EntityQuery livePlayerUnitsQuery,
-        BuildingSpawnPrefabSystem.ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null,
         Func<Source> createCurrentSource = null)
     {
         return new Source(
@@ -154,7 +145,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             unitPrefabRegistryQuery,
             spawnPrefabCandidatesQuery,
             livePlayerUnitsQuery,
-            resolveSpawnableLookupKey,
             createCurrentSource);
     }
 
@@ -223,7 +213,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
         return source.RuntimeUnitPrefabSystem != null
             ? source.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext)
             : new CitizenPrefabSystem.Context(
-                runtimeUnitPrefabContext.DefinitionSystem,
                 runtimeUnitPrefabContext.SpawnPrefabSystem,
                 runtimeUnitPrefabContext.TryGetEntityManager,
                 runtimeUnitPrefabContext.EnsureEntityQueries,
@@ -247,10 +236,8 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
     private static BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContextState(Source source)
     {
         return new BuildingSpawnPrefabSystem.Context(
-            source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.UnitPrefabRegistryQuery,
             source.SpawnPrefabCandidatesQuery,
-            source.LivePlayerUnitsQuery,
-            source.ResolveSpawnableLookupKey);
+            source.LivePlayerUnitsQuery);
     }
 }

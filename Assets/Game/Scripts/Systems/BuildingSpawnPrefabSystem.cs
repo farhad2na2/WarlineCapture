@@ -1,122 +1,118 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
-using UnityEngine;
 
-internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
+internal partial struct BuildingSpawnPrefabSystem : ISystem
 {
-    public delegate string ResolveSpawnableLookupKeyDelegate(GameObject prefab);
-
     public readonly struct Context
     {
-        public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
         public readonly EntityQuery UnitPrefabRegistryQuery;
         public readonly EntityQuery SpawnPrefabCandidatesQuery;
         public readonly EntityQuery LivePlayerUnitsQuery;
-        public readonly ResolveSpawnableLookupKeyDelegate ResolveSpawnableLookupKey;
 
         public Context(
-            IReadOnlyList<GameObject> unitSpawnPrefabs,
             EntityQuery unitPrefabRegistryQuery,
             EntityQuery spawnPrefabCandidatesQuery,
-            EntityQuery livePlayerUnitsQuery,
-            ResolveSpawnableLookupKeyDelegate resolveSpawnableLookupKey = null)
+            EntityQuery livePlayerUnitsQuery)
         {
-            UnitSpawnPrefabs = unitSpawnPrefabs;
             UnitPrefabRegistryQuery = unitPrefabRegistryQuery;
             SpawnPrefabCandidatesQuery = spawnPrefabCandidatesQuery;
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
-            ResolveSpawnableLookupKey = resolveSpawnableLookupKey;
         }
     }
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
-    public bool TryResolveSpawnUnitPrefabFromRegistry(Context context, EntityManager em, Entity prefabEntity, out GameObject spawnUnitPrefab)
+    public bool TryResolveSpawnUnitSourceKey(
+        Context context,
+        EntityManager em,
+        Entity prefabEntity,
+        out FixedString64Bytes sourceKey)
     {
-        spawnUnitPrefab = null;
-        if (prefabEntity == Entity.Null ||
-            context.UnitPrefabRegistryQuery.IsEmptyIgnoreFilter ||
-            context.UnitSpawnPrefabs == null ||
-            context.UnitSpawnPrefabs.Count == 0)
-        {
+        sourceKey = default;
+        if (prefabEntity == Entity.Null || !em.Exists(prefabEntity))
             return false;
+
+        if (em.HasComponent<UnitSourcePrefabKey>(prefabEntity))
+            sourceKey = em.GetComponentData<UnitSourcePrefabKey>(prefabEntity).Value;
+
+        if (sourceKey.Length == 0)
+        {
+            string name = em.GetName(prefabEntity);
+            if (!string.IsNullOrWhiteSpace(name))
+                sourceKey = new FixedString64Bytes(NormalizeSourceKey(name));
         }
+
+        if (sourceKey.Length == 0)
+            return false;
+
+        if (context.UnitPrefabRegistryQuery.IsEmptyIgnoreFilter)
+            return true;
 
         Entity registryEntity = context.UnitPrefabRegistryQuery.GetSingletonEntity();
         DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        int count = math.min(registry.Length, context.UnitSpawnPrefabs.Count);
-        if (count <= 0)
-            return false;
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < registry.Length; i++)
         {
-            if (registry[i].Prefab != prefabEntity)
-                continue;
-
-            spawnUnitPrefab = context.UnitSpawnPrefabs[i];
-            return spawnUnitPrefab != null;
+            if (registry[i].Prefab == prefabEntity)
+                return true;
         }
 
-        return false;
+        return true;
     }
 
-    public bool TryGetSpawnUnitPrefabEntity(Context context, EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
+    public bool TryGetSpawnUnitPrefabEntity(
+        Context context,
+        EntityManager em,
+        FixedString64Bytes sourceKey,
+        out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        if (spawnUnitPrefab == null)
+        if (sourceKey.Length == 0)
             return false;
 
-        return TryGetSpawnUnitPrefabEntityFromRegistry(context, em, spawnUnitPrefab, out prefabEntity) ||
-               TryGetSpawnUnitPrefabEntityFromPrefabQuery(context, em, spawnUnitPrefab, out prefabEntity) ||
-               TryGetPlayerUnitPrefabEntityFromLiveUnits(context, em, spawnUnitPrefab, out prefabEntity);
+        return TryGetSpawnUnitPrefabEntityFromRegistry(context, em, sourceKey, out prefabEntity) ||
+               TryGetSpawnUnitPrefabEntityFromPrefabQuery(context, em, sourceKey, out prefabEntity) ||
+               TryGetPlayerUnitPrefabEntityFromLiveUnits(context, em, sourceKey, out prefabEntity);
     }
 
-    private bool TryGetSpawnUnitPrefabEntityFromRegistry(Context context, EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
+    private static bool TryGetSpawnUnitPrefabEntityFromRegistry(
+        Context context,
+        EntityManager em,
+        FixedString64Bytes sourceKey,
+        out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        if (context.UnitPrefabRegistryQuery.IsEmptyIgnoreFilter ||
-            context.UnitSpawnPrefabs == null ||
-            context.UnitSpawnPrefabs.Count == 0)
-        {
+        if (context.UnitPrefabRegistryQuery.IsEmptyIgnoreFilter)
             return false;
-        }
 
         Entity registryEntity = context.UnitPrefabRegistryQuery.GetSingletonEntity();
         DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        string targetKey = GetSpawnableLookupKey(context, spawnUnitPrefab);
-        int count = math.min(registry.Length, context.UnitSpawnPrefabs.Count);
-        if (string.IsNullOrEmpty(targetKey) || count <= 0)
-            return false;
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < registry.Length; i++)
         {
-            GameObject configuredPrefab = context.UnitSpawnPrefabs[i];
-            if (configuredPrefab == null)
+            Entity candidate = registry[i].Prefab;
+            if (candidate == Entity.Null || !EntityMatchesSourceKey(em, candidate, sourceKey))
                 continue;
 
-            if (!NamesMatch(GetSpawnableLookupKey(context, configuredPrefab), targetKey))
-                continue;
-
-            prefabEntity = registry[i].Prefab;
+            prefabEntity = candidate;
             return prefabEntity != Entity.Null;
         }
 
         return false;
     }
 
-    private bool TryGetSpawnUnitPrefabEntityFromPrefabQuery(Context context, EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
+    private static bool TryGetSpawnUnitPrefabEntityFromPrefabQuery(
+        Context context,
+        EntityManager em,
+        FixedString64Bytes sourceKey,
+        out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        string targetName = spawnUnitPrefab.name;
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = context.SpawnPrefabCandidatesQuery.ToArchetypeChunkArray(Allocator.Temp);
 
@@ -126,7 +122,7 @@ internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity candidate = entities[i];
-                if (!NamesMatch(em.GetName(candidate), targetName))
+                if (!EntityMatchesSourceKey(em, candidate, sourceKey))
                     continue;
 
                 prefabEntity = candidate;
@@ -137,10 +133,13 @@ internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
         return false;
     }
 
-    private bool TryGetPlayerUnitPrefabEntityFromLiveUnits(Context context, EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
+    private static bool TryGetPlayerUnitPrefabEntityFromLiveUnits(
+        Context context,
+        EntityManager em,
+        FixedString64Bytes sourceKey,
+        out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        string targetName = spawnUnitPrefab != null ? spawnUnitPrefab.name : string.Empty;
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
         ComponentTypeHandle<UnitRespawnPrefab> respawnPrefabType = em.GetComponentTypeHandle<UnitRespawnPrefab>(true);
@@ -162,7 +161,7 @@ internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
                 Entity candidate = respawnPrefabs[i].Prefab;
                 if (candidate == Entity.Null)
                     continue;
-                if (!NamesMatch(em.GetName(candidate), targetName))
+                if (!EntityMatchesSourceKey(em, candidate, sourceKey))
                     continue;
 
                 prefabEntity = candidate;
@@ -173,29 +172,39 @@ internal sealed partial class BuildingSpawnPrefabSystem : SystemBase
         return false;
     }
 
-    private static string GetSpawnableLookupKey(Context context, GameObject prefab)
+    private static bool EntityMatchesSourceKey(EntityManager em, Entity candidate, FixedString64Bytes sourceKey)
     {
-        if (prefab == null)
-            return string.Empty;
-
-        string configuredKey = context.ResolveSpawnableLookupKey?.Invoke(prefab);
-        if (!string.IsNullOrWhiteSpace(configuredKey))
-            return NormalizeSpawnableKey(configuredKey);
-
-        return NormalizeSpawnableKey(prefab.name);
-    }
-
-    private static string NormalizeSpawnableKey(string value)
-    {
-        return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
-    }
-
-    private static bool NamesMatch(string candidateName, string targetName)
-    {
-        if (string.IsNullOrWhiteSpace(candidateName) || string.IsNullOrWhiteSpace(targetName))
+        if (candidate == Entity.Null || !em.Exists(candidate) || sourceKey.Length == 0)
             return false;
 
-        return string.Equals(candidateName, targetName, System.StringComparison.OrdinalIgnoreCase) ||
-               string.Equals(candidateName.Replace(" (Clone)", string.Empty), targetName, System.StringComparison.OrdinalIgnoreCase);
+        if (em.HasComponent<UnitSourcePrefabKey>(candidate) &&
+            SourceKeysMatch(em.GetComponentData<UnitSourcePrefabKey>(candidate).Value, sourceKey))
+        {
+            return true;
+        }
+
+        return SourceKeysMatch(em.GetName(candidate), sourceKey);
+    }
+
+    private static bool SourceKeysMatch(FixedString64Bytes candidate, FixedString64Bytes target)
+    {
+        return SourceKeysMatch(candidate.ToString(), target);
+    }
+
+    private static bool SourceKeysMatch(string candidate, FixedString64Bytes target)
+    {
+        if (string.IsNullOrWhiteSpace(candidate) || target.Length == 0)
+            return false;
+
+        string targetKey = NormalizeSourceKey(target.ToString());
+        string candidateKey = NormalizeSourceKey(candidate);
+        return string.Equals(candidateKey, targetKey, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizeSourceKey(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Replace(" (Clone)", string.Empty).Trim().ToLowerInvariant();
     }
 }

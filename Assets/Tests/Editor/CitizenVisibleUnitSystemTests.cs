@@ -1,7 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
-using System.Collections.Generic;
-using System.Reflection;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -35,7 +34,6 @@ public sealed class CitizenVisibleUnitSystemTests
         using World world = new("CitizenVisibleUnitSystemTests");
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World.DefaultGameObjectInjectionWorld = world;
-        GameObject prefab = new("Unit_Chr_Civilian_Male_01");
         try
         {
             EntityManager em = world.EntityManager;
@@ -60,8 +58,10 @@ public sealed class CitizenVisibleUnitSystemTests
                 typeof(UnitTarget),
                 typeof(UnitPathRequest),
                 typeof(UnitPathFollow),
-                typeof(SelectedUnitTag));
-            em.SetName(prefabEntity, prefab.name);
+                typeof(SelectedUnitTag),
+                typeof(UnitSourcePrefabKey));
+            em.SetName(prefabEntity, "Unit_Chr_Civilian_Male_01");
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = new FixedString64Bytes("unit_chr_civilian_male_01") });
             em.SetComponentData(prefabEntity, new UnitMovementBehavior { AllowIdleWander = 1, UsesVehicleMotion = 0 });
             em.SetComponentData(prefabEntity, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
             em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.PlayerFactionId });
@@ -80,22 +80,20 @@ public sealed class CitizenVisibleUnitSystemTests
                 ComponentType.ReadOnly<UnitRespawnPrefab>(),
                 ComponentType.ReadOnly<Faction>());
 
-            var configuredPrefabs = new List<GameObject> { prefab };
-            var spawnPrefabSystem = world.GetOrCreateSystemManaged<BuildingSpawnPrefabSystem>();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
             var spawnPrefabContext = new BuildingSpawnPrefabSystem.Context(
-                configuredPrefabs,
                 registryQuery,
                 prefabCandidatesQuery,
                 liveUnitsQuery);
             var citizenPrefabContext = new CitizenPrefabSystem.Context(
-                null,
                 spawnPrefabSystem,
                 TryGetEntityManager,
                 null,
                 () => spawnPrefabContext);
-            var citizenPrefabSystem = world.GetOrCreateSystemManaged<CitizenPrefabSystem>();
-            var prefabSelectionSystem = world.GetOrCreateSystemManaged<CitizenPrefabSelectionSystem>();
-            SetCitizenPrefabs(prefabSelectionSystem, prefab);
+            var citizenPrefabSystem = new CitizenPrefabSystem();
+            var prefabSelectionSystem = new CitizenPrefabSelectionSystem();
+            var prefabSelectionState = default(CitizenPrefabSelectionSystem.State);
+            prefabSelectionSystem.Init(ref prefabSelectionState, citizenPrefabSystem, citizenPrefabContext);
 
             var state = new CitizenPopulationStateSystem();
             var projection = new CitizenPopulationEcsProjectionSystem();
@@ -118,6 +116,7 @@ public sealed class CitizenVisibleUnitSystemTests
                 citizenPrefabSystem,
                 citizenPrefabContext,
                 prefabSelectionSystem,
+                prefabSelectionState,
                 new CitizenTravelSystem(),
                 new CitizenBuildingReadSystem(),
                 new CitizenStatusTransitionSystem(),
@@ -154,7 +153,6 @@ public sealed class CitizenVisibleUnitSystemTests
         }
         finally
         {
-            Object.DestroyImmediate(prefab);
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
@@ -230,17 +228,6 @@ public sealed class CitizenVisibleUnitSystemTests
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
-    }
-
-    private static void SetCitizenPrefabs(CitizenPrefabSelectionSystem prefabSelectionSystem, GameObject malePrefab)
-    {
-        const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
-        typeof(CitizenPrefabSelectionSystem)
-            .GetField("_maleCitizenPrefabs", Flags)
-            .SetValue(prefabSelectionSystem, new[] { malePrefab });
-        typeof(CitizenPrefabSelectionSystem)
-            .GetField("_femaleCitizenPrefabs", Flags)
-            .SetValue(prefabSelectionSystem, new GameObject[0]);
     }
 }
 #endif

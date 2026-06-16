@@ -1,20 +1,20 @@
 using Unity.Entities;
 
-internal sealed partial class BuildingEntityManagerAccessSystem : SystemBase
+internal partial struct BuildingEntityManagerAccessSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
     public bool TryGetEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

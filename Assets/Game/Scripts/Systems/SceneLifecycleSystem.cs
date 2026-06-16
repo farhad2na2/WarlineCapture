@@ -3,12 +3,21 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class SceneLifecycleSystem
+public sealed partial class SceneLifecycleSystem : SystemBase
 {
     public const string MenuSceneName = "Menu";
     public const string MatchSceneName = "Match";
 
-    private World _world;
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    private Unity.Entities.World _world;
     private Entity _lifecycleEntity;
     private AsyncOperation _activeOperation;
     private SceneLifecycleRequestElement _activeRequest;
@@ -78,7 +87,7 @@ public sealed class SceneLifecycleSystem
 
     public Entity EnsureLifecycleEntity(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_world == world &&
             _lifecycleEntity != Entity.Null &&
             em.Exists(_lifecycleEntity) &&

@@ -1,7 +1,17 @@
 using System;
+using Unity.Entities;
 
-public sealed class RoadBuildReadModelSystem
+public sealed partial class RoadBuildReadModelSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal readonly struct Context
     {
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;

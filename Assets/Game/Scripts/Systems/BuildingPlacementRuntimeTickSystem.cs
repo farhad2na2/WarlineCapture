@@ -1,8 +1,9 @@
 using System;
+using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
 
-internal sealed class BuildingPlacementRuntimeTickSystem
+internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
 {
     private static readonly ProfilerMarker ProcessPendingProductionsMarker = new("BuildingPlacementRuntimeTick.ProcessPendingProductions");
     private static readonly ProfilerMarker UpdateResourceProductionMarker = new("BuildingPlacementRuntimeTick.UpdateResourceProduction");
@@ -71,9 +72,18 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         }
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void Update(Context context)
     {
-        double startTime = Time.realtimeSinceStartupAsDouble;
+        double startTime = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double afterProductions = startTime;
         double afterResources = startTime;
         double afterHaulers = startTime;
@@ -93,27 +103,27 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             {
                 context.ProcessPendingProductions?.Invoke();
             }
-            afterProductions = Time.realtimeSinceStartupAsDouble;
+            afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (UpdateResourceProductionMarker.Auto())
             {
                 context.UpdateResourceProduction?.Invoke();
             }
-            afterResources = Time.realtimeSinceStartupAsDouble;
+            afterResources = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (UpdateResourceHaulersMarker.Auto())
             {
                 context.UpdateResourceHaulers?.Invoke();
             }
-            afterHaulers = Time.realtimeSinceStartupAsDouble;
+            afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (UpdateBuildingResourceVisualsMarker.Auto())
             {
                 context.UpdateBuildingResourceVisuals?.Invoke();
             }
-            afterResourceVisuals = Time.realtimeSinceStartupAsDouble;
+            afterResourceVisuals = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (CleanupRecentSpawnReservationsMarker.Auto())
             {
                 context.CleanupRecentSpawnReservations?.Invoke();
             }
-            afterReservations = Time.realtimeSinceStartupAsDouble;
+            afterReservations = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (SyncDestroyedRuntimeBuildingCombatEntitiesMarker.Auto())
             {
                 context.SyncDestroyedRuntimeBuildingCombatEntities?.Invoke();
@@ -122,17 +132,17 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             {
                 context.UpdateDestroyedBuildings?.Invoke();
             }
-            afterDestroyed = Time.realtimeSinceStartupAsDouble;
+            afterDestroyed = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (UpdateRoadBarrierDoorsMarker.Auto())
             {
                 context.UpdateRoadBarrierDoors?.Invoke();
             }
-            afterDoors = Time.realtimeSinceStartupAsDouble;
+            afterDoors = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (FlushPendingMarkerRefreshMarker.Auto())
             {
                 context.FlushPendingMarkerRefresh?.Invoke();
             }
-            afterMarkers = Time.realtimeSinceStartupAsDouble;
+            afterMarkers = UnityEngine.Time.realtimeSinceStartupAsDouble;
             using (EnqueueMapBuildingPlacementsMarker.Auto())
             {
                 context.EnqueueMapBuildingPlacements?.Invoke();

@@ -27,7 +27,7 @@ internal sealed partial class CitizenPopulationRuntimeUpdateSystem : SystemBase
         _systems = null;
     }
 
-    public void Update()
+    public new void Update()
     {
         if (_systems == null)
             return;

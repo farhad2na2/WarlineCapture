@@ -1,7 +1,16 @@
 using Unity.Entities;
 
-internal sealed class RoadBuildCompositionSourceSystem
+internal sealed partial class RoadBuildCompositionSourceSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
@@ -73,7 +82,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadGridProjectionSystem ResolveRoadGridProjectionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadGridProjectionSystem>()
             : null;
@@ -81,7 +90,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadRuntimeRootSystem ResolveRoadRuntimeRootSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadRuntimeRootSystem>()
             : null;
@@ -89,7 +98,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadVisualVariantSystem ResolveRoadVisualVariantSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadVisualVariantSystem>()
             : null;
@@ -97,7 +106,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadBuildPlacementVisualSystem ResolveRoadBuildPlacementVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadBuildPlacementVisualSystem>()
             : null;
@@ -105,7 +114,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadBuildVisualContextSystem ResolveRoadBuildVisualContextSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadBuildVisualContextSystem>()
             : null;
@@ -113,7 +122,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadVisualResolutionSystem ResolveRoadVisualResolutionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadVisualResolutionSystem>()
             : null;
@@ -121,7 +130,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadVisualRefreshSystem ResolveRoadVisualRefreshSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadVisualRefreshSystem>()
             : null;
@@ -129,7 +138,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadChunkVisualSystem ResolveRoadChunkVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadChunkVisualSystem>()
             : null;
@@ -137,7 +146,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadSpecialVisualSystem ResolveRoadSpecialVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadSpecialVisualSystem>()
             : null;
@@ -145,7 +154,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadPreviewSystem ResolveRoadPreviewSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadPreviewSystem>()
             : null;
@@ -153,7 +162,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationSystem>()
             : null;
@@ -161,7 +170,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadRuntimeGenerationContextSystem ResolveRoadRuntimeGenerationContextSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationContextSystem>()
             : null;
@@ -169,7 +178,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadMinimapEventSystem ResolveRoadMinimapEventSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadMinimapEventSystem>()
             : null;
@@ -177,7 +186,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadBuildRuntimeActionSystem ResolveRoadBuildRuntimeActionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RoadBuildRuntimeActionSystem>()
             : null;

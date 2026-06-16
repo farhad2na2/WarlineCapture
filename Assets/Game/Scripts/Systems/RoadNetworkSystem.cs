@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class RoadNetworkSystem
+public sealed partial class RoadNetworkSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public enum RoadVisualType
     {
         None,

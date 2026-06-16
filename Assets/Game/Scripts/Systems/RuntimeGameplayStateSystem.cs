@@ -2,9 +2,18 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RuntimeGameplayStateSystem
+public sealed partial class RuntimeGameplayStateSystem : SystemBase
 {
-    private World _cachedWorld;
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    private Unity.Entities.World _cachedWorld;
     private Entity _stateEntity;
     private bool _hasCachedLegacyGameplayState;
     private bool _hasCachedLegacyCameraInput;
@@ -254,7 +263,7 @@ public sealed class RuntimeGameplayStateSystem
     {
         entityManager = default;
         entity = Entity.Null;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 
@@ -290,7 +299,7 @@ public sealed class RuntimeGameplayStateSystem
         return true;
     }
 
-    private void CacheStateEntity(World world, Entity entity)
+    private void CacheStateEntity(Unity.Entities.World world, Entity entity)
     {
         _cachedWorld = world;
         _stateEntity = entity;

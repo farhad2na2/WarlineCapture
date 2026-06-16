@@ -1,5 +1,16 @@
-internal sealed class RoadBuildContextSystem
+using Unity.Entities;
+
+internal sealed partial class RoadBuildContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;

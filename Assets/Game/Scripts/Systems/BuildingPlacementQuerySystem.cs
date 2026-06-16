@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementQuerySystem
+internal sealed partial class BuildingPlacementQuerySystem : SystemBase
 {
     public delegate int GetProductionCountDelegate(BuildingDefinition definition);
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
@@ -56,6 +56,15 @@ internal sealed class BuildingPlacementQuerySystem
             HasEntityManager = hasEntityManager;
             EntityManager = entityManager;
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public GameObject GetSelectedBuildingProductionPrefab(Context context, int productionIndex)

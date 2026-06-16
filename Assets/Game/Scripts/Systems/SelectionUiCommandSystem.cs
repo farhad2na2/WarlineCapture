@@ -1,7 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiCommandSystem : ISelectionUiCommand
+[DisableAutoCreation]
+public sealed partial class SelectionUiCommandSystem : SystemBase, ISelectionUiCommand
 {
     private readonly RtsSelectionInputSystem _inputSystem = new();
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
@@ -10,6 +11,15 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     public SelectionUiCommandSystem(System.Func<bool> isGameplayInputLocked = null)
     {
         _isGameplayInputLocked = isGameplayInputLocked;
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void CaptureUiClickSequence()
@@ -54,7 +64,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         CaptureUiClickSequence();
         bool queued = Queue(RtsSelectionCommandIntentKind.EnterMoveTargetMode);
         SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-            $"requestMoveCommandMode queued={queued} frame={Time.frameCount}");
+            $"requestMoveCommandMode queued={queued} frame={UnityEngine.Time.frameCount}");
         return queued;
     }
 
@@ -131,7 +141,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         if (!TryReadFocusedUnit(out Entity focusedUnit))
             return false;
 
-        return _inputSystem.QueueDisembarkTransportCommandRequest(focusedUnit, Time.frameCount);
+        return _inputSystem.QueueDisembarkTransportCommandRequest(focusedUnit, UnityEngine.Time.frameCount);
     }
 
     public bool RequestFocusedTransportPassengerDisembark(Entity passenger)
@@ -142,7 +152,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         if (!TryReadFocusedUnit(out Entity focusedUnit))
             return false;
 
-        return _inputSystem.QueueDisembarkTransportPassengerCommandRequest(focusedUnit, passenger, Time.frameCount);
+        return _inputSystem.QueueDisembarkTransportPassengerCommandRequest(focusedUnit, passenger, UnityEngine.Time.frameCount);
     }
 
     private bool Queue(RtsSelectionCommandIntentKind kind)
@@ -150,15 +160,15 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         if (IsGameplayInputLocked())
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={Time.frameCount}");
+                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
-        bool queued = _inputSystem.QueueCommandIntentRequest(kind, Time.frameCount);
+        bool queued = _inputSystem.QueueCommandIntentRequest(kind, UnityEngine.Time.frameCount);
         if (kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode)
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"uiCommandQueued kind={kind} queued={queued} frame={Time.frameCount}");
+                $"uiCommandQueued kind={kind} queued={queued} frame={UnityEngine.Time.frameCount}");
         }
 
         return queued;
@@ -169,14 +179,14 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         if (IsGameplayInputLocked())
         {
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={Time.frameCount}");
+                $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
         return _inputSystem.QueueSelectAllCommandRequest(
             kind,
             new Rect(0f, 0f, Screen.width, Screen.height),
-            Time.frameCount);
+            UnityEngine.Time.frameCount);
     }
 
     private bool IsGameplayInputLocked()
@@ -187,7 +197,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     private bool TryReadFocusedUnit(out Entity focusedUnit)
     {
         focusedUnit = Entity.Null;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

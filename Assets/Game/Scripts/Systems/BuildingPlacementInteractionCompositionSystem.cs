@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInteractionCompositionSystem
+internal sealed partial class BuildingPlacementInteractionCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate bool TryGetGridForPlacementInputDelegate(
         BuildingGameplayCompositionSourceSystem source,
         out GridConfig grid);
@@ -124,7 +133,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystem
             context,
             source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             productionIndex: 0,
-            Time.frameCount);
+            UnityEngine.Time.frameCount);
     }
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(

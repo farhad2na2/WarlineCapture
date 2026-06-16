@@ -1,7 +1,17 @@
 using Unity.Entities;
 
-public readonly struct InitialUnitSpawnResetSystem
+[DisableAutoCreation]
+public partial struct InitialUnitSpawnResetSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
+
     public void ResetSpawnedUnitRuntimeState(
         EntityManager em,
         EntityCommandBuffer ecb,

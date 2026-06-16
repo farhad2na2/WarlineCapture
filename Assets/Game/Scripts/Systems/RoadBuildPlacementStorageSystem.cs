@@ -1,8 +1,18 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildPlacementStorageSystem
+internal sealed partial class RoadBuildPlacementStorageSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private readonly RuntimeBuildingSystem<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
 
     public IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings => _runtimeBuildingSystem.Buildings;

@@ -2,8 +2,17 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-internal sealed class ManagedGameplayStartupSystem
+internal sealed partial class ManagedGameplayStartupSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private readonly RoadBuildCompositionSystem _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
     private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();
@@ -337,7 +346,7 @@ internal sealed class ManagedGameplayStartupSystem
 
     private static DayNightSystem ResolveDayNightSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<DayNightSystem>()
             : null;

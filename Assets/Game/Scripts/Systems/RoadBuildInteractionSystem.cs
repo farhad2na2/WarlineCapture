@@ -2,8 +2,17 @@ using Unity.Entities;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildInteractionSystem
+internal sealed partial class RoadBuildInteractionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool IsPointerOverUiDelegate(Vector2 screenPosition);
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
 

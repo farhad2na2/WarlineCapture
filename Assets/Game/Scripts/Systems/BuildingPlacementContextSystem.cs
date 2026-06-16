@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementContextSystem
+internal sealed partial class BuildingPlacementContextSystem : SystemBase
 {
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct Source
     {

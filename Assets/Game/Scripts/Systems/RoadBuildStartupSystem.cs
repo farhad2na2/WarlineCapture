@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildStartupSystem
+internal sealed partial class RoadBuildStartupSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal sealed class State
     {
         public RoadBuildSystemConfig Config;

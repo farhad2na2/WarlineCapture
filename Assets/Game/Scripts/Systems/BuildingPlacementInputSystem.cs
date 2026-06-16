@@ -1,8 +1,18 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInputSystem
+internal sealed partial class BuildingPlacementInputSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public enum DragFirstAxis
     {
         None,

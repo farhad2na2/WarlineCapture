@@ -3,8 +3,17 @@ using Unity.Mathematics;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildBuildingPlacementSystem
+internal sealed partial class RoadBuildBuildingPlacementSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
     public delegate bool IsRuntimeBlockerCellDelegate(int x, int y, int width, int height);
 

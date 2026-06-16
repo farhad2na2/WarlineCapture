@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInvalidCellSystem
+internal sealed partial class BuildingPlacementInvalidCellSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate RectInt GetEffectivePlacementRectDelegate(
         BuildingDefinition definition,
         Vector2Int originCell,

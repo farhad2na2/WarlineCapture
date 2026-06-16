@@ -1,12 +1,22 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInputRuntimeTickSystem
+internal sealed partial class BuildingPlacementInputRuntimeTickSystem : SystemBase
 {
     private const float DefaultClickDragThresholdPixels = 8f;
 
     private bool _pendingBuildingSelectionClick;
     private Vector2 _buildingSelectionPressPosition;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct Context
     {
@@ -100,7 +110,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             return default;
 
         bool hasPointer = GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer);
-        afterMouse = Time.realtimeSinceStartupAsDouble;
+        afterMouse = UnityEngine.Time.realtimeSinceStartupAsDouble;
         if (!hasPointer)
             return new Result(afterOutline, afterMouse, afterUi, afterBuildingClick, afterInput);
 
@@ -112,7 +122,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                 activePlacement,
                 pointer,
                 context.ActivePlacementPointerContext);
-            afterInput = Time.realtimeSinceStartupAsDouble;
+            afterInput = UnityEngine.Time.realtimeSinceStartupAsDouble;
             return new Result(afterInput, afterMouse, afterInput, afterInput, afterInput);
         }
 
@@ -120,13 +130,13 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         {
             _pendingBuildingSelectionClick = false;
             context.PlacementPreviewSystem?.HideOutline();
-            afterOutline = Time.realtimeSinceStartupAsDouble;
+            afterOutline = UnityEngine.Time.realtimeSinceStartupAsDouble;
             return new Result(afterOutline, afterMouse, afterOutline, afterOutline, afterOutline);
         }
 
         if (context.IsBuildModeActive?.Invoke() != true)
             context.PlacementPreviewSystem?.HideOutline();
-        afterOutline = Time.realtimeSinceStartupAsDouble;
+        afterOutline = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
         if (pointer.WasPressedThisFrame)
         {
@@ -144,7 +154,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                 _pendingBuildingSelectionClick = false;
                 if (context.RuntimeGameplayStateSystem != null)
                     context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
-                afterInput = Time.realtimeSinceStartupAsDouble;
+                afterInput = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 return new Result(afterOutline, afterMouse, afterUi, afterInput, afterInput);
             }
 
@@ -174,7 +184,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
                     context.SelectionClickSystem?.HandleBuildingSelectionClick(
                         context.SelectionClickContext,
                         pointerPosition);
-                    afterBuildingClick = Time.realtimeSinceStartupAsDouble;
+                    afterBuildingClick = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 }
             }
 
@@ -185,7 +195,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             _pendingBuildingSelectionClick = false;
         }
 
-        afterInput = Time.realtimeSinceStartupAsDouble;
+        afterInput = UnityEngine.Time.realtimeSinceStartupAsDouble;
         if (afterUi < afterOutline)
             afterUi = afterOutline;
         if (afterBuildingClick < afterUi)
@@ -220,7 +230,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             overGameplayUi,
             hasActiveBuilding,
             overUnitCommandUi,
-            Time.realtimeSinceStartupAsDouble);
+            UnityEngine.Time.realtimeSinceStartupAsDouble);
     }
 
     private readonly struct BuildingSelectionClickGate

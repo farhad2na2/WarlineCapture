@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildDefinitionProjectionSystem
+internal sealed partial class RoadBuildDefinitionProjectionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void BuildDefinitions(
         GameObject soldierBasePrefab,
         Vector2Int soldierBaseFootprintCells,

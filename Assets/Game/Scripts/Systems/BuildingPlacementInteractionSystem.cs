@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingPlacementInteractionSystem
+public sealed partial class BuildingPlacementInteractionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryResolveBaseBreachTargetDelegate(
         byte attackerFactionId,
         Entity finalTarget,

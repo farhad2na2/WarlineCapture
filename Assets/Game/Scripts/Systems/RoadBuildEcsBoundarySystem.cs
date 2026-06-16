@@ -6,8 +6,17 @@ using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildEcsBoundarySystem
+internal sealed partial class RoadBuildEcsBoundarySystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
@@ -53,7 +62,7 @@ internal sealed class RoadBuildEcsBoundarySystem
     public bool TryGetEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

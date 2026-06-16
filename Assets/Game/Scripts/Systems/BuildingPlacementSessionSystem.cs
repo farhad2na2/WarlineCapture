@@ -1,7 +1,8 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementSessionSystem
+internal sealed partial class BuildingPlacementSessionSystem : SystemBase
 {
     public readonly struct Context
     {
@@ -48,6 +49,15 @@ internal sealed class BuildingPlacementSessionSystem
     }
 
     private bool _preserveBuildingSelectionOnNextExitBuildMode;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void SetActivePlacementCost(Context context, int cost)
     {

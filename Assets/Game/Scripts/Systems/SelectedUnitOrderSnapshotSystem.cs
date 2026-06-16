@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed class SelectedUnitOrderSnapshotSystem
+[DisableAutoCreation]
+public sealed partial class SelectedUnitOrderSnapshotSystem : SystemBase
 {
     private struct PreservedOrderState
     {
@@ -19,13 +20,22 @@ public sealed class SelectedUnitOrderSnapshotSystem
         public UnitPathRange UnitPathRange;
     }
 
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _selectedTagQuery;
     private readonly List<PreservedOrderState> _preservedOrders = new();
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 

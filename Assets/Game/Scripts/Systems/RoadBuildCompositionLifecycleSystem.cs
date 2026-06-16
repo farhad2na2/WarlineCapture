@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildCompositionLifecycleSystem
+internal sealed partial class RoadBuildCompositionLifecycleSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void Init(
         RoadBuildCompositionSourceSystem source,
         RoadBuildCompositionContextSystem contextSystem,

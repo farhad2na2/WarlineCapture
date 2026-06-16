@@ -1,8 +1,18 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementCommitSystem
+internal sealed partial class BuildingPlacementCommitSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct WallRun
     {
         public readonly IReadOnlyList<Vector2Int> Origins;

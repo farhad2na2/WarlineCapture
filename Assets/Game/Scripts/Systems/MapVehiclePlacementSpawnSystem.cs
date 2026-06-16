@@ -5,8 +5,17 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class MapVehiclePlacementSpawnSystem
+internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private const int MaxPlacementsPerUpdate = 32;
     private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
     private const float UniformScaleEpsilon = 0.0001f;

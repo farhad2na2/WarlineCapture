@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
 
-public sealed class GameplayRuntimeUpdateSystem
+public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private const int LoadingGateDiagnosticIntervalFrames = 120;
     private const int LoadingGateFailOpenFrames = 1800;
     private static readonly ProfilerMarker BeginUpdateMarker = new("GameplayRuntimeUpdate.BeginUpdate");
@@ -21,7 +30,7 @@ public sealed class GameplayRuntimeUpdateSystem
     private static readonly ProfilerMarker EndUpdateMarker = new("GameplayRuntimeUpdate.EndUpdate");
     private int _nextLoadingGateDiagnosticFrame;
     private int _loadingGateStartedFrame = -1;
-    private World _initialSpawnQueryWorld;
+    private Unity.Entities.World _initialSpawnQueryWorld;
     private EntityQuery _initialSpawnConfigQuery;
     private EntityQuery _initialSpawnInitializedQuery;
     private EntityQuery _initialSpawnProgressQuery;
@@ -80,7 +89,7 @@ public sealed class GameplayRuntimeUpdateSystem
             stepStart = performanceDiagnosticsSystem.BeginStep();
             using (RuntimeCityMarker.Auto())
             {
-                runtimeCity?.Update(Time.frameCount);
+                runtimeCity?.Update(UnityEngine.Time.frameCount);
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeCity", stepStart);
 
@@ -123,7 +132,7 @@ public sealed class GameplayRuntimeUpdateSystem
         using (LoadingGateMarker.Auto())
         {
             if (gameplayStartPending && _loadingGateStartedFrame < 0)
-                _loadingGateStartedFrame = Time.frameCount;
+                _loadingGateStartedFrame = UnityEngine.Time.frameCount;
 
             if (gameplayStartPending && IsGameplayStartComplete(
                     gameplayInitialized,
@@ -134,7 +143,7 @@ public sealed class GameplayRuntimeUpdateSystem
             {
                 gameplayStartPending = false;
                 _loadingGateStartedFrame = -1;
-                Debug.Log($"[LoadingGate] ready frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
+                Debug.Log($"[LoadingGate] ready frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
             }
             else if (gameplayStartPending && ShouldFailOpenLoadingGate(
                          gameplayInitialized,
@@ -145,7 +154,7 @@ public sealed class GameplayRuntimeUpdateSystem
                 gameplayStartPending = false;
                 _loadingGateStartedFrame = -1;
                 runtimeCity?.MarkSpawnedAfterLoadingGateTimeout();
-                Debug.LogError($"[LoadingGate] failOpen frame={Time.frameCount} reason={failOpenReason}");
+                Debug.LogError($"[LoadingGate] failOpen frame={UnityEngine.Time.frameCount} reason={failOpenReason}");
             }
             else if (gameplayStartPending)
             {
@@ -233,7 +242,7 @@ public sealed class GameplayRuntimeUpdateSystem
         if (runtimeDecorations != null && !runtimeDecorations.HasSpawned)
             return false;
 
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 
@@ -256,12 +265,12 @@ public sealed class GameplayRuntimeUpdateSystem
             return false;
         if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
             return false;
-        if (Time.frameCount - _loadingGateStartedFrame < LoadingGateFailOpenFrames)
+        if (UnityEngine.Time.frameCount - _loadingGateStartedFrame < LoadingGateFailOpenFrames)
             return false;
         if (runtimeCity == null || runtimeCity.HasSpawned || runtimeCity.IsGenerating)
             return false;
 
-        reason = $"runtimeCityNotGenerating blocker={runtimeCity.DescribeStartupBlocker(Time.frameCount)}";
+        reason = $"runtimeCityNotGenerating blocker={runtimeCity.DescribeStartupBlocker(UnityEngine.Time.frameCount)}";
         return true;
     }
 
@@ -272,15 +281,15 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeDecorationSpawnerSystem runtimeDecorations)
     {
-        if (Time.frameCount < _nextLoadingGateDiagnosticFrame)
+        if (UnityEngine.Time.frameCount < _nextLoadingGateDiagnosticFrame)
             return;
 
-        _nextLoadingGateDiagnosticFrame = Time.frameCount + LoadingGateDiagnosticIntervalFrames;
+        _nextLoadingGateDiagnosticFrame = UnityEngine.Time.frameCount + LoadingGateDiagnosticIntervalFrames;
 
         bool playRequested = runtimeGameplayStateSystem.PlayRequested;
         string cityState = runtimeCity == null
             ? "null"
-            : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)} blocker={runtimeCity.DescribeStartupBlocker(Time.frameCount)}";
+            : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)} blocker={runtimeCity.DescribeStartupBlocker(UnityEngine.Time.frameCount)}";
         string blockerState = runtimeGridBlockers == null
             ? "null"
             : $"spawned={(runtimeGridBlockers.HasSpawned ? 1 : 0)}";
@@ -291,7 +300,7 @@ public sealed class GameplayRuntimeUpdateSystem
         GetInitialSpawnCounts(out int spawnConfigs, out int spawnInitialized, out int spawnProgress);
 
         Debug.Log(
-            $"[LoadingGate] waiting frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} " +
+            $"[LoadingGate] waiting frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} " +
             $"playRequested={(playRequested ? 1 : 0)} city={cityState} blockers={blockerState} decorations={decorationState} " +
             $"initialSpawn=configs:{spawnConfigs},initialized:{spawnInitialized},progress:{spawnProgress}");
     }
@@ -305,7 +314,7 @@ public sealed class GameplayRuntimeUpdateSystem
         initializedCount = 0;
         progressCount = 0;
 
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return;
 
@@ -318,7 +327,7 @@ public sealed class GameplayRuntimeUpdateSystem
 
     private void EnsureInitialSpawnQueries(EntityManager entityManager)
     {
-        World world = entityManager.World;
+        Unity.Entities.World world = entityManager.World;
         if (_hasInitialSpawnQueries && _initialSpawnQueryWorld == world)
             return;
 

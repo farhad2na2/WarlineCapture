@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildCompositionSystem
+internal sealed partial class RoadBuildCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private RoadBuildCompositionSourceSystem _roadSource;
 
     public readonly struct Result

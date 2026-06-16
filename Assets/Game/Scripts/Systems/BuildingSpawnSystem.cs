@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class BuildingSpawnSystem
+internal sealed partial class BuildingSpawnSystem : SystemBase
 {
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
     public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
@@ -25,6 +25,15 @@ internal sealed class BuildingSpawnSystem
     {
         get => _buildingSpawnRandomState;
         set => _buildingSpawnRandomState = value;
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public readonly struct Context
@@ -615,7 +624,7 @@ internal sealed class BuildingSpawnSystem
         if (_recentSpawnReservations.Count == 0)
             return;
 
-        float now = Time.time;
+        float now = UnityEngine.Time.time;
         for (int i = 0; i < _recentSpawnReservations.Count; i++)
         {
             RecentSpawnReservation reservation = _recentSpawnReservations[i];
@@ -648,7 +657,7 @@ internal sealed class BuildingSpawnSystem
         {
             Cell = cell,
             Size = UnitFootprintUtility.ClampSize(size),
-            ExpiresAt = Time.time + 0.5f
+            ExpiresAt = UnityEngine.Time.time + 0.5f
         });
     }
 
@@ -657,7 +666,7 @@ internal sealed class BuildingSpawnSystem
         if (_recentSpawnReservations.Count == 0)
             return false;
 
-        float now = Time.time;
+        float now = UnityEngine.Time.time;
         int2 clampedSize = UnitFootprintUtility.ClampSize(size);
         for (int i = 0; i < _recentSpawnReservations.Count; i++)
         {

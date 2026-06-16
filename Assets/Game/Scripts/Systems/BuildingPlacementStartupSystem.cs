@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementStartupSystem
+internal sealed partial class BuildingPlacementStartupSystem : SystemBase
 {
     private BuildingPlacementSystemConfig _config;
     private Camera _worldCamera;
@@ -27,6 +28,15 @@ internal sealed class BuildingPlacementStartupSystem
     public GameObject BuildingSelectionMarkerPrefab => _config != null ? _config.BuildingSelectionMarkerPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void ConfigureRoadFootprintState(RoadGridProjectionSystem.RoadFootprintState roadFootprintState)
     {

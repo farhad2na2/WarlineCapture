@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class RoadDeletePromptSystem
+public sealed partial class RoadDeletePromptSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;

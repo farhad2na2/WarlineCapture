@@ -1,7 +1,8 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
+internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : SystemBase
 {
     private const bool EnableDiagnostics = false;
     private const double SlowLogThresholdSeconds = 0.01d;
@@ -75,9 +76,18 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
         return new Context(getRuntimeBuildingCount, log);
     }
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void LogIfSlow(Context context, Timing timing)
     {
-        double now = Time.realtimeSinceStartupAsDouble;
+        double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double elapsed = now - timing.Start;
         if (!EnableDiagnostics || elapsed < SlowLogThresholdSeconds || now < _nextSlowLogAt || !Application.isFocused)
             return;
@@ -98,7 +108,7 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
         double afterInput = Math.Max(timing.AfterInput, afterInputBuildingClick);
 
         context.Log?.Invoke(
-            $"[BuildingPlacementDiag] frame={Time.frameCount} total={elapsed * 1000d:F1}ms " +
+            $"[BuildingPlacementDiag] frame={UnityEngine.Time.frameCount} total={elapsed * 1000d:F1}ms " +
             $"productions={(afterProductions - timing.Start) * 1000d:F1}ms " +
             $"resources={(afterResources - afterProductions) * 1000d:F1}ms " +
             $"haulers={(afterHaulers - afterResources) * 1000d:F1}ms " +

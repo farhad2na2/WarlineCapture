@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingSelectionSystem
+internal sealed partial class BuildingSelectionSystem : SystemBase
 {
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
@@ -113,6 +113,15 @@ internal sealed class BuildingSelectionSystem
             TryRequestMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
             ShouldUseExpandedSelectionArea = shouldUseExpandedSelectionArea;
         }
+    }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
     }
 
     public void ClearSelectedBuilding(Context context)

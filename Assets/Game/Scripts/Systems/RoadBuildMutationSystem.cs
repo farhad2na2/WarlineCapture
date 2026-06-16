@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildMutationSystem
+internal sealed partial class RoadBuildMutationSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;

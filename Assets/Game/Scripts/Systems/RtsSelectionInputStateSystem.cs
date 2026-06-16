@@ -1,9 +1,19 @@
 using Unity.Entities;
 
-public sealed class RtsSelectionInputStateSystem
+[DisableAutoCreation]
+public sealed partial class RtsSelectionInputStateSystem : SystemBase
 {
-    private World _world;
+    private Unity.Entities.World _world;
     private Entity _stateEntity;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public bool TryRead(out EntityManager em, out RtsSelectionInputStateComponent state)
     {
@@ -89,7 +99,7 @@ public sealed class RtsSelectionInputStateSystem
         em = default;
         entity = Entity.Null;
 
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

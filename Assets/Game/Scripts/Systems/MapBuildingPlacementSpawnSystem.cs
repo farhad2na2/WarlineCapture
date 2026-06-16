@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class MapBuildingPlacementSpawnSystem
+internal sealed partial class MapBuildingPlacementSpawnSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private const int MaxPlacementsPerUpdate = 32;
 
     public delegate bool TryGetGridDataDelegate(

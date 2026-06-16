@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementLifecycleSystem
+internal sealed partial class BuildingPlacementLifecycleSystem : SystemBase
 {
     public sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
     {
@@ -138,6 +139,15 @@ internal sealed class BuildingPlacementLifecycleSystem
     public bool HasPendingBuildingPlacement => ActivePlacement != null;
     public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void SetActivePlacementCost(int cost)
     {
         ActivePlacementCost = Mathf.Max(0, cost);
@@ -181,7 +191,7 @@ internal sealed class BuildingPlacementLifecycleSystem
             AutoRotateVertical = false,
             CommittedWallRuns = new List<BuildingPlacementInputSystem.WallRun>(),
             HideCurrentWallPreview = false,
-            LastPointerMovedAt = Time.time,
+            LastPointerMovedAt = UnityEngine.Time.time,
             LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero
         };
 

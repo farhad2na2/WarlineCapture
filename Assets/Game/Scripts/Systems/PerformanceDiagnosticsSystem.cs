@@ -7,8 +7,17 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public sealed class PerformanceDiagnosticsSystem
+public sealed partial class PerformanceDiagnosticsSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private const double FreezeLogThresholdSeconds = 0.15d;
     private const double LowFpsDiagThreshold = 55d;
     private const double FrameRateDiagIntervalSeconds = 2d;
@@ -92,7 +101,7 @@ public sealed class PerformanceDiagnosticsSystem
     public void Initialize()
     {
         _lastApplicationFocused = Application.isFocused;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
+        _lastUpdateTimestamp = UnityEngine.Time.realtimeSinceStartupAsDouble;
         _nextFrameRateDiagTimestamp = _lastUpdateTimestamp + FrameRateDiagIntervalSeconds;
         StartProfilerRecorders();
         CaptureGcCounts();
@@ -100,7 +109,7 @@ public sealed class PerformanceDiagnosticsSystem
 
     public void BeginUpdate(bool gameplayActive)
     {
-        double now = Time.realtimeSinceStartupAsDouble;
+        double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         bool applicationFocused = Application.isFocused;
         if (applicationFocused != _lastApplicationFocused)
         {
@@ -120,12 +129,12 @@ public sealed class PerformanceDiagnosticsSystem
             double gapSeconds = now - _lastUpdateTimestamp;
             if (gapSeconds >= FreezeLogThresholdSeconds)
             {
-                Debug.Log($"[FreezeDetect] Frame gap frame={Time.frameCount} Gap={FormatMilliseconds(gapSeconds)}ms GC={BuildGcDeltaString()} LastSteps={BuildLastStepLogString()}");
+                Debug.Log($"[FreezeDetect] Frame gap frame={UnityEngine.Time.frameCount} Gap={FormatMilliseconds(gapSeconds)}ms GC={BuildGcDeltaString()} LastSteps={BuildLastStepLogString()}");
             }
         }
 
         _lastUpdateTimestamp = now;
-        _frameStartTimestamp = Time.realtimeSinceStartupAsDouble;
+        _frameStartTimestamp = UnityEngine.Time.realtimeSinceStartupAsDouble;
         _freezeLogBuilder.Clear();
         _lastStepLogBuilder.Clear();
         _lastStepSampleCount = 0;
@@ -133,12 +142,12 @@ public sealed class PerformanceDiagnosticsSystem
 
     public double BeginStep()
     {
-        return Time.realtimeSinceStartupAsDouble;
+        return UnityEngine.Time.realtimeSinceStartupAsDouble;
     }
 
     public bool EndStep(string name, double start)
     {
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
+        double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
         RecordLastStepSample(name, elapsed);
 
         if (elapsed < FreezeLogThresholdSeconds)
@@ -211,7 +220,7 @@ public sealed class PerformanceDiagnosticsSystem
         bool gameplayInitialized,
         bool playRequested)
     {
-        double now = Time.realtimeSinceStartupAsDouble;
+        double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double totalSeconds = now - _frameStartTimestamp;
         RecordUpdateFrameStats(totalSeconds);
         if (gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
@@ -225,7 +234,7 @@ public sealed class PerformanceDiagnosticsSystem
             _freezeLogBuilder.Append("Total=");
             AppendMilliseconds(_freezeLogBuilder, totalSeconds);
             _freezeLogBuilder.Append("ms");
-            Debug.Log($"[FreezeDetect] Update hitch frame={Time.frameCount} {_freezeLogBuilder}");
+            Debug.Log($"[FreezeDetect] Update hitch frame={UnityEngine.Time.frameCount} {_freezeLogBuilder}");
         }
 
         LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested);
@@ -236,34 +245,34 @@ public sealed class PerformanceDiagnosticsSystem
     public void OnApplicationFocus(bool hasFocus)
     {
         _lastApplicationFocused = hasFocus;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
+        _lastUpdateTimestamp = UnityEngine.Time.realtimeSinceStartupAsDouble;
         _suppressFrameGapUntilTimestamp = _lastUpdateTimestamp + 0.5d;
     }
 
     public void OnApplicationPause(bool pauseStatus)
     {
         _applicationPaused = pauseStatus;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
+        _lastUpdateTimestamp = UnityEngine.Time.realtimeSinceStartupAsDouble;
         _suppressFrameGapUntilTimestamp = _lastUpdateTimestamp + 0.5d;
     }
 
     public double BeginTimedSection()
     {
-        return Time.realtimeSinceStartupAsDouble;
+        return UnityEngine.Time.realtimeSinceStartupAsDouble;
     }
 
     public void EndLateUpdate(double start, int impostorCount)
     {
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
+        double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
         if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] LateUpdate hitch frame={Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
+            Debug.Log($"[FreezeDetect] LateUpdate hitch frame={UnityEngine.Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
     }
 
     public void EndOnGui(double start)
     {
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
+        double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
         if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] OnGUI hitch frame={Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
+            Debug.Log($"[FreezeDetect] OnGUI hitch frame={UnityEngine.Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
     }
 
     public void Dispose()
@@ -466,7 +475,7 @@ public sealed class PerformanceDiagnosticsSystem
         }
 
         _frameRateDiagFrames++;
-        _frameRateDiagAccumulatedSeconds += Time.unscaledDeltaTime;
+        _frameRateDiagAccumulatedSeconds += UnityEngine.Time.unscaledDeltaTime;
         if (now < _nextFrameRateDiagTimestamp)
             return;
 
@@ -534,7 +543,7 @@ public sealed class PerformanceDiagnosticsSystem
         sourceKeys = 0;
         sourceKeyFallbackVisuals = 0;
         initialSpawnConfigs = 0;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return;
 
@@ -597,7 +606,7 @@ public sealed class PerformanceDiagnosticsSystem
             out int initialSpawnConfigs);
         string label = gameplayActive ? "PerfDiag" : "PerfDiag:PreGame";
         Debug.Log(
-            $"[{label}] slowUpdate frame={Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
+            $"[{label}] slowUpdate frame={UnityEngine.Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
             $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={BuildLastStepLogString()} units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
@@ -677,7 +686,7 @@ public sealed class PerformanceDiagnosticsSystem
     private string BuildRenderSceneBreakdownDiagString()
     {
         return
-            $"[RenderSceneDiag] frame={Time.frameCount} source=profilerCounters " +
+            $"[RenderSceneDiag] frame={UnityEngine.Time.frameCount} source=profilerCounters " +
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
             $"topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}";

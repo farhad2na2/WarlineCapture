@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-public sealed class RoadBuildConfigSystem
+public sealed partial class RoadBuildConfigSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Snapshot
     {
         public readonly Camera WorldCamera;

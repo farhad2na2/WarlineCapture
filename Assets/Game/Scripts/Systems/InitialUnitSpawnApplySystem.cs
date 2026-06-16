@@ -2,8 +2,18 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-public readonly struct InitialUnitSpawnApplySystem
+[DisableAutoCreation]
+public partial struct InitialUnitSpawnApplySystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.Enabled = false;
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+    }
+
     public Entity InstantiateAndConfigureSpawnedUnit(
         EntityManager em,
         EntityCommandBuffer ecb,

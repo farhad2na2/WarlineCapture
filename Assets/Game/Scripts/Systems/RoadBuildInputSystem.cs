@@ -1,11 +1,21 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using BuildToolMode = RoadBuildSessionSystem.BuildToolMode;
 using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
 
-public sealed class RoadBuildInputSystem
+public sealed partial class RoadBuildInputSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetHoveredCellAction(Vector2 screenPosition, out Vector2Int cell);
 
     public sealed class State

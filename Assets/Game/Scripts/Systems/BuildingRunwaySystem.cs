@@ -1,9 +1,19 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRunwaySystem
+internal sealed partial class BuildingRunwaySystem : SystemBase
 {
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public bool TryGetNearestAirportRunway(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,

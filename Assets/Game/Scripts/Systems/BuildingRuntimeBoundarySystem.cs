@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingRuntimeBoundarySystem
+public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
 {
     private const float PublishIntervalSeconds = 0.5f;
     private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
@@ -18,6 +18,15 @@ public sealed class BuildingRuntimeBoundarySystem
     private bool _forcePublishNextUpdate;
     private bool _configuredReadModelsPublished;
     private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     internal void Update(
         BuildingDefinitionSystem definitionSystem,

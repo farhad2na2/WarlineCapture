@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeResourceSystem
+internal sealed partial class RuntimeResourceSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private int _dollars;
 
     public int CurrentDollars => _dollars;

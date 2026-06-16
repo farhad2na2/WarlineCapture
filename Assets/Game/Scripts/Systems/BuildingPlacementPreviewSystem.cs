@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-internal sealed class BuildingPlacementPreviewSystem
+internal sealed partial class BuildingPlacementPreviewSystem : SystemBase
 {
     public readonly struct WallPreviewRun
     {
@@ -29,6 +30,15 @@ internal sealed class BuildingPlacementPreviewSystem
     private float _outlineHeight;
     private Color _validColor;
     private Color _invalidColor;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public void Init(
         Transform runtimeRoot,

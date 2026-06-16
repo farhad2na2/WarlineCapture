@@ -92,6 +92,8 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
     {
         _query.ConfigureMetadataResolvers(tryResolveBuildingMetadata, tryResolveUnitMetadata);
+        if (isActiveAndEnabled)
+            Refresh();
     }
 
     public void SelectCategoryForTests(BuildDrawerCategory category)

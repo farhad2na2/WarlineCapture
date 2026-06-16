@@ -47,6 +47,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 test => test.CurrentBuildDrawerPrefabBindsTabsAndCatalogItems(),
                 ref passed);
             RunValidationStep(
+                nameof(CurrentBuildDrawerPrefabRefreshesCatalogAfterRuntimeMetadataBinding),
+                test => test.CurrentBuildDrawerPrefabRefreshesCatalogAfterRuntimeMetadataBinding(),
+                ref passed);
+            RunValidationStep(
                 nameof(CurrentBuildDrawerPrefabBindsSelectionDetailAndActionLabel),
                 test => test.CurrentBuildDrawerPrefabBindsSelectionDetailAndActionLabel(),
                 ref passed);
@@ -272,6 +276,39 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
         int activeItemRows = CountActiveCatalogItemRows(view);
         Assert.AreEqual(_results.Count, activeItemRows, "Visible drawer item rows must match the requestable catalog count for the selected category.");
+    }
+
+    [Test]
+    public void CurrentBuildDrawerPrefabRefreshesCatalogAfterRuntimeMetadataBinding()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab, "Build drawer popup prefab must exist.");
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+
+        SerializedObject presenterObject = new SerializedObject(presenter);
+        BuildingPlacementSystemConfig buildingConfig = GetSerializedReference<BuildingPlacementSystemConfig>(
+            presenterObject,
+            "buildingPlacementConfig");
+        Assert.NotNull(buildingConfig, "Build drawer presenter must serialize the building placement config.");
+
+        _query.Collect(null, buildingConfig, BuildDrawerCategory.Buildings, _results);
+        Assert.Greater(_results.Count, 0, "Current project configs should expose at least one requestable building for the drawer.");
+        presenter.RefreshForTests();
+        Assert.AreEqual(0, CountActiveCatalogItemRows(view), "The active prefab instance starts before live metadata resolvers are bound.");
+
+        ConfigureCatalogMetadataResolvers(presenter);
+
+        Assert.AreEqual(
+            _results.Count,
+            CountActiveCatalogItemRows(view),
+            "Binding runtime metadata after popup instantiation must refresh visible drawer catalog rows.");
     }
 
     [Test]

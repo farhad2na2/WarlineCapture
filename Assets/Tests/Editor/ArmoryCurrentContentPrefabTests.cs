@@ -25,6 +25,10 @@ public sealed class ArmoryCurrentContentPrefabTests
                 nameof(ArmoryContentListBindsCurrentInspectionPanel),
                 test => test.ArmoryContentListBindsCurrentInspectionPanel(),
                 ref passed);
+            RunValidationStep(
+                nameof(ArmoryContentListRefreshesWhenMetadataResolversBindAfterEnable),
+                test => test.ArmoryContentListRefreshesWhenMetadataResolversBindAfterEnable(),
+                ref passed);
 
             Debug.Log($"[ArmoryCurrentContentValidation] result=Passed tests={passed}");
             EditorApplication.Exit(0);
@@ -124,6 +128,35 @@ public sealed class ArmoryCurrentContentPrefabTests
         Assert.AreNotEqual("ITEM NAME", titleText.text, "The inspection title should no longer show placeholder copy after binding.");
         Assert.False(string.IsNullOrWhiteSpace(typeText.text), "The current Armory list should populate the inspection type.");
         Assert.False(string.IsNullOrWhiteSpace(healthText.text), "The current Armory list should populate the inspection health value.");
+    }
+
+    [Test]
+    public void ArmoryContentListRefreshesWhenMetadataResolversBindAfterEnable()
+    {
+        UIShellContentSectionsView sections = InstantiateSections();
+        Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Middle, out GameObject middle));
+        Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Right, out GameObject right));
+
+        ArmoryContentListView list = middle.GetComponent<ArmoryContentListView>();
+        ArmoryInspectionPanelView inspection = right.GetComponent<ArmoryRightContentView>().InspectionPanel;
+        Assert.NotNull(list);
+        Assert.NotNull(inspection);
+
+        list.SetInspectionPanel(inspection);
+        list.ConfigureCatalogMetadataResolvers(
+            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+
+        TMP_Text titleText = (TMP_Text)new SerializedObject(inspection)
+            .FindProperty("titleText")
+            .objectReferenceValue;
+        ArmoryCatalogItemView itemTemplate = (ArmoryCatalogItemView)new SerializedObject(list)
+            .FindProperty("itemTemplate")
+            .objectReferenceValue;
+
+        Assert.True(itemTemplate.gameObject.activeSelf, "Binding metadata resolvers after OnEnable should repopulate the Armory catalog list.");
+        Assert.False(string.IsNullOrWhiteSpace(titleText.text), "Binding metadata resolvers after OnEnable should populate the inspection title.");
+        Assert.AreNotEqual("ITEM NAME", titleText.text, "The inspection title should no longer show placeholder copy after late resolver binding.");
     }
 
     private UIShellContentSectionsView InstantiateSections()

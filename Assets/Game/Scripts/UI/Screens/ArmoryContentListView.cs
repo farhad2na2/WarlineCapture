@@ -62,6 +62,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
         TryResolveUiUnitCatalogMetadata tryResolveUnitMetadata)
     {
         catalogQuerySystem.ConfigureMetadataResolvers(tryResolveBuildingMetadata, tryResolveUnitMetadata);
+        Refresh(activeCategory);
     }
 
     public void SetInspectionPanel(ArmoryInspectionPanelView panel)

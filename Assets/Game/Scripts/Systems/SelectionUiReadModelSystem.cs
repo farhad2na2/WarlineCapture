@@ -85,6 +85,33 @@ public sealed partial class SelectionUiReadModelSystem : SystemBase
         TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
         model.CanAttack != 0;
 
+    public bool FocusedUnitCanHold =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
+        model.CanHold != 0;
+
+    public TacticalCommandReasonCode FocusedUnitHoldDisabledReason =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
+            ? ToReasonCode(model.HoldDisabledReason)
+            : TacticalCommandReasonCode.NoSelection;
+
+    public bool FocusedUnitCanStop =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
+        model.CanStop != 0;
+
+    public TacticalCommandReasonCode FocusedUnitStopDisabledReason =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
+            ? ToReasonCode(model.StopDisabledReason)
+            : TacticalCommandReasonCode.NoSelection;
+
+    public bool FocusedUnitCanScan =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
+        model.CanScan != 0;
+
+    public TacticalCommandReasonCode FocusedUnitScanDisabledReason =>
+        TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
+            ? ToReasonCode(model.ScanDisabledReason)
+            : TacticalCommandReasonCode.NoSelection;
+
     public int FocusedTransportPassengerCount =>
         TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
             ? model.PassengerCount
@@ -230,5 +257,12 @@ public sealed partial class SelectionUiReadModelSystem : SystemBase
             SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => FocusedUnitUiStatus.AirDefenseReloading,
             _ => FocusedUnitUiStatus.Idle
         };
+    }
+
+    private static TacticalCommandReasonCode ToReasonCode(int reason)
+    {
+        return System.Enum.IsDefined(typeof(TacticalCommandReasonCode), reason)
+            ? (TacticalCommandReasonCode)reason
+            : TacticalCommandReasonCode.CommandUnavailable;
     }
 }

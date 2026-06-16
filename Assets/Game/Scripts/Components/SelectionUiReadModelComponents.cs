@@ -9,6 +9,12 @@ public struct FocusedUnitUiReadModelComponent : IComponentData
     public byte OwnedByPlayer;
     public byte IsVehicle;
     public byte CanAttack;
+    public byte CanHold;
+    public int HoldDisabledReason;
+    public byte CanStop;
+    public int StopDisabledReason;
+    public byte CanScan;
+    public int ScanDisabledReason;
     public byte HasHealth;
     public int HealthCurrent;
     public int HealthMax;

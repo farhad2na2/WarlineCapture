@@ -51,6 +51,13 @@ public sealed partial class FocusedUnitUiReadModelSystem : SystemBase
             Status = (int)selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, focusedUnit)
         };
 
+        model.CanHold = selectionUiReadModelLookup.CanHoldPosition(em, focusedUnit, out TacticalCommandReasonCode holdReason) ? (byte)1 : (byte)0;
+        model.HoldDisabledReason = (int)holdReason;
+        model.CanStop = selectionUiReadModelLookup.CanStop(em, focusedUnit, out TacticalCommandReasonCode stopReason) ? (byte)1 : (byte)0;
+        model.StopDisabledReason = (int)stopReason;
+        model.CanScan = selectionUiReadModelLookup.CanScan(em, focusedUnit, out TacticalCommandReasonCode scanReason) ? (byte)1 : (byte)0;
+        model.ScanDisabledReason = (int)scanReason;
+
         if (selectionUiReadModelLookup.TryGetFocusedUnitHealth(em, focusedUnit, out int healthCurrent, out int healthMax))
         {
             model.HasHealth = 1;

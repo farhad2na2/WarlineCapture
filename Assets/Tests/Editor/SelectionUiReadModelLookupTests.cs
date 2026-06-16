@@ -27,6 +27,8 @@ public sealed class SelectionUiReadModelLookupTests
             passed++;
             RunCase(test => test.TryGetSelectedUnitsPortraitPose_CentersAndFramesSelectedUnits());
             passed++;
+            RunCase(test => test.CommandCapabilities_ReturnTypedReasonsForHoldStopAndScan());
+            passed++;
 
             Debug.Log($"[SelectionUiReadModelLookupValidation] result=Passed tests={passed}");
             EditorApplication.Exit(0);
@@ -162,11 +164,71 @@ public sealed class SelectionUiReadModelLookupTests
         }
     }
 
+    [Test]
+    public void CommandCapabilities_ReturnTypedReasonsForHoldStopAndScan()
+    {
+        Entity soldier = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Rifle Squad");
+        Assert.IsTrue(_lookup.CanHoldPosition(_entityManager, soldier, out TacticalCommandReasonCode holdReason));
+        Assert.AreEqual(TacticalCommandReasonCode.None, holdReason);
+        Assert.IsTrue(_lookup.CanStop(_entityManager, soldier, out TacticalCommandReasonCode stopReason));
+        Assert.AreEqual(TacticalCommandReasonCode.None, stopReason);
+        Assert.IsFalse(_lookup.CanScan(_entityManager, soldier, out TacticalCommandReasonCode soldierScanReason));
+        Assert.AreEqual(TacticalCommandReasonCode.ScanUnavailable, soldierScanReason);
+
+        Entity scoutDrone = CreateCommandableUnit("Unit_Veh_Drone_Recon", "Recon Drone", typeof(UnitAirMovement));
+        Assert.IsTrue(_lookup.CanScan(_entityManager, scoutDrone, out TacticalCommandReasonCode droneScanReason));
+        Assert.AreEqual(TacticalCommandReasonCode.None, droneScanReason);
+
+        Entity passenger = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Passenger", typeof(UnitTransportPassenger));
+        Assert.IsFalse(_lookup.CanHoldPosition(_entityManager, passenger, out TacticalCommandReasonCode passengerHoldReason));
+        Assert.AreEqual(TacticalCommandReasonCode.CommandUnavailable, passengerHoldReason);
+
+        Entity enemy = _entityManager.CreateEntity(typeof(Faction), typeof(UnitMove), typeof(UnitHealth));
+        _entityManager.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
+        _entityManager.SetComponentData(enemy, new UnitHealth { Current = 10, Max = 10 });
+        Assert.IsFalse(_lookup.CanStop(_entityManager, enemy, out TacticalCommandReasonCode enemyStopReason));
+        Assert.AreEqual(TacticalCommandReasonCode.CommandUnavailable, enemyStopReason);
+
+        Entity deadUnit = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Dead Unit");
+        _entityManager.SetComponentData(deadUnit, new UnitHealth { Current = 0, Max = 10 });
+        Assert.IsFalse(_lookup.CanHoldPosition(_entityManager, deadUnit, out TacticalCommandReasonCode deadHoldReason));
+        Assert.AreEqual(TacticalCommandReasonCode.CommandUnavailable, deadHoldReason);
+
+        Assert.IsFalse(_lookup.CanHoldPosition(_entityManager, Entity.Null, out TacticalCommandReasonCode noSelectionReason));
+        Assert.AreEqual(TacticalCommandReasonCode.NoSelection, noSelectionReason);
+    }
+
     private Entity CreatePoseEntity(float3 position)
     {
         Entity entity = _entityManager.CreateEntity(typeof(LocalTransform), typeof(LocalToWorld));
         _entityManager.SetComponentData(entity, LocalTransform.FromPosition(position));
         _entityManager.SetComponentData(entity, new LocalToWorld { Value = float4x4.Translate(position) });
+        return entity;
+    }
+
+    private Entity CreateCommandableUnit(string sourceKey, string displayName, params ComponentType[] extraTypes)
+    {
+        ComponentType[] baseTypes =
+        {
+            typeof(Faction),
+            typeof(UnitMove),
+            typeof(UnitHealth),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitDisplayInfo)
+        };
+        var types = new ComponentType[baseTypes.Length + extraTypes.Length];
+        Array.Copy(baseTypes, types, baseTypes.Length);
+        Array.Copy(extraTypes, 0, types, baseTypes.Length, extraTypes.Length);
+
+        Entity entity = _entityManager.CreateEntity(types);
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new UnitHealth { Current = 10, Max = 10 });
+        _entityManager.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(sourceKey) });
+        _entityManager.SetComponentData(entity, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes(displayName),
+            Description = new FixedString128Bytes("Test unit.")
+        });
         return entity;
     }
 }

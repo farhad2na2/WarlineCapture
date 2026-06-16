@@ -38,6 +38,11 @@ Shader "Game/Environment/GroundMacroVariation"
         _GroundDetailStrength("Detail Albedo Strength", Range(0, 1)) = 0.7
         _GroundDetailNormalStrength("Detail Normal Strength", Range(0, 2)) = 0.8
         _GreenPatchThreshold("Green Patch Threshold", Range(0, 1)) = 0.5
+
+        [Header(Atlas Dirt Shoulder Match)]
+        _DirtShoulderColorScale("Dirt Shoulder Color Scale", Color) = (1, 1, 1, 1)
+        _DirtShoulderTintStrength("Dirt Shoulder Tint Strength", Range(0, 1)) = 0
+        _DirtShoulderWarmthThreshold("Dirt Shoulder Warmth Threshold", Range(0, 0.4)) = 0.08
     }
 
     SubShader
@@ -104,6 +109,9 @@ Shader "Game/Environment/GroundMacroVariation"
                 half _GroundDetailStrength;
                 half _GroundDetailNormalStrength;
                 half _GreenPatchThreshold;
+                half4 _DirtShoulderColorScale;
+                half _DirtShoulderTintStrength;
+                half _DirtShoulderWarmthThreshold;
             CBUFFER_END
 
             // Global runtime toggle (0 = enabled, 1 = disabled). Globals default
@@ -207,6 +215,26 @@ Shader "Game/Environment/GroundMacroVariation"
                 normalWS = normalize(half3(normalWS.x + detailNormalTS.x, normalWS.y, normalWS.z + detailNormalTS.y));
             }
 
+            half3 ApplyDirtShoulderTint(half3 atlasColor, half3 albedo)
+            {
+                half maxChannel = max(atlasColor.r, max(atlasColor.g, atlasColor.b));
+                half minChannel = min(atlasColor.r, min(atlasColor.g, atlasColor.b));
+                half saturation = maxChannel - minChannel;
+                half luma = dot(atlasColor, half3(0.2126, 0.7152, 0.0722));
+
+                half warmBrownMask =
+                    smoothstep(_DirtShoulderWarmthThreshold, _DirtShoulderWarmthThreshold + 0.08, atlasColor.r - atlasColor.b) *
+                    smoothstep(0.015, 0.08, atlasColor.g - atlasColor.b) *
+                    smoothstep(0.045, 0.12, saturation);
+
+                // Protect grey asphalt, dark asphalt cracks, and white lane paint.
+                half paintReject = 1.0 - smoothstep(0.62, 0.82, luma);
+                half mask = warmBrownMask * paintReject * _DirtShoulderTintStrength;
+
+                half3 target = saturate(albedo * _DirtShoulderColorScale.rgb);
+                return lerp(albedo, target, mask);
+            }
+
             Varyings GroundVertex(Attributes input)
             {
                 Varyings output = (Varyings)0;
@@ -236,6 +264,7 @@ Shader "Game/Environment/GroundMacroVariation"
                 half3 albedo = atlas.rgb * _BaseColor.rgb;
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
+                albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);
 
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;

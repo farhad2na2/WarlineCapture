@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -406,7 +407,12 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
         }
 
         int count = 0;
-        context.ProductionSystem?.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
+        context.ProductionSystem?.PruneProducedUnits(
+            building.ProducedUnits,
+            building.ProducedUnitSlots,
+            building.ProducedUnitPrefabs,
+            em,
+            building.ProducedUnitSourceKeys);
         for (int i = 0; i < building.ProducedUnits.Count; i++)
         {
             Entity unit = building.ProducedUnits[i];
@@ -488,6 +494,12 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
     {
         if (string.IsNullOrEmpty(normalizedUnitId))
             return true;
+        if (building?.ProducedUnitSourceKeys != null &&
+            building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKeyFromBuilding) &&
+            Normalize(context, sourceKeyFromBuilding.ToString()) == normalizedUnitId)
+        {
+            return true;
+        }
         if (building?.ProducedUnitPrefabs != null &&
             building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
             context.UnitPrefabMatchesId != null &&

@@ -107,19 +107,18 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         for (; _nextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; _nextPlacementIndex++, processed++)
         {
             MapVehiclePlacementConfigEntry placement = context.Config.Placements[_nextPlacementIndex];
-            if (placement == null || placement.VehiclePrefab == null)
+            if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
                 continue;
 
-            if (context.UnitPrefabSystem == null ||
-                !context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+            if (!context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
                     context.UnitPrefabContext,
-                    placement.VehiclePrefab,
+                    GetVehiclePrefabSourceKey(placement),
                     out Entity prefabEntity))
             {
                 WarnOnce(
                     ref _warnedMissingPrefab,
                     context,
-                    $"[MapVehiclePlacement] at least one authored vehicle could not resolve an ECS prefab. First failed source={placement.SourcePath} prefab={placement.VehiclePrefab.name}.");
+                    $"[MapVehiclePlacement] at least one authored vehicle could not resolve an ECS prefab. First failed source={placement.SourcePath} sourceKey={placement.VehicleSourceKey}.");
                 continue;
             }
 
@@ -237,7 +236,7 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         {
             MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
             if (placement == null ||
-                placement.VehiclePrefab == null ||
+                string.IsNullOrWhiteSpace(placement.VehicleSourceKey) ||
                 !TryResolvePlacementFootprint(context, em, placement, out int2 footprintSize))
             {
                 continue;
@@ -257,13 +256,12 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         out int2 footprintSize)
     {
         footprintSize = new int2(1, 1);
-        if (placement == null || placement.VehiclePrefab == null)
+        if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
             return false;
 
-        if (context.UnitPrefabSystem != null &&
-            context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+        if (context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
                 context.UnitPrefabContext,
-                placement.VehiclePrefab,
+                GetVehiclePrefabSourceKey(placement),
                 out Entity prefabEntity) &&
             prefabEntity != Entity.Null &&
             em.Exists(prefabEntity) &&
@@ -320,6 +318,12 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
     private static float3 ToFloat3(Vector3 value)
     {
         return new float3(value.x, value.y, value.z);
+    }
+
+    private static FixedString64Bytes GetVehiclePrefabSourceKey(MapVehiclePlacementConfigEntry placement)
+    {
+        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(placement?.VehicleSourceKey);
+        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 
     private static void SetOrAddComponent<T>(

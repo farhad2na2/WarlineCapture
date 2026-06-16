@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -270,6 +271,7 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
     public void AddProducedUnitEntries(
         List<Entity> producedUnits,
         Dictionary<Entity, GameObject> producedUnitPrefabs,
+        Dictionary<Entity, FixedString64Bytes> producedUnitSourceKeys,
         IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
         EntityManager entityManager,
         BuildingProductionSystem productionSystem,
@@ -281,7 +283,12 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
 
         if (producedUnits != null)
         {
-            productionSystem?.PruneProducedUnits(producedUnits, null, producedUnitPrefabs, entityManager);
+            productionSystem?.PruneProducedUnits(
+                producedUnits,
+                null,
+                producedUnitPrefabs,
+                entityManager,
+                producedUnitSourceKeys);
             for (int i = 0; i < producedUnits.Count; i++)
             {
                 Entity unit = producedUnits[i];
@@ -338,6 +345,7 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
         AddProducedUnitEntries(
             building.ProducedUnits,
             building.ProducedUnitPrefabs,
+            building.ProducedUnitSourceKeys,
             building.PendingProductions,
             em,
             context.ProductionSystem,

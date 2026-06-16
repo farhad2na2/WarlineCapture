@@ -8,6 +8,7 @@ public sealed class MapVehiclePlacementConfigEntry
     [SerializeField] private string sourcePath;
     [SerializeField] private string category;
     [SerializeField] private GameObject vehiclePrefab;
+    [SerializeField] private string vehicleSourceKey;
     [SerializeField] private byte factionId;
     [SerializeField] private Vector3 worldCenter;
     [SerializeField] private Vector3 worldPosition;
@@ -17,6 +18,10 @@ public sealed class MapVehiclePlacementConfigEntry
     public string SourcePath => sourcePath;
     public string Category => category;
     public GameObject VehiclePrefab => vehiclePrefab;
+    public string VehicleSourceKey =>
+        !string.IsNullOrWhiteSpace(vehicleSourceKey)
+            ? vehicleSourceKey
+            : GetVehicleSourceKey(vehiclePrefab);
     public byte FactionId => factionId;
     public Vector3 WorldCenter => worldCenter;
     public Vector3 WorldPosition => worldPosition;
@@ -36,11 +41,20 @@ public sealed class MapVehiclePlacementConfigEntry
         this.sourcePath = sourcePath;
         this.category = category;
         this.vehiclePrefab = vehiclePrefab;
+        vehicleSourceKey = GetVehicleSourceKey(vehiclePrefab);
         this.factionId = factionId;
         this.worldCenter = worldCenter;
         this.worldPosition = worldPosition;
         this.worldEulerAngles = worldEulerAngles;
         this.worldScale = worldScale;
+    }
+
+    private static string GetVehicleSourceKey(GameObject prefab)
+    {
+        if (prefab == null || string.IsNullOrWhiteSpace(prefab.name))
+            return string.Empty;
+
+        return prefab.name.Replace(" (Clone)", string.Empty).Trim().ToLowerInvariant();
     }
 }
 

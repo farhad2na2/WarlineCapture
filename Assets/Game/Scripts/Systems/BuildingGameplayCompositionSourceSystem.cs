@@ -79,7 +79,7 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
     internal readonly BuildingPlacementRuntimeTickSystem BuildingPlacementRuntimeTickSystem = new();
     internal readonly BuildingPlacementInputRuntimeTickSystem BuildingPlacementInputRuntimeTickSystem = new();
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();
-    internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
+    internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem = new();
     internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem;
     internal readonly BuildingRuntimeResourcePrefabCompositionSystem BuildingRuntimeResourcePrefabCompositionSystem;
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
@@ -104,7 +104,6 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
         BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
         BuildingPlacementVisualCompositionSystem = ResolveBuildingPlacementVisualCompositionSystem();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
-        RuntimeUnitPrefabSystem = ResolveRuntimeUnitPrefabSystem();
         BuildingRuntimeResourcePrefabContextSystem = ResolveBuildingRuntimeResourcePrefabContextSystem();
         BuildingRuntimeResourcePrefabCompositionSystem = ResolveBuildingRuntimeResourcePrefabCompositionSystem();
     }
@@ -170,14 +169,6 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
         Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingPlacementVisualCompositionSystem>()
-            : null;
-    }
-
-    private static RuntimeUnitPrefabSystem ResolveRuntimeUnitPrefabSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeUnitPrefabSystem>()
             : null;
     }
 

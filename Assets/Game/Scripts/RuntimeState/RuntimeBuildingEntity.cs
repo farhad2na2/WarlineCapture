@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -78,6 +79,7 @@ internal sealed class RuntimeBuildingEntity : BuildingCombatSystem.IRuntimeBuild
     public Entity[] ProducedUnitSlots;
     public List<Entity> ProducedUnits;
     public Dictionary<Entity, GameObject> ProducedUnitPrefabs;
+    public Dictionary<Entity, FixedString64Bytes> ProducedUnitSourceKeys;
     public List<PendingProduction> PendingProductions;
     public ActiveProductionTransport ActiveTransport;
     public bool IsDestroyed { get; set; }

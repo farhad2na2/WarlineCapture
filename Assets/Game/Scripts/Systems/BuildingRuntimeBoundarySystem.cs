@@ -630,7 +630,8 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
             building.ProducedUnits,
             building.ProducedUnitSlots,
             building.ProducedUnitPrefabs,
-            producedUnitEntityManager);
+            producedUnitEntityManager,
+            building.ProducedUnitSourceKeys);
         for (int i = 0; i < building.ProducedUnits.Count; i++)
         {
             Entity unit = building.ProducedUnits[i];
@@ -705,6 +706,14 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         EntityManager em,
         out FixedString128Bytes unitId)
     {
+        if (building?.ProducedUnitSourceKeys != null &&
+            building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKeyFromBuilding) &&
+            sourceKeyFromBuilding.Length > 0)
+        {
+            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(sourceKeyFromBuilding.ToString()));
+            return unitId.Length > 0;
+        }
+
         if (building?.ProducedUnitPrefabs != null &&
             building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
             prefab != null)

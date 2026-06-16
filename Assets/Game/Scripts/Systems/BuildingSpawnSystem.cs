@@ -288,10 +288,14 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
         em.SetComponentData(instance, new UnitGrid { Cell = cell });
         em.SetComponentData(instance, LocalTransform.FromPosition(pos));
+        if (spawnUnitSourceKey.Length > 0)
+            SetOrAddComponent(em, instance, new UnitSourcePrefabKey { Value = spawnUnitSourceKey });
         building.ProducedUnits ??= new List<Entity>();
         building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
+        building.ProducedUnitSourceKeys ??= new Dictionary<Entity, FixedString64Bytes>();
         building.ProducedUnits.Add(instance);
         building.ProducedUnitPrefabs[instance] = spawnUnitPrefab;
+        building.ProducedUnitSourceKeys[instance] = spawnUnitSourceKey;
         if (!isAirUnit)
         {
             ReserveDynamicOccupancy(em, gridEntity, grid, cell, unitFootprint);
@@ -1102,5 +1106,14 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
     {
         string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
         return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
+    }
+
+    private static void SetOrAddComponent<T>(EntityManager em, Entity entity, T value)
+        where T : unmanaged, IComponentData
+    {
+        if (em.HasComponent<T>(entity))
+            em.SetComponentData(entity, value);
+        else
+            em.AddComponentData(entity, value);
     }
 }

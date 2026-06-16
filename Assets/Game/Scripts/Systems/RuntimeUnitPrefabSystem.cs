@@ -1,31 +1,23 @@
 using System;
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
-internal sealed partial class RuntimeUnitPrefabSystem : SystemBase
+internal partial struct RuntimeUnitPrefabSystem : ISystem
 {
     public readonly struct Context
     {
-        public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly Func<BuildingSpawnPrefabSystem.Context> CreateSpawnPrefabContext;
 
         public Context(
-            BuildingDefinitionSystem definitionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
-            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
             Func<BuildingSpawnPrefabSystem.Context> createSpawnPrefabContext)
         {
-            DefinitionSystem = definitionSystem;
             SpawnPrefabSystem = spawnPrefabSystem;
-            RuntimeBuildings = runtimeBuildings;
             TryGetEntityManager = tryGetEntityManager;
             EnsureEntityQueries = ensureEntityQueries;
             CreateSpawnPrefabContext = createSpawnPrefabContext;
@@ -41,19 +33,28 @@ internal sealed partial class RuntimeUnitPrefabSystem : SystemBase
             context.CreateSpawnPrefabContext);
     }
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
-    public bool TryResolveConfiguredUnitPrefabEntity(Context context, GameObject unitPrefab, out Entity prefabEntity)
+    public bool TryResolveConfiguredUnitPrefabEntity(Context context, string unitPrefabSourceKey, out Entity prefabEntity)
+    {
+        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefabSourceKey);
+        return TryResolveConfiguredUnitPrefabEntity(
+            context,
+            string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey),
+            out prefabEntity);
+    }
+
+    public bool TryResolveConfiguredUnitPrefabEntity(Context context, FixedString64Bytes unitPrefabSourceKey, out Entity prefabEntity)
     {
         prefabEntity = Entity.Null;
-        if (unitPrefab == null ||
+        if (unitPrefabSourceKey.Length == 0 ||
             context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
@@ -61,17 +62,16 @@ internal sealed partial class RuntimeUnitPrefabSystem : SystemBase
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        FixedString64Bytes sourceKey = GetUnitPrefabSourceKey(unitPrefab);
         return context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
             context.CreateSpawnPrefabContext != null ? context.CreateSpawnPrefabContext() : default,
             em,
-            sourceKey,
+            unitPrefabSourceKey,
             out prefabEntity);
     }
 
-    public bool TryResolveSpawnUnitPrefab(Context context, Entity prefabEntity, out GameObject spawnUnitPrefab)
+    public bool TryResolveSpawnUnitSourceKey(Context context, Entity prefabEntity, out FixedString64Bytes sourceKey)
     {
-        spawnUnitPrefab = null;
+        sourceKey = default;
         if (prefabEntity == Entity.Null ||
             context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
@@ -80,73 +80,10 @@ internal sealed partial class RuntimeUnitPrefabSystem : SystemBase
         }
 
         context.EnsureEntityQueries?.Invoke(em);
-        if (!context.SpawnPrefabSystem.TryResolveSpawnUnitSourceKey(
-                context.CreateSpawnPrefabContext != null ? context.CreateSpawnPrefabContext() : default,
-                em,
-                prefabEntity,
-                out FixedString64Bytes sourceKey) ||
-            sourceKey.Length == 0 ||
-            context.DefinitionSystem == null)
-        {
-            return false;
-        }
-
-        return context.DefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out spawnUnitPrefab) &&
-               spawnUnitPrefab != null;
-    }
-
-    public bool TryResolveLiveUnitPreviewPrefab(Context context, Entity unitEntity, out GameObject prefab)
-    {
-        prefab = null;
-        if (unitEntity == Entity.Null ||
-            context.TryGetEntityManager == null ||
-            !context.TryGetEntityManager(out EntityManager em) ||
-            !em.Exists(unitEntity))
-        {
-            return false;
-        }
-
-        if (em.HasComponent<UnitRespawnPrefab>(unitEntity))
-        {
-            Entity prefabEntity = em.GetComponentData<UnitRespawnPrefab>(unitEntity).Prefab;
-            if (prefabEntity != Entity.Null &&
-                TryResolveSpawnUnitPrefab(context, prefabEntity, out prefab) &&
-                prefab != null)
-            {
-                return true;
-            }
-        }
-
-        if (context.RuntimeBuildings != null)
-        {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-            {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building?.ProducedUnitPrefabs == null)
-                    continue;
-
-                if (building.ProducedUnitPrefabs.TryGetValue(unitEntity, out prefab) && prefab != null)
-                    return true;
-            }
-        }
-
-        if (em.HasComponent<UnitSourcePrefabKey>(unitEntity))
-        {
-            string key = em.GetComponentData<UnitSourcePrefabKey>(unitEntity).Value.ToString();
-            if (!string.IsNullOrEmpty(key) &&
-                context.DefinitionSystem != null &&
-                context.DefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(key, out prefab))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
-    {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
-        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
+        return context.SpawnPrefabSystem.TryResolveSpawnUnitSourceKey(
+            context.CreateSpawnPrefabContext != null ? context.CreateSpawnPrefabContext() : default,
+            em,
+            prefabEntity,
+            out sourceKey);
     }
 }

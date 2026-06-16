@@ -184,9 +184,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
     private static RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContextState(Source source)
     {
         return new RuntimeUnitPrefabSystem.Context(
-            source.DefinitionSystem,
             source.SpawnPrefabSystem,
-            source.RuntimeBuildingSystem != null ? source.RuntimeBuildingSystem.Buildings : null,
             source.TryGetEntityManager,
             source.EnsureEntityQueries,
             () => CreateBuildingSpawnPrefabContextState(
@@ -210,13 +208,7 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
     private static CitizenPrefabSystem.Context CreateCitizenPrefabContextState(Source source)
     {
         RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext = CreateRuntimeUnitPrefabContextState(source);
-        return source.RuntimeUnitPrefabSystem != null
-            ? source.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext)
-            : new CitizenPrefabSystem.Context(
-                runtimeUnitPrefabContext.SpawnPrefabSystem,
-                runtimeUnitPrefabContext.TryGetEntityManager,
-                runtimeUnitPrefabContext.EnsureEntityQueries,
-                runtimeUnitPrefabContext.CreateSpawnPrefabContext);
+        return source.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext);
     }
 
     public static BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext(

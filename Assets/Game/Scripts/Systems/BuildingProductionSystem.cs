@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -167,7 +168,12 @@ public sealed partial class BuildingProductionSystem : SystemBase
         building.PendingProductions ??= new List<RuntimeBuildingEntity.PendingProduction>();
         building.ProducedUnits ??= new List<Entity>();
 
-        PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, entityManager);
+        PruneProducedUnits(
+            building.ProducedUnits,
+            building.ProducedUnitSlots,
+            building.ProducedUnitPrefabs,
+            entityManager,
+            building.ProducedUnitSourceKeys);
 
         int reservedProductionSlotIndex = -1;
         if (building.ProductionSpawnLocalPositions != null &&
@@ -634,7 +640,8 @@ public sealed partial class BuildingProductionSystem : SystemBase
         List<Entity> producedUnits,
         Entity[] producedUnitSlots,
         Dictionary<Entity, GameObject> producedUnitPrefabs,
-        EntityManager entityManager)
+        EntityManager entityManager,
+        Dictionary<Entity, FixedString64Bytes> producedUnitSourceKeys = null)
     {
         if (producedUnits != null)
         {
@@ -645,6 +652,7 @@ public sealed partial class BuildingProductionSystem : SystemBase
                     continue;
 
                 producedUnitPrefabs?.Remove(unit);
+                producedUnitSourceKeys?.Remove(unit);
                 producedUnits.RemoveAt(i);
             }
         }

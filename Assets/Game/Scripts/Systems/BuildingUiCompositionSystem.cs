@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -73,16 +74,13 @@ internal sealed partial class BuildingUiCompositionSystem : SystemBase
                 Screen.height),
             (Entity unitEntity, out GameObject prefab) =>
             {
-                prefab = null;
-                return source.RuntimeUnitPrefabSystem != null &&
-                       source.RuntimeUnitPrefabSystem.TryResolveLiveUnitPreviewPrefab(
-                           BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
-                               source.BuildingRuntimeResourcePrefabContextSystem,
-                               BuildingRuntimeResourcePrefabCompositionSystem.Create(
-                                   source.BuildingRuntimeResourcePrefabCompositionSystem,
-                                   source)),
-                           unitEntity,
-                           out prefab);
+                RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext =
+                    BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
+                        source.BuildingRuntimeResourcePrefabContextSystem,
+                        BuildingRuntimeResourcePrefabCompositionSystem.Create(
+                            source.BuildingRuntimeResourcePrefabCompositionSystem,
+                            source));
+                return TryResolveLiveUnitPreviewPrefab(source, runtimeUnitPrefabContext, unitEntity, out prefab);
             },
             () => EnqueueAndProcessConfirmBuildingPlacement(
                 source,
@@ -133,6 +131,77 @@ internal sealed partial class BuildingUiCompositionSystem : SystemBase
                 createPlacementCommandContext,
                 createBuildingPlacementQueryContext,
                 createBuildingSelectionContext));
+    }
+
+    private static bool TryResolveLiveUnitPreviewPrefab(
+        BuildingGameplayCompositionSourceSystem source,
+        RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext,
+        Entity unitEntity,
+        out GameObject prefab)
+    {
+        prefab = null;
+        if (source == null ||
+            unitEntity == Entity.Null ||
+            runtimeUnitPrefabContext.TryGetEntityManager == null ||
+            !runtimeUnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
+            !em.Exists(unitEntity))
+        {
+            return false;
+        }
+
+        runtimeUnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+        if (em.HasComponent<UnitRespawnPrefab>(unitEntity))
+        {
+            Entity prefabEntity = em.GetComponentData<UnitRespawnPrefab>(unitEntity).Prefab;
+            if (prefabEntity != Entity.Null &&
+                source.RuntimeUnitPrefabSystem.TryResolveSpawnUnitSourceKey(runtimeUnitPrefabContext, prefabEntity, out FixedString64Bytes sourceKey) &&
+                TryResolveConfiguredUnitSpawnPrefab(source, sourceKey, out prefab))
+            {
+                return true;
+            }
+        }
+
+        if (em.HasComponent<UnitSourcePrefabKey>(unitEntity) &&
+            TryResolveConfiguredUnitSpawnPrefab(source, em.GetComponentData<UnitSourcePrefabKey>(unitEntity).Value, out prefab))
+        {
+            return true;
+        }
+
+        if (source.RuntimeBuildingSystem?.Buildings != null)
+        {
+            foreach (var pair in source.RuntimeBuildingSystem.Buildings)
+            {
+                RuntimeBuildingEntity building = pair.Value;
+                if (building == null)
+                    continue;
+
+                if (building.ProducedUnitSourceKeys != null &&
+                    building.ProducedUnitSourceKeys.TryGetValue(unitEntity, out FixedString64Bytes producedSourceKey) &&
+                    TryResolveConfiguredUnitSpawnPrefab(source, producedSourceKey, out prefab))
+                {
+                    return true;
+                }
+
+                if (building.ProducedUnitPrefabs == null)
+                    continue;
+                if (building.ProducedUnitPrefabs.TryGetValue(unitEntity, out prefab) && prefab != null)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveConfiguredUnitSpawnPrefab(
+        BuildingGameplayCompositionSourceSystem source,
+        FixedString64Bytes sourceKey,
+        out GameObject prefab)
+    {
+        prefab = null;
+        return source?.BuildingDefinitionSystem != null &&
+               sourceKey.Length > 0 &&
+               source.BuildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out prefab) &&
+               prefab != null;
     }
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(

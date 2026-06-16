@@ -1,0 +1,243 @@
+.scn08-build-placement-confirmation-bar {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    color: rgb(232, 226, 198);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.scn08-build-placement-confirmation-bar Button {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-text-align: middle-center;
+}
+
+.build-placement-confirmation-bar-root {
+    position: absolute;
+    left: 25.5%;
+    right: 27.5%;
+    bottom: 20.5%;
+    height: 18%;
+}
+
+.bar-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Panels/scn08_command_bar_rail_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+}
+
+.placement-title {
+    position: absolute;
+    left: 7%;
+    top: 6%;
+    width: 32%;
+    height: 27%;
+    font-size: 26px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(245, 224, 171);
+}
+
+.status-chip {
+    position: absolute;
+    left: 40.5%;
+    top: 7%;
+    width: 15%;
+    height: 25%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_small_status_chip_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 18;
+    -unity-slice-right: 18;
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+    background-color: rgba(24, 66, 28, 0.64);
+}
+
+.status-text {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 12%;
+    bottom: 12%;
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(158, 250, 89);
+}
+
+.metric-icon {
+    position: absolute;
+    top: 8%;
+    width: 4.5%;
+    height: 22%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.credits-icon {
+    left: 60%;
+    background-image: url("../../Art/UI/Icons/scn09_icon_credits_star_coin.png");
+}
+
+.time-icon {
+    left: 77%;
+    background-image: url("../../Art/UI/Icons/scn09_icon_time_clock.png");
+}
+
+.cost-text,
+.duration-text {
+    position: absolute;
+    top: 6%;
+    height: 26%;
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(245, 241, 220);
+}
+
+.cost-text {
+    left: 64.5%;
+    width: 9%;
+}
+
+.duration-text {
+    left: 81.5%;
+    width: 10.5%;
+}
+
+.placement-action,
+.rotate-action {
+    position: absolute;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.placement-action {
+    top: 37%;
+    height: 36%;
+    -unity-slice-left: 30;
+    -unity-slice-right: 30;
+    -unity-slice-top: 16;
+    -unity-slice-bottom: 16;
+}
+
+.cancel-action {
+    left: 3%;
+    width: 35%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_secondary_button_bg.png");
+    background-color: rgba(46, 43, 38, 0.72);
+}
+
+.confirm-action {
+    right: 3%;
+    width: 32%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_gold_action_button_bg.png");
+    background-color: rgba(183, 122, 28, 0.72);
+}
+
+.rotate-action {
+    left: 47%;
+    top: 35%;
+    width: 8%;
+    height: 41%;
+    background-image: url("../../Art/UI/Panels/scn08_small_square_button_frame.png");
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+    background-color: rgba(33, 36, 33, 0.72);
+}
+
+.action-icon {
+    position: absolute;
+    left: 13%;
+    top: 20%;
+    width: 17%;
+    height: 60%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cancel-icon {
+    background-image: url("../../Art/UI/Icons/scn09_icon_close_x.png");
+}
+
+.confirm-icon {
+    background-image: url("../../Art/UI/Icons/scn09_icon_check_confirm.png");
+}
+
+.rotate-icon {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 18%;
+    bottom: 18%;
+    background-image: url("../../Art/UI/Icons/scn09_icon_placement_corners.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.action-label {
+    position: absolute;
+    left: 25%;
+    right: 7%;
+    top: 10%;
+    bottom: 10%;
+    font-size: 18px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(245, 241, 220);
+}
+
+.instruction-strip {
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    bottom: 4%;
+    height: 17%;
+    background-image: url("../../Art/UI/Panels/scn09_panel_bottom_instruction_strip.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 14;
+    -unity-slice-bottom: 14;
+    background-color: rgba(13, 15, 14, 0.72);
+}
+
+.info-icon {
+    position: absolute;
+    left: 27%;
+    top: 12%;
+    width: 5.5%;
+    height: 75%;
+    background-image: url("../../Art/UI/Icons/scn09_icon_info.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.instruction-text {
+    position: absolute;
+    left: 33%;
+    top: 8%;
+    width: 50%;
+    height: 84%;
+    font-size: 15px;
+    -unity-text-align: middle-left;
+    color: rgba(204, 201, 184, 0.92);
+}

@@ -1,13 +1,13 @@
 using Unity.Entities;
 
-internal sealed partial class BuildingGameplayChildSystem : SystemBase
+internal partial struct BuildingGameplayChildSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
+        state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 

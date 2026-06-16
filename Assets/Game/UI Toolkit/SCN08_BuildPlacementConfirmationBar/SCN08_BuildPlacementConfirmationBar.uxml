@@ -1,0 +1,40 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SCN08_BuildPlacementConfirmationBar.uss" />
+
+    <ui:VisualElement name="SCN08_BuildPlacementConfirmationBar" class="scn08-build-placement-confirmation-bar">
+        <ui:VisualElement name="BuildPlacementConfirmationBarRoot" class="build-placement-confirmation-bar-root">
+            <ui:VisualElement name="Frame" class="bar-frame" />
+
+            <ui:Label name="Title" class="placement-title" text="PLACE BUILDING" />
+
+            <ui:VisualElement name="StatusChip" class="status-chip">
+                <ui:Label name="Status" class="status-text" text="VALID GROUND" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="CreditsIcon" class="metric-icon credits-icon" />
+            <ui:Label name="Cost" class="cost-text" text="2,000" />
+
+            <ui:VisualElement name="TimeIcon" class="metric-icon time-icon" />
+            <ui:Label name="Duration" class="duration-text" text="00:30" />
+
+            <ui:Button name="CancelButton" class="placement-action cancel-action" text="">
+                <ui:VisualElement name="Icon" class="action-icon cancel-icon" />
+                <ui:Label name="Label" class="action-label" text="CANCEL" />
+            </ui:Button>
+
+            <ui:Button name="RotateButton" class="rotate-action" text="">
+                <ui:VisualElement name="Icon" class="rotate-icon" />
+            </ui:Button>
+
+            <ui:Button name="ConfirmButton" class="placement-action confirm-action" text="">
+                <ui:VisualElement name="Icon" class="action-icon confirm-icon" />
+                <ui:Label name="Label" class="action-label" text="CONFIRM" />
+            </ui:Button>
+
+            <ui:VisualElement name="InstructionStrip" class="instruction-strip">
+                <ui:VisualElement name="InfoIcon" class="info-icon" />
+                <ui:Label name="Instruction" class="instruction-text" text="DRAG TO POSITION, CONFIRM TO BUILD" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -8,6 +8,7 @@ using UnityEngine;
 internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+    public delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager entityManager, out Entity boundaryEntity);
     public delegate string StringNormalizer(string value);
     public delegate bool BuildingPredicate(RuntimeBuildingEntity building);
     public delegate bool BuildingIdPredicate(RuntimeBuildingEntity building, string normalizedId);
@@ -30,6 +31,7 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly StringNormalizer NormalizeId;
         public readonly BuildingPredicate IsHouseBuilding;
@@ -44,6 +46,7 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetEntityManagerDelegate tryGetEntityManager,
+            TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity,
             BuildingProductionSystem productionSystem,
             StringNormalizer normalizeId,
             BuildingPredicate isHouseBuilding,
@@ -57,6 +60,7 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
         {
             RuntimeBuildings = runtimeBuildings;
             TryGetEntityManager = tryGetEntityManager;
+            TryGetRuntimeBoundaryEntity = tryGetRuntimeBoundaryEntity;
             ProductionSystem = productionSystem;
             NormalizeId = normalizeId;
             IsHouseBuilding = isHouseBuilding;
@@ -134,6 +138,12 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
             return 0;
         }
 
+        if (TryCountProducedUnitsFromReadModel(context, factionId, normalized, em, out int readModelCount) &&
+            readModelCount > 0)
+        {
+            return readModelCount;
+        }
+
         if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
@@ -146,6 +156,43 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
         }
 
         return count;
+    }
+
+    private static bool TryCountProducedUnitsFromReadModel(
+        Context context,
+        byte factionId,
+        string normalized,
+        EntityManager em,
+        out int count)
+    {
+        count = 0;
+        if (context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+        for (int i = 0; i < producedUnits.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            if (!ProducedReadModelUnitMatchesFactionAndBuilding(context, producedUnit, factionId))
+                continue;
+            if (!IsProducedUnitAlive(producedUnit.Unit, em))
+                continue;
+            if (!ProducedReadModelUnitMatchesId(context, producedUnit, normalized, em))
+                continue;
+
+            count++;
+        }
+
+        return true;
     }
 
     public int CountPendingProductionsForFaction(Context context, byte factionId, string unitId)
@@ -517,6 +564,56 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
         }
 
         return false;
+    }
+
+    private static bool ProducedReadModelUnitMatchesFactionAndBuilding(
+        Context context,
+        BuildingProducedUnitReadModel producedUnit,
+        byte factionId)
+    {
+        if (producedUnit.HasOwnerFaction == 0 || producedUnit.OwnerFactionId != factionId)
+            return false;
+        if (!TryGetRuntimeBuilding(context, producedUnit.BuildingRuntimeId, out RuntimeBuildingEntity building))
+            return false;
+
+        return building != null &&
+               !building.IsDestroyed &&
+               building.HasOwnerFaction &&
+               building.OwnerFactionId == factionId;
+    }
+
+    private static bool ProducedReadModelUnitMatchesId(
+        Context context,
+        BuildingProducedUnitReadModel producedUnit,
+        string normalizedUnitId,
+        EntityManager em)
+    {
+        if (string.IsNullOrEmpty(normalizedUnitId))
+            return true;
+        if (producedUnit.UnitSourceKey.Length > 0 &&
+            Normalize(context, producedUnit.UnitSourceKey.ToString()) == normalizedUnitId)
+        {
+            return true;
+        }
+        if (producedUnit.Unit != Entity.Null &&
+            em.Exists(producedUnit.Unit) &&
+            em.HasComponent<UnitSourcePrefabKey>(producedUnit.Unit))
+        {
+            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(producedUnit.Unit).Value.ToString();
+            if (Normalize(context, sourceKey) == normalizedUnitId)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
+    {
+        if (unit == Entity.Null || !em.Exists(unit))
+            return false;
+
+        return !em.HasComponent<UnitHealth>(unit) ||
+               em.GetComponentData<UnitHealth>(unit).Current > 0;
     }
 
     private static string Normalize(Context context, string value)

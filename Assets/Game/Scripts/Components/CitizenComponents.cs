@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -69,6 +70,17 @@ public struct CitizenPopulationSummaryTag : IComponentData
 
 public struct CivilianUnitTag : IComponentData
 {
+}
+
+public struct CitizenVisibleUnitState : IComponentData
+{
+    public int CitizenId;
+    public FixedString64Bytes SourceKey;
+    public byte OwnerFactionId;
+    public CitizenLifeState LifeState;
+    public CitizenStatus Status;
+    public int TargetBuildingId;
+    public int2 GoalCell;
 }
 
 public struct CitizenMovementCommandQueueComponent : IComponentData

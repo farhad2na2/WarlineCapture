@@ -775,6 +775,11 @@ internal sealed class MatchBootstrapSystem
             em.AddComponent<BuildingRuntimeBoundaryTag>(entity);
         EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, entity);
         EnsureBuffer<BuildingConfiguredUnitReadModel>(em, entity);
+        EnsureBuffer<BuildingProductionSlotReadModel>(em, entity);
+        EnsureBuffer<BuildingProductionSpawnRequest>(em, entity);
+        EnsureBuffer<BuildingRecentSpawnReservation>(em, entity);
+        EnsureBuffer<BuildingProducedUnitReadModel>(em, entity);
+        EnsureBuffer<MapVehiclePlacementReadModel>(em, entity);
         EnsureBuffer<BuildingRuntimeFactionSummary>(em, entity);
         EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
         EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);

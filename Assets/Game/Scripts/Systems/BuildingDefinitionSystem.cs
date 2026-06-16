@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using ConfiguredSpawnableEntry = BuildingUiCommandBoundary.ConfiguredSpawnableEntry;
@@ -525,6 +526,25 @@ internal sealed partial class BuildingDefinitionSystem : SystemBase
         };
     }
 
+    public static bool TryGetProductionSourceKey(BuildingDefinition definition, int index, out FixedString64Bytes sourceKey)
+    {
+        sourceKey = default;
+        if (definition == null || index < 0)
+            return false;
+
+        if (definition.ProductionSlots != null && index < definition.ProductionSlots.Count)
+            sourceKey = definition.ProductionSlots[index]?.SpawnUnitSourceKey ?? default;
+
+        if (sourceKey.Length == 0)
+        {
+            string fallbackKey = GetSpawnableLookupKey(GetProductionPrefab(definition, index));
+            if (!string.IsNullOrWhiteSpace(fallbackKey))
+                sourceKey = new FixedString64Bytes(fallbackKey);
+        }
+
+        return sourceKey.Length > 0;
+    }
+
     public static string GetSpawnableLookupKey(GameObject prefab)
     {
         if (prefab == null)
@@ -719,14 +739,16 @@ internal sealed partial class BuildingDefinitionSystem : SystemBase
             {
                 return new BuildingDefinition.ProductionSlotDefinition
                 {
-                    SpawnUnitPrefab = configuredPrefab
+                    SpawnUnitPrefab = configuredPrefab,
+                    SpawnUnitSourceKey = ToUnitSourceKey(configuredPrefab)
                 };
             }
         }
 
         return new BuildingDefinition.ProductionSlotDefinition
         {
-            SpawnUnitPrefab = fallbackSpawnUnitPrefab
+            SpawnUnitPrefab = fallbackSpawnUnitPrefab,
+            SpawnUnitSourceKey = ToUnitSourceKey(fallbackSpawnUnitPrefab)
         };
     }
 
@@ -749,6 +771,12 @@ internal sealed partial class BuildingDefinitionSystem : SystemBase
         }
 
         return slots;
+    }
+
+    private static FixedString64Bytes ToUnitSourceKey(GameObject prefab)
+    {
+        string sourceKey = GetSpawnableLookupKey(prefab);
+        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 
     private void RegisterSpawnableLookupAliases(Dictionary<string, GameObject> lookup, GameObject prefab)

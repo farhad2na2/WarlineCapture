@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed partial class BuildingProductionSystem : SystemBase
@@ -22,6 +23,7 @@ public sealed partial class BuildingProductionSystem : SystemBase
 
     public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
     public delegate bool TryGetUnitProductionMetadataDelegate(GameObject prefab, out UnitProductionMetadata metadata);
+    internal delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager em, out Entity boundaryEntity);
     internal delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
 
     public enum ProductionTransportMode : byte
@@ -138,19 +140,22 @@ public sealed partial class BuildingProductionSystem : SystemBase
         public readonly BuildingProductionSlotSystem ProductionSlotSystem;
         public readonly TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
+        public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
 
         public QueueContext(
             IReadOnlyList<GameObject> unitSpawnPrefabs,
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
             BuildingProductionSlotSystem productionSlotSystem,
             TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
-            RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId)
+            RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId,
+            TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity = null)
         {
             UnitSpawnPrefabs = unitSpawnPrefabs;
             UnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
             ProductionSlotSystem = productionSlotSystem;
             TryGetPrefabLocalBounds = tryGetPrefabLocalBounds;
             RuntimeBuildingMatchesId = runtimeBuildingMatchesId;
+            TryGetRuntimeBoundaryEntity = tryGetRuntimeBoundaryEntity;
         }
     }
 
@@ -180,7 +185,7 @@ public sealed partial class BuildingProductionSystem : SystemBase
             building.ProducedUnitSlots != null &&
             building.ProductionSpawnLocalPositions.Length > 0)
         {
-            context.ProductionSlotSystem?.TryReserveProductionSlot(building, entityManager, out reservedProductionSlotIndex);
+            TryReserveProductionSlot(context, building, entityManager, out reservedProductionSlotIndex);
 
             bool allowUnreservedHelicopterHelipadSpawn =
                 IsHelicopterUnitPrefab(spawnUnitPrefab) &&
@@ -214,6 +219,78 @@ public sealed partial class BuildingProductionSystem : SystemBase
         building.PendingProductions.Add(queuedProduction);
         RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
         return true;
+    }
+
+    private static bool TryReserveProductionSlot(
+        QueueContext context,
+        RuntimeBuildingEntity building,
+        EntityManager entityManager,
+        out int reservedProductionSlotIndex)
+    {
+        reservedProductionSlotIndex = -1;
+        if (context.ProductionSlotSystem == null ||
+            building?.ProducedUnitSlots == null ||
+            building.ProductionSpawnLocalPositions == null ||
+            building.ProductionSpawnLocalPositions.Length <= 0)
+        {
+            return false;
+        }
+
+        int count = math.min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
+        for (int i = 0; i < count; i++)
+        {
+            if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i) ||
+                context.ProductionSlotSystem.IsProductionSlotOccupied(building, entityManager, i) ||
+                IsProductionSlotOccupiedByReadModel(context, entityManager, building.Id, i))
+            {
+                continue;
+            }
+
+            reservedProductionSlotIndex = i;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsProductionSlotOccupiedByReadModel(
+        QueueContext context,
+        EntityManager entityManager,
+        int productionSlotBuildingRuntimeId,
+        int slotIndex)
+    {
+        if (productionSlotBuildingRuntimeId <= 0 ||
+            slotIndex < 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            entityManager.World == null ||
+            !entityManager.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(entityManager, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !entityManager.Exists(boundaryEntity) ||
+            !entityManager.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            entityManager.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+        for (int i = 0; i < producedUnits.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            int slotBuildingRuntimeId = producedUnit.ProductionSlotBuildingRuntimeId > 0
+                ? producedUnit.ProductionSlotBuildingRuntimeId
+                : producedUnit.BuildingRuntimeId;
+            if (slotBuildingRuntimeId != productionSlotBuildingRuntimeId ||
+                producedUnit.ProductionSlotIndex != slotIndex ||
+                !IsProducedUnitAlive(producedUnit.Unit, entityManager))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public void InitializePendingProduction(

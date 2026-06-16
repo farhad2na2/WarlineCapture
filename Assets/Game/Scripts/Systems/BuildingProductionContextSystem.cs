@@ -313,7 +313,11 @@ internal sealed partial class BuildingProductionContextSystem : SystemBase
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
             source.ProductionSlotSystem,
             BuildingDefinitionSystem.TryGetPrefabLocalBounds,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+            source.SpawnContext.TryGetRuntimeBoundaryEntity == null
+                ? null
+                : (BuildingProductionSystem.TryGetRuntimeBoundaryEntityDelegate)(
+                    (EntityManager em, out Entity entity) => source.SpawnContext.TryGetRuntimeBoundaryEntity(em, out entity)));
     }
 
     public bool TryQueuePlayerUnitProduction(

@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -13,8 +14,10 @@ public sealed class BuildingUiQuerySystemTests
             var tests = new BuildingUiQuerySystemTests();
             tests.AddPendingProducedUnitEntries_AddsProgressCappedPendingEntries();
             tests.GetProducedUnits_PrunesDeadProducedUnits();
+            tests.AddProducedUnitEntries_ResolvesReadyPrefabFromPassivePreviewDelegate();
+            tests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel();
             tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
-            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=3");
+            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=5");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (System.Exception exception)
@@ -123,6 +126,144 @@ public sealed class BuildingUiQuerySystemTests
         Assert.AreEqual(alive, produced[0]);
         Assert.AreEqual(1, results.Count);
         Assert.AreEqual(alive, results[0]);
+    }
+
+    [Test]
+    public void AddProducedUnitEntries_ResolvesReadyPrefabFromPassivePreviewDelegate()
+    {
+        using World world = new("BuildingUiQuerySystemTests_ProducedUnitPreview");
+        EntityManager entityManager = world.EntityManager;
+        Entity alive = entityManager.CreateEntity(typeof(UnitHealth));
+        entityManager.SetComponentData(alive, new UnitHealth { Current = 10, Max = 10 });
+
+        GameObject prefab = new("Unit_Infantry_SourceKeyPreview");
+        try
+        {
+            var produced = new List<Entity> { alive };
+            var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
+
+            var uiQuery = new BuildingUiQuerySystem();
+            uiQuery.AddProducedUnitEntries(
+                produced,
+                null,
+                null,
+                null,
+                entityManager,
+                new BuildingProductionSystem(),
+                0f,
+                entries,
+                (Entity unit, out GameObject resolvedPrefab) =>
+                {
+                    resolvedPrefab = unit == alive ? prefab : null;
+                    return resolvedPrefab != null;
+                });
+
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(alive, entries[0].Unit);
+            Assert.AreSame(prefab, entries[0].Prefab);
+            Assert.IsTrue(entries[0].IsReady);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingProducedUnits_ReadsProducedUnitReadModel()
+    {
+        using World world = new("BuildingUiQuerySystemTests_ProducedUnitReadModel");
+        EntityManager entityManager = world.EntityManager;
+        Entity alive = entityManager.CreateEntity(typeof(UnitHealth));
+        entityManager.SetComponentData(alive, new UnitHealth { Current = 10, Max = 10 });
+        Entity dead = entityManager.CreateEntity(typeof(UnitHealth));
+        entityManager.SetComponentData(dead, new UnitHealth { Current = 0, Max = 10 });
+        Entity otherBuildingUnit = entityManager.CreateEntity(typeof(UnitHealth));
+        entityManager.SetComponentData(otherBuildingUnit, new UnitHealth { Current = 10, Max = 10 });
+
+        Entity boundaryEntity = entityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 7,
+            Unit = alive,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 7,
+            Unit = dead,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 8,
+            Unit = otherBuildingUnit,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+
+        RuntimeBuildingEntity selectedBuilding = new()
+        {
+            Id = 7
+        };
+        var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+        {
+            [selectedBuilding.Id] = selectedBuilding
+        };
+        GameObject previewPrefab = new("UnitPreview");
+        try
+        {
+            BuildingUiQuerySystem.Context context = new(
+                runtimeBuildings,
+                () => selectedBuilding.Id,
+                (out EntityManager em) =>
+                {
+                    em = entityManager;
+                    return true;
+                },
+                new BuildingProductionSystem(),
+                () => 10f,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                (Entity unit, out GameObject prefab) =>
+                {
+                    prefab = unit == alive ? previewPrefab : null;
+                    return prefab != null;
+                });
+            var uiQuery = new BuildingUiQuerySystem();
+            var producedUnitResults = new List<Entity>();
+            uiQuery.GetSelectedBuildingProducedUnits(context, producedUnitResults);
+
+            Assert.AreEqual(1, producedUnitResults.Count);
+            Assert.AreEqual(alive, producedUnitResults[0]);
+            Assert.IsNull(selectedBuilding.ProducedUnits);
+
+            var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
+            uiQuery.GetSelectedBuildingProducedUnitEntries(context, entries);
+
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(alive, entries[0].Unit);
+            Assert.AreSame(previewPrefab, entries[0].Prefab);
+            Assert.IsTrue(entries[0].IsReady);
+            Assert.IsNull(selectedBuilding.ProducedUnits);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(previewPrefab);
+        }
     }
 
     [Test]

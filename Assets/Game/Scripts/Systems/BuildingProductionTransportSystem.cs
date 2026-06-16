@@ -81,7 +81,8 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
         Context context,
         RuntimeBuildingEntity building,
         RuntimeBuildingEntity.PendingProduction pending,
-        float now)
+        float now,
+        ref uint randomState)
     {
         if (building == null || pending == null || pending.TransportPrefab == null || building.ActiveTransport != null)
             return building?.ActiveTransport != null;
@@ -135,7 +136,7 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
             if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
                 return false;
 
-            touchdownPosition = ResolveProductionTransportDropPosition(context, building, pending);
+            touchdownPosition = ResolveProductionTransportDropPosition(context, building, pending, ref randomState);
             hoverPosition = touchdownPosition + new Vector3(0f, 6f, 0f);
             hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
             Vector3 horizontalOffset = context.WorldCamera != null
@@ -371,16 +372,20 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
         Context context)
     {
         if (Unity.Entities.World.DefaultGameObjectInjectionWorld == null ||
-            building.ProducedUnits == null ||
-            building.ProducedUnits.Count == 0)
+            context.TransportBridgeSystem == null)
         {
             return;
         }
 
         EntityManager em = Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;
-        Entity newest = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (newest == Entity.Null || !em.Exists(newest))
+        if (!BuildingProductionTransportBridgeSystem.TryGetNewestProducedUnit(
+                context.TransportBridgeContext,
+                building,
+                em,
+                out Entity newest))
+        {
             return;
+        }
 
         if (!em.HasComponent<UnitSpawnTransitTag>(newest))
             em.AddComponent<UnitSpawnTransitTag>(newest);
@@ -832,7 +837,8 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
     private static Vector3 ResolveProductionTransportDropPosition(
         Context context,
         RuntimeBuildingEntity building,
-        RuntimeBuildingEntity.PendingProduction pending)
+        RuntimeBuildingEntity.PendingProduction pending,
+        ref uint randomState)
     {
         if (pending?.TransportMode == ProductionTransportMode.AirSelf &&
             pending.Prefab != null &&
@@ -844,6 +850,7 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
                     factionId,
                     building,
                     pending.Prefab,
+                    ref randomState,
                     out _,
                     out Vector3 helipadPosition))
             {

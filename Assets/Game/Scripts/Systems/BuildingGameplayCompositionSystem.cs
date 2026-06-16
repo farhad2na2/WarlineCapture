@@ -511,6 +511,20 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
                             return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
                         }
 
+                        bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
+                        {
+                            source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+                            EntityQuery boundaryQuery = source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery;
+                            if (boundaryQuery.IsEmptyIgnoreFilter)
+                            {
+                                boundaryEntity = Entity.Null;
+                                return false;
+                            }
+
+                            boundaryEntity = boundaryQuery.GetSingletonEntity();
+                            return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+                        }
+
                         MapVehiclePlacementSpawnSystem.Context mapVehiclePlacementContext =
                             new(
                                 mapVehiclePlacementConfig,
@@ -518,6 +532,7 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
                                 source.RuntimeUnitPrefabSystem,
                                 mapVehiclePrefabContext,
                                 TryGetMapGridData,
+                                TryGetMapRuntimeBoundary,
                                 Debug.LogWarning);
                         return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
                     },

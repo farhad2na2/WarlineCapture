@@ -35,7 +35,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesWallSegmentSpawnRequest();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=5");
+            tests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel();
+            tests.TearDown();
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=6");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (System.Exception ex)
@@ -332,6 +334,64 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         Assert.AreEqual(1, request.SpawnedCount);
         Assert.AreEqual(new int2(4, 6), request.ActualOrigin);
         Assert.AreEqual(new int2(1, 1), request.ActualFootprint);
+    }
+
+    [Test]
+    public void RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeProductionSlotReadModelValidationTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+        GameObject unitPrefab = new("Rifleman_Regular");
+        try
+        {
+            _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2);
+            BuildingDefinitionAuthoring authoring = _buildingPrefab.GetComponent<BuildingDefinitionAuthoring>();
+            SetPrivateField(authoring, "productions", new System.Collections.Generic.List<BuildingDefinitionAuthoring.ProductionDefinition>
+            {
+                new() { spawnUnitPrefab = unitPrefab }
+            });
+
+            var definitionSystem = new BuildingDefinitionSystem();
+            definitionSystem.ConfigureAuthoringMetadataResolvers(
+                BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+                BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            definitionSystem.RebuildSpawnablesLookup(
+                new System.Collections.Generic.List<GameObject> { _buildingPrefab },
+                new System.Collections.Generic.List<GameObject> { unitPrefab });
+            definitionSystem.RebuildConfiguredSpawnableDefinitions(null, Object.DestroyImmediate);
+
+            var boundarySystem = new BuildingRuntimeBoundarySystem();
+            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+            boundarySystem.Update(
+                definitionSystem,
+                new BuildingRuntimeSpawnSystem(),
+                default,
+                new BuildingProductionRequestBoundary(),
+                default,
+                new BuildingRuntimeQuerySystem(),
+                default,
+                new FactionResourceSystem(),
+                em,
+                boundaryQuery,
+                new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>(),
+                now: 0f,
+                frameCount: 0);
+
+            DynamicBuffer<BuildingProductionSlotReadModel> slots =
+                em.GetBuffer<BuildingProductionSlotReadModel>(boundary, true);
+            Assert.AreEqual(1, slots.Length);
+            Assert.AreEqual(new FixedString128Bytes("tent_regular"), slots[0].BuildingId);
+            Assert.AreEqual(0, slots[0].SlotIndex);
+            Assert.AreEqual(new FixedString64Bytes("Rifleman_Regular"), slots[0].UnitSourceKey);
+            Assert.AreEqual(new FixedString128Bytes("rifleman_regular"), slots[0].UnitId);
+        }
+        finally
+        {
+            Object.DestroyImmediate(unitPrefab);
+        }
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

@@ -63,6 +63,7 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
         byte factionId,
         RuntimeBuildingEntity sourceBuilding,
         GameObject spawnUnitPrefab,
+        ref uint randomState,
         out int2 cell,
         out Vector3 worldPosition)
     {
@@ -87,6 +88,7 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
                 grid,
                 blockerData,
                 unitFootprint,
+                ref randomState,
                 out cell,
                 out float3 position))
         {
@@ -122,13 +124,10 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
 
     public void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingEntity building, int2 goalCell)
     {
-        if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
-            return;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return;
 
-        Entity entity = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (entity == Entity.Null || !em.Exists(entity))
+        if (!TryGetNewestProducedUnit(context, building, em, out Entity entity))
             return;
 
         bool isAirUnit = em.HasComponent<UnitAirMovement>(entity);
@@ -141,14 +140,14 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
 
     public void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingEntity building, Vector3 forward)
     {
-        if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
-            return;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return;
 
-        Entity entity = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<LocalTransform>(entity))
+        if (!TryGetNewestProducedUnit(context, building, em, out Entity entity) ||
+            !em.HasComponent<LocalTransform>(entity))
+        {
             return;
+        }
 
         forward.y = 0f;
         if (forward.sqrMagnitude <= 0.0001f)
@@ -201,20 +200,81 @@ internal sealed partial class BuildingProductionTransportBridgeSystem : SystemBa
             context.IsBuildDrawerOpen == null ||
             !context.IsBuildDrawerOpen() ||
             building == null ||
-            !IsPlayerProductionFocusAllowed(building) ||
-            building.ProducedUnits == null ||
-            building.ProducedUnits.Count == 0)
+            !IsPlayerProductionFocusAllowed(building))
         {
             return false;
         }
 
-        Entity newest = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (newest == Entity.Null || !em.Exists(newest) || !em.HasComponent<LocalTransform>(newest))
+        if (!TryGetNewestProducedUnit(context, building, em, out Entity newest) ||
+            !em.HasComponent<LocalTransform>(newest))
+        {
             return false;
+        }
 
         LocalTransform transform = em.GetComponentData<LocalTransform>(newest);
         context.SmoothMoveCameraGroundCenterTo(transform.Position);
         return true;
+    }
+
+    internal static bool TryGetNewestProducedUnit(Context context, RuntimeBuildingEntity building, EntityManager em, out Entity newest)
+    {
+        newest = Entity.Null;
+        if (building == null || em.World == null || !em.World.IsCreated)
+            return false;
+
+        if (TryGetNewestProducedUnitFromReadModel(context, building.Id, em, out newest))
+            return true;
+
+        if (building.ProducedUnits == null || building.ProducedUnits.Count == 0)
+            return false;
+
+        for (int i = building.ProducedUnits.Count - 1; i >= 0; i--)
+        {
+            Entity candidate = building.ProducedUnits[i];
+            if (candidate == Entity.Null || !em.Exists(candidate))
+                continue;
+
+            newest = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetNewestProducedUnitFromReadModel(
+        Context context,
+        int buildingRuntimeId,
+        EntityManager em,
+        out Entity newest)
+    {
+        newest = Entity.Null;
+        if (buildingRuntimeId <= 0 ||
+            context.SpawnContext.TryGetRuntimeBoundaryEntity == null ||
+            !context.SpawnContext.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+        for (int i = producedUnits.Length - 1; i >= 0; i--)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            if (producedUnit.BuildingRuntimeId != buildingRuntimeId ||
+                producedUnit.Unit == Entity.Null ||
+                !em.Exists(producedUnit.Unit))
+            {
+                continue;
+            }
+
+            newest = producedUnit.Unit;
+            return true;
+        }
+
+        return false;
     }
 
     private static bool IsPlayerProductionFocusAllowed(RuntimeBuildingEntity building)

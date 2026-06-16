@@ -264,6 +264,7 @@ internal sealed partial class BuildingRuntimeCompositionSystem : SystemBase
             source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,
             source.BuildingGameplayEcsQuerySystem.SelectedUnitsQuery,
             source.BuildingGameplayEcsQuerySystem.LiveFactionUnitsQuery,
+            source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

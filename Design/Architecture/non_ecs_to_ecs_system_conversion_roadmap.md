@@ -856,7 +856,7 @@ Progress notes:
 
 ## Post-Roadmap Pure ECS Prefab Conversion Track
 
-Status: [~]
+Status: [x]
 
 Purpose:
 Remove pre-UI-work `GameObject`/prefab dependencies from gameplay prefab lookup code only when the behavior can be represented by ECS prefab entities, source keys, requests, or explicit managed presentation boundaries.
@@ -871,6 +871,23 @@ Progress:
 - [x] Audit `MapVehiclePlacementSpawnSystem` for a source-key placement data projection so authored vehicle prefab references are not needed during spawn execution.
 - [x] Audit production `ProducedUnitPrefabs` dictionaries and UI preview callers; replace gameplay lookups with `UnitSourcePrefabKey`/entity data while keeping preview sprite/prefab mapping at the managed UI boundary.
 - [x] Re-run architecture validation, citizen visible-unit validation, building production validation, and gameplay composition smoke after each slice.
+
+Final disposition note:
+
+This post-roadmap track is complete, but completion does not mean all eight originally audited files became unmanaged `ISystem` structs. Only the pure prefab bridge helpers were converted to `ISystem`. Mixed prefab/config/UI/presentation/startup consumers were closed as managed `SystemBase` or passive boundary work when forcing them into unmanaged code would keep or hide `GameObject` ownership.
+
+| Target | Final status | Notes |
+| --- | --- | --- |
+| `BuildingSpawnPrefabSystem` | Done: `ISystem` | Pure source-key-to-prefab-entity resolver. |
+| `CitizenPrefabSystem` | Done: `ISystem` | Pure citizen source-key-to-prefab-entity helper. |
+| `RuntimeUnitPrefabSystem` | Done: `ISystem` | Pure configured unit source-key/entity lookup; live preview fallback moved to managed UI boundary. |
+| `BuildingSpawnSystem` | Done as managed `SystemBase` boundary | Still owns runtime building spawn/production boundary behavior and managed prefab fallback data; not pending unless a new scope removes that boundary. |
+| `BuildingProductionTransportBridgeSystem` | Done as managed `SystemBase` boundary | Still bridges production transport behavior that depends on managed prefab/config inputs. |
+| `CitizenVisibleUnitSystem` | Done as managed `SystemBase` boundary | Visible-citizen presentation/spawn boundary; entity source-key selection is handled before this boundary. |
+| `MapVehiclePlacementSpawnSystem` | Done as managed `SystemBase` boundary | Runtime spawn/footprint lookup now uses `vehicleSourceKey`; authored prefab fallback remains at config/boundary edge. |
+| `CustomGameStartupSystem` | Done as managed `SystemBase` boundary | Startup/config projection boundary with serialized config and prefab references; not a safe unmanaged `ISystem` target before a broader startup/config rewrite. |
+
+There are no pending items in this track. The strict validation gate "all eight target files contain no `SystemBase`/`GameObject`/`List<GameObject>`" is intentionally not the accepted final gate because five targets remain documented managed boundaries. The accepted gate is that gameplay prefab lookup uses ECS prefab entities/source keys where converted, managed prefab fallback stays at UI/config/presentation boundaries, and focused validation stays green.
 
 ## Phase 12: Final Guardrails And Cleanup
 

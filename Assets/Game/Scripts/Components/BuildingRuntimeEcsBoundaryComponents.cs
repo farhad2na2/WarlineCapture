@@ -24,6 +24,71 @@ public struct BuildingConfiguredUnitReadModel : IBufferElementData
     public byte IsVehicle;
 }
 
+public struct BuildingProductionSlotReadModel : IBufferElementData
+{
+    public FixedString128Bytes BuildingId;
+    public int SlotIndex;
+    public FixedString64Bytes UnitSourceKey;
+    public FixedString128Bytes UnitId;
+}
+
+public struct BuildingProductionSpawnRequest : IBufferElementData
+{
+    public const byte Pending = 0;
+    public const byte Succeeded = 1;
+    public const byte Failed = 2;
+
+    public int RequestId;
+    public int BuildingRuntimeId;
+    public int ProductionIndex;
+    public int ReservedProductionSlotIndex;
+    public byte OwnerFactionId;
+    public byte HasOwnerFaction;
+    public byte HasOverrideWorldPosition;
+    public byte HasOverrideCell;
+    public byte Status;
+    public FixedString64Bytes UnitSourceKey;
+    public Entity PrefabEntity;
+    public Entity ProducedUnit;
+    public int2 SpawnCell;
+    public float3 SpawnWorldPosition;
+}
+
+public struct BuildingRecentSpawnReservation : IBufferElementData
+{
+    public int2 Cell;
+    public int2 Size;
+    public float ExpiresAt;
+}
+
+public struct BuildingProducedUnitReadModel : IBufferElementData
+{
+    public int BuildingRuntimeId;
+    public int ProductionSlotBuildingRuntimeId;
+    public int ProductionIndex;
+    public int ProductionSlotIndex;
+    public byte OwnerFactionId;
+    public byte HasOwnerFaction;
+    public Entity Unit;
+    public FixedString64Bytes UnitSourceKey;
+}
+
+public struct MapVehiclePlacementReadModel : IBufferElementData
+{
+    public int PlacementIndex;
+    public FixedString128Bytes SourcePath;
+    public FixedString128Bytes Category;
+    public FixedString64Bytes VehicleSourceKey;
+    public Entity Prefab;
+    public int2 FootprintCells;
+    public byte FactionId;
+    public byte HasPrefab;
+    public float3 WorldCenter;
+    public float3 WorldPosition;
+    public float3 WorldEulerAngles;
+    public float3 WorldScale;
+}
+
 public struct BuildingRuntimeFactionSummary : IBufferElementData
 {
     public byte FactionId;
@@ -53,6 +118,7 @@ public struct BuildingFactionProductionSpawnPointReadModel : IBufferElementData
 {
     public byte FactionId;
     public FixedString128Bytes BuildingId;
+    public int BuildingRuntimeId;
     public int SlotIndex;
     public int2 Cell;
     public float3 WorldPosition;

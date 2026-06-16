@@ -176,6 +176,9 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
             return;
         }
 
+        if (TryAddProducedUnitsFromReadModel(building, em, results))
+            return;
+
         building.ProducedUnits ??= new List<Entity>();
         GetProducedUnits(building.ProducedUnits, em, context.ProductionSystem, results);
     }
@@ -276,7 +279,8 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
         EntityManager entityManager,
         BuildingProductionSystem productionSystem,
         float now,
-        List<ProducedUnitUiEntry> entries)
+        List<ProducedUnitUiEntry> entries,
+        TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab = null)
     {
         if (entries == null)
             return;
@@ -294,6 +298,8 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
                 Entity unit = producedUnits[i];
                 GameObject prefab = null;
                 producedUnitPrefabs?.TryGetValue(unit, out prefab);
+                if (prefab == null && tryResolveLiveUnitPreviewPrefab != null)
+                    tryResolveLiveUnitPreviewPrefab(unit, out prefab);
                 entries.Add(new ProducedUnitUiEntry(unit, prefab, true, 1f));
             }
         }
@@ -340,8 +346,14 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
             return;
         }
 
+        float now = context.GetNow != null ? context.GetNow() : UnityEngine.Time.time;
+        if (TryAddProducedUnitEntriesFromReadModel(context, building, em, entries))
+        {
+            AddPendingProducedUnitEntries(building.PendingProductions, context.ProductionSystem, now, entries);
+            return;
+        }
+
         building.ProducedUnits ??= new List<Entity>();
-        building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
         AddProducedUnitEntries(
             building.ProducedUnits,
             building.ProducedUnitPrefabs,
@@ -349,8 +361,103 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
             building.PendingProductions,
             em,
             context.ProductionSystem,
-            context.GetNow != null ? context.GetNow() : UnityEngine.Time.time,
-            entries);
+            now,
+            entries,
+            context.TryResolveLiveUnitPreviewPrefab);
+    }
+
+    private static bool TryAddProducedUnitsFromReadModel(
+        RuntimeBuildingEntity building,
+        EntityManager em,
+        List<Entity> results)
+    {
+        if (!TryGetProducedUnitReadModelRows(em, out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits))
+            return false;
+
+        bool matchedBuilding = false;
+        for (int i = 0; i < producedUnits.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            if (producedUnit.BuildingRuntimeId != building.Id)
+                continue;
+
+            matchedBuilding = true;
+            if (IsProducedUnitAlive(producedUnit.Unit, em))
+                results.Add(producedUnit.Unit);
+        }
+
+        return matchedBuilding;
+    }
+
+    private static bool TryAddProducedUnitEntriesFromReadModel(
+        Context context,
+        RuntimeBuildingEntity building,
+        EntityManager em,
+        List<ProducedUnitUiEntry> entries)
+    {
+        if (!TryGetProducedUnitReadModelRows(em, out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits))
+            return false;
+
+        bool matchedBuilding = false;
+        for (int i = 0; i < producedUnits.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            if (producedUnit.BuildingRuntimeId != building.Id)
+                continue;
+
+            matchedBuilding = true;
+            Entity unit = producedUnit.Unit;
+            if (!IsProducedUnitAlive(unit, em))
+                continue;
+
+            GameObject prefab = null;
+            context.TryResolveLiveUnitPreviewPrefab?.Invoke(unit, out prefab);
+            entries.Add(new ProducedUnitUiEntry(unit, prefab, true, 1f));
+        }
+
+        return matchedBuilding;
+    }
+
+    private static bool TryGetProducedUnitReadModelRows(
+        EntityManager em,
+        out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits)
+    {
+        producedUnits = default;
+        if (em.World == null || !em.World.IsCreated)
+            return false;
+
+        using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        if (boundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> boundaryEntities = boundaryQuery.ToEntityArray(Allocator.Temp);
+        if (boundaryEntities.Length == 0)
+            return false;
+
+        Entity boundaryEntity = boundaryEntities[0];
+        if (boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        producedUnits = em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+        return true;
+    }
+
+    private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
+    {
+        if (unit == Entity.Null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !em.Exists(unit))
+        {
+            return false;
+        }
+
+        return !em.HasComponent<UnitHealth>(unit) ||
+               em.GetComponentData<UnitHealth>(unit).Current > 0;
     }
 
     public void AddPendingProductionUiEntries(

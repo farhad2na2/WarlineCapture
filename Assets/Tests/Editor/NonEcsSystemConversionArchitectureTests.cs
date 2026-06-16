@@ -42,6 +42,10 @@ public sealed class NonEcsSystemConversionArchitectureTests
         @"\b(?:TryIssue|Issue)[A-Za-z0-9_]*\s*\(",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex ConvertedTargetManagedPrefabDependencyRegex = new(
+        @"\b(?:GameObject|UnityEngine\.Object|List\s*<\s*GameObject\s*>|Dictionary\s*<[^>\r\n]*GameObject|ProducedUnitPrefabs|TryResolveConvertedPrefabEntity|GetPrefabName|FindAtlasEntry)\b",
+        RegexOptions.CultureInvariant);
+
     private static readonly Regex PublicCommandMutatorEntrypointRegex = new(
         @"^[ \t]*public\s+(?:static\s+)?(?:readonly\s+)?[A-Za-z0-9_<>,\.\?\[\]\s]+\s+(?<name>(?:TryIssue|Issue|EnqueueAndProcess|ProcessPending|Clear[A-Za-z0-9_]*Order|Request[A-Za-z0-9_]*(?:Order|Command)|TryRequest[A-Za-z0-9_]*(?:Order|Command))[A-Za-z0-9_]*)\s*\(",
         RegexOptions.CultureInvariant | RegexOptions.Multiline);
@@ -120,6 +124,15 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
     };
 
+    private static readonly Dictionary<string, string> FiveSystemBaseConversionTargets = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs"] = "BuildingSpawnSystem",
+        ["Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeSystem.cs"] = "BuildingProductionTransportBridgeSystem",
+        ["Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs"] = "CitizenVisibleUnitSystem",
+        ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs"] = "MapVehiclePlacementSpawnSystem",
+        ["Assets/Game/Scripts/Systems/CustomGameStartupSystem.cs"] = "CustomGameStartupSystem"
+    };
+
     private static readonly string[] RetiredDirectCallContextSystemTokens =
     {
         "RtsSelectionCommandResultContextSystem",
@@ -144,7 +157,8 @@ public sealed class NonEcsSystemConversionArchitectureTests
             tests.PublicNonEcsCommandMutatorHelpersStayOnApprovedTransitionList();
             tests.TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList();
             tests.RetiredDirectCallContextSystemsStayDeleted();
-            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=8");
+            tests.ConvertedFiveSystemBaseTargetsStayFreeOfManagedPrefabDependencies();
+            Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -349,6 +363,32 @@ public sealed class NonEcsSystemConversionArchitectureTests
             string.Join(Environment.NewLine, violations));
     }
 
+    [Test]
+    public void ConvertedFiveSystemBaseTargetsStayFreeOfManagedPrefabDependencies()
+    {
+        Dictionary<string, SystemDeclaration> declarations = EnumerateSystemDeclarations()
+            .ToDictionary(ToInventoryKey, declaration => declaration, StringComparer.Ordinal);
+
+        List<string> violations = new();
+        foreach (KeyValuePair<string, string> target in FiveSystemBaseConversionTargets)
+        {
+            string declarationKey = $"{target.Key}|{target.Value}";
+            if (!declarations.TryGetValue(declarationKey, out SystemDeclaration declaration) ||
+                !IsConvertedUnmanagedSystem(declaration))
+            {
+                continue;
+            }
+
+            violations.AddRange(FindRegexReferences(target.Key, ConvertedTargetManagedPrefabDependencyRegex));
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "Converted five-SystemBase target files must not carry managed prefab dependencies into `ISystem` code. " +
+            "Keep `GameObject`, `UnityEngine.Object`, `List<GameObject>`, `Dictionary<..., GameObject>`, and prefab reverse lookup code in explicit managed/passive boundaries. Violations:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
     private static IEnumerable<SystemDeclaration> EnumerateSystemDeclarations()
     {
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
@@ -435,6 +475,11 @@ public sealed class NonEcsSystemConversionArchitectureTests
     private static bool IsMonoBehaviour(SystemDeclaration declaration)
     {
         return MonoBehaviourBaseRegex.IsMatch(declaration.Bases);
+    }
+
+    private static bool IsConvertedUnmanagedSystem(SystemDeclaration declaration)
+    {
+        return Regex.IsMatch(declaration.Bases, @"\bISystem\b", RegexOptions.CultureInvariant);
     }
 
     private static bool IsEditorOnlyPath(SystemDeclaration declaration)

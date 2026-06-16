@@ -26,6 +26,8 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
+    public delegate bool TryGetRuntimeBoundaryDelegate(EntityManager em, out Entity boundaryEntity);
+
     public readonly struct Context
     {
         public readonly MapVehiclePlacementConfig Config;
@@ -33,6 +35,7 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         public readonly RuntimeUnitPrefabSystem UnitPrefabSystem;
         public readonly RuntimeUnitPrefabSystem.Context UnitPrefabContext;
         public readonly TryGetGridDataDelegate TryGetGridData;
+        public readonly TryGetRuntimeBoundaryDelegate TryGetRuntimeBoundary;
         public readonly Action<string> LogWarning;
 
         public Context(
@@ -42,12 +45,32 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
             RuntimeUnitPrefabSystem.Context unitPrefabContext,
             TryGetGridDataDelegate tryGetGridData,
             Action<string> logWarning)
+            : this(
+                config,
+                authoringVehiclesRoot,
+                unitPrefabSystem,
+                unitPrefabContext,
+                tryGetGridData,
+                null,
+                logWarning)
+        {
+        }
+
+        public Context(
+            MapVehiclePlacementConfig config,
+            Transform authoringVehiclesRoot,
+            RuntimeUnitPrefabSystem unitPrefabSystem,
+            RuntimeUnitPrefabSystem.Context unitPrefabContext,
+            TryGetGridDataDelegate tryGetGridData,
+            TryGetRuntimeBoundaryDelegate tryGetRuntimeBoundary,
+            Action<string> logWarning)
         {
             Config = config;
             AuthoringVehiclesRoot = authoringVehiclesRoot;
             UnitPrefabSystem = unitPrefabSystem;
             UnitPrefabContext = unitPrefabContext;
             TryGetGridData = tryGetGridData;
+            TryGetRuntimeBoundary = tryGetRuntimeBoundary;
             LogWarning = logWarning;
         }
     }
@@ -68,6 +91,8 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
     {
         if (context.Config == null || !context.Config.SpawnOnMatchStart)
             return;
+
+        TryPublishPlacementReadModel(context);
 
         if (_queued)
         {
@@ -249,6 +274,79 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         _lastClearedBlockerCells = clearedCells;
     }
 
+    private static void TryPublishPlacementReadModel(Context context)
+    {
+        if (context.UnitPrefabContext.TryGetEntityManager == null ||
+            !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
+            context.TryGetRuntimeBoundary == null ||
+            !context.TryGetRuntimeBoundary(em, out Entity boundaryEntity))
+        {
+            return;
+        }
+
+        PublishPlacementReadModel(context, em, boundaryEntity);
+    }
+
+    internal static int PublishPlacementReadModel(Context context, EntityManager em, Entity boundaryEntity)
+    {
+        if (context.Config == null ||
+            context.Config.Placements == null ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity))
+        {
+            return 0;
+        }
+
+        DynamicBuffer<MapVehiclePlacementReadModel> buffer =
+            EnsureBuffer<MapVehiclePlacementReadModel>(em, boundaryEntity);
+        buffer.Clear();
+
+        context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+        int projected = 0;
+        for (int i = 0; i < context.Config.Placements.Count; i++)
+        {
+            MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
+            FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
+            if (placement == null || sourceKey.Length == 0)
+                continue;
+
+            Entity prefabEntity = Entity.Null;
+            int2 footprintCells = new(1, 1);
+            byte hasPrefab = 0;
+            if (context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+                    context.UnitPrefabContext,
+                    sourceKey,
+                    out Entity resolvedPrefab) &&
+                resolvedPrefab != Entity.Null &&
+                em.Exists(resolvedPrefab))
+            {
+                prefabEntity = resolvedPrefab;
+                hasPrefab = 1;
+                if (em.HasComponent<UnitFootprint>(prefabEntity))
+                    footprintCells = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+            }
+
+            buffer.Add(new MapVehiclePlacementReadModel
+            {
+                PlacementIndex = i,
+                SourcePath = ToFixedString128(placement.SourcePath),
+                Category = ToFixedString128(placement.Category),
+                VehicleSourceKey = sourceKey,
+                Prefab = prefabEntity,
+                FootprintCells = footprintCells,
+                FactionId = placement.FactionId,
+                HasPrefab = hasPrefab,
+                WorldCenter = ToFloat3(placement.WorldCenter),
+                WorldPosition = ToFloat3(placement.WorldPosition),
+                WorldEulerAngles = ToFloat3(placement.WorldEulerAngles),
+                WorldScale = ToFloat3(placement.WorldScale)
+            });
+            projected++;
+        }
+
+        return projected;
+    }
+
     private static bool TryResolvePlacementFootprint(
         Context context,
         EntityManager em,
@@ -324,6 +422,19 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
     {
         string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(placement?.VehicleSourceKey);
         return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
+    }
+
+    private static FixedString128Bytes ToFixedString128(string value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? default : new FixedString128Bytes(value);
+    }
+
+    private static DynamicBuffer<T> EnsureBuffer<T>(EntityManager em, Entity entity)
+        where T : unmanaged, IBufferElementData
+    {
+        return em.HasBuffer<T>(entity)
+            ? em.GetBuffer<T>(entity)
+            : em.AddBuffer<T>(entity);
     }
 
     private static void SetOrAddComponent<T>(

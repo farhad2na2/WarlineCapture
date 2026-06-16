@@ -371,6 +371,7 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         {
             PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
             PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
+            PublishProductionSlotsReadModel(definitionSystem, em, boundaryEntity);
             _configuredReadModelsPublished = true;
         }
 
@@ -443,6 +444,38 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
                 CanRequest = canRequest ? (byte)1 : (byte)0,
                 IsVehicle = isVehicle ? (byte)1 : (byte)0
             });
+        }
+    }
+
+    private void PublishProductionSlotsReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
+    {
+        DynamicBuffer<BuildingProductionSlotReadModel> buffer =
+            EnsureBoundaryBuffer<BuildingProductionSlotReadModel>(em, boundaryEntity);
+        buffer.Clear();
+
+        IReadOnlyList<BuildingDefinition> definitions = definitionSystem.ConfiguredSpawnableDefinitions;
+        for (int i = 0; i < definitions.Count; i++)
+        {
+            BuildingDefinition definition = definitions[i];
+            if (definition == null || definition.Prefab == null)
+                continue;
+
+            FixedString128Bytes buildingId = ResolveBoundaryId(definition.Prefab, definition.DisplayName);
+            int productionCount = BuildingDefinitionSystem.GetProductionCount(definition);
+            for (int slotIndex = 0; slotIndex < productionCount; slotIndex++)
+            {
+                GameObject unitPrefab = BuildingDefinitionSystem.GetProductionPrefab(definition, slotIndex);
+                if (unitPrefab == null)
+                    continue;
+
+                buffer.Add(new BuildingProductionSlotReadModel
+                {
+                    BuildingId = buildingId,
+                    SlotIndex = slotIndex,
+                    UnitSourceKey = ToUnitSourceKey(unitPrefab),
+                    UnitId = ResolveBoundaryId(unitPrefab, unitPrefab.name)
+                });
+            }
         }
     }
 
@@ -577,12 +610,19 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         EntityManager producedUnitEntityManager = default;
         bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
                                 runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows = default;
+        bool hasProducedUnitRows = em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+        if (hasProducedUnitRows)
+            producedUnitRows = em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+
         if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
                 PublishRuntimeUnitProductionSummaryForBuilding(
                     runtimeQueryContext,
                     buffer,
+                    producedUnitRows,
+                    hasProducedUnitRows,
                     producedUnitEntityManager,
                     hasEntityManager,
                     pair.Value);
@@ -593,6 +633,8 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
                 PublishRuntimeUnitProductionSummaryForBuilding(
                     runtimeQueryContext,
                     buffer,
+                    producedUnitRows,
+                    hasProducedUnitRows,
                     producedUnitEntityManager,
                     hasEntityManager,
                     pair.Value);
@@ -602,6 +644,8 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
     private void PublishRuntimeUnitProductionSummaryForBuilding(
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows,
+        bool hasProducedUnitRows,
         EntityManager producedUnitEntityManager,
         bool hasEntityManager,
         RuntimeBuildingEntity building)
@@ -621,6 +665,18 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
                 FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
                 IncrementExistingProductionSummary(buffer, factionId, unitId, 0, 1);
             }
+        }
+
+        if (hasEntityManager &&
+            TryPublishProducedUnitReadModelSummaryForBuilding(
+                buffer,
+                producedUnitRows,
+                hasProducedUnitRows,
+                producedUnitEntityManager,
+                building,
+                factionId))
+        {
+            return;
         }
 
         if (!hasEntityManager || building.ProducedUnits == null)
@@ -646,6 +702,39 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
 
             IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
         }
+    }
+
+    private static bool TryPublishProducedUnitReadModelSummaryForBuilding(
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows,
+        bool hasProducedUnitRows,
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        byte factionId)
+    {
+        if (!hasProducedUnitRows)
+            return false;
+
+        bool foundBuildingRows = false;
+        for (int i = 0; i < producedUnitRows.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnitRows[i];
+            if (producedUnit.BuildingRuntimeId != building.Id)
+                continue;
+
+            foundBuildingRows = true;
+            if (producedUnit.HasOwnerFaction == 0 ||
+                producedUnit.OwnerFactionId != factionId ||
+                !IsProducedUnitAlive(producedUnit.Unit, em) ||
+                !TryResolveProducedReadModelUnitId(producedUnit, em, out FixedString128Bytes unitId))
+            {
+                continue;
+            }
+
+            IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
+        }
+
+        return foundBuildingRows;
     }
 
     private void PublishConfiguredUnitProductionSummaryRows(
@@ -735,6 +824,39 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         return false;
     }
 
+    private static bool TryResolveProducedReadModelUnitId(
+        BuildingProducedUnitReadModel producedUnit,
+        EntityManager em,
+        out FixedString128Bytes unitId)
+    {
+        if (producedUnit.UnitSourceKey.Length > 0)
+        {
+            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(producedUnit.UnitSourceKey.ToString()));
+            return unitId.Length > 0;
+        }
+
+        if (producedUnit.Unit != Entity.Null &&
+            em.Exists(producedUnit.Unit) &&
+            em.HasComponent<UnitSourcePrefabKey>(producedUnit.Unit))
+        {
+            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(
+                em.GetComponentData<UnitSourcePrefabKey>(producedUnit.Unit).Value.ToString()));
+            return unitId.Length > 0;
+        }
+
+        unitId = default;
+        return false;
+    }
+
+    private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
+    {
+        if (unit == Entity.Null || !em.Exists(unit))
+            return false;
+
+        return !em.HasComponent<UnitHealth>(unit) ||
+               em.GetComponentData<UnitHealth>(unit).Current > 0;
+    }
+
     private void PublishFactionProductionSpawnPointsReadModel(
         EntityManager em,
         Entity boundaryEntity,
@@ -788,6 +910,7 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
             {
                 FactionId = building.OwnerFactionId,
                 BuildingId = buildingId,
+                BuildingRuntimeId = building.Id,
                 SlotIndex = i,
                 Cell = cell,
                 WorldPosition = new float3(world.x, world.y, world.z)
@@ -1054,5 +1177,10 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
     private static FixedString128Bytes ToFixedString128(string value)
     {
         return new FixedString128Bytes(value ?? string.Empty);
+    }
+
+    private static FixedString64Bytes ToUnitSourceKey(GameObject prefab)
+    {
+        return new FixedString64Bytes(prefab != null ? prefab.name : string.Empty);
     }
 }

@@ -10,6 +10,7 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
     private const float VisibleCitizenSpawnDistance = 140f;
     private const float VisibleCitizenDespawnDistance = 170f;
     private const float VisibleCitizenArriveDistance = 0.35f;
+    private const byte VisibleCitizenOwnerFactionId = 2;
     private readonly MapSurfaceSpawnGrounding _spawnGroundingSystem = new();
 
     public delegate bool HandleCitizenDeathAction(int citizenId, string reason);
@@ -300,7 +301,7 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
         }
         if (em.HasComponent<Faction>(instance))
         {
-            ecb.SetComponent(instance, new Faction { Id = 2 });
+            ecb.SetComponent(instance, new Faction { Id = VisibleCitizenOwnerFactionId });
             hasSetupCommand = true;
         }
         if (em.HasComponent<UnitTarget>(instance))
@@ -336,6 +337,17 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
         int2 goalCell = spawnCell;
         if (CitizenTravelSystem.TryGetCitizenMoveGoal(travelSystem, state, ecsProjection, buildingReadSystem, statusTransitionSystem, citizen, worldPosition, out int2 resolvedGoalCell))
             goalCell = resolvedGoalCell;
+        SetOrAddComponent(em, instance, new UnitSourcePrefabKey { Value = sourceKey });
+        SetOrAddComponent(em, instance, new CitizenVisibleUnitState
+        {
+            CitizenId = citizen.CitizenId,
+            SourceKey = sourceKey,
+            OwnerFactionId = VisibleCitizenOwnerFactionId,
+            LifeState = citizen.LifeState,
+            Status = citizen.Status,
+            TargetBuildingId = citizen.CurrentTargetBuildingId,
+            GoalCell = goalCell
+        });
         CitizenMovementCommandSystem.TryEnqueueMoveCommand(ecsProjection.EntityManager, instance, goalCell);
 
         state.VisibleCitizensById[citizen.CitizenId] = new VisibleCitizenComponent
@@ -345,5 +357,14 @@ internal sealed partial class CitizenVisibleUnitSystem : SystemBase
             GoalCell = goalCell,
             TargetBuildingId = citizen.CurrentTargetBuildingId
         };
+    }
+
+    private static void SetOrAddComponent<T>(EntityManager em, Entity entity, T component)
+        where T : unmanaged, IComponentData
+    {
+        if (em.HasComponent<T>(entity))
+            em.SetComponentData(entity, component);
+        else
+            em.AddComponentData(entity, component);
     }
 }

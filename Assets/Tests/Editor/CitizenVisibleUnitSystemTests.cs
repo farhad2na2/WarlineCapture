@@ -144,6 +144,16 @@ public sealed class CitizenVisibleUnitSystemTests
             Assert.AreEqual(0, em.GetComponentData<UnitCombat>(visibleCitizen.UnitEntity).CanAttack);
             Assert.AreEqual(0, em.GetComponentData<UnitCombat>(visibleCitizen.UnitEntity).AutoEngage);
             Assert.AreEqual(2, em.GetComponentData<Faction>(visibleCitizen.UnitEntity).Id);
+            Assert.AreEqual(new FixedString64Bytes("unit_chr_civilian_male_01"), em.GetComponentData<UnitSourcePrefabKey>(visibleCitizen.UnitEntity).Value);
+            Assert.IsTrue(em.HasComponent<CitizenVisibleUnitState>(visibleCitizen.UnitEntity));
+            CitizenVisibleUnitState visibleUnitState = em.GetComponentData<CitizenVisibleUnitState>(visibleCitizen.UnitEntity);
+            Assert.AreEqual(citizen.CitizenId, visibleUnitState.CitizenId);
+            Assert.AreEqual(new FixedString64Bytes("unit_chr_civilian_male_01"), visibleUnitState.SourceKey);
+            Assert.AreEqual(2, visibleUnitState.OwnerFactionId);
+            Assert.AreEqual(citizen.LifeState, visibleUnitState.LifeState);
+            Assert.AreEqual(citizen.Status, visibleUnitState.Status);
+            Assert.AreEqual(citizen.CurrentTargetBuildingId, visibleUnitState.TargetBuildingId);
+            Assert.AreEqual(new int2(4, 6), visibleUnitState.GoalCell);
 
             bool TryGetEntityManager(out EntityManager entityManager)
             {

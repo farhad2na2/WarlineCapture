@@ -38,6 +38,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
         public readonly EntityQuery HaulerUnitsQuery;
         public readonly EntityQuery SelectedUnitsQuery;
         public readonly EntityQuery LiveFactionUnitsQuery;
+        public readonly EntityQuery BuildingRuntimeBoundaryQuery;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingRuntimeEntitySystem.TryGetGridDataDelegate TryGetGridData;
@@ -78,6 +79,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
             EntityQuery haulerUnitsQuery,
             EntityQuery selectedUnitsQuery,
             EntityQuery liveFactionUnitsQuery,
+            EntityQuery buildingRuntimeBoundaryQuery,
             Func<int?> getActiveBuildingId,
             BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingRuntimeEntitySystem.TryGetGridDataDelegate tryGetGridData,
@@ -117,6 +119,7 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
             HaulerUnitsQuery = haulerUnitsQuery;
             SelectedUnitsQuery = selectedUnitsQuery;
             LiveFactionUnitsQuery = liveFactionUnitsQuery;
+            BuildingRuntimeBoundaryQuery = buildingRuntimeBoundaryQuery;
             GetActiveBuildingId = getActiveBuildingId;
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
@@ -344,8 +347,20 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
             source.SpawnPrefabSystem,
             source.SpawnPrefabContext,
             source.ProductionSlotSystem,
-            BuildingDefinitionSystem.GetProductionPrefab,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+            BuildingDefinitionSystem.TryGetProductionSourceKey,
+            (EntityManager em, out Entity boundaryEntity) =>
+                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity));
+    }
+
+    private static bool TryGetRuntimeBoundaryEntity(EntityQuery boundaryQuery, EntityManager em, out Entity boundaryEntity)
+    {
+        boundaryEntity = Entity.Null;
+        if (em.World == null || !em.World.IsCreated || boundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        boundaryEntity = boundaryQuery.GetSingletonEntity();
+        return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
     }
 
     public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(
@@ -431,6 +446,8 @@ internal sealed partial class BuildingRuntimeContextSystem : SystemBase
         return new BuildingRuntimeQuerySystem.Context(
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            (EntityManager em, out Entity boundaryEntity) =>
+                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity),
             source.ProductionSystem,
             BuildingDefinitionSystem.NormalizeSpawnableKey,
             source.IsHouseBuilding,

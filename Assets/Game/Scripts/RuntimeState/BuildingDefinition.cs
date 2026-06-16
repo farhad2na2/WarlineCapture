@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 internal sealed class BuildingDefinition
@@ -6,6 +7,7 @@ internal sealed class BuildingDefinition
     public sealed class ProductionSlotDefinition
     {
         public GameObject SpawnUnitPrefab;
+        public FixedString64Bytes SpawnUnitSourceKey;
     }
 
     public string DisplayName;

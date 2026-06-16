@@ -133,6 +133,11 @@ internal static class RuntimeGameplayStateTestHelper
             entityManager.AddComponent<BuildingRuntimeBoundaryTag>(entity);
         EnsureBuffer<BuildingConfiguredSpawnableReadModel>(entityManager, entity);
         EnsureBuffer<BuildingConfiguredUnitReadModel>(entityManager, entity);
+        EnsureBuffer<BuildingProductionSlotReadModel>(entityManager, entity);
+        EnsureBuffer<BuildingProductionSpawnRequest>(entityManager, entity);
+        EnsureBuffer<BuildingRecentSpawnReservation>(entityManager, entity);
+        EnsureBuffer<BuildingProducedUnitReadModel>(entityManager, entity);
+        EnsureBuffer<MapVehiclePlacementReadModel>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeFactionSummary>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeUnitProductionSummary>(entityManager, entity);

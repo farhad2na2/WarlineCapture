@@ -7,25 +7,11 @@ using UnityEngine;
 
 internal sealed partial class BuildingSpawnSystem : SystemBase
 {
-    public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
+    public delegate bool TryGetProductionSourceKeyDelegate(BuildingDefinition definition, int index, out FixedString64Bytes sourceKey);
     public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
+    public delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager em, out Entity boundaryEntity);
 
-    private sealed class RecentSpawnReservation
-    {
-        public int2 Cell;
-        public int2 Size;
-        public float ExpiresAt;
-    }
-
-    private readonly List<RecentSpawnReservation> _recentSpawnReservations = new();
-    private readonly MapSurfaceSpawnGrounding _spawnGroundingSystem = new();
-    private uint _buildingSpawnRandomState = 0x12345678u;
-
-    internal uint BuildingSpawnRandomState
-    {
-        get => _buildingSpawnRandomState;
-        set => _buildingSpawnRandomState = value;
-    }
+    private const int MaxProductionSpawnRequestHistory = 256;
 
     protected override void OnCreate()
     {
@@ -44,8 +30,9 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
         public readonly BuildingProductionSlotSystem ProductionSlotSystem;
-        public readonly GetProductionPrefabDelegate GetProductionPrefab;
+        public readonly TryGetProductionSourceKeyDelegate TryGetProductionSourceKey;
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
+        public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -54,8 +41,9 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
             BuildingProductionSlotSystem productionSlotSystem,
-            GetProductionPrefabDelegate getProductionPrefab,
-            RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId)
+            RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId,
+            TryGetProductionSourceKeyDelegate tryGetProductionSourceKey = null,
+            TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity = null)
         {
             RuntimeBuildings = runtimeBuildings;
             LiveUnitFootprintQuery = liveUnitFootprintQuery;
@@ -63,23 +51,14 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             SpawnPrefabSystem = spawnPrefabSystem;
             SpawnPrefabContext = spawnPrefabContext;
             ProductionSlotSystem = productionSlotSystem;
-            GetProductionPrefab = getProductionPrefab;
+            TryGetProductionSourceKey = tryGetProductionSourceKey;
             RuntimeBuildingMatchesId = runtimeBuildingMatchesId;
+            TryGetRuntimeBoundaryEntity = tryGetRuntimeBoundaryEntity;
         }
     }
 
     public void CleanupRecentSpawnReservations(float now)
     {
-        if (_recentSpawnReservations.Count == 0)
-            return;
-
-        for (int i = _recentSpawnReservations.Count - 1; i >= 0; i--)
-        {
-            if (_recentSpawnReservations[i].ExpiresAt > now)
-                continue;
-
-            _recentSpawnReservations.RemoveAt(i);
-        }
     }
 
     public bool TryResolveAvailableFactionHelipadSpawn(
@@ -103,7 +82,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
         try
         {
-            ReserveRecentSpawnBuffers(ref reserved, grid);
+            ReserveRecentSpawnBuffers(context, em, ref reserved, grid);
             randomState = math.max(1u, randomState + 1u);
             var rng = new Unity.Mathematics.Random(randomState);
             return TryResolveHelicopterSpawnForFaction(
@@ -130,64 +109,113 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         }
     }
 
-    public bool TryResolveAvailableFactionHelipadSpawn(
+    public bool TryGetFactionProductionSpawnPoint(
         Context context,
         byte factionId,
-        RuntimeBuildingEntity sourceBuilding,
-        EntityManager em,
-        Entity gridEntity,
+        string buildingId,
+        int flattenedSlotIndex,
         GridConfig grid,
-        DynamicBlockerComponent blockerData,
-        int2 unitFootprint,
         out int2 cell,
         out float3 worldPosition)
     {
-        uint randomState = _buildingSpawnRandomState;
-        bool resolved = TryResolveAvailableFactionHelipadSpawn(
+        return TryGetFactionProductionSpawnPointFromRuntimeBuildings(
             context,
             factionId,
-            sourceBuilding,
-            em,
-            gridEntity,
+            buildingId,
+            flattenedSlotIndex,
             grid,
-            blockerData,
-            unitFootprint,
-            ref randomState,
             out cell,
             out worldPosition);
-        _buildingSpawnRandomState = randomState;
-        return resolved;
-    }
-
-    public bool TryResolveAvailableFactionHelipadSpawn(
-        Context context,
-        byte factionId,
-        EntityManager em,
-        Entity gridEntity,
-        GridConfig grid,
-        DynamicBlockerComponent blockerData,
-        int2 unitFootprint,
-        out int2 cell,
-        out float3 worldPosition)
-    {
-        uint randomState = _buildingSpawnRandomState;
-        bool resolved = TryResolveAvailableFactionHelipadSpawn(
-            context,
-            factionId,
-            null,
-            em,
-            gridEntity,
-            grid,
-            blockerData,
-            unitFootprint,
-            ref randomState,
-            out cell,
-            out worldPosition);
-        _buildingSpawnRandomState = randomState;
-        return resolved;
     }
 
     public bool TryGetFactionProductionSpawnPoint(
+        Context context,
+        byte factionId,
+        string buildingId,
+        int flattenedSlotIndex,
+        EntityManager em,
+        GridConfig grid,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        if (TryGetFactionProductionSpawnPointFromReadModel(
+                context,
+                factionId,
+                buildingId,
+                flattenedSlotIndex,
+                em,
+                grid,
+                out cell,
+                out worldPosition))
+        {
+            return true;
+        }
+
+        return TryGetFactionProductionSpawnPointFromRuntimeBuildings(
+            context,
+            factionId,
+            buildingId,
+            flattenedSlotIndex,
+            grid,
+            out cell,
+            out worldPosition);
+    }
+
+    private static bool TryGetFactionProductionSpawnPointFromReadModel(
+        Context context,
+        byte factionId,
+        string buildingId,
+        int flattenedSlotIndex,
+        EntityManager em,
+        GridConfig grid,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        cell = default;
+        worldPosition = default;
+        if (context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            string.IsNullOrWhiteSpace(buildingId) ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        FixedString128Bytes normalizedBuildingId = new(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
+        int remainingSlotIndex = math.max(0, flattenedSlotIndex);
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.FactionId != factionId ||
+                !spawnPoint.BuildingId.Equals(normalizedBuildingId))
+            {
+                continue;
+            }
+
+            if (remainingSlotIndex > 0)
+            {
+                remainingSlotIndex--;
+                continue;
+            }
+
+            if (!GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height))
+                return false;
+
+            cell = spawnPoint.Cell;
+            worldPosition = spawnPoint.WorldPosition;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetFactionProductionSpawnPointFromRuntimeBuildings(
         Context context,
         byte factionId,
         string buildingId,
@@ -234,6 +262,52 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         return false;
     }
 
+    private static bool TryGetProductionSpawnPointFromReadModel(
+        Context context,
+        EntityManager em,
+        int buildingRuntimeId,
+        int slotIndex,
+        GridConfig grid,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        cell = default;
+        worldPosition = default;
+        if (buildingRuntimeId <= 0 ||
+            slotIndex < 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.BuildingRuntimeId != buildingRuntimeId ||
+                spawnPoint.SlotIndex != slotIndex)
+            {
+                continue;
+            }
+
+            if (!GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height))
+                return false;
+
+            cell = spawnPoint.Cell;
+            worldPosition = spawnPoint.WorldPosition;
+            return true;
+        }
+
+        return false;
+    }
+
     public bool TrySpawnPlayerUnitNearBuilding(
         Context context,
         RuntimeBuildingEntity building,
@@ -247,15 +321,17 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         DynamicBlockerComponent blockerData,
         ref uint randomState)
     {
-        if (building == null || building.Definition == null || context.GetProductionPrefab == null)
+        if (building == null || building.Definition == null)
             return false;
 
-        GameObject spawnUnitPrefab = context.GetProductionPrefab(building.Definition, productionIndex);
-        FixedString64Bytes spawnUnitSourceKey = GetUnitPrefabSourceKey(spawnUnitPrefab);
+        FixedString64Bytes spawnUnitSourceKey = GetProductionSourceKey(context, building.Definition, productionIndex);
+        if (spawnUnitSourceKey.Length == 0)
+            return false;
+
         if (!context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(context.SpawnPrefabContext, em, spawnUnitSourceKey, out Entity prefabEntity))
         {
 #if UNITY_EDITOR
-            Debug.LogWarning($"[BuildingSpawn] Could not resolve ECS prefab entity for spawn prefab '{(spawnUnitPrefab != null ? spawnUnitPrefab.name : "<null>")}' from building '{building.Definition.DisplayName}'.");
+            Debug.LogWarning($"[BuildingSpawn] Could not resolve ECS prefab entity for source key '{spawnUnitSourceKey}' from building '{building.Definition.DisplayName}'.");
 #endif
             return false;
         }
@@ -263,7 +339,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         if (!TryResolveSpawnPlacement(
                 context,
                 building,
-                spawnUnitPrefab,
+                spawnUnitSourceKey,
                 prefabEntity,
                 reservedProductionSlotIndex,
                 overrideWorldPosition,
@@ -285,38 +361,59 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
 
         Entity instance = em.Instantiate(prefabEntity);
         if (!isAirUnit)
-            _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
+            new MapSurfaceSpawnGrounding().TryGroundCellCenter(em, grid, cell, ref pos, out _);
         em.SetComponentData(instance, new UnitGrid { Cell = cell });
         em.SetComponentData(instance, LocalTransform.FromPosition(pos));
         if (spawnUnitSourceKey.Length > 0)
             SetOrAddComponent(em, instance, new UnitSourcePrefabKey { Value = spawnUnitSourceKey });
-        building.ProducedUnits ??= new List<Entity>();
-        building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
-        building.ProducedUnitSourceKeys ??= new Dictionary<Entity, FixedString64Bytes>();
-        building.ProducedUnits.Add(instance);
-        building.ProducedUnitPrefabs[instance] = spawnUnitPrefab;
-        building.ProducedUnitSourceKeys[instance] = spawnUnitSourceKey;
         if (!isAirUnit)
         {
             ReserveDynamicOccupancy(em, gridEntity, grid, cell, unitFootprint);
-            AddRecentSpawnReservation(cell, unitFootprint);
-        }
-
-        if (productionSlotIndex >= 0 &&
-            productionSlotBuilding?.ProducedUnitSlots != null &&
-            productionSlotIndex < productionSlotBuilding.ProducedUnitSlots.Length)
-        {
-            productionSlotBuilding.ProducedUnitSlots[productionSlotIndex] = instance;
+            AddRecentSpawnReservation(context, em, cell, unitFootprint);
         }
 
         InitializeSpawnedUnit(em, instance, pos, cell, building, isAirUnit, ref randomState);
+        bool publishedProducedUnitReadModel = PublishProducedUnitReadModel(
+            context,
+            em,
+            building,
+            productionSlotBuilding,
+            productionIndex,
+            productionSlotIndex,
+            spawnUnitSourceKey,
+            instance);
+        if (!publishedProducedUnitReadModel)
+        {
+            building.ProducedUnits ??= new List<Entity>();
+            building.ProducedUnits.Add(instance);
+            if (productionSlotIndex >= 0 &&
+                productionSlotBuilding?.ProducedUnitSlots != null &&
+                productionSlotIndex < productionSlotBuilding.ProducedUnitSlots.Length)
+            {
+                productionSlotBuilding.ProducedUnitSlots[productionSlotIndex] = instance;
+            }
+        }
+
+        PublishProductionSpawnRequest(
+            context,
+            em,
+            building,
+            productionIndex,
+            reservedProductionSlotIndex,
+            overrideWorldPosition.HasValue,
+            overrideCell.HasValue,
+            spawnUnitSourceKey,
+            prefabEntity,
+            instance,
+            cell,
+            pos);
         return true;
     }
 
     private bool TryResolveSpawnPlacement(
         Context context,
         RuntimeBuildingEntity building,
-        GameObject spawnUnitPrefab,
+        FixedString64Bytes spawnUnitSourceKey,
         Entity prefabEntity,
         int reservedProductionSlotIndex,
         Vector3? overrideWorldPosition,
@@ -338,34 +435,72 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             ? em.GetComponentData<UnitFootprint>(prefabEntity).Size
             : new int2(1, 1);
         isAirUnit = em.HasComponent<UnitAirMovement>(prefabEntity);
+        bool isHelicopter = IsHelicopterSourceKey(spawnUnitSourceKey);
         bool useHelicopterSpawnResolver =
             !overrideWorldPosition.HasValue &&
             !overrideCell.HasValue &&
             isAirUnit &&
-            context.ProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab) &&
+            isHelicopter &&
             building.HasOwnerFaction;
         bool useOverrideHelicopterSpawn =
             overrideWorldPosition.HasValue &&
             overrideCell.HasValue &&
             isAirUnit &&
-            context.ProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab);
+            isHelicopter;
         productionSlotIndex = -1;
         Vector3 productionSpawnLocalPosition = Vector3.zero;
         productionSlotBuilding = building;
-        bool hasProductionSpawnSlots = building.ProductionSpawnLocalPositions != null &&
-                                       building.ProducedUnitSlots != null &&
-                                       building.ProductionSpawnLocalPositions.Length > 0;
-        if (hasProductionSpawnSlots && !useHelicopterSpawnResolver && !useOverrideHelicopterSpawn)
+        bool hasProductionSpawnSlots = false;
+        bool hasProductionSpawnPointFromReadModel = false;
+        int2 productionSpawnCell = default;
+        float3 productionSpawnWorldPosition = default;
+        bool canUseProductionSpawnSlots = !useHelicopterSpawnResolver && !useOverrideHelicopterSpawn;
+        if (canUseProductionSpawnSlots)
         {
-            if (reservedProductionSlotIndex >= 0 &&
-                reservedProductionSlotIndex < building.ProductionSpawnLocalPositions.Length &&
-                reservedProductionSlotIndex < building.ProducedUnitSlots.Length)
+            if (reservedProductionSlotIndex >= 0)
             {
-                productionSlotIndex = reservedProductionSlotIndex;
-                productionSpawnLocalPosition = building.ProductionSpawnLocalPositions[reservedProductionSlotIndex];
+                if (TryGetProductionSpawnPointFromReadModel(
+                        context,
+                        em,
+                        building.Id,
+                        reservedProductionSlotIndex,
+                        grid,
+                        out productionSpawnCell,
+                        out productionSpawnWorldPosition))
+                {
+                    productionSlotIndex = reservedProductionSlotIndex;
+                    hasProductionSpawnSlots = true;
+                    hasProductionSpawnPointFromReadModel = true;
+                }
+                else if (TryGetLegacyProductionSpawnLocalPosition(building, reservedProductionSlotIndex, out productionSpawnLocalPosition))
+                {
+                    productionSlotIndex = reservedProductionSlotIndex;
+                    hasProductionSpawnSlots = true;
+                }
             }
-            else if (context.ProductionSlotSystem == null ||
-                     !context.ProductionSlotSystem.TryGetAvailableProductionSpawnSlot(building, em, out productionSlotIndex, out productionSpawnLocalPosition))
+
+            if (!hasProductionSpawnSlots &&
+                TryGetAvailableProductionSpawnPointFromReadModel(
+                    context,
+                    em,
+                    building,
+                    grid,
+                    out productionSlotIndex,
+                    out productionSpawnCell,
+                    out productionSpawnWorldPosition))
+            {
+                hasProductionSpawnSlots = true;
+                hasProductionSpawnPointFromReadModel = true;
+            }
+            else if (!hasProductionSpawnSlots &&
+                     context.ProductionSlotSystem != null &&
+                     context.ProductionSlotSystem.TryGetAvailableProductionSpawnSlot(building, em, out productionSlotIndex, out productionSpawnLocalPosition))
+            {
+                hasProductionSpawnSlots = true;
+            }
+            else if (!hasProductionSpawnSlots &&
+                     (HasAnyProductionSpawnPointInReadModel(context, em, building.Id) ||
+                      (building.ProductionSpawnLocalPositions != null && building.ProductionSpawnLocalPositions.Length > 0)))
             {
                 cell = default;
                 pos = default;
@@ -382,7 +517,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             var rng = new Unity.Mathematics.Random(randomState);
             Vector2Int size = building.Definition.FootprintCells;
             ReserveBuildingBuffer(ref reserved, grid, building.OriginCell, size, 1);
-            ReserveRecentSpawnBuffers(ref reserved, grid);
+            ReserveRecentSpawnBuffers(context, em, ref reserved, grid);
             int2 center = new(building.OriginCell.x + size.x / 2, building.OriginCell.y + size.y / 2);
             cell = center;
             if (overrideWorldPosition.HasValue && overrideCell.HasValue)
@@ -416,10 +551,25 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             }
             else if (hasProductionSpawnSlots)
             {
-                pos = building.Instance != null
-                    ? (float3)building.Instance.transform.TransformPoint(productionSpawnLocalPosition)
-                    : (float3)productionSpawnLocalPosition;
-                cell = GridUtils.WorldToCell(grid, pos);
+                if (hasProductionSpawnPointFromReadModel)
+                {
+                    cell = productionSpawnCell;
+                    pos = productionSpawnWorldPosition;
+                }
+                else if (!TryGetProductionSpawnPointFromReadModel(
+                        context,
+                        em,
+                        building.Id,
+                        productionSlotIndex,
+                        grid,
+                        out cell,
+                        out pos))
+                {
+                    pos = building.Instance != null
+                        ? (float3)building.Instance.transform.TransformPoint(productionSpawnLocalPosition)
+                        : (float3)productionSpawnLocalPosition;
+                    cell = GridUtils.WorldToCell(grid, pos);
+                }
                 if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
                     return false;
 
@@ -427,7 +577,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
                 {
                     bool slotCellAvailable =
                         TryReserveSpawnCandidate(grid, walkable, blockerData.Blocked, occupied, ref reserved, cell, unitFootprint) &&
-                        !OverlapsRecentSpawnReservation(cell, unitFootprint) &&
+                        !OverlapsRecentSpawnReservation(context, em, cell, unitFootprint) &&
                         !OverlapsExistingUnitFootprint(context, em, cell, unitFootprint);
 
                     if (!slotCellAvailable)
@@ -495,6 +645,105 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         }
     }
 
+    private static bool TryGetLegacyProductionSpawnLocalPosition(
+        RuntimeBuildingEntity building,
+        int slotIndex,
+        out Vector3 productionSpawnLocalPosition)
+    {
+        productionSpawnLocalPosition = Vector3.zero;
+        if (building?.ProductionSpawnLocalPositions == null ||
+            building.ProducedUnitSlots == null ||
+            slotIndex < 0 ||
+            slotIndex >= building.ProductionSpawnLocalPositions.Length ||
+            slotIndex >= building.ProducedUnitSlots.Length)
+        {
+            return false;
+        }
+
+        productionSpawnLocalPosition = building.ProductionSpawnLocalPositions[slotIndex];
+        return true;
+    }
+
+    private static bool TryGetAvailableProductionSpawnPointFromReadModel(
+        Context context,
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        GridConfig grid,
+        out int slotIndex,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        slotIndex = -1;
+        cell = default;
+        worldPosition = default;
+        if (building == null ||
+            building.Id <= 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            context.ProductionSlotSystem == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.BuildingRuntimeId != building.Id ||
+                spawnPoint.SlotIndex < 0 ||
+                !GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height))
+            {
+                continue;
+            }
+
+            if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, spawnPoint.SlotIndex))
+                continue;
+            if (IsProductionSlotOccupied(context, em, building, spawnPoint.SlotIndex))
+                continue;
+
+            slotIndex = spawnPoint.SlotIndex;
+            cell = spawnPoint.Cell;
+            worldPosition = spawnPoint.WorldPosition;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool HasAnyProductionSpawnPointInReadModel(
+        Context context,
+        EntityManager em,
+        int buildingRuntimeId)
+    {
+        if (buildingRuntimeId <= 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            if (spawnPoints[i].BuildingRuntimeId == buildingRuntimeId)
+                return true;
+        }
+
+        return false;
+    }
+
     private static bool TryResolveProductionSlotAtCell(
         Context context,
         EntityManager em,
@@ -508,6 +757,18 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         slotIndex = -1;
         if (context.RuntimeBuildings == null || context.ProductionSlotSystem == null)
             return false;
+
+        if (TryResolveProductionSlotAtCellFromReadModel(
+                context,
+                em,
+                grid,
+                targetCell,
+                unitFootprint,
+                out slotBuilding,
+                out slotIndex))
+        {
+            return true;
+        }
 
         string helipadKey = NormalizeSpawnableKey("Building_Helipad");
         foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
@@ -527,7 +788,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             {
                 if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i))
                     continue;
-                if (context.ProductionSlotSystem.IsProductionSlotOccupied(building, em, i))
+                if (IsProductionSlotOccupied(context, em, building, i))
                     continue;
 
                 Vector3 candidateWorld = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
@@ -542,6 +803,129 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         }
 
         return false;
+    }
+
+    private static bool TryResolveProductionSlotAtCellFromReadModel(
+        Context context,
+        EntityManager em,
+        GridConfig grid,
+        int2 targetCell,
+        int2 unitFootprint,
+        out RuntimeBuildingEntity slotBuilding,
+        out int slotIndex)
+    {
+        slotBuilding = null;
+        slotIndex = -1;
+        if (context.RuntimeBuildings == null ||
+            context.ProductionSlotSystem == null ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        FixedString128Bytes helipadId = new(NormalizeSpawnableKey("Building_Helipad"));
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (!spawnPoint.BuildingId.Equals(helipadId) ||
+                spawnPoint.BuildingRuntimeId <= 0 ||
+                spawnPoint.SlotIndex < 0 ||
+                !GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height) ||
+                !FootprintsOverlap(targetCell, unitFootprint, spawnPoint.Cell, new int2(1, 1)) ||
+                !context.RuntimeBuildings.TryGetValue(spawnPoint.BuildingRuntimeId, out RuntimeBuildingEntity building) ||
+                building == null ||
+                (building.ProducedUnitSlots != null && spawnPoint.SlotIndex >= building.ProducedUnitSlots.Length))
+            {
+                continue;
+            }
+
+            if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, spawnPoint.SlotIndex))
+                continue;
+            if (IsProductionSlotOccupied(context, em, building, spawnPoint.SlotIndex))
+                continue;
+
+            slotBuilding = building;
+            slotIndex = spawnPoint.SlotIndex;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsProductionSlotOccupied(
+        Context context,
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        int slotIndex)
+    {
+        if (building == null || slotIndex < 0)
+            return false;
+
+        if (context.ProductionSlotSystem != null &&
+            building.ProducedUnitSlots != null &&
+            context.ProductionSlotSystem.IsProductionSlotOccupied(building, em, slotIndex))
+        {
+            return true;
+        }
+
+        return IsProductionSlotOccupiedByReadModel(context, em, building.Id, slotIndex);
+    }
+
+    private static bool IsProductionSlotOccupiedByReadModel(
+        Context context,
+        EntityManager em,
+        int productionSlotBuildingRuntimeId,
+        int slotIndex)
+    {
+        if (productionSlotBuildingRuntimeId <= 0 ||
+            slotIndex < 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+        for (int i = 0; i < producedUnits.Length; i++)
+        {
+            BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+            int slotBuildingRuntimeId = producedUnit.ProductionSlotBuildingRuntimeId > 0
+                ? producedUnit.ProductionSlotBuildingRuntimeId
+                : producedUnit.BuildingRuntimeId;
+            if (slotBuildingRuntimeId != productionSlotBuildingRuntimeId ||
+                producedUnit.ProductionSlotIndex != slotIndex ||
+                !IsProducedUnitAlive(producedUnit.Unit, em))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
+    {
+        if (unit == Entity.Null || !em.Exists(unit))
+            return false;
+
+        return !em.HasComponent<UnitHealth>(unit) ||
+               em.GetComponentData<UnitHealth>(unit).Current > 0;
     }
 
     private static bool FootprintsOverlap(int2 aCell, int2 aSize, int2 bCell, int2 bSize)
@@ -623,66 +1007,110 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         return building.OwnerFactionId;
     }
 
-    private void ReserveRecentSpawnBuffers(ref NativeBitArray reserved, GridConfig grid)
+    private void ReserveRecentSpawnBuffers(Context context, EntityManager em, ref NativeBitArray reserved, GridConfig grid)
     {
-        if (_recentSpawnReservations.Count == 0)
-            return;
-
         float now = UnityEngine.Time.time;
-        for (int i = 0; i < _recentSpawnReservations.Count; i++)
+        if (TryGetRecentSpawnReservationBuffer(context, em, createIfMissing: false, out DynamicBuffer<BuildingRecentSpawnReservation> boundaryReservations))
         {
-            RecentSpawnReservation reservation = _recentSpawnReservations[i];
-            if (reservation == null || reservation.ExpiresAt <= now)
+            CleanupBoundaryRecentSpawnReservations(boundaryReservations, now);
+            for (int i = 0; i < boundaryReservations.Length; i++)
+                ReserveRecentSpawnBuffer(ref reserved, grid, boundaryReservations[i].Cell, boundaryReservations[i].Size);
+        }
+    }
+
+    private static void ReserveRecentSpawnBuffer(ref NativeBitArray reserved, GridConfig grid, int2 cell, int2 footprintSize)
+    {
+        int2 size = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(cell, size);
+        int2 max = min + size;
+        for (int y = min.y; y < max.y; y++)
+        {
+            if ((uint)y >= (uint)grid.Height)
                 continue;
 
-            int2 size = UnitFootprintUtility.ClampSize(reservation.Size);
-            int2 min = UnitFootprintUtility.GetMinCell(reservation.Cell, size);
-            int2 max = min + size;
-            for (int y = min.y; y < max.y; y++)
+            int row = y * grid.Width;
+            for (int x = min.x; x < max.x; x++)
             {
-                if ((uint)y >= (uint)grid.Height)
+                if ((uint)x >= (uint)grid.Width)
                     continue;
 
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    if ((uint)x >= (uint)grid.Width)
-                        continue;
-
-                    reserved.Set(row + x, true);
-                }
+                reserved.Set(row + x, true);
             }
         }
     }
 
-    private void AddRecentSpawnReservation(int2 cell, int2 size)
+    private void AddRecentSpawnReservation(Context context, EntityManager em, int2 cell, int2 size)
     {
-        _recentSpawnReservations.Add(new RecentSpawnReservation
+        int2 clampedSize = UnitFootprintUtility.ClampSize(size);
+        float expiresAt = UnityEngine.Time.time + 0.5f;
+        if (TryGetRecentSpawnReservationBuffer(context, em, createIfMissing: true, out DynamicBuffer<BuildingRecentSpawnReservation> boundaryReservations))
         {
-            Cell = cell,
-            Size = UnitFootprintUtility.ClampSize(size),
-            ExpiresAt = UnityEngine.Time.time + 0.5f
-        });
+            CleanupBoundaryRecentSpawnReservations(boundaryReservations, UnityEngine.Time.time);
+            boundaryReservations.Add(new BuildingRecentSpawnReservation
+            {
+                Cell = cell,
+                Size = clampedSize,
+                ExpiresAt = expiresAt
+            });
+            return;
+        }
     }
 
-    private bool OverlapsRecentSpawnReservation(int2 cell, int2 size)
+    private bool OverlapsRecentSpawnReservation(Context context, EntityManager em, int2 cell, int2 size)
     {
-        if (_recentSpawnReservations.Count == 0)
-            return false;
-
         float now = UnityEngine.Time.time;
         int2 clampedSize = UnitFootprintUtility.ClampSize(size);
-        for (int i = 0; i < _recentSpawnReservations.Count; i++)
+        if (TryGetRecentSpawnReservationBuffer(context, em, createIfMissing: false, out DynamicBuffer<BuildingRecentSpawnReservation> boundaryReservations))
         {
-            RecentSpawnReservation reservation = _recentSpawnReservations[i];
-            if (reservation == null || reservation.ExpiresAt <= now)
-                continue;
+            CleanupBoundaryRecentSpawnReservations(boundaryReservations, now);
+            for (int i = 0; i < boundaryReservations.Length; i++)
+            {
+                BuildingRecentSpawnReservation reservation = boundaryReservations[i];
+                if (UnitFootprintUtility.Overlaps(cell, clampedSize, reservation.Cell, UnitFootprintUtility.ClampSize(reservation.Size)))
+                    return true;
+            }
 
-            if (UnitFootprintUtility.Overlaps(cell, clampedSize, reservation.Cell, reservation.Size))
-                return true;
+            return false;
         }
 
         return false;
+    }
+
+    private static bool TryGetRecentSpawnReservationBuffer(
+        Context context,
+        EntityManager em,
+        bool createIfMissing,
+        out DynamicBuffer<BuildingRecentSpawnReservation> reservations)
+    {
+        reservations = default;
+        if (context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity))
+        {
+            return false;
+        }
+
+        if (!em.HasBuffer<BuildingRecentSpawnReservation>(boundaryEntity) && createIfMissing)
+            em.AddBuffer<BuildingRecentSpawnReservation>(boundaryEntity);
+        if (!em.HasBuffer<BuildingRecentSpawnReservation>(boundaryEntity))
+            return false;
+
+        reservations = em.GetBuffer<BuildingRecentSpawnReservation>(boundaryEntity);
+        return true;
+    }
+
+    private static void CleanupBoundaryRecentSpawnReservations(DynamicBuffer<BuildingRecentSpawnReservation> reservations, float now)
+    {
+        for (int i = reservations.Length - 1; i >= 0; i--)
+        {
+            if (reservations[i].ExpiresAt > now)
+                continue;
+
+            reservations.RemoveAt(i);
+        }
     }
 
     private bool TryResolveHelicopterSpawnForFaction(
@@ -720,6 +1148,31 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         int helipadSearchRadius = 0;
         string helipadKey = NormalizeSpawnableKey("Building_Helipad");
 
+        if (TryResolveHelicopterSpawnForFactionFromReadModel(
+                context,
+                factionId,
+                sourceBuilding,
+                em,
+                grid,
+                unitFootprint,
+                out cell,
+                out worldPosition,
+                out slotBuilding,
+                out slotIndex,
+                out bool foundReadModelHelipad,
+                out int2 readModelHelipadSearchCenter,
+                out int readModelHelipadSearchRadius))
+        {
+            return true;
+        }
+
+        if (foundReadModelHelipad)
+        {
+            foundHelipad = true;
+            helipadSearchCenter = readModelHelipadSearchCenter;
+            helipadSearchRadius = readModelHelipadSearchRadius;
+        }
+
         foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
             RuntimeBuildingEntity building = entry.Value;
@@ -744,14 +1197,14 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
             {
                 if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i))
                     continue;
-                if (context.ProductionSlotSystem.IsProductionSlotOccupied(building, em, i))
+                if (IsProductionSlotOccupied(context, em, building, i))
                     continue;
 
                 Vector3 candidateWorld = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
                 int2 candidateCell = GridUtils.WorldToCell(grid, candidateWorld);
                 if (!GridUtils.InBounds(candidateCell, grid.Width, grid.Height))
                     continue;
-                if (OverlapsRecentSpawnReservation(candidateCell, unitFootprint))
+                if (OverlapsRecentSpawnReservation(context, em, candidateCell, unitFootprint))
                     continue;
                 if (OverlapsExistingUnitFootprint(context, em, candidateCell, unitFootprint))
                     continue;
@@ -825,6 +1278,153 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         return false;
     }
 
+    private bool TryResolveHelicopterSpawnForFactionFromReadModel(
+        Context context,
+        byte factionId,
+        RuntimeBuildingEntity sourceBuilding,
+        EntityManager em,
+        in GridConfig grid,
+        int2 unitFootprint,
+        out int2 cell,
+        out float3 worldPosition,
+        out RuntimeBuildingEntity slotBuilding,
+        out int slotIndex,
+        out bool foundHelipad,
+        out int2 helipadSearchCenter,
+        out int helipadSearchRadius)
+    {
+        cell = default;
+        worldPosition = default;
+        slotBuilding = null;
+        slotIndex = -1;
+        foundHelipad = false;
+        helipadSearchCenter = default;
+        helipadSearchRadius = 0;
+        if (context.RuntimeBuildings == null ||
+            context.ProductionSlotSystem == null ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        bool hasSourcePosition = TryGetRuntimeBuildingSourcePositionFromReadModel(
+            context,
+            em,
+            sourceBuilding != null ? sourceBuilding.Id : 0,
+            out float3 sourcePosition);
+        bool hasBestHelipadSlot = false;
+        float bestHelipadSlotDistanceSq = float.MaxValue;
+        int2 bestHelipadSlotCell = default;
+        float3 bestHelipadSlotWorldPosition = default;
+        RuntimeBuildingEntity bestHelipadSlotBuilding = null;
+        int bestHelipadSlotIndex = -1;
+        FixedString128Bytes helipadId = new(NormalizeSpawnableKey("Building_Helipad"));
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.FactionId != factionId ||
+                !spawnPoint.BuildingId.Equals(helipadId) ||
+                spawnPoint.BuildingRuntimeId <= 0 ||
+                spawnPoint.SlotIndex < 0 ||
+                !GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height) ||
+                !context.RuntimeBuildings.TryGetValue(spawnPoint.BuildingRuntimeId, out RuntimeBuildingEntity building) ||
+                !IsOwnedRuntimeBuildingForFaction(building, factionId) ||
+                (building.ProducedUnitSlots != null && spawnPoint.SlotIndex >= building.ProducedUnitSlots.Length))
+            {
+                continue;
+            }
+
+            foundHelipad = true;
+            Vector2Int footprint = building.Definition != null ? building.Definition.FootprintCells : Vector2Int.one;
+            int2 buildingCenter = new(building.OriginCell.x + footprint.x / 2, building.OriginCell.y + footprint.y / 2);
+            if (helipadSearchRadius == 0)
+                helipadSearchCenter = buildingCenter;
+            helipadSearchRadius = math.max(
+                helipadSearchRadius,
+                math.max(footprint.x, footprint.y) + math.max(unitFootprint.x, unitFootprint.y) + 12);
+
+            if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, spawnPoint.SlotIndex))
+                continue;
+            if (IsProductionSlotOccupied(context, em, building, spawnPoint.SlotIndex))
+                continue;
+            if (OverlapsRecentSpawnReservation(context, em, spawnPoint.Cell, unitFootprint))
+                continue;
+            if (OverlapsExistingUnitFootprint(context, em, spawnPoint.Cell, unitFootprint))
+                continue;
+
+            if (!hasSourcePosition)
+            {
+                cell = spawnPoint.Cell;
+                worldPosition = spawnPoint.WorldPosition;
+                slotBuilding = building;
+                slotIndex = spawnPoint.SlotIndex;
+                return true;
+            }
+
+            float distanceSq = math.distancesq(spawnPoint.WorldPosition, sourcePosition);
+            if (hasBestHelipadSlot && distanceSq >= bestHelipadSlotDistanceSq)
+                continue;
+
+            hasBestHelipadSlot = true;
+            bestHelipadSlotDistanceSq = distanceSq;
+            bestHelipadSlotCell = spawnPoint.Cell;
+            bestHelipadSlotWorldPosition = spawnPoint.WorldPosition;
+            bestHelipadSlotBuilding = building;
+            bestHelipadSlotIndex = spawnPoint.SlotIndex;
+        }
+
+        if (!hasBestHelipadSlot)
+            return false;
+
+        cell = bestHelipadSlotCell;
+        worldPosition = bestHelipadSlotWorldPosition;
+        slotBuilding = bestHelipadSlotBuilding;
+        slotIndex = bestHelipadSlotIndex;
+        return true;
+    }
+
+    private static bool TryGetRuntimeBuildingSourcePositionFromReadModel(
+        Context context,
+        EntityManager em,
+        int buildingRuntimeId,
+        out float3 sourcePosition)
+    {
+        sourcePosition = default;
+        if (buildingRuntimeId <= 0 ||
+            context.TryGetRuntimeBoundaryEntity == null ||
+            em.World == null ||
+            !em.World.IsCreated ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity) ||
+            !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.BuildingRuntimeId != buildingRuntimeId)
+                continue;
+
+            sourcePosition = spawnPoint.WorldPosition;
+            return true;
+        }
+
+        return false;
+    }
+
     private bool TryFindStrictSpawnCell(
         Context context,
         EntityManager em,
@@ -849,7 +1449,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
 
             if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, footprintSize))
                 continue;
-            if (OverlapsRecentSpawnReservation(candidate, footprintSize))
+            if (OverlapsRecentSpawnReservation(context, em, candidate, footprintSize))
                 continue;
             if (OverlapsExistingUnitFootprint(context, em, candidate, footprintSize))
                 continue;
@@ -871,7 +1471,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
                     int2 candidate = new(center.x + dx, center.y + dy);
                     if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, footprintSize))
                         continue;
-                    if (OverlapsRecentSpawnReservation(candidate, footprintSize))
+                    if (OverlapsRecentSpawnReservation(context, em, candidate, footprintSize))
                         continue;
                     if (OverlapsExistingUnitFootprint(context, em, candidate, footprintSize))
                         continue;
@@ -934,7 +1534,7 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
                     int2 candidate = candidates[(startIndex + offset) % candidates.Length];
                     if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, unitFootprint))
                         continue;
-                    if (OverlapsRecentSpawnReservation(candidate, unitFootprint))
+                    if (OverlapsRecentSpawnReservation(context, em, candidate, unitFootprint))
                         continue;
                     if (OverlapsExistingUnitFootprint(context, em, candidate, unitFootprint))
                         continue;
@@ -1102,10 +1702,120 @@ internal sealed partial class BuildingSpawnSystem : SystemBase
         return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
     }
 
-    private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
+    private static bool IsHelicopterSourceKey(FixedString64Bytes sourceKey)
     {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
-        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
+        if (sourceKey.Length == 0)
+            return false;
+
+        string normalized = NormalizeSpawnableKey(sourceKey.ToString());
+        return normalized.StartsWith("unit_veh_helicopter_", System.StringComparison.Ordinal);
+    }
+
+    private static FixedString64Bytes GetProductionSourceKey(
+        Context context,
+        BuildingDefinition definition,
+        int productionIndex)
+    {
+        if (context.TryGetProductionSourceKey != null &&
+            context.TryGetProductionSourceKey(definition, productionIndex, out FixedString64Bytes sourceKey) &&
+            sourceKey.Length > 0)
+        {
+            return sourceKey;
+        }
+
+        return default;
+    }
+
+    private static void PublishProductionSpawnRequest(
+        Context context,
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        int productionIndex,
+        int reservedProductionSlotIndex,
+        bool hasOverrideWorldPosition,
+        bool hasOverrideCell,
+        FixedString64Bytes sourceKey,
+        Entity prefabEntity,
+        Entity producedUnit,
+        int2 spawnCell,
+        float3 spawnWorldPosition)
+    {
+        if (context.TryGetRuntimeBoundaryEntity == null ||
+            building == null ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity))
+        {
+            return;
+        }
+
+        if (!em.HasBuffer<BuildingProductionSpawnRequest>(boundaryEntity))
+            em.AddBuffer<BuildingProductionSpawnRequest>(boundaryEntity);
+
+        DynamicBuffer<BuildingProductionSpawnRequest> requests =
+            em.GetBuffer<BuildingProductionSpawnRequest>(boundaryEntity);
+        int requestId = requests.Length > 0 ? requests[requests.Length - 1].RequestId + 1 : 1;
+        while (requests.Length >= MaxProductionSpawnRequestHistory)
+            requests.RemoveAt(0);
+
+        requests.Add(new BuildingProductionSpawnRequest
+        {
+            RequestId = requestId,
+            BuildingRuntimeId = building.Id,
+            ProductionIndex = productionIndex,
+            ReservedProductionSlotIndex = reservedProductionSlotIndex,
+            OwnerFactionId = ResolveProducedUnitFaction(building),
+            HasOwnerFaction = building.HasOwnerFaction ? (byte)1 : (byte)0,
+            HasOverrideWorldPosition = hasOverrideWorldPosition ? (byte)1 : (byte)0,
+            HasOverrideCell = hasOverrideCell ? (byte)1 : (byte)0,
+            Status = BuildingProductionSpawnRequest.Succeeded,
+            UnitSourceKey = sourceKey,
+            PrefabEntity = prefabEntity,
+            ProducedUnit = producedUnit,
+            SpawnCell = spawnCell,
+            SpawnWorldPosition = spawnWorldPosition
+        });
+    }
+
+    private static bool PublishProducedUnitReadModel(
+        Context context,
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity productionSlotBuilding,
+        int productionIndex,
+        int productionSlotIndex,
+        FixedString64Bytes sourceKey,
+        Entity producedUnit)
+    {
+        if (context.TryGetRuntimeBoundaryEntity == null ||
+            building == null ||
+            producedUnit == Entity.Null ||
+            !context.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity) ||
+            boundaryEntity == Entity.Null ||
+            !em.Exists(boundaryEntity))
+        {
+            return false;
+        }
+
+        if (!em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+            em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = building.Id,
+            ProductionSlotBuildingRuntimeId = productionSlotIndex >= 0 && productionSlotBuilding != null
+                ? productionSlotBuilding.Id
+                : 0,
+            ProductionIndex = productionIndex,
+            ProductionSlotIndex = productionSlotIndex,
+            OwnerFactionId = ResolveProducedUnitFaction(building),
+            HasOwnerFaction = building.HasOwnerFaction ? (byte)1 : (byte)0,
+            Unit = producedUnit,
+            UnitSourceKey = sourceKey
+        });
+        return true;
     }
 
     private static void SetOrAddComponent<T>(EntityManager em, Entity entity, T value)

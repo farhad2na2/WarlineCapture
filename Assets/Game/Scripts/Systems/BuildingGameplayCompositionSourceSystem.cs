@@ -93,6 +93,7 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
     internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
     internal readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+    internal uint BuildingSpawnRandomState = 0x12345678u;
 
     public BuildingGameplayCompositionSourceSystem()
     {

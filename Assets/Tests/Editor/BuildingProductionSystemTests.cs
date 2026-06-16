@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -47,12 +48,13 @@ public sealed class BuildingProductionSystemTests
             tests.FocusNewestPlayerProducedUnit_IgnoresWhenBuildDrawerClosed();
             tests.FocusNewestPlayerProducedUnit_AllowsNeutralOrUnownedProducerOutput();
             tests.FocusNewestPlayerProducedUnit_IgnoresNonPlayerProduction();
+            tests.FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel();
             tests.ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer();
             tests.TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback();
             tests.TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists();
             tests.RebuildPendingProductionTimeline_ChainsQueuedItemsAfterActiveProduction();
             tests.RebuildPendingProductionTimeline_AfterActiveRemovalResetsNextActiveProgress();
-            Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=9");
+            Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=10");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -82,6 +84,23 @@ public sealed class BuildingProductionSystemTests
         }
     }
 
+    public static void RunProducedUnitStateValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionSystemTests();
+            tests.PruneProducedUnits_RemovesDeadUnitsAndClearsDeadSlots();
+            Debug.Log("[ProducedUnitSourceKeyStateValidation] result=Passed tests=1");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[ProducedUnitSourceKeyStateValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     public static void RunProductionRequestValidation()
     {
         try
@@ -97,7 +116,18 @@ public sealed class BuildingProductionSystemTests
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
             tests.BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand();
             tests.BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=10");
+            tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
+            tests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel();
+            tests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy();
+            tests.BuildingDefinitionProductionSourceKey_UsesSlotKeyBeforePrefabFallback();
+            tests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot();
+            tests.BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel();
+            tests.BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer();
+            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement();
+            tests.BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray();
+            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot();
+            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=21");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -105,6 +135,1133 @@ public sealed class BuildingProductionSystemTests
             Debug.LogException(ex);
             Debug.LogError("[BuildingProductionRequestValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
+    [Test]
+    public void BuildingDefinitionProductionSourceKey_UsesSlotKeyBeforePrefabFallback()
+    {
+        var sourceKeyOnlyDefinition = new BuildingDefinition
+        {
+            ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+            {
+                new()
+                {
+                    SpawnUnitPrefab = null,
+                    SpawnUnitSourceKey = new FixedString64Bytes("unit_veh_tank_usa")
+                }
+            }
+        };
+
+        Assert.IsTrue(BuildingDefinitionSystem.TryGetProductionSourceKey(sourceKeyOnlyDefinition, 0, out FixedString64Bytes sourceKey));
+        Assert.AreEqual(new FixedString64Bytes("unit_veh_tank_usa"), sourceKey);
+
+        GameObject unitPrefab = new("Unit_Veh_APC_Heavy");
+        try
+        {
+            var fallbackDefinition = new BuildingDefinition
+            {
+                SpawnUnitPrefab = unitPrefab
+            };
+
+            Assert.IsTrue(BuildingDefinitionSystem.TryGetProductionSourceKey(fallbackDefinition, 0, out FixedString64Bytes fallbackSourceKey));
+            Assert.AreEqual(new FixedString64Bytes("unit_veh_apc_heavy"), fallbackSourceKey);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot()
+    {
+        const int width = 8;
+        const int height = 8;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_SourceKeyOnlyProductionSlot");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_veh_helicopter_transport");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(UnitAirMovement),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Veh_Helicopter_Transport");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(3, 3) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity building = new()
+            {
+                Id = 10,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Source Key Helipad",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                building,
+                productionIndex: 0,
+                reservedProductionSlotIndex: -1,
+                overrideWorldPosition: new Vector3(4.5f, 0f, 4.5f),
+                overrideCell: new int2(4, 4),
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            Assert.IsNull(building.ProducedUnits);
+            Assert.IsTrue(em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity));
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            Assert.AreEqual(1, producedUnitRows.Length);
+            Entity spawned = producedUnitRows[0].Unit;
+            Assert.IsTrue(em.Exists(spawned));
+            Assert.AreEqual(new int2(4, 4), em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(sourceKey, em.GetComponentData<UnitSourcePrefabKey>(spawned).Value);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(spawned).Id);
+            Assert.IsNull(building.ProducedUnitSourceKeys);
+            Assert.IsTrue(building.ProducedUnitPrefabs == null || !building.ProducedUnitPrefabs.ContainsKey(spawned));
+            Assert.IsTrue(em.HasBuffer<BuildingProductionSpawnRequest>(boundaryEntity));
+            DynamicBuffer<BuildingProductionSpawnRequest> spawnRequests =
+                em.GetBuffer<BuildingProductionSpawnRequest>(boundaryEntity, true);
+            Assert.AreEqual(1, spawnRequests.Length);
+            Assert.AreEqual(10, spawnRequests[0].BuildingRuntimeId);
+            Assert.AreEqual(0, spawnRequests[0].ProductionIndex);
+            Assert.AreEqual(-1, spawnRequests[0].ReservedProductionSlotIndex);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, spawnRequests[0].OwnerFactionId);
+            Assert.AreEqual(1, spawnRequests[0].HasOwnerFaction);
+            Assert.AreEqual(1, spawnRequests[0].HasOverrideWorldPosition);
+            Assert.AreEqual(1, spawnRequests[0].HasOverrideCell);
+            Assert.AreEqual(BuildingProductionSpawnRequest.Succeeded, spawnRequests[0].Status);
+            Assert.AreEqual(sourceKey, spawnRequests[0].UnitSourceKey);
+            Assert.AreEqual(prefabEntity, spawnRequests[0].PrefabEntity);
+            Assert.AreEqual(spawned, spawnRequests[0].ProducedUnit);
+            Assert.AreEqual(new int2(4, 4), spawnRequests[0].SpawnCell);
+            Assert.AreEqual(new float3(4.5f, 0f, 4.5f), spawnRequests[0].SpawnWorldPosition);
+            Assert.AreEqual(10, producedUnitRows[0].BuildingRuntimeId);
+            Assert.AreEqual(0, producedUnitRows[0].ProductionIndex);
+            Assert.AreEqual(-1, producedUnitRows[0].ProductionSlotIndex);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, producedUnitRows[0].OwnerFactionId);
+            Assert.AreEqual(1, producedUnitRows[0].HasOwnerFaction);
+            Assert.AreEqual(spawned, producedUnitRows[0].Unit);
+            Assert.AreEqual(sourceKey, producedUnitRows[0].UnitSourceKey);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel()
+    {
+        using World world = new("BuildingSpawnSystem_FactionSpawnPointReadModel");
+        EntityManager em = world.EntityManager;
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
+        spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            BuildingId = new FixedString128Bytes("building_helipad"),
+            SlotIndex = 0,
+            Cell = new int2(2, 3),
+            WorldPosition = new float3(2.5f, 0f, 3.5f)
+        });
+        spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            BuildingId = new FixedString128Bytes("building_helipad"),
+            SlotIndex = 1,
+            Cell = new int2(4, 5),
+            WorldPosition = new float3(4.5f, 0f, 5.5f)
+        });
+
+        var spawnSystem = new BuildingSpawnSystem();
+        var context = new BuildingSpawnSystem.Context(
+            new Dictionary<int, RuntimeBuildingEntity>(),
+            default,
+            null,
+            default,
+            default,
+            null,
+            null,
+            null,
+            (EntityManager _, out Entity entity) =>
+            {
+                entity = boundaryEntity;
+                return true;
+            });
+        GridConfig grid = new() { Width = 8, Height = 8, CellSize = 1f, Origin = float3.zero };
+
+        Assert.IsTrue(spawnSystem.TryGetFactionProductionSpawnPoint(
+            context,
+            FactionIdentity.PlayerFactionId,
+            "Building_Helipad",
+            1,
+            em,
+            grid,
+            out int2 cell,
+            out float3 worldPosition));
+        Assert.AreEqual(new int2(4, 5), cell);
+        Assert.AreEqual(new float3(4.5f, 0f, 5.5f), worldPosition);
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer()
+    {
+        const int width = 8;
+        const int height = 8;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_RecentReservationBoundaryBuffer");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_veh_tank_light");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Veh_Tank_Light");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(2, 2) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity building = new()
+            {
+                Id = 11,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Source Key Factory",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                building,
+                productionIndex: 0,
+                reservedProductionSlotIndex: -1,
+                overrideWorldPosition: new Vector3(4.5f, 0f, 4.5f),
+                overrideCell: new int2(4, 4),
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            Assert.IsTrue(em.HasBuffer<BuildingRecentSpawnReservation>(boundaryEntity));
+            DynamicBuffer<BuildingRecentSpawnReservation> reservations =
+                em.GetBuffer<BuildingRecentSpawnReservation>(boundaryEntity, true);
+            Assert.AreEqual(1, reservations.Length);
+            Assert.AreEqual(new int2(4, 4), reservations[0].Cell);
+            Assert.AreEqual(new int2(2, 2), reservations[0].Size);
+            Assert.Greater(reservations[0].ExpiresAt, 0f);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement()
+    {
+        const int width = 8;
+        const int height = 8;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_BoundaryProductionSlotPlacement");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_inf_regular");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Inf_Regular");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_factory"),
+                BuildingRuntimeId = 12,
+                SlotIndex = 0,
+                Cell = new int2(5, 5),
+                WorldPosition = new float3(5.5f, 0f, 5.5f)
+            });
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity building = new()
+            {
+                Id = 12,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                ProductionSpawnLocalPositions = new[] { new Vector3(1.5f, 0f, 1.5f) },
+                ProducedUnitSlots = new Entity[1],
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Boundary Factory",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                building,
+                productionIndex: 0,
+                reservedProductionSlotIndex: 0,
+                overrideWorldPosition: null,
+                overrideCell: null,
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            Assert.IsNull(building.ProducedUnits);
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            Assert.AreEqual(1, producedUnitRows.Length);
+            Entity spawned = producedUnitRows[0].Unit;
+            Assert.AreEqual(new int2(5, 5), em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(new float3(5.5f, 0f, 5.5f), em.GetComponentData<LocalTransform>(spawned).Position);
+            Assert.AreEqual(Entity.Null, building.ProducedUnitSlots[0]);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray()
+    {
+        const int width = 8;
+        const int height = 8;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_BoundaryProductionSlotWithoutManagedArray");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_inf_regular");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Inf_Regular");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_factory"),
+                BuildingRuntimeId = 13,
+                SlotIndex = 0,
+                Cell = new int2(5, 5),
+                WorldPosition = new float3(5.5f, 0f, 5.5f)
+            });
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity building = new()
+            {
+                Id = 13,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Boundary Factory",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                building,
+                productionIndex: 0,
+                reservedProductionSlotIndex: -1,
+                overrideWorldPosition: null,
+                overrideCell: null,
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            Assert.IsNull(building.ProducedUnits);
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            Assert.AreEqual(1, producedUnitRows.Length);
+            Entity spawned = producedUnitRows[0].Unit;
+            Assert.AreEqual(new int2(5, 5), em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(new float3(5.5f, 0f, 5.5f), em.GetComponentData<LocalTransform>(spawned).Position);
+            Assert.IsNull(building.ProducedUnitSlots);
+
+            Assert.AreEqual(13, producedUnitRows[0].BuildingRuntimeId);
+            Assert.AreEqual(13, producedUnitRows[0].ProductionSlotBuildingRuntimeId);
+            Assert.AreEqual(0, producedUnitRows[0].ProductionSlotIndex);
+            Assert.AreEqual(spawned, producedUnitRows[0].Unit);
+            Assert.AreEqual(sourceKey, producedUnitRows[0].UnitSourceKey);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot()
+    {
+        const int width = 8;
+        const int height = 8;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_BoundaryOverrideHelicopterSlot");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_veh_helicopter_transport");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(UnitAirMovement),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Veh_Helicopter_Transport");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_helipad"),
+                BuildingRuntimeId = 70,
+                SlotIndex = 0,
+                Cell = new int2(4, 4),
+                WorldPosition = new float3(4.5f, 0f, 4.5f)
+            });
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            RuntimeBuildingEntity helipad = new()
+            {
+                Id = 70,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(3, 3),
+                ProducedUnitSlots = new Entity[1],
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Boundary Helipad",
+                    FootprintCells = new Vector2Int(2, 2)
+                }
+            };
+            var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+            {
+                [helipad.Id] = helipad
+            };
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                runtimeBuildings,
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity sourceBuilding = new()
+            {
+                Id = 10,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Source Key Air Factory",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                sourceBuilding,
+                productionIndex: 0,
+                reservedProductionSlotIndex: -1,
+                overrideWorldPosition: new Vector3(4.5f, 0f, 4.5f),
+                overrideCell: new int2(4, 4),
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            Assert.AreEqual(1, producedUnitRows.Length);
+            Assert.IsNull(sourceBuilding.ProducedUnits);
+            Entity spawned = producedUnitRows[0].Unit;
+            Assert.AreEqual(new int2(4, 4), em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(Entity.Null, helipad.ProducedUnitSlots[0]);
+            Assert.AreEqual(10, producedUnitRows[0].BuildingRuntimeId);
+            Assert.AreEqual(70, producedUnitRows[0].ProductionSlotBuildingRuntimeId);
+            Assert.AreEqual(0, producedUnitRows[0].ProductionSlotIndex);
+            Assert.AreEqual(spawned, producedUnitRows[0].Unit);
+            Assert.AreEqual(sourceKey, producedUnitRows[0].UnitSourceKey);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn()
+    {
+        const int width = 10;
+        const int height = 10;
+        int gridSize = width * height;
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new("BuildingSpawnSystem_BoundaryAutomaticHelicopterSpawn");
+        EntityManager em = world.EntityManager;
+
+        try
+        {
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+
+            GridConfig grid = new() { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+
+            DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            for (int i = 0; i < walkable.Length; i++)
+                walkable[i] = new GridWalkable { Value = 1 };
+
+            FixedString64Bytes sourceKey = new("unit_veh_helicopter_transport");
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitSourcePrefabKey),
+                typeof(LocalTransform),
+                typeof(UnitAirMovement),
+                typeof(Faction));
+            em.SetName(prefabEntity, "Unit_Veh_Helicopter_Transport");
+            em.SetComponentData(prefabEntity, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = sourceKey });
+            em.SetComponentData(prefabEntity, LocalTransform.FromPosition(float3.zero));
+            em.SetComponentData(prefabEntity, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+            em.SetComponentData(prefabEntity, new Faction { Id = FactionIdentity.NeutralFactionId });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_air_factory"),
+                BuildingRuntimeId = 10,
+                SlotIndex = 0,
+                Cell = new int2(2, 2),
+                WorldPosition = new float3(2.5f, 0f, 2.5f)
+            });
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_helipad"),
+                BuildingRuntimeId = 71,
+                SlotIndex = 0,
+                Cell = new int2(7, 7),
+                WorldPosition = new float3(7.5f, 0f, 7.5f)
+            });
+            spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingId = new FixedString128Bytes("building_helipad"),
+                BuildingRuntimeId = 70,
+                SlotIndex = 0,
+                Cell = new int2(4, 4),
+                WorldPosition = new float3(4.5f, 0f, 4.5f)
+            });
+
+            using EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+            using EntityQuery liveUnitFootprintQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+
+            RuntimeBuildingEntity helipad = new()
+            {
+                Id = 70,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(3, 3),
+                ProducedUnitSlots = new Entity[1],
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Boundary Helipad",
+                    FootprintCells = new Vector2Int(2, 2)
+                }
+            };
+            RuntimeBuildingEntity farHelipad = new()
+            {
+                Id = 71,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(6, 6),
+                ProducedUnitSlots = new Entity[1],
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Boundary Far Helipad",
+                    FootprintCells = new Vector2Int(2, 2)
+                }
+            };
+            var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+            {
+                [helipad.Id] = helipad,
+                [farHelipad.Id] = farHelipad
+            };
+            var spawnSystem = new BuildingSpawnSystem();
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var context = new BuildingSpawnSystem.Context(
+                runtimeBuildings,
+                liveUnitFootprintQuery,
+                null,
+                spawnPrefabSystem,
+                new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
+                new BuildingProductionSlotSystem(),
+                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+            RuntimeBuildingEntity sourceBuilding = new()
+            {
+                Id = 10,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OriginCell = new Vector2Int(2, 2),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Source Key Air Factory",
+                    FootprintCells = new Vector2Int(2, 2),
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitSourceKey = sourceKey }
+                    }
+                }
+            };
+
+            uint randomState = 7u;
+            Assert.IsTrue(spawnSystem.TrySpawnPlayerUnitNearBuilding(
+                context,
+                sourceBuilding,
+                productionIndex: 0,
+                reservedProductionSlotIndex: -1,
+                overrideWorldPosition: null,
+                overrideCell: null,
+                em,
+                gridEntity,
+                grid,
+                em.GetComponentData<DynamicBlockerComponent>(gridEntity),
+                ref randomState));
+
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            Assert.AreEqual(1, producedUnitRows.Length);
+            Assert.IsNull(sourceBuilding.ProducedUnits);
+            Entity spawned = producedUnitRows[0].Unit;
+            Assert.AreEqual(new int2(4, 4), em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(new float3(4.5f, 0f, 4.5f), em.GetComponentData<LocalTransform>(spawned).Position);
+            Assert.AreEqual(Entity.Null, helipad.ProducedUnitSlots[0]);
+            Assert.AreEqual(Entity.Null, farHelipad.ProducedUnitSlots[0]);
+            Assert.AreEqual(10, producedUnitRows[0].BuildingRuntimeId);
+            Assert.AreEqual(70, producedUnitRows[0].ProductionSlotBuildingRuntimeId);
+            Assert.AreEqual(0, producedUnitRows[0].ProductionSlotIndex);
+            Assert.AreEqual(spawned, producedUnitRows[0].Unit);
+            Assert.AreEqual(sourceKey, producedUnitRows[0].UnitSourceKey);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
         }
     }
 
@@ -262,6 +1419,79 @@ public sealed class BuildingProductionSystemTests
         Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, unownedBuilding, em));
         Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, neutralBuilding, em));
         Assert.AreEqual(2, focusCount);
+    }
+
+    [Test]
+    public void FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel()
+    {
+        using World world = new("FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel");
+        EntityManager em = world.EntityManager;
+        Entity older = em.CreateEntity(typeof(LocalTransform));
+        Entity newest = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(older, LocalTransform.FromPosition(new float3(1f, 0f, 2f)));
+        em.SetComponentData(newest, LocalTransform.FromPosition(new float3(7f, 0f, 9f)));
+
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 27,
+            ProductionSlotBuildingRuntimeId = 27,
+            ProductionIndex = 0,
+            ProductionSlotIndex = 0,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            HasOwnerFaction = 1,
+            Unit = older,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 27,
+            ProductionSlotBuildingRuntimeId = 27,
+            ProductionIndex = 1,
+            ProductionSlotIndex = 1,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            HasOwnerFaction = 1,
+            Unit = newest,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_rifle")
+        });
+
+        RuntimeBuildingEntity building = new()
+        {
+            Id = 27,
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentity.PlayerFactionId
+        };
+
+        Vector3? requestedFocus = null;
+        BuildingSpawnSystem.Context spawnContext = new(
+            new Dictionary<int, RuntimeBuildingEntity>(),
+            default,
+            null,
+            default,
+            default,
+            null,
+            null,
+            null,
+            (EntityManager _, out Entity entity) =>
+            {
+                entity = boundaryEntity;
+                return true;
+            });
+        BuildingProductionTransportBridgeSystem.Context context = new(
+            null,
+            null,
+            null,
+            null,
+            spawnContext,
+            () => true,
+            worldPosition => requestedFocus = worldPosition);
+
+        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsTrue(requestedFocus.HasValue);
+        Assert.AreEqual(new Vector3(7f, 0f, 9f), requestedFocus.Value);
+        Assert.IsNull(building.ProducedUnits);
     }
 
     [Test]
@@ -906,6 +2136,218 @@ public sealed class BuildingProductionSystemTests
     }
 
     [Test]
+    public void CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel()
+    {
+        using World world = new("CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel");
+        EntityManager em = world.EntityManager;
+        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
+        em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+            em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+        producedUnitRows.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 84,
+            ProductionSlotBuildingRuntimeId = 84,
+            ProductionIndex = 0,
+            ProductionSlotIndex = 0,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            HasOwnerFaction = 1,
+            Unit = producedUnit,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+
+        RuntimeBuildingEntity producer = new()
+        {
+            Id = 84,
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            ProducedUnits = null
+        };
+        Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+        {
+            [producer.Id] = producer
+        };
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+            runtimeBuildings,
+            em,
+            new BuildingProductionSystem(),
+            boundaryEntity);
+
+        Assert.AreEqual(
+            1,
+            runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(
+                runtimeQueryContext,
+                FactionIdentity.PlayerFactionId,
+                "unit_inf_regular"));
+        Assert.AreEqual(
+            0,
+            runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(
+                runtimeQueryContext,
+                FactionIdentity.PlayerFactionId,
+                "unit_inf_rifle"));
+        Assert.IsNull(producer.ProducedUnits);
+    }
+
+    [Test]
+    public void BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel()
+    {
+        using World world = new("BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel");
+        EntityManager em = world.EntityManager;
+        var requestSystem = new BuildingProductionRequestBoundary();
+        var productionSystem = new BuildingProductionSystem();
+        var boundarySystem = new BuildingRuntimeBoundarySystem();
+        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        var definitionSystem = new BuildingDefinitionSystem();
+        GameObject unitPrefab = new("Unit_Inf_Regular");
+        try
+        {
+            definitionSystem.RebuildSpawnablesLookup(null, new List<GameObject> { unitPrefab });
+            Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
+            em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+            producedUnitRows.Add(new BuildingProducedUnitReadModel
+            {
+                BuildingRuntimeId = 86,
+                ProductionSlotBuildingRuntimeId = 86,
+                ProductionIndex = 0,
+                ProductionSlotIndex = 0,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                HasOwnerFaction = 1,
+                Unit = producedUnit,
+                UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+            });
+
+            RuntimeBuildingEntity producer = new()
+            {
+                Id = 86,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                ProducedUnits = null
+            };
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                em);
+            BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+                runtimeBuildings,
+                em,
+                productionSystem,
+                boundaryEntity);
+
+            boundarySystem.Update(
+                definitionSystem,
+                new BuildingRuntimeSpawnSystem(),
+                default,
+                requestSystem,
+                productionContext,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                new FactionResourceSystem(),
+                em,
+                boundaryQuery,
+                runtimeBuildings,
+                now: 20f,
+                frameCount: 0);
+
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries =
+                em.GetBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity, true);
+            AssertProducedUnitSummary(
+                summaries,
+                FactionIdentity.PlayerFactionId,
+                new FixedString128Bytes("unit_inf_regular"),
+                producedCount: 1,
+                queuedCount: 0);
+            Assert.IsNull(producer.ProducedUnits);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy()
+    {
+        using World world = new("TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy");
+        EntityManager em = world.EntityManager;
+        var productionSystem = new BuildingProductionSystem();
+        GameObject unitPrefab = new("Unit_Inf_Regular");
+        try
+        {
+            Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
+            em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+            producedUnitRows.Add(new BuildingProducedUnitReadModel
+            {
+                BuildingRuntimeId = 91,
+                ProductionSlotBuildingRuntimeId = 91,
+                ProductionIndex = 0,
+                ProductionSlotIndex = 0,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                HasOwnerFaction = 1,
+                Unit = producedUnit,
+                UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+            });
+
+            RuntimeBuildingEntity producer = new()
+            {
+                Id = 91,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                ProductionSpawnLocalPositions = new[] { Vector3.zero },
+                ProducedUnitSlots = new Entity[1],
+                PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>(),
+                Definition = new BuildingDefinition
+                {
+                    DisplayName = "Read Model Factory",
+                    ProductionSlots = new List<BuildingDefinition.ProductionSlotDefinition>
+                    {
+                        new() { SpawnUnitPrefab = unitPrefab }
+                    }
+                }
+            };
+            BuildingProductionSystem.QueueContext queueContext = new(
+                new[] { unitPrefab },
+                new Dictionary<string, GameObject>(),
+                new BuildingProductionSlotSystem(),
+                null,
+                null,
+                (EntityManager _, out Entity entity) =>
+                {
+                    entity = boundaryEntity;
+                    return true;
+                });
+
+            Assert.IsFalse(productionSystem.TryQueuePlayerUnitFromBuilding(
+                queueContext,
+                producer,
+                0,
+                unitPrefab,
+                em,
+                10f));
+            Assert.AreEqual(0, producer.PendingProductions.Count);
+            Assert.AreEqual(Entity.Null, producer.ProducedUnitSlots[0]);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void ResolveProductionDurationSeconds_UsesUnitAuthoringDuration()
     {
         GameObject prefab = new("Unit_Infantry_Test");
@@ -1175,16 +2617,23 @@ public sealed class BuildingProductionSystemTests
         {
             [dead] = deadPrefab
         };
+        var producedUnitSourceKeys = new Dictionary<Entity, FixedString64Bytes>
+        {
+            [alive] = new FixedString64Bytes("AlivePrefab"),
+            [dead] = new FixedString64Bytes("DeadPrefab")
+        };
         Entity[] slots = { dead, alive };
 
         try
         {
             var system = new BuildingProductionSystem();
-            system.PruneProducedUnits(producedUnits, slots, producedUnitPrefabs, entityManager);
+            system.PruneProducedUnits(producedUnits, slots, producedUnitPrefabs, entityManager, producedUnitSourceKeys);
 
             Assert.AreEqual(1, producedUnits.Count);
             Assert.AreEqual(alive, producedUnits[0]);
             Assert.IsFalse(producedUnitPrefabs.ContainsKey(dead));
+            Assert.IsFalse(producedUnitSourceKeys.ContainsKey(dead));
+            Assert.AreEqual(new FixedString64Bytes("AlivePrefab"), producedUnitSourceKeys[alive]);
             Assert.AreEqual(Entity.Null, slots[0]);
             Assert.AreEqual(alive, slots[1]);
         }
@@ -1490,7 +2939,8 @@ public sealed class BuildingProductionSystemTests
     private static BuildingRuntimeQuerySystem.Context CreateRuntimeQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager entityManager,
-        BuildingProductionSystem productionSystem)
+        BuildingProductionSystem productionSystem,
+        Entity runtimeBoundaryEntity = default)
     {
         bool TryGetEntityManager(out EntityManager em)
         {
@@ -1498,9 +2948,19 @@ public sealed class BuildingProductionSystemTests
             return entityManager.World != null && entityManager.World.IsCreated;
         }
 
+        bool TryGetRuntimeBoundaryEntity(EntityManager em, out Entity boundaryEntity)
+        {
+            boundaryEntity = runtimeBoundaryEntity;
+            return boundaryEntity != Entity.Null &&
+                   em.World != null &&
+                   em.World.IsCreated &&
+                   em.Exists(boundaryEntity);
+        }
+
         return new BuildingRuntimeQuerySystem.Context(
             runtimeBuildings,
             TryGetEntityManager,
+            TryGetRuntimeBoundaryEntity,
             productionSystem,
             BuildingDefinitionSystem.NormalizeSpawnableKey,
             _ => false,
@@ -1534,6 +2994,27 @@ public sealed class BuildingProductionSystemTests
                 reason = string.Empty;
                 return false;
             });
+    }
+
+    private static void AssertProducedUnitSummary(
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries,
+        byte factionId,
+        FixedString128Bytes unitId,
+        int producedCount,
+        int queuedCount)
+    {
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeUnitProductionSummary summary = summaries[i];
+            if (summary.FactionId != factionId || !summary.UnitId.Equals(unitId))
+                continue;
+
+            Assert.AreEqual(producedCount, summary.ProducedCount);
+            Assert.AreEqual(queuedCount, summary.QueuedCount);
+            return;
+        }
+
+        Assert.Fail($"Missing production summary for faction={factionId}, unit={unitId.ToString()}.");
     }
 
     private static FieldInfo FindPrivateField(System.Type type, string fieldName)

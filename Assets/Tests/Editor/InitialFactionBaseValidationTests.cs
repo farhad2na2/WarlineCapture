@@ -395,15 +395,18 @@ public sealed class InitialFactionBaseValidationTests
             spawnContext = buildingGameplay.CreateSpawnContext();
             Entity gridEntity = GetGridEntity(world.EntityManager);
             DynamicBlockerComponent blockerData = world.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            uint randomState = 0x12345678u;
             Assert.IsTrue(
                 buildingGameplay.Spawn.TryResolveAvailableFactionHelipadSpawn(
                     spawnContext,
                     FactionIdentity.PlayerFactionId,
+                    null,
                     world.EntityManager,
                     gridEntity,
                     grid,
                     blockerData,
                     new int2(3, 3),
+                    ref randomState,
                     out int2 resolvedCell,
                     out _),
                 "Transport helicopter spawn should resolve to a usable owned helipad or fallback landing zone.");

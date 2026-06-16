@@ -24,6 +24,7 @@ public sealed class UnitMovementBlockerValidationTests
             tests.VehicleConfiguredFootprintOverridesRenderedBounds();
             tests.AuthoredUsaTankPlacementsAreVehicleWalkableInBakedSurface();
             tests.LoggedAuthoredUsaTankPlacementHasVehicleDepartureSurface();
+            tests.MapVehiclePlacementReadModelProjectsSourceKeyAndPrefabEntityData();
             tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
             tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
             tests.VehiclePathingCanDepartFromCurrentDynamicBlockedFootprint();
@@ -741,6 +742,99 @@ public sealed class UnitMovementBlockerValidationTests
         finally
         {
             Object.DestroyImmediate(testObject);
+        }
+    }
+
+    [Test]
+    public void MapVehiclePlacementReadModelProjectsSourceKeyAndPrefabEntityData()
+    {
+        using World world = new("MapVehiclePlacementReadModelProjectionTests");
+        EntityManager em = world.EntityManager;
+        GameObject vehiclePrefab = new("Unit_Veh_Tank_USA");
+        MapVehiclePlacementConfig config = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        try
+        {
+            config.EditorSetPlacements(new System.Collections.Generic.List<MapVehiclePlacementConfigEntry>
+            {
+                new(
+                    "Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01",
+                    "Unit_Veh_Tank_USA",
+                    vehiclePrefab,
+                    factionId: 1,
+                    worldCenter: new Vector3(10f, 2f, 20f),
+                    worldPosition: new Vector3(11f, 1f, 21f),
+                    worldEulerAngles: new Vector3(0f, 90f, 0f),
+                    worldScale: Vector3.one)
+            });
+
+            Entity prefabEntity = em.CreateEntity(
+                typeof(Prefab),
+                typeof(UnitMove),
+                typeof(UnitSourcePrefabKey),
+                typeof(UnitFootprint));
+            em.SetName(prefabEntity, "Unit_Veh_Tank_USA");
+            em.SetComponentData(prefabEntity, new UnitSourcePrefabKey { Value = new FixedString64Bytes("unit_veh_tank_usa") });
+            em.SetComponentData(prefabEntity, new UnitFootprint { Size = new int2(3, 3) });
+
+            Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
+
+            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            EntityQuery registryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            EntityQuery prefabCandidatesQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Prefab>(),
+                ComponentType.ReadOnly<UnitMove>());
+            EntityQuery liveUnitsQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<Faction>());
+
+            var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
+            var spawnPrefabContext = new BuildingSpawnPrefabSystem.Context(
+                registryQuery,
+                prefabCandidatesQuery,
+                liveUnitsQuery);
+            var runtimeUnitPrefabContext = new RuntimeUnitPrefabSystem.Context(
+                spawnPrefabSystem,
+                TryGetEntityManager,
+                null,
+                () => spawnPrefabContext);
+            var context = new MapVehiclePlacementSpawnSystem.Context(
+                config,
+                null,
+                new RuntimeUnitPrefabSystem(),
+                runtimeUnitPrefabContext,
+                null,
+                null);
+
+            int projected = MapVehiclePlacementSpawnSystem.PublishPlacementReadModel(context, em, boundary);
+
+            Assert.AreEqual(1, projected);
+            Assert.IsTrue(em.HasBuffer<MapVehiclePlacementReadModel>(boundary));
+            DynamicBuffer<MapVehiclePlacementReadModel> placements =
+                em.GetBuffer<MapVehiclePlacementReadModel>(boundary, true);
+            Assert.AreEqual(1, placements.Length);
+            Assert.AreEqual(0, placements[0].PlacementIndex);
+            Assert.AreEqual(new FixedString64Bytes("unit_veh_tank_usa"), placements[0].VehicleSourceKey);
+            Assert.AreEqual(prefabEntity, placements[0].Prefab);
+            Assert.AreEqual(1, placements[0].HasPrefab);
+            Assert.AreEqual(new int2(3, 3), placements[0].FootprintCells);
+            Assert.AreEqual(1, placements[0].FactionId);
+            Assert.AreEqual(new float3(10f, 2f, 20f), placements[0].WorldCenter);
+            Assert.AreEqual(new float3(11f, 1f, 21f), placements[0].WorldPosition);
+        }
+        finally
+        {
+            Object.DestroyImmediate(config);
+            Object.DestroyImmediate(vehiclePrefab);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
         }
     }
 

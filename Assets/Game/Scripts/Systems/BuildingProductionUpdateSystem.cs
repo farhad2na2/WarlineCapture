@@ -87,7 +87,7 @@ internal sealed partial class BuildingProductionUpdateSystem : SystemBase
                 if (context.ProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
                     context.ProductionSystem.ShouldLaunchTransport(pending, now))
                 {
-                    if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now))
+                    if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now, ref randomState))
                         context.ProductionSystem.DelayPendingProduction(pending, deltaTime);
                 }
                 continue;

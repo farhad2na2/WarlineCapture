@@ -1,0 +1,422 @@
+[
+  {
+    "file": "scn02c_background_command_table_no_ui.png",
+    "size": [
+      1672,
+      941
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 1573352,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_brand_logo_lockup.png",
+    "size": [
+      1592,
+      412
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 328813,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_commander_panel_frame.png",
+    "size": [
+      777,
+      1532
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 351609,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_commander_portrait.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 1572864,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_deploy_button_frame.png",
+    "size": [
+      1664,
+      499
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 744805,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_deploy_chevron_left.png",
+    "size": [
+      664,
+      623
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 217854,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_deploy_chevron_right.png",
+    "size": [
+      632,
+      513
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 184673,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_deploy_star_icon.png",
+    "size": [
+      613,
+      620
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 147746,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_header_bar_frame.png",
+    "size": [
+      1608,
+      262
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 416782,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_header_square_button_frame_default.png",
+    "size": [
+      887,
+      902
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 778296,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mail_icon.png",
+    "size": [
+      707,
+      507
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 356672,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_menu_hamburger_icon.png",
+    "size": [
+      674,
+      547
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 275942,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_art_campaign_valley.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 1572864,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_art_operations_radar.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 1572864,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_art_skirmish_airbase.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 1572864,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_badge_frame_amber.png",
+    "size": [
+      536,
+      706
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 291701,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_badge_frame_blue.png",
+    "size": [
+      504,
+      624
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 242386,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_badge_frame_selected.png",
+    "size": [
+      546,
+      720
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 311121,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_campaign_target_icon.png",
+    "size": [
+      779,
+      788
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 188761,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_frame_default_amber.png",
+    "size": [
+      776,
+      1394
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 146113,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_frame_default_blue.png",
+    "size": [
+      726,
+      1393
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 144978,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_frame_selected.png",
+    "size": [
+      783,
+      1390
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 135464,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_label_plate_amber.png",
+    "size": [
+      1419,
+      489
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 685425,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_label_plate_blue.png",
+    "size": [
+      1554,
+      434
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 663849,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_card_label_plate_selected.png",
+    "size": [
+      1564,
+      434
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 669785,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_operations_star_icon.png",
+    "size": [
+      690,
+      892
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 285525,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_mode_skirmish_crossed_weapons_icon.png",
+    "size": [
+      894,
+      873
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 363252,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_armory_ammo_icon.png",
+    "size": [
+      518,
+      737
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 252689,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_button_frame_default.png",
+    "size": [
+      1527,
+      485
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 724779,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_button_frame_selected.png",
+    "size": [
+      1675,
+      506
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 827942,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_campaign_target_icon.png",
+    "size": [
+      779,
+      788
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 188761,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_chevron_icon.png",
+    "size": [
+      304,
+      512
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 71686,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_command_shield_icon.png",
+    "size": [
+      680,
+      894
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 462402,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_profile_tag_icon.png",
+    "size": [
+      448,
+      855
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 328670,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_supply_crate_icon.png",
+    "size": [
+      728,
+      747
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 420428,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_nav_tech_tree_nodes_icon.png",
+    "size": [
+      692,
+      682
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 200636,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_plus_icon.png",
+    "size": [
+      604,
+      610
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 202714,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_resource_chip_frame.png",
+    "size": [
+      1466,
+      325
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 469606,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_resource_crate_icon.png",
+    "size": [
+      728,
+      747
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 420428,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_resource_diamond_icon.png",
+    "size": [
+      762,
+      675
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 308367,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_resource_energy_icon.png",
+    "size": [
+      483,
+      888
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 179064,
+    "uncropped_alpha_margin": false
+  },
+  {
+    "file": "scn02c_settings_gear_icon.png",
+    "size": [
+      788,
+      799
+    ],
+    "visible_green_pixels": 0,
+    "visible_pixels": 335635,
+    "uncropped_alpha_margin": false
+  }
+]

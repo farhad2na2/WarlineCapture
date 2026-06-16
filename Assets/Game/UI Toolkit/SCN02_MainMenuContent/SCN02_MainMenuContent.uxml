@@ -11,198 +11,189 @@
         <ui:VisualElement name="HeaderContent" class="header-content">
             <ui:VisualElement name="HeaderBackPlate" class="header-back-plate" />
             <ui:VisualElement name="HeaderLogoPanel" class="header-logo-panel">
-                <ui:VisualElement name="Frame" class="header-logo-frame" />
                 <ui:VisualElement name="Logo" class="header-logo" />
             </ui:VisualElement>
             <ui:VisualElement name="HeaderResourceArea" class="header-resource-area">
                 <ui:VisualElement name="CreditsPanel" class="resource-panel credits-panel">
+                    <ui:VisualElement name="Frame" class="resource-frame" />
                     <ui:VisualElement name="Icon" class="resource-icon credits-icon" />
-                    <ui:Label name="Label" class="resource-label" text="Credits" />
-                    <ui:Label name="Value" class="resource-value credits-value" text="187,540" />
+                    <ui:Label name="Value" class="resource-value credits-value" text="12,450" />
+                    <ui:VisualElement name="Plus" class="resource-plus" />
                 </ui:VisualElement>
                 <ui:VisualElement name="SuppliesPanel" class="resource-panel supplies-panel">
+                    <ui:VisualElement name="Frame" class="resource-frame" />
                     <ui:VisualElement name="Icon" class="resource-icon supplies-icon" />
-                    <ui:Label name="Label" class="resource-label" text="Supplies" />
-                    <ui:Label name="Value" class="resource-value supplies-value" text="92,860" />
+                    <ui:Label name="Value" class="resource-value supplies-value" text="1,280" />
+                    <ui:VisualElement name="Plus" class="resource-plus" />
                 </ui:VisualElement>
                 <ui:VisualElement name="CommandPanel" class="resource-panel command-panel">
+                    <ui:VisualElement name="Frame" class="resource-frame" />
                     <ui:VisualElement name="Icon" class="resource-icon command-icon" />
-                    <ui:Label name="Label" class="resource-label" text="Command" />
-                    <ui:Label name="Value" class="resource-value command-value" text="2,715" />
+                    <ui:Label name="Value" class="resource-value command-value" text="78/100" />
+                    <ui:VisualElement name="Plus" class="resource-plus" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="HeaderActionsPanel" class="header-actions-panel">
-                <ui:VisualElement name="Frame" class="header-actions-frame" />
-                <ui:Button name="InboxButton" class="header-icon-button" text="">
-                    <ui:VisualElement name="Icon" class="inbox-icon" />
+                <ui:Button name="InboxButton" class="header-icon-button inbox-button" text="">
+                    <ui:VisualElement name="Frame" class="header-icon-button-frame" />
+                    <ui:VisualElement name="Icon" class="header-action-icon inbox-icon" />
                 </ui:Button>
                 <ui:Button name="SettingsButton" class="header-icon-button settings-button" text="">
-                    <ui:VisualElement name="Icon" class="settings-icon" />
+                    <ui:VisualElement name="Frame" class="header-icon-button-frame" />
+                    <ui:VisualElement name="Icon" class="header-action-icon settings-icon" />
+                </ui:Button>
+                <ui:Button name="MenuButton" class="header-icon-button menu-button" text="">
+                    <ui:VisualElement name="Frame" class="header-icon-button-frame" />
+                    <ui:VisualElement name="Icon" class="header-action-icon menu-icon" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement name="LeftContent" class="left-content">
             <ui:VisualElement name="LeftNavPanel" class="left-nav-panel">
-                <ui:Button name="Nav_Leaderboards" class="nav-item nav-item-selected" text="">
+                <ui:Button name="Nav_Campaign" class="nav-item nav-item-selected" text="">
                     <ui:VisualElement name="Frame" class="nav-frame" />
-                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-leaderboards" />
-                    <ui:Label name="Text" class="nav-text" text="Leaderboards" />
+                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-campaign" />
+                    <ui:Label name="Text" class="nav-text" text="CAMPAIGN" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
                 </ui:Button>
                 <ui:Button name="Nav_Armory" class="nav-item" text="">
                     <ui:VisualElement name="Frame" class="nav-frame" />
                     <ui:VisualElement name="Icon" class="nav-icon nav-icon-armory" />
-                    <ui:Label name="Text" class="nav-text" text="Armory" />
+                    <ui:Label name="Text" class="nav-text" text="ARMORY" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
                 </ui:Button>
-                <ui:Button name="Nav_Store" class="nav-item" text="">
+                <ui:Button name="Nav_Supply" class="nav-item" text="">
                     <ui:VisualElement name="Frame" class="nav-frame" />
-                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-store" />
-                    <ui:Label name="Text" class="nav-text" text="Store" />
+                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-supply" />
+                    <ui:Label name="Text" class="nav-text" text="SUPPLY" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
                 </ui:Button>
-                <ui:Button name="Nav_Contests" class="nav-item" text="">
+                <ui:Button name="Nav_Command" class="nav-item" text="">
                     <ui:VisualElement name="Frame" class="nav-frame" />
-                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-contests" />
-                    <ui:Label name="Text" class="nav-text" text="Contests" />
+                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-command" />
+                    <ui:Label name="Text" class="nav-text" text="COMMAND" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
                 </ui:Button>
-                <ui:Button name="Nav_Tutorials" class="nav-item" text="">
+                <ui:Button name="Nav_TechTree" class="nav-item" text="">
                     <ui:VisualElement name="Frame" class="nav-frame" />
-                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-stats" />
-                    <ui:Label name="Text" class="nav-text" text="Stats" />
+                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-tech-tree" />
+                    <ui:Label name="Text" class="nav-text" text="TECH TREE" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
+                </ui:Button>
+                <ui:Button name="Nav_Profile" class="nav-item" text="">
+                    <ui:VisualElement name="Frame" class="nav-frame" />
+                    <ui:VisualElement name="Icon" class="nav-icon nav-icon-profile" />
+                    <ui:Label name="Text" class="nav-text" text="PROFILE" />
+                    <ui:VisualElement name="Chevron" class="nav-chevron" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement name="MiddleContent" class="middle-content">
             <ui:VisualElement name="ModeCardsContainer" class="mode-cards-container">
-                <ui:Button name="Card_Campaign" class="mode-card" text="">
-                    <ui:VisualElement name="Frame" class="mode-card-frame">
-                        <ui:VisualElement name="TitleIcon" class="mode-title-icon campaign-title-icon" />
-                        <ui:Label name="Title" class="mode-title" text="CAMPAIGN" />
-                        <ui:VisualElement name="ThumbnailViewport" class="mode-thumbnail-viewport">
-                            <ui:VisualElement name="ThumbnailArt" class="mode-thumbnail campaign-thumbnail" />
-                        </ui:VisualElement>
-                        <ui:Label name="Description" class="mode-description" text="Advance through the campaign and liberate the city districts." />
-                        <ui:VisualElement name="ProgressMeter" class="progress-meter">
-                            <ui:Label name="ProgressLabel" class="progress-label" text="PROGRESS" />
-                            <ui:Label name="ProgressValue" class="progress-value" text="35%" />
-                            <ui:VisualElement name="ProgressSegments" class="progress-segments progress-gold">
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                                <ui:VisualElement class="progress-segment" />
-                            </ui:VisualElement>
-                        </ui:VisualElement>
-                    </ui:VisualElement>
+                <ui:Button name="Card_Campaign" class="mode-card mode-card-selected" text="">
+                    <ui:VisualElement name="Fill" class="mode-card-fill campaign-card-fill" />
+                    <ui:VisualElement name="Art" class="mode-card-art campaign-art" />
+                    <ui:VisualElement name="Frame" class="mode-card-frame campaign-frame" />
+                    <ui:VisualElement name="LabelPlate" class="mode-card-label-plate campaign-label-plate" />
+                    <ui:VisualElement name="BadgeFrame" class="mode-badge-frame campaign-badge-frame" />
+                    <ui:VisualElement name="BadgeIcon" class="mode-badge-icon campaign-title-icon" />
+                    <ui:Label name="Title" class="mode-title" text="CAMPAIGN" />
+                    <ui:VisualElement name="DividerLeft" class="mode-divider divider-left" />
+                    <ui:VisualElement name="DividerRight" class="mode-divider divider-right" />
+                    <ui:VisualElement name="BottomStar" class="mode-bottom-star" />
                 </ui:Button>
 
-                <ui:Button name="Card_Operations" class="mode-card" text="">
-                    <ui:VisualElement name="Frame" class="mode-card-frame">
-                        <ui:VisualElement name="TitleIcon" class="mode-title-icon operations-title-icon" />
-                        <ui:Label name="Title" class="mode-title" text="OPERATIONS" />
-                        <ui:VisualElement name="ThumbnailViewport" class="mode-thumbnail-viewport">
-                            <ui:VisualElement name="ThumbnailArt" class="mode-thumbnail operations-thumbnail" />
-                        </ui:VisualElement>
-                        <ui:Label name="Description" class="mode-description" text="Advance through the campaign and liberate the city districts." />
-                        <ui:VisualElement name="ProgressMeter" class="progress-meter">
-                            <ui:Label name="ProgressLabel" class="progress-label" text="PROGRESS" />
-                            <ui:Label name="ProgressValue" class="progress-value" text="35%" />
-                            <ui:VisualElement name="ProgressSegments" class="progress-segments progress-blue">
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                            </ui:VisualElement>
-                        </ui:VisualElement>
-                    </ui:VisualElement>
+                <ui:Button name="Card_Skirmish" class="mode-card mode-card-blue" text="">
+                    <ui:VisualElement name="Fill" class="mode-card-fill skirmish-card-fill" />
+                    <ui:VisualElement name="Art" class="mode-card-art skirmish-art" />
+                    <ui:VisualElement name="Frame" class="mode-card-frame skirmish-frame" />
+                    <ui:VisualElement name="LabelPlate" class="mode-card-label-plate skirmish-label-plate" />
+                    <ui:VisualElement name="BadgeFrame" class="mode-badge-frame skirmish-badge-frame" />
+                    <ui:VisualElement name="BadgeIcon" class="mode-badge-icon skirmish-title-icon" />
+                    <ui:Label name="Title" class="mode-title" text="SKIRMISH" />
+                    <ui:VisualElement name="DividerLeft" class="mode-divider divider-left" />
+                    <ui:VisualElement name="DividerRight" class="mode-divider divider-right" />
+                    <ui:VisualElement name="BottomStar" class="mode-bottom-star" />
                 </ui:Button>
 
-                <ui:Button name="Card_Skirmish" class="mode-card" text="">
-                    <ui:VisualElement name="Frame" class="mode-card-frame">
-                        <ui:VisualElement name="TitleIcon" class="mode-title-icon skirmish-title-icon" />
-                        <ui:Label name="Title" class="mode-title" text="SKIRMISH" />
-                        <ui:VisualElement name="ThumbnailViewport" class="mode-thumbnail-viewport">
-                            <ui:VisualElement name="ThumbnailArt" class="mode-thumbnail skirmish-thumbnail" />
-                        </ui:VisualElement>
-                        <ui:Label name="Description" class="mode-description" text="Advance through the campaign and liberate the city districts." />
-                        <ui:VisualElement name="ProgressMeter" class="progress-meter">
-                            <ui:Label name="ProgressLabel" class="progress-label" text="PROGRESS" />
-                            <ui:Label name="ProgressValue" class="progress-value" text="35%" />
-                            <ui:VisualElement name="ProgressSegments" class="progress-segments progress-green">
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                                <ui:VisualElement class="progress-segment progress-on" />
-                            </ui:VisualElement>
-                        </ui:VisualElement>
-                    </ui:VisualElement>
+                <ui:Button name="Card_Operations" class="mode-card mode-card-amber" text="">
+                    <ui:VisualElement name="Fill" class="mode-card-fill operations-card-fill" />
+                    <ui:VisualElement name="Art" class="mode-card-art operations-art" />
+                    <ui:VisualElement name="Frame" class="mode-card-frame operations-frame" />
+                    <ui:VisualElement name="LabelPlate" class="mode-card-label-plate operations-label-plate" />
+                    <ui:VisualElement name="BadgeFrame" class="mode-badge-frame operations-badge-frame" />
+                    <ui:VisualElement name="BadgeIcon" class="mode-badge-icon operations-title-icon" />
+                    <ui:Label name="Title" class="mode-title" text="OPERATIONS" />
+                    <ui:VisualElement name="DividerLeft" class="mode-divider divider-left" />
+                    <ui:VisualElement name="DividerRight" class="mode-divider divider-right" />
+                    <ui:VisualElement name="BottomStar" class="mode-bottom-star" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement name="RightContent" class="right-content">
             <ui:Button name="CommanderPanel" class="commander-panel" text="">
-                <ui:VisualElement name="Portrait" class="commander-portrait" />
-                <ui:VisualElement name="Frame" class="commander-frame" />
-                <ui:VisualElement name="TitleIcon" class="commander-title-icon" />
-                <ui:Label name="Title" class="commander-title" text="COMMANDER" />
-                <ui:VisualElement name="IdentityPanel" class="identity-panel">
-                    <ui:VisualElement name="Badge" class="identity-badge" />
-                    <ui:Label name="Name" class="identity-name" text="FIELD COMMANDER" />
-                    <ui:Label name="Level" class="identity-level" text="LEVEL 38" />
+                <ui:VisualElement name="CommanderTitlePanel" class="commander-section-panel commander-title-panel">
+                    <ui:VisualElement name="Backing" class="commander-section-backing" />
+                    <ui:VisualElement name="Frame" class="commander-section-frame" />
+                    <ui:Label name="Title" class="commander-title" text="COMMANDER" />
+                    <ui:VisualElement name="TitleRuleLeft" class="commander-title-rule title-rule-left" />
+                    <ui:VisualElement name="TitleRuleRight" class="commander-title-rule title-rule-right" />
                 </ui:VisualElement>
-                <ui:VisualElement name="ReadinessPanel" class="readiness-panel">
-                    <ui:Label name="Label" class="readiness-label" text="READINESS" />
-                    <ui:VisualElement name="Segments" class="readiness-segments" />
-                </ui:VisualElement>
-                <ui:VisualElement name="LockedRowsContainer" class="locked-rows-container">
-                    <ui:VisualElement name="SquadManagementRow" class="locked-row">
-                        <ui:VisualElement name="LockIcon" class="lock-icon" />
-                        <ui:Label name="Label" class="locked-label" text="SQUAD MANAGEMENT      LOCKED" />
+                <ui:VisualElement name="CommanderPortraitPanel" class="commander-portrait-panel">
+                    <ui:VisualElement name="Backing" class="commander-portrait-backing" />
+                    <ui:VisualElement name="Frame" class="commander-portrait-frame" />
+                    <ui:VisualElement name="Portrait" class="commander-portrait" />
+                    <ui:VisualElement name="EditButton" class="commander-edit-button">
+                        <ui:VisualElement name="Frame" class="commander-edit-frame" />
+                        <ui:VisualElement name="Icon" class="commander-edit-icon" />
                     </ui:VisualElement>
-                    <ui:VisualElement name="IntelReportRow" class="locked-row">
-                        <ui:VisualElement name="LockIcon" class="lock-icon" />
-                        <ui:Label name="Label" class="locked-label" text="INTEL REPORT      LOCKED" />
+                </ui:VisualElement>
+                <ui:VisualElement name="IdentityPanel" class="commander-section-panel identity-panel">
+                    <ui:VisualElement name="Backing" class="commander-section-backing" />
+                    <ui:VisualElement name="Frame" class="commander-section-frame" />
+                    <ui:VisualElement name="Badge" class="identity-badge" />
+                    <ui:Label name="Name" class="identity-name" text="COL. ALEX MORGAN" />
+                    <ui:Label name="Level" class="identity-level" text="VICTORY IS PLANNED" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ProgressPanel" class="commander-section-panel commander-progress-panel">
+                    <ui:VisualElement name="Backing" class="commander-section-backing" />
+                    <ui:VisualElement name="Frame" class="commander-section-frame" />
+                    <ui:Label name="LevelBadge" class="commander-level-badge" text="28" />
+                    <ui:VisualElement name="ProgressFrame" class="commander-progress-frame">
+                        <ui:VisualElement name="ProgressFill" class="commander-progress-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="ProgressValue" class="commander-progress-value" text="8,560 / 15,000" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ReadinessPanel" class="commander-section-panel readiness-panel">
+                    <ui:VisualElement name="Backing" class="commander-section-backing" />
+                    <ui:VisualElement name="Frame" class="commander-section-frame" />
+                    <ui:Label name="Label" class="readiness-label" text="FACTION STANDING" />
+                    <ui:VisualElement name="Segments" class="readiness-segments">
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick standing-on" />
+                        <ui:VisualElement class="standing-tick" />
+                        <ui:VisualElement class="standing-tick" />
+                        <ui:VisualElement class="standing-tick" />
+                        <ui:VisualElement class="standing-tick" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:Button>
         </ui:VisualElement>
 
         <ui:VisualElement name="FooterContent" class="footer-content">
-            <ui:VisualElement name="CommsStatusPanel" class="comms-status-panel">
-                <ui:VisualElement name="Frame" class="comms-frame">
-                    <ui:VisualElement name="StatusIcon" class="comms-status-icon" />
-                    <ui:Label name="Label" class="comms-label" text="COMMS ONLINE" />
-                    <ui:Label name="Detail" class="comms-detail" text="Secure Channel 7" />
-                </ui:VisualElement>
-            </ui:VisualElement>
             <ui:Button name="DeployOperationButton" class="deploy-operation-button" text="">
                 <ui:VisualElement name="Frame" class="deploy-frame" />
-                <ui:Label name="Text" class="deploy-text" text="DEPLOY OPERATION" />
-                <ui:VisualElement name="Chevrons" class="deploy-chevrons" />
+                <ui:VisualElement name="ChevronLeft" class="deploy-chevron deploy-chevron-left" />
+                <ui:Label name="Text" class="deploy-text" text="DEPLOY" />
+                <ui:VisualElement name="ChevronRight" class="deploy-chevron deploy-chevron-right" />
+                <ui:VisualElement name="Star" class="deploy-star" />
             </ui:Button>
         </ui:VisualElement>
     </ui:VisualElement>

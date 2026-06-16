@@ -4,7 +4,7 @@
     position: relative;
     overflow: hidden;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
-    color: rgb(219, 214, 189);
+    color: rgb(242, 232, 196);
 }
 
 .scn02-main-menu-content Button {
@@ -36,22 +36,22 @@
 }
 
 .background-art {
-    left: -2.5%;
-    right: -2.5%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_background_art.png");
+    left: -1.5%;
+    right: -1.5%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png");
     -unity-background-scale-mode: scale-and-crop;
 }
 
 .background-art-overlay {
-    background-color: rgba(0, 0, 0, 0.42);
+    background-color: rgba(8, 9, 8, 0.13);
 }
 
 .header-content {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 12.96%;
+    left: 0.25%;
+    right: 0.25%;
+    top: 0.6%;
+    height: 12.1%;
 }
 
 .header-back-plate {
@@ -60,698 +60,830 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(5, 6, 5, 0.88);
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_bar_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 110;
+    -unity-slice-right: 110;
+    -unity-slice-top: 52;
+    -unity-slice-bottom: 52;
+    -unity-slice-scale: 0.28;
 }
 
 .header-logo-panel {
     position: absolute;
-    left: 0;
-    top: 14px;
-    width: 19.8%;
-    height: 86.8%;
+    left: 2.6%;
+    top: 15%;
+    width: 18.7%;
+    height: 70%;
 }
 
-.header-logo-frame,
-.header-logo,
-.header-actions-frame {
+.header-logo {
     position: absolute;
-}
-
-.header-logo-frame {
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_logo_panel_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 34;
-    -unity-slice-right: 34;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
-}
-
-.header-logo {
-    left: 13.7%;
-    right: 13.7%;
-    top: 22.8%;
-    bottom: 22.8%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_brand_logo_lockup.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_brand_logo_lockup.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .header-resource-area {
     position: absolute;
-    right: 12.65%;
-    top: 14px;
-    width: 47.08%;
-    height: 86.8%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_resource_panel_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 40;
-    -unity-slice-right: 40;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    right: 16.7%;
+    top: 22%;
+    width: 40.5%;
+    height: 52%;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .resource-panel {
-    position: absolute;
-    top: 0;
+    position: relative;
+    width: 31.7%;
     height: 100%;
-    width: 32.52%;
 }
 
-.credits-panel {
+.resource-frame,
+.resource-icon,
+.resource-value,
+.resource-plus,
+.header-icon-button-frame,
+.header-action-icon {
+    position: absolute;
+}
+
+.resource-frame {
     left: 0;
-}
-
-.supplies-panel {
-    left: 33.74%;
-}
-
-.command-panel {
-    left: 67.26%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 135;
+    -unity-slice-right: 135;
+    -unity-slice-top: 82;
+    -unity-slice-bottom: 82;
+    -unity-slice-scale: 0.2;
 }
 
 .resource-icon {
-    position: absolute;
-    left: 9.5%;
+    left: 7.5%;
     top: 20%;
-    width: 23%;
-    height: 62%;
+    width: 17.5%;
+    height: 60%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .credits-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_coin_badge.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png");
 }
 
 .supplies-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_supplies_crate.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png");
 }
 
 .command-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
-}
-
-.resource-label {
-    position: absolute;
-    left: 34%;
-    top: 20%;
-    width: 60%;
-    height: 50px;
-    font-size: 36px;
-    color: rgb(219, 214, 189);
-    -unity-text-align: middle-left;
-    white-space: nowrap;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_energy_icon.png");
 }
 
 .resource-value {
-    position: absolute;
-    left: 34%;
-    top: 43%;
-    width: 60%;
-    height: 84px;
-    font-size: 58px;
-    -unity-text-align: middle-left;
+    left: 25%;
+    right: 15%;
+    top: 0;
+    bottom: 0;
+    font-size: 54px;
+    color: rgb(242, 232, 196);
+    -unity-text-align: middle-center;
     white-space: nowrap;
 }
 
-.credits-value {
-    color: rgb(235, 179, 65);
-}
-
-.supplies-value {
-    color: rgb(161, 166, 105);
-}
-
-.command-value {
-    color: rgb(119, 180, 215);
+.resource-plus {
+    right: 6%;
+    top: 32%;
+    width: 11%;
+    height: 36%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_plus_icon.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .header-actions-panel {
     position: absolute;
-    right: 0;
-    top: 14px;
-    width: 12.67%;
-    height: 86.8%;
-}
-
-.header-actions-frame {
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_header_right_actions_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 34;
-    -unity-slice-right: 34;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    right: 2.2%;
+    top: 20%;
+    width: 13%;
+    height: 58%;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .header-icon-button {
-    position: absolute;
-    width: 26%;
-    height: 62.5%;
-    top: 18.5%;
-    left: 22%;
+    position: relative;
+    width: 29.5%;
+    height: 100%;
 }
 
-.settings-button {
-    left: 57%;
-}
-
-.inbox-icon,
-.settings-icon {
-    position: absolute;
+.header-icon-button-frame {
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_default.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 150;
+    -unity-slice-bottom: 150;
+    -unity-slice-scale: 0.18;
+}
+
+.header-action-icon {
+    left: 24%;
+    right: 24%;
+    top: 24%;
+    bottom: 24%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .inbox-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_inbox_envelope.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mail_icon.png");
 }
 
 .settings-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_settings_gear.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png");
+}
+
+.menu-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_menu_hamburger_icon.png");
 }
 
 .left-content {
     position: absolute;
-    left: 0;
-    top: 13%;
-    bottom: 11.2%;
-    width: 15%;
+    left: 1.55%;
+    top: 16.7%;
+    width: 16.9%;
+    height: 56.3%;
 }
 
 .left-nav-panel {
     position: absolute;
-    left: 50px;
-    top: 13.2%;
-    width: 79.7%;
-    height: 72.9%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .nav-item {
     position: relative;
     width: 100%;
-    height: 19.6%;
-    margin-bottom: 0;
+    height: 14.45%;
+}
+
+.nav-frame,
+.nav-icon,
+.nav-chevron,
+.nav-text {
+    position: absolute;
 }
 
 .nav-frame {
-    position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Final/scn02_nav_button_inactive_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22;
 }
 
 .nav-item-selected .nav-frame {
-    -unity-background-image-tint-color: rgb(235, 179, 65);
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
 }
 
 .nav-icon {
-    position: absolute;
-    left: 8%;
-    top: 23%;
-    width: 20%;
-    height: 54%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_operations_pin.png");
+    left: 8.5%;
+    top: 22%;
+    width: 17.5%;
+    height: 56%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
+.nav-icon-campaign {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png");
+}
+
+.nav-icon-armory {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_armory_ammo_icon.png");
+}
+
+.nav-icon-supply {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_supply_crate_icon.png");
+}
+
+.nav-icon-command {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png");
+}
+
+.nav-icon-tech-tree {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_tech_tree_nodes_icon.png");
+}
+
+.nav-icon-profile {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_profile_tag_icon.png");
+}
+
 .nav-text {
-    position: absolute;
-    left: 32%;
-    right: 5%;
+    left: 28%;
+    right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 34px;
-    color: rgb(219, 214, 189);
+    font-size: 44px;
+    color: rgb(242, 232, 196);
     -unity-text-align: middle-left;
     white-space: nowrap;
+}
+
+.nav-chevron {
+    right: 6.8%;
+    top: 34%;
+    width: 6.5%;
+    height: 32%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_chevron_icon.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .middle-content {
     position: absolute;
-    left: 15%;
-    right: 15%;
-    top: 13%;
-    bottom: 11.2%;
+    left: 20.7%;
+    right: 21.3%;
+    top: 16.8%;
+    height: 60.6%;
 }
 
 .mode-cards-container {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 86.93%;
-    height: 60.06%;
-    translate: -50% -50%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     flex-direction: row;
     justify-content: space-between;
-    align-items: stretch;
 }
 
 .mode-card {
     position: relative;
-    width: 30.68%;
+    width: 31.1%;
     height: 100%;
 }
 
-.mode-card-frame {
+.mode-card-art,
+.mode-card-fill,
+.mode-card-frame,
+.mode-card-label-plate,
+.mode-badge-frame,
+.mode-badge-icon,
+.mode-title,
+.mode-divider,
+.mode-bottom-star {
     position: absolute;
+}
+
+.mode-card-fill {
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_card_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 54;
-    -unity-slice-right: 54;
-    -unity-slice-top: 54;
-    -unity-slice-bottom: 54;
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32;
 }
 
-.mode-title-icon {
-    position: absolute;
-    left: 6.1%;
-    top: 3.55%;
-    width: 9.4%;
-    height: 6.5%;
+.campaign-card-fill {
+    background-color: rgb(31, 38, 12);
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png");
+}
+
+.skirmish-card-fill {
+    background-color: rgb(10, 21, 30);
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png");
+}
+
+.operations-card-fill {
+    background-color: rgb(31, 18, 9);
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png");
+}
+
+.mode-card-art {
+    left: 4.4%;
+    right: 4.4%;
+    top: 3.5%;
+    height: 70.2%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.campaign-art {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png");
+}
+
+.skirmish-art {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png");
+}
+
+.operations-art {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png");
+}
+
+.mode-card-frame {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32;
+}
+
+.campaign-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
+}
+
+.skirmish-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png");
+}
+
+.operations-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png");
+}
+
+.mode-card-label-plate {
+    left: 4.3%;
+    right: 4.3%;
+    bottom: 3.5%;
+    height: 25.4%;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 135;
+    -unity-slice-right: 135;
+    -unity-slice-top: 92;
+    -unity-slice-bottom: 92;
+    -unity-slice-scale: 0.2;
+}
+
+.campaign-label-plate {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png");
+}
+
+.skirmish-label-plate {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_blue.png");
+}
+
+.operations-label-plate {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_amber.png");
+}
+
+.mode-badge-frame {
+    left: 50%;
+    bottom: 18.6%;
+    width: 18.2%;
+    height: 14.4%;
+    translate: -50% 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.campaign-badge-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_badge_frame_selected.png");
+}
+
+.skirmish-badge-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_badge_frame_blue.png");
+}
+
+.operations-badge-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_badge_frame_amber.png");
+}
+
+.mode-badge-icon {
+    left: 50%;
+    bottom: 22.6%;
+    width: 9.8%;
+    height: 8.4%;
+    translate: -50% 0;
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .campaign-title-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_campaign_crosshair.png");
-}
-
-.operations-title-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_operations_pin.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_campaign_target_icon.png");
 }
 
 .skirmish-title-icon {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_skirmish_blades.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png");
+}
+
+.operations-title-icon {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_operations_star_icon.png");
 }
 
 .mode-title {
-    position: absolute;
-    left: 23%;
-    right: 14%;
-    top: 3.3%;
-    height: 6.3%;
-    font-size: 58px;
-    color: rgb(219, 214, 189);
+    left: 2.5%;
+    right: 2.5%;
+    bottom: 8.7%;
+    height: 10.2%;
+    font-size: 70px;
+    color: rgb(248, 239, 205);
     -unity-text-align: middle-center;
     white-space: nowrap;
 }
 
-.mode-thumbnail-viewport {
-    position: absolute;
-    left: 4.1%;
-    right: 4.1%;
-    top: 11%;
-    height: 52.5%;
-    overflow: hidden;
+.mode-divider {
+    bottom: 7.1%;
+    width: 24%;
+    height: 2px;
+    background-color: rgba(211, 188, 102, 0.6);
 }
 
-.mode-thumbnail {
-    position: absolute;
-    left: -60%;
-    right: -60%;
-    top: 0;
-    bottom: 0;
-    -unity-background-scale-mode: scale-and-crop;
+.divider-left {
+    left: 21%;
 }
 
-.campaign-thumbnail {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png");
+.divider-right {
+    right: 21%;
 }
 
-.operations-thumbnail {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png");
-}
-
-.skirmish-thumbnail {
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png");
-}
-
-.mode-description {
-    position: absolute;
-    left: 12.2%;
-    right: 12.2%;
-    bottom: 7.75%;
-    height: 10.2%;
-    font-size: 40px;
-    color: rgb(219, 214, 189);
-    -unity-text-align: middle-center;
-    white-space: normal;
-}
-
-.progress-meter {
-    position: absolute;
-    left: 20.9%;
-    width: 58.1%;
-    bottom: 21%;
-    height: 6.35%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_progress_meter_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 20;
-    -unity-slice-right: 20;
-    -unity-slice-top: 10;
-    -unity-slice-bottom: 10;
-}
-
-.progress-label {
-    position: absolute;
-    left: 0;
-    top: -36px;
-    width: 66%;
-    height: 54px;
-    font-size: 28px;
-    color: rgb(158, 156, 138);
-    -unity-text-align: middle-left;
-}
-
-.progress-value {
-    position: absolute;
-    right: 0;
-    top: -36px;
-    width: 34%;
-    height: 54px;
-    font-size: 34px;
-    color: rgb(245, 168, 41);
-    -unity-text-align: middle-right;
-}
-
-.progress-segments {
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 50%;
-    height: 18px;
-    translate: 0 -50%;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.progress-segment {
-    width: 7%;
-    height: 18px;
-    background-color: rgba(46, 48, 41, 0.92);
-}
-
-.progress-gold .progress-on {
-    background-color: rgb(245, 168, 41);
-}
-
-.progress-blue .progress-on {
-    background-color: rgb(97, 191, 217);
-}
-
-.progress-green .progress-on {
-    background-color: rgb(159, 174, 62);
+.mode-bottom-star {
+    left: 50%;
+    bottom: 5.3%;
+    width: 6.2%;
+    height: 4.4%;
+    translate: -50% 0;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_star_icon.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .right-content {
     position: absolute;
-    right: 0;
-    top: 13%;
-    bottom: 11.2%;
-    width: 15%;
+    right: 1.55%;
+    top: 14.8%;
+    width: 19%;
+    height: 68%;
 }
 
 .commander-panel {
     position: absolute;
     left: 0;
-    top: 4.8%;
-    width: 99.9%;
-    height: 90.4%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.commander-section-panel,
+.commander-portrait-panel,
+.commander-section-backing,
+.commander-section-frame,
+.commander-portrait-backing,
+.commander-portrait-frame,
+.commander-title,
+.commander-title-rule,
+.commander-portrait,
+.commander-edit-button,
+.identity-badge,
+.identity-name,
+.identity-level,
+.commander-level-badge,
+.commander-progress-frame,
+.commander-progress-fill,
+.commander-progress-value,
+.readiness-label,
+.readiness-segments {
+    position: absolute;
+}
+
+.commander-section-panel,
+.commander-portrait-panel {
+    left: 0;
+    right: 0;
+}
+
+.commander-title-panel {
+    top: 0;
+    height: 8.5%;
+}
+
+.commander-portrait-panel {
+    top: 9.8%;
+    height: 49.5%;
+}
+
+.identity-panel {
+    top: 61.5%;
+    height: 10.2%;
+}
+
+.commander-progress-panel {
+    top: 73.5%;
+    height: 10.2%;
+}
+
+.readiness-panel {
+    bottom: 0;
+    height: 14.8%;
+}
+
+.commander-section-backing,
+.commander-section-frame,
+.commander-portrait-backing,
+.commander-portrait-frame {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.commander-section-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png");
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22;
+}
+
+.commander-section-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22;
+}
+
+.commander-portrait-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32;
+}
+
+.commander-portrait-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32;
+}
+
+.commander-title {
+    left: 10%;
+    right: 10%;
+    top: 0;
+    bottom: 0;
+    font-size: 52px;
+    color: rgb(242, 232, 196);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+}
+
+.commander-title-rule {
+    top: 50%;
+    height: 2px;
+    background-color: rgba(211, 188, 102, 0.55);
+}
+
+.title-rule-left {
+    left: 8%;
+    width: 15%;
+}
+
+.title-rule-right {
+    right: 8%;
+    width: 15%;
 }
 
 .commander-portrait {
-    position: absolute;
-    left: 11.5%;
-    right: 15%;
-    top: 11%;
-    height: 34.2%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_commander_portrait_art.png");
+    left: 7%;
+    right: 7%;
+    top: 5.5%;
+    bottom: 5.5%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png");
     -unity-background-scale-mode: scale-and-crop;
 }
 
-.commander-frame {
+.commander-edit-button {
+    right: 8.8%;
+    top: 7%;
+    width: 14%;
+    height: 14%;
+}
+
+.commander-edit-frame {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_commander_panel_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_default.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 44;
-    -unity-slice-right: 44;
-    -unity-slice-top: 44;
-    -unity-slice-bottom: 44;
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 150;
+    -unity-slice-bottom: 150;
+    -unity-slice-scale: 0.14;
 }
 
-.commander-title-icon {
+.commander-edit-icon {
     position: absolute;
-    left: 13%;
-    top: 5.3%;
-    width: 11%;
-    height: 6.6%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
+    left: 22%;
+    right: 22%;
+    top: 22%;
+    bottom: 22%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.commander-title {
-    position: absolute;
-    left: 29.7%;
-    right: 7%;
-    top: 5.7%;
-    height: 82px;
-    font-size: 52px;
-    color: rgb(219, 214, 189);
-    -unity-text-align: middle-center;
-    white-space: nowrap;
-}
-
-.identity-panel {
-    position: absolute;
-    left: 11%;
-    right: 11%;
-    top: 51%;
-    height: 9.6%;
-}
-
 .identity-badge {
-    position: absolute;
-    left: 3%;
-    top: 23%;
-    width: 16%;
-    height: 65%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_resource_command_shield.png");
+    left: 4.4%;
+    top: 14%;
+    width: 14%;
+    height: 72%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .identity-name,
 .identity-level {
-    position: absolute;
-    left: 20%;
-    right: 0;
-    height: 54px;
-    -unity-text-align: middle-center;
+    left: 22%;
+    right: 5%;
+    -unity-text-align: middle-left;
     white-space: nowrap;
 }
 
 .identity-name {
-    top: 20%;
+    top: 7%;
+    height: 50%;
     font-size: 40px;
-    color: rgb(219, 214, 189);
+    color: rgb(242, 232, 196);
 }
 
 .identity-level {
-    top: 51%;
-    font-size: 34px;
-    color: rgb(245, 168, 41);
+    bottom: 6%;
+    height: 38%;
+    font-size: 31px;
+    color: rgb(167, 179, 80);
 }
 
-.readiness-panel {
-    position: absolute;
-    left: 8.8%;
-    right: 8.8%;
-    top: 61%;
-    height: 8.8%;
+.commander-level-badge {
+    left: 4.2%;
+    top: 13%;
+    width: 16.5%;
+    height: 74%;
+    font-size: 48px;
+    color: rgb(248, 204, 64);
+    -unity-text-align: middle-center;
+    background-color: rgba(23, 26, 24, 0.8);
+}
+
+.commander-progress-frame {
+    left: 25%;
+    right: 43%;
+    top: 34%;
+    height: 32%;
+    background-color: rgba(22, 24, 24, 0.92);
+}
+
+.commander-progress-fill {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 42%;
+    background-color: rgb(191, 174, 57);
+}
+
+.commander-progress-value {
+    right: 3%;
+    top: 10%;
+    width: 40%;
+    height: 80%;
+    font-size: 34px;
+    color: rgb(215, 196, 139);
+    -unity-text-align: middle-right;
+    white-space: nowrap;
 }
 
 .readiness-label {
-    position: absolute;
-    left: 4.8%;
-    top: 5.7%;
-    width: 45%;
-    height: 58px;
+    left: 0;
+    right: 0;
+    top: 5%;
+    height: 36%;
     font-size: 36px;
-    color: rgb(219, 214, 189);
-    -unity-text-align: middle-left;
+    color: rgb(201, 190, 153);
+    -unity-text-align: middle-center;
 }
 
 .readiness-segments {
-    position: absolute;
-    left: 2.1%;
-    right: 8.4%;
-    top: 41%;
-    height: 48px;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_readiness_segments.png");
-    -unity-background-scale-mode: stretch-to-fill;
+    left: 14%;
+    right: 12%;
+    bottom: 18%;
+    height: 36%;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.locked-rows-container {
-    position: absolute;
-    left: 6.6%;
-    right: 6.6%;
-    top: 73.1%;
-    height: 23.5%;
+.standing-tick {
+    width: 7%;
+    height: 100%;
+    background-color: rgba(67, 66, 57, 0.84);
 }
 
-.locked-row {
-    position: relative;
-    width: 100%;
-    height: 45.4%;
-}
-
-.lock-icon {
-    position: absolute;
-    left: 12%;
-    top: 20%;
-    width: 12%;
-    height: 56%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lock.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.locked-label {
-    position: absolute;
-    left: 26%;
-    right: 4%;
-    top: 0;
-    bottom: 0;
-    font-size: 34px;
-    color: rgb(158, 156, 138);
-    -unity-text-align: middle-left;
-    white-space: normal;
+.standing-on {
+    background-color: rgb(149, 161, 55);
 }
 
 .footer-content {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: 11.1%;
-}
-
-.comms-status-panel {
-    position: absolute;
-    left: 45px;
-    bottom: 45px;
-    width: 14.18%;
-    height: 95.8%;
-}
-
-.comms-frame {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_comms_status_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 32;
-    -unity-slice-right: 32;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
-}
-
-.comms-status-icon {
-    position: absolute;
-    left: 8%;
-    top: 29%;
-    width: 12%;
-    height: 42%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lightning_small.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.comms-label,
-.comms-detail {
-    position: absolute;
-    left: 25%;
-    right: 8%;
-    -unity-text-align: middle-left;
-    white-space: nowrap;
-}
-
-.comms-label {
-    top: 32%;
-    height: 64px;
-    font-size: 34px;
-    color: rgb(245, 168, 41);
-}
-
-.comms-detail {
-    top: 58%;
-    height: 48px;
-    font-size: 24px;
-    color: rgb(158, 156, 138);
+    bottom: 2.6%;
+    height: 12.2%;
 }
 
 .deploy-operation-button {
     position: absolute;
-    right: 0;
+    left: 50%;
     bottom: 0;
-    width: 23.77%;
-    height: 110%;
+    width: 29%;
+    height: 100%;
+    translate: -50% 0;
+}
+
+.deploy-frame,
+.deploy-chevron,
+.deploy-text,
+.deploy-star {
+    position: absolute;
 }
 
 .deploy-frame {
-    position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_cta_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 20;
-    -unity-slice-bottom: 20;
+    -unity-slice-left: 155;
+    -unity-slice-right: 155;
+    -unity-slice-top: 116;
+    -unity-slice-bottom: 96;
+    -unity-slice-scale: 0.22;
 }
 
 .deploy-text {
-    position: absolute;
-    left: 12%;
-    right: 22%;
-    top: 0;
-    bottom: 0;
-    font-size: 64px;
-    color: rgb(0, 0, 0);
+    left: 16%;
+    right: 16%;
+    top: 3%;
+    height: 74%;
+    font-size: 92px;
+    color: rgb(255, 243, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;
 }
 
-.deploy-chevrons {
-    position: absolute;
-    right: 7%;
-    top: 29.5%;
-    width: 13%;
-    height: 41%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_chevrons.png");
+.deploy-chevron {
+    top: 25%;
+    width: 10%;
+    height: 40%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.deploy-chevron-left {
+    left: 11%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_chevron_left.png");
+}
+
+.deploy-chevron-right {
+    right: 11%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_chevron_right.png");
+}
+
+.deploy-star {
+    left: 50%;
+    bottom: 7%;
+    width: 6.4%;
+    height: 18%;
+    translate: -50% 0;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_star_icon.png");
     -unity-background-scale-mode: scale-to-fit;
 }

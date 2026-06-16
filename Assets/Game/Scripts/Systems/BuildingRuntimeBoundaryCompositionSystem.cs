@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeBoundaryCompositionSystem
+internal sealed partial class BuildingRuntimeBoundaryCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public BuildingRuntimeBoundaryPublishSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,

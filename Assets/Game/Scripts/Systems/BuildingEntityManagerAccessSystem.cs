@@ -1,7 +1,16 @@
 using Unity.Entities;
 
-internal sealed class BuildingEntityManagerAccessSystem
+internal sealed partial class BuildingEntityManagerAccessSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public bool TryGetEntityManager(out EntityManager entityManager)
     {
         entityManager = default;

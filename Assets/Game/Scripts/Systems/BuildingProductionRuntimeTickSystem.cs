@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingProductionRuntimeTickSystem
+internal sealed partial class BuildingProductionRuntimeTickSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -64,8 +74,8 @@ internal sealed class BuildingProductionRuntimeTickSystem
         uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
         context.ProductionUpdateSystem.UpdatePendingProductions(
             context.ProductionUpdateContext,
-            Time.time,
-            Time.deltaTime,
+            UnityEngine.Time.time,
+            UnityEngine.Time.deltaTime,
             ref randomState);
         context.SetRandomState?.Invoke(randomState);
     }
@@ -83,12 +93,12 @@ internal sealed class BuildingProductionRuntimeTickSystem
             ? context.FactionResourceSystem.UpdateResourceProduction(
                 context.RuntimeBuildingMap,
                 secondsPerDay,
-                Time.deltaTime,
+                UnityEngine.Time.deltaTime,
                 context.OilBarrelsPerFuelBarrel)
             : context.FactionResourceSystem.UpdateResourceProduction(
                 context.RuntimeBuildings,
                 secondsPerDay,
-                Time.deltaTime,
+                UnityEngine.Time.deltaTime,
                 context.OilBarrelsPerFuelBarrel);
         if (result.OilExtractedBarrels > 0f)
             context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
@@ -101,11 +111,11 @@ internal sealed class BuildingProductionRuntimeTickSystem
         context.ResourceHaulerBridgeSystem?.UpdateResourceHaulers(
             context.ResourceHaulerBridgeContext,
             context.HasPendingPathJob != null && context.HasPendingPathJob(),
-            Time.time);
+            UnityEngine.Time.time);
     }
 
     public void CleanupRecentSpawnReservations(Context context)
     {
-        context.SpawnSystem?.CleanupRecentSpawnReservations(Time.time);
+        context.SpawnSystem?.CleanupRecentSpawnReservations(UnityEngine.Time.time);
     }
 }

@@ -1,7 +1,17 @@
 using System;
+using Unity.Entities;
 
-internal sealed class BuildingGameplayDisposalCompositionSystem
+internal sealed partial class BuildingGameplayDisposalCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public Action CreateDisposeAction(
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)

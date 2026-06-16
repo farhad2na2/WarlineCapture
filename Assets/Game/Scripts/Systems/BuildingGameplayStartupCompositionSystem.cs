@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayStartupCompositionSystem
+internal sealed partial class BuildingGameplayStartupCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public void Initialize(
         BuildingGameplayCompositionSourceSystem childSystems,
         BuildingPlacementSystemConfig buildingPlacementConfig,

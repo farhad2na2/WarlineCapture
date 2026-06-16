@@ -2,8 +2,17 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeCitySpawnSystem
+internal sealed partial class BuildingRuntimeCitySpawnSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommandBoundary;

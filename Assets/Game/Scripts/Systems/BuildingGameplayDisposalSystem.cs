@@ -1,8 +1,17 @@
 using System;
 using Unity.Entities;
 
-internal sealed class BuildingGameplayDisposalSystem
+internal sealed partial class BuildingGameplayDisposalSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal readonly struct Source
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;
@@ -68,7 +77,7 @@ internal sealed class BuildingGameplayDisposalSystem
     private static bool TryGetEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 

@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal static class BuildingSpawnPrefabLookupKeySystem
+internal sealed partial class BuildingSpawnPrefabLookupKeySystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public static string ResolveSpawnableLookupKey(GameObject prefab)
     {
         if (prefab == null)

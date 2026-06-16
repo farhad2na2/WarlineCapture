@@ -1,8 +1,18 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingProductionUpdateSystem
+internal sealed partial class BuildingProductionUpdateSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;

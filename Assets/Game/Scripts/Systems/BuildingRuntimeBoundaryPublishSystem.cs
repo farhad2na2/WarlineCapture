@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeBoundaryPublishSystem
+internal sealed partial class BuildingRuntimeBoundaryPublishSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     public readonly struct Context
@@ -73,7 +82,7 @@ internal sealed class BuildingRuntimeBoundaryPublishSystem
             em,
             boundaryQuery,
             context.RuntimeBuildings,
-            Time.time,
-            Time.frameCount);
+            UnityEngine.Time.time,
+            UnityEngine.Time.frameCount);
     }
 }

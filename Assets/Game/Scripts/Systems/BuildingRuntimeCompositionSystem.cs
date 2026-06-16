@@ -2,8 +2,17 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeCompositionSystem
+internal sealed partial class BuildingRuntimeCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal delegate bool TryGetGridDataDelegate(
@@ -215,7 +224,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             runtimeSource,
             source.BuildingCombatSystem,
             combatContext,
-            () => Time.time,
+            () => UnityEngine.Time.time,
             destroyedBuildingLifetimeSeconds);
     }
 

@@ -3,8 +3,17 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingProductionContextSystem
+internal sealed partial class BuildingProductionContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct Source
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;

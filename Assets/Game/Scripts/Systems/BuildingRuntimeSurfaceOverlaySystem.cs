@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeSurfaceOverlaySystem
+internal sealed partial class BuildingRuntimeSurfaceOverlaySystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     private const float OverlayPadding = 0.25f;
     private readonly List<Renderer> _rendererBuffer = new(32);
     private readonly Dictionary<int, Transform> _runwayTransformByBuildingId = new();

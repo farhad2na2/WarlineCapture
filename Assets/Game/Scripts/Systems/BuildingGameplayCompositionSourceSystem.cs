@@ -1,7 +1,16 @@
 using Unity.Entities;
 
-internal sealed class BuildingGameplayCompositionSourceSystem
+internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     internal readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem;
@@ -104,7 +113,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingVisualSystem>()
             : null;
@@ -112,7 +121,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingFactionVisualSystem ResolveBuildingFactionVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>()
             : null;
@@ -120,7 +129,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingRuntimeVisualSystem ResolveBuildingRuntimeVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingRuntimeVisualSystem>()
             : null;
@@ -128,7 +137,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingSelectionMarkerSystem>()
             : null;
@@ -136,7 +145,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingDestroyedVisualSystem ResolveBuildingDestroyedVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>()
             : null;
@@ -144,7 +153,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingSpawnPrefabSystem ResolveBuildingSpawnPrefabSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingSpawnPrefabSystem>()
             : null;
@@ -152,7 +161,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingPlacementVisualSystem>()
             : null;
@@ -160,7 +169,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingPlacementVisualUpdateSystem>()
             : null;
@@ -168,7 +177,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingPlacementVisualCompositionSystem ResolveBuildingPlacementVisualCompositionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingPlacementVisualCompositionSystem>()
             : null;
@@ -176,7 +185,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static RuntimeUnitPrefabSystem ResolveRuntimeUnitPrefabSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeUnitPrefabSystem>()
             : null;
@@ -184,7 +193,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingRuntimeResourcePrefabCompositionSystem ResolveBuildingRuntimeResourcePrefabCompositionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabCompositionSystem>()
             : null;
@@ -192,7 +201,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingRuntimeResourcePrefabContextSystem ResolveBuildingRuntimeResourcePrefabContextSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabContextSystem>()
             : null;

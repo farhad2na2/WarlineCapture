@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayCompositionSystem
+internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
 {
     private const float DestroyedBuildingLifetimeSeconds = 5f;
     private const float OilBarrelsPerFuelBarrel = 2f;
@@ -19,6 +19,15 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingPlacementInteractionCompositionSystem _placementInteractionCompositionSystem = new();
     private readonly BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem = new();
     private readonly BuildingGameplayCompositionResultSystem _resultSystem = new();
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public BuildingGameplayCompositionResultSystem.Result Initialize(
         BuildingPlacementSystemConfig buildingPlacementConfig,
@@ -585,7 +594,7 @@ internal sealed class BuildingGameplayCompositionSystem
 
     private static BuildingMarkerVisualCompositionSystem ResolveBuildingMarkerVisualCompositionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingMarkerVisualCompositionSystem>()
             : null;
@@ -593,7 +602,7 @@ internal sealed class BuildingGameplayCompositionSystem
 
     private static BuildingCitizenPopulationCompositionSystem ResolveBuildingCitizenPopulationCompositionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<BuildingCitizenPopulationCompositionSystem>()
             : null;

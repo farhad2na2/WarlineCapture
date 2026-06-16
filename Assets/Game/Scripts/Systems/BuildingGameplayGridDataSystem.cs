@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayGridDataSystem
+internal sealed partial class BuildingGameplayGridDataSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal bool TryGetGridForPlacementInput(

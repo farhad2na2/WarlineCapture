@@ -1,8 +1,18 @@
+using Unity.Entities;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class BuildingRuntimeObjectSystem
+internal sealed partial class BuildingRuntimeObjectSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal void DestroyRuntimeObject(Object target)
     {
         if (target == null)

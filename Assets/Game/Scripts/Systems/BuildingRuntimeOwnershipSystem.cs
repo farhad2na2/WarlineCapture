@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeOwnershipSystem
+internal sealed partial class BuildingRuntimeOwnershipSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     public readonly struct Context

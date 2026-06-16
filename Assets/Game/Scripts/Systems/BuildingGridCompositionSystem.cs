@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGridCompositionSystem
+internal sealed partial class BuildingGridCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public bool TryGetGridData(
         BuildingGameplayCompositionSourceSystem source,
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,

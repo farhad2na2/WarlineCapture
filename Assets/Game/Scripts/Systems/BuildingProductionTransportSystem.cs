@@ -8,7 +8,7 @@ using UnityEngine;
 using static UnityEngine.Object;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 
-internal sealed class BuildingProductionTransportSystem
+internal sealed partial class BuildingProductionTransportSystem : SystemBase
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;
@@ -30,6 +30,15 @@ internal sealed class BuildingProductionTransportSystem
     private Transform _runtimeRoot;
     private bool[] _laneUsage = new bool[4];
     private int _createdTransportStateCount;
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
 
     public readonly struct Context
     {
@@ -361,14 +370,14 @@ internal sealed class BuildingProductionTransportSystem
         int2 runwayCell,
         Context context)
     {
-        if (World.DefaultGameObjectInjectionWorld == null ||
+        if (Unity.Entities.World.DefaultGameObjectInjectionWorld == null ||
             building.ProducedUnits == null ||
             building.ProducedUnits.Count == 0)
         {
             return;
         }
 
-        EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityManager em = Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;
         Entity newest = building.ProducedUnits[building.ProducedUnits.Count - 1];
         if (newest == Entity.Null || !em.Exists(newest))
             return;

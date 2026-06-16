@@ -2,8 +2,17 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingProductionCompositionSystem
+internal sealed partial class BuildingProductionCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public BuildingProductionContextSystem.Source CreateRuntimeContextSource(
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
@@ -44,7 +53,7 @@ internal sealed class BuildingProductionCompositionSystem
                     building,
                     productionIndex,
                     spawnUnitPrefab,
-                    Time.time),
+                    UnityEngine.Time.time),
             buildingId => source.RuntimeBuildingSystem.SelectBuilding(buildingId),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
             () => runtimeSource.RefreshBuildingMarkerVisibility?.Invoke(),

@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeTickCompositionSystem
+internal sealed partial class BuildingRuntimeTickCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public BuildingPlacementRuntimeTickContextSystem.Source Create(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
@@ -30,13 +40,13 @@ internal sealed class BuildingRuntimeTickCompositionSystem
         return new BuildingPlacementRuntimeTickContextSystem.Source(
             createProductionRuntimeTickContext(source),
             createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
-            () => source.BuildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(runtimeVisualContext, Time.time),
+            () => source.BuildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
             () => source.BuildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
                 combatContext,
-                Time.time,
+                UnityEngine.Time.time,
                 destroyedBuildingLifetimeSeconds),
-            () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, Time.time),
-            () => source.BuildingBarrierSystem.UpdateRoadBarrierDoors(barrierContext, Time.deltaTime),
+            () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
+            () => source.BuildingBarrierSystem.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
             () => source.BuildingPlacementRedirectSystem.FlushPendingMarkerRefresh(
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),

@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal static class UnitRenderingMetadataAuthoringSystem
+internal sealed partial class UnitRenderingMetadataAuthoringSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public static bool TryGetUnitRenderingMetadata(GameObject prefab, out UnitRenderingMetadata metadata)
     {
         metadata = default;

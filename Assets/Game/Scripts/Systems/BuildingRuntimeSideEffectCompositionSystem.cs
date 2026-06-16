@@ -1,8 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeSideEffectCompositionSystem
+internal sealed partial class BuildingRuntimeSideEffectCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     public void BeginDeferredRuntimeBuildingSideEffects(

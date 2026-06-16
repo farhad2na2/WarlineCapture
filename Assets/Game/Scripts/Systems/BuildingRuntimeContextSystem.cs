@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeContextSystem
+internal sealed partial class BuildingRuntimeContextSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public readonly struct RuntimeSource
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingEntity> RuntimeBuildingSystem;

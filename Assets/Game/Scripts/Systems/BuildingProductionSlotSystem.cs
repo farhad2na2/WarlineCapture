@@ -3,8 +3,17 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingProductionSlotSystem
+internal sealed partial class BuildingProductionSlotSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     public bool TryReserveProductionSlot(RuntimeBuildingEntity building, EntityManager entityManager, out int reservedProductionSlotIndex)
     {
         reservedProductionSlotIndex = -1;

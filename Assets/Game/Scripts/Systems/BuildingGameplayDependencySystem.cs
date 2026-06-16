@@ -1,8 +1,18 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayDependencySystem
+internal sealed partial class BuildingGameplayDependencySystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
     internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }

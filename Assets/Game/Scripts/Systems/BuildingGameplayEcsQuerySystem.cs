@@ -1,9 +1,9 @@
 using Unity.Entities;
 using Unity.Transforms;
 
-internal sealed class BuildingGameplayEcsQuerySystem
+internal sealed partial class BuildingGameplayEcsQuerySystem : SystemBase
 {
-    private World _queryWorld;
+    private Unity.Entities.World _queryWorld;
     private EntityQuery _gridDataQuery;
     private EntityQuery _redirectUnitsQuery;
     private EntityQuery _unitPrefabRegistryQuery;
@@ -26,9 +26,18 @@ internal sealed class BuildingGameplayEcsQuerySystem
     internal EntityQuery LiveFactionUnitsQuery => _liveFactionUnitsQuery;
     internal EntityQuery BuildingRuntimeBoundaryQuery => _buildingRuntimeBoundaryQuery;
 
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal void EnsureEntityQueries(EntityManager em)
     {
-        World world = em.World;
+        Unity.Entities.World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
             return;
 

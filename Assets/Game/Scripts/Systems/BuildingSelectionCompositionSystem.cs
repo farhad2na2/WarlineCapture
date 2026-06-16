@@ -1,7 +1,17 @@
+using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingSelectionCompositionSystem
+internal sealed partial class BuildingSelectionCompositionSystem : SystemBase
 {
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
     internal delegate bool TryGetGridForSelectionDelegate(
         BuildingGameplayCompositionSourceSystem source,
         out GridConfig grid);

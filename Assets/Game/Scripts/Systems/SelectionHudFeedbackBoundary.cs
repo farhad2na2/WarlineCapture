@@ -522,6 +522,8 @@ public sealed class SelectionHudFeedbackBoundary
         bool vehicle = context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, entity);
         TryGetHealthModel(context, em, entity, out string healthLabel, out float health01);
         string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiReadModelLookup);
+        string focusedName = context.SelectionUiReadModelLookup.ResolveFocusedUnitName(em, entity);
+        string focusedDescription = context.SelectionUiReadModelLookup.ResolveFocusedUnitDescription(em, entity);
         if (tryGetAttackModeOrderSnapshot != null &&
             tryGetAttackModeOrderSnapshot(out string attackModeOrderText))
         {
@@ -530,8 +532,8 @@ public sealed class SelectionHudFeedbackBoundary
 
         return new MatchHudSelectionPanelModel(
             true,
-            context.SelectionUiReadModelLookup.ResolveFocusedUnitName(em, entity),
-            context.SelectionUiReadModelLookup.ResolveFocusedUnitDescription(em, entity),
+            focusedName,
+            focusedDescription,
             orderText,
             healthLabel,
             health01,

@@ -87,6 +87,12 @@ public struct UnitDetailedVisualReference : IComponentData
     public Entity Root;
 }
 
+public struct UnitSelectionHitbox : IComponentData
+{
+    public float3 Center;
+    public float3 Extents;
+}
+
 public struct UnitMidLodPrefabReference : IComponentData
 {
     public Entity Prefab;

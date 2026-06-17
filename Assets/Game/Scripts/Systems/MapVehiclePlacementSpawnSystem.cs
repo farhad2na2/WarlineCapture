@@ -191,7 +191,27 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         _randomState = math.max(1u, rng.state);
 
         ApplyAuthoredTransform(em, ecb, instance, prefabEntity, hasPrefab, placement);
+        FixedString64Bytes sourceKey = ResolveSpawnedVehicleSourceKey(em, prefabEntity, hasPrefab, placement);
+        if (sourceKey.Length > 0)
+            SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitSourcePrefabKey { Value = sourceKey });
         SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitRespawnPrefab { Prefab = prefabEntity });
+    }
+
+    private static FixedString64Bytes ResolveSpawnedVehicleSourceKey(
+        EntityManager em,
+        Entity prefabEntity,
+        bool hasPrefab,
+        MapVehiclePlacementConfigEntry placement)
+    {
+        if (hasPrefab &&
+            prefabEntity != Entity.Null &&
+            em.Exists(prefabEntity) &&
+            em.HasComponent<UnitSourcePrefabKey>(prefabEntity))
+        {
+            return em.GetComponentData<UnitSourcePrefabKey>(prefabEntity).Value;
+        }
+
+        return GetVehiclePrefabSourceKey(placement);
     }
 
     private static void ApplyAuthoredTransform(

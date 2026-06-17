@@ -10,6 +10,8 @@ using UnityEngine;
 public sealed partial class FocusableUnitLookupSystem : SystemBase
 {
     private const float ClickScreenFallbackTorsoHeight = 0.85f;
+    private const float SelectionHitboxScreenPaddingPixels = 8f;
+    private const float MinimumSelectionHitboxExtent = 0.05f;
 
     private struct FocusableUnitCoverage
     {
@@ -136,6 +138,7 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
             UnitAirType = em.GetComponentTypeHandle<UnitAirComponent>(true),
             UnitTargetType = em.GetComponentTypeHandle<UnitTarget>(true),
             EngageTargetType = em.GetComponentTypeHandle<EngageTarget>(true),
+            UnitSelectionHitboxType = em.GetComponentTypeHandle<UnitSelectionHitbox>(true),
             Candidates = candidates
         }.Run(_focusableUnitsQuery);
 
@@ -146,6 +149,17 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
             float distanceSq = math.min(
                 ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
                 ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
+            if (candidate.HasSelectionHitbox != 0 &&
+                TryGetSelectionHitboxScreenDistanceSq(
+                    worldCamera,
+                    candidate.LocalToWorld,
+                    candidate.SelectionHitbox,
+                    screenPosition,
+                    out float hitboxDistanceSq))
+            {
+                distanceSq = math.min(distanceSq, hitboxDistanceSq);
+            }
+
             if (distanceSq < bestDistanceSq)
             {
                 bestDistanceSq = distanceSq;
@@ -358,10 +372,67 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
         return (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
     }
 
+    private static bool TryGetSelectionHitboxScreenDistanceSq(
+        Camera worldCamera,
+        float4x4 localToWorld,
+        UnitSelectionHitbox hitbox,
+        Vector2 screenPosition,
+        out float distanceSq)
+    {
+        distanceSq = float.MaxValue;
+        float3 extents = math.abs(hitbox.Extents);
+        if (math.cmax(extents) <= MinimumSelectionHitboxExtent)
+            return false;
+
+        Vector2 min = new(float.MaxValue, float.MaxValue);
+        Vector2 max = new(float.MinValue, float.MinValue);
+        bool hasVisibleCorner = false;
+        for (int ix = 0; ix < 2; ix++)
+        {
+            float x = ix == 0 ? -extents.x : extents.x;
+            for (int iy = 0; iy < 2; iy++)
+            {
+                float y = iy == 0 ? -extents.y : extents.y;
+                for (int iz = 0; iz < 2; iz++)
+                {
+                    float z = iz == 0 ? -extents.z : extents.z;
+                    float3 world = math.transform(localToWorld, hitbox.Center + new float3(x, y, z));
+                    Vector3 screen = worldCamera.WorldToScreenPoint(new Vector3(world.x, world.y, world.z));
+                    if (screen.z <= 0f)
+                        continue;
+
+                    Vector2 point = new(screen.x, screen.y);
+                    min = Vector2.Min(min, point);
+                    max = Vector2.Max(max, point);
+                    hasVisibleCorner = true;
+                }
+            }
+        }
+
+        if (!hasVisibleCorner)
+            return false;
+
+        Vector2 padding = Vector2.one * SelectionHitboxScreenPaddingPixels;
+        min -= padding;
+        max += padding;
+
+        float dx = screenPosition.x < min.x
+            ? min.x - screenPosition.x
+            : (screenPosition.x > max.x ? screenPosition.x - max.x : 0f);
+        float dy = screenPosition.y < min.y
+            ? min.y - screenPosition.y
+            : (screenPosition.y > max.y ? screenPosition.y - max.y : 0f);
+        distanceSq = dx * dx + dy * dy;
+        return true;
+    }
+
     private struct FocusableScreenDistanceCandidate
     {
         public Entity Entity;
         public float3 Position;
+        public float4x4 LocalToWorld;
+        public UnitSelectionHitbox SelectionHitbox;
+        public byte HasSelectionHitbox;
     }
 
     [BurstCompile]
@@ -373,6 +444,7 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
         [ReadOnly] public ComponentTypeHandle<UnitAirComponent> UnitAirType;
         [ReadOnly] public ComponentTypeHandle<UnitTarget> UnitTargetType;
         [ReadOnly] public ComponentTypeHandle<EngageTarget> EngageTargetType;
+        [ReadOnly] public ComponentTypeHandle<UnitSelectionHitbox> UnitSelectionHitboxType;
         public NativeList<FocusableScreenDistanceCandidate> Candidates;
 
         public void Execute(
@@ -385,10 +457,14 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
             bool hasAir = chunk.Has(ref UnitAirType);
             bool hasUnitTarget = chunk.Has(ref UnitTargetType);
             bool hasEngageTarget = chunk.Has(ref EngageTargetType);
+            bool hasSelectionHitbox = chunk.Has(ref UnitSelectionHitboxType);
             NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
             NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref LocalToWorldType);
             NativeArray<UnitAirComponent> airStates = hasAir
                 ? chunk.GetNativeArray(ref UnitAirType)
+                : default;
+            NativeArray<UnitSelectionHitbox> selectionHitboxes = hasSelectionHitbox
+                ? chunk.GetNativeArray(ref UnitSelectionHitboxType)
                 : default;
 
             for (int i = 0; i < entities.Length; i++)
@@ -399,7 +475,10 @@ public sealed partial class FocusableUnitLookupSystem : SystemBase
                 Candidates.Add(new FocusableScreenDistanceCandidate
                 {
                     Entity = entities[i],
-                    Position = transforms[i].Position
+                    Position = transforms[i].Position,
+                    LocalToWorld = transforms[i].Value,
+                    SelectionHitbox = hasSelectionHitbox ? selectionHitboxes[i] : default,
+                    HasSelectionHitbox = (byte)(hasSelectionHitbox ? 1 : 0)
                 });
             }
         }

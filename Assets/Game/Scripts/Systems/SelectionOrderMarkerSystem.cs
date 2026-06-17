@@ -617,6 +617,10 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
         Entity source,
         IsPreviewTargetValidWithSourceDelegate isValidTarget)
     {
+        em.CompleteDependencyBeforeRO<Faction>();
+        em.CompleteDependencyBeforeRO<LocalTransform>();
+        em.CompleteDependencyBeforeRO<UnitHealth>();
+
         int markerIndex = 0;
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);

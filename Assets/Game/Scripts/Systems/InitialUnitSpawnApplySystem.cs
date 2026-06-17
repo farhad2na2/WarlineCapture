@@ -30,6 +30,8 @@ public partial struct InitialUnitSpawnApplySystem : ISystem
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new Faction { Id = faction });
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitRespawnPrefab { Prefab = Entity.Null });
+        if (hasPrefab && em.HasComponent<UnitSourcePrefabKey>(prefab))
+            SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, em.GetComponentData<UnitSourcePrefabKey>(prefab));
         SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
         return instance;
     }

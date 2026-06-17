@@ -28,7 +28,8 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.MixedGroundVehicleAndTransportUsesVehiclePortraitKind());
             RunCase(test => test.GroundTransportAndAirTransportUsesAirVehiclePortraitKind());
             RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=10");
+            RunCase(test => test.FocusedTransportPlaneSelectionPanelUsesResolvedPortrait());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=11");
         }
         catch (System.Exception ex)
         {
@@ -366,6 +367,75 @@ public sealed class SelectionSummaryQuerySystemTests
         }
     }
 
+    [Test]
+    public void FocusedTransportPlaneSelectionPanelUsesResolvedPortrait()
+    {
+        EntityManager em = _world.EntityManager;
+        Texture2D portraitTexture = new Texture2D(1, 1);
+        Texture2D fallbackTexture = new Texture2D(1, 1);
+        Sprite portraitSprite = Sprite.Create(portraitTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        Sprite fallbackSprite = Sprite.Create(fallbackTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        try
+        {
+            Entity transport = CreatePlayerUnit(em, "Transport Plane", new int2(4, 2), 100);
+            em.AddComponent<SelectedUnitTag>(transport);
+            em.AddComponentData(transport, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+            em.AddComponentData(transport, new UnitAirMovement
+            {
+                CruiseHeight = 55f,
+                RunwayTaxiSpeed = 12f
+            });
+            em.AddComponentData(transport, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
+
+            var selectionState = new SelectionStateSystem();
+            selectionState.SetFocusedUnit(transport);
+            var lifecycle = new FocusedUnitLifecycleSystem();
+            var panel = new RecordingSelectionPanelView(fallbackSprite);
+            var feedback = new SelectionHudFeedbackBoundary();
+            feedback.BindMatchHudSelectionPanel(panel);
+
+            var context = new SelectionHudFeedbackBoundary.Context(
+                new SelectionUiReadModelLookup(),
+                TryGetEntityManager,
+                (_, entity) => entity == transport ? portraitSprite : null);
+            var passengers = new List<MatchHudSelectionPanelPassengerItemModel>();
+
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                passengers,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            Assert.IsTrue(panel.AppliedModel.Visible);
+            Assert.AreSame(portraitSprite, panel.AppliedModel.PortraitSprite);
+            Assert.AreEqual("Transport Plane", panel.AppliedModel.Title);
+            Assert.IsFalse(panel.AppliedModel.BadgeVisible);
+        }
+        finally
+        {
+            Object.DestroyImmediate(portraitSprite);
+            Object.DestroyImmediate(fallbackSprite);
+            Object.DestroyImmediate(portraitTexture);
+            Object.DestroyImmediate(fallbackTexture);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
     private static Entity CreatePlayerUnit(EntityManager em, string displayName, int2 cell, int health)
     {
         Entity entity = em.CreateEntity();
@@ -393,5 +463,60 @@ public sealed class SelectionSummaryQuerySystemTests
         FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(field, $"Missing private field {fieldName} on {target.GetType().Name}.");
         field.SetValue(target, value);
+    }
+
+    private sealed class RecordingSelectionPanelView : IMatchHudSelectionPanelView
+    {
+        private readonly Sprite _fallbackSprite;
+
+        public RecordingSelectionPanelView(Sprite fallbackSprite)
+        {
+            _fallbackSprite = fallbackSprite;
+        }
+
+        public MatchHudSelectionPanelModel AppliedModel { get; private set; }
+
+        public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
+        {
+        }
+
+        public void BindTransportPassengerActions(
+            System.Action passengerChipRequested,
+            System.Action passengerDrawerCloseRequested,
+            System.Action passengerExitAllRequested,
+            System.Action<UiEntityHandle> passengerExitRequested)
+        {
+        }
+
+        public void HideSelection()
+        {
+            AppliedModel = MatchHudSelectionPanelModel.Hidden;
+        }
+
+        public void SetSelectionVisible(bool visible)
+        {
+        }
+
+        public void SetSelectionVisible(bool visible, Sprite portraitSprite)
+        {
+        }
+
+        public void SetBoardActionSelected(bool selected)
+        {
+        }
+
+        public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
+        {
+            return _fallbackSprite;
+        }
+
+        public void Apply(MatchHudSelectionPanelModel model)
+        {
+            AppliedModel = model;
+        }
+
+        public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
+        {
+        }
     }
 }

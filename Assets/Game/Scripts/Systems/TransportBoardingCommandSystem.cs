@@ -9,6 +9,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 {
     private const int TransportPlaneVehicleMaxFootprintSpan = 3;
     private const int TransportPlaneVehicleMaxFootprintCells = 9;
+    public const int TransportBoardingCommandMaxDistanceCells = 36;
 
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate bool TryGetClickedCellDelegate(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint);
@@ -469,7 +470,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 request,
                 false,
                 TacticalCommandReasonCode.CommandUnavailable,
-                "No nearby soldiers can board this transport.");
+                "No nearby units can board this transport.");
         }
 
         string message = orderedCount == 1 ? "Boarding 1 unit." : $"Boarding {orderedCount} units.";
@@ -1402,11 +1403,32 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
                 int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
                 int distance = math.abs(cell.x - transportCell.x) + math.abs(cell.y - transportCell.y);
+                if (distance > TransportBoardingCommandMaxDistanceCells)
+                    continue;
+
                 candidates.Add(new BoardAllTransportCandidate(candidate, distance));
             }
         }
 
         candidates.Sort();
+    }
+
+    public static bool IsWithinTransportBoardingCommandRange(EntityManager em, Entity transport, Entity passenger)
+    {
+        if (transport == Entity.Null ||
+            passenger == Entity.Null ||
+            !em.Exists(transport) ||
+            !em.Exists(passenger) ||
+            !em.HasComponent<UnitGrid>(transport) ||
+            !em.HasComponent<UnitGrid>(passenger))
+        {
+            return false;
+        }
+
+        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
+        int2 passengerCell = em.GetComponentData<UnitGrid>(passenger).Cell;
+        int distance = math.abs(passengerCell.x - transportCell.x) + math.abs(passengerCell.y - transportCell.y);
+        return distance <= TransportBoardingCommandMaxDistanceCells;
     }
 
     public bool IsBoardablePlayerTransportClick(

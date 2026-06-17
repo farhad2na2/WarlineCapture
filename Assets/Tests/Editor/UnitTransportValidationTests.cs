@@ -26,6 +26,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer());
             RunTest(test => test.TransportPlaneCapacity_PreservesAuthoredCargoCapacity());
             RunTest(test => test.TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources());
+            RunTest(test => test.TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences());
             RunTest(test => test.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation());
             RunTest(test => test.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger());
             RunTest(test => test.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger());
@@ -54,6 +55,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
             RunTest(test => test.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers());
+            RunTest(test => test.BoardAllSelectedTransportCommand_IgnoresDistantPassengers());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
             RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
@@ -71,7 +73,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=50");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=52");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -194,6 +196,62 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(55f, config.TransportCruiseHeight);
         Assert.IsNotNull(config.SoldierParachuteVisualPrefab);
         Assert.IsNotNull(config.VehicleEmergencyDropVisualPrefab);
+        Assert.IsNotNull(config.PortraitSprite);
+        Assert.IsNotNull(config.PortraitCardSprite);
+        Assert.IsNotNull(config.PortraitActionSprite);
+        Assert.IsNotNull(config.UnitSelectionMarkerPrefab);
+        Assert.IsNotNull(config.VehicleSelectionMarkerPrefab);
+        Assert.IsNotNull(config.UnitHealthBarPrefab);
+        Assert.IsNotNull(config.VehicleHealthBarPrefab);
+    }
+
+    [Test]
+    public void TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences()
+    {
+        const string PrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+
+        Assert.IsNotNull(prefab);
+        Assert.IsTrue(prefab.TryGetComponent(out UnitGridAuthoring authoring));
+        Assert.AreEqual("Transport Plane", authoring.ConfiguredDisplayName);
+        Assert.IsTrue(authoring.IsAirUnit);
+        Assert.AreEqual(24, authoring.SoldierTransportCapacity);
+        Assert.AreEqual(2, authoring.VehicleTransportCapacity);
+        Assert.IsNotNull(authoring.PortraitSprite);
+        Assert.IsNotNull(authoring.PortraitCardSprite);
+        Assert.IsNotNull(authoring.PortraitActionSprite);
+        Assert.IsNotNull(SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab));
+        Assert.IsNotNull(SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite(prefab));
+        Assert.IsNotNull(authoring.UnitSelectionMarkerPrefab);
+        Assert.IsNotNull(authoring.VehicleSelectionMarkerPrefab);
+        Assert.IsNotNull(authoring.UnitHealthBarPrefab);
+        Assert.IsNotNull(authoring.VehicleHealthBarPrefab);
+
+        var definitionSystem = new BuildingDefinitionSystem();
+        definitionSystem.ConfigureAuthoringMetadataResolvers(null, TryGetTestUnitDefinitionMetadata);
+        definitionSystem.RebuildSpawnablesLookup(null, new List<GameObject> { prefab });
+        Assert.IsTrue(definitionSystem.TryResolveConfiguredUnitSpawnPrefab("Unit_Veh_Plane_Transport", out GameObject resolvedByPrefabName));
+        Assert.AreSame(prefab, resolvedByPrefabName);
+        Assert.IsTrue(definitionSystem.TryResolveConfiguredUnitSpawnPrefab("Transport Plane", out GameObject resolvedByDisplayName));
+        Assert.AreSame(prefab, resolvedByDisplayName);
+    }
+
+    private static bool TryGetTestUnitDefinitionMetadata(GameObject prefab, out BuildingDefinitionSystem.UnitDefinitionMetadata metadata)
+    {
+        metadata = default;
+        if (prefab == null || !prefab.TryGetComponent(out UnitGridAuthoring authoring))
+            return false;
+
+        metadata = new BuildingDefinitionSystem.UnitDefinitionMetadata
+        {
+            DisplayName = authoring.ConfiguredDisplayName,
+            Description = authoring.ConfiguredDescription,
+            FootprintCells = authoring.GetConfiguredFootprintCells(),
+            CanRequest = authoring.CanRequest,
+            Price = authoring.Price
+        };
+        return true;
     }
 
     [Test]
@@ -1303,6 +1361,56 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(2, CountBoardingTargets(em, nearSoldier, farSoldier));
         Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(nearSoldier).Transport);
         Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(farSoldier).Transport);
+    }
+
+    [Test]
+    public void BoardAllSelectedTransportCommand_IgnoresDistantPassengers()
+    {
+        using var world = new World("BoardAllSelectedTransportCommand_IgnoresDistantPassengers");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 128, 128);
+
+        Entity transport = CreateTransport(em, new int2(10, 10), air: false, airborne: false);
+        Entity nearSoldier = CreateBoardAllSoldier(em, new int2(7, 10));
+        Entity distantSoldier = CreateBoardAllSoldier(em, new int2(80, 80));
+        Entity commandEntity = em.CreateEntity();
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardAllSelectedTransport,
+            RequestId = 18,
+            Frame = 91
+        });
+
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(transport);
+        var transportCommandSystem = new TransportBoardingCommandSystem();
+
+        bool handled = transportCommandSystem.ProcessCommandIntentRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new UnitTransportCapacitySystem(),
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            selectionState,
+            TryGetNoClickedUnit,
+            TryGetNoClickedCell);
+
+        Assert.IsTrue(handled);
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardAllSelectedTransport, results[0].Kind);
+        Assert.AreEqual(18, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual("Boarding 1 unit.", results[0].Message.ToString());
+        Assert.AreEqual(1, CountBoardingTargets(em, nearSoldier, distantSoldier));
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(nearSoldier).Transport);
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(distantSoldier));
     }
 
     [Test]

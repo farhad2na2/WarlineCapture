@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 
@@ -275,6 +276,14 @@ public class UnitGridAuthoring : MonoBehaviour
                 ArriveDistance = authoring.arriveDistance
             });
             AddComponent(entity, new UnitFootprint { Size = footprint });
+            if (hasModelBounds)
+            {
+                AddComponent(entity, new UnitSelectionHitbox
+                {
+                    Center = new float3(modelBounds.center.x, modelBounds.center.y, modelBounds.center.z),
+                    Extents = new float3(modelBounds.extents.x, modelBounds.extents.y, modelBounds.extents.z)
+                });
+            }
             AddComponent(entity, new UnitMovementBehavior
             {
                 AllowIdleWander = (byte)(authoring.allowIdleWander ? 1 : 0),
@@ -412,32 +421,6 @@ public class UnitGridAuthoring : MonoBehaviour
                     TargetLateralOffset = lateralOffset * 0.25f
                 });
             }
-            if (authoring.config != null)
-                DependsOn(authoring.config);
-            AddTransportAirdropVisualPrefabReferences(authoring, entity);
-            AddTransportPlaneDoorMetadata(authoring, entity);
-            GameObject impactPrefab = authoring.AttackImpactPrefab;
-            GameObject muzzleFlashPrefab = authoring.MuzzleFlashPrefab;
-            float muzzleFlashHeightOffset = authoring.MuzzleFlashHeightOffset;
-            float muzzleFlashForwardOffset = authoring.MuzzleFlashForwardOffset;
-            if (impactPrefab != null)
-            {
-                AddComponentObject(entity, new UnitAttackImpactVfxReference
-                {
-                    Prefab = impactPrefab
-                });
-            }
-            if (muzzleFlashPrefab != null)
-            {
-                AddComponentObject(entity, new UnitMuzzleFlashVfxReference
-                {
-                    Prefab = muzzleFlashPrefab,
-                    HeightOffset = math.max(0f, muzzleFlashHeightOffset),
-                    ForwardOffset = math.max(0f, muzzleFlashForwardOffset)
-                });
-            }
-            AddGroundMissileLauncherComponents(authoring, entity);
-            AddAirMissileLauncherComponents(authoring, entity);
 
             int maxHp = authoring.ConfiguredMaxHealth;
             AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
@@ -540,6 +523,33 @@ public class UnitGridAuthoring : MonoBehaviour
                     DestroyedVisibleScale = !Mathf.Approximately(destroyed.localScale.x, 0f) ? destroyed.localScale.x : 1f
                 });
             }
+
+            if (authoring.config != null)
+                DependsOn(authoring.config);
+            AddTransportAirdropVisualPrefabReferences(authoring, entity);
+            AddTransportPlaneDoorMetadata(authoring, entity);
+            GameObject impactPrefab = authoring.AttackImpactPrefab;
+            GameObject muzzleFlashPrefab = authoring.MuzzleFlashPrefab;
+            float muzzleFlashHeightOffset = authoring.MuzzleFlashHeightOffset;
+            float muzzleFlashForwardOffset = authoring.MuzzleFlashForwardOffset;
+            if (impactPrefab != null)
+            {
+                AddComponentObject(entity, new UnitAttackImpactVfxReference
+                {
+                    Prefab = impactPrefab
+                });
+            }
+            if (muzzleFlashPrefab != null)
+            {
+                AddComponentObject(entity, new UnitMuzzleFlashVfxReference
+                {
+                    Prefab = muzzleFlashPrefab,
+                    HeightOffset = math.max(0f, muzzleFlashHeightOffset),
+                    ForwardOffset = math.max(0f, muzzleFlashForwardOffset)
+                });
+            }
+            AddGroundMissileLauncherComponents(authoring, entity);
+            AddAirMissileLauncherComponents(authoring, entity);
 
             Transform turret = FindDescendantByName(authoring.transform, "Turret");
             if (authoring.UsesTurretAim && turret != null)
@@ -939,6 +949,19 @@ public class UnitGridAuthoring : MonoBehaviour
             if (parachutePrefab == null && emergencyDropPrefab == null)
                 return;
 
+            RequireValidPrefabReference(
+                parachutePrefab,
+                authoring,
+                nameof(authoring.SoldierParachuteVisualPrefab));
+            RequireValidPrefabReference(
+                emergencyDropPrefab,
+                authoring,
+                nameof(authoring.VehicleEmergencyDropVisualPrefab));
+            if (parachutePrefab != null)
+                DependsOn(parachutePrefab);
+            if (emergencyDropPrefab != null)
+                DependsOn(emergencyDropPrefab);
+
             AddComponent(entity, new UnitTransportAirdropVisualPrefabs
             {
                 SoldierParachuteVisualPrefab = parachutePrefab != null
@@ -948,6 +971,25 @@ public class UnitGridAuthoring : MonoBehaviour
                     ? GetEntity(emergencyDropPrefab, TransformUsageFlags.Dynamic)
                     : Entity.Null
             });
+        }
+
+        private static void RequireValidPrefabReference(GameObject prefab, UnitGridAuthoring authoring, string fieldName)
+        {
+            if (prefab == null)
+                return;
+
+            try
+            {
+                _ = prefab.scene;
+            }
+            catch (MissingReferenceException exception)
+            {
+                string configName = authoring.config != null ? authoring.config.name : authoring.gameObject.name;
+                throw new InvalidOperationException(
+                    $"{nameof(UnitGridAuthoring)} requires a valid prefab reference for {fieldName} on '{configName}', " +
+                    "but Unity loaded a stale or destroyed object reference during baking. Reassign or reimport the prefab reference in the config asset.",
+                    exception);
+            }
         }
 
         private void AddTransportPlaneDoorMetadata(UnitGridAuthoring authoring, Entity entity)

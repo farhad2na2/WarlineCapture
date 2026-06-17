@@ -33,6 +33,8 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
             tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
+            tests.UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden();
+            tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
             tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
@@ -42,7 +44,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=17");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=19");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -313,6 +315,75 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         Assert.IsFalse(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
         Assert.IsFalse(em.Exists(characterOutline), "Destroying a selected unit marker must also destroy ECS selection-object outlines that parent outside the marker tree.");
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateReferenceSelectionMarkerPrefab(em);
+        Entity aircraft = CreateVehicle(em, health: 100);
+        Entity aircraftRenderer = CreateRenderableChild(em, aircraft, "TransportPlaneBody", 1.2f);
+        em.AddComponentData(aircraft, new UnitAirMovement
+        {
+            CruiseHeight = 55f,
+            RunwayTaxiSpeed = 12f
+        });
+        em.AddComponentData(aircraft, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(aircraft);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(aircraft));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(aircraft).Instance;
+        Entity markerModel = FindLinkedEntityByName(em, marker, "Model");
+        Entity vehicleFrame = FindLinkedEntityByName(em, marker, "VehicleBoundsFrame");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(markerModel).Scale, 0.001f, "Air vehicles should not show the ground marker model.");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleFrame).Scale, 0.001f, "Air vehicles should not show the under-vehicle rectangle.");
+
+        Entity outline = AssertSelectionObjectOutline(em, aircraft, aircraftRenderer, "Vehicle");
+        Assert.AreEqual(1.2f, em.GetComponentData<LocalTransform>(outline).Scale, 0.001f, "Air vehicles still need a visible selected-body outline.");
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateReferenceSelectionMarkerPrefab(em);
+        Entity aircraft = CreateVehicle(em, health: 100);
+        Entity visualRoot = CreateVisualInstance(em);
+        em.SetName(visualRoot, "Unit_Veh_Plane_Transport_Model");
+        Entity aircraftRenderer = CreateRenderableChild(em, visualRoot, "TransportPlaneBody", 1.35f);
+        em.AddComponentData(aircraft, new UnitDetailedVisualReference { Root = visualRoot });
+        em.AddComponentData(aircraft, new UnitAirMovement
+        {
+            CruiseHeight = 55f,
+            RunwayTaxiSpeed = 12f
+        });
+        em.AddComponentData(aircraft, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(aircraft);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        system.Update(world.Unmanaged);
+        visibilitySystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(aircraft));
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(aircraft).Instance;
+        Entity markerModel = FindLinkedEntityByName(em, marker, "Model");
+        Entity vehicleFrame = FindLinkedEntityByName(em, marker, "VehicleBoundsFrame");
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(markerModel).Scale, 0.001f);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleFrame).Scale, 0.001f);
+
+        Entity outline = AssertSelectionObjectOutline(em, aircraft, aircraftRenderer, "Vehicle", visualRoot);
+        Assert.AreEqual(1.35f, em.GetComponentData<LocalTransform>(outline).Scale, 0.001f);
     }
 
     [Test]
@@ -800,7 +871,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         return volume;
     }
 
-    private static Entity AssertSelectionObjectOutline(EntityManager em, Entity unit, Entity sourceRenderer, string expectedKind)
+    private static Entity AssertSelectionObjectOutline(EntityManager em, Entity unit, Entity sourceRenderer, string expectedKind, Entity expectedParent = default)
     {
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(unit));
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit).Instance;
@@ -812,7 +883,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsTrue(em.Exists(outline));
         Assert.IsTrue(em.HasComponent<SelectionObjectOutlineTag>(outline));
         Assert.AreEqual(unit, em.GetComponentData<SelectionMarkerOwner>(outline).Value);
-        Assert.AreEqual(unit, em.GetComponentData<Parent>(outline).Value);
+        Assert.AreEqual(expectedParent == Entity.Null ? unit : expectedParent, em.GetComponentData<Parent>(outline).Value);
         Assert.AreEqual(em.GetComponentData<LocalTransform>(sourceRenderer).Position, em.GetComponentData<LocalTransform>(outline).Position);
         Assert.AreEqual(em.GetComponentData<LocalTransform>(sourceRenderer).Rotation, em.GetComponentData<LocalTransform>(outline).Rotation);
         Assert.IsTrue(em.HasComponent<MaterialMeshInfo>(outline));

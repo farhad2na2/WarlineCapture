@@ -526,6 +526,7 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         }
 
         return TransportBoardingCommandSystem.IsBoardingCandidateForTransport(em, transport, passenger) &&
+               TransportBoardingCommandSystem.IsWithinTransportBoardingCommandRange(em, transport, passenger) &&
                TransportBoardingCommandSystem.TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out _) &&
                IsBoardTransportWithAvailableSlots(em, transport, passengerKind);
     }

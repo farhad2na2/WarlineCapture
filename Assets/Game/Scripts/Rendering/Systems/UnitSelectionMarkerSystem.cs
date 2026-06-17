@@ -606,8 +606,8 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 
         using NativeList<Entity> sources = new(MaxSelectionObjectOutlineRenderers, Allocator.Temp);
         CollectRenderableDescendants(em, unit, sources);
-        if (sources.Length == 0)
-            CollectRenderableDescendantsByAncestryScan(em, unit, renderEntityQuery, sources);
+        CollectRenderableDescendantsByAncestryScan(em, unit, renderEntityQuery, sources);
+        CollectReferencedVisualRootRenderSources(em, unit, renderEntityQuery, sources);
 
         bool createdGpuAnimatedCharacterVolume = false;
         for (int i = 0; i < sources.Length && GetSelectionObjectOutlineCount(em, marker) < MaxSelectionObjectOutlineRenderers; i++)
@@ -685,7 +685,7 @@ public partial struct UnitSelectionMarkerSystem : ISystem
                 continue;
 
             if (CanUseSelectionObjectOutlineSource(em, current, unit))
-                sources.Add(current);
+                AddUniqueSelectionObjectOutlineSource(sources, current);
 
             if (!em.HasBuffer<Child>(current))
                 continue;
@@ -717,8 +717,81 @@ public partial struct UnitSelectionMarkerSystem : ISystem
                 continue;
             }
 
-            sources.Add(candidate);
+            AddUniqueSelectionObjectOutlineSource(sources, candidate);
         }
+    }
+
+    private static void CollectReferencedVisualRootRenderSources(
+        EntityManager em,
+        Entity unit,
+        EntityQuery renderEntityQuery,
+        NativeList<Entity> sources)
+    {
+        if (em.HasComponent<UnitDetailedVisualReference>(unit))
+            CollectRenderableRootAndDescendants(em, em.GetComponentData<UnitDetailedVisualReference>(unit).Root, renderEntityQuery, sources);
+
+        if (em.HasComponent<UnitModelInstanceReference>(unit))
+            CollectRenderableRootAndDescendants(em, em.GetComponentData<UnitModelInstanceReference>(unit).Instance, renderEntityQuery, sources);
+
+        if (em.HasComponent<UnitMidLodInstanceReference>(unit))
+            CollectRenderableRootAndDescendants(em, em.GetComponentData<UnitMidLodInstanceReference>(unit).Instance, renderEntityQuery, sources);
+
+        if (em.HasComponent<UnitLowLodInstanceReference>(unit))
+            CollectRenderableRootAndDescendants(em, em.GetComponentData<UnitLowLodInstanceReference>(unit).Instance, renderEntityQuery, sources);
+    }
+
+    private static void CollectRenderableRootAndDescendants(
+        EntityManager em,
+        Entity root,
+        EntityQuery renderEntityQuery,
+        NativeList<Entity> sources)
+    {
+        if (root == Entity.Null || !em.Exists(root))
+            return;
+
+        if (CanUseSelectionObjectOutlineSource(em, root, root))
+            AddUniqueSelectionObjectOutlineSource(sources, root);
+
+        if (em.HasBuffer<Child>(root))
+        {
+            using NativeList<Entity> stack = new(Allocator.Temp);
+            DynamicBuffer<Child> rootChildren = em.GetBuffer<Child>(root);
+            for (int i = 0; i < rootChildren.Length; i++)
+                stack.Add(rootChildren[i].Value);
+
+            while (stack.Length > 0 && sources.Length < MaxSelectionObjectOutlineRenderers)
+            {
+                int last = stack.Length - 1;
+                Entity current = stack[last];
+                stack.RemoveAt(last);
+                if (current == Entity.Null || !em.Exists(current))
+                    continue;
+
+                if (CanUseSelectionObjectOutlineSource(em, current, root))
+                    AddUniqueSelectionObjectOutlineSource(sources, current);
+
+                if (!em.HasBuffer<Child>(current))
+                    continue;
+
+                DynamicBuffer<Child> children = em.GetBuffer<Child>(current);
+                for (int i = 0; i < children.Length; i++)
+                    stack.Add(children[i].Value);
+            }
+        }
+
+        CollectRenderableDescendantsByAncestryScan(em, root, renderEntityQuery, sources);
+    }
+
+    private static void AddUniqueSelectionObjectOutlineSource(NativeList<Entity> sources, Entity source)
+    {
+        for (int i = 0; i < sources.Length; i++)
+        {
+            if (sources[i] == source)
+                return;
+        }
+
+        if (sources.Length < MaxSelectionObjectOutlineRenderers)
+            sources.Add(source);
     }
 
     private static bool CanUseSelectionObjectOutlineSource(EntityManager em, Entity source, Entity owner)
@@ -815,6 +888,9 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 
     private static bool IsDescendantOf(EntityManager em, Entity entity, Entity owner)
     {
+        if (entity == owner)
+            return true;
+
         Entity current = entity;
         for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
         {

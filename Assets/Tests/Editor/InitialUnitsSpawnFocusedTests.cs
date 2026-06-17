@@ -402,7 +402,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             typeof(UnitMoveVisualComponent),
             typeof(Faction),
             typeof(UnitRespawnPrefab),
+            typeof(UnitSourcePrefabKey),
             typeof(UnitAttackCooldownComponent));
+        em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         _ = new InitialUnitSpawnApplySystem().InstantiateAndConfigureSpawnedUnit(
             em,
@@ -433,6 +435,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.AreEqual(1, em.GetComponentData<Faction>(spawned).Id);
         Assert.AreEqual(new float3(4.5f, 0f, 7.5f), em.GetComponentData<UnitPrevWorldPos>(spawned).Value);
         Assert.AreEqual(0, em.GetComponentData<UnitMoveVisualComponent>(spawned).IsMoving);
+        Assert.AreEqual(new FixedString64Bytes("Unit_Veh_Plane_Transport"), em.GetComponentData<UnitSourcePrefabKey>(spawned).Value);
     }
 
     [Test]

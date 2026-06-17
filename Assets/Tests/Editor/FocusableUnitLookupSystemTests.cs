@@ -16,7 +16,8 @@ public sealed class FocusableUnitLookupSystemTests
         {
             RunCase(test => test.LookupRefreshesWhenGridOrFootprintChangesWithoutCountChange());
             RunCase(test => test.ScreenDistanceFallback_SkipsActiveTransitAirUnits());
-            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=2");
+            RunCase(test => test.ScreenDistanceFallback_UsesVisualHitboxForLargeAircraft());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=3");
         }
         catch (System.Exception ex)
         {
@@ -156,6 +157,41 @@ public sealed class FocusableUnitLookupSystemTests
                 1000f,
                 out focused));
             Assert.AreEqual(activeTransit, focused);
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void ScreenDistanceFallback_UsesVisualHitboxForLargeAircraft()
+    {
+        GameObject cameraObject = new("FocusableUnitLargeAircraftCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 10f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(32, 32);
+            Entity aircraft = CreateFocusableUnit(new int2(0, 0), new int2(1, 1));
+            _entityManager.AddComponentData(aircraft, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(7f, 1f, 1f)
+            });
+
+            var lookup = new FocusableUnitLookupSystem();
+            Assert.IsTrue(lookup.TryGetClickedUnitEntityByScreenDistance(
+                _entityManager,
+                camera,
+                new Vector2(80f, 50f),
+                10f,
+                out Entity focused));
+            Assert.AreEqual(aircraft, focused);
         }
         finally
         {

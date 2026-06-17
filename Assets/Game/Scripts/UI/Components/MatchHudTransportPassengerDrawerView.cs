@@ -59,7 +59,7 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
         if (!model.Visible || !model.DrawerOpen)
             return;
 
-        SetText(headerText, $"PASSENGERS {model.PassengerCount}/{model.Capacity}");
+        SetText(headerText, ResolveHeaderText(model));
         SetText(emptyStateText, "NO PASSENGERS ONBOARD");
         SetText(exitAllLabel, "EXIT ALL");
         SetText(closeLabel, "CLOSE");
@@ -144,6 +144,14 @@ public sealed class MatchHudTransportPassengerDrawerView : MonoBehaviour
     {
         if (text != null)
             text.text = value ?? string.Empty;
+    }
+
+    private static string ResolveHeaderText(MatchHudTransportPassengersModel model)
+    {
+        if (model.VehicleCapacity <= 0)
+            return $"PASSENGERS {model.PassengerCount}/{model.Capacity}";
+
+        return $"PASSENGERS {model.PassengerCount}/{model.Capacity} | SOLDIERS {model.SoldierPassengerCount}/{model.SoldierCapacity} | VEHICLES {model.VehiclePassengerCount}/{model.VehicleCapacity}";
     }
 
     private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)

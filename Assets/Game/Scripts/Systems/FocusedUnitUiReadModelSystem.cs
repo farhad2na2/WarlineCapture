@@ -79,8 +79,22 @@ public sealed partial class FocusedUnitUiReadModelSystem : SystemBase
             model.CapacityProgress01 = capacityProgress01;
         }
 
-        model.PassengerCount = selectionUiReadModelLookup.GetTransportPassengerCount(em, focusedUnit, transportCapacitySystem);
-        model.TransportPassengerCapacity = selectionUiReadModelLookup.GetTransportPassengerCapacity(em, focusedUnit, transportCapacitySystem);
+        if (selectionUiReadModelLookup.TryGetTransportPassengerBreakdown(
+                em,
+                focusedUnit,
+                transportCapacitySystem,
+                out int soldierPassengerCount,
+                out int soldierPassengerCapacity,
+                out int vehiclePassengerCount,
+                out int vehiclePassengerCapacity))
+        {
+            model.TransportSoldierPassengerCount = soldierPassengerCount;
+            model.TransportSoldierPassengerCapacity = soldierPassengerCapacity;
+            model.TransportVehiclePassengerCount = vehiclePassengerCount;
+            model.TransportVehiclePassengerCapacity = vehiclePassengerCapacity;
+            model.PassengerCount = soldierPassengerCount + vehiclePassengerCount;
+            model.TransportPassengerCapacity = soldierPassengerCapacity + vehiclePassengerCapacity;
+        }
         _passengerScratch.Clear();
         selectionUiReadModelLookup.GetTransportPassengers(em, focusedUnit, transportCapacitySystem, _passengerScratch);
         for (int i = 0; i < _passengerScratch.Count; i++)

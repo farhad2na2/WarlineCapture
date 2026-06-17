@@ -24,6 +24,10 @@ public struct FocusedUnitUiReadModelComponent : IComponentData
     public float CapacityProgress01;
     public int PassengerCount;
     public int TransportPassengerCapacity;
+    public int TransportSoldierPassengerCount;
+    public int TransportSoldierPassengerCapacity;
+    public int TransportVehiclePassengerCount;
+    public int TransportVehiclePassengerCapacity;
     public int Status;
     public FixedString64Bytes Label;
     public FixedString128Bytes Description;

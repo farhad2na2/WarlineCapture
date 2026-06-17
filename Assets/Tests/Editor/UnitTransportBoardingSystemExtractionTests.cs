@@ -18,6 +18,16 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void IsTransportPlaneName_RecognizesTransportPlaneSources()
+    {
+        var capacitySystem = new UnitTransportCapacitySystem();
+
+        Assert.IsTrue(capacitySystem.IsTransportPlaneName("Unit_Veh_Plane_Transport"));
+        Assert.IsTrue(capacitySystem.IsTransportPlaneName("SM_Veh_TransportPlane_01"));
+        Assert.IsFalse(capacitySystem.IsTransportPlaneName("Unit_Veh_Jet_Fighter"));
+    }
+
+    [Test]
     public void TryEnsureTransportCapacity_AddsCapacityAndPassengerBufferForKnownTransport()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");
@@ -29,6 +39,47 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         Assert.IsTrue(capacitySystem.TryEnsureTransportCapacity(entityManager, transport));
         Assert.AreEqual(10, entityManager.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
         Assert.IsTrue(entityManager.HasBuffer<UnitTransportPassengerElement>(transport));
+    }
+
+    [Test]
+    public void TryEnsureTransportCapacity_AddsCargoCapacityForTransportPlane()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        var capacitySystem = new UnitTransportCapacitySystem();
+        EntityManager entityManager = world.EntityManager;
+        Entity transport = entityManager.CreateEntity(typeof(UnitSourcePrefabKey));
+        entityManager.SetComponentData(transport, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
+
+        Assert.IsTrue(capacitySystem.TryEnsureTransportCapacity(entityManager, transport));
+        Assert.AreEqual(24, entityManager.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+        Assert.IsTrue(entityManager.HasComponent<UnitTransportCargoCapacity>(transport));
+        UnitTransportCargoCapacity cargoCapacity = entityManager.GetComponentData<UnitTransportCargoCapacity>(transport);
+        Assert.AreEqual(24, cargoCapacity.SoldierCapacity);
+        Assert.AreEqual(2, cargoCapacity.VehicleCapacity);
+        Assert.AreEqual(0, cargoCapacity.CargoWeightCapacity);
+        Assert.IsTrue(entityManager.HasBuffer<UnitTransportPassengerElement>(transport));
+    }
+
+    [Test]
+    public void ResolveTransportCargoCapacity_PreservesAuthoredCargoCapacity()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        var capacitySystem = new UnitTransportCapacitySystem();
+        EntityManager entityManager = world.EntityManager;
+        Entity transport = entityManager.CreateEntity(typeof(UnitTransportCapacity), typeof(UnitTransportCargoCapacity));
+        entityManager.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 12 });
+        entityManager.SetComponentData(transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 3,
+            CargoWeightCapacity = 40
+        });
+
+        UnitTransportCargoCapacity capacity = capacitySystem.ResolveTransportCargoCapacity(entityManager, transport);
+
+        Assert.AreEqual(24, capacity.SoldierCapacity);
+        Assert.AreEqual(3, capacity.VehicleCapacity);
+        Assert.AreEqual(40, capacity.CargoWeightCapacity);
     }
 
     [Test]

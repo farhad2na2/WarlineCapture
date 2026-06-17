@@ -509,7 +509,10 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
 
     public bool IsValidBoardTransportPreviewTarget(Context context, EntityManager em, Entity source, Entity target)
     {
-        return IsBoardTransportWithAvailableSeats(em, target);
+        if (!TransportBoardingCommandSystem.TryResolveBoardingPassengerKind(em, target, source, out byte passengerKind, out _))
+            return false;
+
+        return IsBoardTransportWithAvailableSlots(em, target, passengerKind);
     }
 
     public bool IsValidBoardPassengerPreviewTarget(Context context, EntityManager em, Entity transport, Entity passenger)
@@ -522,7 +525,9 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
             return false;
         }
 
-        return TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, passenger);
+        return TransportBoardingCommandSystem.IsBoardingCandidateForTransport(em, transport, passenger) &&
+               TransportBoardingCommandSystem.TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out _) &&
+               IsBoardTransportWithAvailableSlots(em, transport, passengerKind);
     }
 
     public bool IsBoardCommandAvailable(Context context, EntityManager em, Entity entity)
@@ -531,6 +536,9 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
             return false;
 
         if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
+            return true;
+
+        if (TransportBoardingCommandSystem.IsPotentialVehicleCargoPassenger(em, entity))
             return true;
 
         return IsBoardTransportWithAvailableSeats(em, entity);
@@ -588,11 +596,25 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity))
             return false;
 
-        int capacity = em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity;
-        int passengers = em.HasBuffer<UnitTransportPassengerElement>(entity)
-            ? em.GetBuffer<UnitTransportPassengerElement>(entity).Length
-            : 0;
-        return capacity > passengers + CountPendingBoardingOrders(em, entity);
+        return IsBoardTransportWithAvailableSlots(em, entity, UnitTransportPassengerKind.Soldier) ||
+               IsBoardTransportWithAvailableSlots(em, entity, UnitTransportPassengerKind.Vehicle);
+    }
+
+    private bool IsBoardTransportWithAvailableSlots(EntityManager em, Entity entity, byte passengerKind)
+    {
+        if (!IsOwnedByPlayer(em, entity))
+            return false;
+
+        if (!TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity))
+            return false;
+
+        return TransportBoardingCommandSystem.HasAvailableTransportBoardingSlot(
+                   em,
+                   entity,
+                   passengerKind,
+                   out int occupied,
+                   out int capacity) &&
+               capacity > occupied + CountPendingBoardingOrders(em, entity, passengerKind);
     }
 
     private static bool IsOwnedByPlayer(EntityManager em, Entity entity)
@@ -605,6 +627,12 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
 
     private static int CountPendingBoardingOrders(EntityManager em, Entity transport)
     {
+        return CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Soldier) +
+               CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Vehicle);
+    }
+
+    private static int CountPendingBoardingOrders(EntityManager em, Entity transport, byte passengerKind)
+    {
         int count = 0;
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
         if (query.IsEmptyIgnoreFilter)
@@ -616,11 +644,18 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         {
             NativeArray<UnitTransportBoardingTarget> targets = chunks[chunkIndex].GetNativeArray(ref targetType);
             for (int i = 0; i < targets.Length; i++)
-                if (targets[i].Transport == transport)
+                if (targets[i].Transport == transport && ResolvePassengerKind(targets[i].PassengerKind) == passengerKind)
                     count++;
         }
 
         return count;
+    }
+
+    private static byte ResolvePassengerKind(byte passengerKind)
+    {
+        return passengerKind == UnitTransportPassengerKind.Vehicle
+            ? UnitTransportPassengerKind.Vehicle
+            : UnitTransportPassengerKind.Soldier;
     }
 
     public bool TryRequestMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)

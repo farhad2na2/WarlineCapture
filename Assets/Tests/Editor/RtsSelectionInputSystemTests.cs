@@ -70,7 +70,9 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation());
             RunCase(test => test.BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats());
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=53");
+            RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
+            RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=55");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -2247,7 +2249,8 @@ public sealed class RtsSelectionInputSystemTests
         string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
         string previewTarget = ExtractBlockAfter(pointerTarget, "public bool IsValidBoardTransportPreviewTarget");
 
-        StringAssert.Contains("IsBoardTransportWithAvailableSeats(em, target)", previewTarget);
+        StringAssert.Contains("TryResolveBoardingPassengerKind(em, target, source", previewTarget);
+        StringAssert.Contains("IsBoardTransportWithAvailableSlots(em, target, passengerKind)", previewTarget);
         Assert.IsFalse(
             previewTarget.Contains("IsBoardCommandAvailable(em, target)", StringComparison.Ordinal),
             "Passenger-first Board preview must not use broad Board availability, because that also includes soldiers.");
@@ -2275,10 +2278,11 @@ public sealed class RtsSelectionInputSystemTests
         string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
         string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
-        StringAssert.Contains("int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);", boarding);
-        StringAssert.Contains("int availableSeats = capacity - occupiedSeats;", boarding);
-        StringAssert.Contains("List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, availableSeats));", boarding);
-        StringAssert.Contains("plannedOrders.Count < availableSeats", boarding);
+        StringAssert.Contains("ResolveTransportSlotAvailability(", boarding);
+        StringAssert.Contains("availableSoldierSeats", boarding);
+        StringAssert.Contains("availableVehicleSlots", boarding);
+        StringAssert.Contains("plannedSoldierSeats >= availableSoldierSeats", boarding);
+        StringAssert.Contains("plannedVehicleSlots >= availableVehicleSlots", boarding);
     }
 
     [Test]
@@ -2295,6 +2299,31 @@ public sealed class RtsSelectionInputSystemTests
         Assert.GreaterOrEqual(clearModeIndex, 0, "Successful Board All must clear Board command mode so BOARD ALL and CANCEL disappear.");
         Assert.GreaterOrEqual(successIndex, 0, "Successful Board All must still show a success message.");
         Assert.Less(clearModeIndex, successIndex, "Clear command mode before showing the success result so the message remains but action buttons are hidden.");
+    }
+
+    [Test]
+    public void BoardCommandResult_PreservesAcceptedTargetTransportEntity()
+    {
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
+        string resultBuilder = ExtractBlockAfter(transportCommands, "private static RtsSelectionCommandResultElement ToBoardingCommandResultElement");
+
+        StringAssert.Contains("TargetEntity = request.TargetEntity", resultBuilder);
+        StringAssert.Contains("HasTargetEntity = result.Accepted && request.HasTargetEntity != 0", resultBuilder);
+    }
+
+    [Test]
+    public void TransportFirstBoarding_PreservesSelectedTransportAfterSuccess()
+    {
+        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string processTransport = ExtractBlockAfter(flush, "public bool ProcessTransportCommandRequests");
+        string preserve = ExtractBlockAfter(flush, "private static void PreserveSelectedTransportAfterBoarding");
+
+        StringAssert.Contains("IsTransportFirstBoardResult(result)", processTransport);
+        StringAssert.Contains("context.ClearCurrentSelection?.Invoke(em, \"TransportFirstBoardingPreserveTransport\")", preserve);
+        StringAssert.Contains("em.AddComponent<SelectedUnitTag>(transport)", preserve);
+        StringAssert.Contains("context.SelectionStateSystem.CacheSelectedMoveEntity(em, transport)", preserve);
+        StringAssert.Contains("context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, transport)", preserve);
+        StringAssert.Contains("context.ApplyHudSelection?.Invoke(em, transport)", preserve);
     }
 
     [Test]

@@ -97,6 +97,10 @@ public readonly struct MatchHudTransportPassengersModel
     public readonly UiEntityHandle Transport;
     public readonly int PassengerCount;
     public readonly int Capacity;
+    public readonly int SoldierPassengerCount;
+    public readonly int SoldierCapacity;
+    public readonly int VehiclePassengerCount;
+    public readonly int VehicleCapacity;
     public readonly bool ExitAllEnabled;
     public readonly IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> Passengers;
 
@@ -107,13 +111,21 @@ public readonly struct MatchHudTransportPassengersModel
         int passengerCount,
         int capacity,
         bool exitAllEnabled,
-        IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> passengers)
+        IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> passengers,
+        int soldierPassengerCount = 0,
+        int soldierCapacity = 0,
+        int vehiclePassengerCount = 0,
+        int vehicleCapacity = 0)
     {
         Visible = visible;
         DrawerOpen = drawerOpen;
         Transport = transport;
         PassengerCount = passengerCount;
         Capacity = capacity;
+        SoldierPassengerCount = soldierPassengerCount;
+        SoldierCapacity = soldierCapacity;
+        VehiclePassengerCount = vehiclePassengerCount;
+        VehicleCapacity = vehicleCapacity;
         ExitAllEnabled = exitAllEnabled;
         Passengers = passengers;
     }

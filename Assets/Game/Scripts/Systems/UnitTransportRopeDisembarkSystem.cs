@@ -108,6 +108,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
             if (em.HasComponent<Disabled>(passenger))
                 ecb.RemoveComponent<Disabled>(passenger);
             RemoveIfPresent<UnitTransportPassenger>(ref ecb, em, passenger);
+            RemoveIfPresent<UnitTransportCargoPassenger>(ref ecb, em, passenger);
             RemoveIfPresent<UnitTransportBoardingTarget>(ref ecb, em, passenger);
             RemoveIfPresent<UnitTarget>(ref ecb, em, passenger);
             RemoveIfPresent<UnitPathRequest>(ref ecb, em, passenger);

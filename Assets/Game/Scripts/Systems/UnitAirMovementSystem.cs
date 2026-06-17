@@ -29,6 +29,7 @@ public partial struct UnitAirMovementSystem : ISystem
         var ropeDisembarkLookup = SystemAPI.GetComponentLookup<UnitTransportRopeDisembarkRequest>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
         var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
+        var airdropLookup = SystemAPI.GetComponentLookup<UnitTransportAirdropRequest>();
 
         foreach (var (transform, unitGrid, move, attack, airMovement, airState, entity) in SystemAPI
                      .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAttack>, RefRO<UnitAirMovement>, RefRW<UnitAirComponent>>()
@@ -83,6 +84,32 @@ public partial struct UnitAirMovementSystem : ISystem
                 stateRw.LandingRolling = 0;
                 stateRw.AttackRunActive = 0;
                 stateRw.ReturnApproachInitialized = 0;
+                if (targetLookup.HasComponent(entity))
+                    ecb.RemoveComponent<UnitTarget>(entity);
+                if (engageLookup.HasComponent(entity))
+                    ecb.RemoveComponent<EngageTarget>(entity);
+                if (state.EntityManager.HasComponent<UnitPathRequest>(entity))
+                    ecb.RemoveComponent<UnitPathRequest>(entity);
+                if (state.EntityManager.HasComponent<ManualMoveOrderTag>(entity))
+                    ecb.RemoveComponent<ManualMoveOrderTag>(entity);
+                continue;
+            }
+
+            if (airdropLookup.HasComponent(entity))
+            {
+                UnitTransportAirdropRequest airdrop = airdropLookup[entity];
+                HandleTransportAirdropPass(
+                    ref transform.ValueRW,
+                    ref unitGrid.ValueRW,
+                    ref stateRw,
+                    ref airdrop,
+                    grid,
+                    move.ValueRO,
+                    airMovement.ValueRO,
+                    dt,
+                    groundY);
+                airdropLookup[entity] = airdrop;
+
                 if (targetLookup.HasComponent(entity))
                     ecb.RemoveComponent<UnitTarget>(entity);
                 if (engageLookup.HasComponent(entity))
@@ -598,6 +625,139 @@ public partial struct UnitAirMovementSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+    private static void HandleTransportAirdropPass(
+        ref LocalTransform transform,
+        ref UnitGrid unitGrid,
+        ref UnitAirComponent state,
+        ref UnitTransportAirdropRequest request,
+        in GridConfig grid,
+        in UnitMove move,
+        in UnitAirMovement airMovement,
+        float deltaTime,
+        float groundY)
+    {
+        state.ReturningHome = 0;
+        state.ReturnApproachInitialized = 0;
+
+        if (state.UsesRunway != 0 && state.Airborne == 0)
+        {
+            float runwayGroundY = ResolveRunwayGroundY(state, groundY);
+            if (state.TakeoffRolling == 0)
+            {
+                bool reachedRunwayStart = SteerTowards(
+                    ref transform,
+                    ref unitGrid,
+                    grid,
+                    math.max(0.01f, airMovement.RunwayTaxiSpeed),
+                    deltaTime,
+                    runwayGroundY,
+                    state.RunwayTakeoffPosition,
+                    false,
+                    5f);
+
+                if (reachedRunwayStart)
+                {
+                    state.TakeoffRolling = 1;
+                    unitGrid.Cell = state.RunwayTakeoffCell;
+                }
+            }
+            else
+            {
+                bool reachedLiftoffPoint = SteerTowards(
+                    ref transform,
+                    ref unitGrid,
+                    grid,
+                    math.max(0.01f, move.Speed),
+                    deltaTime,
+                    runwayGroundY,
+                    state.RunwayLandingPosition,
+                    false,
+                    3.25f);
+
+                if (reachedLiftoffPoint)
+                {
+                    state.TakeoffRolling = 0;
+                    state.Airborne = 1;
+                    unitGrid.Cell = state.RunwayLandingCell;
+                }
+            }
+
+            request.PassReady = 0;
+            state.AttackRunActive = 0;
+            return;
+        }
+
+        float cruiseY = groundY + airMovement.CruiseHeight;
+        float3 dropWorld = GridUtils.CellToWorldCenter(grid, request.DropReferenceCell);
+        dropWorld.y = cruiseY;
+
+        if (state.AttackRunActive == 0)
+        {
+            float3 passDirection = dropWorld - transform.Position;
+            passDirection.y = 0f;
+            passDirection = math.normalizesafe(passDirection);
+            if (math.lengthsq(passDirection) <= 1e-6f)
+            {
+                passDirection = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
+                passDirection.y = 0f;
+                passDirection = math.normalizesafe(passDirection, new float3(0f, 0f, 1f));
+            }
+
+            float sequenceSeconds = math.max(2f, math.max(0.1f, request.DropIntervalSeconds) * math.max(1, request.DropCount));
+            float overshootDistance = math.max(grid.CellSize * 24f, math.max(0.01f, move.Speed) * (sequenceSeconds + 1.5f));
+            state.AttackRunActive = 1;
+            state.AttackRunExitPosition = new float3(
+                dropWorld.x + passDirection.x * overshootDistance,
+                cruiseY,
+                dropWorld.z + passDirection.z * overshootDistance);
+            request.PassReady = 0;
+        }
+
+        float3 exitVector = state.AttackRunExitPosition - dropWorld;
+        exitVector.y = 0f;
+        float3 passForward = math.normalizesafe(exitVector, math.mul(transform.Rotation, new float3(0f, 0f, 1f)));
+        passForward.y = 0f;
+        passForward = math.normalizesafe(passForward, new float3(0f, 0f, 1f));
+
+        float3 toDrop = dropWorld - transform.Position;
+        float horizontalDistanceToDrop = math.length(new float3(toDrop.x, 0f, toDrop.z));
+        float3 progressedVector = transform.Position - dropWorld;
+        progressedVector.y = 0f;
+        if (request.PassReady == 0 &&
+            (horizontalDistanceToDrop <= math.max(grid.CellSize * 3f, math.max(0.01f, move.Speed) * deltaTime * 1.5f) ||
+             math.dot(progressedVector, passForward) >= 0f))
+        {
+            request.PassReady = 1;
+            request.NextDropAt = 0f;
+        }
+
+        bool completedPass = FlyTowards(
+            ref transform,
+            ref unitGrid,
+            grid,
+            math.max(0.01f, move.Speed),
+            deltaTime,
+            cruiseY,
+            state.AttackRunExitPosition,
+            true);
+
+        float exitLengthSq = math.lengthsq(exitVector);
+        progressedVector = transform.Position - dropWorld;
+        progressedVector.y = 0f;
+        if (exitLengthSq > 1e-6f && math.dot(progressedVector, exitVector) >= exitLengthSq * 0.92f)
+            completedPass = true;
+
+        if (completedPass)
+        {
+            float extendDistance = math.max(grid.CellSize * 20f, math.max(0.01f, move.Speed) * 2.5f);
+            state.AttackRunExitPosition = new float3(
+                state.AttackRunExitPosition.x + passForward.x * extendDistance,
+                cruiseY,
+                state.AttackRunExitPosition.z + passForward.z * extendDistance);
+            state.AttackRunActive = 1;
+        }
     }
 
     private static float ResolveRunwayGroundY(in UnitAirComponent state, float fallbackY)

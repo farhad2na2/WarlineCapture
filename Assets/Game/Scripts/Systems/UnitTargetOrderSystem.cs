@@ -540,6 +540,7 @@ public partial struct UnitTargetOrderSystem : ISystem
         RemoveIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
         RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
         RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
         RemoveIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
         if (removeEngageTarget)
             RemoveIfPresent<EngageTarget>(entityManager, ecb, entity);

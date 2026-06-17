@@ -475,7 +475,7 @@ public class FactionTintTargetConfig : ScriptableObject
 [CreateAssetMenu(menuName = "Game/Config/Unit Grid Authoring")]
 public class UnitGridAuthoringConfig : ScriptableObject
 {
-    [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private Sprite weaponSprite; [SerializeField] private string weaponDisplayName; [SerializeField] private bool allowIdleWander = true; [SerializeField] private bool autoCalculateFootprint; [SerializeField] private Vector2Int footprintCells = new(1, 1); [SerializeField] private bool usesVehicleMotion; [SerializeField] private bool isAirUnit; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price; [SerializeField] private float productionDurationSeconds = 60f; [SerializeField] private GameObject productionTransportPrefab; [SerializeField] private bool isProductionTransportUnit; [SerializeField] private float productionTransportArrivalSeconds = 5f; [SerializeField] private float productionTransportHoldForNextReadySeconds = 4f; [SerializeField, Min(1)] private int productionTransportMaxConcurrent = 1; [SerializeField] private bool productionTransportRequiresAirportRunway; [SerializeField] private bool productionTransportUsesRunwayLanding; [SerializeField, Min(0)] private int soldierTransportCapacity; [SerializeField, Min(0.01f)] private float runwayTaxiSpeed = 5f; [SerializeField] private float speed = 5f; [SerializeField] private float walkSpeed = 2f; [SerializeField] private float roadSpeedMultiplier = 1.2f; [SerializeField] private float arriveDistance = 0.05f; [SerializeField] private float groundOffset; [Header("Identity")] [SerializeField] private string displayName; [TextArea, SerializeField] private string description; [Header("LOD")] [SerializeField] private GameObject midLodPrefab; [SerializeField] private GameObject lowLodPrefab; [Header("Unit Visuals")] [SerializeField] private GameObject unitSelectionMarkerPrefab; [SerializeField] private GameObject unitHealthBarPrefab; [SerializeField] private bool tintUnitModelRenderers = true; [Header("Vehicle Visuals")] [SerializeField] private GameObject vehicleDestroyedVisualPrefab; [SerializeField] private GameObject vehicleSelectionMarkerPrefab; [SerializeField] private GameObject vehicleHealthBarPrefab; [SerializeField] private bool tintVehicleModelRenderers = true; [Header("Resource Hauler")] [SerializeField, Min(0)] private int resourceHaulerBarrelCapacity; [SerializeField, Min(0.01f)] private float resourceHaulerFillDurationSeconds = 2f; [SerializeField, Min(0.01f)] private float resourceHaulerUnloadDurationSeconds = 1.5f; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [SerializeField] private bool canAttack = true; [SerializeField] private bool allowAutoEngage = true; [SerializeField] private bool usesTurretAim; [SerializeField] private int aggroRangeCells = 6; [SerializeField] private float attackRange = 2f; [SerializeField] private float chaseBreakDistance = 8f; [SerializeField] private float attackCooldownSeconds = 1f; [SerializeField] private int attackDamage = 10; [SerializeField] private int maxHealth = 100; [SerializeField] private GameObject attackImpactPrefab; [SerializeField] private GameObject muzzleFlashPrefab; [SerializeField, Min(0f)] private float muzzleFlashHeightOffset = 0.9f; [SerializeField, Min(0f)] private float muzzleFlashForwardOffset = 0.45f; [Header("Missile Launcher")] [SerializeField] private GroundMissileLauncherConfig groundMissileLauncherConfig; [SerializeField] private Color attackTraceColor = new(1f, 0.85f, 0.2f, 1f); [SerializeField] private float attackTraceWidth = 0.18f; [SerializeField] private float attackTraceScrollSpeed = 10f; [SerializeField] private float attackTraceDashDensity = 10f; [SerializeField] private float attackTraceVisibleSeconds = 0.08f; [SerializeField, Min(1)] private int attackTracerEveryNthShot = 1; [SerializeField] private float idleDelayMinSeconds = 5f; [SerializeField] private float idleDelayMaxSeconds = 7f; [SerializeField] private float idleWanderDistanceMin = 3f; [SerializeField] private float idleWanderDistanceMax = 5f; [SerializeField] private float attackAnimationSeconds = 0.25f; [SerializeField] private float deathAnimationSeconds = 1.25f; [SerializeField] private List<UnitAnimationKind> animationOrder = new();
+    [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private Sprite weaponSprite; [SerializeField] private string weaponDisplayName; [SerializeField] private bool allowIdleWander = true; [SerializeField] private bool autoCalculateFootprint; [SerializeField] private Vector2Int footprintCells = new(1, 1); [SerializeField] private bool usesVehicleMotion; [SerializeField] private bool isAirUnit; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price; [SerializeField] private float productionDurationSeconds = 60f; [SerializeField] private GameObject productionTransportPrefab; [SerializeField] private bool isProductionTransportUnit; [SerializeField] private float productionTransportArrivalSeconds = 5f; [SerializeField] private float productionTransportHoldForNextReadySeconds = 4f; [SerializeField, Min(1)] private int productionTransportMaxConcurrent = 1; [SerializeField] private bool productionTransportRequiresAirportRunway; [SerializeField] private bool productionTransportUsesRunwayLanding; [SerializeField, Min(0)] private int soldierTransportCapacity; [SerializeField, Min(0)] private int vehicleTransportCapacity; [SerializeField, Min(0)] private int cargoWeightCapacity; [SerializeField, Min(0f)] private float transportCruiseHeight; [SerializeField] private GameObject soldierParachuteVisualPrefab; [SerializeField] private GameObject vehicleEmergencyDropVisualPrefab; [SerializeField, Min(0.01f)] private float runwayTaxiSpeed = 5f; [SerializeField] private float speed = 5f; [SerializeField] private float walkSpeed = 2f; [SerializeField] private float roadSpeedMultiplier = 1.2f; [SerializeField] private float arriveDistance = 0.05f; [SerializeField] private float groundOffset; [Header("Identity")] [SerializeField] private string displayName; [TextArea, SerializeField] private string description; [Header("LOD")] [SerializeField] private GameObject midLodPrefab; [SerializeField] private GameObject lowLodPrefab; [Header("Unit Visuals")] [SerializeField] private GameObject unitSelectionMarkerPrefab; [SerializeField] private GameObject unitHealthBarPrefab; [SerializeField] private bool tintUnitModelRenderers = true; [Header("Vehicle Visuals")] [SerializeField] private GameObject vehicleDestroyedVisualPrefab; [SerializeField] private GameObject vehicleSelectionMarkerPrefab; [SerializeField] private GameObject vehicleHealthBarPrefab; [SerializeField] private bool tintVehicleModelRenderers = true; [Header("Resource Hauler")] [SerializeField, Min(0)] private int resourceHaulerBarrelCapacity; [SerializeField, Min(0.01f)] private float resourceHaulerFillDurationSeconds = 2f; [SerializeField, Min(0.01f)] private float resourceHaulerUnloadDurationSeconds = 1.5f; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [SerializeField] private bool canAttack = true; [SerializeField] private bool allowAutoEngage = true; [SerializeField] private bool usesTurretAim; [SerializeField] private int aggroRangeCells = 6; [SerializeField] private float attackRange = 2f; [SerializeField] private float chaseBreakDistance = 8f; [SerializeField] private float attackCooldownSeconds = 1f; [SerializeField] private int attackDamage = 10; [SerializeField] private int maxHealth = 100; [SerializeField] private GameObject attackImpactPrefab; [SerializeField] private GameObject muzzleFlashPrefab; [SerializeField, Min(0f)] private float muzzleFlashHeightOffset = 0.9f; [SerializeField, Min(0f)] private float muzzleFlashForwardOffset = 0.45f; [Header("Missile Launcher")] [SerializeField] private GroundMissileLauncherConfig groundMissileLauncherConfig; [SerializeField] private Color attackTraceColor = new(1f, 0.85f, 0.2f, 1f); [SerializeField] private float attackTraceWidth = 0.18f; [SerializeField] private float attackTraceScrollSpeed = 10f; [SerializeField] private float attackTraceDashDensity = 10f; [SerializeField] private float attackTraceVisibleSeconds = 0.08f; [SerializeField, Min(1)] private int attackTracerEveryNthShot = 1; [SerializeField] private float idleDelayMinSeconds = 5f; [SerializeField] private float idleDelayMaxSeconds = 7f; [SerializeField] private float idleWanderDistanceMin = 3f; [SerializeField] private float idleWanderDistanceMax = 5f; [SerializeField] private float attackAnimationSeconds = 0.25f; [SerializeField] private float deathAnimationSeconds = 1.25f; [SerializeField] private List<UnitAnimationKind> animationOrder = new();
     [SerializeField] private AirMissileLauncherConfig airMissileLauncherConfig;
 
     private void OnValidate()
@@ -487,6 +487,12 @@ public class UnitGridAuthoringConfig : ScriptableObject
             price = ResolveDefaultPrice(name, footprintCells);
         if (soldierTransportCapacity <= 0)
             soldierTransportCapacity = ResolveDefaultSoldierTransportCapacity(name);
+        if (vehicleTransportCapacity <= 0)
+            vehicleTransportCapacity = ResolveDefaultVehicleTransportCapacity(name);
+        if (cargoWeightCapacity <= 0)
+            cargoWeightCapacity = ResolveDefaultCargoWeightCapacity(name);
+        if (transportCruiseHeight <= 0f)
+            transportCruiseHeight = ResolveDefaultTransportCruiseHeight(name);
     }
 
     private static int ResolveDefaultPrice(string assetName, Vector2Int footprint)
@@ -500,6 +506,9 @@ public class UnitGridAuthoringConfig : ScriptableObject
         if (string.IsNullOrWhiteSpace(assetName))
             return 0;
 
+        if (IsTransportPlaneAssetName(assetName))
+            return 24;
+
         return assetName.IndexOf("Unit_Veh_APC_Fast", StringComparison.OrdinalIgnoreCase) >= 0 ||
                assetName.IndexOf("Unit_Veh_APC_Heavy", StringComparison.OrdinalIgnoreCase) >= 0 ||
                assetName.IndexOf("Unit_Veh_APC_Slow", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -507,6 +516,31 @@ public class UnitGridAuthoringConfig : ScriptableObject
                assetName.IndexOf("Unit_Veh_Helicopter_Transport", StringComparison.OrdinalIgnoreCase) >= 0
             ? 10
             : 0;
+    }
+
+    private static int ResolveDefaultVehicleTransportCapacity(string assetName)
+    {
+        return IsTransportPlaneAssetName(assetName) ? 2 : 0;
+    }
+
+    private static int ResolveDefaultCargoWeightCapacity(string assetName)
+    {
+        return 0;
+    }
+
+    private static float ResolveDefaultTransportCruiseHeight(string assetName)
+    {
+        return IsTransportPlaneAssetName(assetName) ? 55f : 0f;
+    }
+
+    private static bool IsTransportPlaneAssetName(string assetName)
+    {
+        if (string.IsNullOrWhiteSpace(assetName))
+            return false;
+
+        return assetName.IndexOf("Unit_Veh_Plane_Transport", StringComparison.OrdinalIgnoreCase) >= 0 ||
+               assetName.IndexOf("SM_Veh_TransportPlane", StringComparison.OrdinalIgnoreCase) >= 0 ||
+               assetName.IndexOf("Plane_Transport", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     private static bool ResolveDefaultUsesVehicleMotion(string assetName, bool airUnit, int transportCapacity, int haulerCapacity)
@@ -542,6 +576,11 @@ public class UnitGridAuthoringConfig : ScriptableObject
     public bool ProductionTransportRequiresAirportRunway => productionTransportRequiresAirportRunway;
     public bool ProductionTransportUsesRunwayLanding => productionTransportUsesRunwayLanding;
     public int SoldierTransportCapacity => Mathf.Max(0, soldierTransportCapacity > 0 ? soldierTransportCapacity : ResolveDefaultSoldierTransportCapacity(name));
+    public int VehicleTransportCapacity => Mathf.Max(0, vehicleTransportCapacity > 0 ? vehicleTransportCapacity : ResolveDefaultVehicleTransportCapacity(name));
+    public int CargoWeightCapacity => Mathf.Max(0, cargoWeightCapacity > 0 ? cargoWeightCapacity : ResolveDefaultCargoWeightCapacity(name));
+    public float TransportCruiseHeight => Mathf.Max(0f, transportCruiseHeight > 0f ? transportCruiseHeight : ResolveDefaultTransportCruiseHeight(name));
+    public GameObject SoldierParachuteVisualPrefab => soldierParachuteVisualPrefab;
+    public GameObject VehicleEmergencyDropVisualPrefab => vehicleEmergencyDropVisualPrefab;
     public float RunwayTaxiSpeed => Mathf.Max(0.01f, runwayTaxiSpeed);
     public float Speed => speed;
     public float WalkSpeed => walkSpeed;

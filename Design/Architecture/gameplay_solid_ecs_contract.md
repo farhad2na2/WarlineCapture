@@ -399,6 +399,8 @@ Transport boarding is gameplay ECS logic, not UI or bootstrap logic. `UnitTransp
 
 Do not replace `UnitTransportBoardingSystem` with `UnitTransportBoardingManager`, `UnitTransportBoardingController`, `TransportBoardingFacade`, or another broad shell. Selection, command-result flush, transport command, and startup composition code must receive only the narrow transport systems they need, not a bundled boarding helper surface.
 
+Transport plane boarding and airdrop is tracked in `Design/Architecture/transport_plane_airdrop_boarding_implementation_plan.md`. That feature is the migration reference for replacing legacy managed prefab/VFX bridge patterns with pure ECS visual spawning: source prefabs are baked into entity-prefab references, runtime request state is data-only, unmanaged `ISystem` owners spawn/drop/animate/cleanup through ECS components and `EntityCommandBuffer`, and no runtime `SystemBase`, `MonoBehaviour`, manager, controller, facade, GameObject instantiation, or managed VFX bridge may own the behavior.
+
 ## Decision Test
 
 For every class, answer:

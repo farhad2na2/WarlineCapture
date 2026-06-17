@@ -228,7 +228,11 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
             model.PassengerCount,
             model.Capacity,
             model.ExitAllEnabled,
-            model.Passengers ?? _emptyPassengers));
+            model.Passengers ?? _emptyPassengers,
+            model.SoldierPassengerCount,
+            model.SoldierCapacity,
+            model.VehiclePassengerCount,
+            model.VehicleCapacity));
     }
 
     public void SetBoardActionSelected(bool selected)

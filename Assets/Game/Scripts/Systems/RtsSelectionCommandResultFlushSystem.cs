@@ -1050,7 +1050,8 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
             if (result.Kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
                 result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
             {
-                context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+                context.ApplyHudCommandResult?.Invoke(ToAcceptedTransportCommandResult(
+                    result,
                     result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
                         ? "Exiting unit."
                         : "Exiting passengers."));
@@ -1080,9 +1081,12 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
             if (result.EmitScreenMarker != 0)
                 context.RequestMoveOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
             context.SetCameraDragging?.Invoke(false);
+            if (IsTransportFirstBoardResult(result))
+                PreserveSelectedTransportAfterBoarding(context, em, result.TargetEntity);
             if (clearInputCommandMode)
                 context.ClearHudCommandMode?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+            context.ApplyHudCommandResult?.Invoke(ToAcceptedTransportCommandResult(
+                result,
                 result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
                 result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger
                     ? "Loading transport."
@@ -1090,6 +1094,37 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
         }
 
         return accepted;
+    }
+
+    private static TacticalCommandResult ToAcceptedTransportCommandResult(RtsSelectionCommandResultElement result, string fallbackMessage)
+    {
+        string message = result.Message.ToString();
+        return TacticalCommandResult.Success(string.IsNullOrWhiteSpace(message) ? fallbackMessage : message);
+    }
+
+    private static bool IsTransportFirstBoardResult(RtsSelectionCommandResultElement result)
+    {
+        return result.HasTargetEntity != 0 &&
+               (result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
+                result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger);
+    }
+
+    private static void PreserveSelectedTransportAfterBoarding(Context context, EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null || !em.Exists(transport))
+            return;
+
+        context.ClearCurrentSelection?.Invoke(em, "TransportFirstBoardingPreserveTransport");
+        if (em.HasComponent<Faction>(transport) &&
+            FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
+            !em.HasComponent<SelectedUnitTag>(transport))
+        {
+            em.AddComponent<SelectedUnitTag>(transport);
+        }
+
+        context.SelectionStateSystem.CacheSelectedMoveEntity(em, transport);
+        context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, transport);
+        context.ApplyHudSelection?.Invoke(em, transport);
     }
 
     private static void EnsureFeedbackQueue(Context context)

@@ -25,6 +25,11 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private bool productionTransportRequiresAirportRunway;
     [SerializeField, HideInInspector] private bool productionTransportUsesRunwayLanding;
     [SerializeField, HideInInspector, Min(0)] private int soldierTransportCapacity;
+    [SerializeField, HideInInspector, Min(0)] private int vehicleTransportCapacity;
+    [SerializeField, HideInInspector, Min(0)] private int cargoWeightCapacity;
+    [SerializeField, HideInInspector, Min(0f)] private float transportCruiseHeight;
+    [SerializeField, HideInInspector] private GameObject soldierParachuteVisualPrefab;
+    [SerializeField, HideInInspector] private GameObject vehicleEmergencyDropVisualPrefab;
     [SerializeField, HideInInspector, Min(0.01f)] private float runwayTaxiSpeed = 5f;
     [SerializeField, HideInInspector, Min(0.01f)] private float speed = 5f;
     [SerializeField, HideInInspector, Min(0.01f)] private float walkSpeed = 2f;
@@ -114,6 +119,11 @@ public class UnitGridAuthoring : MonoBehaviour
         productionTransportRequiresAirportRunway = config.ProductionTransportRequiresAirportRunway;
         productionTransportUsesRunwayLanding = config.ProductionTransportUsesRunwayLanding;
         soldierTransportCapacity = config.SoldierTransportCapacity;
+        vehicleTransportCapacity = config.VehicleTransportCapacity;
+        cargoWeightCapacity = config.CargoWeightCapacity;
+        transportCruiseHeight = config.TransportCruiseHeight;
+        soldierParachuteVisualPrefab = config.SoldierParachuteVisualPrefab;
+        vehicleEmergencyDropVisualPrefab = config.VehicleEmergencyDropVisualPrefab;
         runwayTaxiSpeed = config.RunwayTaxiSpeed;
         speed = config.Speed;
         walkSpeed = config.WalkSpeed;
@@ -177,6 +187,11 @@ public class UnitGridAuthoring : MonoBehaviour
     public bool ProductionTransportRequiresAirportRunway => productionTransportRequiresAirportRunway;
     public bool ProductionTransportUsesRunwayLanding => productionTransportUsesRunwayLanding;
     public int SoldierTransportCapacity => Mathf.Max(0, soldierTransportCapacity);
+    public int VehicleTransportCapacity => Mathf.Max(0, vehicleTransportCapacity);
+    public int CargoWeightCapacity => Mathf.Max(0, cargoWeightCapacity);
+    public float TransportCruiseHeight => Mathf.Max(0f, transportCruiseHeight);
+    public GameObject SoldierParachuteVisualPrefab => config != null ? config.SoldierParachuteVisualPrefab : soldierParachuteVisualPrefab;
+    public GameObject VehicleEmergencyDropVisualPrefab => config != null ? config.VehicleEmergencyDropVisualPrefab : vehicleEmergencyDropVisualPrefab;
     public bool IsAirUnit => config != null ? config.IsAirUnit : isAirUnit;
     public bool CanRequest => canRequest;
     public int Price => Mathf.Max(0, price);
@@ -287,12 +302,27 @@ public class UnitGridAuthoring : MonoBehaviour
                 });
             }
             AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.groundOffset });
-            if (authoring.soldierTransportCapacity > 0)
+            int soldierCapacity = math.max(0, authoring.soldierTransportCapacity);
+            int vehicleCapacity = math.max(0, authoring.vehicleTransportCapacity);
+            int cargoWeightCapacity = math.max(0, authoring.cargoWeightCapacity);
+            if (soldierCapacity > 0)
             {
                 AddComponent(entity, new UnitTransportCapacity
                 {
-                    SoldierCapacity = math.max(0, authoring.soldierTransportCapacity)
+                    SoldierCapacity = soldierCapacity
                 });
+            }
+            if (vehicleCapacity > 0 || cargoWeightCapacity > 0)
+            {
+                AddComponent(entity, new UnitTransportCargoCapacity
+                {
+                    SoldierCapacity = soldierCapacity,
+                    VehicleCapacity = vehicleCapacity,
+                    CargoWeightCapacity = cargoWeightCapacity
+                });
+            }
+            if (soldierCapacity > 0 || vehicleCapacity > 0 || cargoWeightCapacity > 0)
+            {
                 AddBuffer<UnitTransportPassengerElement>(entity);
             }
             if (authoring.resourceHaulerBarrelCapacity > 0)
@@ -308,9 +338,12 @@ public class UnitGridAuthoring : MonoBehaviour
             }
             if (authoring.isAirUnit)
             {
+                float configuredCruiseHeight = math.max(0f, authoring.TransportCruiseHeight);
                 AddComponent(entity, new UnitAirMovement
                 {
-                    CruiseHeight = math.max(3f, modelBounds.size.y > 0f ? modelBounds.size.y * 2f : 6f),
+                    CruiseHeight = configuredCruiseHeight > 0f
+                        ? configuredCruiseHeight
+                        : math.max(3f, modelBounds.size.y > 0f ? modelBounds.size.y * 2f : 6f),
                     RunwayTaxiSpeed = math.max(0.01f, authoring.runwayTaxiSpeed)
                 });
                 AddComponent(entity, new UnitAirComponent
@@ -381,6 +414,8 @@ public class UnitGridAuthoring : MonoBehaviour
             }
             if (authoring.config != null)
                 DependsOn(authoring.config);
+            AddTransportAirdropVisualPrefabReferences(authoring, entity);
+            AddTransportPlaneDoorMetadata(authoring, entity);
             GameObject impactPrefab = authoring.AttackImpactPrefab;
             GameObject muzzleFlashPrefab = authoring.MuzzleFlashPrefab;
             float muzzleFlashHeightOffset = authoring.MuzzleFlashHeightOffset;
@@ -895,6 +930,64 @@ public class UnitGridAuthoring : MonoBehaviour
                     Prefab = GetEntity(authoring.VehicleDestroyedVisualPrefab, TransformUsageFlags.Dynamic)
                 });
             }
+        }
+
+        private void AddTransportAirdropVisualPrefabReferences(UnitGridAuthoring authoring, Entity entity)
+        {
+            GameObject parachutePrefab = authoring.SoldierParachuteVisualPrefab;
+            GameObject emergencyDropPrefab = authoring.VehicleEmergencyDropVisualPrefab;
+            if (parachutePrefab == null && emergencyDropPrefab == null)
+                return;
+
+            AddComponent(entity, new UnitTransportAirdropVisualPrefabs
+            {
+                SoldierParachuteVisualPrefab = parachutePrefab != null
+                    ? GetEntity(parachutePrefab, TransformUsageFlags.Dynamic)
+                    : Entity.Null,
+                VehicleEmergencyDropVisualPrefab = emergencyDropPrefab != null
+                    ? GetEntity(emergencyDropPrefab, TransformUsageFlags.Dynamic)
+                    : Entity.Null
+            });
+        }
+
+        private void AddTransportPlaneDoorMetadata(UnitGridAuthoring authoring, Entity entity)
+        {
+            if (authoring.VehicleTransportCapacity <= 0)
+                return;
+
+            Transform door = FindDescendantByName(authoring.transform, "Door_X");
+            if (door == null)
+                return;
+
+            Vector3 doorLocalPosition = door.localPosition;
+            doorLocalPosition.x = 0f;
+            Vector3 openEuler = door.localEulerAngles;
+            Vector3 closedEuler = openEuler;
+            closedEuler.x = 0f;
+            Quaternion closedLocalRotation = Quaternion.Euler(closedEuler);
+
+            AddComponent(entity, new UnitTransportPlaneDoorReference
+            {
+                DoorEntity = GetEntity(door.gameObject, TransformUsageFlags.Dynamic),
+                ClosedLocalRotation = ToMathQuaternion(closedLocalRotation),
+                OpenLocalRotation = ToMathQuaternion(door.localRotation),
+                OpenSeconds = 1.1f,
+                CloseSeconds = 0.9f,
+                DoorLocalPosition = doorLocalPosition,
+                InteriorLocalPosition = doorLocalPosition + new Vector3(0f, 1.45f, 9.5f),
+                ApproachLocalPosition = doorLocalPosition + new Vector3(0f, 0f, -6f),
+                RolloutLocalPosition = doorLocalPosition + new Vector3(0f, 0f, -6f)
+            });
+            AddComponent(entity, new UnitTransportPlaneDoorState
+            {
+                Open01 = 0f,
+                TargetOpen = 0
+            });
+        }
+
+        private static quaternion ToMathQuaternion(Quaternion rotation)
+        {
+            return new quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
         }
 
         private static bool TryGetBladeAxis(string name, out byte axis)

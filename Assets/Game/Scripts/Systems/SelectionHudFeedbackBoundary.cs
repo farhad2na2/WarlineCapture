@@ -602,7 +602,11 @@ public sealed class SelectionHudFeedbackBoundary
             transportPassengerPanelItems.Count,
             capacity,
             transportPassengerPanelItems.Count > 0,
-            transportPassengerPanelItems);
+            transportPassengerPanelItems,
+            focusedModel.TransportSoldierPassengerCount,
+            focusedModel.TransportSoldierPassengerCapacity,
+            focusedModel.TransportVehiclePassengerCount,
+            focusedModel.TransportVehiclePassengerCapacity);
     }
 
     private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)

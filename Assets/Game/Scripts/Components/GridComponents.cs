@@ -77,15 +77,67 @@ public struct UnitTransportCapacity : IComponentData
     public int SoldierCapacity;
 }
 
+public static class UnitTransportPassengerKind
+{
+    public const byte Soldier = 0;
+    public const byte Vehicle = 1;
+}
+
+public struct UnitTransportCargoCapacity : IComponentData
+{
+    public int SoldierCapacity;
+    public int VehicleCapacity;
+    public int CargoWeightCapacity;
+}
+
 public struct UnitTransportPassenger : IComponentData
 {
     public Entity Transport;
+}
+
+public struct UnitTransportCargoPassenger : IComponentData
+{
+    public Entity Transport;
+    public byte PassengerKind;
+    public int CargoWeight;
+}
+
+public struct UnitTransportAirdropVisualPrefabs : IComponentData
+{
+    public Entity SoldierParachuteVisualPrefab;
+    public Entity VehicleEmergencyDropVisualPrefab;
+}
+
+public struct UnitTransportPlaneDoorReference : IComponentData
+{
+    public Entity DoorEntity;
+    public quaternion ClosedLocalRotation;
+    public quaternion OpenLocalRotation;
+    public float OpenSeconds;
+    public float CloseSeconds;
+    public float3 DoorLocalPosition;
+    public float3 InteriorLocalPosition;
+    public float3 ApproachLocalPosition;
+    public float3 RolloutLocalPosition;
+}
+
+public struct UnitTransportPlaneDoorState : IComponentData
+{
+    public float Open01;
+    public byte TargetOpen;
+}
+
+public struct UnitTransportPlaneDoorOpenRequest : IComponentData
+{
+    public float RemainingSeconds;
 }
 
 public struct UnitTransportBoardingTarget : IComponentData
 {
     public Entity Transport;
     public int2 Goal;
+    public byte PassengerKind;
+    public int CargoWeight;
 }
 
 public static class TransportBoardingData
@@ -169,6 +221,60 @@ public struct UnitTransportRopeLandingClearance : IComponentData
 {
     public Entity Transport;
     public int2 LandingCell;
+}
+
+public static class UnitTransportAirdropMode
+{
+    public const byte Mixed = 0;
+    public const byte SoldierOnly = 1;
+    public const byte VehicleOnly = 2;
+}
+
+public struct UnitTransportAirdropRequest : IComponentData
+{
+    public int2 DropReferenceCell;
+    public float NextDropAt;
+    public float DropIntervalSeconds;
+    public int DropCount;
+    public int DroppedCount;
+    public int SoldierDropCount;
+    public int VehicleDropCount;
+    public byte DropMode;
+    public byte PassReady;
+}
+
+public struct UnitTransportParachuteDropComponent : IComponentData
+{
+    public float3 StartPosition;
+    public float3 EndPosition;
+    public int2 LandingCell;
+    public float StartedAt;
+    public float DurationSeconds;
+    public Entity VisualEntity;
+}
+
+public struct UnitTransportCargoDropComponent : IComponentData
+{
+    public float3 StartPosition;
+    public float3 EndPosition;
+    public int2 LandingCell;
+    public float StartedAt;
+    public float DurationSeconds;
+    public Entity VisualEntity;
+}
+
+public struct UnitTransportAirdropVisualCleanup : IComponentData
+{
+    public float DestroyAt;
+}
+
+public struct UnitTransportAirdropSettleComponent : IComponentData
+{
+    public float3 StartPosition;
+    public float3 EndPosition;
+    public int2 EndCell;
+    public float StartedAt;
+    public float DurationSeconds;
 }
 
 public struct UnitTransportRopeDisperseComponent : IComponentData

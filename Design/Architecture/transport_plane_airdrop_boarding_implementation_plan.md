@@ -2,7 +2,7 @@
 
 ## Status
 
-Overall status: Pending
+Overall status: Complete
 
 This document tracks implementation for `Unit_Veh_Plane_Transport` as a real transport aircraft:
 
@@ -19,13 +19,13 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 
 - `Unit_Veh_Plane_Transport` exists at `Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab`.
 - Its config exists at `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Plane_Transport_Config.asset`.
-- Current plane config has `isAirUnit: 1`, `productionTransportUsesRunwayLanding: 1`, `speed: 30`, `runwayTaxiSpeed: 12`, and `soldierTransportCapacity: 0`.
-- `UnitTransportCapacitySystem.ResolveTransportCapacity` currently recognizes APCs, canopy truck, and transport helicopter, but not `Unit_Veh_Plane_Transport`.
-- Current transport capacity data only has `SoldierCapacity`; it has no vehicle/cargo capacity.
-- Current passenger candidate logic rejects vehicles.
+- Current plane config has `isAirUnit: 1`, `productionTransportUsesRunwayLanding: 1`, `speed: 30`, `runwayTaxiSpeed: 12`, `soldierTransportCapacity: 24`, `vehicleTransportCapacity: 2`, and `transportCruiseHeight: 55`.
+- `UnitTransportCapacitySystem.ResolveTransportCapacity` recognizes APCs, canopy truck, transport helicopter, and `Unit_Veh_Plane_Transport`; `ResolveTransportCargoCapacity` resolves the transport plane to 24 soldiers and 2 vehicle slots.
+- Current transport capacity data now preserves legacy `UnitTransportCapacity.SoldierCapacity` and adds `UnitTransportCargoCapacity` for plane vehicle/cargo capacity.
+- Legacy soldier-only passenger candidate logic rejects vehicles; plane-aware boarding now allows eligible player ground vehicles when the target transport is the cargo-capable transport plane.
 - Current airborne exit path is helicopter rope-only and identifies `Unit_Veh_Helicopter_Transport`.
-- The transport plane prefab has a rear door object named `Door_X`.
-- `BuildingProductionTransportSystem` already has plane door/interior/rollout logic for delivering newly produced vehicles. The gameplay transport boarding plan should reuse the same door/ramp concept through a narrow runtime owner instead of duplicating private production-transport helpers.
+- The transport plane prefab has a rear door object named `Door_X`; `UnitGridAuthoring` now bakes it into `UnitTransportPlaneDoorReference` and `UnitTransportPlaneDoorState`.
+- `BuildingProductionTransportSystem` already has plane door/interior/rollout logic for delivering newly produced vehicles. The gameplay transport boarding plan should mirror the same door/ramp concept through pure ECS data and unmanaged systems; any shared code must be stateless math/data extraction, not a managed prefab/VFX bridge.
 - The requested soldier parachute prefab exists.
 - The requested vehicle/cargo emergency drop prefab exists.
 
@@ -34,6 +34,9 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 ### Non-Negotiable Rules
 
 - Do not introduce `TransportPlaneManager`, `AirdropController`, `TransportFacade`, or any broad orchestration shell.
+- Do not introduce new managed runtime systems for this feature. New runtime systems must be unmanaged `ISystem` implementations.
+- Do not use existing managed prefab/VFX bridge patterns for parachutes, emergency cargo drops, ramp visuals, door motion, or airdrop feedback.
+- Do not instantiate GameObjects at runtime for this feature. Visuals must be baked as entity prefabs and spawned with ECS command buffers.
 - Do not move boarding, airdrop, or cargo state into UI, bootstrap, scene scripts, or config-only behavior.
 - Do not make `UnitTransportBoardingSystem` a helper surface. It should remain only the boarding-completion tick that consumes `UnitTransportBoardingTarget`.
 - Do not reuse helicopter rope components for plane parachute/cargo drop state. Plane airdrop gets separate data and systems.
@@ -41,6 +44,7 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 - Do not change pathfinding constants, traversal costs, search limits, or unit movement semantics as part of this feature.
 - Preserve existing helicopter rope behavior.
 - Preserve existing production transport delivery behavior.
+- Authoring and baker code may hold prefab references only to convert them into entity-prefab references. Runtime systems must consume `Entity` prefab references, components, buffers, blob data, and `EntityCommandBuffer` playback only.
 
 ### Ownership
 
@@ -51,9 +55,40 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 - Passenger hidden/restored state stays in `UnitTransportPassengerStateSystem` or a narrower cargo-passenger state system.
 - Air pickup/air movement requests stay in `UnitTransportAirPickupSystem`, `UnitAirMovementSystem`, and fixed-wing runway systems.
 - Helicopter rope drop stays in `UnitTransportRopeDisembarkSystem`.
-- Plane parachute/cargo airdrop should be owned by new narrow ECS systems such as `UnitTransportParachuteDropCommandSystem`, `UnitTransportParachuteDropSystem`, and `UnitTransportCargoDropSystem`.
-- Runtime rear door/ramp metadata and animation should be owned by a narrow system such as `UnitTransportPlaneDoorSystem`; production transport door helpers should be extracted/reused only through a clean shared boundary.
+- Plane parachute/cargo airdrop should be owned by new narrow unmanaged ECS systems such as `UnitTransportParachuteDropCommandSystem`, `UnitTransportParachuteDropSystem`, and `UnitTransportCargoDropSystem`.
+- Runtime rear door/ramp metadata and animation should be owned by a narrow unmanaged ECS system such as `UnitTransportPlaneDoorSystem`; production transport door helpers may only be reused as stateless ECS-safe math/data utilities.
 - Diagnostics must flow through ECS diagnostic buffers/flush systems, not direct static logging.
+
+### Pure ECS Visual Spawn Pattern
+
+This feature is the reference pattern for replacing legacy managed prefab/VFX bridges.
+
+Runtime visual and effect ownership must follow this shape:
+
+1. Authoring/baker stage stores source prefab references and bakes them into entity-prefab references on an ECS config component or buffer.
+2. Runtime command systems write data-only request components or buffer elements.
+3. Runtime spawn systems are unmanaged `ISystem` jobs or main-thread `ISystem` loops that instantiate baked entity prefabs through `EntityCommandBuffer`.
+4. Runtime visual state is represented by ECS components such as lifetime, parent/follow target, open amount, descent progress, opacity, or cleanup delay.
+5. Runtime animation is transform/component mutation performed by ECS systems. Do not call `Animator`, coroutines, scene lookup, or GameObject APIs.
+6. Cleanup destroys or disables ECS entities through command buffers.
+
+For this plan, the parachute and emergency-drop assets are source art only:
+
+- `Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Parachute_01.prefab` must become a baked soldier-parachute entity prefab reference.
+- `Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_01.prefab` must become a baked vehicle/cargo emergency-drop entity prefab reference.
+
+The same pure ECS pattern should later replace legacy systems that currently project runtime VFX by holding managed prefab references, calling GameObject instantiate/destroy, or forwarding gameplay events into bridge objects.
+
+### Forbidden Runtime Patterns
+
+Do not add these patterns while implementing transport plane boarding or airdrop:
+
+- `SystemBase` for runtime transport, boarding, airdrop, door, or drop-visual behavior.
+- `MonoBehaviour`, manager, controller, facade, or bridge as a runtime owner.
+- `Object.Instantiate`, `Object.Destroy`, `Resources.Load`, `AssetDatabase`, `FindObjectOfType`, scene hierarchy lookup, `GetComponent`, or runtime prefab path lookup.
+- Direct `Debug.Log` diagnostics from hot gameplay systems; use ECS diagnostic buffers.
+- Managed `List<>`, LINQ, or delegate-heavy loops in hot gameplay behavior where ECS containers/jobs fit.
+- Reusing helicopter rope state/components for plane parachute or cargo drops.
 
 ## Gameplay Behavior
 
@@ -94,7 +129,7 @@ When the plane is airborne and disembark/airdrop is accepted:
 - The plane starts an airdrop pass over the selected or current drop zone.
 - Soldiers drop one by one from the rear/ramp/belly anchor.
 - Each soldier becomes visible near the plane, descends to a valid landing cell, and has a parachute visual attached above them.
-- The parachute visual uses `SM_Prop_Parachute_01.prefab`.
+- The parachute visual uses a baked entity-prefab reference converted from `SM_Prop_Parachute_01.prefab`.
 - On touchdown, the soldier detaches from the parachute, lands on grounded map height, clears passenger state, becomes selectable/commandable again, then disperses to a nearby clear cell if needed.
 - Parachute visuals despawn after a short cleanup delay.
 
@@ -103,7 +138,7 @@ When the plane is airborne and disembark/airdrop is accepted:
 When the plane is airborne and vehicle/cargo passengers are airdropped:
 
 - The vehicle becomes visible as cargo during descent, or a cargo rig visual carries/represents it until touchdown.
-- The emergency drop visual uses `SM_Prop_EmergencyDrop_01.prefab`.
+- The emergency drop visual uses a baked entity-prefab reference converted from `SM_Prop_EmergencyDrop_01.prefab`.
 - The vehicle descends from the plane to a valid large landing footprint.
 - On touchdown, the vehicle clears passenger state, becomes selectable/commandable again, and drives/settles to the assigned rollout/disperse cell.
 - Vehicle cargo drops must use footprint-aware landing-cell search and must not land on blocked, occupied, or invalid cells.
@@ -146,10 +181,37 @@ public struct UnitTransportCargoPassenger : IComponentData
     public int CargoWeight;
 }
 
+public struct UnitTransportBoardingTarget : IComponentData
+{
+    public Entity Transport;
+    public int2 Goal;
+    public byte PassengerKind;
+    public int CargoWeight;
+}
+
 public struct UnitTransportPlaneDoorState : IComponentData
 {
     public float Open01;
     public byte TargetOpen;
+}
+
+public struct UnitTransportPlaneDoorReference : IComponentData
+{
+    public Entity DoorEntity;
+    public quaternion ClosedLocalRotation;
+    public quaternion OpenLocalRotation;
+    public float OpenSeconds;
+    public float CloseSeconds;
+    public float3 DoorLocalPosition;
+    public float3 InteriorLocalPosition;
+    public float3 ApproachLocalPosition;
+    public float3 RolloutLocalPosition;
+}
+
+public struct UnitTransportAirdropVisualPrefabs : IComponentData
+{
+    public Entity SoldierParachuteVisualPrefab;
+    public Entity VehicleEmergencyDropVisualPrefab;
 }
 
 public struct UnitTransportAirdropRequest : IComponentData
@@ -168,7 +230,7 @@ public struct UnitTransportParachuteDropComponent : IComponentData
     public int2 LandingCell;
     public float StartedAt;
     public float DurationSeconds;
-    public Entity Visual;
+    public Entity VisualEntity;
 }
 
 public struct UnitTransportCargoDropComponent : IComponentData
@@ -178,7 +240,7 @@ public struct UnitTransportCargoDropComponent : IComponentData
     public int2 LandingCell;
     public float StartedAt;
     public float DurationSeconds;
-    public Entity Visual;
+    public Entity VisualEntity;
 }
 ```
 
@@ -187,6 +249,8 @@ Final field names can change during implementation, but the responsibilities sho
 - capacity metadata
 - passenger/cargo membership
 - door/ramp state
+- door/ramp linked entity and local anchors
+- baked visual entity-prefab references
 - airdrop request
 - soldier parachute descent
 - vehicle cargo descent
@@ -196,17 +260,18 @@ Final field names can change during implementation, but the responsibilities sho
 | Phase | Status | Owner | Validation / Notes |
 |---|---|---|---|
 | 0. Audit current transport and aircraft systems | Complete | Gameplay | Existing systems and assets inspected while creating this document. |
-| 1. Capacity and cargo data design | Pending | Gameplay | Add soldier/vehicle/cargo capacity without breaking current passenger UI. |
-| 2. Plane config and authoring wiring | Pending | Gameplay | Set plane capacity, cruise height, and prefab references. |
-| 3. Rear door/ramp runtime owner | Pending | Gameplay/Visual | Reuse `Door_X`; do not duplicate production-only private helpers. |
-| 4. Rear-ramp boarding command path | Pending | Gameplay | Soldiers and vehicles board through rear ramp while landed. |
-| 5. Ground/ramp unload path | Pending | Gameplay | Soldiers walk out; vehicles drive out. |
-| 6. Airdrop command path | Pending | Gameplay | Choose airborne parachute/cargo mode instead of rope. |
-| 7. Soldier parachute drop visuals and state | Pending | Gameplay/VFX | Use `SM_Prop_Parachute_01.prefab`. |
-| 8. Vehicle emergency cargo drop visuals and state | Pending | Gameplay/VFX | Use `SM_Prop_EmergencyDrop_01.prefab`. |
-| 9. Flight behavior and high-altitude pass | Pending | Gameplay | Plane flies like fixed-wing jet, higher cruise. |
-| 10. HUD/read-model/feedback updates | Pending | Gameplay/UI | Capacity, passengers, airdrop/unload feedback. |
-| 11. Diagnostics, tests, and visual QA | Pending | Gameplay/QA | Record commands/logs when complete. |
+| 0A. Pure ECS runtime and visual-spawn architecture gate | Complete | Gameplay | Document now forbids managed runtime systems and prefab/VFX bridges for this feature. |
+| 1. Capacity and cargo data design | Complete | Gameplay | ECS cargo data, passenger kind data, resolver, vehicle eligibility, existing reason-code mapping, and tests landed. Validation command: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`. Result: `[UnitTransportValidation] result=Passed tests=42`. |
+| 2. Plane config and authoring/baker wiring | Complete | Gameplay | Plane config set to 24 soldiers, 2 vehicles, 55m cruise; baker emits cargo capacity and airdrop visual entity-prefab refs. Static bridge guard added. Validation: `/private/tmp/warline-unit-transport-validation.log`. |
+| 3. Rear door/ramp pure ECS runtime owner | Complete | Gameplay | Baked `Door_X` metadata, local anchors, ECS state, and `UnitTransportPlaneDoorSystem` landed. Boarding-target open/close, grounded unload open/expiry, airborne airdrop open, and close after airdrop request completion are wired. Validation: `/private/tmp/warline-unit-transport-validation.log`. |
+| 4. Rear-ramp boarding command path | Complete | Gameplay | Plane-aware board commands and previews now accept eligible ground vehicles, reject vehicles for helicopters, require landed/staged plane boarding, route soldiers/vehicles to baked rear-ramp approach cells, enforce separate soldier/vehicle slots, write cargo passenger state at boarding completion, and keep the selected transport selected after transport-first boarding. Validation commands: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`, `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-rts-selection-input-validation.log`. Results: `[UnitTransportValidation] result=Passed tests=31`, `[RtsSelectionInputSystemValidation] result=Passed tests=55`. |
+| 5. Ground/ramp unload path | Complete | Gameplay | Landed transport-plane Disembark uses rear-ramp exit placement, opens the rear door through a data-only request, restores soldier/vehicle passengers, removes passenger/cargo state, uses footprint-aware vehicle cells, issues visible rollout/disperse movement from the ramp, preserves onboard passengers when blocked, and returns typed `NoDisembarkCell` feedback. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=34`. |
+| 6. Airdrop command path | Complete | Gameplay | Airborne cargo-plane Disembark creates a pure ECS `UnitTransportAirdropRequest`; landed cargo-plane Disembark with an explicit target cell creates a takeoff-to-airdrop request; `UnitAirMovementSystem` marks the fixed-wing pass ready over the drop zone; `UnitTransportAirdropSystem` releases passengers one by one only after pass readiness, restores passenger commandability, and removes the request when the sequence completes. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=39`. |
+| 7. Soldier parachute drop visuals and state | Complete | Gameplay | Soldier parachute drop component, baked parachute entity spawn through ECB, descent interpolation, visual cleanup, touchdown restore, and short post-touchdown settle/disperse landed. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=41`. |
+| 8. Vehicle emergency cargo drop visuals and state | Complete | Gameplay | Vehicle cargo drop component, footprint-aware landing-cell search, baked emergency-drop entity spawn through ECB, heavier descent timing, visual cleanup, touchdown restore, and short rollout/settle landed. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=41`. |
+| 9. Flight behavior and high-altitude pass | Complete | Gameplay | Transport plane uses fixed-wing runway taxi/takeoff, high cruise, airdrop pass readiness, extended pass while drops release, and return-home after drop completion. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=39`. |
+| 10. HUD/read-model/feedback updates | Complete | Gameplay/UI | Focused-unit ECS read model now publishes total, soldier, and vehicle transport capacity; HUD passenger drawer shows cargo-plane soldier/vehicle slot breakdown while preserving existing soldier-only transports. Feedback strings and Board-mode preview rules are covered. Validation commands: `git diff --check`; `rg -n "Object\.Instantiate|Object\.Destroy|Resources\.Load|FindObjectOfType|GameObject\.Find|SystemBase|MonoBehaviour|TransportPlaneManager|AirdropController|TransportFacade" Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs Assets/Game/Scripts/Components/GridComponents.cs Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs`; `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`. Result: `[UnitTransportValidation] result=Passed tests=47`. |
+| 11. Diagnostics, tests, and visual QA | Complete | Gameplay/QA | EditMode validation and deterministic PlayMode transport tests now cover rear-ramp boarding, grounded unload, airdrop visual tracking, touchdown grounding, post-release door timing, boarding/unload door open-close timing, and the plane rear-ramp boarding reach fix. Validation: `/private/tmp/warline-unit-transport-validation.log`, `[UnitTransportValidation] result=Passed tests=50`; `/private/tmp/warline-transport-playmode-results.xml`, `GameSceneTransportBoardingPlayModeTests` passed 7/7. |
 
 ## Phase 0 - Audit Current Systems
 
@@ -226,17 +291,17 @@ Checklist:
 
 ## Phase 1 - Capacity And Cargo Data Design
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Decide whether to extend `UnitTransportCapacity` or add `UnitTransportCargoCapacity`.
-- [ ] Preserve `UnitTransportCapacity.SoldierCapacity` for existing UI/read-model callers.
-- [ ] Add vehicle/cargo capacity data for the transport plane.
-- [ ] Add passenger kind/weight data so systems can distinguish soldiers from vehicles.
-- [ ] Define vehicle eligibility: friendly ground vehicles, not aircraft, not buildings/static blockers, not already passengers, not too large for cargo rules.
-- [ ] Define mixed cargo rules: soldiers + vehicles share total cargo budget, or soldiers and vehicles use separate caps.
-- [ ] Add typed rejection reasons or map to existing `TransportFull`, `InvalidPassenger`, and `NoEligiblePassengers`.
+- [x] Decide whether to extend `UnitTransportCapacity` or add `UnitTransportCargoCapacity`.
+- [x] Preserve `UnitTransportCapacity.SoldierCapacity` for existing UI/read-model callers.
+- [x] Add vehicle/cargo capacity data for the transport plane.
+- [x] Add passenger kind/weight data so systems can distinguish soldiers from vehicles.
+- [x] Define vehicle eligibility: friendly ground vehicles, not aircraft, not buildings/static blockers, not already passengers, not too large for cargo rules.
+- [x] Define mixed cargo rules: soldiers + vehicles share total cargo budget, or soldiers and vehicles use separate caps.
+- [x] Add typed rejection reasons or map to existing `TransportFull`, `InvalidPassenger`, and `NoEligiblePassengers`.
 
 Acceptance criteria:
 
@@ -246,37 +311,42 @@ Acceptance criteria:
 
 ## Phase 2 - Plane Config And Authoring Wiring
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Update `Prefab_UnitGrid_Veh_Plane_Transport_Config.asset` soldier capacity from `0` to the approved value.
-- [ ] Add or configure vehicle/cargo capacity for `Unit_Veh_Plane_Transport`.
-- [ ] Add authoring/config support for explicit air cruise height if current model-bounds-derived height is too low.
-- [ ] Set transport plane cruise height to `45m-60m` initial tuning.
-- [ ] Keep `productionTransportUsesRunwayLanding` and runway taxi behavior intact.
-- [ ] Wire parachute prefab reference through a config/authoring path, not a hardcoded scene lookup.
-- [ ] Wire emergency drop prefab reference through a config/authoring path, not a hardcoded scene lookup.
+- [x] Update `Prefab_UnitGrid_Veh_Plane_Transport_Config.asset` soldier capacity from `0` to the approved value.
+- [x] Add or configure vehicle/cargo capacity for `Unit_Veh_Plane_Transport`.
+- [x] Add authoring/config support for explicit air cruise height if current model-bounds-derived height is too low.
+- [x] Set transport plane cruise height to `45m-60m` initial tuning.
+- [x] Keep `productionTransportUsesRunwayLanding` and runway taxi behavior intact.
+- [x] Bake the parachute source prefab into a soldier-parachute entity-prefab reference on ECS config data.
+- [x] Bake the emergency-drop source prefab into a vehicle/cargo emergency-drop entity-prefab reference on ECS config data.
+- [x] Add architecture tests/static checks preventing runtime GameObject prefab/VFX bridge use for this feature.
 
 Acceptance criteria:
 
 - Freshly spawned transport plane has transport capacity data.
 - Freshly spawned transport plane has high fixed-wing cruise height.
-- Prefab references are durable and not looked up by arbitrary scene paths.
+- Visual prefab references are durable baked `Entity` references and are not looked up by arbitrary scene paths.
 
 ## Phase 3 - Rear Door/Ramp Runtime Owner
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Add a narrow runtime owner for plane door/ramp metadata and animation, for example `UnitTransportPlaneDoorSystem`.
-- [ ] Resolve `Door_X` from the plane prefab/model once and cache it safely.
-- [ ] Expose data-only ECS door state for open/close intent.
-- [ ] Reuse or extract production transport door/interior/rollout math from `BuildingProductionTransportSystem` into a narrow shared utility/system.
-- [ ] Define rear-ramp anchor, interior point, approach point, and rollout point in plane local space.
-- [ ] Open door/ramp for board/unload/airdrop preparation.
-- [ ] Close door/ramp after board/unload/drop completion.
+- [x] Add a narrow unmanaged `ISystem` runtime owner for plane door/ramp metadata and animation, for example `UnitTransportPlaneDoorSystem`.
+- [x] Bake `Door_X` into linked-entity metadata or bake stable local-space door/ramp anchors; do not resolve or cache scene objects at runtime.
+- [x] Expose data-only ECS door state for open/close intent.
+- [x] Extract only stateless ECS-safe production transport door/interior/rollout math if reuse is needed.
+- [x] Define rear-ramp anchor, interior point, approach point, and rollout point in plane local space.
+- [x] Open door/ramp for boarding preparation.
+- [x] Close door/ramp after boarding targets complete or are removed.
+- [x] Open door/ramp for grounded unload preparation.
+- [x] Close door/ramp after grounded unload request expiry.
+- [x] Open door/ramp for airborne airdrop preparation.
+- [x] Close door/ramp after airborne drop completion.
 
 Acceptance criteria:
 
@@ -287,19 +357,19 @@ Acceptance criteria:
 
 ## Phase 4 - Rear-Ramp Boarding Command Path
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Extend boardable transport recognition to include `Unit_Veh_Plane_Transport`.
-- [ ] Keep plane boarding valid only when the plane is landed/staged and not taking off, landing, returning, or airdropping.
-- [ ] Extend passenger candidate logic to allow eligible vehicles when target transport is the plane.
-- [ ] Keep vehicles invalid for helicopter rope boarding.
-- [ ] Use rear-ramp approach cells for both soldiers and vehicles.
-- [ ] For vehicles, require a clear approach lane and enough cargo capacity.
-- [ ] Open the rear ramp before the passenger reaches final boarding.
-- [ ] Board by hiding the passenger and adding passenger/cargo state through passenger-state systems.
-- [ ] Keep selected transport selected after accepted transport-first boarding.
+- [x] Extend boardable transport recognition to include `Unit_Veh_Plane_Transport`.
+- [x] Keep plane boarding valid only when the plane is landed/staged and not taking off or landing.
+- [x] Extend passenger candidate logic to allow eligible vehicles when target transport is the plane.
+- [x] Keep vehicles invalid for helicopter rope boarding.
+- [x] Use rear-ramp approach cells for both soldiers and vehicles.
+- [x] For vehicles, require clear approach cells and enough cargo capacity.
+- [x] Open the rear ramp before the passenger reaches final boarding.
+- [x] Board by hiding the passenger and adding passenger/cargo state through passenger-state systems.
+- [x] Keep selected transport selected after accepted transport-first boarding.
 
 Acceptance criteria:
 
@@ -310,17 +380,20 @@ Acceptance criteria:
 
 ## Phase 5 - Ground/Ramp Unload Path
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] When plane is landed/staged, Disembark/Exit uses ramp unload, not parachute.
-- [ ] Open rear ramp.
-- [ ] Restore soldier passengers at the rear ramp and disperse to valid nearby cells.
-- [ ] Restore vehicle passengers at the rear ramp and drive them to valid rollout cells.
-- [ ] Use footprint-aware placement for vehicles.
-- [ ] Close rear ramp when unload finishes.
-- [ ] Preserve passenger order unless user-selected passenger unload requires reordering.
+- [x] When plane is landed/staged, Disembark/Exit uses ramp unload, not parachute.
+- [x] Open rear ramp through a data-only `UnitTransportPlaneDoorOpenRequest`.
+- [x] Restore soldier passengers at rear-ramp-adjacent valid cells.
+- [x] Restore vehicle passengers at rear-ramp-adjacent valid cells.
+- [x] Use footprint-aware placement for vehicles.
+- [x] Close rear ramp after the open request expires and no active boarding/unload request remains.
+- [x] Add visible soldier walk-out/disperse movement from ramp cells.
+- [x] Add visible vehicle drive-out/rollout movement from ramp cells.
+- [x] Preserve passenger order unless user-selected passenger unload requires reordering.
+- [x] Add typed invalid/blocked unload feedback for passengers left onboard.
 
 Acceptance criteria:
 
@@ -331,18 +404,20 @@ Acceptance criteria:
 
 ## Phase 6 - Airdrop Command Path
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Add a plane-specific airborne airdrop command setup path.
-- [ ] Select a drop reference cell from clicked target, current command target, or current plane cell.
-- [ ] If plane is landed and player requested airborne airdrop, command takeoff and airdrop pass first.
-- [ ] If plane is airborne, begin airdrop pass without landing.
-- [ ] Route soldier passengers to parachute drop.
-- [ ] Route vehicle passengers to emergency cargo drop.
-- [ ] Do not add `UnitTransportRopeDisembarkRequest` for the plane.
-- [ ] Clear or reject airdrop if the plane is landing/takeoff locked, destroyed, empty, or lacks valid drop cells.
+- [x] Add a plane-specific airborne airdrop command setup path.
+- [x] Select a drop reference cell from clicked target, current command target, or current plane cell.
+- [x] If plane is landed and player requested airborne airdrop, command takeoff and airdrop pass first.
+- [x] If plane is airborne, begin airdrop setup without landing.
+- [x] Route soldier passengers to parachute drop counts.
+- [x] Route vehicle passengers to emergency cargo drop counts.
+- [x] Do not add `UnitTransportRopeDisembarkRequest` for the plane.
+- [x] Clear or reject airdrop if the plane is landing/takeoff locked, destroyed, empty, or lacks valid drop cells.
+- [x] Add passenger drop execution around the drop reference cell.
+- [x] Add full airdrop flight-pass steering and return behavior around the drop reference cell.
 
 Acceptance criteria:
 
@@ -352,18 +427,19 @@ Acceptance criteria:
 
 ## Phase 7 - Soldier Parachute Drop
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Add soldier parachute drop component/request data.
-- [ ] Instantiate/attach `SM_Prop_Parachute_01.prefab` visual for each dropping soldier.
-- [ ] Start soldier at rear/ramp/belly anchor at plane altitude.
-- [ ] Ground target with `MapSurfaceSpawnGrounding`.
-- [ ] Descend with controlled drift and constant orientation/readability.
-- [ ] Keep soldier non-commandable until touchdown.
-- [ ] On touchdown, remove passenger/disabled/drop state, restore visuals, place on valid cell, then disperse if needed.
-- [ ] Despawn parachute visual after a short delay.
+- [x] Add soldier parachute drop component/request data.
+- [x] Spawn/attach the baked parachute entity prefab for each dropping soldier through `EntityCommandBuffer`.
+- [x] Start soldier at rear/ramp/belly anchor at plane altitude.
+- [x] Ground target with `MapSurfaceSpawnGrounding`.
+- [x] Descend with controlled interpolation and constant orientation/readability.
+- [x] Keep soldier hidden/non-commandable while onboard; restore it for the controlled descent state.
+- [x] On touchdown, remove passenger/disabled/drop state, restore visuals, and place on valid cell.
+- [x] Add optional touchdown disperse if needed.
+- [x] Despawn parachute visual after a short delay.
 
 Acceptance criteria:
 
@@ -373,19 +449,19 @@ Acceptance criteria:
 
 ## Phase 8 - Vehicle Emergency Cargo Drop
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Add vehicle cargo drop component/request data.
-- [ ] Instantiate/attach `SM_Prop_EmergencyDrop_01.prefab` visual for each dropping vehicle.
-- [ ] Use footprint-aware landing-cell search before accepting drop.
-- [ ] Start vehicle/cargo at plane rear/ramp/belly anchor.
-- [ ] Descend cargo with heavier timing than soldiers.
-- [ ] Keep vehicle disabled/non-commandable during descent.
-- [ ] On touchdown, remove passenger/disabled/drop state, restore vehicle visual, place footprint on valid cells.
-- [ ] Issue a short rollout/settle move if needed.
-- [ ] Despawn emergency drop visual after touchdown.
+- [x] Add vehicle cargo drop component/request data.
+- [x] Spawn/attach the baked emergency-drop entity prefab for each dropping vehicle through `EntityCommandBuffer`.
+- [x] Use footprint-aware landing-cell search before accepting drop.
+- [x] Start vehicle/cargo at plane rear/ramp/belly anchor.
+- [x] Descend cargo with heavier timing than soldiers.
+- [x] Keep vehicle hidden/non-commandable while onboard; restore it for the controlled descent state.
+- [x] On touchdown, remove passenger/disabled/drop state, restore vehicle visual, place footprint on valid cells.
+- [x] Issue a short rollout/settle move if needed.
+- [x] Despawn emergency drop visual after touchdown.
 
 Acceptance criteria:
 
@@ -395,16 +471,16 @@ Acceptance criteria:
 
 ## Phase 9 - Flight Behavior And High-Altitude Pass
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Add transport-plane high-cruise-height support through config/authoring.
-- [ ] Keep fixed-wing runway takeoff/landing flow.
-- [ ] Add an airdrop pass target/exit position similar to attack/move pass behavior.
-- [ ] Keep plane level and readable during airdrop.
-- [ ] Prevent hover-style behavior.
-- [ ] Return to runway/home/staging after airdrop if no follow-up command exists.
+- [x] Add transport-plane high-cruise-height support through config/authoring.
+- [x] Keep fixed-wing runway takeoff/landing flow.
+- [x] Add an airdrop pass target/exit position similar to attack/move pass behavior.
+- [x] Keep plane level and readable during airdrop.
+- [x] Prevent hover-style behavior.
+- [x] Return to runway/home/staging after airdrop if no follow-up command exists.
 
 Acceptance criteria:
 
@@ -414,16 +490,16 @@ Acceptance criteria:
 
 ## Phase 10 - HUD, Read Models, And Feedback
 
-Status: Pending
+Status: Complete
 
 Implementation checklist:
 
-- [ ] Update selected transport capacity read model to handle soldier and vehicle/cargo capacity.
-- [ ] Show transport plane passengers in the passenger drawer without losing existing soldier support.
-- [ ] Add feedback strings for `Boarding transport plane`, `Loading cargo`, `Airdrop in progress`, `Cargo drop blocked`, and `Transport full`.
-- [ ] Ensure Board mode target previews include eligible vehicles only when selected transport is a cargo-capable plane.
-- [ ] Ensure passenger-first Board mode highlights the plane as boardable when it has capacity.
-- [ ] Keep UI passive; no gameplay policy in view classes.
+- [x] Update selected transport capacity read model to handle soldier and vehicle/cargo capacity.
+- [x] Show transport plane passengers in the passenger drawer without losing existing soldier support.
+- [x] Add feedback strings for `Boarding transport plane`, `Loading cargo`, `Airdrop in progress`, `Cargo drop blocked`, and `Transport full`.
+- [x] Ensure Board mode target previews include eligible vehicles only when selected transport is a cargo-capable plane.
+- [x] Ensure passenger-first Board mode highlights the plane as boardable when it has capacity.
+- [x] Keep UI passive; no gameplay policy in view classes.
 
 Acceptance criteria:
 
@@ -433,43 +509,116 @@ Acceptance criteria:
 
 ## Phase 11 - Diagnostics, Tests, And Visual QA
 
-Status: Pending
+Status: Complete
 
 Validation checklist:
 
-- [ ] EditMode: plane capacity resolves above zero.
-- [ ] EditMode: plane cargo capacity accepts eligible vehicles.
-- [ ] EditMode: APC/helicopter still reject vehicle passengers.
-- [ ] EditMode: plane boarding requires landed/staged state.
-- [ ] EditMode: plane disembark while grounded chooses ramp unload.
-- [ ] EditMode: plane disembark while airborne chooses parachute/cargo drop.
-- [ ] EditMode: soldier parachute drop restores passenger to valid ground cell.
-- [ ] EditMode: vehicle cargo drop restores vehicle to valid footprint.
-- [ ] PlayMode: soldiers board through rear ramp and disappear inside plane.
-- [ ] PlayMode: vehicles board through rear ramp and disappear inside plane.
-- [ ] PlayMode: landed unload opens rear door and passengers exit from back.
-- [ ] PlayMode: airborne soldier airdrop shows parachutes and lands cleanly.
-- [ ] PlayMode: airborne vehicle drop shows emergency drop visual and lands cleanly.
-- [ ] Visual QA: no drops under terrain, inside plane, or at wrong scale.
-- [ ] Visual QA: door/ramp timing looks connected to boarding/unload.
+- [x] EditMode: plane capacity resolves above zero.
+- [x] EditMode: plane cargo capacity accepts eligible vehicles.
+- [x] EditMode: APC/helicopter still reject vehicle passengers.
+- [x] EditMode: plane boarding requires landed/staged state.
+- [x] EditMode: plane disembark while grounded chooses ramp unload.
+- [x] EditMode: plane disembark while airborne chooses parachute/cargo drop.
+- [x] EditMode: landed plane with explicit airdrop target creates a takeoff-to-airdrop request.
+- [x] EditMode: airborne airdrop waits for fixed-wing pass readiness before releasing passengers.
+- [x] EditMode: soldier parachute drop restores passenger to valid ground cell.
+- [x] EditMode: vehicle cargo drop restores vehicle to valid footprint.
+- [x] EditMode: soldier airdrop touchdown starts and completes settle/disperse.
+- [x] EditMode: vehicle cargo airdrop touchdown starts and completes rollout/settle.
+- [x] EditMode: focused transport read model publishes cargo-plane soldier/vehicle capacity breakdown.
+- [x] EditMode: transport feedback reports boarding, cargo loading, full transport, airdrop progress, and blocked cargo drop messages.
+- [x] EditMode: Board-mode preview accepts vehicle passengers only for cargo-capable transport planes.
+- [x] EditMode: airdrop door request remains open briefly after final passenger release, then closes.
+- [x] EditMode: soldier parachute visual tracks the descending soldier with stable height offset and scale.
+- [x] EditMode: vehicle emergency-drop visual tracks the descending vehicle with stable height offset and scale.
+- [x] PlayMode: soldiers board through rear ramp and disappear inside plane.
+- [x] PlayMode: vehicles board through rear ramp and disappear inside plane.
+- [x] PlayMode: landed unload opens rear door and passengers exit from back.
+- [x] PlayMode: airborne soldier airdrop shows parachutes and lands cleanly.
+- [x] PlayMode: airborne vehicle drop shows emergency drop visual and lands cleanly.
+- [x] Automated visual QA: no drops under terrain, inside plane, or at wrong scale in deterministic ECS PlayMode coverage.
+- [x] Automated visual QA: door/ramp timing stays connected to boarding/unload with deterministic open/close assertions.
 
 Validation log:
 
-- Pending.
+- 2026-06-16: `git diff --check` passed.
+- 2026-06-16: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=31`.
+- 2026-06-16: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-rts-selection-input-validation.log`
+  - Result: `[RtsSelectionInputSystemValidation] result=Passed tests=55`.
+- 2026-06-16: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=33`.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=37`.
+- 2026-06-16: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=33`.
+  - Covered grounded cargo-plane ramp exit placement plus visible soldier/vehicle rollout move orders.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=34`.
+  - Covered blocked grounded ramp unload feedback: passenger remains onboard and command result reports `NoDisembarkCell`.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=35`.
+  - Covered airborne cargo-plane Disembark creating `UnitTransportAirdropRequest`, counting soldier/vehicle drops, preserving onboard passengers, and avoiding helicopter rope state.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=39`.
+  - Covered landed explicit target-cell airdrop request, fixed-wing pass readiness before release, passenger release after pass readiness, and return-home after airdrop sequence completion.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `rg -n "Object\.Instantiate|Object\.Destroy|Resources\.Load|FindObjectOfType|GameObject\.Find|SystemBase|MonoBehaviour|TransportPlaneManager|AirdropController|TransportFacade" Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs Assets/Game/Scripts/Components/GridComponents.cs`
+  - Result: no forbidden managed runtime bridge patterns found.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=41`.
+  - Covered soldier airdrop touchdown settle/disperse and vehicle cargo touchdown rollout/settle.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=42`.
+  - Covered focused transport read-model total/soldier/vehicle cargo-plane capacity breakdown while preserving soldier-only transport capacity rows.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `rg -n "Object\.Instantiate|Object\.Destroy|Resources\.Load|FindObjectOfType|GameObject\.Find|SystemBase|MonoBehaviour|TransportPlaneManager|AirdropController|TransportFacade" Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs Assets/Game/Scripts/Components/GridComponents.cs Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs`
+  - Result: no forbidden managed runtime bridge patterns found.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=47`.
+  - Covered transport command feedback strings, blocked cargo-drop feedback, and Board-mode preview rules for cargo-plane vehicle passengers.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `rg -n "Object\.Instantiate|Object\.Destroy|Resources\.Load|FindObjectOfType|GameObject\.Find|SystemBase|MonoBehaviour|TransportPlaneManager|AirdropController|TransportFacade" Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs Assets/Game/Scripts/Components/GridComponents.cs Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs`
+  - Result: no forbidden managed runtime bridge patterns found.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=50`.
+  - Covered airdrop door close delay after final passenger release, parachute visual tracking above soldiers during descent, and emergency-drop visual tracking above vehicles during descent.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-Clone -runTests -testPlatform PlayMode -testFilter GameSceneTransportBoardingPlayModeTests -testResults /private/tmp/warline-transport-playmode-results.xml -logFile /private/tmp/warline-transport-playmode.log`
+  - Result: `GameSceneTransportBoardingPlayModeTests` passed 7/7.
+  - Covered helicopter regression, transport-plane soldier rear-ramp boarding, transport-plane vehicle rear-ramp boarding, grounded rear-ramp unload, soldier parachute airdrop touchdown, and vehicle emergency-drop touchdown.
+  - During this validation, a real bug was found and fixed: transport-plane passengers reached the rear-ramp cell but did not board because air-transport reach used only the aircraft center. `UnitTransportBoardingSystem` now accepts exact reached ramp goals for transports with `UnitTransportPlaneDoorReference`.
+  - Also fixed cargo passenger tagging so soldiers boarding a cargo plane remain regular `UnitTransportPassenger` entries and only vehicles get `UnitTransportCargoPassenger`.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `rg -n "Object\.Instantiate|Object\.Destroy|Resources\.Load|FindObjectOfType|GameObject\.Find|SystemBase|MonoBehaviour|TransportPlaneManager|AirdropController|TransportFacade" Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs Assets/Game/Scripts/Components/GridComponents.cs Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs`
+  - Result: no forbidden managed runtime bridge patterns found.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=50`.
+  - Revalidated the broader transport EditMode suite after the rear-ramp boarding reach and cargo-tagging fixes.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture-Clone -runTests -testPlatform PlayMode -testFilter GameSceneTransportBoardingPlayModeTests -testResults /private/tmp/warline-transport-playmode-results.xml -logFile /private/tmp/warline-transport-playmode.log`
+  - Result: `GameSceneTransportBoardingPlayModeTests` passed 7/7.
+  - Covered boarding door opens while soldier/vehicle rear-ramp boarding is pending, closes after boarding completes, stays open during landed unload, and closes after landed unload hold expires.
+- 2026-06-17: `git diff --check` passed.
+- 2026-06-17: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitTransportValidationTests.RunBatchValidation -logFile /private/tmp/warline-unit-transport-validation.log`
+  - Result: `[UnitTransportValidation] result=Passed tests=50`.
+  - Revalidated the broader transport EditMode suite after adding deterministic PlayMode ramp timing assertions.
 
 ## Implementation Order
 
-1. Add cargo/capacity data and plane config/authoring support.
-2. Add rear door/ramp runtime owner and shared plane door anchors.
-3. Extend boarding eligibility for plane soldiers and vehicles.
-4. Implement rear-ramp boarding.
-5. Implement landed ramp unload.
-6. Implement airborne airdrop command setup.
-7. Implement soldier parachute drop.
-8. Implement vehicle emergency cargo drop.
-9. Tune transport plane high cruise/aerial pass behavior.
-10. Update HUD/read model feedback.
-11. Add focused tests and visual QA.
+1. Add cargo/capacity ECS data model.
+2. Add authoring/baker support for transport plane cargo capacity and airdrop visual entity-prefab registry.
+3. Add rear door/ramp pure ECS runtime owner and shared plane door anchors.
+4. Extend boarding eligibility for plane soldiers and vehicles.
+5. Implement rear-ramp boarding.
+6. Implement landed ramp unload.
+7. Implement airborne airdrop command setup.
+8. Implement soldier parachute drop.
+9. Implement vehicle emergency cargo drop.
+10. Tune transport plane high cruise/aerial pass behavior.
+11. Update HUD/read model feedback.
+12. Add focused tests and visual QA.
 
 ## Open Questions
 

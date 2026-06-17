@@ -244,22 +244,70 @@ public sealed class SelectionUiReadModelLookup
 
     public int GetTransportPassengerCount(EntityManager entityManager, Entity transport, UnitTransportCapacitySystem capacitySystem)
     {
-        if (!entityManager.Exists(transport) || !capacitySystem.TryEnsureTransportCapacity(entityManager, transport))
-            return 0;
-
-        return entityManager.GetBuffer<UnitTransportPassengerElement>(transport).Length;
+        return TryGetTransportPassengerBreakdown(
+            entityManager,
+            transport,
+            capacitySystem,
+            out int soldierCount,
+            out _,
+            out int vehicleCount,
+            out _)
+            ? soldierCount + vehicleCount
+            : 0;
     }
 
     public int GetTransportPassengerCapacity(EntityManager entityManager, Entity transport, UnitTransportCapacitySystem capacitySystem)
     {
-        if (!entityManager.Exists(transport) ||
-            !capacitySystem.TryEnsureTransportCapacity(entityManager, transport) ||
-            !entityManager.HasComponent<UnitTransportCapacity>(transport))
+        return TryGetTransportPassengerBreakdown(
+            entityManager,
+            transport,
+            capacitySystem,
+            out _,
+            out int soldierCapacity,
+            out _,
+            out int vehicleCapacity)
+            ? soldierCapacity + vehicleCapacity
+            : 0;
+    }
+
+    public bool TryGetTransportPassengerBreakdown(
+        EntityManager entityManager,
+        Entity transport,
+        UnitTransportCapacitySystem capacitySystem,
+        out int soldierCount,
+        out int soldierCapacity,
+        out int vehicleCount,
+        out int vehicleCapacity)
+    {
+        soldierCount = 0;
+        soldierCapacity = 0;
+        vehicleCount = 0;
+        vehicleCapacity = 0;
+
+        if (!entityManager.Exists(transport) || !capacitySystem.TryEnsureTransportCapacity(entityManager, transport))
+            return false;
+
+        UnitTransportCargoCapacity capacity = capacitySystem.ResolveTransportCargoCapacity(entityManager, transport);
+        soldierCapacity = math.max(0, capacity.SoldierCapacity);
+        vehicleCapacity = math.max(0, capacity.VehicleCapacity);
+
+        if (!entityManager.HasBuffer<UnitTransportPassengerElement>(transport))
+            return soldierCapacity + vehicleCapacity > 0;
+
+        DynamicBuffer<UnitTransportPassengerElement> passengers = entityManager.GetBuffer<UnitTransportPassengerElement>(transport);
+        for (int i = 0; i < passengers.Length; i++)
         {
-            return 0;
+            Entity passenger = passengers[i].Passenger;
+            if (!entityManager.Exists(passenger))
+                continue;
+
+            if (ResolveTransportPassengerKind(entityManager, transport, passenger) == UnitTransportPassengerKind.Vehicle)
+                vehicleCount++;
+            else
+                soldierCount++;
         }
 
-        return math.max(0, entityManager.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
+        return soldierCapacity + vehicleCapacity > 0;
     }
 
     public void GetTransportPassengers(
@@ -600,6 +648,20 @@ public sealed class SelectionUiReadModelLookup
                 ContainsToken(source, "Drone") ||
                 ContainsToken(source, "Aircraft") ||
                 ContainsToken(source, "Air"));
+    }
+
+    private static byte ResolveTransportPassengerKind(EntityManager entityManager, Entity transport, Entity passenger)
+    {
+        if (!entityManager.Exists(passenger) || !entityManager.HasComponent<UnitTransportCargoPassenger>(passenger))
+            return UnitTransportPassengerKind.Soldier;
+
+        UnitTransportCargoPassenger cargoPassenger = entityManager.GetComponentData<UnitTransportCargoPassenger>(passenger);
+        if (cargoPassenger.Transport != transport)
+            return UnitTransportPassengerKind.Soldier;
+
+        return cargoPassenger.PassengerKind == UnitTransportPassengerKind.Vehicle
+            ? UnitTransportPassengerKind.Vehicle
+            : UnitTransportPassengerKind.Soldier;
     }
 
     private static string ResolveScanCapabilitySource(EntityManager entityManager, Entity entity)

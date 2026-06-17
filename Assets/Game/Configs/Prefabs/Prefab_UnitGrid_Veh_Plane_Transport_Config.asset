@@ -32,7 +32,12 @@ MonoBehaviour:
   productionTransportMaxConcurrent: 1
   productionTransportRequiresAirportRunway: 1
   productionTransportUsesRunwayLanding: 1
-  soldierTransportCapacity: 0
+  soldierTransportCapacity: 24
+  vehicleTransportCapacity: 2
+  cargoWeightCapacity: 0
+  transportCruiseHeight: 55
+  soldierParachuteVisualPrefab: {fileID: 100100000, guid: a567fd209adc22643bffbc9030f3005a, type: 3}
+  vehicleEmergencyDropVisualPrefab: {fileID: 100100000, guid: da21a5a922007a641b197316ea708507, type: 3}
   runwayTaxiSpeed: 12
   speed: 30
   walkSpeed: 30

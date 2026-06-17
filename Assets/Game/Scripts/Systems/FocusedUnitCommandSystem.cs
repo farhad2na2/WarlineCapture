@@ -186,6 +186,7 @@ public partial struct FocusedUnitCommandSystem : ISystem
         moveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, ecb, entity);
         moveOrderSystem.RemoveComponentIfPresent<UnitTransportBoardingTarget>(em, ecb, entity);
         moveOrderSystem.RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(em, ecb, entity);
+        moveOrderSystem.RemoveComponentIfPresent<UnitTransportAirdropRequest>(em, ecb, entity);
         moveOrderSystem.RemoveComponentIfPresent<UnitResourceHaulOrder>(em, ecb, entity);
         if (clearEngageTarget)
             moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, ecb, entity);

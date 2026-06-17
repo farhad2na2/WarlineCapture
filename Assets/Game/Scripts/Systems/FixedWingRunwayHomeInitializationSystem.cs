@@ -170,6 +170,8 @@ internal static class FixedWingRunwayUnitUtility
         }
 
         return key.IndexOf("Jet", StringComparison.OrdinalIgnoreCase) >= 0 ||
-               key.IndexOf("Drone", StringComparison.OrdinalIgnoreCase) >= 0;
+               key.IndexOf("Drone", StringComparison.OrdinalIgnoreCase) >= 0 ||
+               key.IndexOf("Plane", StringComparison.OrdinalIgnoreCase) >= 0 ||
+               key.IndexOf("FixedWing", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 }

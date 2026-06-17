@@ -1867,7 +1867,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                IsPotentialVehicleCargoPassenger(em, passenger);
     }
 
-    private static bool IsCargoPlaneTransport(EntityManager em, Entity transport)
+    public static bool IsCargoPlaneTransport(EntityManager em, Entity transport)
     {
         if (!em.Exists(transport))
             return false;
@@ -2946,6 +2946,92 @@ public partial struct TransportBoardingCommandSystem : ISystem
         return DisembarkResult.Success("Airdrop in progress.");
     }
 
+    public static bool TryIssueDeployDisembark(
+        EntityManager em,
+        Entity transport,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitMoveOrderSystem moveOrderSystem,
+        EntityQuery gridPathingQuery,
+        int2 requestedDropCell,
+        Entity attackTarget,
+        int2 attackTargetCell,
+        float3 attackTargetPosition,
+        byte attackAfterDeploy,
+        out TacticalCommandReasonCode reasonCode)
+    {
+        reasonCode = TacticalCommandReasonCode.None;
+        if (!em.Exists(transport) || !em.HasBuffer<UnitTransportPassengerElement>(transport))
+        {
+            reasonCode = TacticalCommandReasonCode.InvalidTransport;
+            return false;
+        }
+
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        List<Entity> passengerSnapshot = new(passengers.Length);
+        for (int i = 0; i < passengers.Length; i++)
+            passengerSnapshot.Add(passengers[i].Passenger);
+
+        DisembarkResult result = TryDisembarkTransport(
+            em,
+            transport,
+            transportCapacitySystem,
+            moveOrderSystem,
+            gridPathingQuery,
+            requestedDropCell,
+            hasRequestedDropCell: 1);
+
+        reasonCode = result.ReasonCode;
+        if (!result.Accepted)
+            return false;
+
+        if (attackAfterDeploy != 0)
+        {
+            MarkDeployPassengersForAttack(
+                em,
+                passengerSnapshot,
+                attackTarget,
+                attackTargetCell,
+                attackTargetPosition);
+        }
+
+        return true;
+    }
+
+    private static void MarkDeployPassengersForAttack(
+        EntityManager em,
+        List<Entity> passengers,
+        Entity attackTarget,
+        int2 attackTargetCell,
+        float3 attackTargetPosition)
+    {
+        if (attackTarget == Entity.Null || !em.Exists(attackTarget))
+            return;
+
+        if (em.HasComponent<LocalTransform>(attackTarget))
+            attackTargetPosition = em.GetComponentData<LocalTransform>(attackTarget).Position;
+        if (em.HasComponent<UnitGrid>(attackTarget))
+            attackTargetCell = em.GetComponentData<UnitGrid>(attackTarget).Cell;
+
+        UnitTransportDeployAttackTarget attack = new()
+        {
+            TargetEntity = attackTarget,
+            TargetCell = attackTargetCell,
+            TargetPosition = attackTargetPosition
+        };
+
+        for (int i = 0; i < passengers.Count; i++)
+        {
+            Entity passenger = passengers[i];
+            if (!em.Exists(passenger))
+                continue;
+
+            if (em.HasComponent<UnitTransportDeployAttackTarget>(passenger))
+                em.SetComponentData(passenger, attack);
+            else
+                em.AddComponentData(passenger, attack);
+        }
+    }
+
     private static bool CanStartPlaneAirdrop(EntityManager em, Entity transport, out TacticalCommandReasonCode reasonCode)
     {
         reasonCode = TacticalCommandReasonCode.None;
@@ -2967,11 +3053,24 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
         if (airState.Airborne == 0 && !IsTransportLandedForBoarding(em, transport))
         {
-            reasonCode = TacticalCommandReasonCode.CommandUnavailable;
-            return false;
+            if (!IsTransportPhysicallyAirborneForAirdrop(em, transport, airState))
+            {
+                reasonCode = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
         }
 
         return true;
+    }
+
+    private static bool IsTransportPhysicallyAirborneForAirdrop(EntityManager em, Entity transport, UnitAirComponent airState)
+    {
+        if (!em.HasComponent<LocalTransform>(transport))
+            return false;
+
+        LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
+        float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
+        return transform.Position.y > groundY + TransportBoardingData.AirBoardingGroundedHeightTolerance;
     }
 
     private static bool TryValidateAirdropReferenceCell(

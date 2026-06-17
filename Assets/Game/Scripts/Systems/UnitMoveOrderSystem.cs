@@ -62,6 +62,7 @@ public partial struct UnitMoveOrderSystem : ISystem
             result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity) ? 1 : 0;
             result.StructuralRemoves += RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity) ? 1 : 0;
             result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity) ? 1 : 0;
+            result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity) ? 1 : 0;
             result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity) ? 1 : 0;
             result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity) ? 1 : 0;
             result.StructuralRemoves += RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity) ? 1 : 0;
@@ -136,6 +137,7 @@ public partial struct UnitMoveOrderSystem : ISystem
             RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
             RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
@@ -171,6 +173,7 @@ public partial struct UnitMoveOrderSystem : ISystem
             RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
             RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
@@ -216,6 +219,7 @@ public partial struct UnitMoveOrderSystem : ISystem
         RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
         RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+        RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
         RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);

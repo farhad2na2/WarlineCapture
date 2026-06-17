@@ -28,6 +28,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneCapacity_PreservesAuthoredCargoCapacity());
             RunTest(test => test.TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources());
             RunTest(test => test.TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences());
+            RunTest(test => test.TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft());
             RunTest(test => test.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation());
             RunTest(test => test.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger());
             RunTest(test => test.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger());
@@ -56,6 +57,9 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent());
             RunTest(test => test.TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown());
             RunTest(test => test.TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown());
+            RunTest(test => test.LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget());
+            RunTest(test => test.TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget());
+            RunTest(test => test.TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage());
             RunTest(test => test.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
@@ -78,7 +82,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=56");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=60");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -259,6 +263,15 @@ public sealed class UnitTransportValidationTests
             Price = authoring.Price
         };
         return true;
+    }
+
+    [Test]
+    public void TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft()
+    {
+        Assert.IsTrue(FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(new FixedString64Bytes("Unit_Veh_Plane_Transport")));
+        Assert.IsTrue(FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(new FixedString64Bytes("Unit_Veh_Jet_02")));
+        Assert.IsTrue(FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(new FixedString64Bytes("Unit_Veh_Drone")));
+        Assert.IsFalse(FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit(new FixedString64Bytes("Unit_Veh_Helicopter_Transport")));
     }
 
     [Test]
@@ -1384,6 +1397,122 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
+    public void LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget()
+    {
+        using var world = new World("LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget");
+        EntityManager em = world.EntityManager;
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        em.AddComponentData(transport, new UnitCombat { CanAttack = 0, AutoEngage = 0 });
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+
+        NativeArray<Entity> selected = new(1, Allocator.Temp);
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            selected[0] = transport;
+            var targetOrderSystem = new UnitTargetOrderSystem();
+            result = targetOrderSystem.IssueAttackTarget(em, selected, target);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual(1, result.IssuedCount);
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployOrder>(transport));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(transport), "Loaded transports should deploy passengers instead of attacking like a gunship.");
+        UnitTransportDeployOrder deployOrder = em.GetComponentData<UnitTransportDeployOrder>(transport);
+        Assert.AreEqual(target, deployOrder.TargetEntity);
+        Assert.AreEqual(new int2(20, 20), deployOrder.TargetCell);
+        Assert.AreEqual(1, deployOrder.AttackAfterDeploy);
+    }
+
+    [Test]
+    public void TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget()
+    {
+        using var world = new World("TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 32, 32);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+
+        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridWalkable>());
+        Entity gridEntity = gridQuery.GetSingletonEntity();
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        walkable[GridUtils.CellToIndex(new int2(20, 20), 32)] = new GridWalkable { Value = 0 };
+
+        em.AddComponentData(transport, new UnitTransportDeployOrder
+        {
+            TargetEntity = target,
+            TargetCell = new int2(20, 20),
+            TargetPosition = em.GetComponentData<LocalTransform>(target).Position,
+            AttackAfterDeploy = 1
+        });
+
+        SystemHandle deploySystem = world.CreateSystem<UnitTransportDeployOrderSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        deploySystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployOrder>(transport));
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        UnitTransportAirdropRequest request = em.GetComponentData<UnitTransportAirdropRequest>(transport);
+        Assert.AreNotEqual(new int2(20, 20), request.DropReferenceCell, "Deploy should pick a nearby walkable cell when the target cell is blocked.");
+        Assert.IsTrue(GridUtils.InBounds(request.DropReferenceCell, 32, 32));
+        walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        Assert.AreEqual(1, walkable[GridUtils.CellToIndex(request.DropReferenceCell, 32)].Value);
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
+    }
+
+    [Test]
+    public void TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage()
+    {
+        using var world = new World("TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage");
+        EntityManager em = world.EntityManager;
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+        Entity passenger = CreateSelectablePassenger(em, new int2(18, 20));
+        em.AddComponentData(passenger, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
+        em.AddComponentData(passenger, new UnitAttack { Range = 8f, CooldownSeconds = 1f, Damage = 10 });
+        em.AddComponentData(passenger, new UnitTransportDeployAttackTarget
+        {
+            TargetEntity = target,
+            TargetCell = new int2(20, 20),
+            TargetPosition = em.GetComponentData<LocalTransform>(target).Position
+        });
+        em.AddComponentData(passenger, new UnitTransportAirdropSettleComponent
+        {
+            StartPosition = new float3(18.5f, 3f, 20.5f),
+            EndPosition = new float3(18.5f, 0f, 20.5f),
+            EndCell = new int2(18, 20),
+            StartedAt = 0f,
+            DurationSeconds = 1f
+        });
+
+        SystemHandle deployAttackSystem = world.CreateSystem<UnitTransportDeployAttackSystem>();
+        world.SetTime(new TimeData(0.25d, 0.1f));
+        deployAttackSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<EngageTarget>(passenger));
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
+
+        em.RemoveComponent<UnitTransportAirdropSettleComponent>(passenger);
+        world.SetTime(new TimeData(1.25d, 0.1f));
+        deployAttackSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
+        Assert.IsTrue(em.HasComponent<EngageTarget>(passenger));
+        Assert.AreEqual(target, em.GetComponentData<EngageTarget>(passenger).Target);
+    }
+
+    [Test]
     public void TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns()
     {
         string[] runtimeFiles =
@@ -1394,7 +1523,9 @@ public sealed class UnitTransportValidationTests
             "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
             "Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs",
             "Assets/Game/Scripts/Systems/UnitTransportPlaneDoorSystem.cs",
-            "Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs"
+            "Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs",
+            "Assets/Game/Scripts/Systems/UnitTransportDeployOrderSystem.cs",
+            "Assets/Game/Scripts/Systems/UnitTransportDeployAttackSystem.cs"
         };
         string[] forbidden =
         {
@@ -2400,6 +2531,20 @@ public sealed class UnitTransportValidationTests
             sidewalks[i] = new GridRoadSidewalk { Value = 0 };
             dirtRoads[i] = new GridRoadDirt { Value = 0 };
         }
+    }
+
+    private static Entity CreateHostileTarget(EntityManager em, int2 cell)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));
+        return entity;
     }
 
     private static Entity CreateTransport(EntityManager em, int2 cell, bool air, bool airborne, string sourcePrefabKey = null)

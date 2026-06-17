@@ -157,7 +157,8 @@ public partial struct UnitTargetOrderSystem : ISystem
             for (int i = 0; i < selectedEntities.Length; i++)
             {
                 Entity entity = selectedEntities[i];
-                if (!ValidateAttackSource(entityManager, entity).Accepted)
+                bool loadedTransportDeploySource = IsLoadedTransportDeploySource(entityManager, entity);
+                if (!loadedTransportDeploySource && !ValidateAttackSource(entityManager, entity).Accepted)
                     continue;
                 bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
                 if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
@@ -188,6 +189,24 @@ public partial struct UnitTargetOrderSystem : ISystem
                     engageCell = breachCell;
                     engagePosition = breachPosition;
                     issuedBreachOrder = true;
+                }
+
+                if (loadedTransportDeploySource)
+                {
+                    PlaybackInterruptedOrderClear(entityManager, entity, removeEngageTarget: true);
+                    SetOrAdd(
+                        entityManager,
+                        orderEcb,
+                        entity,
+                        new UnitTransportDeployOrder
+                        {
+                            TargetEntity = targetEntity,
+                            TargetCell = targetCell,
+                            TargetPosition = targetTransform.Position,
+                            AttackAfterDeploy = 1
+                        });
+                    issuedCount++;
+                    continue;
                 }
 
                 PlaybackInterruptedOrderClear(entityManager, entity, removeEngageTarget: issuedBreachOrder);
@@ -360,6 +379,21 @@ public partial struct UnitTargetOrderSystem : ISystem
         }
 
         return true;
+    }
+
+    private static bool IsLoadedTransportDeploySource(EntityManager entityManager, Entity entity)
+    {
+        if (entity == Entity.Null ||
+            !entityManager.Exists(entity) ||
+            !entityManager.HasComponent<Faction>(entity) ||
+            !FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) ||
+            !entityManager.HasComponent<UnitMove>(entity) ||
+            !entityManager.HasBuffer<UnitTransportPassengerElement>(entity))
+        {
+            return false;
+        }
+
+        return entityManager.GetBuffer<UnitTransportPassengerElement>(entity).Length > 0;
     }
 
     public bool IsInFriendlyDetectorRadius(EntityManager entityManager, NativeArray<Entity> detectors, byte factionId, int detectorKind, int2 targetCell)
@@ -539,6 +573,7 @@ public partial struct UnitTargetOrderSystem : ISystem
         RemoveIfPresent<UnitTarget>(entityManager, ecb, entity);
         RemoveIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
         RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
+        RemoveIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
         RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
         RemoveIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
         RemoveIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);

@@ -140,6 +140,21 @@ public struct UnitTransportBoardingTarget : IComponentData
     public int CargoWeight;
 }
 
+public struct UnitTransportDeployOrder : IComponentData
+{
+    public Entity TargetEntity;
+    public int2 TargetCell;
+    public float3 TargetPosition;
+    public byte AttackAfterDeploy;
+}
+
+public struct UnitTransportDeployAttackTarget : IComponentData
+{
+    public Entity TargetEntity;
+    public int2 TargetCell;
+    public float3 TargetPosition;
+}
+
 public static class TransportBoardingData
 {
     public const int BoardingClearanceCells = 4;

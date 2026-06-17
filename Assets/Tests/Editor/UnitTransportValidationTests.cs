@@ -16,6 +16,7 @@ public sealed class UnitTransportValidationTests
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
+    private NativeList<int2> _pathPool;
 
     public static void RunBatchValidation()
     {
@@ -30,6 +31,10 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation());
             RunTest(test => test.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger());
             RunTest(test => test.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger());
+            RunTest(test => test.TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement());
+            RunTest(test => test.TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier());
+            RunTest(test => test.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal());
+            RunTest(test => test.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp());
             RunTest(test => test.TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding());
             RunTest(test => test.TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot());
             RunTest(test => test.TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger());
@@ -73,7 +78,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=52");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=56");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -108,6 +113,8 @@ public sealed class UnitTransportValidationTests
             _occupied.Dispose();
         if (_friendlyPassFactionIds.IsCreated)
             _friendlyPassFactionIds.Dispose();
+        if (_pathPool.IsCreated)
+            _pathPool.Dispose();
     }
 
     [Test]
@@ -355,6 +362,183 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(transport, boarding.Transport);
         Assert.AreEqual(UnitTransportPassengerKind.Soldier, boarding.PassengerKind);
         Assert.AreEqual(new int2(12, 7), boarding.Goal);
+    }
+
+    [Test]
+    public void TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 96, 96);
+
+        Entity transport = CreateTransportPlane(em, new int2(70, 70));
+        em.RemoveComponent<UnitTransportCargoCapacity>(transport);
+        em.RemoveComponent<UnitSourcePrefabKey>(transport);
+        Entity passenger = CreateSelectablePassenger(em, new int2(5, 5));
+        var commandSystem = new TransportBoardingCommandSystem();
+
+        TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+            em,
+            transport,
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem());
+
+        Assert.IsTrue(result.Accepted);
+        Assert.AreEqual("Boarding transport plane.", result.Message.ToString());
+        Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger));
+        UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+        Assert.AreEqual(transport, boarding.Transport);
+        Assert.AreEqual(UnitTransportPassengerKind.Soldier, boarding.PassengerKind);
+        Assert.AreEqual(new int2(70, 65), boarding.Goal);
+    }
+
+    [Test]
+    public void TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier");
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World.DefaultGameObjectInjectionWorld = world;
+        EntityManager em = world.EntityManager;
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            CreateGrid(em, 96, 96);
+
+            Entity transport = CreateTransportPlane(em, new int2(70, 70));
+            em.RemoveComponent<UnitTransportPlaneDoorReference>(transport);
+            em.RemoveComponent<UnitTransportPlaneDoorState>(transport);
+            Entity passenger = CreateSelectablePassenger(em, new int2(5, 5));
+            var commandSystem = new TransportBoardingCommandSystem();
+
+            TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+                em,
+                transport,
+                new UnitTransportAirPickupSystem(),
+                new UnitMoveOrderSystem(),
+                new SelectionStateSystem());
+
+            Assert.IsTrue(result.Accepted);
+            Assert.AreEqual("Boarding transport plane.", result.Message.ToString());
+            Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger));
+            UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+            Assert.AreEqual(transport, boarding.Transport);
+            Assert.AreEqual(UnitTransportPassengerKind.Soldier, boarding.PassengerKind);
+            Assert.LessOrEqual(math.distancesq(new float2(boarding.Goal.x, boarding.Goal.y), new float2(70, 70)), 25f);
+
+            SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
+            for (int i = 0; i < 256 && !em.HasComponent<UnitPathRange>(passenger); i++)
+            {
+                world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
+                pathSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                System.Threading.Thread.Sleep(1);
+            }
+
+            Assert.IsTrue(em.HasComponent<UnitPathRange>(passenger), "Selected far soldier should receive a real path to board the specific transport plane even when door metadata is missing.");
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        Entity passenger = CreateSelectablePassenger(em, new int2(17, 12));
+        Entity rampSoldier = CreateSelectablePassenger(em, new int2(12, 7));
+        em.RemoveComponent<SelectedUnitTag>(passenger);
+        em.RemoveComponent<SelectedUnitTag>(rampSoldier);
+
+        int2 rampCell = new(12, 7);
+        for (int y = rampCell.y - 8; y <= rampCell.y + 8; y++)
+        {
+            for (int x = rampCell.x - 8; x <= rampCell.x + 8; x++)
+            {
+                int2 cell = new(x, y);
+                if (!GridUtils.InBounds(cell, 30, 30) || cell.Equals(rampCell))
+                    continue;
+
+                _blocked.Set(GridUtils.CellToIndex(cell, 30), true);
+            }
+        }
+
+        _occupied.Set(GridUtils.CellToIndex(rampCell, 30), true);
+        var selectionStateSystem = new SelectionStateSystem();
+        selectionStateSystem.CacheSelectedMoveEntities(em, new[] { rampSoldier, passenger });
+        var commandSystem = new TransportBoardingCommandSystem();
+
+        TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+            em,
+            transport,
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            selectionStateSystem);
+
+        Assert.IsTrue(result.Accepted);
+        Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger));
+        UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+        Assert.AreEqual(transport, boarding.Transport);
+        Assert.AreEqual(new int2(12, 7), boarding.Goal);
+    }
+
+    [Test]
+    public void TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp");
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World.DefaultGameObjectInjectionWorld = world;
+        EntityManager em = world.EntityManager;
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            CreateGrid(em, 30, 30);
+
+            Entity transport = CreateTransportPlane(em, new int2(12, 12));
+            Entity passenger = CreateSelectablePassenger(em, new int2(17, 12));
+            Entity rampSoldier = CreateSelectablePassenger(em, new int2(12, 7));
+            em.RemoveComponent<SelectedUnitTag>(passenger);
+            em.RemoveComponent<SelectedUnitTag>(rampSoldier);
+
+            var selectionStateSystem = new SelectionStateSystem();
+            selectionStateSystem.CacheSelectedMoveEntities(em, new[] { rampSoldier, passenger });
+            var commandSystem = new TransportBoardingCommandSystem();
+
+            TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+                em,
+                transport,
+                new UnitTransportAirPickupSystem(),
+                new UnitMoveOrderSystem(),
+                selectionStateSystem);
+
+            Assert.IsTrue(result.Accepted);
+            Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger));
+            UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+            Assert.AreEqual(new int2(12, 7), boarding.Goal);
+            Assert.IsTrue(em.HasComponent<ManualMoveGroupMemberTag>(passenger));
+            Assert.IsTrue(em.HasComponent<ManualMoveGroupMemberTag>(rampSoldier));
+
+            SystemHandle pathSystem = world.CreateSystem<UnitPathfindingSystem>();
+            for (int i = 0; i < 128 && !em.HasComponent<UnitPathRange>(passenger); i++)
+            {
+                world.SetTime(new TimeData((i + 1) * 0.016d, 0.016f));
+                pathSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                System.Threading.Thread.Sleep(1);
+            }
+
+            Assert.IsTrue(em.HasComponent<UnitPathRange>(passenger), "Boarding passenger should receive a real path to the ramp even when another selected boarding soldier occupies the ramp cell.");
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]
@@ -2174,8 +2358,13 @@ public sealed class UnitTransportValidationTests
         _friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
         for (int i = 0; i < _friendlyPassFactionIds.Length; i++)
             _friendlyPassFactionIds[i] = byte.MaxValue;
+        _pathPool = new NativeList<int2>(1024, Allocator.Persistent);
 
-        Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+        Entity gridEntity = em.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(PathPoolComponent));
         em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
         em.SetComponentData(gridEntity, new DynamicBlockerComponent
         {
@@ -2189,11 +2378,28 @@ public sealed class UnitTransportValidationTests
             GridSize = gridSize,
             Occupied = _occupied
         });
+        em.SetComponentData(gridEntity, new PathPoolComponent { Cells = _pathPool });
 
-        DynamicBuffer<GridWalkable> walkable = em.AddBuffer<GridWalkable>(gridEntity);
+        em.AddBuffer<GridWalkable>(gridEntity);
+        em.AddBuffer<GridRoad>(gridEntity);
+        em.AddBuffer<GridRoadSidewalk>(gridEntity);
+        em.AddBuffer<GridRoadDirt>(gridEntity);
+
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+        DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+        DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
         walkable.ResizeUninitialized(gridSize);
+        roads.ResizeUninitialized(gridSize);
+        sidewalks.ResizeUninitialized(gridSize);
+        dirtRoads.ResizeUninitialized(gridSize);
         for (int i = 0; i < walkable.Length; i++)
+        {
             walkable[i] = new GridWalkable { Value = 1 };
+            roads[i] = new GridRoad { Value = 0 };
+            sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+            dirtRoads[i] = new GridRoadDirt { Value = 0 };
+        }
     }
 
     private static Entity CreateTransport(EntityManager em, int2 cell, bool air, bool airborne, string sourcePrefabKey = null)

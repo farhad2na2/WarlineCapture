@@ -997,7 +997,7 @@ public class UnitGridAuthoring : MonoBehaviour
             if (authoring.VehicleTransportCapacity <= 0)
                 return;
 
-            Transform door = FindDescendantByName(authoring.transform, "Door_X");
+            Transform door = FindTransportPlaneDoorTransform(authoring.transform);
             if (door == null)
                 return;
 
@@ -1025,6 +1025,15 @@ public class UnitGridAuthoring : MonoBehaviour
                 Open01 = 0f,
                 TargetOpen = 0
             });
+        }
+
+        private static Transform FindTransportPlaneDoorTransform(Transform root)
+        {
+            return FindDescendantByName(root, "Door_X") ??
+                   FindDescendantByName(root, "SM_Veh_TransportPlane_Door_High_01") ??
+                   FindDescendantByName(root, "SM_Veh_TransportPlane_Door_Low_01") ??
+                   FindDescendantByName(root, "Door_High") ??
+                   FindDescendantByName(root, "Door_Low");
         }
 
         private static quaternion ToMathQuaternion(Quaternion rotation)

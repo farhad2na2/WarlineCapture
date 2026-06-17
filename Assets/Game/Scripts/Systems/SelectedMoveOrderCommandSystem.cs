@@ -101,13 +101,6 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
     {
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveStart frame={currentFrame} screen={screenPosition}");
-        if (tryGetClickedUnit != null && tryGetClickedUnit(screenPosition, em, out Entity clickedUnit))
-        {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=ClickedUnit screen={screenPosition} clicked={DescribeMoveEntity(em, clickedUnit)}");
-            return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-        }
-
         using NativeList<Entity> selectedEntities = new(Allocator.Temp);
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, cachedSelectedMoveEntities, selectedEntities);
@@ -123,7 +116,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         {
             if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
-            return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+            return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
         }
 
         if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)

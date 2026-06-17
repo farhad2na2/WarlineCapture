@@ -720,6 +720,17 @@ public partial struct TransportBoardingCommandSystem : ISystem
         NativeArray<Entity> liveUnitEntityArray = liveUnitEntities.AsArray();
         NativeArray<UnitGrid> liveUnitGridArray = liveUnitGrids.AsArray();
         NativeArray<UnitFootprint> liveUnitFootprintArray = liveUnitFootprints.AsArray();
+        HashSet<Entity> ignoredSelectedBoardingEntities = new();
+        HashSet<int> ignoredSelectedBoardingOccupiedCells = new();
+        BuildSelectedBoardingPassengerIgnoreSets(
+            em,
+            grid,
+            transport,
+            selectedBoardingSourceEntities,
+            availableSoldierSeats,
+            availableVehicleSlots,
+            ignoredSelectedBoardingEntities,
+            ignoredSelectedBoardingOccupiedCells);
 
         bool hasPendingAirPickupLanding = false;
         int2 pendingAirPickupCell = default;
@@ -744,7 +755,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
             {
                 if (shouldLogTransportBoarding)
                     EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
-                return Result.Rejected(TacticalCommandReasonCode.NoEligiblePassengers);
+                return Result.Rejected(
+                    TacticalCommandReasonCode.NoEligiblePassengers,
+                    "No landing zone for selected transport.");
             }
 
             transportCell = pendingAirPickupCell;
@@ -813,6 +826,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                     reservedBoardingCells,
                     directBoardingCells,
                     passengerFaction,
+                    ignoredSelectedBoardingEntities,
+                    ignoredSelectedBoardingOccupiedCells,
                     out int2 goal))
             {
                 if (shouldLogTransportBoarding)
@@ -853,7 +868,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
                     $"soldiers={occupiedSoldierSeats}/{soldierCapacity} vehicles={occupiedVehicleSlots}/{vehicleCapacity}");
             }
 
-            return Result.Rejected(TacticalCommandReasonCode.NoEligiblePassengers);
+            return Result.Rejected(
+                TacticalCommandReasonCode.NoEligiblePassengers,
+                "No boarding path to selected transport.");
         }
 
         if (hasPendingAirPickupLanding)
@@ -1097,6 +1114,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 targetedReservedBoardingCells,
                 directBoardingCells,
                 passengerFaction,
+                null,
+                null,
                 out int2 goal))
         {
             if (shouldLogTransportBoarding)
@@ -1315,6 +1334,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                     reservedBoardingCells,
                     directBoardingCells,
                     passengerFaction,
+                    null,
+                    null,
                     out int2 goal))
             {
                 continue;
@@ -1517,6 +1538,61 @@ public partial struct TransportBoardingCommandSystem : ISystem
         if (selectedEntities.Count > 0)
             usedCachedSelection = true;
         return selectedEntities.Count;
+    }
+
+    private static void BuildSelectedBoardingPassengerIgnoreSets(
+        EntityManager em,
+        in GridConfig grid,
+        Entity transport,
+        List<Entity> selectedBoardingSourceEntities,
+        int availableSoldierSeats,
+        int availableVehicleSlots,
+        HashSet<Entity> ignoredEntities,
+        HashSet<int> ignoredOccupiedCells)
+    {
+        if (selectedBoardingSourceEntities == null ||
+            ignoredEntities == null ||
+            ignoredOccupiedCells == null)
+        {
+            return;
+        }
+
+        int plannedSoldierSeats = 0;
+        int plannedVehicleSlots = 0;
+        for (int i = 0; i < selectedBoardingSourceEntities.Count; i++)
+        {
+            Entity passenger = selectedBoardingSourceEntities[i];
+            if (passenger == transport ||
+                !em.Exists(passenger) ||
+                !em.HasComponent<UnitGrid>(passenger) ||
+                !em.HasComponent<UnitFootprint>(passenger) ||
+                !TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out _))
+            {
+                continue;
+            }
+
+            if (passengerKind == UnitTransportPassengerKind.Vehicle)
+            {
+                if (plannedVehicleSlots >= availableVehicleSlots)
+                    continue;
+
+                plannedVehicleSlots++;
+            }
+            else
+            {
+                if (plannedSoldierSeats >= availableSoldierSeats)
+                    continue;
+
+                plannedSoldierSeats++;
+            }
+
+            ignoredEntities.Add(passenger);
+            ReserveFootprintCells(
+                grid,
+                em.GetComponentData<UnitGrid>(passenger).Cell,
+                em.GetComponentData<UnitFootprint>(passenger).Size,
+                ignoredOccupiedCells);
+        }
     }
 
     private static void CollectEntities(EntityManager em, EntityQuery query, List<Entity> entities)
@@ -1793,15 +1869,17 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
     private static bool IsCargoPlaneTransport(EntityManager em, Entity transport)
     {
-        if (!em.Exists(transport) ||
-            !em.HasComponent<UnitTransportCargoCapacity>(transport) ||
+        if (!em.Exists(transport))
+            return false;
+
+        if (em.HasComponent<UnitTransportPlaneDoorReference>(transport))
+            return true;
+
+        if (!em.HasComponent<UnitTransportCargoCapacity>(transport) ||
             em.GetComponentData<UnitTransportCargoCapacity>(transport).VehicleCapacity <= 0)
         {
             return false;
         }
-
-        if (em.HasComponent<UnitTransportPlaneDoorReference>(transport))
-            return true;
 
         string sourceName = ResolveSourceName(em, transport);
         return new UnitTransportCapacitySystem().IsTransportPlaneName(sourceName);
@@ -2014,11 +2092,13 @@ public partial struct TransportBoardingCommandSystem : ISystem
         HashSet<int> reservedCells,
         int directBoardingCells,
         byte factionId,
+        HashSet<Entity> ignoredLiveEntities,
+        HashSet<int> ignoredOccupiedCells,
         out int2 goal)
     {
         if (IsCargoPlaneTransport(em, ignoredOccupancyEntity))
         {
-            return TryFindPlaneRampApproachCell(
+            if (TryFindPlaneRampApproachCell(
                 em,
                 grid,
                 walkable,
@@ -2038,6 +2118,36 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 ignoredOccupancySize,
                 reservedCells,
                 factionId,
+                ignoredLiveEntities,
+                ignoredOccupiedCells,
+                out goal))
+            {
+                return true;
+            }
+
+            int fallbackDirectBoardingCells = math.max(directBoardingCells, TransportBoardingData.BoardingClearanceCells);
+            return TryFindTransportApproachCell(
+                grid,
+                walkable,
+                blocked,
+                friendlyPassFactionIds,
+                occupied,
+                transportCell,
+                ignoredOccupancySize,
+                referenceCell,
+                passengerFootprint,
+                passenger,
+                liveUnitEntities,
+                liveUnitGrids,
+                liveUnitFootprints,
+                ignoredOccupancyEntity,
+                ignoredOccupancyCell,
+                ignoredOccupancySize,
+                reservedCells,
+                fallbackDirectBoardingCells,
+                factionId,
+                ignoredLiveEntities,
+                ignoredOccupiedCells,
                 out goal);
         }
 
@@ -2061,6 +2171,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
             reservedCells,
             directBoardingCells,
             factionId,
+            ignoredLiveEntities,
+            ignoredOccupiedCells,
             out goal);
     }
 
@@ -2084,6 +2196,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
         int2 ignoredOccupancySize,
         HashSet<int> reservedCells,
         byte factionId,
+        HashSet<Entity> ignoredLiveEntities,
+        HashSet<int> ignoredOccupiedCells,
         out int2 goal)
     {
         goal = default;
@@ -2096,7 +2210,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
         int2 rampCell = ResolvePlaneRampApproachCell(em, grid, transport);
         int2 clampedFootprint = UnitFootprintUtility.ClampSize(passengerFootprint);
-        int maxRadius = math.max(2, math.max(clampedFootprint.x, clampedFootprint.y));
+        int maxRadius = math.max(8, math.max(clampedFootprint.x, clampedFootprint.y) + 4);
         int bestScore = int.MaxValue;
         bool found = false;
 
@@ -2141,7 +2255,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
                             reservedCells,
                             referenceCell,
                             factionId,
-                            candidate.Equals(referenceCell)))
+                            candidate.Equals(referenceCell),
+                            ignoredLiveEntities,
+                            ignoredOccupiedCells))
                     {
                         continue;
                     }
@@ -2196,6 +2312,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
         HashSet<int> reservedCells,
         int directBoardingCells,
         byte factionId,
+        HashSet<Entity> ignoredLiveEntities,
+        HashSet<int> ignoredOccupiedCells,
         out int2 goal)
     {
         return TryFindNearbyTransportApproachCell(
@@ -2218,6 +2336,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
             reservedCells,
             directBoardingCells,
             factionId,
+            ignoredLiveEntities,
+            ignoredOccupiedCells,
             out goal);
     }
 
@@ -2462,6 +2582,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
         HashSet<int> reservedCells,
         int directBoardingCells,
         byte factionId,
+        HashSet<Entity> ignoredLiveEntities,
+        HashSet<int> ignoredOccupiedCells,
         out int2 goal)
     {
         goal = default;
@@ -2523,7 +2645,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
                             reservedCells,
                             referenceCell,
                             factionId,
-                            candidate.Equals(referenceCell)))
+                            candidate.Equals(referenceCell),
+                            ignoredLiveEntities,
+                            ignoredOccupiedCells))
                     {
                         continue;
                     }
@@ -2565,7 +2689,9 @@ public partial struct TransportBoardingCommandSystem : ISystem
         HashSet<int> reservedCells,
         int2 referenceCell,
         byte factionId,
-        bool allowReferenceCellOccupied)
+        bool allowReferenceCellOccupied,
+        HashSet<Entity> ignoredLiveEntities = null,
+        HashSet<int> ignoredOccupiedCells = null)
     {
         int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
         int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
@@ -2595,11 +2721,13 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 bool isIgnoredOccupancyCell =
                     ignoredOccupancyEntity != Entity.Null &&
                     UnitFootprintUtility.ContainsCell(ignoredOccupancyCell, ignoredOccupancySize, new int2(x, y));
+                bool isIgnoredSelectedOccupiedCell = ignoredOccupiedCells != null && ignoredOccupiedCells.Contains(index);
                 if (!isCurrentFootprintCell &&
                     occupied.IsCreated &&
                     occupied.IsSet(index) &&
                     (!allowReferenceCellOccupied || !isReferenceCell) &&
-                    !isIgnoredOccupancyCell)
+                    !isIgnoredOccupancyCell &&
+                    !isIgnoredSelectedOccupiedCell)
                 {
                     return false;
                 }
@@ -2609,8 +2737,12 @@ public partial struct TransportBoardingCommandSystem : ISystem
         for (int i = 0; i < liveUnitEntities.Length; i++)
         {
             Entity other = liveUnitEntities[i];
-            if (other == movingEntity || other == ignoredOccupancyEntity)
+            if (other == movingEntity ||
+                other == ignoredOccupancyEntity ||
+                (ignoredLiveEntities != null && ignoredLiveEntities.Contains(other)))
+            {
                 continue;
+            }
 
             int2 otherCell = liveUnitGrids[i].Cell;
             int2 otherSize = liveUnitFootprints[i].Size;

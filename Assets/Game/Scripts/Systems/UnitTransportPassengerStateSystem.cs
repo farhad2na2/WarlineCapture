@@ -36,6 +36,9 @@ public partial struct UnitTransportPassengerStateSystem : ISystem
             ecb.SetComponent(passenger, boardingTarget);
         else
             ecb.AddComponent(passenger, boardingTarget);
+
+        if (!em.HasComponent<ManualMoveGroupMemberTag>(passenger))
+            ecb.AddComponent<ManualMoveGroupMemberTag>(passenger);
     }
 
     public int BoardPassenger(
@@ -55,6 +58,7 @@ public partial struct UnitTransportPassengerStateSystem : ISystem
         RemoveIfPresent<UnitPathFollow>(ref ecb, em, passenger);
         RemoveIfPresent<UnitPathRange>(ref ecb, em, passenger);
         RemoveIfPresent<ManualMoveOrderTag>(ref ecb, em, passenger);
+        RemoveIfPresent<ManualMoveGroupMemberTag>(ref ecb, em, passenger);
         RemoveIfPresent<AutoWanderMoveTag>(ref ecb, em, passenger);
         RemoveIfPresent<EngageTarget>(ref ecb, em, passenger);
         RemoveIfPresent<SelectedUnitTag>(ref ecb, em, passenger);

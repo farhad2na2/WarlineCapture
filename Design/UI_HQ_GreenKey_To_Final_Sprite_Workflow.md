@@ -11,6 +11,8 @@ Use this workflow when an existing UI panel/sprite is too low quality, clipped, 
 
 Do not use this workflow for code-native SVG/vector work or for already-clean transparent PNGs that only need import settings.
 
+Do not use this workflow to crop production layers from a flattened target mockup. If the source is a full screen/popup target, follow `Design/UI_Imagegen_Target_Mockup_To_Layered_Unity_Workflow.md`: generate/approve the mockup, request the needed asset again from imagegen on green background, then cut and clamp that generated layer.
+
 ## Required Inputs
 
 - Source/reference image path or attached image.
@@ -189,4 +191,3 @@ Assets/Game/Art/UI/Final/<asset_name>.png.meta
 ```
 
 Do not overwrite unrelated assets. If replacing an existing final sprite, confirm the requested replacement or save a versioned filename.
-

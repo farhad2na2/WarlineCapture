@@ -9,6 +9,8 @@ Assets/Game/Art/UI/Panels
 
 The goal is reusable Unity UI sprites: icons, buttons, panels, frames, borders, badges, chips, dividers, and command controls. Do not place rectangular content art, building thumbnails, portraits, minimaps, or full-screen mockups in these two folders unless the user explicitly asks for those asset types.
 
+This workflow is a layer-generation workflow, not a mockup-cropping workflow. For full screen work, follow `Design/UI_Imagegen_Target_Mockup_To_Layered_Unity_Workflow.md`: generate/approve the target mockup first, then request each needed layer from imagegen on green background. Never crop icons, panels, logos, or frames out of the flattened target mockup for runtime use.
+
 ## Required Inputs
 
 - Screen or popup id, for example `SCN08`, `SCN09`, or `SCN13`.
@@ -55,7 +57,7 @@ Do not overwrite unrelated assets. Same-screen regeneration may overwrite same-n
 
 ## Imagegen Request
 
-Use the `imagegen` skill. Ask for separate green-background source sheets, not a full baked UI screenshot.
+Use the `imagegen` skill. Ask for separate green-background source sheets, not a full baked UI screenshot and not crops from the approved target mockup.
 
 Request at least two sheets:
 
@@ -84,7 +86,7 @@ Prompt requirements:
 ```text
 Use case: ui-mockup
 Asset type: Unity UI sprite source sheet, chroma-key extraction source
-Reference image: the loaded <SCREEN_ID> target lock. Use only the <screen/popup> UI layer assets, not the surrounding screen unless explicitly requested.
+Reference image: the loaded <SCREEN_ID> target lock is style reference only. Do not crop, trace, patch, or copy runtime assets from it. Use only the <screen/popup> UI layer requirements, not the surrounding screen unless explicitly requested.
 
 Primary request: Generate separate reusable UI layer assets on a perfectly flat solid #00ff00 chroma-key background for later transparency cutting.
 

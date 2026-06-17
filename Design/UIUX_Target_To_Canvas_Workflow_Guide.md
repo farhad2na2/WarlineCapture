@@ -6,6 +6,8 @@ Use this guide whenever a high-quality UI target mockup needs to become a real U
 
 The target mockup is only the visual contract. The shipped UI must be made from separate Canvas objects, reusable sliced sprites, transparent icons, TMP text, and real controls. Do not ship a flattened target image or large baked panel crops as UI.
 
+For imagegen-driven UI work, first follow `Design/UI_Imagegen_Target_Mockup_To_Layered_Unity_Workflow.md`. The mandatory sequence is: generate and approve the full target mockup, request every production layer separately from imagegen on flat green background, cut green to transparent, clamp, add sprite metadata/9-slice, then build the Unity UI. Do not crop or extract runtime art from the flattened mockup.
+
 ## Required Inputs
 
 For each screen, popup, or reusable panel, start with:
@@ -16,7 +18,7 @@ For each screen, popup, or reusable panel, start with:
 - The target Unity prefab path, for example `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab`.
 - The builder/test files that own that screen.
 
-If a new target is being generated, request the flattened target and the separate layer assets in the same generation workflow. Do not generate a target first and then try to reverse-engineer clean layers from the flattened image unless there is no alternative.
+If a new target is being generated, request the flattened target first, get approval, then request separate imagegen layer assets on green background. Do not reverse-engineer, crop, or extract clean layers from the flattened image.
 
 ## Hard Layer-Pack Gate
 

@@ -34,7 +34,9 @@ Design/VisualLockLayered/<SurfaceId>/
 
 Do not start Unity Canvas implementation for a surface until the pack has the reference image, separated layers, manifest, contact sheet, and README.
 
-Use `WORKFLOW_V15_3D_GREENSCREEN.md` and `prompts/visual_lock_layered_v15_3d_green_background.md` for the active UI-agent workflow: generate target and layers, use transparent PNGs or clean `#00ff00` chroma-key backgrounds, extract to alpha, write the manifest, validate the layer pack, then convert to Unity Canvas.
+Use `Design/UI_Imagegen_Target_Mockup_To_Layered_Unity_Workflow.md`, `WORKFLOW_V15_3D_GREENSCREEN.md`, and `prompts/visual_lock_layered_v15_3d_green_background.md` for the active UI-agent workflow: generate and approve the full target mockup, request each production layer separately from imagegen on clean `#00ff00` chroma-key backgrounds, extract to alpha, clamp, write the manifest, validate the layer pack, then convert to Unity Canvas.
+
+The target mockup is reference only. Do not crop, extract, trace, patch, or reuse runtime sprites from the flattened target image. If a logo, panel, chip, icon, or progress bar is needed, request that layer from imagegen on green background.
 
 For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_MainMenu/REFERENCE_MOCKUP_REQUESTS.md`. Do not request separated layers until one main menu reference is approved.
 

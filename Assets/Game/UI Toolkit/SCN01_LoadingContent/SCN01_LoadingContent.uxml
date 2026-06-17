@@ -4,6 +4,10 @@
         <ui:VisualElement name="LoadingBody" class="loading-body">
             <ui:VisualElement name="Background" class="background" />
             <ui:VisualElement name="Screen_Vignette" class="screen-vignette" />
+            <ui:VisualElement name="Corner_TopLeft" class="screen-corner corner-tl" />
+            <ui:VisualElement name="Corner_TopRight" class="screen-corner corner-tr" />
+            <ui:VisualElement name="Corner_BottomLeft" class="screen-corner corner-bl" />
+            <ui:VisualElement name="Corner_BottomRight" class="screen-corner corner-br" />
 
             <ui:VisualElement name="Logo_ReadabilityBand" class="logo-readability-band">
                 <ui:VisualElement name="Brand_LogoLockup" class="brand-logo-lockup" />
@@ -12,22 +16,8 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <ui:VisualElement name="OuterTopLine" class="outer-line outer-top-line" />
-            <ui:VisualElement name="OuterBottomLine" class="outer-line outer-bottom-line" />
-            <ui:VisualElement name="OuterLeftLine" class="outer-line outer-left-line" />
-            <ui:VisualElement name="OuterRightLine" class="outer-line outer-right-line" />
-
-            <ui:VisualElement name="OuterTopLeftTrim_Horizontal" class="trim trim-horizontal trim-top trim-left" />
-            <ui:VisualElement name="OuterTopLeftTrim_Vertical" class="trim trim-vertical trim-top trim-left" />
-            <ui:VisualElement name="OuterTopRightTrim_Horizontal" class="trim trim-horizontal trim-top trim-right" />
-            <ui:VisualElement name="OuterTopRightTrim_Vertical" class="trim trim-vertical trim-top trim-right" />
-            <ui:VisualElement name="OuterBottomLeftTrim_Horizontal" class="trim trim-horizontal trim-bottom trim-left" />
-            <ui:VisualElement name="OuterBottomLeftTrim_Vertical" class="trim trim-vertical trim-bottom trim-left" />
-            <ui:VisualElement name="OuterBottomRightTrim_Horizontal" class="trim trim-horizontal trim-bottom trim-right" />
-            <ui:VisualElement name="OuterBottomRightTrim_Vertical" class="trim trim-vertical trim-bottom trim-right" />
-
             <ui:VisualElement name="LoadingPanel_Frame" class="loading-panel-frame">
-                <ui:Label name="LoadingPanel_Status" class="loading-panel-status" text="INITIALIZING COMMAND NET..." />
+                <ui:Label name="LoadingPanel_Status" class="loading-panel-status" text="INITIALIZING COMMAND NET" />
                 <ui:Label name="LoadingPanel_Percent" class="loading-panel-percent" text="68%" />
                 <ui:VisualElement name="Progress_Frame" class="progress-frame">
                     <ui:VisualElement name="Progress_Fill" class="progress-fill" />
@@ -49,7 +39,6 @@
                     <ui:VisualElement name="Progress_Tick_16" class="progress-tick progress-tick-16" />
                     <ui:VisualElement name="Progress_Tick_17" class="progress-tick progress-tick-17" />
                 </ui:VisualElement>
-                <ui:Label name="LoadingPanel_Tip" class="loading-panel-tip" text="Tip: Scout streets before committing armor; civilian risk changes mission rewards." />
             </ui:VisualElement>
 
             <ui:VisualElement name="BottomStatus_Chip_Fill" class="bottom-status-chip-fill">

@@ -83,7 +83,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_brand_logo_lockup.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_logo_lockup.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 

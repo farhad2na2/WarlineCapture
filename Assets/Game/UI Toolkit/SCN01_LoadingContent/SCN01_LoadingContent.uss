@@ -4,7 +4,7 @@
     position: relative;
     overflow: hidden;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
-    color: rgb(226, 219, 197);
+    color: rgb(242, 232, 196);
 }
 
 .loading-body {
@@ -18,11 +18,11 @@
 
 .background {
     position: absolute;
-    left: -12.5%;
-    right: -12.5%;
+    left: 0;
+    right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_background_21x9_no_ui.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_background_no_ui.png");
     -unity-background-scale-mode: scale-and-crop;
 }
 
@@ -32,234 +32,158 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.14);
+    background-color: rgba(8, 9, 8, 0.10);
+}
+
+.screen-corner {
+    position: absolute;
+    width: 6.6%;
+    height: 11.2%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.corner-tl {
+    left: 1.1%;
+    top: 2.0%;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_corner_tl.png");
+}
+
+.corner-tr {
+    right: 1.2%;
+    top: 2.0%;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_corner_tr.png");
+}
+
+.corner-bl {
+    left: 1.2%;
+    bottom: 2.0%;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_corner_bl.png");
+}
+
+.corner-br {
+    right: 1.2%;
+    bottom: 2.0%;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_corner_br.png");
 }
 
 .logo-readability-band {
     position: absolute;
     left: 0;
     right: 0;
-    top: 31.85%;
-    height: 11.67%;
-    background-color: rgba(0, 0, 0, 0.16);
+    top: 0;
+    bottom: 0;
     overflow: visible;
 }
 
 .brand-logo-lockup {
     position: absolute;
-    width: 41.67%;
-    height: 740.74%;
+    width: 42%;
+    height: 17.5%;
     left: 50%;
-    top: 50%;
+    top: 11.8%;
     translate: -50% -50%;
-    background-image: url("../../Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_brand_logo_lockup.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_logo_lockup.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .command-system-back {
     position: absolute;
-    width: 22.35%;
-    height: 32.54%;
+    width: 27.0%;
+    height: 6.6%;
     left: 50%;
-    top: 168.65%;
+    top: 27.0%;
     translate: -50% -50%;
-    background-color: rgba(9, 11, 9, 0.91);
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_loading_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
     align-items: center;
     justify-content: center;
 }
 
 .command-system-text {
-    font-size: 60px;
-    color: rgb(226, 219, 197);
+    font-size: 62px;
+    color: rgb(239, 226, 191);
     -unity-text-align: middle-center;
     white-space: nowrap;
 }
 
-.outer-line {
-    position: absolute;
-    background-color: rgba(204, 166, 82, 0.38);
-}
-
-.outer-top-line {
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 4px;
-}
-
-.outer-bottom-line {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 4px;
-}
-
-.outer-left-line {
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: rgba(204, 166, 82, 0.26);
-}
-
-.outer-right-line {
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: rgba(204, 166, 82, 0.26);
-}
-
-.trim {
-    position: absolute;
-    background-color: rgba(235, 179, 46, 0.82);
-}
-
-.trim-horizontal {
-    width: 158px;
-    height: 4px;
-}
-
-.trim-vertical {
-    width: 4px;
-    height: 78px;
-}
-
-.trim-top {
-    top: 14px;
-}
-
-.trim-bottom {
-    bottom: 14px;
-}
-
-.trim-left.trim-horizontal {
-    left: 14px;
-}
-
-.trim-left.trim-vertical {
-    left: 14px;
-}
-
-.trim-right.trim-horizontal {
-    right: 14px;
-}
-
-.trim-right.trim-vertical {
-    right: 14px;
-}
-
 .loading-panel-frame {
     position: absolute;
-    width: 76.62%;
-    height: 15.65%;
+    width: 70.8%;
+    height: 20.8%;
     left: 50%;
-    top: 59.31%;
+    top: 60.9%;
     translate: -50% 0;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_chrome_03_loading_panel_frame.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_loading_panel_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 44;
-    -unity-slice-right: 44;
-    -unity-slice-top: 44;
-    -unity-slice-bottom: 44;
 }
 
 .loading-panel-status {
     position: absolute;
-    left: 55px;
-    top: 55px;
-    width: 59.04%;
-    height: 90px;
-    font-size: 70px;
-    color: rgb(226, 219, 197);
+    left: 6.1%;
+    top: 11.0%;
+    width: 66%;
+    height: 33%;
+    font-size: 84px;
+    color: rgb(242, 232, 196);
     -unity-text-align: middle-left;
     white-space: nowrap;
 }
 
 .loading-panel-percent {
     position: absolute;
-    right: 55px;
-    top: 55px;
-    width: 214px;
-    height: 90px;
-    font-size: 70px;
-    color: rgb(229, 174, 39);
+    right: 6.1%;
+    top: 7.5%;
+    width: 16%;
+    height: 40%;
+    font-size: 106px;
+    color: rgb(226, 174, 42);
     -unity-text-align: middle-right;
     white-space: nowrap;
 }
 
 .progress-frame {
     position: absolute;
-    left: 44px;
-    right: 44px;
-    top: 154px;
-    height: 30px;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_chrome_04_progress_bar_frame.png");
+    left: 6.2%;
+    right: 6.2%;
+    top: 57.0%;
+    height: 21%;
+    min-height: 34px;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_progress_track_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 12;
-    -unity-slice-right: 12;
-    -unity-slice-top: 8;
-    -unity-slice-bottom: 8;
 }
 
 .progress-fill {
     position: absolute;
-    left: 7px;
-    top: 7px;
-    width: 68%;
-    height: 16px;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_chrome_05_progress_fill_gold.png");
+    left: 2.0%;
+    top: 50%;
+    translate: 0 -50%;
+    width: 68.0%;
+    height: 68%;
+    min-height: 12px;
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 8;
-    -unity-slice-right: 8;
-    -unity-slice-top: 4;
-    -unity-slice-bottom: 4;
 }
 
 .progress-tick {
     position: absolute;
-    top: 7px;
+    top: 17%;
     width: 2px;
-    height: 16px;
-    background-color: rgba(0, 0, 0, 0.62);
+    height: 66%;
+    background-color: rgba(0, 0, 0, 0.56);
+    display: none;
 }
 
-.progress-tick-1 { left: 4.5%; }
-.progress-tick-2 { left: 8.7%; }
-.progress-tick-3 { left: 12.9%; }
-.progress-tick-4 { left: 17.1%; }
-.progress-tick-5 { left: 21.3%; }
-.progress-tick-6 { left: 25.5%; }
-.progress-tick-7 { left: 29.7%; }
-.progress-tick-8 { left: 33.9%; }
-.progress-tick-9 { left: 38.1%; }
-.progress-tick-10 { left: 44.0%; }
-.progress-tick-11 { left: 50.5%; }
-.progress-tick-12 { left: 56.4%; }
-.progress-tick-13 { left: 63.8%; }
-.progress-tick-14 { left: 72.5%; }
-.progress-tick-15 { left: 79.8%; }
-.progress-tick-16 { left: 88.1%; }
-.progress-tick-17 { left: 96.9%; }
-
-.loading-panel-tip {
-    position: absolute;
-    left: 55px;
-    right: 55px;
-    bottom: 35px;
-    height: 93px;
-    font-size: 55px;
-    color: rgb(178, 171, 148);
-    -unity-text-align: upper-left;
-    white-space: normal;
-}
+.progress-tick-7 { left: 38.6%; display: flex; }
+.progress-tick-11 { left: 61.2%; display: flex; }
+.progress-tick-15 { left: 80.4%; display: flex; }
+.progress-tick-17 { left: 96.5%; display: flex; }
 
 .bottom-status-chip-fill {
     position: absolute;
-    width: 20.60%;
-    height: 6.21%;
+    width: 31.5%;
+    height: 7.7%;
     left: 50%;
-    top: 81.90%;
+    top: 84.4%;
     translate: -50% 0;
 }
 
@@ -269,35 +193,30 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_chrome_07_small_system_chip_frame.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_loading_panel_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
 }
 
 .bottom-status-spinner {
     position: absolute;
-    left: 42px;
+    left: 7.5%;
     top: 50%;
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     translate: 0 -50%;
-    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV01/scn01_icon_03_loading_spinner_ring.png");
+    background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_spinner_ring.png");
     -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgb(160, 187, 75);
 }
 
 .bottom-status-text {
     position: absolute;
-    left: 124px;
+    left: 22%;
+    right: 8%;
     top: 50%;
     translate: 0 -50%;
-    width: 612px;
-    height: 90px;
-    font-size: 40px;
-    color: rgb(160, 187, 75);
+    height: 72%;
+    font-size: 54px;
+    color: rgb(239, 226, 191);
     -unity-text-align: middle-left;
     white-space: nowrap;
 }

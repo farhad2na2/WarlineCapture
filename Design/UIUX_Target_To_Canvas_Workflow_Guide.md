@@ -20,6 +20,8 @@ For each screen, popup, or reusable panel, start with:
 
 If a new target is being generated, request the flattened target first, get approval, then request separate imagegen layer assets on green background. Do not reverse-engineer, crop, or extract clean layers from the flattened image.
 
+For a restyle or new art direction, old reference mockups are not canonical targets. Generate a fresh full target mockup in the current art direction first, show it for approval, and only then continue to layers and Unity implementation.
+
 ## Hard Layer-Pack Gate
 
 This is a blocking gate. Before editing Unity prefab files, builder code, generated Unity sprites, or tests for any visual-lock screen, popup, or reusable panel, verify that the matching layer-pack folder exists:
@@ -108,6 +110,8 @@ This classification decides import mode, alpha behavior, z-order, and tests. Do 
 7. Confirm state backgrounds contain no icons, labels, portraits, health bars, badges, or markers.
 8. Use 9-sliced sprites for scalable chrome, buttons, bars, cards, and panels.
 9. Add atlas labels and sprite atlas membership for generated UI assets.
+10. Tune import Pixel Per Unit before changing art or layout when a frame looks too large, too thick, too small, or too thin. In UI Toolkit, increasing Pixel Per Unit makes the sprite render visually smaller/thinner, and lowering Pixel Per Unit makes it larger/heavier. Start from `100`, then compare in UI Builder/Game View; values such as `300` are valid when the target needs slimmer chrome.
+11. Record intentional non-default Pixel Per Unit values in the surface notes or implementation report so later agents do not reset them as an accident.
 
 Alpha checks on source PNGs are useful, but not enough. Opaque rectangular artifacts often only show up in a rendered capture over a non-black background.
 
@@ -128,6 +132,7 @@ Typography:
 - Normal labels, values, descriptions, and control text use `Oxanium-Light SDF`.
 - Text should stay single-line unless the target explicitly has paragraph copy.
 - Autosize only to prevent clipping, not to hide poor layout.
+- Match font size by focused crop comparison against the target. If target labels, numbers, or button captions are visibly larger, increase the Unity font size until the rendered text height and weight match. Do not leave tiny default labels because they fit.
 
 Buttons and cards:
 
@@ -157,6 +162,8 @@ Required loop:
 7. Compare each crop for:
    - frame thickness
    - corner silhouette
+   - sprite Pixel Per Unit scale
+   - 9-slice borders and slice scale
    - fill opacity and color
    - separator placement
    - icon shape, scale, and center
@@ -179,8 +186,10 @@ Before reporting any screen as done, complete this checklist yourself:
 - Rewards, objectives, mission names, difficulty labels, counters, and CTA labels match the target.
 - Header/logo/title scale and alignment match the target.
 - Every major panel has the correct frame, fill, border thickness, and corner silhouette.
+- Pixel Per Unit and 9-slice settings were tuned for every frame/button/panel that did not match target chrome scale on first import.
 - 9-sliced chrome has transparent outside corners and no opaque rectangular artifacts.
 - Icons are separate child sprites, centered and scaled like the target.
+- Live text sizes were increased or reduced until focused crops match the target text height, not left at generic defaults.
 - Buttons/cards/tabs use the correct selected/normal/pressed state workflow.
 - No content art, labels, badges, icons, health bars, or counters are baked into reusable backgrounds.
 - No text is clipped, wrapped unexpectedly, or autosized so far away from target scale that it looks mismatched.

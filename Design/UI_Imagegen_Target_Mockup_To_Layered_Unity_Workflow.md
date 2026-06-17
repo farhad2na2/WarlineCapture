@@ -8,6 +8,8 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
 
 1. **Request the full target mockup from imagegen**
    - Generate the complete screen/popup composition.
+   - For a new visual direction, new screen family, or restyle request, generate a fresh target mockup first. Do not search for, pick, or reuse old reference mockups as the target.
+   - Existing target images are only valid when the user explicitly says to use that exact target as the current source of truth.
    - Use this image only to approve visual direction, hierarchy, layout, logo style, panel proportions, color, spacing, and typography intent.
    - Save it under `Design/VisualLockLayered/<SurfaceId>/reference/`.
 
@@ -52,24 +54,31 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
    - `alphaIsTransparency: 1`
    - `enableMipMap: 0`
    - `filterMode: 1`
-   - `spritePixelsToUnits: 100`
+   - Start from `spritePixelsToUnits: 100`, then tune it against the rendered target.
    - Add 9-slice borders for scalable frames, panels, buttons, chips, tracks, and fills.
+   - For UI Toolkit sprite backgrounds, treat `spritePixelsToUnits` as a visual scale/thickness control:
+     - raise Pixel Per Unit when chrome must render smaller, thinner, or less bulky, for example `300`;
+     - lower Pixel Per Unit when the same sprite must render larger or heavier;
+     - validate the result in UI Builder/Game View before changing the PNG or layout.
+   - Do not skip this import-setting pass. A correct imagegen frame can look wrong if Pixel Per Unit or slice settings are wrong.
 
 8. **Build the Unity UI from the separated layers**
    - Canvas/UI Toolkit objects must use separated sprites, live text, and real controls.
    - Background art, frames, icons, fills, labels, and state visuals must remain separate.
    - Never use the target mockup as a full-screen background to fake the UI.
+   - Set live text size by direct crop comparison to the target. If target labels/numbers are larger, increase font size until the rendered text height matches. Do not leave default-small labels and call the panel matched.
 
 9. **Compare implementation against target**
    - Capture rendered output at the target aspect and 20:9.
    - Compare target vs rendered screen and focused crops.
-   - Iterate by changing layout, sizing, layer prompts, or layer generation. Do not solve mismatches by cropping the flattened target.
+   - Iterate in this order for visual scale problems: import Pixel Per Unit, 9-slice borders/slice scale, USS/RectTransform size, then layer prompt/regeneration. Do not solve mismatches by cropping the flattened target.
 
 ## Non-Negotiable Rules
 
 - Do not crop a logo, panel, icon, frame, background detail, or button from the flattened target mockup for runtime use.
 - Do not use deterministic drawing, vector reconstruction, or patched screenshots as production art when the workflow calls for imagegen layers.
 - Do not reuse old screen assets just because they are close; request the needed asset in the current target style.
+- Do not use old reference mockups for a new art direction. Generate the new full target mockup first, show it, and wait for acceptance before requesting layers.
 - Do not keep stale mockups in active reference paths. Archive or delete rejected targets so future searches find only the approved current reference.
 - Do not claim target match until the implementation is compared against the accepted target and obvious differences are fixed or listed as not accepted.
 
@@ -133,4 +142,6 @@ Before handoff:
 
 - SCN/POP target and rendered output compared.
 - Logo, panels, icons, text scale, progress bars, and spacing checked against target.
+- Pixel Per Unit and 9-slice settings checked for every frame/button/panel that looks too thick, too thin, too large, or too small.
+- Font sizes checked against focused target crops; labels and values must not be left visibly smaller than the target.
 - Any remaining mismatch is listed as `not target-matched`.

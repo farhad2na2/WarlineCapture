@@ -146,9 +146,18 @@ Create a `.png.meta` beside the final PNG with:
 - `alphaIsTransparency: 1`
 - `enableMipMap: 0`
 - `filterMode: 1`
-- `spritePixelsToUnits: 100`
+- `spritePixelsToUnits: 100` as the starting value, then tune against the rendered UI target.
 
 Use a unique GUID. Label with `WarlineCaptureUI` and the screen/feature id when useful.
+
+Pixel Per Unit is part of the visual match pass, not a fixed boilerplate value. For UI Toolkit sprite backgrounds and sliced frame sprites:
+
+- raise Pixel Per Unit when the frame needs to appear smaller, thinner, or less bulky, for example `300`;
+- lower Pixel Per Unit when the frame needs to appear larger or heavier;
+- validate in UI Builder/Game View before regenerating art or rewriting layout;
+- record any intentional non-default value in the report or surface README.
+
+If text is added near the regenerated sprite, match the target font scale by direct visual comparison. Increase font sizes until button labels, values, and titles match the target crop. Do not accept tiny readable text when the target uses larger type.
 
 ## Step 6: Validate
 
@@ -178,6 +187,8 @@ Pass criteria:
 - No visible green remains.
 - No border is clipped.
 - Sprite meta exists beside the final PNG.
+- Pixel Per Unit and slice settings have been checked in the consuming UI if the sprite is a frame, panel, button, chip, track, or fill.
+- Any associated live text size has been checked against the target crop.
 
 ## Output Convention
 

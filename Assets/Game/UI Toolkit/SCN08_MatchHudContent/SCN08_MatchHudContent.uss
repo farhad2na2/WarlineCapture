@@ -4,8 +4,8 @@
     position: relative;
     overflow: hidden;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
-    color: rgb(220, 216, 192);
-    background-color: rgba(0, 0, 0, 0);
+    color: rgb(238, 229, 198);
+    background-color: rgb(8, 9, 8);
 }
 
 .scn08-match-hud-content Button {
@@ -25,198 +25,279 @@
     -unity-text-align: middle-center;
 }
 
+.background-plate {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_background_command_table_no_ui.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.header-content,
+.left-content,
+.right-content,
+.footer-content,
+.battlefield-layer {
+    position: absolute;
+}
+
 .header-content {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 10.4%;
+    left: 0.8%;
+    right: 0.8%;
+    top: 1.25%;
+    height: 9.2%;
 }
 
-.header-back-plate {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 100%;
-    background-color: rgba(7, 10, 10, 0.78);
+.left-content {
+    left: 0.8%;
+    top: 11.2%;
+    width: 20.3%;
+    height: 68.4%;
 }
 
-.objectives-panel {
-    position: absolute;
-    left: 0.35%;
-    top: 5.8%;
-    width: 13.95%;
-    height: 192%;
+.right-content {
+    right: 0.8%;
+    top: 11.2%;
+    width: 24.1%;
+    height: 57.8%;
 }
 
-.objectives-frame {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_objective_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 44;
-    -unity-slice-right: 44;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
+.footer-content {
+    left: 0.8%;
+    right: 0.8%;
+    bottom: 1.25%;
+    height: 18.7%;
+    overflow: visible;
 }
 
-.objectives-title {
-    position: absolute;
-    left: 9%;
-    right: 9%;
-    top: 5%;
-    height: 12%;
-    font-size: 28px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(232, 227, 203);
+.battlefield-layer {
+    left: 22%;
+    right: 25.6%;
+    top: 12.8%;
+    bottom: 20.2%;
 }
 
-.objective-row {
-    position: absolute;
-    left: 5%;
-    right: 5%;
-    top: 24%;
-    height: 16%;
-}
-
-.objective-row-second {
-    top: 43.5%;
-}
-
-.objective-row-third {
-    top: 63%;
-}
-
-.objective-icon {
-    position: absolute;
-    left: 3%;
-    top: 17%;
-    width: 9%;
-    height: 66%;
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.objective-unchecked {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_checkbox_empty.png");
-}
-
-.objective-checked {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_checkbox_checked.png");
-}
-
-.objective-star {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_objective_star.png");
-}
-
-.objective-text {
-    position: absolute;
-    left: 17%;
-    right: 2%;
-    top: 0;
-    bottom: 0;
-    font-size: 22px;
-    -unity-text-align: middle-left;
-    color: rgba(218, 222, 208, 0.9);
-}
-
-.objectives-elapsed {
-    position: absolute;
-    left: 13%;
-    right: 13%;
-    bottom: 5%;
-    height: 9.5%;
-    font-size: 20px;
-    -unity-text-align: middle-center;
-    color: rgba(202, 214, 205, 0.78);
-}
-
-.resource-strip {
-    position: absolute;
-    right: 11.5%;
-    top: 6.4%;
-    width: 33.5%;
-    height: 53.6%;
-}
-
+.panel-frame,
+.chip-frame,
 .resource-frame,
-.current-order-frame,
-.header-icon-frame,
-.threat-jump-frame,
-.right-quick-frame,
-.quick-command-frame,
-.selected-squad-frame,
-.selected-portrait-frame,
 .command-rail-frame,
 .squad-tray-frame,
 .minimap-frame,
-.feedback-frame {
+.selected-portrait-frame,
+.selected-health-frame,
+.squad-health-frame,
+.square-frame,
+.rect-button-frame,
+.command-button-frame,
+.squad-card-frame {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
 }
 
-.resource-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_strip_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 44;
-    -unity-slice-right: 44;
+.panel-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 72;
+    -unity-slice-bottom: 72;
+}
+
+.objectives-panel .panel-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 72;
+    -unity-slice-bottom: 72;
+}
+
+.selected-squad-panel .panel-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png");
+    -unity-slice-left: 54;
+    -unity-slice-right: 54;
+    -unity-slice-top: 82;
+    -unity-slice-bottom: 82;
+}
+
+.chip-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
+    -unity-slice-left: 42;
+    -unity-slice-right: 42;
     -unity-slice-top: 24;
     -unity-slice-bottom: 24;
 }
 
-.resource-slot {
+.logo-panel .chip-frame,
+.current-order-banner .chip-frame,
+.threat-jump-panel .chip-frame,
+.feedback-panel .chip-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png");
+    -unity-slice-left: 86;
+    -unity-slice-right: 86;
+    -unity-slice-top: 42;
+    -unity-slice-bottom: 42;
+}
+
+.resource-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png");
+    -unity-slice-left: 66;
+    -unity-slice-right: 66;
+    -unity-slice-top: 42;
+    -unity-slice-bottom: 42;
+}
+
+.square-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 56;
+    -unity-slice-bottom: 56;
+}
+
+.command-button-frame {
+    left: -4%;
+    right: -4%;
+    top: -2%;
+    bottom: -2%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 56;
+    -unity-slice-bottom: 56;
+}
+
+.command-button-selected .command-button-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
+    -unity-background-image-tint-color: rgb(255, 229, 145);
+}
+
+.rect-button-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-slice-left: 66;
+    -unity-slice-right: 66;
+    -unity-slice-top: 42;
+    -unity-slice-bottom: 42;
+}
+
+.squad-card-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png");
+    -unity-slice-left: 58;
+    -unity-slice-right: 58;
+    -unity-slice-top: 58;
+    -unity-slice-bottom: 58;
+}
+
+.squad-card-selected .squad-card-frame {
+    -unity-background-image-tint-color: rgb(255, 225, 140);
+}
+
+.command-rail-frame,
+.squad-tray-frame,
+.minimap-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 46;
+    -unity-slice-bottom: 46;
+}
+
+.header-content {
+    overflow: visible;
+}
+
+.logo-panel {
     position: absolute;
-    top: 7%;
-    width: 21.8%;
-    height: 86%;
+    left: 0;
+    top: 0;
+    width: 23.6%;
+    height: 100%;
 }
 
-.credits-slot {
-    left: 5%;
-}
-
-.fuel-slot {
-    left: 29.3%;
-}
-
-.supply-slot {
-    left: 53.6%;
-}
-
-.civilian-risk-slot {
-    left: 77.9%;
-}
-
-.resource-icon {
+.logo-lockup {
     position: absolute;
-    left: 1%;
-    top: 15%;
-    width: 26%;
-    height: 70%;
+    left: 6.2%;
+    right: 6.2%;
+    top: 10%;
+    bottom: 10%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_logo_lockup.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.credits-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_credits_coin.png");
+.current-order-banner {
+    position: absolute;
+    left: 34.2%;
+    top: 0;
+    width: 19.3%;
+    height: 100%;
 }
 
-.fuel-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_fuel_can.png");
+.current-order-chevrons {
+    position: absolute;
+    left: 8%;
+    top: 21%;
+    width: 17%;
+    height: 58%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_move_chevrons.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
-.supply-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_resource_supply_crate.png");
+.current-order-text {
+    position: absolute;
+    left: 31%;
+    right: 8%;
+    top: 18%;
+    height: 34%;
+    font-size: 23px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(241, 232, 203);
 }
 
-.civilian-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_civilian_group.png");
+.current-order-squad {
+    position: absolute;
+    left: 31%;
+    right: 8%;
+    bottom: 18%;
+    height: 24%;
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(209, 223, 146);
+}
+
+.resource-strip {
+    position: absolute;
+    right: 5.6%;
+    top: 0;
+    width: 38.2%;
+    height: 100%;
+}
+
+.resource-slot {
+    position: absolute;
+    top: 14%;
+    height: 72%;
+    width: 23.2%;
+}
+
+.credits-slot { left: 3.2%; }
+.fuel-slot { left: 27.1%; }
+.supply-slot { left: 51%; }
+.civilian-risk-slot { left: 75%; }
+
+.resource-icon {
+    position: absolute;
+    left: 2%;
+    top: 14%;
+    width: 25%;
+    height: 72%;
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .resource-label {
@@ -224,105 +305,378 @@
     left: 32%;
     right: 0;
     top: 9%;
-    height: 34%;
-    font-size: 18px;
+    height: 30%;
+    font-size: 11px;
+    -unity-font-style: bold;
     -unity-text-align: middle-left;
-    color: rgba(197, 211, 199, 0.82);
+    color: rgba(237, 229, 199, 0.85);
 }
 
 .resource-value {
     position: absolute;
     left: 32%;
     right: 0;
-    bottom: 8%;
-    height: 42%;
-    font-size: 25px;
+    bottom: 6%;
+    height: 46%;
+    font-size: 20px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
-    color: rgb(235, 227, 194);
-}
-
-.current-order-banner {
-    position: absolute;
-    left: 31.6%;
-    top: 6.4%;
-    width: 14.6%;
-    height: 53.6%;
-}
-
-.current-order-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_mode_banner_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 38;
-    -unity-slice-right: 38;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
-}
-
-.current-order-chevrons {
-    position: absolute;
-    left: 8%;
-    top: 30%;
-    width: 16%;
-    height: 40%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_current_order_chevrons.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.current-order-text {
-    position: absolute;
-    left: 29%;
-    right: 7%;
-    top: 11%;
-    height: 42%;
-    font-size: 25px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(232, 225, 196);
-}
-
-.current-order-squad {
-    position: absolute;
-    left: 29%;
-    right: 7%;
-    bottom: 11%;
-    height: 34%;
-    font-size: 18px;
-    -unity-text-align: middle-left;
-    color: rgba(197, 211, 199, 0.82);
+    color: rgb(230, 196, 74);
 }
 
 .header-icon-button {
     position: absolute;
-    top: 6.4%;
-    width: 3.12%;
-    height: 53.6%;
+    right: 0;
+    top: 0;
+    width: 4.5%;
+    height: 100%;
 }
 
-.settings-button {
-    right: 7.25%;
+.objectives-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 34.2%;
 }
 
-.pause-button {
-    right: 3.88%;
+.selected-squad-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 36.5%;
+    bottom: 0;
 }
 
-.menu-button {
-    right: 0.5%;
+.panel-title {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 6%;
+    height: 13%;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(241, 232, 203);
 }
 
-.header-icon-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_top_icon_button_frame_b.png");
+.objective-row {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    height: 14%;
+    margin-top: 0;
+}
+
+#NeutralizeHostiles { top: 27%; }
+#ProtectCivilians { top: 45%; }
+#KeepLossesLow { top: 63%; }
+
+.objective-icon {
+    position: absolute;
+    left: 0;
+    top: 15%;
+    width: 11%;
+    height: 70%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.objective-text {
+    position: absolute;
+    left: 16.5%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(234, 228, 202);
+}
+
+.objectives-elapsed {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 6%;
+    height: 12%;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(184, 216, 64);
+}
+
+.selected-badge {
+    position: absolute;
+    left: 7%;
+    top: 5.5%;
+    width: 12%;
+    height: 9%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_squad_badge.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selected-title {
+    position: absolute;
+    left: 22%;
+    right: 7%;
+    top: 5.2%;
+    height: 7%;
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(242, 232, 203);
+}
+
+.selected-subtitle {
+    position: absolute;
+    left: 22%;
+    right: 7%;
+    top: 13%;
+    height: 4.6%;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgba(236, 229, 199, 0.78);
+}
+
+.selected-portrait-frame {
+    left: 7.5%;
+    right: 7.5%;
+    top: 21%;
+    height: 25%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-slice-left: 58;
+    -unity-slice-right: 58;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+}
+
+.selected-portrait {
+    position: absolute;
+    left: 4.4%;
+    right: 4.4%;
+    top: 9%;
+    bottom: 9%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.selected-health-frame {
+    left: 8%;
+    right: 8%;
+    top: 50%;
+    height: 5.6%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
+    -unity-slice-left: 44;
+    -unity-slice-right: 44;
+    -unity-slice-top: 10;
+    -unity-slice-bottom: 10;
+}
+
+.selected-health-fill {
+    position: absolute;
+    left: 5%;
+    top: 24%;
+    width: 61%;
+    height: 52%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
+    -unity-slice-left: 34;
+    -unity-slice-right: 34;
+    -unity-slice-top: 6;
+    -unity-slice-bottom: 6;
 }
 
-.settings-icon,
-.pause-icon,
-.menu-icon {
+.selected-health-text {
+    position: absolute;
+    left: 68%;
+    right: 5%;
+    top: 0;
+    bottom: 0;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-right;
+    color: rgb(240, 232, 203);
+}
+
+.order-row {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 59%;
+    height: 8%;
+}
+
+.order-label,
+.order-value {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+}
+
+.order-label {
+    left: 0;
+    width: 30%;
+    font-size: 13px;
+    color: rgba(236, 229, 199, 0.75);
+}
+
+.order-value {
+    left: 31%;
+    right: 0;
+    font-size: 18px;
+    color: rgb(184, 216, 64);
+}
+
+.selected-command-buttons {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 69%;
+    height: 17.5%;
+}
+
+.selected-action-button {
+    position: absolute;
+    top: 0;
+    width: 30%;
+    height: 100%;
+}
+
+#ReturnButton { left: 0; }
+#DestroyButton { left: 35%; }
+#BoardButton { right: 0; }
+
+.selected-action-button .rect-button-frame {
+    -unity-slice-left: 38;
+    -unity-slice-right: 38;
+    -unity-slice-top: 26;
+    -unity-slice-bottom: 26;
+}
+
+.selected-action-button .return-icon,
+.selected-action-button .destroy-icon,
+.selected-action-button .board-icon {
+    position: absolute;
+    left: 23%;
+    right: 23%;
+    top: 12%;
+    height: 45%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selected-action-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 8%;
+    height: 24%;
+    font-size: 11px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(238, 231, 199);
+}
+
+.passenger-chip,
+.transport-passenger-drawer {
+    display: none;
+}
+
+.threat-jump-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 11.6%;
+}
+
+.warning-icon {
+    position: absolute;
+    left: 6%;
+    top: 22%;
+    width: 10%;
+    height: 56%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.threat-title {
+    position: absolute;
+    left: 19%;
+    right: 31%;
+    top: 18%;
+    height: 34%;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(244, 235, 203);
+}
+
+.threat-subtitle {
+    position: absolute;
+    left: 19%;
+    right: 31%;
+    bottom: 18%;
+    height: 24%;
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgba(238, 231, 199, 0.78);
+}
+
+.jump-button {
+    position: absolute;
+    right: 4.5%;
+    top: 17%;
+    width: 25%;
+    height: 66%;
+}
+
+.jump-button .jump-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(241, 232, 203);
+}
+
+.right-quick-rail {
+    position: absolute;
+    right: 0;
+    top: 17.5%;
+    width: 22%;
+    height: 70%;
+}
+
+.quick-square-button,
+.quick-command {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.quick-square-button {
+    height: 18%;
+}
+
+#PauseButton { top: 0; }
+#SettingsButton { top: 22.3%; }
+
+.quick-command {
+    height: 25%;
+}
+
+#RightBuildCommand { top: 47%; }
+#RightSupportCommand { bottom: 0; }
+
+.quick-square-button .pause-icon,
+.quick-square-button .settings-icon {
     position: absolute;
     left: 24%;
     right: 24%;
@@ -331,1151 +685,408 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.settings-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_settings_gear.png");
-}
-
-.pause-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_pause.png");
-}
-
-.menu-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_menu_list.png");
-}
-
-.battlefield-layer {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 964%;
-}
-
-.civilian-risk-zone,
-.move-path,
-.objective-pin,
-.threat-pin,
-.hostile-marker,
-.selected-squad-ring,
-.command-focus,
-.move-destination {
-    position: absolute;
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.civilian-risk-zone {
-    left: 18%;
-    top: 57%;
-    width: 11.7%;
-    height: 13.3%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_civilian_risk_zone.png");
-}
-
-.move-path {
-    left: 43%;
-    top: 58%;
-    width: 18.8%;
-    height: 2.3%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_path_line.png");
-}
-
-.objective-pin {
-    left: 28%;
-    top: 30%;
-    width: 3.1%;
-    height: 6.6%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_objective_star_pin.png");
-}
-
-.threat-pin {
-    left: 76%;
-    top: 31%;
-    width: 2.8%;
-    height: 6%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_threat_warning_pin.png");
-}
-
-.hostile-marker {
-    width: 2.5%;
-    height: 4.4%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_hostile_diamond.png");
-}
-
-.hostile-marker-a {
-    left: 67%;
-    top: 38%;
-}
-
-.hostile-marker-b {
-    left: 72.5%;
-    top: 30%;
-}
-
-.selected-squad-ring {
-    left: 41%;
-    top: 63.5%;
-    width: 11.25%;
-    height: 6.3%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_selection_ring.png");
-}
-
-.command-focus {
-    left: 39%;
-    top: 60%;
-    width: 15%;
-    height: 9.6%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_command_focus_brackets.png");
-}
-
-.move-destination {
-    left: 61%;
-    top: 56%;
-    width: 3.75%;
-    height: 6.7%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_move_destination.png");
-}
-
-.left-content {
-    position: absolute;
-    left: 0;
-    top: 10.4%;
-    bottom: 8.9%;
-    width: 15%;
-}
-
-.selected-squad-panel {
-    position: absolute;
-    left: 2.2%;
-    top: 22%;
-    width: 95.8%;
-    height: 46%;
-}
-
-.selected-squad-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_selected_entity_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
+.quick-command .rect-button-frame {
     -unity-slice-left: 48;
     -unity-slice-right: 48;
-    -unity-slice-top: 42;
-    -unity-slice-bottom: 42;
+    -unity-slice-top: 36;
+    -unity-slice-bottom: 36;
 }
 
-.selected-portrait-frame {
-    left: 7.5%;
-    right: 7.5%;
-    top: 7.8%;
-    height: 43.5%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_selected_entity_portrait_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 30;
-    -unity-slice-bottom: 30;
-}
-
-.selected-portrait {
+.quick-command .build-icon,
+.quick-command .support-icon {
     position: absolute;
-    left: 15.8%;
-    right: 15.8%;
-    top: 10.8%;
-    height: 37.5%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_portrait_rifle_squad.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.selected-badge {
-    position: absolute;
-    left: 10%;
-    top: 54%;
-    width: 10.5%;
-    height: 8%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_shield_rank_badge.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.selected-title {
-    position: absolute;
-    left: 27%;
-    right: 9%;
-    top: 52.5%;
-    height: 6%;
-    font-size: 26px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(235, 228, 198);
-}
-
-.selected-subtitle {
-    position: absolute;
-    left: 27%;
-    right: 9%;
-    top: 59%;
-    height: 4.8%;
-    font-size: 17px;
-    -unity-text-align: middle-left;
-    color: rgba(202, 213, 202, 0.82);
-}
-
-.selected-health-frame {
-    position: absolute;
-    left: 10.5%;
-    right: 10.5%;
-    top: 66.5%;
-    height: 5.4%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_health_bar_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 22;
-    -unity-slice-right: 22;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
-}
-
-.selected-health-fill {
-    position: absolute;
-    left: 6%;
-    top: 44%;
-    width: 62%;
-    height: 16%;
-    background-color: rgb(92, 204, 116);
-}
-
-.selected-health-text {
-    position: absolute;
-    left: 70%;
-    right: 4%;
-    top: 0;
-    bottom: 0;
-    font-size: 14px;
-    -unity-text-align: middle-right;
-    color: rgb(230, 224, 196);
-}
-
-.order-label {
-    position: absolute;
-    left: 10.5%;
-    right: 10.5%;
-    top: 73%;
-    height: 7%;
-    font-size: 18px;
-    -unity-text-align: middle-left;
-    color: rgba(200, 213, 202, 0.78);
-}
-
-.order-value {
-    position: absolute;
-    left: 39%;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 21px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(232, 226, 197);
-}
-
-.selected-command-buttons {
-    position: absolute;
-    left: 9.5%;
-    right: 9.5%;
-    bottom: 12.5%;
-    height: 16%;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.selected-action-button {
-    position: relative;
-    width: 30.2%;
-    height: 100%;
-}
-
-.selected-action-frame {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 78%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_ability_chip_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
-}
-
-.return-icon,
-.destroy-icon,
-.board-icon {
-    position: absolute;
-    left: 27%;
-    right: 27%;
+    left: 20%;
+    right: 20%;
     top: 12%;
-    height: 37%;
+    height: 47%;
     -unity-background-scale-mode: scale-to-fit;
-}
-
-.return-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_scan_radar.png");
-}
-
-.destroy-icon {
-    background-image: url("../../../Synty/InterfaceMilitaryCombatHUD/Sprites/Badges/SPR_MilitaryCombat_Badge_Element_Skull_01_Bronze.png");
-}
-
-.board-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_board_vehicle.png");
-}
-
-.selected-action-label {
-    position: absolute;
-    left: 5%;
-    right: 5%;
-    top: 52%;
-    height: 17%;
-    font-size: 14px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
-}
-
-.selected-action-status {
-    position: absolute;
-    left: 17%;
-    right: 17%;
-    bottom: 1%;
-    height: 12%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_status_segment_strip.png");
-    -unity-background-scale-mode: stretch-to-fill;
-}
-
-.passenger-chip {
-    position: absolute;
-    left: 18%;
-    right: 18%;
-    bottom: 3.7%;
-    height: 7.2%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_gold_action_button_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 14;
-    -unity-slice-bottom: 14;
-}
-
-.passenger-chip-label {
-    position: absolute;
-    left: 4%;
-    right: 4%;
-    top: 0;
-    bottom: 0;
-    font-size: 16px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(48, 42, 22);
-}
-
-.transport-passenger-drawer {
-    position: absolute;
-    left: 93%;
-    top: 10%;
-    width: 75%;
-    height: 79.5%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_card_frame_default_a.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 32;
-    -unity-slice-bottom: 32;
-}
-
-.passenger-drawer-header {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 3.5%;
-    height: 6%;
-    font-size: 17px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(232, 226, 197);
-}
-
-.passenger-empty-state {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 43%;
-    height: 8%;
-}
-
-.passenger-empty-label {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 14px;
-    -unity-text-align: middle-center;
-    color: rgba(200, 213, 202, 0.68);
-}
-
-.passenger-scroll-view {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 13%;
-    bottom: 15%;
-}
-
-.passenger-scroll-view .unity-scroll-view__vertical-scroller,
-.passenger-scroll-view .unity-scroll-view__horizontal-scroller {
-    display: none;
-}
-
-.passenger-content {
-    flex-direction: column;
-    padding-top: 0;
-    padding-bottom: 8px;
-    padding-right: 0;
-}
-
-.passenger-item-view {
-    position: relative;
-    width: 100%;
-    height: 92px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    background-image: url("../../Art/UI/Panels/scn09_panel_secondary_button_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 22;
-    -unity-slice-right: 22;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
-}
-
-.passenger-name {
-    position: absolute;
-    left: 6%;
-    top: 10%;
-    width: 50%;
-    height: 34%;
-    font-size: 17px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(232, 226, 197);
-}
-
-.passenger-role {
-    position: absolute;
-    left: 6%;
-    top: 48%;
-    width: 32%;
-    height: 30%;
-    font-size: 13px;
-    -unity-text-align: middle-left;
-    color: rgba(201, 213, 203, 0.78);
-}
-
-.passenger-health-frame {
-    position: absolute;
-    left: 40%;
-    top: 53%;
-    width: 31%;
-    height: 18%;
-    background-color: rgba(16, 20, 18, 0.92);
-}
-
-.passenger-health-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    background-color: rgb(87, 197, 112);
-}
-
-.passenger-health-text {
-    position: absolute;
-    left: 40%;
-    top: 17%;
-    width: 31%;
-    height: 28%;
-    font-size: 13px;
-    -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
-}
-
-.passenger-exit-button {
-    position: absolute;
-    right: 6%;
-    top: 20%;
-    width: 18%;
-    height: 60%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_close_button_bg.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
-}
-
-.passenger-exit-label {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 13px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
-}
-
-.passenger-footer {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    bottom: 4%;
-    height: 8.9%;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.passenger-footer-button {
-    position: relative;
-    width: 48%;
-    height: 100%;
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
-}
-
-.exit-all-button {
-    background-image: url("../../Art/UI/Panels/scn09_panel_small_gold_button_bg.png");
-}
-
-.close-button {
-    background-image: url("../../Art/UI/Panels/scn09_panel_small_status_chip_bg.png");
-}
-
-.passenger-footer-label {
-    position: absolute;
-    left: 3%;
-    right: 3%;
-    top: 0;
-    bottom: 0;
-    font-size: 14px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
-}
-
-.right-content {
-    position: absolute;
-    right: 0;
-    top: 10.4%;
-    bottom: 8.9%;
-    width: 15%;
-}
-
-.threat-jump-panel {
-    position: absolute;
-    right: 3.5%;
-    top: 2.5%;
-    width: 111%;
-    height: 10%;
-}
-
-.threat-jump-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_rule_toast_chip_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
-}
-
-.threat-warning-icon {
-    position: absolute;
-    left: 5%;
-    top: 25%;
-    width: 10%;
-    height: 50%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_threat_warning.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.threat-title {
-    position: absolute;
-    left: 20%;
-    right: 24%;
-    top: 15%;
-    height: 34%;
-    font-size: 20px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-left;
-    color: rgb(235, 228, 198);
-}
-
-.threat-subtitle {
-    position: absolute;
-    left: 20%;
-    right: 24%;
-    bottom: 14%;
-    height: 30%;
-    font-size: 15px;
-    -unity-text-align: middle-left;
-    color: rgba(202, 213, 202, 0.82);
-}
-
-.jump-frame {
-    position: absolute;
-    right: 7%;
-    top: 22%;
-    width: 18%;
-    height: 56%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_jump_button_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 10;
-    -unity-slice-bottom: 10;
-}
-
-.jump-icon {
-    position: absolute;
-    right: 11%;
-    top: 32%;
-    width: 10%;
-    height: 36%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_jump_arrow.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.right-quick-rail {
-    position: absolute;
-    right: 4.9%;
-    top: 29%;
-    width: 46%;
-    height: 42%;
-}
-
-.right-quick-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_right_quick_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 38;
-    -unity-slice-right: 38;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
-    flex-direction: column;
-    justify-content: space-around;
-    padding-left: 9%;
-    padding-right: 9%;
-    padding-top: 6%;
-    padding-bottom: 6%;
-}
-
-.quick-command {
-    position: relative;
-    width: 100%;
-    height: 46%;
-}
-
-.quick-command-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 28;
-    -unity-slice-right: 28;
-    -unity-slice-top: 20;
-    -unity-slice-bottom: 20;
-}
-
-.build-icon,
-.support-icon {
-    position: absolute;
-    left: 25%;
-    right: 25%;
-    top: 15%;
-    height: 39%;
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.build-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_build_tools.png");
-}
-
-.support-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_icon_support_parachute.png");
 }
 
 .quick-command-label {
     position: absolute;
-    left: 6%;
-    right: 6%;
-    bottom: 19%;
-    height: 19%;
-    font-size: 16px;
+    left: 5%;
+    right: 5%;
+    bottom: 10%;
+    height: 22%;
+    font-size: 12px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
-}
-
-.footer-content {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 22.6%;
+    color: rgb(238, 231, 199);
 }
 
 .squad-tray {
     position: absolute;
-    left: 0.35%;
-    bottom: 18.8%;
-    width: 36.3%;
-    height: 78.7%;
-}
-
-.squad-tray-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_tray_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 52;
-    -unity-slice-right: 52;
-    -unity-slice-top: 36;
-    -unity-slice-bottom: 36;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-left: 2.4%;
-    padding-right: 2.4%;
-    padding-top: 7%;
-    padding-bottom: 7%;
-}
-
-.squad-card {
-    position: relative;
-    width: 18.4%;
+    left: 0;
+    bottom: 0;
+    width: 37.2%;
     height: 100%;
 }
 
-.squad-card-frame {
+.squad-card {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_normal_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 30;
-    -unity-slice-bottom: 30;
+    top: 14%;
+    width: 22.4%;
+    height: 72%;
 }
 
-.squad-card-selected .squad-card-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_selected_frame.png");
+#SquadCard1 { left: 3.2%; }
+#SquadCard2 { left: 27.5%; }
+#SquadCard3 { left: 51.8%; }
+#SquadCard4 { left: 76.1%; }
+
+.squad-number {
+    position: absolute;
+    left: 9%;
+    top: 8%;
+    width: 16%;
+    height: 15%;
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(230, 196, 74);
 }
 
 .squad-portrait {
     position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 8%;
-    height: 61%;
+    left: 9%;
+    right: 9%;
+    top: 22%;
+    height: 34%;
     -unity-background-scale-mode: scale-and-crop;
 }
 
-.squad-portrait-1 {
-    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card1_RifleSquad.png");
-}
-
-.squad-portrait-2 {
-    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card2_CombatVehicles.png");
-}
-
-.squad-portrait-3 {
-    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card3_AttackHelicopter.png");
-}
-
-.squad-portrait-4 {
-    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card4_FighterJet.png");
-}
-
-.squad-portrait-5 {
-    background-image: url("../../Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card5_Transport.png");
-}
-
-.squad-portrait-overlay {
+.squad-card-title {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 36%;
-    background-color: rgba(0, 0, 0, 0.35);
+    left: 7%;
+    right: 7%;
+    top: 59%;
+    height: 14%;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(239, 232, 202);
 }
 
 .squad-health-frame {
-    position: absolute;
-    left: 12%;
-    right: 12%;
-    bottom: 12.5%;
-    height: 12.5%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_health_bar_small_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 10;
-    -unity-slice-bottom: 10;
+    left: 10%;
+    right: 10%;
+    bottom: 17%;
+    height: 7%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
+    -unity-slice-left: 34;
+    -unity-slice-right: 34;
+    -unity-slice-top: 8;
+    -unity-slice-bottom: 8;
 }
 
 .squad-health-fill {
     position: absolute;
-    left: 9%;
-    right: 9%;
-    top: 43%;
-    height: 26%;
-    background-color: rgb(86, 196, 112);
+    left: 4%;
+    top: 20%;
+    width: 74%;
+    height: 60%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 5;
+    -unity-slice-bottom: 5;
 }
 
-.squad-number-badge {
+.short-fill {
+    width: 58%;
+}
+
+.squad-health-text {
     position: absolute;
     left: 8%;
-    top: 8%;
-    width: 17%;
-    height: 13%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_number_badge_frame.png");
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.squad-number {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 22px;
+    right: 8%;
+    bottom: 5%;
+    height: 10%;
+    font-size: 11px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
-    color: rgb(235, 228, 198);
+    color: rgb(239, 232, 202);
 }
 
 .command-rail {
     position: absolute;
-    left: 30%;
-    bottom: 8%;
-    width: 39.9%;
-    height: 53%;
-}
-
-.command-rail-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_bar_rail_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 52;
-    -unity-slice-right: 52;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
-    flex-direction: row;
-    justify-content: space-around;
-    padding-left: 3%;
-    padding-right: 3%;
-    padding-top: 5%;
-    padding-bottom: 5%;
+    left: 38.2%;
+    bottom: 0;
+    width: 31.8%;
+    height: 82.5%;
 }
 
 .command-button {
-    position: relative;
-    width: 15.1%;
-    height: 100%;
+    position: absolute;
+    top: 9%;
+    width: 13.6%;
+    height: 82%;
 }
 
-.command-button-frame {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 28;
-    -unity-slice-right: 28;
-    -unity-slice-top: 20;
-    -unity-slice-bottom: 20;
+#SelectCommand { left: 5.2%; }
+#MoveCommand { left: 20.5%; }
+#AttackCommand { left: 35.8%; }
+#HoldCommand { left: 51.1%; }
+#StopCommand { left: 66.4%; }
+#ScanCommand { left: 81.7%; }
+
+#BuildCommandRail,
+#SupportCommandRail {
+    display: none;
 }
 
-.select-command-icon,
-.stop-command-icon,
-.hold-command-icon,
-.attack-command-icon,
-.move-command-icon,
-.scan-command-icon {
+.command-button .select-command-icon,
+.command-button .move-command-icon,
+.command-button .attack-command-icon,
+.command-button .hold-command-icon,
+.command-button .stop-command-icon,
+.command-button .build-command-icon,
+.command-button .scan-command-icon,
+.command-button .support-command-icon {
     position: absolute;
-    left: 25%;
-    right: 25%;
-    top: 15%;
-    height: 39%;
+    left: 22%;
+    right: 22%;
+    top: 14%;
+    height: 44%;
     -unity-background-scale-mode: scale-to-fit;
-}
-
-.select-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_select_cursor.png");
-}
-
-.stop-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_stop_hand.png");
-}
-
-.hold-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_hold_shield.png");
-}
-
-.attack-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_attack_crosshair.png");
-}
-
-.move-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_move_chevrons.png");
-}
-
-.scan-command-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_scan_radar.png");
 }
 
 .command-button-label {
     position: absolute;
     left: 5%;
     right: 5%;
-    bottom: 19%;
-    height: 19%;
-    font-size: 16px;
+    bottom: 11%;
+    height: 20%;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
+    color: rgb(238, 231, 199);
 }
 
 .minimap-panel {
     position: absolute;
-    right: 0.35%;
-    bottom: 2.6%;
-    width: 18.75%;
-    height: 99.7%;
-}
-
-.minimap-map,
-.minimap-overlay,
-.minimap-frame {
-    position: absolute;
+    right: 5.5%;
+    bottom: 0;
+    width: 19.2%;
+    height: 193%;
 }
 
 .minimap-map {
-    left: 4.8%;
-    right: 4.8%;
-    top: 5%;
-    bottom: 5%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_content.png");
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 9%;
+    bottom: 9%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_background_command_table_no_ui.png");
     -unity-background-scale-mode: scale-and-crop;
-}
-
-.minimap-overlay {
-    left: 4.8%;
-    right: 4.8%;
-    top: 5%;
-    bottom: 5%;
-    background-color: rgba(0, 0, 0, 0.16);
+    -unity-background-image-tint-color: rgb(150, 142, 108);
 }
 
 .minimap-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 48;
-    -unity-slice-right: 48;
-    -unity-slice-top: 38;
-    -unity-slice-bottom: 38;
-}
-
-.minimap-viewport,
-.minimap-dot,
-.minimap-north,
-.minimap-focus,
-.minimap-control {
-    position: absolute;
-    -unity-background-scale-mode: scale-to-fit;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
+    -unity-slice-left: 62;
+    -unity-slice-right: 62;
+    -unity-slice-top: 46;
+    -unity-slice-bottom: 46;
 }
 
 .minimap-viewport {
-    left: 43%;
-    top: 36%;
-    width: 28%;
-    height: 25%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_minimap_viewport_rect.png");
+    position: absolute;
+    left: 26%;
+    top: 34%;
+    width: 40%;
+    height: 34%;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(241, 232, 203, 0.75);
+    border-right-color: rgba(241, 232, 203, 0.75);
+    border-top-color: rgba(241, 232, 203, 0.75);
+    border-bottom-color: rgba(241, 232, 203, 0.75);
 }
 
 .minimap-dot {
-    width: 4.2%;
-    height: 6.2%;
+    position: absolute;
+    width: 5.5%;
+    height: 5.5%;
+    border-top-left-radius: 999px;
+    border-top-right-radius: 999px;
+    border-bottom-left-radius: 999px;
+    border-bottom-right-radius: 999px;
 }
 
-.friendly-a {
-    left: 34%;
-    top: 43%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_friendly_minimap_dot.png");
-}
-
-.friendly-b {
-    left: 52%;
-    top: 62%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_friendly_minimap_dot.png");
-}
-
-.hostile-a {
-    left: 70%;
-    top: 30%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_hostile_minimap_dot.png");
-}
-
-.civilian-dot {
-    left: 22%;
-    top: 67%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_civilian_minimap_dot.png");
-}
+.friendly-a { left: 47%; top: 57%; background-color: rgb(166, 213, 67); }
+.friendly-b { left: 58%; top: 63%; background-color: rgb(166, 213, 67); }
+.hostile-a { left: 55%; top: 37%; background-color: rgb(196, 54, 41); }
+.civilian-dot { left: 75%; top: 52%; background-color: rgb(226, 190, 70); }
 
 .minimap-north {
-    left: 41%;
-    top: 62%;
-    width: 7.1%;
-    height: 10.5%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_north_arrow.png");
-}
-
-.minimap-focus {
-    left: 43.5%;
-    bottom: 6.5%;
-    width: 10%;
-    height: 14.8%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_focus_target_icon.png");
-}
-
-.minimap-control {
-    bottom: 11.5%;
-    width: 10.2%;
-    height: 15.2%;
-}
-
-.zoom-in {
-    right: 34%;
-}
-
-.zoom-out {
-    right: 19.8%;
-}
-
-.minimap-control-frame {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_button_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 14;
-    -unity-slice-bottom: 14;
-}
-
-.zoom-plus-icon,
-.zoom-minus-icon {
-    position: absolute;
-    left: 23%;
-    right: 23%;
-    top: 23%;
-    bottom: 23%;
+    left: 50%;
+    top: 6%;
+    width: 8%;
+    height: 9%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_north_arrow.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.zoom-plus-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_plus_icon.png");
+.minimap-control {
+    position: absolute;
+    right: -17%;
+    width: 13.5%;
+    height: 13.5%;
 }
 
-.zoom-minus-icon {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_zoom_minus_icon.png");
+.zoom-in { top: 43%; }
+.zoom-out { top: 59%; }
+.zoom-focus { top: 75%; }
+
+.zoom-plus-icon,
+.zoom-minus-icon,
+.focus-icon {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    top: 18%;
+    bottom: 18%;
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .feedback-panel {
     position: absolute;
-    left: 39%;
-    bottom: 68%;
-    width: 20.75%;
-    height: 27%;
+    left: 36.4%;
+    bottom: 97%;
+    width: 21.8%;
+    height: 38%;
 }
 
-.feedback-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV01/scn08_rule_toast_chip_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
-}
-
-.feedback-icon {
-    position: absolute;
-    left: 7%;
-    top: 25%;
-    width: 8.2%;
-    height: 50%;
-    background-image: url("../../Art/UI/Icons/Icon_BuildDrawer_Info_512.png");
-    -unity-background-scale-mode: scale-to-fit;
+.feedback-panel .warning-icon {
+    left: 10%;
+    top: 24%;
+    width: 8%;
+    height: 52%;
 }
 
 .feedback-text {
     position: absolute;
-    left: 18%;
-    top: 15%;
-    width: 46%;
-    height: 70%;
-    font-size: 18px;
-    -unity-text-align: middle-left;
-    color: rgb(232, 226, 197);
-}
-
-.feedback-actions {
-    position: absolute;
-    right: 4%;
-    top: 23%;
-    width: 46.6%;
-    height: 54%;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.feedback-action {
-    position: relative;
-    height: 100%;
-    width: 48%;
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
-}
-
-.board-all-action {
-    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_04_tab_selected_bg.png");
-}
-
-.cancel-action {
-    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_05_tab_idle_bg.png");
-}
-
-.feedback-action-label {
-    position: absolute;
-    left: 3%;
-    right: 3%;
+    left: 24%;
+    right: 12%;
     top: 0;
     bottom: 0;
     font-size: 14px;
     -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(232, 226, 197);
+    -unity-text-align: middle-left;
+    color: rgb(230, 196, 74);
 }
+
+.feedback-actions {
+    display: none;
+}
+
+.selection-ring {
+    position: absolute;
+    left: 32%;
+    top: 53%;
+    width: 15%;
+    height: 10%;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-color: rgba(141, 226, 84, 0.72);
+    border-right-color: rgba(141, 226, 84, 0.72);
+    border-top-color: rgba(141, 226, 84, 0.72);
+    border-bottom-color: rgba(141, 226, 84, 0.72);
+    border-top-left-radius: 999px;
+    border-top-right-radius: 999px;
+    border-bottom-left-radius: 999px;
+    border-bottom-right-radius: 999px;
+}
+
+.move-path {
+    position: absolute;
+    left: 45%;
+    top: 47%;
+    width: 23%;
+    height: 18%;
+}
+
+.move-dot {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    margin-left: 12px;
+    margin-top: 7px;
+    background-color: rgba(166, 213, 67, 0.7);
+    border-top-left-radius: 999px;
+    border-top-right-radius: 999px;
+    border-bottom-left-radius: 999px;
+    border-bottom-right-radius: 999px;
+}
+
+.move-destination {
+    position: absolute;
+    left: 66%;
+    top: 44%;
+    width: 6%;
+    height: 7%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(241, 232, 203, 0.82);
+}
+
+.map-marker {
+    position: absolute;
+    width: 5.8%;
+    height: 6.8%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.friendly-marker {
+    left: 37%;
+    top: 42%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_civilian_group.png");
+    -unity-background-image-tint-color: rgba(220, 194, 71, 0.85);
+}
+
+.hostile-marker-a,
+.hostile-marker-b {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png");
+    -unity-background-image-tint-color: rgba(219, 82, 57, 0.82);
+}
+
+.hostile-marker-a { left: 62%; top: 34%; }
+.hostile-marker-b { left: 77%; top: 41%; }
+
+.credits-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png"); }
+.fuel-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_fuel_can.png"); }
+.supply-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_supply_crate.png"); }
+.civilian-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_civilian_group.png"); }
+.menu-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_menu_list.png"); }
+.objective-unchecked { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_empty.png"); }
+.objective-checked { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_checked.png"); }
+.objective-star { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_objective_star.png"); }
+.return-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_move_chevrons.png"); }
+.destroy-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png"); }
+.board-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_support_parachute.png"); }
+.pause-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_pause.png"); }
+.settings-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_settings_gear.png"); }
+.build-icon,
+.build-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_build_tools.png"); }
+.support-icon,
+.support-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_support_parachute.png"); }
+.select-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_select_cursor.png"); }
+.move-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_move_chevrons.png"); }
+.attack-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_attack_crosshair.png"); }
+.hold-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_hold_shield.png"); }
+.stop-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_stop_hand.png"); }
+.scan-command-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_scan_radar.png"); }
+.zoom-plus-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_plus.png"); }
+.zoom-minus-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_minus.png"); }
+.focus-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png"); }
+.squad-portrait-1 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png"); }
+.squad-portrait-2 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_vehicle_portrait.png"); }
+.squad-portrait-3 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_drone_portrait.png"); }
+.squad-portrait-4 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_bomb_suit_portrait.png"); }

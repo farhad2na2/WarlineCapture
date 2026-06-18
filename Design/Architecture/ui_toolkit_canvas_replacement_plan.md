@@ -16,6 +16,56 @@ The migration starts with the already converted UI Toolkit assets:
 
 The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavior and visual parity.
 
+## Progress Dashboard
+
+Last updated: 2026-06-18
+
+Overall progress: 0% - 0 / 111 tracked items complete
+
+Current phase: Phase 0 - Inventory And Feature Switch
+
+Current focus:
+
+- Build the Canvas parity inventory.
+- Build the UI Toolkit element/read-model/request mapping.
+- Add the mode config and validation gates before runtime migration begins.
+
+Completed phases:
+
+- None yet.
+
+Blocked:
+
+- None.
+
+| Phase | Status | Progress | Done / Total | Completion evidence |
+| --- | --- | ---: | ---: | --- |
+| Phase 0 - Inventory And Feature Switch | Not started | 0% | 0 / 15 | Pending |
+| Phase 1 - UI Toolkit Shell Foundation | Not started | 0% | 0 / 14 | Pending |
+| Phase 2 - Loading Screen | Not started | 0% | 0 / 9 | Pending |
+| Phase 3 - Main Menu | Not started | 0% | 0 / 11 | Pending |
+| Phase 4 - Match HUD | Not started | 0% | 0 / 13 | Pending |
+| Phase 5 - Build Popup | Not started | 0% | 0 / 12 | Pending |
+| Phase 6 - Build Placement Confirmation Bar | Not started | 0% | 0 / 8 | Pending |
+| Phase 7 - Armory | Not started | 0% | 0 / 8 | Pending |
+| Phase 8 - Commander/Profile | Not started | 0% | 0 / 6 | Pending |
+| Phase 9 - Result, Victory, Loss, And Other Popups | Not started | 0% | 0 / 7 | Pending |
+| Phase 10 - Remove Canvas Runtime Dependency | Not started | 0% | 0 / 8 | Pending |
+
+## Progress Update Rules
+
+Every heartbeat or implementation update must update this document before reporting completion.
+
+- Update `Last updated`.
+- Update `Overall progress` as completed tracked items divided by total tracked items.
+- Update the phase table row for any touched phase.
+- Mark phase status as `Not started`, `In progress`, `Blocked`, or `Complete`.
+- Update each touched phase's `Progress`, `Done / Total`, and `Completion evidence`.
+- Add completed step bullets under that phase's `Completed steps`.
+- If blocked, write the exact blocker under that phase's `Blocked` field and keep the dashboard `Blocked` field in sync.
+- If a phase adds or removes tracked task/validation bullets, update the phase total and the overall total.
+- A phase is `Complete` only when every task and validation bullet in that phase is done and evidence is linked.
+
 ## Architecture Target
 
 UI Toolkit is an application edge, not gameplay logic.
@@ -147,7 +197,14 @@ The final names can adjust to existing local naming, but they must preserve the 
 
 ### Phase 0 - Inventory And Feature Switch
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 15 tracked items complete
+Current step: Inventory every active Canvas prefab, runtime view, command binding, popup, route, and scene reference.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -172,7 +229,14 @@ Validation:
 
 ### Phase 1 - UI Toolkit Shell Foundation
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 14 tracked items complete
+Current step: Mount `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml` through a `UIDocument`.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -196,7 +260,14 @@ Validation:
 
 ### Phase 2 - Loading Screen
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 9 tracked items complete
+Current step: Reconcile Loading UXML text, logo, status, progress behavior, topmost behavior, and disable-initial-loading behavior against the current Canvas flow before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -215,7 +286,14 @@ Validation:
 
 ### Phase 3 - Main Menu
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 11 tracked items complete
+Current step: Reconcile Main Menu UXML buttons, labels, resources, settings/mail actions, profile action, deploy route, and current header behavior against the Canvas prefab before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -236,7 +314,14 @@ Validation:
 
 ### Phase 4 - Match HUD
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 13 tracked items complete
+Current step: Reconcile Match HUD UXML against the current Canvas HUD before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -259,7 +344,14 @@ Validation:
 
 ### Phase 5 - Build Popup
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 12 tracked items complete
+Current step: Reconcile Build Drawer UXML against the current Canvas popup before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -281,7 +373,14 @@ Validation:
 
 ### Phase 6 - Build Placement Confirmation Bar
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 8 tracked items complete
+Current step: Reconcile Build Placement Confirmation Bar UXML against the current Canvas bar before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -299,7 +398,14 @@ Validation:
 
 ### Phase 7 - Armory
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 8 tracked items complete
+Current step: Reconcile Armory UXML against the current Canvas Armory behavior before binding.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -317,7 +423,14 @@ Validation:
 
 ### Phase 8 - Commander/Profile
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 6 tracked items complete
+Current step: Convert the commander/profile content screen to UI Toolkit.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -333,7 +446,14 @@ Validation:
 
 ### Phase 9 - Result, Victory, Loss, And Other Popups
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 7 tracked items complete
+Current step: Convert result popups, victory/loss screens, mission result panels, settings/mail popups, and any remaining shell overlays.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 
@@ -350,7 +470,14 @@ Validation:
 
 ### Phase 10 - Remove Canvas Runtime Dependency
 
-Status: [ ]
+Status: Not started
+Progress: 0% - 0 / 8 tracked items complete
+Current step: Replace runtime Canvas shell references in startup/composition with UI Toolkit references when `RuntimeUiConfig` is `UiToolkit`.
+Completed steps:
+
+- None yet.
+
+Blocked: None.
 
 Tasks:
 

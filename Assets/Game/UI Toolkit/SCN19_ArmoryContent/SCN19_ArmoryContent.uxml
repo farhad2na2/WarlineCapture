@@ -232,13 +232,18 @@
 
         <ui:VisualElement name="RightContent" class="right-content">
             <ui:VisualElement name="InspectionPanel" class="inspection-panel">
+                <ui:VisualElement name="Backing" class="inspection-backing" />
                 <ui:VisualElement name="Frame" class="inspection-frame" />
                 <ui:Label name="Name" class="inspection-name" text="RIFLE SQUAD" />
                 <ui:Label name="Type" class="inspection-type" text="INFANTRY" />
-                <ui:VisualElement name="PortraitFrame" class="inspection-portrait-frame">
-                    <ui:VisualElement name="PortraitArt" class="inspection-portrait-art" />
+                <ui:VisualElement name="PortraitSection" class="inspection-section portrait-section">
+                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
+                    <ui:VisualElement name="PortraitFrame" class="inspection-portrait-frame">
+                        <ui:VisualElement name="PortraitArt" class="inspection-portrait-art" />
+                    </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="LevelRow" class="level-row">
+                <ui:VisualElement name="LevelSection" class="inspection-section level-section">
+                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
                     <ui:Label name="LevelLabel" class="level-label" text="LEVEL" />
                     <ui:Label name="LevelValue" class="level-value" text="12 / 20" />
                     <ui:VisualElement name="LevelTrack" class="level-track">
@@ -246,31 +251,34 @@
                     </ui:VisualElement>
                     <ui:Label name="XpValue" class="xp-value" text="2,750 / 4,000" />
                 </ui:VisualElement>
-                <ui:VisualElement name="StatsPanel" class="stats-panel">
-                    <ui:VisualElement name="Stat_Health" class="stat-row">
-                        <ui:VisualElement class="stat-icon health-icon" />
-                        <ui:Label class="stat-name" text="HEALTH" />
-                        <ui:Label class="stat-value" text="1,250" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="Stat_Damage" class="stat-row">
-                        <ui:VisualElement class="stat-icon damage-icon" />
-                        <ui:Label class="stat-name" text="DAMAGE" />
-                        <ui:Label class="stat-value" text="85" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="Stat_Armor" class="stat-row">
-                        <ui:VisualElement class="stat-icon armor-icon" />
-                        <ui:Label class="stat-name" text="ARMOR" />
-                        <ui:Label class="stat-value" text="25" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="Stat_Speed" class="stat-row">
-                        <ui:VisualElement class="stat-icon speed-icon" />
-                        <ui:Label class="stat-name" text="SPEED" />
-                        <ui:Label class="stat-value" text="4.5" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="Stat_Capacity" class="stat-row">
-                        <ui:VisualElement class="stat-icon capacity-icon" />
-                        <ui:Label class="stat-name" text="CAPACITY" />
-                        <ui:Label class="stat-value" text="4" />
+                <ui:VisualElement name="StatsSection" class="inspection-section stats-section">
+                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
+                    <ui:VisualElement name="StatsPanel" class="stats-panel">
+                        <ui:VisualElement name="Stat_Health" class="stat-row">
+                            <ui:VisualElement class="stat-icon health-icon" />
+                            <ui:Label class="stat-name" text="HEALTH" />
+                            <ui:Label class="stat-value" text="1,250" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Stat_Damage" class="stat-row">
+                            <ui:VisualElement class="stat-icon damage-icon" />
+                            <ui:Label class="stat-name" text="DAMAGE" />
+                            <ui:Label class="stat-value" text="85" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Stat_Armor" class="stat-row">
+                            <ui:VisualElement class="stat-icon armor-icon" />
+                            <ui:Label class="stat-name" text="ARMOR" />
+                            <ui:Label class="stat-value" text="25" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Stat_Speed" class="stat-row">
+                            <ui:VisualElement class="stat-icon speed-icon" />
+                            <ui:Label class="stat-name" text="SPEED" />
+                            <ui:Label class="stat-value" text="4.5" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Stat_Capacity" class="stat-row">
+                            <ui:VisualElement class="stat-icon capacity-icon" />
+                            <ui:Label class="stat-name" text="CAPACITY" />
+                            <ui:Label class="stat-value" text="4" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:Button name="UpgradeButton" class="cta-button primary-cta" text="">

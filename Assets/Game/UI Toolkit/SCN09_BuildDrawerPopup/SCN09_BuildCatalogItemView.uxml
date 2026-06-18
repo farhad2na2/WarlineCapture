@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="SCN09_BuildDrawerPopup.uss" />
     <ui:Button name="ItemView" class="catalog-item-view" text="">
+        <ui:VisualElement name="Frame" class="catalog-item-frame" />
         <ui:VisualElement name="Thumb" class="catalog-thumb" />
         <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
         <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
@@ -20,6 +21,5 @@
             <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
             <ui:Label name="Value" class="tiny-cost-value" text="00:45" />
         </ui:VisualElement>
-        <ui:VisualElement name="Frame" class="catalog-item-frame" />
     </ui:Button>
 </ui:UXML>

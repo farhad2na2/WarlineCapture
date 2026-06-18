@@ -1,32 +1,20 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="SCN19_ArmoryContent.uss" />
-    <ui:Button name="ItemView" class="armory-item-view" text="">
-        <ui:VisualElement name="Background_Character" class="item-background item-background-character">
-            <ui:VisualElement name="Art" class="item-background-art character-card-art" />
+    <ui:Button name="ItemView" class="armory-item-view item-card" text="">
+        <ui:VisualElement name="Frame" class="item-frame" />
+        <ui:VisualElement name="Rarity" class="item-rarity rarity-gold" />
+        <ui:VisualElement name="Art" class="item-art rifle-art" />
+        <ui:Label name="Title" class="item-title" text="ITEM NAME" />
+        <ui:VisualElement name="State" class="item-state-row">
+            <ui:Label name="StateLabel" class="item-state-label owned-state" text="OWNED" />
+            <ui:VisualElement name="Badge" class="owned-badge" />
         </ui:VisualElement>
-        <ui:VisualElement name="Background_Vehicle" class="item-background item-background-vehicle hidden">
-            <ui:VisualElement name="Art" class="item-background-art vehicle-card-art" />
-        </ui:VisualElement>
-        <ui:VisualElement name="Background_Aircraft" class="item-background item-background-aircraft hidden">
-            <ui:VisualElement name="Art" class="item-background-art aircraft-card-art" />
-        </ui:VisualElement>
-        <ui:VisualElement name="Background_Building" class="item-background item-background-building hidden">
-            <ui:VisualElement name="Art" class="item-background-art building-card-art" />
-        </ui:VisualElement>
-
-        <ui:VisualElement name="Frame" class="item-frame">
-            <ui:Label name="Title" class="item-title" text="ITEM NAME" />
-            <ui:VisualElement name="State" class="item-state-row">
-                <ui:VisualElement name="Badge" class="owned-badge" />
-                <ui:Label name="StateLabel" class="item-state-label" text="OWNED" />
+        <ui:VisualElement name="Progress" class="item-progress">
+            <ui:VisualElement name="Track" class="item-progress-track">
+                <ui:VisualElement name="Fill" class="item-progress-fill" />
             </ui:VisualElement>
-            <ui:VisualElement name="Progress" class="item-progress">
-                <ui:VisualElement name="Track" class="item-progress-track">
-                    <ui:VisualElement name="Fill" class="item-progress-fill" />
-                </ui:VisualElement>
-                <ui:Label name="Level" class="item-level" text="LVL 12" />
-                <ui:Label name="Type" class="item-type" text="INFANTRY" />
-            </ui:VisualElement>
+            <ui:Label name="Level" class="item-level" text="LVL 12" />
+            <ui:Label name="Type" class="item-type" text="INFANTRY" />
         </ui:VisualElement>
     </ui:Button>
 </ui:UXML>

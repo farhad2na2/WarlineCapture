@@ -1,65 +1,13 @@
-# SCN-09 Build Drawer Visual Lock
+# SCN-09 Build Drawer New Art Direction
 
-Status: Target-lock mockup and V01 implementation layer pack generated.
-Date: 2026-05-22
+Status: blocked, missing saved reference PNG.
 
-## Active Target
+The current new-art prompt is:
 
-- Reference target: `reference/SCN-09_BuildDrawer_OnExistingMatchHUD_TargetLock_V01.png`
-- Queue-enabled reference target: `reference/SCN-09_BuildDrawer_WithProductionQueue_TargetLock_V01.png`
-- Latest single-action queue reference: `reference/SCN-09_BuildDrawer_SingleActionQueue_OnExistingMatchHUD_TargetLock_V03.png`
-- Latest popup-only source: `generated_one_go/source/SCN-09_BuildDrawer_SingleActionQueue_PopupPanel_V02.png`
-- Build placement mode reference: `reference/SCN-09_BuildPlacementMode_TargetLock_V01.png`
-- Build placement implementation spec: `Design/SCN09_Build_Placement_Mode_Implementation_Spec.md`
-- Canonical layout context: `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
-- Canonical size: `2400 x 1080`
+`prompts/SCN-09_BuildDrawer_NewMainMenuArtDirection_TargetLock_V03.md`
 
-This target is the Build drawer opened on top of the active match HUD. It keeps the same SCN-08 match layout and overlays a left-side production drawer for adding Buildings, Vehicles, and Soldiers during a 3D single-map match.
+Before implementation or layer extraction continues, regenerate that prompt and save the resulting PNG as:
 
-The queue-enabled reference adds the production queue to the right-side detail column. This is the preferred reference when implementing production status: active item progress, ETA, queued rows, cancel controls, queue capacity, and disabled queue actions remain inside the Build drawer instead of opening a second popup.
+`reference/SCN-09_BuildDrawer_NewMainMenuArtDirection_TargetLock_V03.png`
 
-The latest single-action queue reference updates the interaction model: item cards are selection/preview only and do not include per-card Build buttons. The selected item detail panel owns the only primary action button: `PLACE` for Buildings, `PRODUCE` for Vehicles, and `RECRUIT` for Soldiers. The production queue remains in the same right-side column below the selected item details.
-
-The Build placement mode reference covers the state after the player taps `PLACE`: the Build drawer closes, a draggable building ghost and valid/invalid footprint appear on the 3D map, and a compact placement confirmation bar appears above the command bar. The placement bar must include `CANCEL`, optional `ROTATE`, `CONFIRM`, selected building name, placement validity, cost, duration, and an instruction line such as `DRAG TO POSITION, CONFIRM TO BUILD`. Use this reference for placement-flow behavior; keep SCN-08 as the canonical HUD baseline if imagegen drifts surrounding HUD details.
-
-## Layer Pack
-
-Active implementation pack:
-
-- Manifest: `layer_manifest.json`
-- Layers: `layers/`
-- Green-source sheets: `generated_one_go/source/`
-- Contact sheet: `validation/SCN-09_BuildDrawer_layers_contact_sheet.png`
-
-The V01 pack contains separate chrome, building thumbnails, and icons. Parent panels are clean and do not bake live labels, costs, timers, lock states, progress bars, selected states, or warning text.
-
-## Layer Rules Applied
-
-- Do not crop or cut the target-lock mockup into implementation assets.
-- Generate clean independent source assets for the layer pack.
-- Keep all item names, costs, resource values, cooldowns, locked reasons, placement warnings, and tab labels live in Unity.
-- Keep thumbnails, card frames, selected highlights, buttons, status chips, resource icons, and placement icons separate.
-- Use `#00ff00` green-source sheets only for extraction assets, not for the target-lock mockup.
-- Build drawer must sit on the existing SCN-08 match HUD, not a different battlefield layout.
-
-## Design Source
-
-- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
-- `Design/Field_Logistics_Oil_Fuel_Design.md`
-- `Design/3D_SingleMap_Gameplay_Direction.md`
-- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
-- Building and unit config source: `Assets/Game/Configs/Prefabs`
-
-## Target Prompt Summary
-
-The target asks for a AAA mobile RTS Build drawer with:
-
-- three tabs: Buildings, Vehicles, and Soldiers
-- config-backed production cards
-- separate thumbnails for building visuals
-- separate Credits, Supplies, Oil, Fuel, Time, Lock, Warning, Add, Queue, Confirm, and placement icons
-- building placement flow that requires a valid 3D footprint
-- vehicle and soldier production flow that spawns at valid game-decided production/rally points
-- clear disabled states and placement warnings without baking text into backgrounds
-
-No 2.5D/isometric strategy-map layout, alternate match HUD, baked labels, baked progress bars, or old visual-lock UI language should appear in this active target.
+Do not use older SCN09 references or layer packs for the bright new main-menu art direction.

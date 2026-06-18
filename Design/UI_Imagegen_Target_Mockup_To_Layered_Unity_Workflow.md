@@ -12,10 +12,15 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
    - Existing target images are only valid when the user explicitly says to use that exact target as the current source of truth.
    - Use this image only to approve visual direction, hierarchy, layout, logo style, panel proportions, color, spacing, and typography intent.
    - Save it under `Design/VisualLockLayered/<SurfaceId>/reference/`.
+   - Save the exact prompt under `Design/VisualLockLayered/<SurfaceId>/prompts/` using the same versioned basename as the target image.
+   - A target image shown only in chat or left only in `$HOME/.codex/generated_images` is not saved. Copy the chosen bitmap into the workspace before any layer request or UI implementation.
+   - If the generated bitmap cannot be located as a file, stop and record the prompt as blocked. Do not continue from memory, screenshots, deterministic approximations, or old references.
+   - Use a versioned filename that states the screen and art direction, for example `<SurfaceId>_NewMainMenuArtDirection_TargetLock_V01.png`.
 
 2. **Get target approval before layer work**
    - Do not request layers until the target mockup is accepted or explicitly chosen as the source of truth.
    - If the target changes, discard stale layer requests and regenerate against the new target.
+   - Before starting layers, verify that exactly one current target reference path is named in the screen README or implementation plan.
 
 3. **Create a layer request list**
    - List every reusable production layer needed for Unity:
@@ -76,6 +81,9 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
 ## Non-Negotiable Rules
 
 - Do not crop a logo, panel, icon, frame, background detail, or button from the flattened target mockup for runtime use.
+- Do not implement a UI Toolkit or Canvas screen unless the active full target mockup PNG is saved under `Design/VisualLockLayered/<SurfaceId>/reference/`.
+- Do not rely on chat-only imagegen outputs. If the imagegen tool displays a result but no file can be found, mark the reference as blocked and regenerate or ask for the image file before implementation.
+- Do not leave prompt-only references ambiguous: a prompt file without a matching reference PNG is a blocker, not a source of truth.
 - Do not use deterministic drawing, vector reconstruction, or patched screenshots as production art when the workflow calls for imagegen layers.
 - Do not reuse old screen assets just because they are close; request the needed asset in the current target style.
 - Do not use old reference mockups for a new art direction. Generate the new full target mockup first, show it, and wait for acceptance before requesting layers.
@@ -131,6 +139,9 @@ Requirements:
 Before implementation:
 
 - Current target mockup path is known and shown/confirmed.
+- Current target mockup exists as a workspace PNG under `Design/VisualLockLayered/<SurfaceId>/reference/`.
+- Current target prompt exists under `Design/VisualLockLayered/<SurfaceId>/prompts/` with the matching basename/version.
+- Screen README or implementation plan names the exact active target reference path.
 - Layer list exists.
 - Every production sprite source came from imagegen green-key output, not target crops.
 - Green removed to alpha.

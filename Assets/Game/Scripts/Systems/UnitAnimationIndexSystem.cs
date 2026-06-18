@@ -32,7 +32,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
         var autoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true);
         var engageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
 
-        new ResolveAnimationIndexJob
+        state.Dependency = new ResolveAnimationIndexJob
         {
             DeltaTime = dt,
             AnimationOrderLookup = animationOrderLookup,
@@ -40,6 +40,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
             AutoWanderLookup = autoWanderLookup,
             EngageTargetLookup = engageTargetLookup
         }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();

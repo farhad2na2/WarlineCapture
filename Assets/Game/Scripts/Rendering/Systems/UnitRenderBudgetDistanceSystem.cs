@@ -36,7 +36,9 @@ public readonly struct UnitRenderBudgetDistance
         }
 
         int count = math.min(units.Length, transforms.Length);
-        distances.Resize(count, NativeArrayOptions.UninitializedMemory);
+        if (distances.Capacity < count)
+            distances.Capacity = count;
+        distances.Clear();
         if (count == 0)
             return;
 
@@ -76,17 +78,7 @@ public readonly struct UnitRenderBudgetDistance
         {
             Entity unit = Units[i];
             if (!EntityStorageInfoLookup.Exists(unit) || PassengerLookup.HasComponent(unit))
-            {
-                Distances.AddNoResize(new UnitDistance
-                {
-                    Unit = Entity.Null,
-                    DistanceSq = float.MaxValue,
-                    Priority = 3,
-                    Visible = 0,
-                    ScreenEdge = 0
-                });
                 return;
-            }
 
             float3 unitPosition = Transforms[i].Position;
             float distanceSq = math.distancesq(unitPosition, CameraPosition);

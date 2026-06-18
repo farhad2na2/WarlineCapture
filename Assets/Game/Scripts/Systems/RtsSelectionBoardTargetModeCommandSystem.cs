@@ -146,25 +146,30 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
 
         Entity firstAvailableTransport = Entity.Null;
         Entity firstDedicatedTransport = Entity.Null;
-        using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity entity = selectedEntities[i];
-            if (!em.Exists(entity))
-                continue;
-
-            source.HasSelected = true;
-            bool isBoardTransport = IsBoardTransportWithAvailableSeats(em, entity);
-            bool isBoardPassenger = IsBoardPassengerCandidate(em, entity);
-            if (isBoardTransport)
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
             {
-                firstAvailableTransport = firstAvailableTransport == Entity.Null ? entity : firstAvailableTransport;
-                if (!isBoardPassenger)
-                    firstDedicatedTransport = firstDedicatedTransport == Entity.Null ? entity : firstDedicatedTransport;
-            }
+                Entity entity = selectedEntities[i];
+                if (!em.Exists(entity))
+                    continue;
 
-            if (isBoardPassenger)
-                source.HasSelectedBoardPassenger = true;
+                source.HasSelected = true;
+                bool isBoardTransport = IsBoardTransportWithAvailableSeats(em, entity);
+                bool isBoardPassenger = IsBoardPassengerCandidate(em, entity);
+                if (isBoardTransport)
+                {
+                    firstAvailableTransport = firstAvailableTransport == Entity.Null ? entity : firstAvailableTransport;
+                    if (!isBoardPassenger)
+                        firstDedicatedTransport = firstDedicatedTransport == Entity.Null ? entity : firstDedicatedTransport;
+                }
+
+                if (isBoardPassenger)
+                    source.HasSelectedBoardPassenger = true;
+            }
         }
 
         if (firstDedicatedTransport != Entity.Null)
@@ -234,12 +239,17 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
             return 0;
 
         int count = 0;
-        using NativeArray<UnitTransportBoardingTarget> targets =
-            query.ToComponentDataArray<UnitTransportBoardingTarget>(Allocator.Temp);
-        for (int i = 0; i < targets.Length; i++)
+        ComponentTypeHandle<UnitTransportBoardingTarget> targetType =
+            em.GetComponentTypeHandle<UnitTransportBoardingTarget>(true);
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (targets[i].Transport == transport && ResolvePassengerKind(targets[i].PassengerKind) == passengerKind)
-                count++;
+            NativeArray<UnitTransportBoardingTarget> targets = chunks[chunkIndex].GetNativeArray(ref targetType);
+            for (int i = 0; i < targets.Length; i++)
+            {
+                if (targets[i].Transport == transport && ResolvePassengerKind(targets[i].PassengerKind) == passengerKind)
+                    count++;
+            }
         }
 
         return count;

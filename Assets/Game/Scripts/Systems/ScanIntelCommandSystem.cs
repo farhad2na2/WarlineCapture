@@ -850,25 +850,32 @@ public partial struct ScanIntelCommandSystem : ISystem
             return false;
         }
 
-        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
+        int selectedCount = query.CalculateEntityCount();
+        int candidateIndex = 0;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = selectedEntities[i];
-            if (!IsValidScanSource(em, candidate))
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++, candidateIndex++)
             {
-                SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
-                    $"scanSourceResolve candidateRejected index={i} entity={candidate}");
-                continue;
-            }
+                Entity candidate = selectedEntities[i];
+                if (!IsValidScanSource(em, candidate))
+                {
+                    SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                        $"scanSourceResolve candidateRejected index={candidateIndex} entity={candidate}");
+                    continue;
+                }
 
-            sourceEntity = candidate;
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
-                $"scanSourceResolve result=True index={i} entity={candidate} selectedCount={selectedEntities.Length}");
-            return true;
+                sourceEntity = candidate;
+                SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                    $"scanSourceResolve result=True index={candidateIndex} entity={candidate} selectedCount={selectedCount}");
+                return true;
+            }
         }
 
         SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
-            $"scanSourceResolve result=False reason=NoScanCapableSelected selectedCount={selectedEntities.Length}");
+            $"scanSourceResolve result=False reason=NoScanCapableSelected selectedCount={selectedCount}");
         return false;
     }
 

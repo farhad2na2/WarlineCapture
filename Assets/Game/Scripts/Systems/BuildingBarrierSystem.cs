@@ -67,6 +67,7 @@ internal sealed partial class BuildingBarrierSystem : SystemBase
 
     private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
     private readonly Dictionary<BuildingDefinition, bool> _wallGateDefinitionCache = new();
+    private readonly Dictionary<byte, RectInt> _enemyWallPerimetersScratch = new();
 
     private const float BarrierDoorOpenCloseSpeed = 2f;
     private const int BarrierDoorDetectPaddingCells = 8;
@@ -132,7 +133,8 @@ internal sealed partial class BuildingBarrierSystem : SystemBase
     {
         breachedFactionId = 0;
         breachedPerimeter = default;
-        var perimeters = new Dictionary<byte, RectInt>();
+        Dictionary<byte, RectInt> perimeters = _enemyWallPerimetersScratch;
+        perimeters.Clear();
 
         if (context.RuntimeBuildings == null)
             return false;

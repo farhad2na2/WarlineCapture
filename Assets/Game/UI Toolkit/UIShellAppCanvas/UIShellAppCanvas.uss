@@ -29,7 +29,8 @@
 .content-root,
 .modal-overlay,
 .tooltip-layer,
-.shell-slot {
+.shell-slot,
+.screen-slot {
     position: absolute;
     left: 0;
     right: 0;
@@ -43,6 +44,83 @@
 
 .shell-hidden {
     display: none;
+}
+
+.screen-slot {
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.popup-screen-slot {
+    overflow: visible;
+}
+
+.shell-motion {
+    transition-property: opacity, translate, scale;
+    transition-duration: 180ms;
+    transition-timing-function: ease-out;
+    transform-origin: 50% 50%;
+}
+
+.shell-motion-visible {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1 1;
+}
+
+.shell-motion-fade-out {
+    opacity: 0;
+    translate: 0 0;
+    scale: 1 1;
+    picking-mode: ignore;
+}
+
+.shell-motion-slide-left-out {
+    opacity: 0;
+    translate: -104% 0;
+    scale: 1 1;
+    picking-mode: ignore;
+}
+
+.shell-motion-slide-right-out {
+    opacity: 0;
+    translate: 104% 0;
+    scale: 1 1;
+    picking-mode: ignore;
+}
+
+.shell-motion-slide-top-out {
+    opacity: 0;
+    translate: 0 -104%;
+    scale: 1 1;
+    picking-mode: ignore;
+}
+
+.shell-motion-slide-bottom-out {
+    opacity: 0;
+    translate: 0 104%;
+    scale: 1 1;
+    picking-mode: ignore;
+}
+
+.shell-motion-scale-out {
+    opacity: 0;
+    translate: 0 0;
+    scale: 0 0;
+    picking-mode: ignore;
+}
+
+.shell-motion-popup-visible {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1 1;
+}
+
+.shell-motion-popup-hidden {
+    opacity: 0;
+    translate: 0 0;
+    scale: 0 0;
+    picking-mode: ignore;
 }
 
 .header-bar {

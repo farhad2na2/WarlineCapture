@@ -8,6 +8,7 @@ using UnityEngine;
 public partial class UnitMoveTargetDiagnosticSystem : SystemBase
 {
     private readonly Dictionary<Entity, int2> _lastTargets = new();
+    private readonly List<Entity> _missingTargetScratch = new();
     private EntityQuery _playerUnitTargetQuery;
     private int _lastPruneFrame;
 
@@ -71,21 +72,22 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
 
     private void PruneMissingEntities()
     {
-        List<Entity> remove = null;
+        _missingTargetScratch.Clear();
         foreach (Entity entity in _lastTargets.Keys)
         {
             if (EntityManager.Exists(entity))
                 continue;
 
-            remove ??= new List<Entity>();
-            remove.Add(entity);
+            _missingTargetScratch.Add(entity);
         }
 
-        if (remove == null)
+        if (_missingTargetScratch.Count == 0)
             return;
 
-        for (int i = 0; i < remove.Count; i++)
-            _lastTargets.Remove(remove[i]);
+        for (int i = 0; i < _missingTargetScratch.Count; i++)
+            _lastTargets.Remove(_missingTargetScratch[i]);
+
+        _missingTargetScratch.Clear();
     }
 
     private string ResolvePathRequest(Entity entity)

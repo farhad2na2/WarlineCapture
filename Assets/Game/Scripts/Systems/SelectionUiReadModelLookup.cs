@@ -7,6 +7,8 @@ using UnityEngine;
 
 public sealed class SelectionUiReadModelLookup
 {
+    private readonly List<string> _selectionStatusParts = new(4);
+
     public readonly struct TransportPassengerUiInfo
     {
         public readonly Entity Entity;
@@ -457,7 +459,8 @@ public sealed class SelectionUiReadModelLookup
 
     public string ResolveHudSelectionStatus(EntityManager entityManager, Entity entity)
     {
-        var parts = new List<string>();
+        List<string> parts = _selectionStatusParts;
+        parts.Clear();
 
         if (entityManager.HasComponent<Faction>(entity))
             parts.Add(FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) ? "PLAYER" : "ENEMY");

@@ -7,10 +7,15 @@
 
             <ui:VisualElement name="ContentRoot" class="content-root shell-region">
                 <ui:VisualElement name="MenuBackgroundRegion" class="menu-background-region shell-slot" />
-                <ui:VisualElement name="LoadingLayer" class="loading-layer shell-slot" />
                 <ui:VisualElement name="HeaderRegion" class="header-region shell-slot" />
                 <ui:VisualElement name="LeftRegion" class="left-region shell-slot" />
-                <ui:VisualElement name="MiddleRegion" class="middle-region shell-slot" />
+                <ui:VisualElement name="MiddleRegion" class="middle-region shell-slot">
+                    <ui:VisualElement name="MainMenuScreenSlot" class="screen-slot main-menu-screen-slot" />
+                    <ui:VisualElement name="MatchScreenSlot" class="screen-slot match-screen-slot" />
+                    <ui:VisualElement name="ArmoryScreenSlot" class="screen-slot armory-screen-slot" />
+                    <ui:VisualElement name="CommanderProfileScreenSlot" class="screen-slot commander-profile-screen-slot" />
+                    <ui:VisualElement name="ResultScreenSlot" class="screen-slot result-screen-slot" />
+                </ui:VisualElement>
                 <ui:VisualElement name="RightRegion" class="right-region shell-slot" />
                 <ui:VisualElement name="FooterRegion" class="footer-region shell-slot" />
             </ui:VisualElement>
@@ -18,16 +23,22 @@
             <ui:VisualElement name="FooterBar" class="footer-bar shell-region shell-hidden" />
 
             <ui:VisualElement name="ModalOverlay" class="modal-overlay shell-hidden">
-                <ui:VisualElement name="PlaceholderPopup" class="placeholder-popup">
-                    <ui:Label name="TitleText" class="placeholder-title" text="Mode" />
-                    <ui:Label name="BodyText" class="placeholder-body" text="Coming soon." />
-                    <ui:Button name="CloseButton" class="placeholder-close-button" text="">
-                        <ui:Label name="LabelText" class="placeholder-close-label" text="CLOSE" />
-                    </ui:Button>
+                <ui:VisualElement name="PopupScreenSlot" class="screen-slot popup-screen-slot">
+                    <ui:VisualElement name="PlaceholderPopup" class="placeholder-popup">
+                        <ui:Label name="TitleText" class="placeholder-title" text="Mode" />
+                        <ui:Label name="BodyText" class="placeholder-body" text="Coming soon." />
+                        <ui:Button name="CloseButton" class="placeholder-close-button" text="">
+                            <ui:Label name="LabelText" class="placeholder-close-label" text="CLOSE" />
+                        </ui:Button>
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement name="TooltipLayer" class="tooltip-layer" />
+
+            <ui:VisualElement name="LoadingLayer" class="loading-layer shell-slot shell-hidden">
+                <ui:VisualElement name="LoadingScreenSlot" class="screen-slot loading-screen-slot" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

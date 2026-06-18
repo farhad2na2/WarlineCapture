@@ -106,7 +106,7 @@ public partial struct RtsSelectionMoveTargetModeCommandSystem : ISystem
 
         RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
         ClearQueuedMoveOrder(ref inputState);
-        if (!HasSelectedMovablePlayerUnit(selectedMoveQuery))
+        if (!HasSelectedMovablePlayerUnit(em, selectedMoveQuery))
         {
             ClearCommandMode(ref inputState);
             em.SetComponentData(commandEntity, inputState);
@@ -135,16 +135,21 @@ public partial struct RtsSelectionMoveTargetModeCommandSystem : ISystem
         return false;
     }
 
-    private static bool HasSelectedMovablePlayerUnit(EntityQuery selectedMoveQuery)
+    private static bool HasSelectedMovablePlayerUnit(EntityManager em, EntityQuery selectedMoveQuery)
     {
         if (selectedMoveQuery.IsEmptyIgnoreFilter)
             return false;
 
-        using NativeArray<Faction> factions = selectedMoveQuery.ToComponentDataArray<Faction>(Allocator.Temp);
-        for (int i = 0; i < factions.Length; i++)
+        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+        using NativeArray<ArchetypeChunk> chunks = selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            if (FactionIdentity.IsPlayerControlled(factions[i].Id))
-                return true;
+            NativeArray<Faction> factions = chunks[chunkIndex].GetNativeArray(ref factionType);
+            for (int i = 0; i < factions.Length; i++)
+            {
+                if (FactionIdentity.IsPlayerControlled(factions[i].Id))
+                    return true;
+            }
         }
 
         return false;

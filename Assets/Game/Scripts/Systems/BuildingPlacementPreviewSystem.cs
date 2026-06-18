@@ -208,7 +208,7 @@ internal sealed partial class BuildingPlacementPreviewSystem : SystemBase
 
     public void RebuildWallPlacementPreview(
         BuildingPlacementLifecycleSystem.PlacementState placement,
-        List<Vector2Int> origins,
+        IReadOnlyList<Vector2Int> origins,
         bool vertical,
         GridConfig grid,
         CreateVisualDelegate createVisual,

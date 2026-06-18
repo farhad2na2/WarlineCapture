@@ -26,7 +26,8 @@ public sealed class BuildingPlacementValidationSystemTests
             tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult();
             tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=11");
+            tests.BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults();
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=12");
             UnityEditor.EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -563,6 +564,45 @@ public sealed class BuildingPlacementValidationSystemTests
             true));
     }
 
+    [Test]
+    public void BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults()
+    {
+        var input = new BuildingPlacementInputSystem();
+        var placement = new ScratchPlacementState
+        {
+            Definition = new BuildingDefinition { FootprintCells = new Vector2Int(1, 1) },
+            DragStartOriginCell = new Vector2Int(1, 1),
+            DragCurrentOriginCell = new Vector2Int(4, 1)
+        };
+
+        IReadOnlyList<Vector2Int> firstScratch = input.BuildWallPlacementOriginsScratch(placement, UnitFootprint);
+        Assert.AreEqual(4, firstScratch.Count);
+        Assert.AreEqual(new Vector2Int(4, 1), firstScratch[3]);
+
+        List<Vector2Int> owned = input.BuildWallPlacementOrigins(placement, UnitFootprint);
+        Assert.AreEqual(firstScratch.Count, owned.Count);
+        Assert.AreNotSame(firstScratch, owned);
+
+        placement.DragCurrentOriginCell = new Vector2Int(2, 1);
+        IReadOnlyList<Vector2Int> secondScratch = input.BuildWallPlacementOriginsScratch(placement, UnitFootprint);
+        Assert.AreSame(firstScratch, secondScratch);
+        Assert.AreEqual(2, secondScratch.Count);
+        Assert.AreEqual(4, owned.Count);
+        Assert.AreEqual(new Vector2Int(4, 1), owned[3]);
+
+        IReadOnlyList<BuildingPlacementInputSystem.WallRun> firstRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
+        IReadOnlyList<BuildingPlacementInputSystem.WallRun> secondRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
+        Assert.AreSame(firstRuns, secondRuns);
+        Assert.AreEqual(1, secondRuns.Count);
+        Assert.AreEqual(secondScratch.Count, secondRuns[0].Origins.Count);
+        Assert.AreEqual(secondScratch[1], secondRuns[0].Origins[1]);
+    }
+
+    private static Vector2Int UnitFootprint(BuildingDefinition _, bool __)
+    {
+        return new Vector2Int(1, 1);
+    }
+
     private static BuildingPlacementCommandSystem.Context CreateActivePlacementCommandContext(
         out BuildingPlacementLifecycleSystem lifecycleSystem,
         out GameObject prefab,
@@ -688,6 +728,21 @@ public sealed class BuildingPlacementValidationSystemTests
             CellSize = 1f,
             Origin = default
         };
+    }
+
+    private sealed class ScratchPlacementState : BuildingPlacementInputSystem.IPlacementState
+    {
+        public BuildingDefinition Definition { get; set; }
+        public Vector2Int OriginCell { get; set; }
+        public Vector2Int CommittedOriginCell { get; set; }
+        public Vector2Int DragStartOriginCell { get; set; }
+        public Vector2Int DragCurrentOriginCell { get; set; }
+        public BuildingPlacementInputSystem.DragFirstAxis DragFirstAxis { get; set; }
+        public bool HideCurrentWallPreview { get; set; }
+        public bool IsValid { get; set; } = true;
+        public float LastPointerMovedAt { get; set; }
+        public Vector2 LastPointerScreenPosition { get; set; }
+        public List<BuildingPlacementInputSystem.WallRun> CommittedWallRuns { get; set; }
     }
 }
 #endif

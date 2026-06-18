@@ -430,11 +430,16 @@ public sealed partial class BuildingUiQuerySystem : SystemBase
         if (boundaryQuery.IsEmptyIgnoreFilter)
             return false;
 
-        using NativeArray<Entity> boundaryEntities = boundaryQuery.ToEntityArray(Allocator.Temp);
-        if (boundaryEntities.Length == 0)
+        using NativeArray<ArchetypeChunk> boundaryChunks = boundaryQuery.ToArchetypeChunkArray(Allocator.Temp);
+        if (boundaryChunks.Length == 0)
             return false;
 
-        Entity boundaryEntity = boundaryEntities[0];
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        NativeArray<Entity> firstChunkEntities = boundaryChunks[0].GetNativeArray(entityType);
+        if (firstChunkEntities.Length == 0)
+            return false;
+
+        Entity boundaryEntity = firstChunkEntities[0];
         if (boundaryEntity == Entity.Null ||
             !em.Exists(boundaryEntity) ||
             !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))

@@ -59,6 +59,12 @@ internal sealed class MenuBootstrapSystem
 
         bool wasInitialized = initialized;
         EnsurePersistentDiagnosticsInitialized();
+        view.ApplyRuntimeUiMode();
+        if (view.IsUiToolkitMode)
+        {
+            initialized = true;
+            return;
+        }
 
         if (view.ShellEcsPresentation != null)
             view.ShellEcsPresentation.Configure(view.ShellView);
@@ -96,6 +102,9 @@ internal sealed class MenuBootstrapSystem
         if (!initialized)
             Initialize(view);
         if (view == null)
+            return;
+        view.ApplyRuntimeUiMode();
+        if (view.IsUiToolkitMode)
             return;
 
         if (!TryGetWorldEntityManager(out EntityManager entityManager))

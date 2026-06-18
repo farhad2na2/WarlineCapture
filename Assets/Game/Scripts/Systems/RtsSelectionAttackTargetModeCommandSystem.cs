@@ -179,9 +179,14 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         if (selectedQuery.IsEmptyIgnoreFilter)
             return selection;
 
-        using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
-            IncludeSelectedAttackModeCandidate(em, selectedEntities[i], ref selection);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
+                IncludeSelectedAttackModeCandidate(em, selectedEntities[i], ref selection);
+        }
 
         return selection;
     }
@@ -197,9 +202,14 @@ public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
         if (selectedQuery.IsEmptyIgnoreFilter)
             return selection;
 
-        using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
-            IncludeToggleAttackModeCandidate(em, selectedEntities[i], ref selection);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < selectedEntities.Length; i++)
+                IncludeToggleAttackModeCandidate(em, selectedEntities[i], ref selection);
+        }
 
         return selection;
     }

@@ -4,6 +4,12 @@ using UnityEngine;
 
 internal sealed partial class BuildingPlacementInputSystem : SystemBase
 {
+    private readonly List<Vector2Int> _wallPlacementOriginsScratch = new();
+    private readonly List<Vector2Int> _allWallPlacementOriginsScratch = new();
+    private readonly List<WallRun> _finalWallRunsScratch = new();
+    private readonly List<Vector2Int> _finalWallCurrentOriginsScratch = new();
+    private readonly WallRun _currentWallRunScratch = new();
+
     protected override void OnCreate()
     {
         Enabled = false;
@@ -265,8 +271,32 @@ internal sealed partial class BuildingPlacementInputSystem : SystemBase
         GetWallSegmentFootprintDelegate getWallSegmentFootprint)
     {
         var origins = new List<Vector2Int>();
+        FillWallPlacementOrigins(placement, getWallSegmentFootprint, origins);
+        return origins;
+    }
+
+    public IReadOnlyList<Vector2Int> BuildWallPlacementOriginsScratch(
+        IPlacementState placement,
+        GetWallSegmentFootprintDelegate getWallSegmentFootprint)
+    {
+        FillWallPlacementOrigins(placement, getWallSegmentFootprint, _wallPlacementOriginsScratch);
+        return _wallPlacementOriginsScratch;
+    }
+
+    public IReadOnlyList<Vector2Int> ClearWallPlacementOriginsScratch()
+    {
+        _wallPlacementOriginsScratch.Clear();
+        return _wallPlacementOriginsScratch;
+    }
+
+    private void FillWallPlacementOrigins(
+        IPlacementState placement,
+        GetWallSegmentFootprintDelegate getWallSegmentFootprint,
+        List<Vector2Int> origins)
+    {
+        origins.Clear();
         if (placement == null || getWallSegmentFootprint == null)
-            return origins;
+            return;
 
         Vector2Int start = placement.DragStartOriginCell;
         Vector2Int end = placement.DragCurrentOriginCell;
@@ -279,7 +309,7 @@ internal sealed partial class BuildingPlacementInputSystem : SystemBase
 
         origins.Add(start);
         if (start == end)
-            return origins;
+            return;
 
         if (vertical)
         {
@@ -299,13 +329,27 @@ internal sealed partial class BuildingPlacementInputSystem : SystemBase
             for (int i = 1; i <= segmentCount; i++)
                 origins.Add(new Vector2Int(start.x + (direction * stepCells * i), start.y));
         }
-
-        return origins;
     }
 
     public List<Vector2Int> GetAllWallPlacementOrigins(IPlacementState placement, IReadOnlyList<Vector2Int> currentOrigins)
     {
         var origins = new List<Vector2Int>();
+        FillAllWallPlacementOrigins(placement, currentOrigins, origins);
+        return origins;
+    }
+
+    public IReadOnlyList<Vector2Int> GetAllWallPlacementOriginsScratch(IPlacementState placement, IReadOnlyList<Vector2Int> currentOrigins)
+    {
+        FillAllWallPlacementOrigins(placement, currentOrigins, _allWallPlacementOriginsScratch);
+        return _allWallPlacementOriginsScratch;
+    }
+
+    private static void FillAllWallPlacementOrigins(
+        IPlacementState placement,
+        IReadOnlyList<Vector2Int> currentOrigins,
+        List<Vector2Int> origins)
+    {
+        origins.Clear();
         if (placement?.CommittedWallRuns != null)
         {
             for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
@@ -320,8 +364,6 @@ internal sealed partial class BuildingPlacementInputSystem : SystemBase
 
         if (placement != null && !placement.HideCurrentWallPreview && currentOrigins != null)
             origins.AddRange(currentOrigins);
-
-        return origins;
     }
 
     public List<WallRun> BuildFinalWallRuns(IPlacementState placement, GetWallSegmentFootprintDelegate getWallSegmentFootprint)
@@ -353,6 +395,37 @@ internal sealed partial class BuildingPlacementInputSystem : SystemBase
         }
 
         return runs;
+    }
+
+    public IReadOnlyList<WallRun> BuildFinalWallRunsScratch(
+        IPlacementState placement,
+        GetWallSegmentFootprintDelegate getWallSegmentFootprint)
+    {
+        _finalWallRunsScratch.Clear();
+        if (placement?.CommittedWallRuns != null)
+        {
+            for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
+            {
+                WallRun run = placement.CommittedWallRuns[i];
+                if (run?.Origins == null || run.Origins.Count == 0)
+                    continue;
+
+                _finalWallRunsScratch.Add(run);
+            }
+        }
+
+        if (placement != null && !placement.HideCurrentWallPreview)
+        {
+            FillWallPlacementOrigins(placement, getWallSegmentFootprint, _finalWallCurrentOriginsScratch);
+            if (_finalWallCurrentOriginsScratch.Count > 0)
+            {
+                _currentWallRunScratch.Origins = _finalWallCurrentOriginsScratch;
+                _currentWallRunScratch.Vertical = IsWallPlacementVertical(placement);
+                _finalWallRunsScratch.Add(_currentWallRunScratch);
+            }
+        }
+
+        return _finalWallRunsScratch;
     }
 
     public void CommitCurrentWallRun(IPlacementState placement, GetWallSegmentFootprintDelegate getWallSegmentFootprint)

@@ -22,15 +22,15 @@ public partial struct UnitAnimationIndexSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        double startTime = Time.realtimeSinceStartupAsDouble;
+        bool collectFreezeMetrics = EnableAnimationIndexFreezeLogs;
+        double startTime = collectFreezeMetrics ? Time.realtimeSinceStartupAsDouble : 0d;
         state.Dependency.Complete();
-        double afterCompleteTime = Time.realtimeSinceStartupAsDouble;
+        double afterCompleteTime = collectFreezeMetrics ? Time.realtimeSinceStartupAsDouble : 0d;
         float dt = SystemAPI.Time.DeltaTime;
         var animationOrderLookup = SystemAPI.GetBufferLookup<UnitAnimationOrderEntry>(true);
         var deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
         var autoWanderLookup = SystemAPI.GetComponentLookup<AutoWanderMoveTag>(true);
         var engageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
-        using NativeArray<int> counters = new(1, Allocator.TempJob);
 
         new ResolveAnimationIndexJob
         {
@@ -38,8 +38,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
             AnimationOrderLookup = animationOrderLookup,
             DeathAnimationLookup = deathAnimationLookup,
             AutoWanderLookup = autoWanderLookup,
-            EngageTargetLookup = engageTargetLookup,
-            Counters = counters
+            EngageTargetLookup = engageTargetLookup
         }.Run();
 
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
@@ -47,7 +46,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
         var modelInstanceLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
         var midLodInstanceLookup = SystemAPI.GetComponentLookup<UnitMidLodInstanceReference>(true);
         var lowLodInstanceLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
-        int checkedUnits = counters[0];
+        int checkedUnits = 0;
         int appliedUnits = 0;
 
         foreach (var (resolvedAnimation, entity) in SystemAPI
@@ -56,6 +55,9 @@ public partial struct UnitAnimationIndexSystem : ISystem
                  .WithNone<StaticGridBlocker>()
                  .WithEntityAccess())
         {
+            if (collectFreezeMetrics)
+                checkedUnits++;
+
             if (resolvedAnimation.ValueRO.Updated == 0)
                 continue;
 
@@ -79,12 +81,15 @@ public partial struct UnitAnimationIndexSystem : ISystem
                 resolvedAnimation.ValueRW.Changed = 0;
         }
 
-        double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
-        if (EnableAnimationIndexFreezeLogs && elapsed >= FreezeLogThresholdSeconds)
+        if (collectFreezeMetrics)
         {
-            Debug.Log(
-                $"[FreezeDetect:ECS] UnitAnimationIndexSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms " +
-                $"complete={(afterCompleteTime - startTime) * 1000d:F1}ms units={checkedUnits} applied={appliedUnits}");
+            double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
+            if (elapsed >= FreezeLogThresholdSeconds)
+            {
+                Debug.Log(
+                    $"[FreezeDetect:ECS] UnitAnimationIndexSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms " +
+                    $"complete={(afterCompleteTime - startTime) * 1000d:F1}ms units={checkedUnits} applied={appliedUnits}");
+            }
         }
     }
 
@@ -97,7 +102,6 @@ public partial struct UnitAnimationIndexSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitDeathAnimationComponent> DeathAnimationLookup;
         [ReadOnly] public ComponentLookup<AutoWanderMoveTag> AutoWanderLookup;
         [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
-        public NativeArray<int> Counters;
 
         private void Execute(
             Entity entity,
@@ -106,7 +110,6 @@ public partial struct UnitAnimationIndexSystem : ISystem
             ref UnitAttackAnimationComponent attackAnimation,
             ref UnitResolvedAnimationIndex resolvedAnimation)
         {
-            Counters[0] = Counters[0] + 1;
             attackAnimation.TimeRemaining = math.max(0f, attackAnimation.TimeRemaining - DeltaTime);
             byte targetAnimationIndex;
 

@@ -20,19 +20,17 @@ The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavio
 
 Last updated: 2026-06-18
 
-Overall progress: 0% - 0 / 111 tracked items complete
+Overall progress: 18% - 20 / 111 tracked items complete
 
-Current phase: Phase 0 - Inventory And Feature Switch
+Current phase: Phase 1 - UI Toolkit Shell Foundation
 
 Current focus:
 
-- Build the Canvas parity inventory.
-- Build the UI Toolkit element/read-model/request mapping.
-- Add the mode config and validation gates before runtime migration begins.
+- Add pointer-block propagation from UI Toolkit to ECS input suppression.
 
 Completed phases:
 
-- None yet.
+- Phase 0 - Inventory And Feature Switch
 
 Blocked:
 
@@ -40,8 +38,8 @@ Blocked:
 
 | Phase | Status | Progress | Done / Total | Completion evidence |
 | --- | --- | ---: | ---: | --- |
-| Phase 0 - Inventory And Feature Switch | Not started | 0% | 0 / 15 | Pending |
-| Phase 1 - UI Toolkit Shell Foundation | Not started | 0% | 0 / 14 | Pending |
+| Phase 0 - Inventory And Feature Switch | Complete | 100% | 15 / 15 | `Design/Architecture/ui_toolkit_canvas_phase0_inventory.md`; Unity compile log `/private/tmp/warline-ui-toolkit-runtime-ui-config-compile.log`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 1 - UI Toolkit Shell Foundation | In progress | 36% | 5 / 14 | `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 2 - Loading Screen | Not started | 0% | 0 / 9 | Pending |
 | Phase 3 - Main Menu | Not started | 0% | 0 / 11 | Pending |
 | Phase 4 - Match HUD | Not started | 0% | 0 / 13 | Pending |
@@ -197,12 +195,26 @@ The final names can adjust to existing local naming, but they must preserve the 
 
 ### Phase 0 - Inventory And Feature Switch
 
-Status: Not started
-Progress: 0% - 0 / 15 tracked items complete
-Current step: Inventory every active Canvas prefab, runtime view, command binding, popup, route, and scene reference.
+Status: Complete
+Progress: 100% - 15 / 15 tracked items complete
+Current step: Phase complete. Continue with Phase 1 shell foundation.
 Completed steps:
 
-- None yet.
+- Inventoried active Canvas prefabs, runtime views, command bindings, popups, routes, and scene references in `Design/Architecture/ui_toolkit_canvas_phase0_inventory.md`.
+- Created surface parity checklists covering labels, icon semantics, button names, states, scroll templates, popup close behavior, and route effects.
+- Compared current UI Toolkit UXML counterparts against Canvas parity and recorded initial missing elements/gaps.
+- Audited current UI Toolkit UXML/USS static `url(...)` references for known old-art markers; found `0` old-marker references.
+- Created the first missing-new-asset manifest inside `Design/Architecture/ui_toolkit_canvas_phase0_inventory.md`.
+- Added `RuntimeUiConfig` with `Canvas` and `UiToolkit` modes.
+- Added `Assets/Game/Data/UI/RuntimeUiConfig.asset` defaulting to `Canvas`.
+- Added a guarded `MenuBootstrapView`/`MenuBootstrapSystem` startup branch that can enable a serialized `UIDocument` shell while leaving Canvas as the default path.
+- Ran Unity batch compile/import validation with no `CS` errors or warnings found in `/private/tmp/warline-ui-toolkit-runtime-ui-config-compile.log`.
+- Confirmed the parity checklist and missing-new-asset manifest exist.
+- Confirmed current UI Toolkit UXML/USS has no known old-art marker references.
+- Added `UiToolkitCanvasMigrationValidationTests` to enforce UI Toolkit UXML import, USS import, USS `url(...)` resolution, old-art marker blocking, the default `RuntimeUiConfig` mode, Canvas fallback smoke, and isolated UI Toolkit shell smoke.
+- Ran the UI Toolkit migration validation through Unity with `[UiToolkitCanvasMigrationValidation] result=Passed tests=7` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Confirmed current Canvas mode keeps the Canvas fallback enabled and the UI Toolkit shell disabled.
+- Confirmed isolated UI Toolkit mode enables the `UIDocument` shell and disables the Canvas fallback without destroying it.
 
 Blocked: None.
 
@@ -229,12 +241,27 @@ Validation:
 
 ### Phase 1 - UI Toolkit Shell Foundation
 
-Status: Not started
-Progress: 0% - 0 / 14 tracked items complete
-Current step: Mount `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml` through a `UIDocument`.
+Status: In progress
+Progress: 36% - 5 / 14 tracked items complete
+Current step: Add pointer-block propagation from UI Toolkit to ECS input suppression.
 Completed steps:
 
-- None yet.
+- Added the `Game.UI.Toolkit` assembly for the managed UI Toolkit edge.
+- Added `UiToolkitShellView` as the raw `UIDocument`/`VisualTreeAsset` holder and shell UXML mount point.
+- Connected `MenuBootstrapView.ApplyRuntimeUiMode()` to mount `UiToolkitShellView` only in UI Toolkit mode and clear its cache in Canvas mode.
+- Added focused validation that mounts `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml` through a `UIDocument`, caches `UIShellAppCanvas`, and confirms `SafeAreaRoot` exists.
+- Bound required shell regions by name on `UiToolkitShellView`: `SafeAreaRoot`, `HeaderBar`, `ContentRoot`, `FooterBar`, `ModalOverlay`, and `TooltipLayer`.
+- Added focused validation that all required shell regions bind by name and that `ClearCache()` clears the region state.
+- Added explicit screen slots to `UIShellAppCanvas.uxml` for loading, main menu, match, armory, commander/profile, result, and popups.
+- Cached required screen slots by name on `UiToolkitShellView`.
+- Added focused validation that all required screen slots bind by name and that `ClearCache()` clears slot state.
+- Added reusable USS motion states for visible, fade-out, directional slide-out, scale-out, popup-visible, and popup-hidden transitions.
+- Added `UiToolkitShellView.ApplyShellMotion()` and `RemoveShellMotion()` as narrow class-application helpers without per-frame polling or gameplay logic.
+- Added focused validation for required motion USS classes and stale-class removal when swapping motion states.
+- Moved `LoadingLayer` out of normal `ContentRoot` and into the top-level safe-area overlay stack above `ModalOverlay` and `TooltipLayer`.
+- Cached `LoadingLayer` as a required shell region on `UiToolkitShellView`.
+- Added focused validation that `ModalOverlay` draws above normal content, `LoadingLayer` draws above content, footer, popups, and tooltip overlays, and both overlay layers remain hidden by default.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=13` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 

@@ -222,7 +222,8 @@ public sealed partial class BuildingPlacementValidationSystem : SystemBase
         if (inputSystem == null || getWallSegmentFootprint == null)
             return false;
 
-        List<BuildingPlacementInputSystem.WallRun> runs = inputSystem.BuildFinalWallRuns(placement, getWallSegmentFootprint.Invoke);
+        IReadOnlyList<BuildingPlacementInputSystem.WallRun> runs =
+            inputSystem.BuildFinalWallRunsScratch(placement, getWallSegmentFootprint.Invoke);
         if (runs.Count == 0)
             return false;
 

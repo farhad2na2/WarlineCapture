@@ -60,12 +60,27 @@ public partial struct RtsSelectionDeselectAllCommandSystem : ISystem
 
         ClearCommandMode(ref inputState);
         em.SetComponentData(commandEntity, inputState);
-        using NativeArray<Entity> selectedUnits = selectedUnitQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < selectedUnits.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedUnitQuery.ToArchetypeChunkArray(Allocator.Temp);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
         {
-            Entity entity = selectedUnits[i];
-            if (em.Exists(entity) && em.HasComponent<SelectedUnitTag>(entity))
-                em.RemoveComponent<SelectedUnitTag>(entity);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> selectedUnits = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < selectedUnits.Length; i++)
+                {
+                    Entity entity = selectedUnits[i];
+                    if (em.Exists(entity) && em.HasComponent<SelectedUnitTag>(entity))
+                        ecb.RemoveComponent<SelectedUnitTag>(entity);
+                }
+            }
+
+            ecb.Playback(em);
+        }
+        finally
+        {
+            ecb.Dispose();
         }
 
         return true;

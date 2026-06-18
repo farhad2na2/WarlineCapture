@@ -181,8 +181,8 @@ internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
         {
             bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
             Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
-            List<Vector2Int> currentOrigins = context.InputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
-            IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOrigins(placement, currentOrigins);
+            IReadOnlyList<Vector2Int> currentOrigins = context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+            IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOriginsScratch(placement, currentOrigins);
             return context.GridSystem.ResolvePlacementFocusWorldPosition(
                 placement,
                 allOrigins,
@@ -223,9 +223,9 @@ internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
         DynamicBlockerComponent blockerData,
         bool shouldFollowCamera)
     {
-        List<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
-            ? new List<Vector2Int>()
-            : context.InputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+        IReadOnlyList<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
+            ? context.InputSystem.ClearWallPlacementOriginsScratch()
+            : context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
         bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
         placement.AutoRotateVertical = vertical;
         Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
@@ -258,7 +258,7 @@ internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
             context.CreateBuildingVisualInstance,
             context.PositionBuildingObject);
         context.PreviewSystem.UpdateWallOutline(
-            context.InputSystem.GetAllWallPlacementOrigins(placement, wallOrigins),
+            context.InputSystem.GetAllWallPlacementOriginsScratch(placement, wallOrigins),
             wallFootprint,
             grid,
             placement.Definition,
@@ -266,7 +266,7 @@ internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
             (origin, footprint, gridData) => context.GetFootprintCenter(origin, footprint, gridData));
         if (shouldFollowCamera)
         {
-            IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOrigins(placement, wallOrigins);
+            IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOriginsScratch(placement, wallOrigins);
             context.DependencySystem.FollowCameraGroundCenterTo(
                 context.GridSystem.ResolvePlacementFocusWorldPosition(
                     placement,

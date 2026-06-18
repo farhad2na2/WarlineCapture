@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed partial class BuildingCombatSystem : SystemBase
 {
+    private readonly List<int> _destroyedCleanupIdsScratch = new();
+
     protected override void OnCreate()
     {
         Enabled = false;
@@ -231,14 +233,58 @@ public sealed partial class BuildingCombatSystem : SystemBase
     public void UpdateDestroyedBuildings<TBuilding>(Context<TBuilding> context, float now)
         where TBuilding : class, IRuntimeBuildingVisualState
     {
-        List<int> cleanupIds = context.RuntimeBuildingMap != null
-            ? CollectDestroyedCleanupIds(context.RuntimeBuildingMap, now)
-            : CollectDestroyedCleanupIds(context.RuntimeBuildings, now);
-        if (cleanupIds == null)
+        _destroyedCleanupIdsScratch.Clear();
+        if (context.RuntimeBuildingMap != null)
+            CollectDestroyedCleanupIds(context.RuntimeBuildingMap, now, _destroyedCleanupIdsScratch);
+        else
+            CollectDestroyedCleanupIds(context.RuntimeBuildings, now, _destroyedCleanupIdsScratch);
+
+        if (_destroyedCleanupIdsScratch.Count == 0)
             return;
 
-        for (int i = 0; i < cleanupIds.Count; i++)
-            FinalizeDestroyedBuilding(context, cleanupIds[i]);
+        for (int i = 0; i < _destroyedCleanupIdsScratch.Count; i++)
+            FinalizeDestroyedBuilding(context, _destroyedCleanupIdsScratch[i]);
+
+        _destroyedCleanupIdsScratch.Clear();
+    }
+
+    private static void CollectDestroyedCleanupIds<TBuilding>(
+        IReadOnlyDictionary<int, TBuilding> buildings,
+        float now,
+        List<int> cleanupIds)
+        where TBuilding : class, IRuntimeBuilding
+    {
+        if (buildings == null || buildings.Count == 0 || cleanupIds == null)
+            return;
+
+        foreach (KeyValuePair<int, TBuilding> entry in buildings)
+            AddDestroyedCleanupId(entry, now, cleanupIds);
+    }
+
+    private static void CollectDestroyedCleanupIds<TBuilding>(
+        Dictionary<int, TBuilding> buildings,
+        float now,
+        List<int> cleanupIds)
+        where TBuilding : class, IRuntimeBuilding
+    {
+        if (buildings == null || buildings.Count == 0 || cleanupIds == null)
+            return;
+
+        foreach (KeyValuePair<int, TBuilding> entry in buildings)
+            AddDestroyedCleanupId(entry, now, cleanupIds);
+    }
+
+    private static void AddDestroyedCleanupId<TBuilding>(
+        KeyValuePair<int, TBuilding> entry,
+        float now,
+        List<int> cleanupIds)
+        where TBuilding : class, IRuntimeBuilding
+    {
+        TBuilding building = entry.Value;
+        if (building == null || !building.IsDestroyed || now < building.DestroyedCleanupAt)
+            return;
+
+        cleanupIds.Add(entry.Key);
     }
 
     public void SyncDestroyedRuntimeBuildingCombatEntities<TBuilding>(Context<TBuilding> context, float now, float destroyedLifetimeSeconds)

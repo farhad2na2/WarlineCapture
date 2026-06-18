@@ -155,8 +155,8 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
             return true;
         }
 
-        using NativeArray<Entity> selectedEntities = selectedMoveQuery.ToEntityArray(Allocator.Temp);
-        if (!ApplyImmediateSelectedUnitOrder(em, selectedEntities, holdPosition))
+        issuedCount = ApplyImmediateSelectedUnitOrder(em, selectedMoveQuery, holdPosition);
+        if (issuedCount <= 0)
         {
             em.SetComponentData(commandEntity, inputState);
             rejectionReason = TacticalCommandReasonCode.NoSelection;
@@ -176,7 +176,6 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         em.SetComponentData(runtimeEntity, runtimeState);
 
         accepted = true;
-        issuedCount = selectedEntities.Length;
         return true;
     }
 
@@ -216,13 +215,10 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         }
         else if (!selectedQuery.IsEmptyIgnoreFilter)
         {
-            using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
+            using NativeList<Entity> selectedEntities = CollectSelectedPlayerUnits(em, selectedQuery, Allocator.Temp);
             for (int i = 0; i < selectedEntities.Length; i++)
             {
                 Entity entity = selectedEntities[i];
-                if (!em.Exists(entity) || !IsPlayerControlled(em, entity))
-                    continue;
-
                 if (TryIssueReturnToBase(em, queueEntity, entity))
                     issuedCount++;
             }
@@ -267,13 +263,10 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
 
         if (!selectedQuery.IsEmptyIgnoreFilter)
         {
-            using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
+            using NativeList<Entity> selectedEntities = CollectSelectedPlayerUnits(em, selectedQuery, Allocator.Temp);
             for (int i = 0; i < selectedEntities.Length; i++)
             {
                 Entity entity = selectedEntities[i];
-                if (!em.Exists(entity) || !IsPlayerControlled(em, entity))
-                    continue;
-
                 DestroyUnit(em, entity);
                 issuedCount++;
             }
@@ -289,53 +282,59 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
         return true;
     }
 
-    private static bool ApplyImmediateSelectedUnitOrder(
+    private static int ApplyImmediateSelectedUnitOrder(
         EntityManager em,
-        NativeArray<Entity> selectedEntities,
+        EntityQuery selectedMoveQuery,
         bool holdPosition)
     {
-        bool issuedAny = false;
+        int issuedCount = 0;
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedMoveQuery.ToArchetypeChunkArray(Allocator.Temp);
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         try
         {
-            for (int i = 0; i < selectedEntities.Length; i++)
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = selectedEntities[i];
-                if (!em.Exists(entity))
-                    continue;
-
-                ClearImmediateOrderComponents(em, ecb, entity, holdPosition);
-                if (holdPosition)
+                NativeArray<Entity> selectedEntities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < selectedEntities.Length; i++)
                 {
-                    if (!em.HasComponent<HoldPositionOrderTag>(entity))
-                        ecb.AddComponent<HoldPositionOrderTag>(entity);
-                    if (em.HasComponent<UnitCombat>(entity))
+                    Entity entity = selectedEntities[i];
+                    if (!em.Exists(entity))
+                        continue;
+
+                    ClearImmediateOrderComponents(em, ecb, entity, holdPosition);
+                    if (holdPosition)
                     {
-                        UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
-                        if (combat.CanAttack != 0)
+                        if (!em.HasComponent<HoldPositionOrderTag>(entity))
+                            ecb.AddComponent<HoldPositionOrderTag>(entity);
+                        if (em.HasComponent<UnitCombat>(entity))
                         {
-                            combat.AutoEngage = 1;
-                            ecb.SetComponent(entity, combat);
+                            UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
+                            if (combat.CanAttack != 0)
+                            {
+                                combat.AutoEngage = 1;
+                                ecb.SetComponent(entity, combat);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    RemoveComponentIfPresent<HoldPositionOrderTag>(em, ecb, entity);
-                    if (em.HasComponent<UnitCombat>(entity))
+                    else
                     {
-                        UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
-                        if (combat.CanAttack != 0)
+                        RemoveComponentIfPresent<HoldPositionOrderTag>(em, ecb, entity);
+                        if (em.HasComponent<UnitCombat>(entity))
                         {
-                            combat.AutoEngage = 0;
-                            ecb.SetComponent(entity, combat);
+                            UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
+                            if (combat.CanAttack != 0)
+                            {
+                                combat.AutoEngage = 0;
+                                ecb.SetComponent(entity, combat);
+                            }
                         }
                     }
-                }
 
-                if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                    ecb.AddComponent<ManualMoveOrderTag>(entity);
-                issuedAny = true;
+                    if (!em.HasComponent<ManualMoveOrderTag>(entity))
+                        ecb.AddComponent<ManualMoveOrderTag>(entity);
+                    issuedCount++;
+                }
             }
 
             ecb.Playback(em);
@@ -345,7 +344,31 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
             ecb.Dispose();
         }
 
-        return issuedAny;
+        return issuedCount;
+    }
+
+    private static NativeList<Entity> CollectSelectedPlayerUnits(
+        EntityManager em,
+        EntityQuery selectedQuery,
+        Allocator allocator)
+    {
+        NativeList<Entity> selectedEntities = new(selectedQuery.CalculateEntityCount(), allocator);
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> chunkEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < chunkEntities.Length; i++)
+            {
+                Entity entity = chunkEntities[i];
+                if (!em.Exists(entity) || !IsPlayerControlled(em, entity))
+                    continue;
+
+                selectedEntities.Add(entity);
+            }
+        }
+
+        return selectedEntities;
     }
 
     private static bool TryIssueReturnToBase(EntityManager em, Entity queueEntity, Entity entity)

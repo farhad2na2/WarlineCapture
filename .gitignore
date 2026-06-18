@@ -1,5 +1,6 @@
 # macOS
 .DS_Store
+Assets/**/.DS_Store
 
 # Unity generated folders
 [Ll]ibrary/

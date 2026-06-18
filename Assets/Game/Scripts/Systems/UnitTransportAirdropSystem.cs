@@ -837,24 +837,29 @@ public partial struct UnitTransportAirdropSystem : ISystem
             },
             Options = EntityQueryOptions.IncludePrefab
         });
-        using NativeArray<Entity> candidates = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < candidates.Length; i++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity candidate = candidates[i];
-            if (candidate == transport)
-                continue;
+            NativeArray<Entity> candidates = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                Entity candidate = candidates[i];
+                if (candidate == transport)
+                    continue;
 
-            UnitSourcePrefabKey candidateKey = em.GetComponentData<UnitSourcePrefabKey>(candidate);
-            if (!candidateKey.Value.Equals(sourceKey.Value))
-                continue;
+                UnitSourcePrefabKey candidateKey = em.GetComponentData<UnitSourcePrefabKey>(candidate);
+                if (!candidateKey.Value.Equals(sourceKey.Value))
+                    continue;
 
-            UnitTransportAirdropVisualPrefabs candidatePrefabs =
-                em.GetComponentData<UnitTransportAirdropVisualPrefabs>(candidate);
-            if (!HasVisualPrefabForKind(em, candidatePrefabs, passengerKind))
-                continue;
+                UnitTransportAirdropVisualPrefabs candidatePrefabs =
+                    em.GetComponentData<UnitTransportAirdropVisualPrefabs>(candidate);
+                if (!HasVisualPrefabForKind(em, candidatePrefabs, passengerKind))
+                    continue;
 
-            prefabs = candidatePrefabs;
-            return true;
+                prefabs = candidatePrefabs;
+                return true;
+            }
         }
 
         return false;
@@ -868,27 +873,32 @@ public partial struct UnitTransportAirdropSystem : ISystem
     {
         prefabs = default;
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportAirdropVisualPrefabRegistryEntry>());
-        using NativeArray<Entity> registryEntities = query.ToEntityArray(Allocator.Temp);
-        for (int registryIndex = 0; registryIndex < registryEntities.Length; registryIndex++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry =
-                em.GetBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(registryEntities[registryIndex]);
-            for (int i = 0; i < registry.Length; i++)
+            NativeArray<Entity> registryEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int registryIndex = 0; registryIndex < registryEntities.Length; registryIndex++)
             {
-                UnitTransportAirdropVisualPrefabRegistryEntry entry = registry[i];
-                if (!entry.SourceKey.Equals(sourceKey))
-                    continue;
-
-                UnitTransportAirdropVisualPrefabs candidate = new()
+                DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry =
+                    em.GetBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(registryEntities[registryIndex]);
+                for (int i = 0; i < registry.Length; i++)
                 {
-                    SoldierParachuteVisualPrefab = entry.SoldierParachuteVisualPrefab,
-                    VehicleEmergencyDropVisualPrefab = entry.VehicleEmergencyDropVisualPrefab
-                };
-                if (!HasVisualPrefabForKind(em, candidate, passengerKind))
-                    continue;
+                    UnitTransportAirdropVisualPrefabRegistryEntry entry = registry[i];
+                    if (!entry.SourceKey.Equals(sourceKey))
+                        continue;
 
-                prefabs = candidate;
-                return true;
+                    UnitTransportAirdropVisualPrefabs candidate = new()
+                    {
+                        SoldierParachuteVisualPrefab = entry.SoldierParachuteVisualPrefab,
+                        VehicleEmergencyDropVisualPrefab = entry.VehicleEmergencyDropVisualPrefab
+                    };
+                    if (!HasVisualPrefabForKind(em, candidate, passengerKind))
+                        continue;
+
+                    prefabs = candidate;
+                    return true;
+                }
             }
         }
 

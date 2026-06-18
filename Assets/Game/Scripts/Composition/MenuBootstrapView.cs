@@ -1,13 +1,18 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 [DisallowMultipleComponent]
 public sealed class MenuBootstrapView : MonoBehaviour
 {
     private readonly MenuBootstrapSystem menuBootstrapSystem = new();
 
+    [SerializeField] private RuntimeUiConfig runtimeUiConfig;
     [SerializeField] private Camera uiCamera;
     [SerializeField] private Canvas uiCanvas;
+    [SerializeField] private UIDocument uiToolkitDocument;
+    [SerializeField] private GameObject uiToolkitShellRoot;
+    [SerializeField] private UiToolkitShellView uiToolkitShellView;
     [SerializeField] private UIShellView shellView;
     [FormerlySerializedAs("shellEcsBridge")]
     [SerializeField] private UIShellEcsPresentationSystem shellEcsPresentation;
@@ -15,8 +20,14 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [SerializeField] private UIShellContentView contentSystem;
     [SerializeField] private UIRouterView router;
 
+    public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
+    public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
+    public bool IsUiToolkitMode => UiMode == RuntimeUiMode.UiToolkit;
     public Camera UiCamera => uiCamera;
     public Canvas UiCanvas => uiCanvas;
+    public UIDocument UiToolkitDocument => uiToolkitDocument;
+    public GameObject UiToolkitShellRoot => uiToolkitShellRoot;
+    public UiToolkitShellView UiToolkitShellView => uiToolkitShellView;
     public UIShellView ShellView => shellView;
     public UIShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
     public UIShellContentView ContentSystem => contentSystem;
@@ -49,14 +60,49 @@ public sealed class MenuBootstrapView : MonoBehaviour
         UIShellView configuredShellView,
         UIShellEcsPresentationSystem configuredShellEcsPresentation,
         UIShellContentView configuredContentSystem,
-        UIRouterView configuredRouter)
+        UIRouterView configuredRouter,
+        RuntimeUiConfig configuredRuntimeUiConfig = null,
+        UIDocument configuredUiToolkitDocument = null,
+        GameObject configuredUiToolkitShellRoot = null,
+        UiToolkitShellView configuredUiToolkitShellView = null)
     {
+        if (configuredRuntimeUiConfig != null)
+            runtimeUiConfig = configuredRuntimeUiConfig;
         uiCamera = configuredUiCamera;
         uiCanvas = configuredUiCanvas;
+        if (configuredUiToolkitDocument != null)
+            uiToolkitDocument = configuredUiToolkitDocument;
+        if (configuredUiToolkitShellRoot != null)
+            uiToolkitShellRoot = configuredUiToolkitShellRoot;
+        if (configuredUiToolkitShellView != null)
+            uiToolkitShellView = configuredUiToolkitShellView;
         shellView = configuredShellView;
         shellEcsPresentation = configuredShellEcsPresentation;
         contentSystem = configuredContentSystem;
         router = configuredRouter;
+    }
+
+    public void ApplyRuntimeUiMode()
+    {
+        bool useUiToolkit = IsUiToolkitMode;
+
+        if (uiCanvas != null && uiCanvas.enabled == useUiToolkit)
+            uiCanvas.enabled = !useUiToolkit;
+        if (shellEcsPresentation != null && shellEcsPresentation.enabled == useUiToolkit)
+            shellEcsPresentation.enabled = !useUiToolkit;
+        if (contentSystem != null && contentSystem.enabled == useUiToolkit)
+            contentSystem.enabled = !useUiToolkit;
+        if (router != null && router.enabled == useUiToolkit)
+            router.enabled = !useUiToolkit;
+
+        if (uiToolkitDocument != null && uiToolkitDocument.enabled != useUiToolkit)
+            uiToolkitDocument.enabled = useUiToolkit;
+        if (uiToolkitShellRoot != null && uiToolkitShellRoot.activeSelf != useUiToolkit)
+            uiToolkitShellRoot.SetActive(useUiToolkit);
+        if (useUiToolkit && uiToolkitShellView != null)
+            uiToolkitShellView.Mount();
+        if (!useUiToolkit && uiToolkitShellView != null)
+            uiToolkitShellView.ClearCache();
     }
 
     private void Awake()

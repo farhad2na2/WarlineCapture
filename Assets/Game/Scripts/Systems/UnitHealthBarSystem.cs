@@ -19,11 +19,11 @@ public partial struct UnitHealthBarSystem : ISystem
         float deltaTime = SystemAPI.Time.DeltaTime;
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
-        new ExpireRecentDamageVisibilityJob
+        state.Dependency = new ExpireRecentDamageVisibilityJob
         {
             DeltaTime = deltaTime,
             Ecb = ecb
-        }.Run();
+        }.Schedule(state.Dependency);
 
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);

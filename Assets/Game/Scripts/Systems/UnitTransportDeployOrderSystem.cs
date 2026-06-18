@@ -12,6 +12,7 @@ public partial struct UnitTransportDeployOrderSystem : ISystem
 
     private EntityQuery _gridPathingQuery;
     private EntityQuery _deployQuery;
+    private EntityTypeHandle _entityType;
 
     public void OnCreate(ref SystemState state)
     {
@@ -23,6 +24,7 @@ public partial struct UnitTransportDeployOrderSystem : ISystem
         _deployQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<UnitTransportDeployOrder>(),
             ComponentType.ReadOnly<UnitGrid>());
+        _entityType = state.GetEntityTypeHandle();
         state.RequireForUpdate(_deployQuery);
         state.RequireForUpdate(_gridPathingQuery);
     }
@@ -41,36 +43,67 @@ public partial struct UnitTransportDeployOrderSystem : ISystem
 
         var capacitySystem = new UnitTransportCapacitySystem();
         var moveOrderSystem = new UnitMoveOrderSystem();
-        using NativeArray<Entity> deployEntities = _deployQuery.ToEntityArray(Allocator.Temp);
+        _entityType.Update(ref state);
+        using NativeArray<ArchetypeChunk> deployChunks = _deployQuery.ToArchetypeChunkArray(Allocator.Temp);
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
-            for (int i = 0; i < deployEntities.Length; i++)
+            bool stopProcessing = false;
+            for (int chunkIndex = 0; chunkIndex < deployChunks.Length && !stopProcessing; chunkIndex++)
             {
-                Entity entity = deployEntities[i];
-                if (!em.Exists(entity) ||
-                    !em.HasComponent<UnitTransportDeployOrder>(entity) ||
-                    !em.HasComponent<UnitGrid>(entity))
+                NativeArray<Entity> deployEntities = deployChunks[chunkIndex].GetNativeArray(_entityType);
+                for (int i = 0; i < deployEntities.Length; i++)
                 {
-                    continue;
-                }
+                    Entity entity = deployEntities[i];
+                    if (!em.Exists(entity) ||
+                        !em.HasComponent<UnitTransportDeployOrder>(entity) ||
+                        !em.HasComponent<UnitGrid>(entity))
+                    {
+                        continue;
+                    }
 
-                if (!IsLoadedTransport(em, entity))
-                {
-                    RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
-                    continue;
-                }
+                    if (!IsLoadedTransport(em, entity))
+                    {
+                        RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
+                        continue;
+                    }
 
-                UnitTransportDeployOrder order = em.GetComponentData<UnitTransportDeployOrder>(entity);
-                if (!TryResolveDeployCell(grid, walkable, blocked, occupied, order.TargetCell, out int2 deployCell))
-                {
-                    RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
-                    continue;
-                }
+                    UnitTransportDeployOrder order = em.GetComponentData<UnitTransportDeployOrder>(entity);
+                    if (!TryResolveDeployCell(grid, walkable, blocked, occupied, order.TargetCell, out int2 deployCell))
+                    {
+                        RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
+                        continue;
+                    }
 
-                if (TransportBoardingCommandSystem.IsCargoPlaneTransport(em, entity))
-                {
-                    bool issued = TransportBoardingCommandSystem.TryIssueDeployDisembark(
+                    if (TransportBoardingCommandSystem.IsCargoPlaneTransport(em, entity))
+                    {
+                        bool issued = TransportBoardingCommandSystem.TryIssueDeployDisembark(
+                            em,
+                            entity,
+                            capacitySystem,
+                            moveOrderSystem,
+                            _gridPathingQuery,
+                            deployCell,
+                            order.TargetEntity,
+                            order.TargetCell,
+                            order.TargetPosition,
+                            order.AttackAfterDeploy,
+                            out TacticalCommandReasonCode reasonCode);
+
+                        if (issued || IsTerminalDeployFailure(reasonCode))
+                            RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
+                        stopProcessing = true;
+                        break;
+                    }
+
+                    UnitGrid unitGrid = em.GetComponentData<UnitGrid>(entity);
+                    if (!HasReachedDeployCell(unitGrid.Cell, deployCell, em, entity))
+                    {
+                        IssueDeployMove(em, ecb, entity, deployCell);
+                        continue;
+                    }
+
+                    bool disembarked = TransportBoardingCommandSystem.TryIssueDeployDisembark(
                         em,
                         entity,
                         capacitySystem,
@@ -81,36 +114,13 @@ public partial struct UnitTransportDeployOrderSystem : ISystem
                         order.TargetCell,
                         order.TargetPosition,
                         order.AttackAfterDeploy,
-                        out TacticalCommandReasonCode reasonCode);
+                        out TacticalCommandReasonCode disembarkReason);
 
-                    if (issued || IsTerminalDeployFailure(reasonCode))
+                    if (disembarked || IsTerminalDeployFailure(disembarkReason))
                         RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
+                    stopProcessing = true;
                     break;
                 }
-
-                UnitGrid unitGrid = em.GetComponentData<UnitGrid>(entity);
-                if (!HasReachedDeployCell(unitGrid.Cell, deployCell, em, entity))
-                {
-                    IssueDeployMove(em, ecb, entity, deployCell);
-                    continue;
-                }
-
-                bool disembarked = TransportBoardingCommandSystem.TryIssueDeployDisembark(
-                    em,
-                    entity,
-                    capacitySystem,
-                    moveOrderSystem,
-                    _gridPathingQuery,
-                    deployCell,
-                    order.TargetEntity,
-                    order.TargetCell,
-                    order.TargetPosition,
-                    order.AttackAfterDeploy,
-                    out TacticalCommandReasonCode disembarkReason);
-
-                if (disembarked || IsTerminalDeployFailure(disembarkReason))
-                    RemoveIfPresent<UnitTransportDeployOrder>(em, ecb, entity);
-                break;
             }
 
             ecb.Playback(em);

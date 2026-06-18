@@ -12,6 +12,8 @@ public partial struct UnitDeathSystem : ISystem
     private NativeList<DeathBeginCandidate> _deathBeginCandidates;
     private NativeList<Entity> _finalizeEntities;
     private EntityQuery _respawnQueueQuery;
+    private EntityQuery _deathBeginQuery;
+    private EntityQuery _finalizeQuery;
 
     private struct GameStatsDeathRecordedTag : IComponentData
     {
@@ -27,6 +29,15 @@ public partial struct UnitDeathSystem : ISystem
     {
         state.RequireForUpdate<UnitHealth>();
         _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
+        _deathBeginQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<UnitAnimationSettings>(),
+            ComponentType.Exclude<UnitDeathAnimationComponent>(),
+            ComponentType.Exclude<StaticGridBlocker>());
+        _finalizeQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
+            ComponentType.Exclude<StaticGridBlocker>());
         _deathBeginCandidates = new NativeList<DeathBeginCandidate>(64, Allocator.Persistent);
         _finalizeEntities = new NativeList<Entity>(64, Allocator.Persistent);
     }
@@ -48,11 +59,15 @@ public partial struct UnitDeathSystem : ISystem
         double now = SystemAPI.Time.ElapsedTime;
         double respawnDelay = math.max(0.01f, queueState.RespawnDelaySeconds);
 
+        int beginCapacity = _deathBeginQuery.CalculateEntityCount();
+        if (_deathBeginCandidates.Capacity < beginCapacity)
+            _deathBeginCandidates.SetCapacity(beginCapacity);
         _deathBeginCandidates.Clear();
-        new CollectDeathBeginCandidatesJob
+        state.Dependency = new CollectDeathBeginCandidatesJob
         {
-            Candidates = _deathBeginCandidates
-        }.Run();
+            Candidates = _deathBeginCandidates.AsParallelWriter()
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
         for (int i = 0; i < _deathBeginCandidates.Length; i++)
         {
@@ -78,12 +93,16 @@ public partial struct UnitDeathSystem : ISystem
             });
         }
 
+        int finalizeCapacity = _finalizeQuery.CalculateEntityCount();
+        if (_finalizeEntities.Capacity < finalizeCapacity)
+            _finalizeEntities.SetCapacity(finalizeCapacity);
         _finalizeEntities.Clear();
-        new CollectDeathAnimationFinalizeJob
+        state.Dependency = new CollectDeathAnimationFinalizeJob
         {
             DeltaTime = dt,
-            FinalizeEntities = _finalizeEntities
-        }.Run();
+            FinalizeEntities = _finalizeEntities.AsParallelWriter()
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
         for (int i = 0; i < _finalizeEntities.Length; i++)
             FinalizeDeath(em, queueEntity, _finalizeEntities[i], now, respawnDelay);
@@ -94,14 +113,14 @@ public partial struct UnitDeathSystem : ISystem
     [WithChangeFilter(typeof(UnitHealth))]
     private partial struct CollectDeathBeginCandidatesJob : IJobEntity
     {
-        public NativeList<DeathBeginCandidate> Candidates;
+        public NativeList<DeathBeginCandidate>.ParallelWriter Candidates;
 
         private void Execute(Entity entity, in UnitHealth health, in UnitAnimationSettings animationSettings)
         {
             if (health.Current > 0)
                 return;
 
-            Candidates.Add(new DeathBeginCandidate
+            Candidates.AddNoResize(new DeathBeginCandidate
             {
                 Entity = entity,
                 Duration = math.max(0.01f, animationSettings.DeathAnimationSeconds)
@@ -114,7 +133,7 @@ public partial struct UnitDeathSystem : ISystem
     private partial struct CollectDeathAnimationFinalizeJob : IJobEntity
     {
         public float DeltaTime;
-        public NativeList<Entity> FinalizeEntities;
+        public NativeList<Entity>.ParallelWriter FinalizeEntities;
 
         private void Execute(Entity entity, in UnitHealth health, ref UnitDeathAnimationComponent deathState)
         {
@@ -123,7 +142,7 @@ public partial struct UnitDeathSystem : ISystem
 
             deathState.TimeRemaining -= DeltaTime;
             if (deathState.TimeRemaining <= 0f)
-                FinalizeEntities.Add(entity);
+                FinalizeEntities.AddNoResize(entity);
         }
     }
 

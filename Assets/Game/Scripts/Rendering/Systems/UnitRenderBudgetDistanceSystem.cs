@@ -35,6 +35,11 @@ public readonly struct UnitRenderBudgetDistance
             return;
         }
 
+        int count = math.min(units.Length, transforms.Length);
+        distances.Resize(count, NativeArrayOptions.UninitializedMemory);
+        if (count == 0)
+            return;
+
         float4x4 worldToCamera = ToFloat4x4(camera.worldToCameraMatrix);
         new CollectDistanceJob
         {
@@ -42,24 +47,24 @@ public readonly struct UnitRenderBudgetDistance
             Transforms = transforms,
             PassengerLookup = passengerLookup,
             EntityStorageInfoLookup = entityStorageInfoLookup,
-            Distances = distances,
+            Distances = distances.AsParallelWriter(),
             CameraPosition = camera.transform.position,
             WorldToCamera = worldToCamera,
             ViewProjection = math.mul(ToFloat4x4(camera.projectionMatrix), worldToCamera),
             AlwaysDetailedDistanceSq = alwaysDetailedDistanceSq,
             ViewportPadding = viewportPadding,
             EdgeSafetyMargin = edgeSafetyMargin
-        }.Run();
+        }.ScheduleParallel(count, 64, default).Complete();
     }
 
     [BurstCompile]
-    private struct CollectDistanceJob : IJob
+    private struct CollectDistanceJob : IJobFor
     {
         [ReadOnly] public NativeArray<Entity> Units;
         [ReadOnly] public NativeArray<LocalTransform> Transforms;
         [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
         [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public NativeList<UnitDistance> Distances;
+        public NativeList<UnitDistance>.ParallelWriter Distances;
         public float3 CameraPosition;
         public float4x4 WorldToCamera;
         public float4x4 ViewProjection;
@@ -67,51 +72,57 @@ public readonly struct UnitRenderBudgetDistance
         public float ViewportPadding;
         public float EdgeSafetyMargin;
 
-        public void Execute()
+        public void Execute(int i)
         {
-            int count = math.min(Units.Length, Transforms.Length);
-            for (int i = 0; i < count; i++)
+            Entity unit = Units[i];
+            if (!EntityStorageInfoLookup.Exists(unit) || PassengerLookup.HasComponent(unit))
             {
-                Entity unit = Units[i];
-                if (!EntityStorageInfoLookup.Exists(unit) || PassengerLookup.HasComponent(unit))
-                    continue;
-
-                float3 unitPosition = Transforms[i].Position;
-                float distanceSq = math.distancesq(unitPosition, CameraPosition);
-                float4 worldPosition = new(unitPosition, 1f);
-                float4 cameraPosition = math.mul(WorldToCamera, worldPosition);
-                float4 clipPosition = math.mul(ViewProjection, worldPosition);
-                float invW = math.abs(clipPosition.w) > 0.000001f ? 1f / clipPosition.w : 0f;
-                float viewportX = clipPosition.x * invW * 0.5f + 0.5f;
-                float viewportY = clipPosition.y * invW * 0.5f + 0.5f;
-                float viewportZ = -cameraPosition.z;
-                bool visible =
-                    viewportZ > 0f &&
-                    viewportX >= -ViewportPadding && viewportX <= 1f + ViewportPadding &&
-                    viewportY >= -ViewportPadding && viewportY <= 1f + ViewportPadding;
-                bool screenEdge =
-                    visible &&
-                    (viewportX <= EdgeSafetyMargin ||
-                     viewportX >= 1f - EdgeSafetyMargin ||
-                     viewportY <= EdgeSafetyMargin ||
-                     viewportY >= 1f - EdgeSafetyMargin ||
-                     viewportX < 0f ||
-                     viewportX > 1f ||
-                     viewportY < 0f ||
-                     viewportY > 1f);
-                bool near = distanceSq <= AlwaysDetailedDistanceSq;
-                byte priority = near
-                    ? (byte)(visible ? 0 : 1)
-                    : (byte)(visible ? 2 : 3);
-                Distances.Add(new UnitDistance
+                Distances.AddNoResize(new UnitDistance
                 {
-                    Unit = unit,
-                    DistanceSq = distanceSq,
-                    Priority = priority,
-                    Visible = visible ? (byte)1 : (byte)0,
-                    ScreenEdge = screenEdge ? (byte)1 : (byte)0
+                    Unit = Entity.Null,
+                    DistanceSq = float.MaxValue,
+                    Priority = 3,
+                    Visible = 0,
+                    ScreenEdge = 0
                 });
+                return;
             }
+
+            float3 unitPosition = Transforms[i].Position;
+            float distanceSq = math.distancesq(unitPosition, CameraPosition);
+            float4 worldPosition = new(unitPosition, 1f);
+            float4 cameraPosition = math.mul(WorldToCamera, worldPosition);
+            float4 clipPosition = math.mul(ViewProjection, worldPosition);
+            float invW = math.abs(clipPosition.w) > 0.000001f ? 1f / clipPosition.w : 0f;
+            float viewportX = clipPosition.x * invW * 0.5f + 0.5f;
+            float viewportY = clipPosition.y * invW * 0.5f + 0.5f;
+            float viewportZ = -cameraPosition.z;
+            bool visible =
+                viewportZ > 0f &&
+                viewportX >= -ViewportPadding && viewportX <= 1f + ViewportPadding &&
+                viewportY >= -ViewportPadding && viewportY <= 1f + ViewportPadding;
+            bool screenEdge =
+                visible &&
+                (viewportX <= EdgeSafetyMargin ||
+                 viewportX >= 1f - EdgeSafetyMargin ||
+                 viewportY <= EdgeSafetyMargin ||
+                 viewportY >= 1f - EdgeSafetyMargin ||
+                 viewportX < 0f ||
+                 viewportX > 1f ||
+                 viewportY < 0f ||
+                 viewportY > 1f);
+            bool near = distanceSq <= AlwaysDetailedDistanceSq;
+            byte priority = near
+                ? (byte)(visible ? 0 : 1)
+                : (byte)(visible ? 2 : 3);
+            Distances.AddNoResize(new UnitDistance
+            {
+                Unit = unit,
+                DistanceSq = distanceSq,
+                Priority = priority,
+                Visible = visible ? (byte)1 : (byte)0,
+                ScreenEdge = screenEdge ? (byte)1 : (byte)0
+            });
         }
     }
 

@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -22,26 +23,29 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
         if (markers.Capacity < MaxMarkers)
             markers.Capacity = MaxMarkers;
 
-        var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
-        new CollectMarkersJob
+        var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers * 2, Allocator.TempJob);
+        var markerWriter = markerScratch.AsParallelWriter();
+        state.Dependency = new CollectMarkersJob
         {
             MaxMarkers = MaxMarkers,
             CollectMode = CollectPlayerMarkers,
-            Markers = markerScratch
-        }.Run();
-        new CollectMarkersJob
+            Markers = markerWriter
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency = new CollectMarkersJob
         {
             MaxMarkers = MaxMarkers,
             CollectMode = CollectEnemyMarkers,
-            Markers = markerScratch
-        }.Run();
-        new CollectScanIntelMarkersJob
+            Markers = markerWriter
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency = new CollectScanIntelMarkersJob
         {
             MaxMarkers = MaxMarkers,
-            Markers = markerScratch
-        }.Run();
+            Markers = markerWriter
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
-        for (int i = 0; i < markerScratch.Length; i++)
+        int copyCount = math.min(markerScratch.Length, MaxMarkers);
+        for (int i = 0; i < copyCount; i++)
             markers.Add(markerScratch[i]);
 
         markerScratch.Dispose();
@@ -69,14 +73,14 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
     {
         public int MaxMarkers;
         public byte CollectMode;
-        public NativeList<MatchHudMinimapMarkerElement> Markers;
+        public NativeList<MatchHudMinimapMarkerElement>.ParallelWriter Markers;
 
         private void Execute(in UnitHealth health, in LocalTransform transform, in Faction faction)
         {
-            if (health.Current <= 0 || Markers.Length >= MaxMarkers || !ShouldCollectFaction(faction.Id))
+            if (health.Current <= 0 || !ShouldCollectFaction(faction.Id))
                 return;
 
-            Markers.Add(new MatchHudMinimapMarkerElement
+            Markers.AddNoResize(new MatchHudMinimapMarkerElement
             {
                 Position = transform.Position,
                 FactionId = faction.Id
@@ -101,14 +105,14 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
     private partial struct CollectScanIntelMarkersJob : IJobEntity
     {
         public int MaxMarkers;
-        public NativeList<MatchHudMinimapMarkerElement> Markers;
+        public NativeList<MatchHudMinimapMarkerElement>.ParallelWriter Markers;
 
         private void Execute(in ScanIntelLastSeen lastSeen)
         {
-            if (Markers.Length >= MaxMarkers || !FactionIdentity.IsHostileToPlayer(lastSeen.FactionId))
+            if (!FactionIdentity.IsHostileToPlayer(lastSeen.FactionId))
                 return;
 
-            Markers.Add(new MatchHudMinimapMarkerElement
+            Markers.AddNoResize(new MatchHudMinimapMarkerElement
             {
                 Position = lastSeen.Position,
                 FactionId = lastSeen.FactionId

@@ -1,27 +1,31 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(UnitHealthBarSystem))]
 public partial struct UnitRuntimeHealthBarSystem : ISystem
 {
     private EntityStorageInfoLookup _entityStorageInfoLookup;
+    private EntityQuery _unitQuery;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<UnitHealthBarPrefabReference>();
         _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
+        _unitQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitHealth>());
     }
 
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;
-        var create = new NativeList<Entity>(Allocator.TempJob);
-        var removeReference = new NativeList<Entity>(Allocator.TempJob);
-        var destroy = new NativeList<Entity>(Allocator.TempJob);
+        int unitCount = _unitQuery.CalculateEntityCount();
+        var create = new NativeList<Entity>(math.max(1, unitCount), Allocator.TempJob);
+        var removeReference = new NativeList<Entity>(math.max(1, unitCount), Allocator.TempJob);
+        var destroy = new NativeList<Entity>(math.max(1, unitCount), Allocator.TempJob);
         _entityStorageInfoLookup.Update(ref state);
-        new CollectHealthBarChangesJob
+        state.Dependency = new CollectHealthBarChangesJob
         {
             RecentDamageLookup = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>(true),
             PrefabReferenceLookup = SystemAPI.GetComponentLookup<UnitHealthBarPrefabReference>(true),
@@ -29,10 +33,11 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
             CulledLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true),
             InstanceReferenceLookup = SystemAPI.GetComponentLookup<UnitHealthBarInstanceReference>(true),
             EntityStorageInfoLookup = _entityStorageInfoLookup,
-            Create = create,
-            RemoveReference = removeReference,
-            Destroy = destroy
-        }.Run();
+            Create = create.AsParallelWriter(),
+            RemoveReference = removeReference.AsParallelWriter(),
+            Destroy = destroy.AsParallelWriter()
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
         for (int i = 0; i < removeReference.Length; i++)
             RemoveHealthBarReference(em, removeReference[i]);
@@ -61,9 +66,9 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledLookup;
         [ReadOnly] public ComponentLookup<UnitHealthBarInstanceReference> InstanceReferenceLookup;
         [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public NativeList<Entity> Create;
-        public NativeList<Entity> RemoveReference;
-        public NativeList<Entity> Destroy;
+        public NativeList<Entity>.ParallelWriter Create;
+        public NativeList<Entity>.ParallelWriter RemoveReference;
+        public NativeList<Entity>.ParallelWriter Destroy;
 
         private void Execute(Entity entity, in UnitHealth health)
         {
@@ -78,20 +83,20 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
                                EntityStorageInfoLookup.Exists(InstanceReferenceLookup[entity].Instance);
             if (hasReference && !hasInstance)
             {
-                RemoveReference.Add(entity);
+                RemoveReference.AddNoResize(entity);
                 if (shouldShow)
-                    Create.Add(entity);
+                    Create.AddNoResize(entity);
                 return;
             }
 
             if (!canOwnHealthBar && hasReference)
             {
-                Destroy.Add(entity);
+                Destroy.AddNoResize(entity);
                 return;
             }
 
             if (shouldShow && !hasInstance)
-                Create.Add(entity);
+                Create.AddNoResize(entity);
         }
     }
 

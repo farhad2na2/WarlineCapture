@@ -1,15 +1,20 @@
 using Unity.Collections;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 
 [UpdateAfter(typeof(UnitDeathSystem))]
 public partial struct VehicleWreckCleanupSystem : ISystem
 {
     private EntityQuery _respawnQueueQuery;
+    private EntityQuery _wreckQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
+        _wreckQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<VehicleWreckComponent>(),
+            ComponentType.ReadOnly<UnitHealth>());
         state.RequireForUpdate<VehicleWreckComponent>();
     }
 
@@ -20,14 +25,16 @@ public partial struct VehicleWreckCleanupSystem : ISystem
         var em = state.EntityManager;
         float dt = SystemAPI.Time.DeltaTime;
         double now = SystemAPI.Time.ElapsedTime;
-        double respawnDelay = Unity.Mathematics.math.max(0.01f, queueState.RespawnDelaySeconds);
+        double respawnDelay = math.max(0.01f, queueState.RespawnDelaySeconds);
 
-        var finalize = new NativeList<Entity>(Allocator.TempJob);
-        new CollectExpiredWrecksJob
+        int capacity = _wreckQuery.CalculateEntityCount();
+        var finalize = new NativeList<Entity>(math.max(1, capacity), Allocator.TempJob);
+        state.Dependency = new CollectExpiredWrecksJob
         {
             DeltaTime = dt,
-            FinalizeEntities = finalize
-        }.Run();
+            FinalizeEntities = finalize.AsParallelWriter()
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency.Complete();
 
         for (int i = 0; i < finalize.Length; i++)
             UnitDeathSystem.FinalizeDeath(em, queueEntity, finalize[i], now, respawnDelay);
@@ -39,7 +46,7 @@ public partial struct VehicleWreckCleanupSystem : ISystem
     private partial struct CollectExpiredWrecksJob : IJobEntity
     {
         public float DeltaTime;
-        public NativeList<Entity> FinalizeEntities;
+        public NativeList<Entity>.ParallelWriter FinalizeEntities;
 
         public void Execute(Entity entity, ref VehicleWreckComponent wreck, in UnitHealth health)
         {
@@ -48,7 +55,7 @@ public partial struct VehicleWreckCleanupSystem : ISystem
 
             wreck.TimeRemaining -= DeltaTime;
             if (wreck.TimeRemaining <= 0f)
-                FinalizeEntities.Add(entity);
+                FinalizeEntities.AddNoResize(entity);
         }
     }
 }

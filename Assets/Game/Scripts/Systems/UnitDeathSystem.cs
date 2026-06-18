@@ -91,6 +91,7 @@ public partial struct UnitDeathSystem : ISystem
 
     [BurstCompile]
     [WithNone(typeof(UnitDeathAnimationComponent), typeof(StaticGridBlocker))]
+    [WithChangeFilter(typeof(UnitHealth))]
     private partial struct CollectDeathBeginCandidatesJob : IJobEntity
     {
         public NativeList<DeathBeginCandidate> Candidates;

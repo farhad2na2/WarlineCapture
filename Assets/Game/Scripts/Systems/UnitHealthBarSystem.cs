@@ -23,7 +23,7 @@ public partial struct UnitHealthBarSystem : ISystem
         {
             DeltaTime = deltaTime,
             Ecb = ecb
-        }.Schedule(state.Dependency);
+        }.ScheduleParallel(state.Dependency);
 
         var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);

@@ -39,7 +39,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
             DeathAnimationLookup = deathAnimationLookup,
             AutoWanderLookup = autoWanderLookup,
             EngageTargetLookup = engageTargetLookup
-        }.Run();
+        }.ScheduleParallel(state.Dependency);
 
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();

@@ -43,5 +43,9 @@ sysinfo.txt
 .jenkins.local
 .local/
 
+# macOS
+.DS_Store
+Assets/**/.DS_Store
+
 # Addressables / generated caches
 Assets/AddressableAssetsData/*/*.bin*

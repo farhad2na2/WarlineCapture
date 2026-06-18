@@ -3,7 +3,7 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold.ttf");
     color: rgb(238, 229, 198);
     background-color: rgb(8, 9, 8);
 }
@@ -79,6 +79,7 @@
     bottom: 20.2%;
 }
 
+/* ── Frame helpers (absolute fill) ── */
 .panel-frame,
 .chip-frame,
 .resource-frame,
@@ -100,36 +101,38 @@
     -unity-background-scale-mode: stretch-to-fill;
 }
 
+/* ── 9-slice values NOW MATCH actual spriteBorder from .meta files ── */
+
 .panel-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png");
-    -unity-slice-left: 72;
-    -unity-slice-right: 72;
-    -unity-slice-top: 72;
-    -unity-slice-bottom: 72;
+    -unity-slice-left: 96;
+    -unity-slice-right: 96;
+    -unity-slice-top: 96;
+    -unity-slice-bottom: 96;
 }
 
 .objectives-panel .panel-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png");
-    -unity-slice-left: 72;
-    -unity-slice-right: 72;
-    -unity-slice-top: 72;
-    -unity-slice-bottom: 72;
+    -unity-slice-left: 96;
+    -unity-slice-right: 96;
+    -unity-slice-top: 96;
+    -unity-slice-bottom: 96;
 }
 
 .selected-squad-panel .panel-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png");
-    -unity-slice-left: 54;
-    -unity-slice-right: 54;
-    -unity-slice-top: 82;
-    -unity-slice-bottom: 82;
+    -unity-slice-left: 96;
+    -unity-slice-right: 96;
+    -unity-slice-top: 96;
+    -unity-slice-bottom: 96;
 }
 
 .chip-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
 }
 
 .logo-panel .chip-frame,
@@ -137,26 +140,26 @@
 .threat-jump-panel .chip-frame,
 .feedback-panel .chip-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png");
-    -unity-slice-left: 86;
-    -unity-slice-right: 86;
-    -unity-slice-top: 42;
-    -unity-slice-bottom: 42;
+    -unity-slice-left: 110;
+    -unity-slice-right: 110;
+    -unity-slice-top: 54;
+    -unity-slice-bottom: 54;
 }
 
 .resource-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png");
-    -unity-slice-left: 66;
-    -unity-slice-right: 66;
-    -unity-slice-top: 42;
-    -unity-slice-bottom: 42;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .square-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
-    -unity-slice-left: 56;
-    -unity-slice-right: 56;
-    -unity-slice-top: 56;
-    -unity-slice-bottom: 56;
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 150;
+    -unity-slice-bottom: 150;
 }
 
 .command-button-frame {
@@ -166,10 +169,10 @@
     bottom: -2%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 56;
-    -unity-slice-right: 56;
-    -unity-slice-top: 56;
-    -unity-slice-bottom: 56;
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 150;
+    -unity-slice-bottom: 150;
 }
 
 .command-button-selected .command-button-frame {
@@ -179,18 +182,18 @@
 
 .rect-button-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
-    -unity-slice-left: 66;
-    -unity-slice-right: 66;
-    -unity-slice-top: 42;
-    -unity-slice-bottom: 42;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .squad-card-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png");
-    -unity-slice-left: 58;
-    -unity-slice-right: 58;
-    -unity-slice-top: 58;
-    -unity-slice-bottom: 58;
+    -unity-slice-left: 92;
+    -unity-slice-right: 92;
+    -unity-slice-top: 86;
+    -unity-slice-bottom: 86;
 }
 
 .squad-card-selected .squad-card-frame {
@@ -201,11 +204,13 @@
 .squad-tray-frame,
 .minimap-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
-    -unity-slice-left: 72;
-    -unity-slice-right: 72;
-    -unity-slice-top: 46;
-    -unity-slice-bottom: 46;
+    -unity-slice-left: 92;
+    -unity-slice-right: 92;
+    -unity-slice-top: 62;
+    -unity-slice-bottom: 62;
 }
+
+/* ── Header ── */
 
 .header-content {
     overflow: visible;
@@ -265,7 +270,7 @@
     right: 8%;
     bottom: 18%;
     height: 24%;
-    font-size: 14px;
+    font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(209, 223, 146);
@@ -306,7 +311,7 @@
     right: 0;
     top: 9%;
     height: 30%;
-    font-size: 11px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgba(237, 229, 199, 0.85);
@@ -331,6 +336,8 @@
     width: 4.5%;
     height: 100%;
 }
+
+/* ── Left panel: Objectives + Selected Squad ── */
 
 .objectives-panel {
     position: absolute;
@@ -387,7 +394,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    font-size: 15px;
+    font-size: 17px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(234, 228, 202);
@@ -399,11 +406,13 @@
     right: 8%;
     bottom: 6%;
     height: 12%;
-    font-size: 16px;
+    font-size: 18px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(184, 216, 64);
 }
+
+/* ── Selected squad panel ── */
 
 .selected-badge {
     position: absolute;
@@ -433,7 +442,7 @@
     right: 7%;
     top: 13%;
     height: 4.6%;
-    font-size: 12px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgba(236, 229, 199, 0.78);
@@ -445,10 +454,10 @@
     top: 21%;
     height: 25%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
-    -unity-slice-left: 58;
-    -unity-slice-right: 58;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .selected-portrait {
@@ -467,10 +476,10 @@
     top: 50%;
     height: 5.6%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
-    -unity-slice-left: 44;
-    -unity-slice-right: 44;
-    -unity-slice-top: 10;
-    -unity-slice-bottom: 10;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .selected-health-fill {
@@ -481,10 +490,10 @@
     height: 52%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 34;
-    -unity-slice-right: 34;
-    -unity-slice-top: 6;
-    -unity-slice-bottom: 6;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .selected-health-text {
@@ -493,7 +502,7 @@
     right: 5%;
     top: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 15px;
     -unity-font-style: bold;
     -unity-text-align: middle-right;
     color: rgb(240, 232, 203);
@@ -519,14 +528,14 @@
 .order-label {
     left: 0;
     width: 30%;
-    font-size: 13px;
+    font-size: 15px;
     color: rgba(236, 229, 199, 0.75);
 }
 
 .order-value {
     left: 31%;
     right: 0;
-    font-size: 18px;
+    font-size: 20px;
     color: rgb(184, 216, 64);
 }
 
@@ -550,10 +559,10 @@
 #BoardButton { right: 0; }
 
 .selected-action-button .rect-button-frame {
-    -unity-slice-left: 38;
-    -unity-slice-right: 38;
-    -unity-slice-top: 26;
-    -unity-slice-bottom: 26;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .selected-action-button .return-icon,
@@ -573,11 +582,13 @@
     right: 8%;
     bottom: 8%;
     height: 24%;
-    font-size: 11px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
+
+/* ── Passenger drawer (hidden by default) ── */
 
 .passenger-chip,
 .transport-passenger-drawer {
@@ -597,10 +608,10 @@
     height: 7%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
 }
 
 .passenger-chip-label {
@@ -609,7 +620,7 @@
     right: 8%;
     top: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 15px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
@@ -623,10 +634,10 @@
     height: 62%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 54;
-    -unity-slice-right: 54;
-    -unity-slice-top: 82;
-    -unity-slice-bottom: 82;
+    -unity-slice-left: 96;
+    -unity-slice-right: 96;
+    -unity-slice-top: 96;
+    -unity-slice-bottom: 96;
 }
 
 .passenger-drawer-header {
@@ -635,7 +646,7 @@
     right: 8%;
     top: 5%;
     height: 10%;
-    font-size: 16px;
+    font-size: 18px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(230, 196, 74);
@@ -655,7 +666,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 15px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgba(238, 231, 199, 0.64);
@@ -688,10 +699,10 @@
     height: 100%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 46;
-    -unity-slice-right: 46;
-    -unity-slice-top: 30;
-    -unity-slice-bottom: 30;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 #ExitAllButton {
@@ -708,7 +719,7 @@
     right: 8%;
     top: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 15px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
@@ -720,10 +731,10 @@
     margin-bottom: 7px;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
 }
 
 .passenger-portrait {
@@ -742,7 +753,7 @@
     right: 27%;
     top: 13%;
     height: 28%;
-    font-size: 13px;
+    font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(241, 232, 203);
@@ -754,7 +765,7 @@
     right: 27%;
     top: 43%;
     height: 22%;
-    font-size: 10px;
+    font-size: 12px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgba(238, 231, 199, 0.72);
@@ -768,10 +779,10 @@
     height: 13%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 34;
-    -unity-slice-right: 34;
-    -unity-slice-top: 8;
-    -unity-slice-bottom: 8;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .passenger-health-fill {
@@ -782,19 +793,19 @@
     height: 60%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 5;
-    -unity-slice-bottom: 5;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .passenger-health-text {
     position: absolute;
     left: 0;
     right: 5%;
-    top: -140%;
-    height: 260%;
-    font-size: 9px;
+    top: 0;
+    bottom: 0;
+    font-size: 13px;
     -unity-font-style: bold;
     -unity-text-align: middle-right;
     color: rgb(238, 231, 199);
@@ -808,10 +819,10 @@
     height: 62%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 24;
-    -unity-slice-bottom: 24;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .passenger-exit-label {
@@ -820,11 +831,13 @@
     right: 6%;
     top: 0;
     bottom: 0;
-    font-size: 10px;
+    font-size: 13px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
+
+/* ── Right panel: Threat/Jump + Quick Rail ── */
 
 .threat-jump-panel {
     position: absolute;
@@ -850,7 +863,7 @@
     right: 31%;
     top: 18%;
     height: 34%;
-    font-size: 16px;
+    font-size: 20px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(244, 235, 203);
@@ -862,7 +875,7 @@
     right: 31%;
     bottom: 18%;
     height: 24%;
-    font-size: 10px;
+    font-size: 13px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgba(238, 231, 199, 0.78);
@@ -882,7 +895,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    font-size: 24px;
+    font-size: 22px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(241, 232, 203);
@@ -928,10 +941,10 @@
 }
 
 .quick-command .rect-button-frame {
-    -unity-slice-left: 48;
-    -unity-slice-right: 48;
-    -unity-slice-top: 36;
-    -unity-slice-bottom: 36;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .quick-command .build-icon,
@@ -950,11 +963,13 @@
     right: 5%;
     bottom: 10%;
     height: 22%;
-    font-size: 12px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
+
+/* ── Footer: Squad tray + Command rail + Minimap ── */
 
 .squad-tray {
     position: absolute;
@@ -983,7 +998,7 @@
     top: 8%;
     width: 16%;
     height: 15%;
-    font-size: 14px;
+    font-size: 18px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(230, 196, 74);
@@ -1004,7 +1019,7 @@
     right: 7%;
     top: 59%;
     height: 14%;
-    font-size: 12px;
+    font-size: 15px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(239, 232, 202);
@@ -1016,10 +1031,10 @@
     bottom: 17%;
     height: 7%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
-    -unity-slice-left: 34;
-    -unity-slice-right: 34;
-    -unity-slice-top: 8;
-    -unity-slice-bottom: 8;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .squad-health-fill {
@@ -1030,10 +1045,10 @@
     height: 60%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 5;
-    -unity-slice-bottom: 5;
+    -unity-slice-left: 52;
+    -unity-slice-right: 52;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
 }
 
 .short-fill {
@@ -1050,7 +1065,7 @@
     right: 8%;
     bottom: 5%;
     height: 10%;
-    font-size: 11px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(239, 232, 202);
@@ -1105,18 +1120,20 @@
     right: 5%;
     bottom: 11%;
     height: 20%;
-    font-size: 14px;
+    font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
+
+/* ── Minimap panel ── */
 
 .minimap-panel {
     position: absolute;
     right: 5.5%;
     bottom: 0;
     width: 19.2%;
-    height: 193%;
+    height: 100%;
 }
 
 .minimap-map {
@@ -1132,10 +1149,10 @@
 
 .minimap-frame {
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
-    -unity-slice-left: 62;
-    -unity-slice-right: 62;
-    -unity-slice-top: 46;
-    -unity-slice-bottom: 46;
+    -unity-slice-left: 92;
+    -unity-slice-right: 92;
+    -unity-slice-top: 62;
+    -unity-slice-bottom: 62;
 }
 
 .minimap-viewport {
@@ -1201,6 +1218,8 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
+/* ── Feedback panel ── */
+
 .feedback-panel {
     position: absolute;
     left: 36.4%;
@@ -1222,7 +1241,7 @@
     right: 12%;
     top: 0;
     bottom: 0;
-    font-size: 14px;
+    font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(230, 196, 74);
@@ -1243,10 +1262,10 @@
     height: 68%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 26;
-    -unity-slice-bottom: 26;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 #BoardAllButton {
@@ -1263,11 +1282,13 @@
     right: 6%;
     top: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 14px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
+
+/* ── Battlefield overlay elements ── */
 
 .selection-ring {
     position: absolute;
@@ -1343,6 +1364,8 @@
 
 .hostile-marker-a { left: 62%; top: 34%; }
 .hostile-marker-b { left: 77%; top: 41%; }
+
+/* ── Icon assignments ── */
 
 .credits-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png"); }
 .fuel-icon { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_fuel_can.png"); }

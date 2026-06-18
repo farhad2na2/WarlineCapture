@@ -27,6 +27,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer());
             RunTest(test => test.TransportPlaneCapacity_PreservesAuthoredCargoCapacity());
             RunTest(test => test.TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources());
+            RunTest(test => test.TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets());
             RunTest(test => test.TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences());
             RunTest(test => test.TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft());
             RunTest(test => test.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation());
@@ -36,6 +37,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier());
             RunTest(test => test.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal());
             RunTest(test => test.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp());
+            RunTest(test => test.TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats());
             RunTest(test => test.TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding());
             RunTest(test => test.TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot());
             RunTest(test => test.TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger());
@@ -43,14 +45,23 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger());
             RunTest(test => test.HelicopterBoardingCommand_RejectsVehiclePassenger());
             RunTest(test => test.TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle());
+            RunTest(test => test.TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit());
             RunTest(test => test.TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell());
             RunTest(test => test.TransportPlaneDoorOpenRequest_OpensThenExpires());
             RunTest(test => test.TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest());
             RunTest(test => test.TransportPlaneDisembarkCommand_AirdropResultReportsInProgress());
+            RunTest(test => test.TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger());
+            RunTest(test => test.TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest());
+            RunTest(test => test.TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason());
+            RunTest(test => test.TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason());
             RunTest(test => test.TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked());
             RunTest(test => test.TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest());
             RunTest(test => test.TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome());
+            RunTest(test => test.TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent());
+            RunTest(test => test.TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers());
             RunTest(test => test.TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown());
+            RunTest(test => test.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop());
+            RunTest(test => test.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop());
             RunTest(test => test.TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual());
             RunTest(test => test.TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease());
             RunTest(test => test.TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent());
@@ -60,10 +71,12 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget());
             RunTest(test => test.TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget());
             RunTest(test => test.TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage());
+            RunTest(test => test.InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs());
             RunTest(test => test.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
             RunTest(test => test.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers());
+            RunTest(test => test.BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport());
             RunTest(test => test.BoardAllSelectedTransportCommand_IgnoresDistantPassengers());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
@@ -74,6 +87,8 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays());
             RunTest(test => test.AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying());
             RunTest(test => test.AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals());
+            RunTest(test => test.TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState());
+            RunTest(test => test.TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState());
             RunTest(test => test.Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal());
             RunTest(test => test.HelicopterRopeDisembark_ReleasesPassengersOneAtATime());
             RunTest(test => test.HelicopterRopeDisembark_DropsStraightDownFromVisualModelCenter());
@@ -82,7 +97,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=60");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=73");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -197,6 +212,8 @@ public sealed class UnitTransportValidationTests
     public void TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources()
     {
         const string ConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Plane_Transport_Config.asset";
+        const string ParachutePath = "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Parachute_01.prefab";
+        const string EmergencyDropPath = "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_01.prefab";
 
         UnitGridAuthoringConfig config = AssetDatabase.LoadAssetAtPath<UnitGridAuthoringConfig>(ConfigPath);
 
@@ -207,6 +224,8 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(55f, config.TransportCruiseHeight);
         Assert.IsNotNull(config.SoldierParachuteVisualPrefab);
         Assert.IsNotNull(config.VehicleEmergencyDropVisualPrefab);
+        AssertValidPrefabAssetReference(config.SoldierParachuteVisualPrefab, ParachutePath);
+        AssertValidPrefabAssetReference(config.VehicleEmergencyDropVisualPrefab, EmergencyDropPath);
         Assert.IsNotNull(config.PortraitSprite);
         Assert.IsNotNull(config.PortraitCardSprite);
         Assert.IsNotNull(config.PortraitActionSprite);
@@ -214,6 +233,27 @@ public sealed class UnitTransportValidationTests
         Assert.IsNotNull(config.VehicleSelectionMarkerPrefab);
         Assert.IsNotNull(config.UnitHealthBarPrefab);
         Assert.IsNotNull(config.VehicleHealthBarPrefab);
+    }
+
+    [Test]
+    public void TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets()
+    {
+        const string PrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
+        const string ParachutePath = "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Parachute_01.prefab";
+        const string EmergencyDropPath = "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_01.prefab";
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+
+        Assert.IsNotNull(prefab);
+        Assert.IsTrue(prefab.TryGetComponent(out UnitGridAuthoring authoring));
+        Assert.IsTrue(authoring.IsAirUnit);
+        Assert.IsTrue(authoring.ProductionTransportUsesRunwayLanding);
+        Assert.AreEqual(24, authoring.SoldierTransportCapacity);
+        Assert.AreEqual(2, authoring.VehicleTransportCapacity);
+        Assert.IsNotNull(authoring.SoldierParachuteVisualPrefab);
+        Assert.IsNotNull(authoring.VehicleEmergencyDropVisualPrefab);
+        AssertValidPrefabAssetReference(authoring.SoldierParachuteVisualPrefab, ParachutePath);
+        AssertValidPrefabAssetReference(authoring.VehicleEmergencyDropVisualPrefab, EmergencyDropPath);
     }
 
     [Test]
@@ -555,6 +595,68 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
+    public void TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 40, 40);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 6 });
+        em.SetComponentData(transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 6,
+            VehicleCapacity = 0,
+            CargoWeightCapacity = 0
+        });
+        Entity loadedPassenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = loadedPassenger });
+
+        Entity[] passengers =
+        {
+            CreateSelectablePassenger(em, new int2(17, 10)),
+            CreateSelectablePassenger(em, new int2(17, 11)),
+            CreateSelectablePassenger(em, new int2(17, 12)),
+            CreateSelectablePassenger(em, new int2(17, 13)),
+            CreateSelectablePassenger(em, new int2(17, 14))
+        };
+        int2[] staleGoals =
+        {
+            new(2, 2),
+            new(3, 2),
+            new(4, 2),
+            new(5, 2),
+            new(6, 2)
+        };
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            em.AddComponentData(passengers[i], new UnitTransportBoardingTarget
+            {
+                Transport = transport,
+                Goal = staleGoals[i],
+                PassengerKind = UnitTransportPassengerKind.Soldier
+            });
+        }
+
+        var commandSystem = new TransportBoardingCommandSystem();
+        TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+            em,
+            transport,
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem());
+
+        Assert.IsTrue(result.Accepted, "Retrying a selected board command must replace stale pending reservations instead of treating them as occupied seats.");
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passengers[i]));
+            UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passengers[i]);
+            Assert.AreEqual(transport, boarding.Transport);
+            Assert.AreNotEqual(staleGoals[i], boarding.Goal);
+        }
+    }
+
+    [Test]
     public void TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding()
     {
         using var world = new World("TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding");
@@ -762,6 +864,45 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
+    public void TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit()
+    {
+        using var world = new World("TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        em.RemoveComponent<UnitTransportPlaneDoorReference>(transport);
+        em.RemoveComponent<UnitTransportPlaneDoorState>(transport);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            HasTargetEntity = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsFalse(em.HasComponent<Disabled>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        Assert.IsFalse(em.HasComponent<UnitTransportParachuteDropComponent>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportPlaneDoorOpenRequest>(transport));
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(1, results[0].Accepted);
+    }
+
+    [Test]
     public void TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell()
     {
         using var world = new World("TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell");
@@ -851,6 +992,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity soldier = CreateLoadedPassenger(em, transport);
         Entity vehicle = CreateLoadedVehiclePassenger(em, transport);
         DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
@@ -902,6 +1044,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity passenger = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         Entity commandEntity = CreateCommandEntity(em);
@@ -923,6 +1066,160 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(1, results[0].Accepted);
         Assert.AreEqual("Airdrop in progress.", results[0].Message.ToString());
+    }
+
+    [Test]
+    public void TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger()
+    {
+        using var world = new World("TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: true);
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            HasTargetEntity = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        SystemHandle airdropSystem = world.CreateSystem<UnitTransportAirdropSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual("Airdrop in progress.", results[0].Message.ToString());
+
+        for (int i = 0; i < 8 && em.GetBuffer<UnitTransportPassengerElement>(transport).Length > 0; i++)
+        {
+            world.SetTime(new TimeData(1.1d + (i * 0.1d), 0.1f));
+            airMovementSystem.Update(world.Unmanaged);
+            airdropSystem.Update(world.Unmanaged);
+        }
+
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(passenger));
+        UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(passenger);
+        Assert.AreNotEqual(Entity.Null, drop.VisualEntity);
+        Assert.IsTrue(em.Exists(drop.VisualEntity));
+    }
+
+    [Test]
+    public void TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason()
+    {
+        using var world = new World("TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            HasTargetEntity = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(0, results[0].Accepted);
+        Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, results[0].ReasonCode);
+        Assert.AreEqual("Parachute visual missing.", results[0].Message.ToString());
+        Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+    }
+
+    [Test]
+    public void TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest()
+    {
+        using var world = new World("TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        Entity parachutePrefab = CreateAirdropVisualPrefab(em, "RegistryCommandParachuteVisual");
+        Entity cargoPrefab = CreateAirdropVisualPrefab(em, "RegistryCommandCargoVisual");
+        AddAirdropVisualPrefabRegistry(em, "Unit_Veh_Plane_Transport", parachutePrefab, cargoPrefab);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            HasTargetEntity = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual("Airdrop in progress.", results[0].Message.ToString());
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+    }
+
+    [Test]
+    public void TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason()
+    {
+        using var world = new World("TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        int2 dropCell = new(15, 15);
+        BlockAirdropLandingArea(new GridConfig { Width = 30, Height = 30, CellSize = 1f, Origin = float3.zero }, dropCell, 16);
+
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            TargetCell = dropCell,
+            HasTargetEntity = 1,
+            HasTargetCell = 1
+        });
+
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        transportCommandSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(0, results[0].Accepted);
+        Assert.AreEqual((int)TacticalCommandReasonCode.TargetBlocked, results[0].ReasonCode);
+        Assert.AreEqual("No clear airdrop landing zone.", results[0].Message.ToString());
+        Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
     }
 
     [Test]
@@ -976,6 +1273,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        AddAirdropVisualPrefabs(em, transport);
         Entity soldier = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
 
@@ -1018,6 +1316,7 @@ public sealed class UnitTransportValidationTests
         Entity transport = CreateTransportPlane(em, new int2(4, 15));
         PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: true);
         SetTransportPlaneAirborne(em, transport, new float3(4.5f, 55f, 15.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity soldier = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
         em.AddComponentData(transport, new UnitTransportAirdropRequest
@@ -1053,6 +1352,99 @@ public sealed class UnitTransportValidationTests
         UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
         Assert.AreEqual(1, airState.ReturningHome);
         Assert.AreEqual(0, airState.AttackRunActive);
+    }
+
+    [Test]
+    public void TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent()
+    {
+        using var world = new World("TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 40, 40);
+
+        Entity transport = CreateTransportPlane(em, new int2(4, 15));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: true);
+        em.RemoveComponent<UnitAttack>(transport);
+        SetTransportPlaneAirborne(em, transport, new float3(4.5f, 55f, 15.5f));
+        AddAirdropVisualPrefabs(em, transport);
+        Entity soldier = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
+        em.AddComponentData(transport, new UnitTransportAirdropRequest
+        {
+            DropReferenceCell = new int2(15, 15),
+            NextDropAt = 0f,
+            DropIntervalSeconds = 0.1f,
+            DropCount = 1,
+            SoldierDropCount = 1,
+            DropMode = UnitTransportAirdropMode.SoldierOnly,
+            PassReady = 0
+        });
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        SystemHandle airdropSystem = world.CreateSystem<UnitTransportAirdropSystem>();
+        for (int i = 0; i < 80 && em.GetBuffer<UnitTransportPassengerElement>(transport).Length > 0; i++)
+        {
+            world.SetTime(new TimeData(1d + (i * 0.25d), 0.25f));
+            airMovementSystem.Update(world.Unmanaged);
+            airdropSystem.Update(world.Unmanaged);
+        }
+
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(soldier));
+        UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(soldier);
+        Assert.AreNotEqual(Entity.Null, drop.VisualEntity);
+        Assert.IsTrue(em.Exists(drop.VisualEntity));
+    }
+
+    [Test]
+    public void TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers()
+    {
+        using var world = new World("TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 40, 40);
+
+        Entity transport = CreateTransportPlane(em, new int2(15, 15));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        float3 airbornePosition = new(15.5f, 55f, 15.5f);
+        em.SetComponentData(transport, LocalTransform.FromPosition(airbornePosition));
+        em.SetComponentData(transport, new LocalToWorld { Value = float4x4.Translate(airbornePosition) });
+        em.SetComponentData(transport, new UnitGrid { Cell = new int2(15, 15) });
+        UnitAirComponent staleAirState = em.GetComponentData<UnitAirComponent>(transport);
+        staleAirState.Airborne = 0;
+        staleAirState.TakeoffRolling = 0;
+        staleAirState.LandingRolling = 0;
+        staleAirState.AttackRunActive = 0;
+        em.SetComponentData(transport, staleAirState);
+        AddAirdropVisualPrefabs(em, transport);
+
+        Entity soldier = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
+        em.AddComponentData(transport, new UnitTransportAirdropRequest
+        {
+            DropReferenceCell = new int2(15, 15),
+            NextDropAt = 0f,
+            DropIntervalSeconds = 0.1f,
+            DropCount = 1,
+            SoldierDropCount = 1,
+            DropMode = UnitTransportAirdropMode.SoldierOnly,
+            PassReady = 0
+        });
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        SystemHandle airdropSystem = world.CreateSystem<UnitTransportAirdropSystem>();
+        for (int i = 0; i < 4 && em.GetBuffer<UnitTransportPassengerElement>(transport).Length > 0; i++)
+        {
+            world.SetTime(new TimeData(1d + (i * 0.1d), 0.1f));
+            airMovementSystem.Update(world.Unmanaged);
+            airdropSystem.Update(world.Unmanaged);
+        }
+
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        UnitAirComponent correctedAirState = em.GetComponentData<UnitAirComponent>(transport);
+        Assert.AreEqual(1, correctedAirState.Airborne);
+        Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(soldier));
+        UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(soldier);
+        Assert.AreNotEqual(Entity.Null, drop.VisualEntity);
+        Assert.IsTrue(em.Exists(drop.VisualEntity));
     }
 
     [Test]
@@ -1126,6 +1518,96 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
+    public void TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop()
+    {
+        using var world = new World("TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        Entity parachutePrefab = CreateAirdropVisualPrefab(em, "SourceParachuteVisual");
+        Entity cargoPrefab = CreateAirdropVisualPrefab(em, "SourceCargoVisual");
+        Entity sourcePrefab = em.CreateEntity(
+            typeof(Prefab),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitTransportAirdropVisualPrefabs));
+        em.SetComponentData(sourcePrefab, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
+        em.SetComponentData(sourcePrefab, new UnitTransportAirdropVisualPrefabs
+        {
+            SoldierParachuteVisualPrefab = parachutePrefab,
+            VehicleEmergencyDropVisualPrefab = cargoPrefab
+        });
+
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        em.AddComponentData(transport, new UnitTransportAirdropRequest
+        {
+            DropReferenceCell = new int2(15, 15),
+            NextDropAt = 0f,
+            DropIntervalSeconds = 0.1f,
+            DropCount = 1,
+            SoldierDropCount = 1,
+            DropMode = UnitTransportAirdropMode.SoldierOnly,
+            PassReady = 1
+        });
+
+        SystemHandle airdropSystem = world.CreateSystem<UnitTransportAirdropSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        airdropSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport));
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(passenger));
+        UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(passenger);
+        Assert.AreNotEqual(Entity.Null, drop.VisualEntity);
+        Assert.IsTrue(em.Exists(drop.VisualEntity));
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropVisualCleanup>(drop.VisualEntity));
+    }
+
+    [Test]
+    public void TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop()
+    {
+        using var world = new World("TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        Entity parachutePrefab = CreateAirdropVisualPrefab(em, "RegistryParachuteVisual");
+        Entity cargoPrefab = CreateAirdropVisualPrefab(em, "RegistryCargoVisual");
+        AddAirdropVisualPrefabRegistry(em, "Unit_Veh_Plane_Transport", parachutePrefab, cargoPrefab);
+
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        em.AddComponentData(transport, new UnitTransportAirdropRequest
+        {
+            DropReferenceCell = new int2(15, 15),
+            NextDropAt = 0f,
+            DropIntervalSeconds = 0.1f,
+            DropCount = 1,
+            SoldierDropCount = 1,
+            DropMode = UnitTransportAirdropMode.SoldierOnly,
+            PassReady = 1
+        });
+
+        SystemHandle airdropSystem = world.CreateSystem<UnitTransportAirdropSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        airdropSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport));
+        UnitTransportAirdropVisualPrefabs backfilled = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(transport);
+        Assert.AreEqual(parachutePrefab, backfilled.SoldierParachuteVisualPrefab);
+        Assert.AreEqual(cargoPrefab, backfilled.VehicleEmergencyDropVisualPrefab);
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(passenger));
+        UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(passenger);
+        Assert.AreNotEqual(Entity.Null, drop.VisualEntity);
+        Assert.IsTrue(em.Exists(drop.VisualEntity));
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropVisualCleanup>(drop.VisualEntity));
+    }
+
+    [Test]
     public void TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual()
     {
         using var world = new World("TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual");
@@ -1186,6 +1668,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity passenger = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         em.AddComponentData(transport, new UnitTransportAirdropRequest
@@ -1258,7 +1741,7 @@ public sealed class UnitTransportValidationTests
         airdropSystem.Update(world.Unmanaged);
 
         UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(passenger);
-        AssertVisualTracksPassenger(em, passenger, drop.VisualEntity, 2.2f);
+        AssertVisualTracksPassenger(em, passenger, drop.VisualEntity, 2.2f, 1.2f);
 
         world.SetTime(new TimeData(2.7d, 1.7f));
         airdropSystem.Update(world.Unmanaged);
@@ -1266,7 +1749,7 @@ public sealed class UnitTransportValidationTests
         LocalTransform passengerTransform = em.GetComponentData<LocalTransform>(passenger);
         Assert.Greater(passengerTransform.Position.y, 0.1f);
         Assert.Less(passengerTransform.Position.y, drop.StartPosition.y);
-        AssertVisualTracksPassenger(em, passenger, drop.VisualEntity, 2.2f);
+        AssertVisualTracksPassenger(em, passenger, drop.VisualEntity, 2.2f, 1.2f);
     }
 
     [Test]
@@ -1323,6 +1806,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity passenger = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         em.AddComponentData(transport, new UnitTransportAirdropRequest
@@ -1364,6 +1848,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         SetTransportPlaneAirborne(em, transport, new float3(12.5f, 55f, 12.5f));
+        AddAirdropVisualPrefabs(em, transport);
         Entity vehicle = CreateLoadedVehiclePassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = vehicle });
         em.AddComponentData(transport, new UnitTransportAirdropRequest
@@ -1441,6 +1926,7 @@ public sealed class UnitTransportValidationTests
 
         Entity transport = CreateTransportPlane(em, new int2(12, 12));
         PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        AddAirdropVisualPrefabs(em, transport);
         Entity passenger = CreateLoadedPassenger(em, transport);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         Entity target = CreateHostileTarget(em, new int2(20, 20));
@@ -1510,6 +1996,54 @@ public sealed class UnitTransportValidationTests
         Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
         Assert.IsTrue(em.HasComponent<EngageTarget>(passenger));
         Assert.AreEqual(target, em.GetComponentData<EngageTarget>(passenger).Target);
+    }
+
+    [Test]
+    public void InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs()
+    {
+        using var world = new World("InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs");
+        EntityManager em = world.EntityManager;
+        Entity parachutePrefab = CreateAirdropVisualPrefab(em, "InitialSpawnParachuteVisual");
+        Entity cargoPrefab = CreateAirdropVisualPrefab(em, "InitialSpawnCargoVisual");
+        Entity prefab = em.CreateEntity(
+            typeof(Prefab),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitTransportAirdropVisualPrefabs));
+        em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
+        em.SetComponentData(prefab, new UnitTransportAirdropVisualPrefabs
+        {
+            SoldierParachuteVisualPrefab = parachutePrefab,
+            VehicleEmergencyDropVisualPrefab = cargoPrefab
+        });
+
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            _ = new InitialUnitSpawnApplySystem().InstantiateAndConfigureSpawnedUnit(
+                em,
+                ecb,
+                prefab,
+                hasPrefab: true,
+                faction: FactionIdentity.PlayerFactionId,
+                cell: new int2(4, 5),
+                pos: new float3(4.5f, 0f, 5.5f));
+            ecb.Playback(em);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+
+        using EntityQuery spawnedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitTransportAirdropVisualPrefabs>(),
+            ComponentType.Exclude<Prefab>());
+        using NativeArray<Entity> spawnedEntities = spawnedQuery.ToEntityArray(Allocator.Temp);
+        Assert.AreEqual(1, spawnedEntities.Length);
+        Entity instance = spawnedEntities[0];
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropVisualPrefabs>(instance));
+        UnitTransportAirdropVisualPrefabs copied = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(instance);
+        Assert.AreEqual(parachutePrefab, copied.SoldierParachuteVisualPrefab);
+        Assert.AreEqual(cargoPrefab, copied.VehicleEmergencyDropVisualPrefab);
     }
 
     [Test]
@@ -1676,6 +2210,91 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(2, CountBoardingTargets(em, nearSoldier, farSoldier));
         Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(nearSoldier).Transport);
         Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(farSoldier).Transport);
+    }
+
+    [Test]
+    public void BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport()
+    {
+        using var world = new World("BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        GridConfig grid = em.GetComponentData<GridConfig>(GetGridEntity(em));
+        int2 rampCell = TransportBoardingCommandSystem.ResolvePlaneRampApproachCell(em, grid, transport);
+        int2 passengerCellA = rampCell;
+        int2 passengerCellB = rampCell + new int2(1, 0);
+        int2 passengerCellC = rampCell + new int2(-1, 0);
+        Entity passengerA = CreateBoardAllSoldier(em, passengerCellA);
+        Entity passengerB = CreateBoardAllSoldier(em, passengerCellB);
+        Entity passengerC = CreateBoardAllSoldier(em, passengerCellC);
+        int2[] allowedApproachCells = { passengerCellA, passengerCellB, passengerCellC };
+        for (int y = rampCell.y - 8; y <= rampCell.y + 8; y++)
+        {
+            for (int x = rampCell.x - 8; x <= rampCell.x + 8; x++)
+            {
+                int2 cell = new(x, y);
+                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
+                    continue;
+
+                bool allowed = false;
+                for (int i = 0; i < allowedApproachCells.Length; i++)
+                    allowed |= allowedApproachCells[i].Equals(cell);
+                if (!allowed)
+                    _blocked.Set(GridUtils.CellToIndex(cell, grid.Width), true);
+            }
+        }
+
+        for (int i = 0; i < allowedApproachCells.Length; i++)
+            _occupied.Set(GridUtils.CellToIndex(allowedApproachCells[i], grid.Width), true);
+
+        int2 staleGoal = new(1, 1);
+        em.AddComponentData(passengerA, new UnitTransportBoardingTarget { Transport = transport, Goal = staleGoal });
+        em.AddComponentData(passengerB, new UnitTransportBoardingTarget { Transport = transport, Goal = staleGoal + new int2(1, 0) });
+        em.AddComponentData(passengerC, new UnitTransportBoardingTarget { Transport = transport, Goal = staleGoal + new int2(2, 0) });
+
+        Entity commandEntity = em.CreateEntity();
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardAllSelectedTransport,
+            RequestId = 170,
+            Frame = 900
+        });
+
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(transport);
+        var transportCommandSystem = new TransportBoardingCommandSystem();
+
+        bool handled = transportCommandSystem.ProcessCommandIntentRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new UnitTransportCapacitySystem(),
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            selectionState,
+            TryGetNoClickedUnit,
+            TryGetNoClickedCell);
+
+        Assert.IsTrue(handled);
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardAllSelectedTransport, results[0].Kind);
+        Assert.AreEqual(170, results[0].RequestId);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual("Boarding 3 units.", results[0].Message.ToString());
+        Assert.AreEqual(3, CountBoardingTargets(em, passengerA, passengerB, passengerC));
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(passengerA).Transport);
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(passengerB).Transport);
+        Assert.AreEqual(transport, em.GetComponentData<UnitTransportBoardingTarget>(passengerC).Transport);
+        Assert.AreNotEqual(staleGoal, em.GetComponentData<UnitTransportBoardingTarget>(passengerA).Goal);
+        Assert.AreNotEqual(staleGoal + new int2(1, 0), em.GetComponentData<UnitTransportBoardingTarget>(passengerB).Goal);
+        Assert.AreNotEqual(staleGoal + new int2(2, 0), em.GetComponentData<UnitTransportBoardingTarget>(passengerC).Goal);
     }
 
     [Test]
@@ -2017,6 +2636,78 @@ public sealed class UnitTransportValidationTests
         Assert.IsTrue(em.HasComponent<Disabled>(passengerA));
         Assert.IsTrue(em.HasComponent<Disabled>(passengerB));
         Assert.IsTrue(em.HasComponent<Disabled>(passengerC));
+    }
+
+    [Test]
+    public void TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState()
+    {
+        using var world = new World("TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        int2 rampGoal = new(12, 2);
+        Entity passenger = CreatePassenger(em, new int2(13, 2), transport, rampGoal);
+        em.AddComponentData(passenger, new UnitTarget { Cell = rampGoal });
+        em.AddComponentData(passenger, new UnitPathRequest { Goal = rampGoal });
+        em.AddComponentData(passenger, new UnitPathFollow { PathIndex = 0 });
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(1, passengers.Length, "A cargo-plane soldier beside the rear-ramp goal should board even if stale movement components have not been cleaned up yet.");
+        Assert.AreEqual(passenger, passengers[0].Passenger);
+        Assert.IsTrue(em.HasComponent<UnitTransportPassenger>(passenger));
+        Assert.IsTrue(em.HasComponent<Disabled>(passenger));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(passenger));
+    }
+
+    [Test]
+    public void TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState()
+    {
+        using var world = new World("TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 40, 40);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        GridConfig grid = em.GetComponentData<GridConfig>(GetGridEntity(em));
+        int2 rampCell = TransportBoardingCommandSystem.ResolvePlaneRampApproachCell(em, grid, transport);
+        int2[] passengerCells =
+        {
+            rampCell,
+            rampCell + new int2(1, 0),
+            rampCell + new int2(-1, 0),
+            rampCell + new int2(0, 1),
+            rampCell + new int2(0, -1),
+            rampCell + new int2(2, 0),
+            rampCell + new int2(-2, 0),
+            rampCell + new int2(1, 1)
+        };
+        Entity[] passengers = new Entity[passengerCells.Length];
+        for (int i = 0; i < passengerCells.Length; i++)
+        {
+            int2 staleReservedGoal = new int2(2 + i, 2);
+            passengers[i] = CreatePassenger(em, passengerCells[i], transport, staleReservedGoal);
+            em.AddComponentData(passengers[i], new UnitTarget { Cell = staleReservedGoal });
+            em.AddComponentData(passengers[i], new UnitPathRequest { Goal = staleReservedGoal });
+            em.AddComponentData(passengers[i], new UnitPathFollow { PathIndex = 0 });
+        }
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<UnitTransportPassengerElement> loadedPassengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(passengers.Length, loadedPassengers.Length, "Every soldier clustered around the cargo plane rear ramp should board in the same update, even when stale movement components remain.");
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            Assert.IsTrue(TransportPassengerBufferContains(loadedPassengers, passengers[i]));
+            Assert.IsTrue(em.HasComponent<UnitTransportPassenger>(passengers[i]));
+            Assert.IsTrue(em.HasComponent<Disabled>(passengers[i]));
+            Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(passengers[i]));
+        }
     }
 
     [Test]
@@ -2459,7 +3150,12 @@ public sealed class UnitTransportValidationTests
         return false;
     }
 
-    private static void AssertVisualTracksPassenger(EntityManager em, Entity passenger, Entity visual, float expectedHeightOffset)
+    private static void AssertVisualTracksPassenger(
+        EntityManager em,
+        Entity passenger,
+        Entity visual,
+        float expectedHeightOffset,
+        float expectedScale = 1f)
     {
         Assert.AreNotEqual(Entity.Null, visual);
         Assert.IsTrue(em.Exists(visual));
@@ -2470,7 +3166,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(passengerTransform.Position.x, visualTransform.Position.x, 0.001f);
         Assert.AreEqual(passengerTransform.Position.z, visualTransform.Position.z, 0.001f);
         Assert.AreEqual(passengerTransform.Position.y + expectedHeightOffset, visualTransform.Position.y, 0.001f);
-        Assert.AreEqual(1f, visualTransform.Scale, 0.001f);
+        Assert.AreEqual(expectedScale, visualTransform.Scale, 0.001f);
     }
 
     private static bool TryGetNearbyHelipadCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
@@ -2530,6 +3226,21 @@ public sealed class UnitTransportValidationTests
             roads[i] = new GridRoad { Value = 0 };
             sidewalks[i] = new GridRoadSidewalk { Value = 0 };
             dirtRoads[i] = new GridRoadDirt { Value = 0 };
+        }
+    }
+
+    private void BlockAirdropLandingArea(in GridConfig grid, int2 centerCell, int radius)
+    {
+        for (int y = centerCell.y - radius; y <= centerCell.y + radius; y++)
+        {
+            for (int x = centerCell.x - radius; x <= centerCell.x + radius; x++)
+            {
+                int2 cell = new(x, y);
+                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
+                    continue;
+
+                _blocked.Set(GridUtils.CellToIndex(cell, grid.Width), true);
+            }
         }
     }
 
@@ -2808,6 +3519,47 @@ public sealed class UnitTransportValidationTests
         em.SetName(entity, name);
         em.SetComponentData(entity, LocalTransform.FromPosition(float3.zero));
         return entity;
+    }
+
+    private static void AssertValidPrefabAssetReference(GameObject prefab, string expectedPath)
+    {
+        Assert.IsNotNull(prefab);
+        Assert.DoesNotThrow(() => { _ = prefab.scene; });
+        Assert.AreEqual(expectedPath, AssetDatabase.GetAssetPath(prefab));
+        Assert.AreSame(AssetDatabase.LoadAssetAtPath<GameObject>(expectedPath), prefab);
+        Assert.AreNotEqual(PrefabAssetType.NotAPrefab, PrefabUtility.GetPrefabAssetType(prefab));
+    }
+
+    private static void AddAirdropVisualPrefabs(EntityManager em, Entity transport)
+    {
+        Entity parachutePrefab = CreateAirdropVisualPrefab(em, "ParachuteVisual");
+        Entity cargoPrefab = CreateAirdropVisualPrefab(em, "CargoVisual");
+        UnitTransportAirdropVisualPrefabs prefabs = new()
+        {
+            SoldierParachuteVisualPrefab = parachutePrefab,
+            VehicleEmergencyDropVisualPrefab = cargoPrefab
+        };
+        if (em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
+            em.SetComponentData(transport, prefabs);
+        else
+            em.AddComponentData(transport, prefabs);
+    }
+
+    private static void AddAirdropVisualPrefabRegistry(
+        EntityManager em,
+        string sourceKey,
+        Entity parachutePrefab,
+        Entity cargoPrefab)
+    {
+        Entity registryEntity = em.CreateEntity();
+        DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry =
+            em.AddBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(registryEntity);
+        registry.Add(new UnitTransportAirdropVisualPrefabRegistryEntry
+        {
+            SourceKey = new FixedString64Bytes(sourceKey),
+            SoldierParachuteVisualPrefab = parachutePrefab,
+            VehicleEmergencyDropVisualPrefab = cargoPrefab
+        });
     }
 
     private static Entity CreateBoardAllSoldier(EntityManager em, int2 cell)

@@ -91,6 +91,8 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
             DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = AddBuffer<InitialUnitsFactionSpawnEntry>(entity);
             DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns = AddBuffer<InitialUnitsFactionUnitSpawnEntry>(entity);
             DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns = AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(entity);
+            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> airdropVisualRegistry =
+                AddBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(entity);
             if (authoring.config != null && authoring.config.Factions != null)
             {
                 for (int i = 0; i < authoring.config.Factions.Count; i++)
@@ -117,6 +119,7 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
                                 continue;
                             firstUnitPrefab ??= unit.Prefab;
                             configuredUnitCount += math.max(0, unit.Count);
+                            AddAirdropVisualRegistryEntry(airdropVisualRegistry, unit.Prefab);
 
                             unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry
                             {
@@ -131,6 +134,7 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
                     int minimumUnits = authoring.config != null ? authoring.config.BaseMinimumUnitsPerFaction : 18;
                     if (authoring.CreateFactionBases && firstUnitPrefab != null && configuredUnitCount < minimumUnits)
                     {
+                        AddAirdropVisualRegistryEntry(airdropVisualRegistry, firstUnitPrefab);
                         unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry
                         {
                             FactionId = factionId,
@@ -167,6 +171,83 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
                 return fallback;
 
             return prefab.name.Trim().ToLowerInvariant();
+        }
+
+        private void AddAirdropVisualRegistryEntry(
+            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry,
+            GameObject unitPrefab)
+        {
+            if (unitPrefab == null ||
+                !unitPrefab.TryGetComponent(out UnitGridAuthoring unitAuthoring) ||
+                !unitAuthoring.IsAirUnit ||
+                !unitAuthoring.ProductionTransportUsesRunwayLanding ||
+                (unitAuthoring.SoldierTransportCapacity <= 0 && unitAuthoring.VehicleTransportCapacity <= 0))
+            {
+                return;
+            }
+
+            FixedString64Bytes sourceKey = new(unitPrefab.name);
+            for (int i = 0; i < registry.Length; i++)
+            {
+                if (registry[i].SourceKey.Equals(sourceKey))
+                    return;
+            }
+
+            GameObject soldierParachutePrefab = unitAuthoring.SoldierParachuteVisualPrefab;
+            GameObject vehicleEmergencyDropPrefab = unitAuthoring.VehicleEmergencyDropVisualPrefab;
+            if (unitAuthoring.SoldierTransportCapacity > 0 && soldierParachutePrefab == null)
+                ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.SoldierParachuteVisualPrefab));
+            if (unitAuthoring.VehicleTransportCapacity > 0 && vehicleEmergencyDropPrefab == null)
+                ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
+            RequireValidAirdropVisualPrefab(
+                soldierParachutePrefab,
+                unitPrefab,
+                nameof(unitAuthoring.SoldierParachuteVisualPrefab));
+            RequireValidAirdropVisualPrefab(
+                vehicleEmergencyDropPrefab,
+                unitPrefab,
+                nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
+
+            DependsOn(unitPrefab);
+            if (soldierParachutePrefab != null)
+                DependsOn(soldierParachutePrefab);
+            if (vehicleEmergencyDropPrefab != null)
+                DependsOn(vehicleEmergencyDropPrefab);
+
+            registry.Add(new UnitTransportAirdropVisualPrefabRegistryEntry
+            {
+                SourceKey = sourceKey,
+                SoldierParachuteVisualPrefab = soldierParachutePrefab != null
+                    ? GetEntity(soldierParachutePrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
+                    : Entity.Null,
+                VehicleEmergencyDropVisualPrefab = vehicleEmergencyDropPrefab != null
+                    ? GetEntity(vehicleEmergencyDropPrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
+                    : Entity.Null
+            });
+        }
+
+        private static void ThrowMissingAirdropVisual(GameObject unitPrefab, string fieldName)
+        {
+            throw new System.InvalidOperationException(
+                $"{nameof(InitialUnitsSpawnerAuthoring)} requires {fieldName} on transport unit '{unitPrefab.name}' for airdrop spawning.");
+        }
+
+        private static void RequireValidAirdropVisualPrefab(GameObject prefab, GameObject unitPrefab, string fieldName)
+        {
+            if (prefab == null)
+                return;
+
+            try
+            {
+                _ = prefab.scene;
+            }
+            catch (MissingReferenceException exception)
+            {
+                throw new System.InvalidOperationException(
+                    $"{nameof(InitialUnitsSpawnerAuthoring)} requires a valid prefab reference for {fieldName} on transport unit '{unitPrefab.name}'. " +
+                    "Reassign the prefab in the UnitGridAuthoring config asset and rebake the subscene.",
+                    exception);
+            }
         }
     }
 }

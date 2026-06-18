@@ -116,7 +116,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
     private EntityQuery _gridPathingQuery;
     private EntityQuery _allSelectableQuery;
     private EntityQuery _boardingCandidateQuery;
-    private EntityQuery _transportBoardingTargetQuery;
     private EntityQuery _pathingLiveUnitsQuery;
 
     public void OnCreate(ref SystemState state)
@@ -159,7 +158,6 @@ public partial struct TransportBoardingCommandSystem : ISystem
             ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<UnitMovementBehavior>());
-        _transportBoardingTargetQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
         _pathingLiveUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
         {
             All = new[]
@@ -1282,11 +1280,26 @@ public partial struct TransportBoardingCommandSystem : ISystem
         if (candidates.Count == 0)
             return false;
 
+        List<Entity> candidateEntities = new(candidates.Count);
+        for (int i = 0; i < candidates.Count; i++)
+            candidateEntities.Add(candidates[i].Entity);
+
         int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
         int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
         int2 boardingTransportSize = em.HasComponent<UnitAirMovement>(transport) ? new int2(1, 1) : transportSize;
         int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
         HashSet<int> reservedBoardingCells = new();
+        HashSet<Entity> ignoredBoardingEntities = new();
+        HashSet<int> ignoredBoardingOccupiedCells = new();
+        BuildSelectedBoardingPassengerIgnoreSets(
+            em,
+            grid,
+            transport,
+            candidateEntities,
+            availableSoldierSeats,
+            availableVehicleSlots,
+            ignoredBoardingEntities,
+            ignoredBoardingOccupiedCells);
         List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, math.max(1, availableSoldierSeats + availableVehicleSlots)));
         int plannedSoldierSeats = 0;
         int plannedVehicleSlots = 0;
@@ -1334,8 +1347,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
                     reservedBoardingCells,
                     directBoardingCells,
                     passengerFaction,
-                    null,
-                    null,
+                    ignoredBoardingEntities,
+                    ignoredBoardingOccupiedCells,
                     out int2 goal))
             {
                 continue;
@@ -1416,8 +1429,13 @@ public partial struct TransportBoardingCommandSystem : ISystem
             {
                 Entity candidate = entities[i];
                 if (candidate == transport ||
-                    em.HasComponent<UnitTransportBoardingTarget>(candidate) ||
                     !IsBoardingCandidateForTransport(em, transport, candidate))
+                {
+                    continue;
+                }
+
+                if (em.HasComponent<UnitTransportBoardingTarget>(candidate) &&
+                    em.GetComponentData<UnitTransportBoardingTarget>(candidate).Transport != transport)
                 {
                     continue;
                 }
@@ -2208,7 +2226,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
             return false;
         }
 
-        int2 rampCell = ResolvePlaneRampApproachCell(em, grid, transport);
+        if (!TryResolvePlaneRampApproachCell(em, grid, transport, out int2 rampCell))
+            return false;
         int2 clampedFootprint = UnitFootprintUtility.ClampSize(passengerFootprint);
         int maxRadius = math.max(8, math.max(clampedFootprint.x, clampedFootprint.y) + 4);
         int bestScore = int.MaxValue;
@@ -2285,11 +2304,37 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
     internal static int2 ResolvePlaneRampApproachCell(EntityManager em, in GridConfig grid, Entity transport)
     {
+        if (TryResolvePlaneRampApproachCell(em, grid, transport, out int2 rampCell))
+            return rampCell;
+
+        if (em.Exists(transport) && em.HasComponent<LocalTransform>(transport))
+            return GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
+
+        return em.Exists(transport) && em.HasComponent<UnitGrid>(transport)
+            ? em.GetComponentData<UnitGrid>(transport).Cell
+            : default;
+    }
+
+    internal static bool TryResolvePlaneRampApproachCell(
+        EntityManager em,
+        in GridConfig grid,
+        Entity transport,
+        out int2 rampCell)
+    {
+        rampCell = default;
+        if (!em.Exists(transport) ||
+            !em.HasComponent<LocalTransform>(transport) ||
+            !em.HasComponent<UnitTransportPlaneDoorReference>(transport))
+        {
+            return false;
+        }
+
         LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
         UnitTransportPlaneDoorReference reference = em.GetComponentData<UnitTransportPlaneDoorReference>(transport);
         float3 localApproach = reference.ApproachLocalPosition * transform.Scale;
         float3 worldApproach = transform.Position + math.mul(transform.Rotation, localApproach);
-        return GridUtils.WorldToCell(grid, worldApproach);
+        rampCell = GridUtils.WorldToCell(grid, worldApproach);
+        return true;
     }
 
     public static bool TryFindTransportApproachCell(
@@ -2921,6 +2966,8 @@ public partial struct TransportBoardingCommandSystem : ISystem
         DynamicBuffer<UnitTransportPassengerElement> passengers,
         in GridConfig grid,
         in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
         int2 fallbackReferenceCell,
         int2 requestedDropCell,
         byte hasRequestedDropCell,
@@ -2940,6 +2987,22 @@ public partial struct TransportBoardingCommandSystem : ISystem
         CountAirdropPassengers(em, transport, passengers, dropCount, out int soldierDropCount, out int vehicleDropCount);
         if (soldierDropCount <= 0 && vehicleDropCount <= 0)
             return DisembarkResult.Rejected(TacticalCommandReasonCode.TransportPassengerMissing);
+
+        if (!TryValidatePlaneAirdropPassengers(
+                em,
+                transport,
+                passengers,
+                dropCount,
+                grid,
+                walkable,
+                blocked,
+                occupied,
+                dropReferenceCell,
+                out TacticalCommandReasonCode airdropReason,
+                out string airdropMessage))
+        {
+            return DisembarkResult.Rejected(airdropReason, message: airdropMessage);
+        }
 
         SetPlaneAirdropRequest(em, transport, dropReferenceCell, soldierDropCount, vehicleDropCount);
         RequestPlaneDoorOpen(em, transport);
@@ -3071,6 +3134,101 @@ public partial struct TransportBoardingCommandSystem : ISystem
         LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
         float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
         return transform.Position.y > groundY + TransportBoardingData.AirBoardingGroundedHeightTolerance;
+    }
+
+    private static bool TryValidatePlaneAirdropPassengers(
+        EntityManager em,
+        Entity transport,
+        DynamicBuffer<UnitTransportPassengerElement> passengers,
+        int dropCount,
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
+        int2 dropReferenceCell,
+        out TacticalCommandReasonCode reasonCode,
+        out string message)
+    {
+        reasonCode = TacticalCommandReasonCode.None;
+        message = null;
+        int validatedCount = 0;
+        int count = math.min(dropCount, passengers.Length);
+        for (int i = 0; i < passengers.Length && validatedCount < count; i++)
+        {
+            Entity passenger = passengers[i].Passenger;
+            if (!em.Exists(passenger))
+                continue;
+
+            if (!TryValidatePlaneAirdropPassenger(
+                    em,
+                    transport,
+                    passenger,
+                    validatedCount,
+                    grid,
+                    walkable,
+                    blocked,
+                    occupied,
+                    dropReferenceCell,
+                    out reasonCode,
+                    out message))
+            {
+                return false;
+            }
+
+            validatedCount++;
+        }
+
+        if (validatedCount > 0)
+            return true;
+
+        reasonCode = TacticalCommandReasonCode.TransportPassengerMissing;
+        return false;
+    }
+
+    private static bool TryValidatePlaneAirdropPassenger(
+        EntityManager em,
+        Entity transport,
+        Entity passenger,
+        int dropOrdinal,
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
+        int2 dropReferenceCell,
+        out TacticalCommandReasonCode reasonCode,
+        out string message)
+    {
+        reasonCode = TacticalCommandReasonCode.None;
+        message = null;
+        byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+        if (!UnitTransportAirdropSystem.HasResolvableDropVisualPrefab(em, transport, passengerKind))
+        {
+            reasonCode = TacticalCommandReasonCode.CommandUnavailable;
+            message = passengerKind == UnitTransportPassengerKind.Vehicle
+                ? "Emergency drop visual missing."
+                : "Parachute visual missing.";
+            return false;
+        }
+
+        int2 passengerFootprint = em.HasComponent<UnitFootprint>(passenger)
+            ? em.GetComponentData<UnitFootprint>(passenger).Size
+            : new int2(1, 1);
+        if (UnitTransportAirdropSystem.TryFindLandingCell(
+                grid,
+                walkable,
+                blocked,
+                occupied,
+                dropReferenceCell,
+                passengerFootprint,
+                dropOrdinal + passenger.Index,
+                out _))
+        {
+            return true;
+        }
+
+        reasonCode = TacticalCommandReasonCode.TargetBlocked;
+        message = "No clear airdrop landing zone.";
+        return false;
     }
 
     private static bool TryValidateAirdropReferenceCell(
@@ -3234,14 +3392,23 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 passengers,
                 grid,
                 walkable,
+                blocked,
+                occupied,
                 referenceCell,
                 requestedDropCell,
                 hasRequestedDropCell,
                 passengers.Length);
         }
 
-        if (cargoPlaneTransport)
-            referenceCell = ResolvePlaneRampApproachCell(em, grid, transport);
+        int2 rampReferenceCell = default;
+        bool usePlaneRampDisembark = cargoPlaneTransport &&
+                                     TryResolvePlaneRampApproachCell(
+                                         em,
+                                         grid,
+                                         transport,
+                                         out rampReferenceCell);
+        if (usePlaneRampDisembark)
+            referenceCell = rampReferenceCell;
 
         List<Entity> passengerSnapshot = new(passengers.Length);
         for (int i = 0; i < passengers.Length; i++)
@@ -3265,7 +3432,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 ? em.GetComponentData<UnitFootprint>(passenger).Size
                 : new int2(1, 1);
             int2 cell;
-            bool foundDisembarkCell = cargoPlaneTransport
+            bool foundDisembarkCell = usePlaneRampDisembark
                 ? TryFindPlaneRampDisembarkCell(
                     grid,
                     walkable,
@@ -3297,7 +3464,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 passengerFootprint,
                 reservedDisembarkCells);
             int2 rolloutCell = cell;
-            if (cargoPlaneTransport &&
+            if (usePlaneRampDisembark &&
                 TryFindPlaneRampRolloutCell(
                     grid,
                     walkable,
@@ -3318,7 +3485,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             rolloutCells.Add(rolloutCell);
         }
 
-        if (cargoPlaneTransport && disembarkingPassengers.Count > 0)
+        if (usePlaneRampDisembark && disembarkingPassengers.Count > 0)
             RequestPlaneDoorOpen(em, transport);
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -3352,7 +3519,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             if (em.Exists(passenger))
             {
                 UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
-                if (cargoPlaneTransport &&
+                if (usePlaneRampDisembark &&
                     i < rolloutCells.Count &&
                     !rolloutCells[i].Equals(disembarkCells[i]))
                 {
@@ -3461,6 +3628,22 @@ public partial struct TransportBoardingCommandSystem : ISystem
             }
 
             byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+            if (!TryValidatePlaneAirdropPassenger(
+                    em,
+                    transport,
+                    passenger,
+                    0,
+                    pathingGrid,
+                    walkable,
+                    blocked,
+                    occupied,
+                    dropReferenceCell,
+                    out TacticalCommandReasonCode airdropReason,
+                    out string airdropMessage))
+            {
+                return DisembarkResult.Rejected(airdropReason, message: airdropMessage);
+            }
+
             int soldierDropCount = passengerKind == UnitTransportPassengerKind.Vehicle ? 0 : 1;
             int vehicleDropCount = passengerKind == UnitTransportPassengerKind.Vehicle ? 1 : 0;
             SetPlaneAirdropRequest(em, transport, dropReferenceCell, soldierDropCount, vehicleDropCount);
@@ -3468,14 +3651,21 @@ public partial struct TransportBoardingCommandSystem : ISystem
             return DisembarkResult.Success("Airdrop in progress.");
         }
 
-        if (cargoPlaneTransport)
-            groundReferenceCell = ResolvePlaneRampApproachCell(em, pathingGrid, transport);
+        int2 rampReferenceCell = default;
+        bool usePlaneRampDisembark = cargoPlaneTransport &&
+                                     TryResolvePlaneRampApproachCell(
+                                         em,
+                                         pathingGrid,
+                                         transport,
+                                         out rampReferenceCell);
+        if (usePlaneRampDisembark)
+            groundReferenceCell = rampReferenceCell;
 
         int2 passengerFootprint = em.HasComponent<UnitFootprint>(passenger)
             ? em.GetComponentData<UnitFootprint>(passenger).Size
             : new int2(1, 1);
         int2 cell;
-        bool foundDisembarkCell = cargoPlaneTransport
+        bool foundDisembarkCell = usePlaneRampDisembark
             ? TryFindPlaneRampDisembarkCell(
                 pathingGrid,
                 walkable,
@@ -3501,7 +3691,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         }
 
         int2 rolloutCell = cell;
-        if (cargoPlaneTransport)
+        if (usePlaneRampDisembark)
         {
             ReserveFootprintCells(pathingGrid, cell, passengerFootprint, reservedDisembarkCells);
             if (TryFindPlaneRampRolloutCell(
@@ -3520,7 +3710,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         }
 
         passengers.RemoveAt(passengerIndex);
-        if (cargoPlaneTransport)
+        if (usePlaneRampDisembark)
             RequestPlaneDoorOpen(em, transport);
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -3541,7 +3731,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         ecb.Playback(em);
         ecb.Dispose();
         UnitTransportVisualUtility.SetPassengerVisible(em, passenger, true);
-        if (cargoPlaneTransport && !rolloutCell.Equals(cell))
+        if (usePlaneRampDisembark && !rolloutCell.Equals(cell))
             UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, passenger, rolloutCell);
         return DisembarkResult.Success();
     }
@@ -3567,47 +3757,12 @@ public partial struct TransportBoardingCommandSystem : ISystem
         out int vehicleCapacity,
         out int availableVehicleSlots)
     {
-        occupiedSoldierSeats =
-            CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Soldier) +
-            CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Soldier);
-        occupiedVehicleSlots =
-            CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Vehicle) +
-            CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Vehicle);
+        occupiedSoldierSeats = CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Soldier);
+        occupiedVehicleSlots = CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Vehicle);
         soldierCapacity = ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Soldier);
         vehicleCapacity = ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Vehicle);
         availableSoldierSeats = soldierCapacity - occupiedSoldierSeats;
         availableVehicleSlots = vehicleCapacity - occupiedVehicleSlots;
-    }
-
-    private int CountPendingBoardingOrders(EntityManager em, Entity transport)
-    {
-        return CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Soldier) +
-               CountPendingBoardingOrders(em, transport, UnitTransportPassengerKind.Vehicle);
-    }
-
-    private int CountPendingBoardingOrders(EntityManager em, Entity transport, byte passengerKind)
-    {
-        EnsureEntityQueries(em);
-        EntityTypeHandle entityType = em.GetEntityTypeHandle();
-        using NativeArray<ArchetypeChunk> chunks = _transportBoardingTargetQuery.ToArchetypeChunkArray(Allocator.Temp);
-        int count = 0;
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-        {
-            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (em.Exists(entity) &&
-                    em.HasComponent<UnitTransportBoardingTarget>(entity) &&
-                    em.GetComponentData<UnitTransportBoardingTarget>(entity).Transport == transport &&
-                    ResolvePassengerKind(em.GetComponentData<UnitTransportBoardingTarget>(entity).PassengerKind) == passengerKind)
-                {
-                    count++;
-                }
-            }
-        }
-
-        return count;
     }
 
     private static bool IsKnownPersonnelTransport(EntityManager em, Entity entity)

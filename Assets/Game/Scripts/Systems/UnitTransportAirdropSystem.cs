@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -15,6 +16,8 @@ public partial struct UnitTransportAirdropSystem : ISystem
     private const float MinimumDropHeight = 12f;
     private const float ParachuteVisualHeight = 2.2f;
     private const float CargoVisualHeight = 1.6f;
+    private const float ParachuteVisualScale = 1.2f;
+    private const float CargoVisualScale = 1f;
     private const float VisualCleanupDelaySeconds = 1.25f;
     private const float DoorCloseDelayAfterFinalDropSeconds = 0.75f;
     private const int SoldierSettleSearchRadius = 3;
@@ -154,6 +157,9 @@ public partial struct UnitTransportAirdropSystem : ISystem
 
         Entity passenger = passengers[passengerIndex].Passenger;
         byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+        if (!TryResolveDropVisualPrefab(em, ecb, transport, passengerKind, out Entity visualPrefab))
+            throw new InvalidOperationException(CreateMissingAirdropVisualPrefabMessage(em, transport, passengerKind));
+
         int2 passengerFootprint = em.HasComponent<UnitFootprint>(passenger)
             ? em.GetComponentData<UnitFootprint>(passenger).Size
             : new int2(1, 1);
@@ -167,8 +173,7 @@ public partial struct UnitTransportAirdropSystem : ISystem
                 request.DroppedCount + passenger.Index,
                 out int2 landingCell))
         {
-            request.NextDropAt = now + 0.25f;
-            return;
+            throw new InvalidOperationException(CreateNoAirdropLandingCellMessage(em, transport, request.DropReferenceCell, passenger, passengerFootprint));
         }
 
         passengers.RemoveAt(passengerIndex);
@@ -179,7 +184,7 @@ public partial struct UnitTransportAirdropSystem : ISystem
             startPosition.y = endPosition.y + MinimumDropHeight;
 
         RestorePassengerForDrop(em, ecb, passenger, landingCell, startPosition);
-        Entity visualEntity = SpawnDropVisual(em, ecb, transport, passengerKind, startPosition);
+        Entity visualEntity = SpawnDropVisual(em, ecb, visualPrefab, passengerKind, startPosition);
         if (passengerKind == UnitTransportPassengerKind.Vehicle)
         {
             SetOrAdd(em, ecb, passenger, new UnitTransportCargoDropComponent
@@ -433,7 +438,7 @@ public partial struct UnitTransportAirdropSystem : ISystem
             : UnitTransportPassengerKind.Soldier;
     }
 
-    private static bool TryFindLandingCell(
+    internal static bool TryFindLandingCell(
         in GridConfig grid,
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
@@ -701,37 +706,242 @@ public partial struct UnitTransportAirdropSystem : ISystem
         return transportTransform.Position + math.rotate(transportTransform.Rotation, localAnchor);
     }
 
-    private static Entity SpawnDropVisual(
+    private static bool TryResolveDropVisualPrefab(
         EntityManager em,
         EntityCommandBuffer ecb,
         Entity transport,
         byte passengerKind,
-        float3 startPosition)
+        out Entity visualPrefab)
     {
-        if (!em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
-            return Entity.Null;
+        visualPrefab = Entity.Null;
+        if (!TryResolveAirdropVisualPrefabs(em, ecb, transport, passengerKind, out UnitTransportAirdropVisualPrefabs prefabs))
+            return false;
 
-        UnitTransportAirdropVisualPrefabs prefabs = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(transport);
+        visualPrefab = passengerKind == UnitTransportPassengerKind.Vehicle
+            ? prefabs.VehicleEmergencyDropVisualPrefab
+            : prefabs.SoldierParachuteVisualPrefab;
+        return visualPrefab != Entity.Null && em.Exists(visualPrefab);
+    }
+
+    internal static bool HasResolvableDropVisualPrefab(
+        EntityManager em,
+        Entity transport,
+        byte passengerKind)
+    {
+        if (!em.Exists(transport))
+            return false;
+
+        if (em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
+        {
+            UnitTransportAirdropVisualPrefabs prefabs = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(transport);
+            if (HasVisualPrefabForKind(em, prefabs, passengerKind))
+                return true;
+        }
+
+        return TryFindSourceAirdropVisualPrefabs(em, transport, passengerKind, out _);
+    }
+
+    internal static string CreateMissingAirdropVisualPrefabMessage(
+        EntityManager em,
+        Entity transport,
+        byte passengerKind)
+    {
+        string transportName = transport == Entity.Null || !em.Exists(transport)
+            ? "missing-transport"
+            : ResolveEntityDebugName(em, transport);
+        string visualKind = passengerKind == UnitTransportPassengerKind.Vehicle
+            ? nameof(UnitTransportAirdropVisualPrefabs.VehicleEmergencyDropVisualPrefab)
+            : nameof(UnitTransportAirdropVisualPrefabs.SoldierParachuteVisualPrefab);
+        return $"Transport plane airdrop requires baked ECS visual prefab '{visualKind}' for {transportName}. " +
+               "Assign the parachute/emergency-drop source prefab in UnitGridAuthoringPrefabConfigAsset and rebake the unit prefab/subscene.";
+    }
+
+    internal static string CreateNoAirdropLandingCellMessage(
+        EntityManager em,
+        Entity transport,
+        int2 dropReferenceCell,
+        Entity passenger,
+        int2 passengerFootprint)
+    {
+        string transportName = transport == Entity.Null || !em.Exists(transport)
+            ? "missing-transport"
+            : ResolveEntityDebugName(em, transport);
+        string passengerName = passenger == Entity.Null || !em.Exists(passenger)
+            ? "missing-passenger"
+            : ResolveEntityDebugName(em, passenger);
+        return $"No clear airdrop landing zone for {transportName} passenger={passengerName} dropCell={dropReferenceCell} footprint={passengerFootprint}.";
+    }
+
+    private static string ResolveEntityDebugName(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<UnitSourcePrefabKey>(entity))
+        {
+            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.IsNullOrWhiteSpace(sourceKey))
+                return $"{sourceKey} {entity}";
+        }
+
+        string entityName = em.GetName(entity);
+        return string.IsNullOrWhiteSpace(entityName) ? entity.ToString() : $"{entityName} {entity}";
+    }
+
+    private static bool TryResolveAirdropVisualPrefabs(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity transport,
+        byte passengerKind,
+        out UnitTransportAirdropVisualPrefabs prefabs)
+    {
+        prefabs = default;
+        if (!em.Exists(transport))
+            return false;
+
+        if (em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
+        {
+            prefabs = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(transport);
+            if (HasVisualPrefabForKind(em, prefabs, passengerKind))
+                return true;
+        }
+
+        if (!TryFindSourceAirdropVisualPrefabs(em, transport, passengerKind, out prefabs))
+            return false;
+
+        if (em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
+            ecb.SetComponent(transport, prefabs);
+        else
+            ecb.AddComponent(transport, prefabs);
+
+        return true;
+    }
+
+    private static bool TryFindSourceAirdropVisualPrefabs(
+        EntityManager em,
+        Entity transport,
+        byte passengerKind,
+        out UnitTransportAirdropVisualPrefabs prefabs)
+    {
+        prefabs = default;
+        if (!em.Exists(transport) || !em.HasComponent<UnitSourcePrefabKey>(transport))
+            return false;
+
+        UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(transport);
+        if (TryFindRegistryAirdropVisualPrefabs(em, sourceKey.Value, passengerKind, out prefabs))
+            return true;
+
+        using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+                ComponentType.ReadOnly<UnitTransportAirdropVisualPrefabs>()
+            },
+            Options = EntityQueryOptions.IncludePrefab
+        });
+        using NativeArray<Entity> candidates = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            Entity candidate = candidates[i];
+            if (candidate == transport)
+                continue;
+
+            UnitSourcePrefabKey candidateKey = em.GetComponentData<UnitSourcePrefabKey>(candidate);
+            if (!candidateKey.Value.Equals(sourceKey.Value))
+                continue;
+
+            UnitTransportAirdropVisualPrefabs candidatePrefabs =
+                em.GetComponentData<UnitTransportAirdropVisualPrefabs>(candidate);
+            if (!HasVisualPrefabForKind(em, candidatePrefabs, passengerKind))
+                continue;
+
+            prefabs = candidatePrefabs;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryFindRegistryAirdropVisualPrefabs(
+        EntityManager em,
+        FixedString64Bytes sourceKey,
+        byte passengerKind,
+        out UnitTransportAirdropVisualPrefabs prefabs)
+    {
+        prefabs = default;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportAirdropVisualPrefabRegistryEntry>());
+        using NativeArray<Entity> registryEntities = query.ToEntityArray(Allocator.Temp);
+        for (int registryIndex = 0; registryIndex < registryEntities.Length; registryIndex++)
+        {
+            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry =
+                em.GetBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(registryEntities[registryIndex]);
+            for (int i = 0; i < registry.Length; i++)
+            {
+                UnitTransportAirdropVisualPrefabRegistryEntry entry = registry[i];
+                if (!entry.SourceKey.Equals(sourceKey))
+                    continue;
+
+                UnitTransportAirdropVisualPrefabs candidate = new()
+                {
+                    SoldierParachuteVisualPrefab = entry.SoldierParachuteVisualPrefab,
+                    VehicleEmergencyDropVisualPrefab = entry.VehicleEmergencyDropVisualPrefab
+                };
+                if (!HasVisualPrefabForKind(em, candidate, passengerKind))
+                    continue;
+
+                prefabs = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasVisualPrefabForKind(
+        EntityManager em,
+        in UnitTransportAirdropVisualPrefabs prefabs,
+        byte passengerKind)
+    {
         Entity prefab = passengerKind == UnitTransportPassengerKind.Vehicle
             ? prefabs.VehicleEmergencyDropVisualPrefab
             : prefabs.SoldierParachuteVisualPrefab;
-        if (prefab == Entity.Null || !em.Exists(prefab))
-            return Entity.Null;
+        return prefab != Entity.Null && em.Exists(prefab);
+    }
 
-        Entity visual = ecb.Instantiate(prefab);
-        float visualHeight = passengerKind == UnitTransportPassengerKind.Vehicle
-            ? CargoVisualHeight
-            : ParachuteVisualHeight;
-        LocalTransform visualTransform = LocalTransform.FromPositionRotationScale(
-            startPosition + new float3(0f, visualHeight, 0f),
-            quaternion.identity,
-            1f);
-        if (em.HasComponent<LocalTransform>(prefab))
+    private static Entity SpawnDropVisual(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity visualPrefab,
+        byte passengerKind,
+        float3 startPosition)
+    {
+        Entity visual = ecb.Instantiate(visualPrefab);
+        LocalTransform visualTransform = ResolveDropVisualTransform(em, visualPrefab, passengerKind, startPosition);
+        if (em.HasComponent<LocalTransform>(visualPrefab))
             ecb.SetComponent(visual, visualTransform);
         else
             ecb.AddComponent(visual, visualTransform);
         ecb.AddComponent(visual, new UnitTransportAirdropVisualCleanup { DestroyAt = 0f });
         return visual;
+    }
+
+    private static LocalTransform ResolveDropVisualTransform(
+        EntityManager em,
+        Entity prefab,
+        byte passengerKind,
+        float3 startPosition)
+    {
+        LocalTransform prefabTransform = em.HasComponent<LocalTransform>(prefab)
+            ? em.GetComponentData<LocalTransform>(prefab)
+            : LocalTransform.Identity;
+        float visualHeight = passengerKind == UnitTransportPassengerKind.Vehicle
+            ? CargoVisualHeight
+            : ParachuteVisualHeight;
+        float visualScale = passengerKind == UnitTransportPassengerKind.Vehicle
+            ? CargoVisualScale
+            : ParachuteVisualScale;
+
+        prefabTransform.Position = startPosition + new float3(0f, visualHeight, 0f);
+        prefabTransform.Scale = math.max(0.01f, prefabTransform.Scale) * visualScale;
+        return prefabTransform;
     }
 
     private static void RestorePassengerForDrop(

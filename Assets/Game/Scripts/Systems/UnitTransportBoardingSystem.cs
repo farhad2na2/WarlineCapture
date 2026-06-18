@@ -13,6 +13,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
     private EntityQuery _boardingTargetQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityQuery _diagnosticsStateQuery;
+    private EntityQuery _gridQuery;
     private EntityStorageInfoLookup _entityStorageInfoLookup;
     private ComponentLookup<UnitTransportCapacity> _transportCapacityLookup;
     private ComponentLookup<UnitTransportCargoCapacity> _transportCargoCapacityLookup;
@@ -45,6 +46,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
         var diagnostics = new UnitTransportBoardingDiagnostics();
         _diagnosticLogQueueQuery = diagnostics.CreateDiagnosticLogQueueQuery(ref state);
         _diagnosticsStateQuery = diagnostics.CreateDiagnosticsStateQuery(ref state);
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
         _transportCapacityLookup = state.GetComponentLookup<UnitTransportCapacity>(true);
         _transportCargoCapacityLookup = state.GetComponentLookup<UnitTransportCargoCapacity>(true);
@@ -85,6 +87,14 @@ public partial struct UnitTransportBoardingSystem : ISystem
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         EntityManager em = state.EntityManager;
+        byte hasGrid = 0;
+        GridConfig grid = default;
+        if (!_gridQuery.IsEmptyIgnoreFilter)
+        {
+            grid = em.GetComponentData<GridConfig>(_gridQuery.GetSingletonEntity());
+            hasGrid = 1;
+        }
+
         var diagnostics = new UnitTransportBoardingDiagnostics();
         bool shouldLogTransportBoarding = diagnostics.ShouldQueueTransportBoardingDiagnostics(
             em,
@@ -114,7 +124,9 @@ public partial struct UnitTransportBoardingSystem : ISystem
             RopeDisembarkLookup = _ropeDisembarkLookup,
             UnitTargetLookup = _unitTargetLookup,
             PathRequestLookup = _pathRequestLookup,
-            PathFollowLookup = _pathFollowLookup
+            PathFollowLookup = _pathFollowLookup,
+            Grid = grid,
+            HasGrid = hasGrid
         }.Schedule(state.Dependency);
         collectHandle.Complete();
         state.Dependency = collectHandle;
@@ -253,6 +265,8 @@ public partial struct UnitTransportBoardingSystem : ISystem
         [ReadOnly] public ComponentLookup<UnitTarget> UnitTargetLookup;
         [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
         [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
+        public GridConfig Grid;
+        public byte HasGrid;
 
         private void Execute(
             Entity entity,
@@ -425,9 +439,11 @@ public partial struct UnitTransportBoardingSystem : ISystem
         {
             int2 transportCell = UnitGridLookup[transport].Cell;
             int2 transportSize = UnitFootprintLookup[transport].Size;
-            float3 transportPosition = LocalTransformLookup[transport].Position;
+            LocalTransform transportTransform = LocalTransformLookup[transport];
+            float3 transportPosition = transportTransform.Position;
             passengerPosition.y = transportPosition.y;
             bool airTransport = AirMovementLookup.HasComponent(transport);
+            bool planeRampTransport = airTransport && PlaneDoorReferenceLookup.HasComponent(transport);
             int boardingClearance = airTransport
                 ? TransportBoardingData.AirBoardingClearanceCells
                 : TransportBoardingData.BoardingClearanceCells;
@@ -438,14 +454,33 @@ public partial struct UnitTransportBoardingSystem : ISystem
             int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
             bool reachedBoardingGoal = passengerCell.Equals(boardingGoal);
             int distanceToBoardingGoal = math.max(math.abs(passengerCell.x - boardingGoal.x), math.abs(passengerCell.y - boardingGoal.y));
-            bool settledNearBoardingGoal = movementFinished && distanceToBoardingGoal <= (airTransport ? 0 : boardingClearance);
+            int boardingGoalTolerance = planeRampTransport
+                ? TransportBoardingData.AirBoardingClearanceCells
+                : airTransport ? 0 : boardingClearance;
+            bool settledNearBoardingGoal = movementFinished && distanceToBoardingGoal <= boardingGoalTolerance;
             bool nearTransportFootprint = UnitFootprintUtility.ContainsCellWithPadding(transportCell, boardingTransportSize, passengerCell, boardingClearance);
             bool boardingGoalNearTransport = UnitFootprintUtility.ContainsCellWithPadding(transportCell, boardingTransportSize, boardingGoal, boardingClearance);
+            int maxRampGoalDistanceFromTransport = math.max(16, math.cmax(UnitFootprintUtility.ClampSize(transportSize)) + 12);
+            bool boardingGoalNearPlaneRampArea =
+                planeRampTransport &&
+                math.max(math.abs(boardingGoal.x - transportCell.x), math.abs(boardingGoal.y - transportCell.y)) <= maxRampGoalDistanceFromTransport;
+            bool reachedResolvedPlaneRamp = false;
+            if (planeRampTransport && HasGrid != 0)
+            {
+                UnitTransportPlaneDoorReference doorReference = PlaneDoorReferenceLookup[transport];
+                float3 localApproach = doorReference.ApproachLocalPosition * transportTransform.Scale;
+                float3 worldApproach = transportTransform.Position + math.mul(transportTransform.Rotation, localApproach);
+                int2 rampCell = GridUtils.WorldToCell(Grid, worldApproach);
+                int distanceToRampCell = math.max(math.abs(passengerCell.x - rampCell.x), math.abs(passengerCell.y - rampCell.y));
+                int rampBoardingTolerance = math.max(4, TransportBoardingData.AirBoardingClearanceCells + 3);
+                reachedResolvedPlaneRamp = distanceToRampCell <= rampBoardingTolerance;
+            }
+
             bool reachedPlaneRampGoal =
-                airTransport &&
-                PlaneDoorReferenceLookup.HasComponent(transport) &&
-                movementFinished &&
-                reachedBoardingGoal;
+                planeRampTransport &&
+                (reachedResolvedPlaneRamp ||
+                 (boardingGoalNearPlaneRampArea &&
+                  distanceToBoardingGoal <= TransportBoardingData.AirBoardingClearanceCells));
             float boardDistanceSq = airTransport ? 1.25f * 1.25f : 4f;
             int boardCellDistance = airTransport ? 1 : 2;
             bool reachedTransport =

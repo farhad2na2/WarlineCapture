@@ -108,6 +108,13 @@ public struct UnitTransportAirdropVisualPrefabs : IComponentData
     public Entity VehicleEmergencyDropVisualPrefab;
 }
 
+public struct UnitTransportAirdropVisualPrefabRegistryEntry : IBufferElementData
+{
+    public FixedString64Bytes SourceKey;
+    public Entity SoldierParachuteVisualPrefab;
+    public Entity VehicleEmergencyDropVisualPrefab;
+}
+
 public struct UnitTransportPlaneDoorReference : IComponentData
 {
     public Entity DoorEntity;

@@ -185,15 +185,17 @@ public class UnitGridAuthoring : MonoBehaviour
     public float ProductionTransportArrivalSeconds => Mathf.Max(0.01f, productionTransportArrivalSeconds);
     public float ProductionTransportHoldForNextReadySeconds => Mathf.Max(0.01f, productionTransportHoldForNextReadySeconds);
     public int ProductionTransportMaxConcurrent => Mathf.Max(1, productionTransportMaxConcurrent);
-    public bool ProductionTransportRequiresAirportRunway => productionTransportRequiresAirportRunway;
-    public bool ProductionTransportUsesRunwayLanding => productionTransportUsesRunwayLanding;
-    public int SoldierTransportCapacity => Mathf.Max(0, soldierTransportCapacity);
-    public int VehicleTransportCapacity => Mathf.Max(0, vehicleTransportCapacity);
-    public int CargoWeightCapacity => Mathf.Max(0, cargoWeightCapacity);
-    public float TransportCruiseHeight => Mathf.Max(0f, transportCruiseHeight);
+    public bool ProductionTransportRequiresAirportRunway => config != null ? config.ProductionTransportRequiresAirportRunway : productionTransportRequiresAirportRunway;
+    public bool ProductionTransportUsesRunwayLanding => config != null ? config.ProductionTransportUsesRunwayLanding : productionTransportUsesRunwayLanding;
+    public int SoldierTransportCapacity => Mathf.Max(0, config != null ? config.SoldierTransportCapacity : soldierTransportCapacity);
+    public int VehicleTransportCapacity => Mathf.Max(0, config != null ? config.VehicleTransportCapacity : vehicleTransportCapacity);
+    public int CargoWeightCapacity => Mathf.Max(0, config != null ? config.CargoWeightCapacity : cargoWeightCapacity);
+    public float TransportCruiseHeight => Mathf.Max(0f, config != null ? config.TransportCruiseHeight : transportCruiseHeight);
     public GameObject SoldierParachuteVisualPrefab => config != null ? config.SoldierParachuteVisualPrefab : soldierParachuteVisualPrefab;
     public GameObject VehicleEmergencyDropVisualPrefab => config != null ? config.VehicleEmergencyDropVisualPrefab : vehicleEmergencyDropVisualPrefab;
+    public bool UsesVehicleMotion => config != null ? config.UsesVehicleMotion : usesVehicleMotion;
     public bool IsAirUnit => config != null ? config.IsAirUnit : isAirUnit;
+    public float RunwayTaxiSpeed => Mathf.Max(0.01f, config != null ? config.RunwayTaxiSpeed : runwayTaxiSpeed);
     public bool CanRequest => canRequest;
     public int Price => Mathf.Max(0, price);
     public bool ConfiguredAllowIdleWander => config != null ? config.AllowIdleWander : allowIdleWander;
@@ -287,7 +289,7 @@ public class UnitGridAuthoring : MonoBehaviour
             AddComponent(entity, new UnitMovementBehavior
             {
                 AllowIdleWander = (byte)(authoring.allowIdleWander ? 1 : 0),
-                UsesVehicleMotion = (byte)(authoring.usesVehicleMotion ? 1 : 0)
+                UsesVehicleMotion = (byte)(authoring.UsesVehicleMotion ? 1 : 0)
             });
             AddComponent(entity, vehicleMovement);
             AddComponent(entity, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
@@ -300,7 +302,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 HasSurface = 0,
                 IsGrounded = 0
             });
-            if (authoring.usesVehicleMotion && !authoring.isAirUnit)
+            if (authoring.UsesVehicleMotion && !authoring.IsAirUnit)
             {
                 AddComponent(entity, new VehicleSurfaceAlignmentComponent
                 {
@@ -311,9 +313,9 @@ public class UnitGridAuthoring : MonoBehaviour
                 });
             }
             AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.groundOffset });
-            int soldierCapacity = math.max(0, authoring.soldierTransportCapacity);
-            int vehicleCapacity = math.max(0, authoring.vehicleTransportCapacity);
-            int cargoWeightCapacity = math.max(0, authoring.cargoWeightCapacity);
+            int soldierCapacity = math.max(0, authoring.SoldierTransportCapacity);
+            int vehicleCapacity = math.max(0, authoring.VehicleTransportCapacity);
+            int cargoWeightCapacity = math.max(0, authoring.CargoWeightCapacity);
             if (soldierCapacity > 0)
             {
                 AddComponent(entity, new UnitTransportCapacity
@@ -345,7 +347,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     CargoFuelBarrels = 0f
                 });
             }
-            if (authoring.isAirUnit)
+            if (authoring.IsAirUnit)
             {
                 float configuredCruiseHeight = math.max(0f, authoring.TransportCruiseHeight);
                 AddComponent(entity, new UnitAirMovement
@@ -353,7 +355,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     CruiseHeight = configuredCruiseHeight > 0f
                         ? configuredCruiseHeight
                         : math.max(3f, modelBounds.size.y > 0f ? modelBounds.size.y * 2f : 6f),
-                    RunwayTaxiSpeed = math.max(0.01f, authoring.runwayTaxiSpeed)
+                    RunwayTaxiSpeed = math.max(0.01f, authoring.RunwayTaxiSpeed)
                 });
                 AddComponent(entity, new UnitAirComponent
                 {
@@ -508,7 +510,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     AddHelicopterBladeReferences(bladeBuffer, authoring.transform);
             }
             AddUnitVisualPrefabReferences(authoring, entity);
-            if (authoring.usesVehicleMotion)
+            if (authoring.UsesVehicleMotion)
             {
                 AddVehicleVisualPrefabReferences(authoring, entity);
             }
@@ -836,7 +838,7 @@ public class UnitGridAuthoring : MonoBehaviour
         {
             int2 configured = new int2(math.max(1, authoring.footprintCells.x), math.max(1, authoring.footprintCells.y));
 
-            if (!authoring.usesVehicleMotion)
+            if (!authoring.UsesVehicleMotion)
                 return configured;
 
             if (configured.x > 1 || configured.y > 1)
@@ -857,7 +859,7 @@ public class UnitGridAuthoring : MonoBehaviour
 
         private static UnitVehicleMovement ResolveVehicleMovement(UnitGridAuthoring authoring, int2 footprint, bool hasModelBounds, Bounds modelBounds)
         {
-            bool isVehicle = authoring.usesVehicleMotion;
+            bool isVehicle = authoring.UsesVehicleMotion;
             float modelLength = hasModelBounds ? math.max(modelBounds.size.x, modelBounds.size.z) : math.max(footprint.x, footprint.y);
 
             return new UnitVehicleMovement
@@ -946,6 +948,21 @@ public class UnitGridAuthoring : MonoBehaviour
         {
             GameObject parachutePrefab = authoring.SoldierParachuteVisualPrefab;
             GameObject emergencyDropPrefab = authoring.VehicleEmergencyDropVisualPrefab;
+            bool requiresRunwayAirdropVisuals = authoring.IsAirUnit &&
+                                               authoring.ProductionTransportUsesRunwayLanding &&
+                                               (authoring.SoldierTransportCapacity > 0 || authoring.VehicleTransportCapacity > 0);
+            if (requiresRunwayAirdropVisuals)
+            {
+                RequireAssignedPrefabReference(
+                    parachutePrefab,
+                    authoring,
+                    nameof(authoring.SoldierParachuteVisualPrefab));
+                RequireAssignedPrefabReference(
+                    emergencyDropPrefab,
+                    authoring,
+                    nameof(authoring.VehicleEmergencyDropVisualPrefab));
+            }
+
             if (parachutePrefab == null && emergencyDropPrefab == null)
                 return;
 
@@ -965,12 +982,22 @@ public class UnitGridAuthoring : MonoBehaviour
             AddComponent(entity, new UnitTransportAirdropVisualPrefabs
             {
                 SoldierParachuteVisualPrefab = parachutePrefab != null
-                    ? GetEntity(parachutePrefab, TransformUsageFlags.Dynamic)
+                    ? GetEntity(parachutePrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
                     : Entity.Null,
                 VehicleEmergencyDropVisualPrefab = emergencyDropPrefab != null
-                    ? GetEntity(emergencyDropPrefab, TransformUsageFlags.Dynamic)
+                    ? GetEntity(emergencyDropPrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
                     : Entity.Null
             });
+        }
+
+        private static void RequireAssignedPrefabReference(GameObject prefab, UnitGridAuthoring authoring, string fieldName)
+        {
+            if (prefab != null)
+                return;
+
+            string configName = authoring.config != null ? authoring.config.name : authoring.gameObject.name;
+            throw new InvalidOperationException(
+                $"{nameof(UnitGridAuthoring)} requires {fieldName} on '{configName}' for runway transport airdrops.");
         }
 
         private static void RequireValidPrefabReference(GameObject prefab, UnitGridAuthoring authoring, string fieldName)

@@ -29,10 +29,11 @@ public partial struct UnitAirMovementSystem : ISystem
         var ropeDisembarkLookup = SystemAPI.GetComponentLookup<UnitTransportRopeDisembarkRequest>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
         var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
+        var attackLookup = SystemAPI.GetComponentLookup<UnitAttack>(true);
         var airdropLookup = SystemAPI.GetComponentLookup<UnitTransportAirdropRequest>();
 
-        foreach (var (transform, unitGrid, move, attack, airMovement, airState, entity) in SystemAPI
-                     .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAttack>, RefRO<UnitAirMovement>, RefRW<UnitAirComponent>>()
+        foreach (var (transform, unitGrid, move, airMovement, airState, entity) in SystemAPI
+                     .Query<RefRW<LocalTransform>, RefRW<UnitGrid>, RefRO<UnitMove>, RefRO<UnitAirMovement>, RefRW<UnitAirComponent>>()
                      .WithNone<StaticGridBlocker>()
                      .WithNone<UnitDeathAnimationComponent>()
                      .WithEntityAccess())
@@ -211,7 +212,9 @@ public partial struct UnitAirMovementSystem : ISystem
                 {
                     float3 horizontalToTarget = engageTargetPosition - transform.ValueRO.Position;
                     horizontalToTarget.y = 0f;
-                    float attackRange = math.max(0.01f, attack.ValueRO.Range);
+                    float attackRange = attackLookup.HasComponent(entity)
+                        ? math.max(0.01f, attackLookup[entity].Range)
+                        : math.max(grid.CellSize * 12f, 30f);
                     if (stateRw.AttackRunActive == 0)
                     {
                         float3 passDirection = math.normalizesafe(horizontalToTarget);
@@ -641,6 +644,15 @@ public partial struct UnitAirMovementSystem : ISystem
         state.ReturningHome = 0;
         state.ReturnApproachInitialized = 0;
 
+        float groundedHeightTolerance = math.max(0.25f, TransportBoardingData.AirBoardingGroundedHeightTolerance);
+        bool physicallyAirborne = transform.Position.y > groundY + groundedHeightTolerance;
+        if (state.Airborne == 0 && physicallyAirborne)
+        {
+            state.Airborne = 1;
+            state.TakeoffRolling = 0;
+            state.LandingRolling = 0;
+        }
+
         if (state.UsesRunway != 0 && state.Airborne == 0)
         {
             float runwayGroundY = ResolveRunwayGroundY(state, groundY);
@@ -725,8 +737,11 @@ public partial struct UnitAirMovementSystem : ISystem
         float horizontalDistanceToDrop = math.length(new float3(toDrop.x, 0f, toDrop.z));
         float3 progressedVector = transform.Position - dropWorld;
         progressedVector.y = 0f;
+        float passReadyDistance = math.max(
+            grid.CellSize * 4f,
+            math.max(0.01f, move.Speed) * math.max(deltaTime, 1f / 30f) * 2f);
         if (request.PassReady == 0 &&
-            (horizontalDistanceToDrop <= math.max(grid.CellSize * 3f, math.max(0.01f, move.Speed) * deltaTime * 1.5f) ||
+            (horizontalDistanceToDrop <= passReadyDistance ||
              math.dot(progressedVector, passForward) >= 0f))
         {
             request.PassReady = 1;

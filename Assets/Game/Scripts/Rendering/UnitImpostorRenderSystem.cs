@@ -425,19 +425,14 @@ public sealed partial class UnitImpostorRenderSystem : SystemBase, IUnitImpostor
         if (batch == null || batch.Count <= 0 || material == null || _quadMesh == null)
             return;
 
-#pragma warning disable CS0618
-        Graphics.DrawMeshInstanced(
-            _quadMesh,
-            0,
-            material,
-            batch.Matrices,
-            batch.Count,
-            null,
-            ShadowCastingMode.Off,
-            false,
-            _renderLayer,
-            _camera);
-#pragma warning restore CS0618
+        var renderParams = new RenderParams(material)
+        {
+            camera = _camera,
+            layer = _renderLayer,
+            shadowCastingMode = ShadowCastingMode.Off,
+            receiveShadows = false
+        };
+        Graphics.RenderMeshInstanced(renderParams, _quadMesh, 0, batch.Matrices, batch.Count);
         LastDrawnCount += batch.Count;
         batch.Count = 0;
     }

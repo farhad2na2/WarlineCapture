@@ -19,13 +19,13 @@ public sealed class MatchHudMinimapMarkerSystemTests
             tests.MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers();
             tests.MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether();
             Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[MatchHudMinimapMarkerFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

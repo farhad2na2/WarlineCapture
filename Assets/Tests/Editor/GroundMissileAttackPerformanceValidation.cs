@@ -28,13 +28,13 @@ public sealed class GroundMissileAttackPerformanceValidation
             var tests = new GroundMissileAttackPerformanceValidation();
             tests.GroundMissileAttackCommandLaunchesImpactsAndReportsTiming();
             Debug.Log("[GroundMissileAttackPerformanceValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[GroundMissileAttackPerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

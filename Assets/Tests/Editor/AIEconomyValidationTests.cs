@@ -17,13 +17,13 @@ public sealed class AIEconomyValidationTests
             AssertEmitsValidationLogForEnabledFactionEconomy(assertDiagnosticLog: false);
             AssertRequestsAndCompletesFactionResourceSale();
             Debug.Log("[AIEconomyFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[AIEconomyFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
         finally
         {

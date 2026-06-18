@@ -14,13 +14,13 @@ public sealed class MapSurfaceDiagnosticsSystemTests
             var tests = new MapSurfaceDiagnosticsSystemTests();
             tests.DiagnosticsSystemAddsAndUpdatesDiagnosticsComponent();
             Debug.Log("[MapSurfaceDiagnosticsFocusedValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[MapSurfaceDiagnosticsFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

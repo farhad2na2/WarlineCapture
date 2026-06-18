@@ -23,13 +23,13 @@ public sealed class BuildingCombatSystemTests
             RunCase(nameof(DestroyBlockerEntity_DestroysEntityAndClearsReference),
                 test => test.DestroyBlockerEntity_DestroysEntityAndClearsReference());
             Debug.Log("[BuildingCombatFocusedValidation] result=Passed tests=4");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BuildingCombatFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

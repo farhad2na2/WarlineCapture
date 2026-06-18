@@ -132,13 +132,13 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
             Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=9");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[EcsBurstHotPathArchitectureValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -149,13 +149,13 @@ public sealed class EcsBurstHotPathArchitectureTests
             var tests = new EcsBurstHotPathArchitectureTests();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             Debug.Log("[EcsTypeHandleArchitectureValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[EcsTypeHandleArchitectureValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

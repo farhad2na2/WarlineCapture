@@ -49,13 +49,13 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitShellViewAppliesMotionStateClasses();
             tests.UiToolkitShellLayersRenderAboveNormalContent();
             UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=13");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
             UnityEngine.Debug.LogError("[UiToolkitCanvasMigrationValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

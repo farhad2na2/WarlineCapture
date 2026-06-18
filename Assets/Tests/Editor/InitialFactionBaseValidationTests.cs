@@ -40,13 +40,13 @@ public sealed class InitialFactionBaseValidationTests
             tests.InitialBaseRuntimePlacement_SpawnsRequiredBaseBuildings();
             tests.HelipadSpawnResolver_SkipsOccupiedPadForInitialTransportHelicopter();
             Debug.Log("[InitialFactionBaseValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[InitialFactionBaseValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -57,13 +57,13 @@ public sealed class InitialFactionBaseValidationTests
             var tests = new InitialFactionBaseValidationTests();
             tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
             Debug.Log("[InitialFactionSceneConfigValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[InitialFactionSceneConfigValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -78,13 +78,13 @@ public sealed class InitialFactionBaseValidationTests
             tests.InitialBaseRuntimePlacement_SpawnsRequiredBaseBuildings();
             tests.HelipadSpawnResolver_SkipsOccupiedPadForInitialTransportHelicopter();
             Debug.Log("[InitialFactionBaseBuildingGameplaySmokeValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[InitialFactionBaseBuildingGameplaySmokeValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

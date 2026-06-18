@@ -18,13 +18,13 @@ public sealed class BuildingUiQuerySystemTests
             tests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel();
             tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
             Debug.Log("[BuildingUiQueryValidation] result=Passed tests=5");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BuildingUiQueryValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

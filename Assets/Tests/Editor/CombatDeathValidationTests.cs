@@ -23,13 +23,13 @@ public sealed class CombatDeathValidationTests
             tests.SoldierAttack_KillsTargetDestroysEntityAndDoesNotRespawn();
             tests.VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants();
             Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=2");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[CombatDeathFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

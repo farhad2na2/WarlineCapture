@@ -45,13 +45,13 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
             Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=19");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[VehicleVisualAdornmentsFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

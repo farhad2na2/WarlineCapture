@@ -38,13 +38,13 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
             tests.MixedInfantryVehicleGroupPathingCompletes();
             tests.RepeatedFocusedPathfindingDoesNotAllocateOrRegress();
             Debug.Log("[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[UnitPathfindingFocusedPerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

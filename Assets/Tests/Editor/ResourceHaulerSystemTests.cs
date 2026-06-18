@@ -21,13 +21,13 @@ public sealed class ResourceHaulerSystemTests
             tests.TryCompleteUnload_WaitsWhenDestinationCannotFitCargo();
             tests.Classification_DetectsHaulerSourceAndDestinationRoles();
             Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=9");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[ResourceHaulerFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

@@ -46,13 +46,13 @@ public static class EcsBurstFullEditorValidationRunner
             }
 
             Debug.Log($"[EcsBurstFullEditorValidation] result=Passed tests={passed} skipped={skipped}");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(Unwrap(exception));
             Debug.LogError($"[EcsBurstFullEditorValidation] result=Failed passed={passed} skipped={skipped}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

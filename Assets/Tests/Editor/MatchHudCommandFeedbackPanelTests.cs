@@ -28,13 +28,13 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing), tests => tests.ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
             Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=13");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[MatchHudCommandFeedbackValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

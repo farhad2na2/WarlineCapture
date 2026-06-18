@@ -75,13 +75,13 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
             UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=56");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
             UnityEngine.Debug.LogError("[RtsSelectionInputSystemValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

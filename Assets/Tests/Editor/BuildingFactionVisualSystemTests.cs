@@ -25,13 +25,13 @@ public sealed class BuildingFactionVisualSystemTests
             RunCase(nameof(ApplyOwnerFactionTintsCachedRenderersAndClearRestoresBaseColor),
                 test => test.ApplyOwnerFactionTintsCachedRenderersAndClearRestoresBaseColor());
             Debug.Log("[BuildingFactionVisualFocusedValidation] result=Passed tests=4");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BuildingFactionVisualFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

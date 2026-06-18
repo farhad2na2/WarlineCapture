@@ -38,14 +38,14 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel();
             tests.TearDown();
             Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=6");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             tests.TearDown();
             Debug.LogException(ex);
             Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

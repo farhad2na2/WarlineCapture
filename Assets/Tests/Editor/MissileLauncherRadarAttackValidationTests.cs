@@ -40,13 +40,13 @@ public sealed class MissileLauncherRadarAttackValidationTests
             tests.MissileLauncherAttackButton_DoesNothingWithoutMatchingRadarCoverage();
             tests.AttackButtonFallback_ArmsExplicitTargetModeForNormalAttackUnits();
             UnityEngine.Debug.Log("[MissileLauncherRadarAttackRuntimeValidation] result=Passed tests=4");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             UnityEngine.Debug.LogException(ex);
             UnityEngine.Debug.LogError("[MissileLauncherRadarAttackRuntimeValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

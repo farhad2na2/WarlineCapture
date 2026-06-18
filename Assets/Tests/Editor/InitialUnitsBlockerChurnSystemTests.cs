@@ -16,13 +16,13 @@ public sealed class InitialUnitsBlockerChurnSystemTests
             var tests = new InitialUnitsBlockerChurnSystemTests();
             tests.ChurnIntervalReplacesBlockerInsideGrid();
             Debug.Log("[InitialUnitsBlockerChurnFocusedValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[InitialUnitsBlockerChurnFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

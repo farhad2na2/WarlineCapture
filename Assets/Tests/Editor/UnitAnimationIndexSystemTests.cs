@@ -17,13 +17,13 @@ public sealed class UnitAnimationIndexSystemTests
             tests.EmptyConfiguredAnimationOrderDoesNotApplyInvalidAnimationIndex();
             tests.FallbackMovingAutoWanderResolvesWalkAnimation();
             Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[UnitAnimationIndexFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

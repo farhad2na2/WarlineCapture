@@ -37,13 +37,13 @@ public sealed class EditorScriptWarningContractTests
         {
             new EditorScriptWarningContractTests().EditorScriptsMustNotUseKnownUnity6ObsoleteWarningApis();
             UnityEngine.Debug.Log("[EditorWarningContractValidation] result=Passed");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             UnityEngine.Debug.LogException(ex);
             UnityEngine.Debug.LogError("[EditorWarningContractValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

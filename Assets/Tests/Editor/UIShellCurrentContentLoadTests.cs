@@ -57,12 +57,12 @@ public sealed class UIShellCurrentContentLoadTests
                 ref passed);
 
             Debug.Log($"[UIShellCurrentContentLoadValidation] result=Passed tests={passed}");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogError($"[UIShellCurrentContentLoadValidation] result=Failed passed={passed}\n{exception}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

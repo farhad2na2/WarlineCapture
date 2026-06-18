@@ -17,13 +17,13 @@ public sealed class GroundMissileLauncherRuntimeTests
             var tests = new GroundMissileLauncherRuntimeTests();
             tests.MissileProjectileFlight_CompletesVehicleSlopeAlignmentTransformDependency();
             Debug.Log("[GroundMissileProjectileDependencyValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[GroundMissileProjectileDependencyValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -34,13 +34,13 @@ public sealed class GroundMissileLauncherRuntimeTests
             var tests = new GroundMissileLauncherRuntimeTests();
             tests.MissileFire_DetachesAndRestoresSelectedRocketVisual();
             Debug.Log("[GroundMissileVisualValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[GroundMissileVisualValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -55,13 +55,13 @@ public sealed class GroundMissileLauncherRuntimeTests
             tests.MissileFire_WaitsForBatteryOpenAndHoldDelayBeforeLaunch();
             tests.MissileProjectile_ImpactsAndDamagesEnemyArea();
             Debug.Log("[GroundMissileAttackFocusedValidation] result=Passed tests=5");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[GroundMissileAttackFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

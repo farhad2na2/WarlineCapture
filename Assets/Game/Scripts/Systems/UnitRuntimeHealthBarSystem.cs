@@ -52,6 +52,7 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
     }
 
     [BurstCompile]
+    [WithChangeFilter(typeof(UnitHealth))]
     private partial struct CollectHealthBarChangesJob : IJobEntity
     {
         [ReadOnly] public ComponentLookup<RecentDamageHealthBarVisibility> RecentDamageLookup;

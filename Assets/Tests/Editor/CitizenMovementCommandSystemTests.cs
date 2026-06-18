@@ -15,13 +15,13 @@ public sealed class CitizenMovementCommandSystemTests
             tests.GroundCitizenMoveCommandClearsCurrentOrderAndRequestsPath();
             tests.AirCitizenMoveCommandClearsGroundPathRequest();
             Debug.Log("[CitizenMovementCommandFocusedValidation] result=Passed tests=2");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[CitizenMovementCommandFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

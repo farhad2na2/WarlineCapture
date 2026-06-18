@@ -26,12 +26,12 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
             Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=11");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogError($"[RtsCameraFocusedValidation] result=Failed\n{exception}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -43,12 +43,12 @@ public sealed class RtsCameraSystemTests
             tests.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests();
             tests.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes();
             Debug.Log("[RtsCameraMatchIntroValidation] result=Passed tests=2");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogError($"[RtsCameraMatchIntroValidation] result=Failed\n{exception}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
         finally
         {

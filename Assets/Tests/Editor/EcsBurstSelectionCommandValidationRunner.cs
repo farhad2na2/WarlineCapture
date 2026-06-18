@@ -32,13 +32,13 @@ public static class EcsBurstSelectionCommandValidationRunner
                 passed += RunFixture(fixtureType);
 
             Debug.Log($"[EcsBurstSelectionCommandValidation] result=Passed tests={passed}");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(Unwrap(exception));
             Debug.LogError($"[EcsBurstSelectionCommandValidation] result=Failed passed={passed}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

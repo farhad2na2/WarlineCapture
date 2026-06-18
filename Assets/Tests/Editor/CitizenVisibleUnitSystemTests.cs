@@ -18,13 +18,13 @@ public sealed class CitizenVisibleUnitSystemTests
             tests.RemoveVisibleCitizenDestroysEntityAndClearsState();
             tests.ClearVisibleCitizensDestroysAllEntitiesAndClearsState();
             Debug.Log("[CitizenVisibleUnitFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[CitizenVisibleUnitFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

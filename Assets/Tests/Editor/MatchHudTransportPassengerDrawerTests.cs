@@ -22,13 +22,13 @@ public sealed class MatchHudTransportPassengerDrawerTests
             RunTest(test => test.TransportPassengerModelShowsChipAndDrawerRows());
             RunTest(test => test.DisembarkPassengerRequestStoresTransportAndPassenger());
             Debug.Log("[MatchHudTransportPassengerDrawerValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[MatchHudTransportPassengerDrawerValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

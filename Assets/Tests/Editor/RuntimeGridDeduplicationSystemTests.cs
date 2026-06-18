@@ -20,13 +20,13 @@ public sealed class RuntimeGridDeduplicationSystemTests
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
             tests.RunWithFixture(tests.RuntimeGridBootstrapSystemCreatesRuntimeGridFromWorldManagedBoundary);
             Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[RuntimeGridDeduplicationFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

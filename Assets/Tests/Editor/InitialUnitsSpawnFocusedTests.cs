@@ -31,7 +31,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             }
 
             UnityEngine.Debug.Log($"[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods={methodNames.Length}");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
@@ -40,7 +40,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 : ex;
             UnityEngine.Debug.LogException(failure);
             UnityEngine.Debug.LogError("[InitialUnitsSpawnFocusedValidation] result=Failed group=ResourceBuildingSourceKey");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -68,7 +68,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             }
 
             UnityEngine.Debug.Log($"[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods={methodNames.Length}");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
@@ -77,7 +77,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                 : ex;
             UnityEngine.Debug.LogException(failure);
             UnityEngine.Debug.LogError("[InitialUnitsSpawnFocusedValidation] result=Failed group=SpawnProgressCompletion");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

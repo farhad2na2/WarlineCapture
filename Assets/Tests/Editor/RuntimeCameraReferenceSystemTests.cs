@@ -19,13 +19,13 @@ public sealed class RuntimeCameraReferenceSystemTests
             RunCase(tests, nameof(TryGetWorldCamera_ReadsManagedBoundaryReference), test => test.TryGetWorldCamera_ReadsManagedBoundaryReference());
             RunCase(tests, nameof(ClearWorldCamera_ClearsManagedBoundaryReference), test => test.ClearWorldCamera_ClearsManagedBoundaryReference());
             Debug.Log("[RuntimeCameraReferenceFocusedValidation] result=Passed tests=3");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[RuntimeCameraReferenceFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

@@ -17,13 +17,13 @@ public sealed class RuntimeBuildingSystemTests
             tests.BuildingUiSelectionCommandRequest_DeletesSelectedBuildingAndWritesResult();
             tests.BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult();
             Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=5");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[RuntimeBuildingSystemFocusedValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

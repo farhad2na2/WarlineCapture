@@ -58,6 +58,7 @@ public partial struct UnitHealthBarSystem : ISystem
     }
 
     [BurstCompile]
+    [WithChangeFilter(typeof(UnitHealth))]
     private partial struct UpdateJob : IJobEntity
     {
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;

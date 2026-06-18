@@ -18,13 +18,13 @@ public sealed class FactionResourceSystemTests
             tests.UpdateResourceProduction_ExtractsOilUpToCapacity();
             tests.UpdateResourceProduction_ConvertsOilIntoFuel();
             Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=6");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[FactionResourceFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

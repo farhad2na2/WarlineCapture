@@ -64,6 +64,7 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
     }
 
     [BurstCompile]
+    [WithChangeFilter(typeof(LocalTransform))]
     private partial struct CollectMarkersJob : IJobEntity
     {
         public int MaxMarkers;

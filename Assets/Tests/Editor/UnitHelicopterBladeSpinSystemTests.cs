@@ -23,13 +23,13 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             tests.HelicopterUnitPrefabsExposeBakedBladeTransforms();
             tests.FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs();
             Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=7");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[UnitHelicopterBladeSpinFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

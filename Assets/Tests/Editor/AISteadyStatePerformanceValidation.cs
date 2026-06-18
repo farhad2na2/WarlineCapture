@@ -30,13 +30,13 @@ public sealed class AISteadyStatePerformanceValidation
             var tests = new AISteadyStatePerformanceValidation();
             tests.AISteadyStateUpdatesProduceOrdersAndReportTiming();
             Debug.Log("[AISteadyStatePerformanceValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[AISteadyStatePerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

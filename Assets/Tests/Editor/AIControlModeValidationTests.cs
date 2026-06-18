@@ -25,13 +25,13 @@ public sealed class AIControlModeValidationTests
             }
 
             Debug.Log("[AIControlModeFocusedValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[AIControlModeFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

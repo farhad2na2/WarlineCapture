@@ -23,13 +23,13 @@ public sealed class BuildingDestroyedVisualSystemTests
             RunCase(nameof(BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt),
                 test => test.BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt());
             Debug.Log("[BuildingDestroyedVisualFocusedValidation] result=Passed tests=2");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BuildingDestroyedVisualFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

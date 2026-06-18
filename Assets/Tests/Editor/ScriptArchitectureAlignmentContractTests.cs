@@ -173,13 +173,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
             Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=28");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[ScriptArchitectureBoundaryValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -190,13 +190,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             var tests = new ScriptArchitectureAlignmentContractTests();
             tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
             Debug.Log("[ScriptBroadShellValidation] result=Passed tests=1");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[ScriptBroadShellValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 
@@ -211,13 +211,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.BootstrapCompositionSystemsMustNotOwnGameplayPolicy();
             tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
             Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=5");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BootstrapCompositionGuardrailValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

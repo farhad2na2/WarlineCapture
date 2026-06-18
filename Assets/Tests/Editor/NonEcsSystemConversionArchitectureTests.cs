@@ -159,13 +159,13 @@ public sealed class NonEcsSystemConversionArchitectureTests
             tests.RetiredDirectCallContextSystemsStayDeleted();
             tests.ConvertedFiveSystemBaseTargetsStayFreeOfManagedPrefabDependencies();
             Debug.Log("[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[NonEcsSystemConversionArchitectureValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

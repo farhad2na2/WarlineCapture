@@ -27,13 +27,13 @@ public sealed class ThreatWarningValidationTests
             tests.ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats();
             tests.ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead();
             Debug.Log("[ThreatWarningValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[ThreatWarningValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

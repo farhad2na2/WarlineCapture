@@ -31,13 +31,13 @@ public sealed class SelectionUiReadModelLookupTests
             passed++;
 
             Debug.Log($"[SelectionUiReadModelLookupValidation] result=Passed tests={passed}");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError($"[SelectionUiReadModelLookupValidation] result=Failed passed={passed}");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

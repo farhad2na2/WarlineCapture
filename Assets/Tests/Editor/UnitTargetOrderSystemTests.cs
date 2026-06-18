@@ -31,13 +31,13 @@ public sealed class UnitTargetOrderSystemTests
             tests.RunWithFixture(tests.UnitAttackOrderRequestSystem_ConsumesClearRequestAndWritesResult);
             tests.RunWithFixture(tests.UnitAttackOrderRequestSystem_ConsumesClearAccidentalAirSelectionMoveRequest);
             Debug.Log("[UnitTargetOrderFocusedValidation] result=Passed tests=12");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[UnitTargetOrderFocusedValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

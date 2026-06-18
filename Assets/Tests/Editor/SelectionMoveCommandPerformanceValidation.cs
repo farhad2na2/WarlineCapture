@@ -28,13 +28,13 @@ public sealed class SelectionMoveCommandPerformanceValidation
             var tests = new SelectionMoveCommandPerformanceValidation();
             tests.SelectedUnitsIssueMoveCommandsAndReportTiming();
             Debug.Log("[SelectionMoveCommandPerformanceValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[SelectionMoveCommandPerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

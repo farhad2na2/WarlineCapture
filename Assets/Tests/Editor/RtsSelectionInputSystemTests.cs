@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -38,6 +39,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.ScanTargetModeCommandSystem_ArmsScanModeAndClearsMoveRequests());
             RunCase(test => test.BoardTargetModeCommandSystem_SelectedTransportAndPassengerUsesTransportFirstMode());
             RunCase(test => test.BoardTargetModeCommandSystem_SelectedPassengerUsesPassengerToTransportMode());
+            RunCase(test => test.BoardTargetModeCommandSystem_SelectedCargoVehicleTransportUsesPassengerToTransportMode());
             RunCase(test => test.BoardTargetModeCommandSystem_ActiveBoardModeTogglesOff());
             RunCase(test => test.BoardTargetModeCommandSystem_RejectsSelectedNonBoardableUnit());
             RunCase(test => test.CancelActiveCommandModeSystem_ClearsCommandAndSelectionMode());
@@ -72,7 +74,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=55");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=56");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -1266,6 +1268,36 @@ public sealed class RtsSelectionInputSystemTests
         return passenger;
     }
 
+    private static Entity CreateSelectedCargoVehicleTransportPassenger(EntityManager em)
+    {
+        Entity passenger = em.CreateEntity(
+            typeof(SelectedUnitTag),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitMove),
+            typeof(UnitFootprint),
+            typeof(UnitMovementBehavior),
+            typeof(UnitSourcePrefabKey),
+            typeof(UnitTransportCapacity),
+            typeof(LocalTransform));
+        em.SetComponentData(passenger, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(passenger, new UnitGrid { Cell = new int2(5, 6) });
+        em.SetComponentData(passenger, new UnitMove
+        {
+            Speed = 6f,
+            WalkSpeed = 1f,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.1f
+        });
+        em.SetComponentData(passenger, new UnitFootprint { Size = new int2(3, 3) });
+        em.SetComponentData(passenger, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.SetComponentData(passenger, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_APC_Heavy") });
+        em.SetComponentData(passenger, new UnitTransportCapacity { SoldierCapacity = 6 });
+        em.SetComponentData(passenger, LocalTransform.FromPosition(float3.zero));
+        em.AddBuffer<UnitTransportPassengerElement>(passenger);
+        return passenger;
+    }
+
     private static Entity CreateSelectedBoardTransport(EntityManager em, int capacity = 4, int passengerCount = 0)
     {
         Entity transport = em.CreateEntity(
@@ -1400,6 +1432,38 @@ public sealed class RtsSelectionInputSystemTests
         bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
             em,
             currentFrame: 370,
+            out bool accepted,
+            out bool toggledOff,
+            out BoardCommandModeDirection direction,
+            out Entity transport,
+            out TacticalCommandReasonCode rejectionReason);
+
+        RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(runtimeStateEntity);
+        Assert.IsTrue(processed);
+        Assert.IsTrue(accepted);
+        Assert.IsFalse(toggledOff);
+        Assert.AreEqual(BoardCommandModeDirection.PassengerToTransport, direction);
+        Assert.AreEqual(Entity.Null, transport);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.IsTrue(inputSystem.TryGetActiveBoardCommandMode(out BoardCommandModeDirection activeDirection, out Entity activeLockedTransport));
+        Assert.AreEqual(BoardCommandModeDirection.PassengerToTransport, activeDirection);
+        Assert.AreEqual(Entity.Null, activeLockedTransport);
+        Assert.AreEqual(0, runtimeState.SelectionModeActive);
+        Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
+    }
+
+    [Test]
+    public void BoardTargetModeCommandSystem_SelectedCargoVehicleTransportUsesPassengerToTransportMode()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateSelectedCargoVehicleTransportPassenger(em);
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
+
+        bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            em,
+            currentFrame: 371,
             out bool accepted,
             out bool toggledOff,
             out BoardCommandModeDirection direction,

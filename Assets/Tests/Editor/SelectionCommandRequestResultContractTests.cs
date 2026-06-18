@@ -2396,9 +2396,9 @@ public sealed class SelectionCommandRequestResultContractTests
     public void TacticalCommandReasonCodes_IncludeTransportFailureCodes()
     {
         Assert.AreEqual("Select a transport vehicle or aircraft first.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.InvalidTransport));
-        Assert.AreEqual("Select soldiers that can board.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.InvalidPassenger));
+        Assert.AreEqual("Select units or cargo that can board.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.InvalidPassenger));
         Assert.AreEqual("Transport is full.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.TransportFull));
-        Assert.AreEqual("No nearby soldiers can board this transport.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.NoEligiblePassengers));
+        Assert.AreEqual("No nearby units can board this transport.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.NoEligiblePassengers));
         Assert.AreEqual("No clear exit point for passengers.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.NoDisembarkCell));
         Assert.AreEqual("Passenger is not inside this transport.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.TransportPassengerMissing));
     }

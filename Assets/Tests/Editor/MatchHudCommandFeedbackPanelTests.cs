@@ -334,8 +334,8 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
             view,
-            TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "No nearby soldiers can board this transport."));
-        Assert.AreEqual("No nearby soldiers can board this transport.", text.text);
+            TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "No nearby units can board this transport."));
+        Assert.AreEqual("No nearby units can board this transport.", text.text);
         Assert.IsFalse(actions.activeSelf);
 
         BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds + 1f);

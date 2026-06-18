@@ -578,6 +578,9 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
                 if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
                     return true;
 
+                if (TransportBoardingCommandSystem.IsPotentialVehicleCargoPassenger(em, entity))
+                    return true;
+
                 if (TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity) &&
                     IsBoardCommandAvailable(context, em, entity))
                 {

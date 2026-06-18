@@ -144,6 +144,8 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
         if (selectedQuery.IsEmptyIgnoreFilter)
             return source;
 
+        Entity firstAvailableTransport = Entity.Null;
+        Entity firstDedicatedTransport = Entity.Null;
         using NativeArray<Entity> selectedEntities = selectedQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < selectedEntities.Length; i++)
         {
@@ -152,22 +154,35 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
                 continue;
 
             source.HasSelected = true;
-            if (IsBoardTransportWithAvailableSeats(em, entity))
+            bool isBoardTransport = IsBoardTransportWithAvailableSeats(em, entity);
+            bool isBoardPassenger = IsBoardPassengerCandidate(em, entity);
+            if (isBoardTransport)
             {
-                source.Accepted = true;
-                source.Direction = BoardCommandModeDirection.TransportToPassenger;
-                source.Transport = entity;
-                return source;
+                firstAvailableTransport = firstAvailableTransport == Entity.Null ? entity : firstAvailableTransport;
+                if (!isBoardPassenger)
+                    firstDedicatedTransport = firstDedicatedTransport == Entity.Null ? entity : firstDedicatedTransport;
             }
 
-            if (IsSoldierBoardingCandidate(em, entity))
+            if (isBoardPassenger)
                 source.HasSelectedBoardPassenger = true;
         }
 
-        if (source.HasSelectedBoardPassenger)
+        if (firstDedicatedTransport != Entity.Null)
+        {
+            source.Accepted = true;
+            source.Direction = BoardCommandModeDirection.TransportToPassenger;
+            source.Transport = firstDedicatedTransport;
+        }
+        else if (source.HasSelectedBoardPassenger)
         {
             source.Accepted = true;
             source.Direction = BoardCommandModeDirection.PassengerToTransport;
+        }
+        else if (firstAvailableTransport != Entity.Null)
+        {
+            source.Accepted = true;
+            source.Direction = BoardCommandModeDirection.TransportToPassenger;
+            source.Transport = firstAvailableTransport;
         }
 
         return source;
@@ -178,39 +193,31 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
         if (!IsBoardablePlayerTransport(em, entity))
             return false;
 
-        int capacity = ResolveTransportCapacity(em, entity);
-        int passengers = em.HasBuffer<UnitTransportPassengerElement>(entity)
-            ? em.GetBuffer<UnitTransportPassengerElement>(entity).Length
-            : 0;
-        return capacity > passengers + CountPendingBoardingOrders(em, entity);
+        return HasAvailableBoardingSlot(em, entity, UnitTransportPassengerKind.Soldier) ||
+               HasAvailableBoardingSlot(em, entity, UnitTransportPassengerKind.Vehicle);
     }
 
     private static bool IsBoardablePlayerTransport(EntityManager em, Entity entity)
     {
-        return IsPlayerFaction(em, entity) &&
-               em.HasComponent<UnitGrid>(entity) &&
-               em.HasComponent<UnitFootprint>(entity) &&
-               em.HasComponent<LocalTransform>(entity) &&
-               ResolveTransportCapacity(em, entity) > 0;
+        return TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, entity);
     }
 
-    private static int ResolveTransportCapacity(EntityManager em, Entity entity)
+    private static bool HasAvailableBoardingSlot(EntityManager em, Entity entity, byte passengerKind)
     {
-        if (!em.Exists(entity))
-            return 0;
-
-        int capacity = em.HasComponent<UnitTransportCapacity>(entity)
-            ? math.max(0, em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity)
-            : 0;
-        return capacity > 0
-            ? capacity
-            : new UnitTransportCapacitySystem().ResolveTransportCapacity(em, entity);
+        return TransportBoardingCommandSystem.HasAvailableTransportBoardingSlot(
+                   em,
+                   entity,
+                   passengerKind,
+                   out int occupied,
+                   out int capacity) &&
+               capacity > occupied + CountPendingBoardingOrders(em, entity, passengerKind);
     }
 
-    private static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
+    private static bool IsBoardPassengerCandidate(EntityManager em, Entity entity)
     {
         return IsPlayerFaction(em, entity) &&
-               TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity);
+               (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity) ||
+                TransportBoardingCommandSystem.IsPotentialVehicleCargoPassenger(em, entity));
     }
 
     private static bool IsPlayerFaction(EntityManager em, Entity entity)
@@ -220,7 +227,7 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
                FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 
-    private static int CountPendingBoardingOrders(EntityManager em, Entity transport)
+    private static int CountPendingBoardingOrders(EntityManager em, Entity transport, byte passengerKind)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
         if (query.IsEmptyIgnoreFilter)
@@ -231,11 +238,18 @@ public partial struct RtsSelectionBoardTargetModeCommandSystem : ISystem
             query.ToComponentDataArray<UnitTransportBoardingTarget>(Allocator.Temp);
         for (int i = 0; i < targets.Length; i++)
         {
-            if (targets[i].Transport == transport)
+            if (targets[i].Transport == transport && ResolvePassengerKind(targets[i].PassengerKind) == passengerKind)
                 count++;
         }
 
         return count;
+    }
+
+    private static byte ResolvePassengerKind(byte passengerKind)
+    {
+        return passengerKind == UnitTransportPassengerKind.Vehicle
+            ? UnitTransportPassengerKind.Vehicle
+            : UnitTransportPassengerKind.Soldier;
     }
 
     private static bool HasRequest(

@@ -10,22 +10,19 @@ public readonly struct UnitRenderBudgetSources
         public readonly EntityQuery SpawnConfigQuery;
         public readonly EntityQuery SpawnProgressQuery;
         public readonly EntityQuery SpawnInitializedQuery;
-        public readonly EntityQuery CameraReferenceQuery;
 
         public Context(
             EntityQuery unitQuery,
             EntityQuery allUnitGridQuery,
             EntityQuery spawnConfigQuery,
             EntityQuery spawnProgressQuery,
-            EntityQuery spawnInitializedQuery,
-            EntityQuery cameraReferenceQuery)
+            EntityQuery spawnInitializedQuery)
         {
             UnitQuery = unitQuery;
             AllUnitGridQuery = allUnitGridQuery;
             SpawnConfigQuery = spawnConfigQuery;
             SpawnProgressQuery = spawnProgressQuery;
             SpawnInitializedQuery = spawnInitializedQuery;
-            CameraReferenceQuery = cameraReferenceQuery;
         }
     }
 
@@ -54,14 +51,12 @@ public readonly struct UnitRenderBudgetSources
         EntityQuery spawnInitializedQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
-        EntityQuery cameraReferenceQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
 
         return new Context(
             unitQuery,
             allUnitGridQuery,
             spawnConfigQuery,
             spawnProgressQuery,
-            spawnInitializedQuery,
-            cameraReferenceQuery);
+            spawnInitializedQuery);
     }
 }

@@ -111,20 +111,17 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
 
         if (em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(launcherEntity))
         {
-            GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(launcherEntity);
-            GameObject launchSmokePrefab = vfx?.LauncherBackfirePrefab != null
-                ? vfx.LauncherBackfirePrefab
-                : vfx?.RocketTrailPrefab;
-            if (launchSmokePrefab != null)
-            {
-                float3 smokePosition = sourcePosition + math.up() * LaunchSmokeVerticalOffset;
-                UnitAttackImpactVfxView.PlayTimedLoop(
-                    launchSmokePrefab,
-                    smokePosition,
-                    ToUnityQuaternion(quaternion.LookRotationSafe(-launchDirection, math.up())),
-                    LaunchSmokeEmitSeconds,
-                    LaunchSmokeActiveSeconds);
-            }
+            GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<GroundMissileLauncherVfxReferenceComponent>(launcherEntity);
+            float3 smokePosition = sourcePosition + math.up() * LaunchSmokeVerticalOffset;
+            CombatGameObjectVfxRequests.Enqueue(
+                ecb,
+                vfx.LauncherBackfirePrefab,
+                smokePosition,
+                quaternion.LookRotationSafe(-launchDirection, math.up()),
+                CombatGameObjectVfxRequestKind.TimedLoop,
+                LaunchSmokeEmitSeconds,
+                LaunchSmokeActiveSeconds,
+                vfx.RocketTrailPrefab);
         }
 
         Entity projectile = ecb.CreateEntity();
@@ -261,10 +258,6 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
             math.up());
     }
 
-    private static Quaternion ToUnityQuaternion(quaternion rotation)
-    {
-        return new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
-    }
 }
 
 [UpdateAfter(typeof(GroundMissileLauncherFireSystem))]
@@ -507,14 +500,14 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 
 [UpdateAfter(typeof(GroundMissileFlyingRocketVisualSystem))]
 [UpdateBefore(typeof(GroundMissileProjectileFlightSystem))]
-public partial struct GroundMissileRocketTrailSystem : ISystem
+public partial class GroundMissileRocketTrailSystem : SystemBase
 {
-    public void OnCreate(ref SystemState state)
+    protected override void OnCreate()
     {
-        state.RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
+        RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
     }
 
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
         foreach (var (transform, entity) in SystemAPI
                      .Query<RefRO<LocalTransform>>()
@@ -673,7 +666,7 @@ public partial struct GroundMissileImpactSystem : ISystem
                 }
             }
 
-            PlayImpactVfx(em, request);
+            EnqueueImpactVfx(em, ecb, request);
             if (request.Source != Entity.Null &&
                 em.Exists(request.Source) &&
                 em.HasComponent<GroundMissileInFlightComponent>(request.Source))
@@ -758,15 +751,26 @@ public partial struct GroundMissileImpactSystem : ISystem
         }
     }
 
-    private static void PlayImpactVfx(EntityManager em, GroundMissileImpactRequestComponent request)
+    private static void EnqueueImpactVfx(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        GroundMissileImpactRequestComponent request)
     {
         if (!em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(request.Source))
             return;
 
-        GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(request.Source);
-        if (vfx?.ImpactExplosionPrefab != null)
-            UnitAttackImpactVfxView.Play(vfx.ImpactExplosionPrefab, request.Position);
-        if (vfx?.ImpactSmokePrefab != null)
-            UnitAttackImpactVfxView.Play(vfx.ImpactSmokePrefab, request.Position);
+        GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<GroundMissileLauncherVfxReferenceComponent>(request.Source);
+        CombatGameObjectVfxRequests.Enqueue(
+            ecb,
+            vfx.ImpactExplosionPrefab,
+            request.Position,
+            quaternion.identity,
+            CombatGameObjectVfxRequestKind.Play);
+        CombatGameObjectVfxRequests.Enqueue(
+            ecb,
+            vfx.ImpactSmokePrefab,
+            request.Position,
+            quaternion.identity,
+            CombatGameObjectVfxRequestKind.Play);
     }
 }

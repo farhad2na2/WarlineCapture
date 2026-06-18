@@ -5,93 +5,136 @@ using Unity.Transforms;
 using UnityEngine;
 
 [UpdateAfter(typeof(UnitModelSpawnSystem))]
-public partial struct UnitAttachedLightSystem : ISystem
+public partial class UnitAttachedLightSystem : SystemBase
 {
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<UnitAttachedLightSet>();
-    }
+    private readonly Dictionary<Entity, GameObject[]> _runtimeLights = new();
+    private readonly List<Entity> _cleanupEntities = new();
+    private readonly List<Entity> _staleEntities = new();
 
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
-        EntityManager em = state.EntityManager;
-        var entitiesToInitialize = new List<Entity>();
-        var runtimesToAttach = new List<UnitAttachedLightRuntime>();
-
-        foreach (var (lightSet, transform, entity) in SystemAPI
-                 .Query<UnitAttachedLightSet, RefRO<LocalTransform>>()
-                 .WithNone<UnitAttachedLightRuntime>()
+        _cleanupEntities.Clear();
+        foreach (var (_, entity) in SystemAPI
+                 .Query<RefRO<UnitAttachedLightCleanupRequest>>()
                  .WithEntityAccess())
         {
-            if (lightSet?.Entries == null || lightSet.Entries.Length == 0)
+            DisposeRuntimeLights(entity);
+            _cleanupEntities.Add(entity);
+        }
+
+        foreach (var (lightSet, transform, entity) in SystemAPI
+                 .Query<DynamicBuffer<UnitAttachedLightSetupElement>, RefRO<LocalTransform>>()
+                 .WithNone<UnitAttachedLightCleanupRequest, UnitDeathAnimationComponent, VehicleWreckComponent>()
+                 .WithEntityAccess())
+        {
+            if (lightSet.Length == 0)
                 continue;
 
-            var runtime = new UnitAttachedLightRuntime
+            if (!_runtimeLights.TryGetValue(entity, out GameObject[] instances) || instances == null || instances.Length != lightSet.Length)
             {
-                Instances = new GameObject[lightSet.Entries.Length]
-            };
-
-            for (int i = 0; i < lightSet.Entries.Length; i++)
-            {
-                UnitAttachedLightSet.Entry entry = lightSet.Entries[i];
-                if (entry == null)
-                    continue;
-
-                GameObject lightObject = new(entry.Name);
-                Light light = lightObject.AddComponent<Light>();
-                light.type = entry.Type;
-                light.color = entry.Color;
-                light.intensity = entry.Intensity;
-                light.range = entry.Range;
-                light.spotAngle = entry.SpotAngle;
-                light.innerSpotAngle = entry.InnerSpotAngle;
-                light.shadows = entry.CastShadows ? LightShadows.Soft : LightShadows.None;
-                light.renderMode = LightRenderMode.Auto;
-                runtime.Instances[i] = lightObject;
+                DisposeRuntimeLights(entity);
+                instances = CreateRuntimeLights(lightSet);
+                _runtimeLights[entity] = instances;
             }
 
-            entitiesToInitialize.Add(entity);
-            runtimesToAttach.Add(runtime);
+            UpdateLights(lightSet, instances, transform.ValueRO);
         }
 
-        for (int i = 0; i < entitiesToInitialize.Count; i++)
+        _staleEntities.Clear();
+        foreach (KeyValuePair<Entity, GameObject[]> entry in _runtimeLights)
         {
-            Entity entity = entitiesToInitialize[i];
-            if (!em.Exists(entity))
-                continue;
-
-            em.AddComponentObject(entity, runtimesToAttach[i]);
-
-            if (!em.HasComponent<UnitAttachedLightRuntime>(entity) || !em.HasComponent<UnitAttachedLightSet>(entity) || !em.HasComponent<LocalTransform>(entity))
-                continue;
-
-            UpdateLights(em.GetComponentObject<UnitAttachedLightSet>(entity), em.GetComponentObject<UnitAttachedLightRuntime>(entity), em.GetComponentData<LocalTransform>(entity));
+            Entity entity = entry.Key;
+            if (!EntityManager.Exists(entity) ||
+                !EntityManager.HasBuffer<UnitAttachedLightSetupElement>(entity) ||
+                !EntityManager.HasComponent<LocalTransform>(entity) ||
+                EntityManager.HasComponent<UnitDeathAnimationComponent>(entity) ||
+                EntityManager.HasComponent<VehicleWreckComponent>(entity))
+            {
+                _staleEntities.Add(entity);
+            }
         }
 
-        foreach (var (lightSet, lightRuntime, transform) in SystemAPI
-                 .Query<UnitAttachedLightSet, UnitAttachedLightRuntime, RefRO<LocalTransform>>())
+        for (int i = 0; i < _staleEntities.Count; i++)
+            DisposeRuntimeLights(_staleEntities[i]);
+
+        for (int i = 0; i < _cleanupEntities.Count; i++)
         {
-            UpdateLights(lightSet, lightRuntime, transform.ValueRO);
+            Entity entity = _cleanupEntities[i];
+            if (EntityManager.Exists(entity) && EntityManager.HasComponent<UnitAttachedLightCleanupRequest>(entity))
+                EntityManager.RemoveComponent<UnitAttachedLightCleanupRequest>(entity);
         }
     }
 
-    private static void UpdateLights(UnitAttachedLightSet lightSet, UnitAttachedLightRuntime runtime, LocalTransform unitTransform)
+    protected override void OnDestroy()
     {
-        if (lightSet?.Entries == null || runtime?.Instances == null)
+        foreach (KeyValuePair<Entity, GameObject[]> entry in _runtimeLights)
+            DestroyInstances(entry.Value);
+
+        _runtimeLights.Clear();
+        _cleanupEntities.Clear();
+        _staleEntities.Clear();
+    }
+
+    internal void DisposeRuntimeLights(Entity entity)
+    {
+        if (!_runtimeLights.Remove(entity, out GameObject[] instances))
             return;
 
-        int count = math.min(lightSet.Entries.Length, runtime.Instances.Length);
+        DestroyInstances(instances);
+    }
+
+    private static GameObject[] CreateRuntimeLights(DynamicBuffer<UnitAttachedLightSetupElement> lightSet)
+    {
+        var instances = new GameObject[lightSet.Length];
+        for (int i = 0; i < lightSet.Length; i++)
+        {
+            UnitAttachedLightSetupElement entry = lightSet[i];
+            string lightName = entry.Name.IsEmpty ? "UnitLight" : entry.Name.ToString();
+            GameObject lightObject = new(lightName);
+            Light light = lightObject.AddComponent<Light>();
+            light.type = entry.Type;
+            light.color = entry.Color;
+            light.intensity = entry.Intensity;
+            light.range = entry.Range;
+            light.spotAngle = entry.SpotAngle;
+            light.innerSpotAngle = entry.InnerSpotAngle;
+            light.shadows = entry.CastShadows != 0 ? LightShadows.Soft : LightShadows.None;
+            light.renderMode = LightRenderMode.Auto;
+            instances[i] = lightObject;
+        }
+
+        return instances;
+    }
+
+    private static void UpdateLights(DynamicBuffer<UnitAttachedLightSetupElement> lightSet, GameObject[] instances, LocalTransform unitTransform)
+    {
+        if (instances == null)
+            return;
+
+        int count = math.min(lightSet.Length, instances.Length);
         for (int i = 0; i < count; i++)
         {
-            UnitAttachedLightSet.Entry entry = lightSet.Entries[i];
-            GameObject lightObject = runtime.Instances[i];
-            if (entry == null || lightObject == null)
+            UnitAttachedLightSetupElement entry = lightSet[i];
+            GameObject lightObject = instances[i];
+            if (lightObject == null)
                 continue;
 
             Transform lightTransform = lightObject.transform;
             lightTransform.SetPositionAndRotation(
                 unitTransform.Position + math.rotate(unitTransform.Rotation, entry.LocalPosition),
-                unitTransform.Rotation * entry.LocalRotation);
+                math.mul(unitTransform.Rotation, entry.LocalRotation));
+        }
+    }
+
+    private static void DestroyInstances(GameObject[] instances)
+    {
+        if (instances == null)
+            return;
+
+        for (int i = 0; i < instances.Length; i++)
+        {
+            if (instances[i] != null)
+                Object.Destroy(instances[i]);
         }
     }
 }

@@ -170,14 +170,14 @@ public struct UnitAttackTraceOriginPattern : IComponentData
     public float TargetLateralOffset;
 }
 
-public sealed class UnitAttackImpactVfxReference : IComponentData
+public struct UnitAttackImpactVfxReference : IComponentData
 {
-    public GameObject Prefab;
+    public UnityObjectRef<GameObject> Prefab;
 }
 
-public sealed class UnitMuzzleFlashVfxReference : IComponentData
+public struct UnitMuzzleFlashVfxReference : IComponentData
 {
-    public GameObject Prefab;
+    public UnityObjectRef<GameObject> Prefab;
     public float HeightOffset;
     public float ForwardOffset;
 }
@@ -196,6 +196,24 @@ public struct UnitAttackVfxRequest : IComponentData
     public Entity Target;
     public float3 SourcePosition;
     public float3 TargetPosition;
+}
+
+public enum CombatGameObjectVfxRequestKind : byte
+{
+    None = 0,
+    Play = 1,
+    TimedLoop = 2
+}
+
+public struct CombatGameObjectVfxRequest : IComponentData
+{
+    public byte Kind;
+    public UnityObjectRef<GameObject> Prefab;
+    public UnityObjectRef<GameObject> FallbackPrefab;
+    public float3 Position;
+    public quaternion Rotation;
+    public float EmitSeconds;
+    public float ActiveSeconds;
 }
 
 public enum GroundMissileLauncherPhase : byte
@@ -286,12 +304,12 @@ public struct GroundMissileFlyingRocketVisualComponent : IComponentData
     public float ArcHeight;
 }
 
-public sealed class GroundMissileLauncherVfxReferenceComponent : IComponentData
+public struct GroundMissileLauncherVfxReferenceComponent : IComponentData
 {
-    public GameObject LauncherBackfirePrefab;
-    public GameObject RocketTrailPrefab;
-    public GameObject ImpactExplosionPrefab;
-    public GameObject ImpactSmokePrefab;
+    public UnityObjectRef<GameObject> LauncherBackfirePrefab;
+    public UnityObjectRef<GameObject> RocketTrailPrefab;
+    public UnityObjectRef<GameObject> ImpactExplosionPrefab;
+    public UnityObjectRef<GameObject> ImpactSmokePrefab;
 }
 
 public struct GroundMissileProjectileComponent : IComponentData
@@ -426,15 +444,15 @@ public struct AirMissileLauncherMissileVisualComponent : IBufferElementData
     public float InitialLocalScale;
 }
 
-public sealed class AirMissileLauncherVfxReferenceComponent : IComponentData
+public struct AirMissileLauncherVfxReferenceComponent : IComponentData
 {
-    public GameObject MissileVisualPrefab;
-    public GameObject LaunchFlashPrefab;
-    public GameObject LaunchSmokePrefab;
-    public GameObject MissileTrailPrefab;
-    public GameObject AirburstExplosionPrefab;
-    public GameObject AirTargetImpactPrefab;
-    public GameObject InterceptExplosionPrefab;
+    public UnityObjectRef<GameObject> MissileVisualPrefab;
+    public UnityObjectRef<GameObject> LaunchFlashPrefab;
+    public UnityObjectRef<GameObject> LaunchSmokePrefab;
+    public UnityObjectRef<GameObject> MissileTrailPrefab;
+    public UnityObjectRef<GameObject> AirburstExplosionPrefab;
+    public UnityObjectRef<GameObject> AirTargetImpactPrefab;
+    public UnityObjectRef<GameObject> InterceptExplosionPrefab;
 }
 
 public struct AirDefenseSupportProviderComponent : IComponentData

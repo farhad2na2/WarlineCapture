@@ -536,14 +536,14 @@ public class UnitGridAuthoring : MonoBehaviour
             float muzzleFlashForwardOffset = authoring.MuzzleFlashForwardOffset;
             if (impactPrefab != null)
             {
-                AddComponentObject(entity, new UnitAttackImpactVfxReference
+                AddComponent(entity, new UnitAttackImpactVfxReference
                 {
                     Prefab = impactPrefab
                 });
             }
             if (muzzleFlashPrefab != null)
             {
-                AddComponentObject(entity, new UnitMuzzleFlashVfxReference
+                AddComponent(entity, new UnitMuzzleFlashVfxReference
                 {
                     Prefab = muzzleFlashPrefab,
                     HeightOffset = math.max(0f, muzzleFlashHeightOffset),
@@ -563,9 +563,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 });
             }
 
-            UnitAttachedLightSet attachedLights = BuildAttachedLightSet(authoring.transform);
-            if (attachedLights != null)
-                AddComponentObject(entity, attachedLights);
+            AddAttachedLightSetup(authoring.transform, entity);
         }
 
         private void AddGroundMissileLauncherComponents(UnitGridAuthoring authoring, Entity entity)
@@ -633,7 +631,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 }
             }
 
-            AddComponentObject(entity, new GroundMissileLauncherVfxReferenceComponent
+            AddComponent(entity, new GroundMissileLauncherVfxReferenceComponent
             {
                 LauncherBackfirePrefab = missileConfig.LauncherBackfirePrefab,
                 RocketTrailPrefab = missileConfig.RocketTrailPrefab,
@@ -732,7 +730,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 }
             }
 
-            AddComponentObject(entity, new AirMissileLauncherVfxReferenceComponent
+            AddComponent(entity, new AirMissileLauncherVfxReferenceComponent
             {
                 MissileVisualPrefab = missileConfig.MissileVisualPrefab,
                 LaunchFlashPrefab = missileConfig.LaunchFlashPrefab,
@@ -764,16 +762,17 @@ public class UnitGridAuthoring : MonoBehaviour
             });
         }
 
-        private static UnitAttachedLightSet BuildAttachedLightSet(Transform root)
+        private void AddAttachedLightSetup(Transform root, Entity entity)
         {
             if (root == null)
-                return null;
+                return;
 
             Light[] lights = root.GetComponentsInChildren<Light>(true);
             if (lights == null || lights.Length == 0)
-                return null;
+                return;
 
-            List<UnitAttachedLightSet.Entry> entries = null;
+            DynamicBuffer<UnitAttachedLightSetupElement> entries = default;
+            bool hasEntries = false;
             for (int i = 0; i < lights.Length; i++)
             {
                 Light light = lights[i];
@@ -781,29 +780,27 @@ public class UnitGridAuthoring : MonoBehaviour
                     continue;
 
                 Transform transform = light.transform;
-                entries ??= new List<UnitAttachedLightSet.Entry>();
-                entries.Add(new UnitAttachedLightSet.Entry
+                if (!hasEntries)
                 {
-                    Name = string.IsNullOrWhiteSpace(light.name) ? "UnitLight" : light.name,
+                    entries = AddBuffer<UnitAttachedLightSetupElement>(entity);
+                    hasEntries = true;
+                }
+
+                string lightName = string.IsNullOrWhiteSpace(light.name) ? "UnitLight" : light.name;
+                entries.Add(new UnitAttachedLightSetupElement
+                {
+                    Name = new FixedString64Bytes(lightName),
                     Type = light.type,
                     Color = light.color,
                     Intensity = light.intensity,
                     Range = light.range,
                     SpotAngle = light.spotAngle,
                     InnerSpotAngle = light.innerSpotAngle,
-                    CastShadows = light.shadows != LightShadows.None,
+                    CastShadows = (byte)(light.shadows != LightShadows.None ? 1 : 0),
                     LocalPosition = root.InverseTransformPoint(transform.position),
                     LocalRotation = Quaternion.Inverse(root.rotation) * transform.rotation
                 });
             }
-
-            if (entries == null || entries.Count == 0)
-                return null;
-
-            return new UnitAttachedLightSet
-            {
-                Entries = entries.ToArray()
-            };
         }
 
         private static bool ShouldUseDualSideAttackTrace(UnitGridAuthoring authoring)

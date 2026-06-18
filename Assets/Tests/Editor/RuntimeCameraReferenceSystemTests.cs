@@ -15,9 +15,9 @@ public sealed class RuntimeCameraReferenceSystemTests
         try
         {
             var tests = new RuntimeCameraReferenceSystemTests();
-            RunCase(tests, nameof(SetWorldCamera_WritesManagedEcsReference), test => test.SetWorldCamera_WritesManagedEcsReference());
-            RunCase(tests, nameof(TryGetWorldCamera_ReadsManagedEcsReference), test => test.TryGetWorldCamera_ReadsManagedEcsReference());
-            RunCase(tests, nameof(ClearWorldCamera_ClearsManagedEcsReference), test => test.ClearWorldCamera_ClearsManagedEcsReference());
+            RunCase(tests, nameof(SetWorldCamera_StoresManagedBoundaryReference), test => test.SetWorldCamera_StoresManagedBoundaryReference());
+            RunCase(tests, nameof(TryGetWorldCamera_ReadsManagedBoundaryReference), test => test.TryGetWorldCamera_ReadsManagedBoundaryReference());
+            RunCase(tests, nameof(ClearWorldCamera_ClearsManagedBoundaryReference), test => test.ClearWorldCamera_ClearsManagedBoundaryReference());
             Debug.Log("[RuntimeCameraReferenceFocusedValidation] result=Passed tests=3");
             EditorApplication.Exit(0);
         }
@@ -66,36 +66,31 @@ public sealed class RuntimeCameraReferenceSystemTests
     }
 
     [Test]
-    public void SetWorldCamera_WritesManagedEcsReference()
+    public void SetWorldCamera_StoresManagedBoundaryReference()
     {
         Camera camera = CreateCamera();
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
 
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
 
-        using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
-        Assert.AreEqual(1, query.CalculateEntityCount());
-        Entity entity = query.GetSingletonEntity();
-        RuntimeCameraReferenceComponent component = _world.EntityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity);
-        Assert.AreSame(camera, component.WorldCamera);
+        Assert.AreSame(camera, runtimeCameraReferenceSystem.WorldCamera);
     }
 
     [Test]
-    public void TryGetWorldCamera_ReadsManagedEcsReference()
+    public void TryGetWorldCamera_ReadsManagedBoundaryReference()
     {
         Camera camera = CreateCamera();
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
         runtimeCameraReferenceSystem.SetWorldCamera(camera);
-        using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
 
-        bool found = RuntimeCameraReferenceSystem.TryGetWorldCamera(_world.EntityManager, query, out Camera resolvedCamera);
+        bool found = RuntimeCameraReferenceSystem.TryGetWorldCamera(_world, out Camera resolvedCamera);
 
         Assert.IsTrue(found);
         Assert.AreSame(camera, resolvedCamera);
     }
 
     [Test]
-    public void ClearWorldCamera_ClearsManagedEcsReference()
+    public void ClearWorldCamera_ClearsManagedBoundaryReference()
     {
         Camera camera = CreateCamera();
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem = _world.GetOrCreateSystemManaged<RuntimeCameraReferenceSystem>();
@@ -103,10 +98,10 @@ public sealed class RuntimeCameraReferenceSystemTests
 
         runtimeCameraReferenceSystem.ClearWorldCamera();
 
-        using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
-        Entity entity = query.GetSingletonEntity();
-        RuntimeCameraReferenceComponent component = _world.EntityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity);
-        Assert.IsNull(component.WorldCamera);
+        bool found = RuntimeCameraReferenceSystem.TryGetWorldCamera(_world, out Camera resolvedCamera);
+        Assert.IsFalse(found);
+        Assert.IsNull(resolvedCamera);
+        Assert.IsNull(runtimeCameraReferenceSystem.WorldCamera);
     }
 
     private Camera CreateCamera()

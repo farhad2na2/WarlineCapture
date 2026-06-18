@@ -865,8 +865,8 @@ public static class MatchGcAllocationCallstackCapture
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
         {
-            UnitAttackImpactVfxReference vfx = entityManager.GetComponentObject<UnitAttackImpactVfxReference>(entities[i]);
-            AddPrefab(prefabs, vfx?.Prefab);
+            UnitAttackImpactVfxReference vfx = entityManager.GetComponentData<UnitAttackImpactVfxReference>(entities[i]);
+            AddPrefab(prefabs, vfx.Prefab.Value);
         }
     }
 
@@ -879,11 +879,11 @@ public static class MatchGcAllocationCallstackCapture
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
         {
-            GroundMissileLauncherVfxReferenceComponent vfx = entityManager.GetComponentObject<GroundMissileLauncherVfxReferenceComponent>(entities[i]);
-            AddPrefab(prefabs, vfx?.LauncherBackfirePrefab);
-            AddPrefab(prefabs, vfx?.RocketTrailPrefab);
-            AddPrefab(prefabs, vfx?.ImpactExplosionPrefab);
-            AddPrefab(prefabs, vfx?.ImpactSmokePrefab);
+            GroundMissileLauncherVfxReferenceComponent vfx = entityManager.GetComponentData<GroundMissileLauncherVfxReferenceComponent>(entities[i]);
+            AddPrefab(prefabs, vfx.LauncherBackfirePrefab.Value);
+            AddPrefab(prefabs, vfx.RocketTrailPrefab.Value);
+            AddPrefab(prefabs, vfx.ImpactExplosionPrefab.Value);
+            AddPrefab(prefabs, vfx.ImpactSmokePrefab.Value);
         }
     }
 
@@ -896,14 +896,14 @@ public static class MatchGcAllocationCallstackCapture
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
         {
-            AirMissileLauncherVfxReferenceComponent vfx = entityManager.GetComponentObject<AirMissileLauncherVfxReferenceComponent>(entities[i]);
-            AddPrefab(prefabs, vfx?.MissileVisualPrefab);
-            AddPrefab(prefabs, vfx?.LaunchFlashPrefab);
-            AddPrefab(prefabs, vfx?.LaunchSmokePrefab);
-            AddPrefab(prefabs, vfx?.MissileTrailPrefab);
-            AddPrefab(prefabs, vfx?.AirburstExplosionPrefab);
-            AddPrefab(prefabs, vfx?.AirTargetImpactPrefab);
-            AddPrefab(prefabs, vfx?.InterceptExplosionPrefab);
+            AirMissileLauncherVfxReferenceComponent vfx = entityManager.GetComponentData<AirMissileLauncherVfxReferenceComponent>(entities[i]);
+            AddPrefab(prefabs, vfx.MissileVisualPrefab.Value);
+            AddPrefab(prefabs, vfx.LaunchFlashPrefab.Value);
+            AddPrefab(prefabs, vfx.LaunchSmokePrefab.Value);
+            AddPrefab(prefabs, vfx.MissileTrailPrefab.Value);
+            AddPrefab(prefabs, vfx.AirburstExplosionPrefab.Value);
+            AddPrefab(prefabs, vfx.AirTargetImpactPrefab.Value);
+            AddPrefab(prefabs, vfx.InterceptExplosionPrefab.Value);
         }
     }
 

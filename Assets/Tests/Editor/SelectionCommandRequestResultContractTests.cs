@@ -6,7 +6,6 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEditor;
 using UnityEngine;
 
 public sealed class SelectionCommandRequestResultContractTests
@@ -65,13 +64,13 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
             UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=48");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
             UnityEngine.Debug.LogError("[SelectionCommandRequestResultContractValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

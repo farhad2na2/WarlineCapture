@@ -135,6 +135,7 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
         _runtimeRoot = runtimeRoot;
         CacheMoveOrderMarker();
         CacheAttackOrderMarker();
+        PrewarmAttackTargetPreviewMarkers();
     }
 
     public bool TryShowCommandResultMarker(
@@ -742,6 +743,18 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
         }
 
         return _attackTargetPreviewMarkers[index];
+    }
+
+    private void PrewarmAttackTargetPreviewMarkers()
+    {
+        if (_attackOrderMarkerPrefab == null)
+            return;
+
+        for (int i = 0; i < MaxAttackTargetPreviewMarkers; i++)
+        {
+            if (EnsureAttackTargetPreviewMarker(i) == null)
+                break;
+        }
     }
 
     private void EnsureScanOrderMarker()

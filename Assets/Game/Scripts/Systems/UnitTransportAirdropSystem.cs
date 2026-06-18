@@ -177,6 +177,35 @@ public partial struct UnitTransportAirdropSystem : ISystem
         }
 
         passengers.RemoveAt(passengerIndex);
+        StartPassengerDrop(
+            em,
+            ecb,
+            ref request,
+            transport,
+            transportTransform,
+            passenger,
+            passengerKind,
+            visualPrefab,
+            landingCell,
+            now,
+            grid);
+        if (request.DroppedCount >= request.DropCount || passengers.Length <= 0)
+            FinishAirdropRequest(em, ecb, transport);
+    }
+
+    private void StartPassengerDrop(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        ref UnitTransportAirdropRequest request,
+        Entity transport,
+        in LocalTransform transportTransform,
+        Entity passenger,
+        byte passengerKind,
+        Entity visualPrefab,
+        int2 landingCell,
+        float now,
+        in GridConfig grid)
+    {
         float3 startPosition = ResolveAirdropStartPosition(em, transport, transportTransform);
         float3 endPosition = GridUtils.CellToWorldCenter(grid, landingCell);
         _spawnGroundingSystem.TryGroundCellCenter(em, grid, landingCell, ref endPosition, out _);
@@ -193,10 +222,9 @@ public partial struct UnitTransportAirdropSystem : ISystem
                 EndPosition = endPosition,
                 LandingCell = landingCell,
                 StartedAt = now,
-                DurationSeconds = VehicleDropDurationSeconds,
+                DurationSeconds = ResolveDropDurationSeconds(passengerKind),
                 VisualEntity = visualEntity
             });
-            request.NextDropAt = now + math.max(VehicleDropIntervalSeconds, request.DropIntervalSeconds);
         }
         else
         {
@@ -206,15 +234,28 @@ public partial struct UnitTransportAirdropSystem : ISystem
                 EndPosition = endPosition,
                 LandingCell = landingCell,
                 StartedAt = now,
-                DurationSeconds = SoldierDropDurationSeconds,
+                DurationSeconds = ResolveDropDurationSeconds(passengerKind),
                 VisualEntity = visualEntity
             });
-            request.NextDropAt = now + math.max(SoldierDropIntervalSeconds, request.DropIntervalSeconds);
         }
 
+        request.NextDropAt = now + ResolveDropIntervalSeconds(passengerKind, request.DropIntervalSeconds);
         request.DroppedCount++;
-        if (request.DroppedCount >= request.DropCount || passengers.Length <= 0)
-            FinishAirdropRequest(em, ecb, transport);
+    }
+
+    private static float ResolveDropDurationSeconds(byte passengerKind)
+    {
+        return passengerKind == UnitTransportPassengerKind.Vehicle
+            ? VehicleDropDurationSeconds
+            : SoldierDropDurationSeconds;
+    }
+
+    private static float ResolveDropIntervalSeconds(byte passengerKind, float requestedIntervalSeconds)
+    {
+        float minimumInterval = passengerKind == UnitTransportPassengerKind.Vehicle
+            ? VehicleDropIntervalSeconds
+            : SoldierDropIntervalSeconds;
+        return math.max(minimumInterval, requestedIntervalSeconds);
     }
 
     private static void FinishAirdropRequest(EntityManager em, EntityCommandBuffer ecb, Entity transport)

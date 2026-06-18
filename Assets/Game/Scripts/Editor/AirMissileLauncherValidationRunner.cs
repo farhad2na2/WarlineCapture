@@ -231,7 +231,7 @@ public static class AirMissileLauncherValidationRunner
     {
         AirMissileLauncherConfig config = AssetDatabase.LoadAssetAtPath<AirMissileLauncherConfig>(AirLauncherConfigPath);
         Require(config != null, $"Missing config at {AirLauncherConfigPath}.");
-        em.AddComponentObject(launcher, new AirMissileLauncherVfxReferenceComponent
+        em.AddComponentData(launcher, new AirMissileLauncherVfxReferenceComponent
         {
             MissileVisualPrefab = config.MissileVisualPrefab,
             LaunchFlashPrefab = config.LaunchFlashPrefab,

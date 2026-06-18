@@ -40,9 +40,12 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
         for (int i = 0; i < destroy.Length; i++)
             DestroyHealthBar(em, destroy[i]);
 
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
         for (int i = 0; i < create.Length; i++)
-            CreateHealthBar(em, create[i]);
+            CreateHealthBar(em, ref ecb, create[i]);
 
+        ecb.Playback(em);
+        ecb.Dispose();
         create.Dispose();
         removeReference.Dispose();
         destroy.Dispose();
@@ -91,19 +94,23 @@ public partial struct UnitRuntimeHealthBarSystem : ISystem
         }
     }
 
-    private static void CreateHealthBar(EntityManager em, Entity unit)
+    private static void CreateHealthBar(EntityManager em, ref EntityCommandBuffer ecb, Entity unit)
     {
         UnitHealthBarPrefabReference prefabRef = em.GetComponentData<UnitHealthBarPrefabReference>(unit);
         if (prefabRef.Prefab == Entity.Null || !em.Exists(prefabRef.Prefab))
             return;
 
-        Entity healthBar = em.Instantiate(prefabRef.Prefab);
-        if (!em.HasComponent<Parent>(healthBar))
-            em.AddComponentData(healthBar, new Parent { Value = unit });
+        bool prefabHasParent = em.HasComponent<Parent>(prefabRef.Prefab);
+        Entity healthBar = ecb.Instantiate(prefabRef.Prefab);
+        if (prefabHasParent)
+            ecb.SetComponent(healthBar, new Parent { Value = unit });
         else
-            em.SetComponentData(healthBar, new Parent { Value = unit });
+            ecb.AddComponent(healthBar, new Parent { Value = unit });
 
-        em.AddComponentData(unit, new UnitHealthBarInstanceReference { Instance = healthBar });
+        if (em.HasComponent<UnitHealthBarInstanceReference>(unit))
+            ecb.SetComponent(unit, new UnitHealthBarInstanceReference { Instance = healthBar });
+        else
+            ecb.AddComponent(unit, new UnitHealthBarInstanceReference { Instance = healthBar });
     }
 
     private static void DestroyHealthBar(EntityManager em, Entity unit)

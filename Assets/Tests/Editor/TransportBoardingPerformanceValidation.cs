@@ -9,7 +9,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -29,13 +28,13 @@ public sealed class TransportBoardingPerformanceValidation
             var tests = new TransportBoardingPerformanceValidation();
             tests.TransportBoardAllAndDisembarkAllReportTiming();
             Debug.Log("[TransportBoardingPerformanceValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[TransportBoardingPerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

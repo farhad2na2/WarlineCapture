@@ -9,7 +9,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -30,13 +29,13 @@ public sealed partial class UnitRenderBudgetPerformanceValidation
             var tests = new UnitRenderBudgetPerformanceValidation();
             tests.RenderBudgetDistanceAndSortReportTiming();
             Debug.Log("[UnitRenderBudgetPerformanceValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[UnitRenderBudgetPerformanceValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

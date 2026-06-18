@@ -31,12 +31,12 @@ public sealed class ArmoryCurrentContentPrefabTests
                 ref passed);
 
             Debug.Log($"[ArmoryCurrentContentValidation] result=Passed tests={passed}");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             Debug.LogError($"[ArmoryCurrentContentValidation] result=Failed passed={passed}\n{exception}");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

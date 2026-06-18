@@ -12,19 +12,20 @@ public sealed class RoadBuildCommandSystemTests
         {
             var tests = new RoadBuildCommandSystemTests();
             tests.RoadBuildCommandRequest_EnterWritesAcceptedResult();
+            tests.RoadBuildCommandRequest_EnterRejectsMissingRuntimeState();
             tests.RoadBuildCommandRequest_ConfirmWritesAcceptedResult();
             tests.RoadBuildCommandRequest_CancelWritesAcceptedResult();
             tests.RoadBuildCommandRequest_ExitWritesAcceptedResult();
             tests.RoadBuildRuntimeAction_UpdateProcessesQueuedEnterCommand();
             tests.RoadBuildCommandRequest_EnqueueAndProcessExitWritesAcceptedResult();
-            Debug.Log("[RoadBuildCommandRequestValidation] result=Passed tests=6");
-            UnityEditor.EditorApplication.Exit(0);
+            Debug.Log("[RoadBuildCommandRequestValidation] result=Passed tests=7");
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[RoadBuildCommandRequestValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -64,6 +65,33 @@ public sealed class RoadBuildCommandSystemTests
         Assert.AreEqual(1, state.ClearSelectedBuildingCount);
         Assert.AreEqual(1, state.CancelBuildingPlacementCount);
         Assert.AreEqual(1, state.UpdatePreviewCount);
+        AssertRequestBufferCleared(world.EntityManager);
+    }
+
+    [Test]
+    public void RoadBuildCommandRequest_EnterRejectsMissingRuntimeState()
+    {
+        using World world = new("RoadBuildCommandEnterMissingRuntimeStateTest");
+        RoadBuildCommandTestState state = new();
+        RoadBuildCommandSystem.Context context = new(
+            null,
+            state.SessionSystem,
+            state.CommandContext.SessionContext,
+            () => state.ClearRoadBuildDragStateCount++);
+
+        int requestId = state.CommandSystem.EnqueueEnterRoadBuildMode(world.EntityManager);
+        state.CommandSystem.ProcessPendingRoadBuildCommands(world.EntityManager, context);
+
+        AssertRoadBuildResult(
+            world.EntityManager,
+            state.CommandSystem,
+            requestId,
+            RoadBuildCommandRequestElement.KindEnterRoadBuildMode,
+            accepted: false,
+            RoadBuildCommandResultElement.MissingRuntimeState);
+        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.None, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(0, state.CaptureSnapshotCount);
+        Assert.AreEqual(0, state.ApplyBuildCommandModeCount);
         AssertRequestBufferCleared(world.EntityManager);
     }
 
@@ -199,7 +227,8 @@ public sealed class RoadBuildCommandSystemTests
         RoadBuildCommandSystem commandSystem,
         int requestId,
         byte requestKind,
-        bool accepted)
+        bool accepted,
+        byte resultCode = RoadBuildCommandResultElement.Completed)
     {
         Assert.IsTrue(commandSystem.TryGetRoadBuildCommandResult(
             em,
@@ -208,9 +237,7 @@ public sealed class RoadBuildCommandSystemTests
         Assert.AreEqual(requestId, result.RequestId);
         Assert.AreEqual(requestKind, result.RequestKind);
         Assert.AreEqual(accepted ? 1 : 0, result.Accepted);
-        Assert.AreEqual(
-            accepted ? RoadBuildCommandResultElement.Completed : RoadBuildCommandResultElement.Rejected,
-            result.ResultCode);
+        Assert.AreEqual(resultCode, result.ResultCode);
     }
 
     private static void AssertRequestBufferCleared(EntityManager em)

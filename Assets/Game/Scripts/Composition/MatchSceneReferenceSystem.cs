@@ -1,36 +1,55 @@
 using Unity.Entities;
 using UnityEngine.SceneManagement;
 
+[DisableAutoCreation]
+public sealed partial class MatchSceneReferenceBoundarySystem : SystemBase
+{
+    public MatchSceneView View { get; set; }
+
+    protected override void OnCreate()
+    {
+        Enabled = false;
+    }
+
+    protected override void OnUpdate()
+    {
+    }
+
+    protected override void OnDestroy()
+    {
+        View = null;
+    }
+}
+
 public sealed class MatchSceneReferenceSystem
 {
-    private Entity _referenceEntity;
+    private World _referenceWorld;
+    private MatchSceneReferenceBoundarySystem _referenceBoundary;
 
     public void Register(MatchSceneView view)
     {
-        if (view == null || !TryGetOrCreateReference(out EntityManager entityManager, out Entity entity))
+        if (view == null || !TryGetOrCreateReference(out MatchSceneReferenceBoundarySystem boundary))
             return;
 
-        entityManager.GetComponentObject<MatchSceneReferenceComponent>(entity).View = view;
+        boundary.View = view;
     }
 
     public void Clear(MatchSceneView view)
     {
-        if (!TryGetReference(out EntityManager entityManager, out Entity entity))
+        if (!TryGetReference(out MatchSceneReferenceBoundarySystem boundary))
             return;
 
-        MatchSceneReferenceComponent reference =
-            entityManager.GetComponentObject<MatchSceneReferenceComponent>(entity);
-        if (view == null || reference.View == view)
-            reference.View = null;
+        if (view == null || boundary.View == view)
+            boundary.View = null;
     }
 
     public bool TryGetLoadedMatchSceneView(World world, out MatchSceneView view)
     {
         view = null;
-        if (!TryGetReference(world, out EntityManager entityManager, out Entity entity))
+        if (!TryGetReference(world, out MatchSceneReferenceBoundarySystem boundary))
             return false;
 
-        MatchSceneView candidate = entityManager.GetComponentObject<MatchSceneReferenceComponent>(entity).View;
+        MatchSceneView candidate = boundary.View;
         if (!IsLoadedMatchSceneView(candidate))
             return false;
 
@@ -38,66 +57,46 @@ public sealed class MatchSceneReferenceSystem
         return true;
     }
 
-    private bool TryGetReference(out EntityManager entityManager, out Entity entity)
+    private bool TryGetReference(out MatchSceneReferenceBoundarySystem boundary)
     {
-        entityManager = default;
-        entity = Entity.Null;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return TryGetReference(entityManager, out entity);
+        return TryGetReference(World.DefaultGameObjectInjectionWorld, out boundary);
     }
 
-    private bool TryGetReference(World world, out EntityManager entityManager, out Entity entity)
+    private bool TryGetReference(World world, out MatchSceneReferenceBoundarySystem boundary)
     {
-        entityManager = default;
-        entity = Entity.Null;
+        boundary = null;
 
         if (world == null || !world.IsCreated)
             return false;
 
-        entityManager = world.EntityManager;
-        return TryGetReference(entityManager, out entity);
-    }
-
-    private bool TryGetReference(EntityManager entityManager, out Entity entity)
-    {
-        entity = Entity.Null;
-        if (_referenceEntity != Entity.Null &&
-            entityManager.Exists(_referenceEntity) &&
-            entityManager.HasComponent<MatchSceneReferenceComponent>(_referenceEntity))
+        if (_referenceWorld == world && _referenceBoundary != null)
         {
-            entity = _referenceEntity;
+            boundary = _referenceBoundary;
             return true;
         }
 
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchSceneReferenceComponent>());
-        if (query.IsEmptyIgnoreFilter)
+        MatchSceneReferenceBoundarySystem existing = world.GetExistingSystemManaged<MatchSceneReferenceBoundarySystem>();
+        if (existing == null)
             return false;
 
-        entity = query.GetSingletonEntity();
-        _referenceEntity = entity;
+        _referenceWorld = world;
+        _referenceBoundary = existing;
+        boundary = existing;
         return true;
     }
 
-    private bool TryGetOrCreateReference(out EntityManager entityManager, out Entity entity)
+    private bool TryGetOrCreateReference(out MatchSceneReferenceBoundarySystem boundary)
     {
-        if (TryGetReference(out entityManager, out entity))
+        if (TryGetReference(out boundary))
             return true;
 
         World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 
-        entityManager = world.EntityManager;
-        entity = entityManager.CreateEntity();
-        entityManager.SetName(entity, "MatchSceneReference");
-        entityManager.AddComponentObject(entity, new MatchSceneReferenceComponent());
-        _referenceEntity = entity;
+        boundary = world.GetOrCreateSystemManaged<MatchSceneReferenceBoundarySystem>();
+        _referenceWorld = world;
+        _referenceBoundary = boundary;
         return true;
     }
 

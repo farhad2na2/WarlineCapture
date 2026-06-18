@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -84,6 +85,20 @@ public sealed class ScriptArchitectureAlignmentContractTests
     };
 
     private static readonly HashSet<string> StaticUiRegistryDebtAllowlist = new(StringComparer.Ordinal);
+
+    private static readonly HashSet<string> StaticGameplayRegistryDebtAllowlist = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs|Cache",
+        "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs|EmptyTransformList",
+        "Assets/Game/Scripts/Utilities/GameStrings.cs|Entries",
+        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|RestoreEntries",
+        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisitedEntities",
+        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisualEntities",
+    };
+
+    private static readonly Regex StaticMutableCollectionFieldRegex = new(
+        @"\bstatic\s+(?:readonly\s+)?(?:(?:System\.Collections\.Generic\.)?(?:List|Dictionary|HashSet)|(?:Unity\.Collections\.)?Native(?:List|HashMap|HashSet|ParallelHashMap|ParallelHashSet))\s*<[^>\r\n]+>\s+(?<name>[A-Za-z_]\w*)\s*(?:=|;)",
+        RegexOptions.CultureInvariant);
 
     private static readonly string[] ConcreteUiRuntimeTypes =
     {
@@ -192,9 +207,10 @@ public sealed class ScriptArchitectureAlignmentContractTests
             var tests = new ScriptArchitectureAlignmentContractTests();
             tests.RuntimeScriptsMustNotAddHierarchyLookupOrObjectFindUsage();
             tests.RuntimeScriptsMustNotUseCameraMain();
+            tests.RuntimeGameplayLogicMustNotAddStaticMutableRegistries();
             tests.BootstrapCompositionSystemsMustNotOwnGameplayPolicy();
             tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
-            Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=4");
+            Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=5");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)
@@ -966,6 +982,42 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
+    public void RuntimeGameplayLogicMustNotAddStaticMutableRegistries()
+    {
+        HashSet<string> currentAllowedDebt = new(StringComparer.Ordinal);
+        List<string> violations = new();
+
+        foreach (string path in EnumerateRuntimeLogicSourceFiles())
+        {
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string fieldName = ResolveStaticMutableCollectionFieldName(lines[lineIndex]);
+                if (fieldName == null)
+                    continue;
+
+                string key = normalized + "|" + fieldName;
+                if (StaticGameplayRegistryDebtAllowlist.Contains(key))
+                {
+                    currentAllowedDebt.Add(key);
+                    continue;
+                }
+
+                violations.Add($"{normalized}:{lineIndex + 1} declares static mutable collection `{fieldName}`: {lines[lineIndex].Trim()}");
+            }
+        }
+
+        IEnumerable<string> staleAllowlistEntries = StaticGameplayRegistryDebtAllowlist
+            .Except(currentAllowedDebt, StringComparer.Ordinal)
+            .Select(key => $"{key} is no longer present; remove the stale static registry allowlist entry.");
+
+        AssertNoViolations(
+            violations.Concat(staleAllowlistEntries).ToArray(),
+            "Runtime gameplay logic must not add static mutable registries. Use ECS singletons, buffers, system-owned instance state, or explicit managed presentation boundaries instead.");
+    }
+
+    [Test]
     public void UiMonoBehavioursMustEndWithViewOrBeAllowlisted()
     {
         List<string> violations = new();
@@ -1298,6 +1350,12 @@ public sealed class ScriptArchitectureAlignmentContractTests
             source.Contains("static HashSet<", StringComparison.Ordinal) ||
             source.Contains("static readonly Dictionary<", StringComparison.Ordinal) ||
             source.Contains("static Dictionary<", StringComparison.Ordinal);
+    }
+
+    private static string ResolveStaticMutableCollectionFieldName(string line)
+    {
+        Match match = StaticMutableCollectionFieldRegex.Match(line);
+        return match.Success ? match.Groups["name"].Value : null;
     }
 
     private static IEnumerable<ClassDeclaration> ExtractClassDeclarations(string source)

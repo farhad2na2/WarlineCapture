@@ -98,13 +98,13 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
             Debug.Log("[UnitTransportValidation] result=Passed tests=73");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[UnitTransportValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

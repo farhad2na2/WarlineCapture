@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 [UpdateAfter(typeof(UnitAttackSystem))]
 public partial struct UnitDeathSystem : ISystem
@@ -152,20 +151,8 @@ public partial struct UnitDeathSystem : ISystem
         if (em.HasComponent<UnitMoveVisualComponent>(entity))
             em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
 
-        if (em.HasComponent<UnitAttachedLightRuntime>(entity))
-        {
-            UnitAttachedLightRuntime runtime = em.GetComponentObject<UnitAttachedLightRuntime>(entity);
-            if (runtime?.Instances != null)
-            {
-                for (int i = 0; i < runtime.Instances.Length; i++)
-                {
-                    if (runtime.Instances[i] != null)
-                        Object.Destroy(runtime.Instances[i]);
-                }
-            }
-
-            em.RemoveComponent<UnitAttachedLightRuntime>(entity);
-        }
+        if (em.HasBuffer<UnitAttachedLightSetupElement>(entity) && !em.HasComponent<UnitAttachedLightCleanupRequest>(entity))
+            em.AddComponent<UnitAttachedLightCleanupRequest>(entity);
     }
 
     private static bool TryBeginVehicleWreck(EntityManager em, Entity entity)

@@ -101,13 +101,16 @@ public sealed class BuildingDestroyedVisualSystemTests
         Assert.IsNotNull(building.DestroyedVisualInstance);
         Assert.IsTrue(building.DestroyedVisualInstance.activeSelf);
         Assert.AreEqual("RuntimeBuilding_Destroyed", building.DestroyedVisualInstance.name);
-        Assert.AreSame(_root.transform, building.DestroyedVisualInstance.transform.parent);
+        Assert.AreSame(_building.transform, building.DestroyedVisualInstance.transform.parent);
         Assert.That(building.DestroyedVisualInstance.transform.position.x, Is.EqualTo(4f).Within(0.001f));
         Assert.That(building.DestroyedVisualInstance.transform.position.y, Is.EqualTo(2f).Within(0.001f));
         Assert.That(building.DestroyedVisualInstance.transform.position.z, Is.EqualTo(8f).Within(0.001f));
-        Assert.That(building.DestroyedVisualInstance.transform.localScale.x, Is.EqualTo(2f).Within(0.001f));
-        Assert.That(building.DestroyedVisualInstance.transform.localScale.y, Is.EqualTo(3f).Within(0.001f));
-        Assert.That(building.DestroyedVisualInstance.transform.localScale.z, Is.EqualTo(4f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.localScale.x, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.localScale.y, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.localScale.z, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.lossyScale.x, Is.EqualTo(2f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.lossyScale.y, Is.EqualTo(3f).Within(0.001f));
+        Assert.That(building.DestroyedVisualInstance.transform.lossyScale.z, Is.EqualTo(4f).Within(0.001f));
     }
 
     [Test]

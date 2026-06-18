@@ -25,16 +25,17 @@ public sealed class BuildingPlacementValidationSystemTests
             tests.BuildingUiPlacementCommandRequest_RotateWritesAcceptedResult();
             tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult();
+            tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementRejectsMissingConfig();
             tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
             tests.BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=12");
-            UnityEditor.EditorApplication.Exit(0);
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=13");
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingPlacementCommandRequestValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -391,6 +392,31 @@ public sealed class BuildingPlacementValidationSystemTests
             UnityEngine.Object.DestroyImmediate(root);
             UnityEngine.Object.DestroyImmediate(prefab);
         }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandRequest_BeginConfiguredPlacementRejectsMissingConfig()
+    {
+        using World world = new("BuildingUiPlacementCommandBeginConfiguredMissingConfigTest");
+        var commandSystem = new BuildingPlacementCommandSystem();
+        BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
+            new BuildingPlacementSessionSystem());
+
+        int requestId = commandSystem.EnqueueBeginConfiguredPlacement(world.EntityManager, "missing-building");
+        commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
+
+        AssertPlacementResult(
+            world.EntityManager,
+            commandSystem,
+            requestId,
+            BuildingUiPlacementCommandRequestElement.KindBeginConfiguredPlacement,
+            accepted: false,
+            BuildingUiPlacementCommandResultElement.MissingConfig);
+
+        using EntityQuery queueQuery = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
+        Entity queueEntity = queueQuery.GetSingletonEntity();
+        Assert.AreEqual(0, world.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Length);
     }
 
     [Test]

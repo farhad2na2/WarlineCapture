@@ -467,9 +467,13 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
 
         if (em.HasComponent<AirMissileLauncherVfxReferenceComponent>(launcherEntity))
         {
-            AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<AirMissileLauncherVfxReferenceComponent>(launcherEntity);
-            if (vfx?.LaunchFlashPrefab != null)
-                UnitAttackImpactVfxView.Play(vfx.LaunchFlashPrefab, start, ToUnityQuaternion(rotation));
+            AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<AirMissileLauncherVfxReferenceComponent>(launcherEntity);
+            CombatGameObjectVfxRequests.Enqueue(
+                ecb,
+                vfx.LaunchFlashPrefab,
+                start,
+                rotation,
+                CombatGameObjectVfxRequestKind.Play);
             if (!usesExistingMissileVisual || !em.HasComponent<AirMissileProjectileTrailComponent>(projectileEntity))
             {
                 ecb.AddComponent(projectileEntity, new AirMissileProjectileTrailComponent
@@ -574,22 +578,18 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
             : launcher.MissileTurnRateDegreesPerSecond;
     }
 
-    private static Quaternion ToUnityQuaternion(quaternion rotation)
-    {
-        return new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
-    }
 }
 
 [UpdateAfter(typeof(AirMissileHomingProjectileSystem))]
 [UpdateBefore(typeof(AirMissileImpactSystem))]
-public partial struct AirMissileProjectileTrailSystem : ISystem
+public partial class AirMissileProjectileTrailSystem : SystemBase
 {
-    public void OnCreate(ref SystemState state)
+    protected override void OnCreate()
     {
-        state.RequireForUpdate<AirMissileProjectileTrailComponent>();
+        RequireForUpdate<AirMissileProjectileTrailComponent>();
     }
 
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
         foreach (var (projectile, transform, entity) in SystemAPI
                      .Query<RefRO<AirMissileProjectileComponent>, RefRO<LocalTransform>>()
@@ -776,7 +776,7 @@ public partial struct AirMissileImpactSystem : ISystem
                 ecb.SetComponent(request.Target, health);
             }
 
-            PlayImpactVfx(em, request);
+            EnqueueImpactVfx(em, ecb, request);
             if (RestoreFlyingVisual(em, ecb, entity))
                 ecb.RemoveComponent<AirMissileImpactRequestComponent>(entity);
         }
@@ -809,19 +809,24 @@ public partial struct AirMissileImpactSystem : ISystem
         return true;
     }
 
-    private static void PlayImpactVfx(EntityManager em, AirMissileImpactRequestComponent request)
+    private static void EnqueueImpactVfx(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        AirMissileImpactRequestComponent request)
     {
         if (!em.Exists(request.Source) || !em.HasComponent<AirMissileLauncherVfxReferenceComponent>(request.Source))
             return;
 
-        AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentObject<AirMissileLauncherVfxReferenceComponent>(request.Source);
-        GameObject prefab = request.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile
-            ? vfx?.InterceptExplosionPrefab
-            : vfx?.AirTargetImpactPrefab;
-        if (prefab == null)
-            prefab = vfx?.AirburstExplosionPrefab;
-        if (prefab != null)
-            UnitAttackImpactVfxView.Play(prefab, request.Position);
+        AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<AirMissileLauncherVfxReferenceComponent>(request.Source);
+        CombatGameObjectVfxRequests.Enqueue(
+            ecb,
+            request.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile
+                ? vfx.InterceptExplosionPrefab
+                : vfx.AirTargetImpactPrefab,
+            request.Position,
+            quaternion.identity,
+            CombatGameObjectVfxRequestKind.Play,
+            fallbackPrefab: vfx.AirburstExplosionPrefab);
     }
 }
 

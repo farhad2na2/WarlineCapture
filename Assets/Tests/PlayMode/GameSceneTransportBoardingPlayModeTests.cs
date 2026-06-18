@@ -74,6 +74,71 @@ public sealed class GameSceneTransportBoardingPlayModeTests
     }
 
     [Test]
+    public void DeterministicHelicopterBoardThenExitCommand_BoardsAndDisembarksSameSoldier()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("DeterministicHelicopterBoardThenExitCommand_BoardsAndDisembarksSameSoldier");
+        World.DefaultGameObjectInjectionWorld = world;
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        Entity transport = CreateTransportHelicopter(em, new int2(8, 8), airborne: false);
+        Entity passenger = CreateSoldier(em, new int2(13, 8));
+        em.AddComponent<SelectedUnitTag>(passenger);
+
+        try
+        {
+            var commandSystem = new TransportBoardingCommandSystem();
+            TransportBoardingCommandSystem.Result result = commandSystem.TryRequestBoardTransportOrderToClickedUnit(
+                em,
+                Vector2.zero,
+                new UnitTransportAirPickupSystem(),
+                new UnitMoveOrderSystem(),
+                new SelectionStateSystem(),
+                (Vector2 unusedScreenPosition, EntityManager unusedEntityManager, out Entity clicked) =>
+                {
+                    clicked = transport;
+                    return true;
+                },
+                TryGetNoClickedCell);
+
+            Assert.IsTrue(result.Accepted, "Board command should accept a selected soldier and landed transport.");
+            UnitTransportBoardingTarget target = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+            MoveUnitToCell(em, passenger, target.Goal);
+
+            SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+            world.SetTime(new TimeData(1d, 0.1f));
+            boardingSystem.Update(world.Unmanaged);
+
+            AssertPassengerBoarded(em, transport, passenger);
+
+            Assert.IsTrue(RequestDisembarkTransportForTest(world, em, transport), "Transport exit command should start rope disembark for the boarded passenger.");
+            Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "Boarded transport should receive a rope disembark request.");
+
+            SystemHandle disembarkSystem = world.CreateSystem<UnitTransportRopeDisembarkSystem>();
+            SystemHandle dropSystem = world.CreateSystem<UnitTransportRopeDropSystem>();
+            SystemHandle disperseSystem = world.CreateSystem<UnitTransportRopeDisperseSystem>();
+
+            world.SetTime(new TimeData(2d, 0.1f));
+            disembarkSystem.Update(world.Unmanaged);
+
+            AssertPassengerStartedDrop(em, passenger);
+            CompleteDropAndDisperse(world, dropSystem, disperseSystem, em, passenger);
+
+            world.SetTime(new TimeData(5d, 0.1f));
+            disembarkSystem.Update(world.Unmanaged);
+
+            Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "Rope disembark should clear after the boarded passenger exits.");
+            AssertPassengerFinishedExit(em, passenger);
+            Assert.IsFalse(TransportPassengerBufferContains(em, transport, passenger), "Transport passenger buffer should no longer contain the exited soldier.");
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
     public void DeterministicHelicopterExitCommand_DropsAndDispersesPassengers()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

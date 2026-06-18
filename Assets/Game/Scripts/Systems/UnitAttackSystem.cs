@@ -897,18 +897,18 @@ public partial struct UnitAttackSystem : ISystem
 
 [UpdateAfter(typeof(UnitAttackSystem))]
 [UpdateBefore(typeof(UnitDeathSystem))]
-public partial struct UnitAttackVfxRequestSystem : ISystem
+public partial class UnitAttackVfxRequestSystem : SystemBase
 {
     private const int MaxMuzzleFlashOriginCount = 4;
 
-    public void OnCreate(ref SystemState state)
+    protected override void OnCreate()
     {
-        state.RequireForUpdate<UnitAttackVfxRequest>();
+        RequireForUpdate<UnitAttackVfxRequest>();
     }
 
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
-        EntityManager em = state.EntityManager;
+        EntityManager em = EntityManager;
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (request, entity) in SystemAPI
@@ -942,8 +942,9 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
             return;
         }
 
-        UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentObject<UnitMuzzleFlashVfxReference>(request.Source);
-        if (muzzleVfx?.Prefab == null)
+        UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentData<UnitMuzzleFlashVfxReference>(request.Source);
+        GameObject muzzlePrefab = muzzleVfx.Prefab.Value;
+        if (muzzlePrefab == null)
             return;
 
         LocalTransform sourceTransform = em.HasComponent<LocalTransform>(request.Source)
@@ -973,7 +974,7 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
         {
             float sideSign = ResolveMuzzleFlashSideSign(originIndex, originCount);
             float3 sideOffset = (float3)sideRight * (sideSign * math.max(0f, originPattern.LateralOffset));
-            UnitAttackImpactVfxView.Play(muzzleVfx.Prefab, (Vector3)(muzzlePosition + sideOffset), rotation);
+            UnitAttackImpactVfxView.Play(muzzlePrefab, (Vector3)(muzzlePosition + sideOffset), rotation);
         }
     }
 
@@ -986,8 +987,9 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
             return;
         }
 
-        UnitAttackImpactVfxReference impactVfx = em.GetComponentObject<UnitAttackImpactVfxReference>(request.Source);
-        if (impactVfx?.Prefab == null)
+        UnitAttackImpactVfxReference impactVfx = em.GetComponentData<UnitAttackImpactVfxReference>(request.Source);
+        GameObject impactPrefab = impactVfx.Prefab.Value;
+        if (impactPrefab == null)
             return;
 
         float3 targetPosition = request.TargetPosition;
@@ -1003,7 +1005,7 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
         Quaternion impactRotation = math.lengthsq(toAttacker) > 1e-4f
             ? Quaternion.LookRotation((Vector3)toAttacker)
             : Quaternion.identity;
-        UnitAttackImpactVfxView.Play(impactVfx.Prefab, targetPosition, impactRotation);
+        UnitAttackImpactVfxView.Play(impactPrefab, targetPosition, impactRotation);
     }
 
     private static Quaternion ResolveLookRotation(
@@ -1064,5 +1066,83 @@ public partial struct UnitAttackVfxRequestSystem : ISystem
             return Vector3.right;
 
         return Vector3.Cross(Vector3.up, flatAim).normalized;
+    }
+}
+
+[UpdateAfter(typeof(GroundMissileImpactSystem))]
+[UpdateAfter(typeof(AirMissileImpactSystem))]
+public partial class CombatGameObjectVfxPlaybackSystem : SystemBase
+{
+    protected override void OnCreate()
+    {
+        RequireForUpdate<CombatGameObjectVfxRequest>();
+    }
+
+    protected override void OnUpdate()
+    {
+        EntityManager em = EntityManager;
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        foreach (var (request, entity) in SystemAPI
+                     .Query<RefRO<CombatGameObjectVfxRequest>>()
+                     .WithEntityAccess())
+        {
+            CombatGameObjectVfxRequest value = request.ValueRO;
+            GameObject prefab = value.Prefab.Value != null ? value.Prefab.Value : value.FallbackPrefab.Value;
+            if (prefab != null)
+            {
+                Quaternion rotation = ToUnityQuaternion(value.Rotation);
+                switch ((CombatGameObjectVfxRequestKind)value.Kind)
+                {
+                    case CombatGameObjectVfxRequestKind.Play:
+                        UnitAttackImpactVfxView.Play(prefab, value.Position, rotation);
+                        break;
+                    case CombatGameObjectVfxRequestKind.TimedLoop:
+                        UnitAttackImpactVfxView.PlayTimedLoop(
+                            prefab,
+                            value.Position,
+                            rotation,
+                            value.EmitSeconds,
+                            value.ActiveSeconds);
+                        break;
+                }
+            }
+
+            ecb.DestroyEntity(entity);
+        }
+
+        ecb.Playback(em);
+        ecb.Dispose();
+    }
+
+    private static Quaternion ToUnityQuaternion(quaternion rotation)
+    {
+        return new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
+    }
+}
+
+internal static class CombatGameObjectVfxRequests
+{
+    public static void Enqueue(
+        EntityCommandBuffer ecb,
+        UnityObjectRef<GameObject> prefab,
+        float3 position,
+        quaternion rotation,
+        CombatGameObjectVfxRequestKind kind,
+        float emitSeconds = 0f,
+        float activeSeconds = 0f,
+        UnityObjectRef<GameObject> fallbackPrefab = default)
+    {
+        Entity request = ecb.CreateEntity();
+        ecb.AddComponent(request, new CombatGameObjectVfxRequest
+        {
+            Kind = (byte)kind,
+            Prefab = prefab,
+            FallbackPrefab = fallbackPrefab,
+            Position = position,
+            Rotation = rotation,
+            EmitSeconds = emitSeconds,
+            ActiveSeconds = activeSeconds
+        });
     }
 }

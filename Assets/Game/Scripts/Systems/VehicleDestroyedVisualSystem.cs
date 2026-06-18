@@ -21,13 +21,16 @@ public partial struct VehicleDestroyedVisualSystem : ISystem
             requests.Add(entity);
         }
 
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
         for (int i = 0; i < requests.Length; i++)
-            ProcessRequest(em, requests[i]);
+            ProcessRequest(em, ref ecb, requests[i]);
 
+        ecb.Playback(em);
+        ecb.Dispose();
         requests.Dispose();
     }
 
-    private static void ProcessRequest(EntityManager em, Entity vehicle)
+    private static void ProcessRequest(EntityManager em, ref EntityCommandBuffer ecb, Entity vehicle)
     {
         if (!em.Exists(vehicle))
             return;
@@ -48,7 +51,7 @@ public partial struct VehicleDestroyedVisualSystem : ISystem
 
         HideAliveVisuals(em, vehicle);
         if (!em.HasComponent<VehicleDestroyedVisualInstanceReference>(vehicle))
-            CreateDestroyedVisual(em, vehicle);
+            CreateDestroyedVisual(em, ref ecb, vehicle);
 
         if (em.HasComponent<VehicleDestroyedVisualSpawnRequest>(vehicle))
             em.RemoveComponent<VehicleDestroyedVisualSpawnRequest>(vehicle);
@@ -63,7 +66,7 @@ public partial struct VehicleDestroyedVisualSystem : ISystem
             UnitDestroyedVisualSystem.SetChildVisible(em, em.GetComponentData<UnitTurretReference>(vehicle).Turret, false);
     }
 
-    private static void CreateDestroyedVisual(EntityManager em, Entity vehicle)
+    private static void CreateDestroyedVisual(EntityManager em, ref EntityCommandBuffer ecb, Entity vehicle)
     {
         if (!em.HasComponent<VehicleDestroyedVisualPrefabReference>(vehicle))
             return;
@@ -72,12 +75,16 @@ public partial struct VehicleDestroyedVisualSystem : ISystem
         if (prefabRef.Prefab == Entity.Null || !em.Exists(prefabRef.Prefab))
             return;
 
-        Entity visual = em.Instantiate(prefabRef.Prefab);
-        if (!em.HasComponent<Parent>(visual))
-            em.AddComponentData(visual, new Parent { Value = vehicle });
+        bool prefabHasParent = em.HasComponent<Parent>(prefabRef.Prefab);
+        Entity visual = ecb.Instantiate(prefabRef.Prefab);
+        if (prefabHasParent)
+            ecb.SetComponent(visual, new Parent { Value = vehicle });
         else
-            em.SetComponentData(visual, new Parent { Value = vehicle });
+            ecb.AddComponent(visual, new Parent { Value = vehicle });
 
-        em.AddComponentData(vehicle, new VehicleDestroyedVisualInstanceReference { Instance = visual });
+        if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(vehicle))
+            ecb.SetComponent(vehicle, new VehicleDestroyedVisualInstanceReference { Instance = visual });
+        else
+            ecb.AddComponent(vehicle, new VehicleDestroyedVisualInstanceReference { Instance = visual });
     }
 }

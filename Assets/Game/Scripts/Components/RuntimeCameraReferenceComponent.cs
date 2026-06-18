@@ -1,7 +1,1 @@
-using Unity.Entities;
-using UnityEngine;
-
-public sealed class RuntimeCameraReferenceComponent : IComponentData
-{
-    public Camera WorldCamera;
-}
+// Runtime camera references are owned by RuntimeCameraReferenceSystem managed state.

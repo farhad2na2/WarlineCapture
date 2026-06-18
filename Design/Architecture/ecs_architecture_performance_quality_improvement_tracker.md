@@ -17,14 +17,15 @@ Do not merge this work into the paused five-SystemBase split tracker. This track
 
 ## Progress Snapshot
 
-- Checklist progress: `40 / 94 complete (42.6%)`.
+- Checklist progress: `92 / 100 complete (92.0%)`.
 - In progress: `0`.
-- Remaining open: `54`.
-- Current target: `Quick-win scope complete; deeper audit phases deferred`.
+- Remaining open: `8`.
+- Current target: `Medium-term scope complete; Phase 7 long-term ECS/Burst migration remains deferred`.
 - Quick-win estimate: `3-5 working days`.
 - Medium-term audit estimate: `5-8 working weeks`.
 - Long-term architecture vision estimate: `2-4 months`.
-- Validation status: `git diff --check` passed; Unity batchmode compile passed after quick-win settings cleanup; main project validation was available, so shadow-project fallback was not needed; baseline render-budget, production, movement, transport, and armory/UI validations passed; Phase 1 camera, building visual, marker shadow/rendering, and quality-setting smoke validations passed; building placement command validation passed after wall-preview scratch-list cleanup and focused scratch-list coverage; vehicle visual adornments validation passed after health-bar expiry scheduling; transport validation passed after deploy-order and airdrop lookup array-snapshot cleanup; selection input validation passed after attack-target, board-target, deselect-all, move-target, and immediate-selected array-snapshot cleanup; building UI query validation passed after boundary lookup cleanup; scan intel focused validation passed after selected-source lookup cleanup; Phase 2 focused rendering budget, health, animation, minimap, production, and movement validations passed; render-budget `.Run()` helpers were evaluated, left synchronous pending an output-container redesign, and revalidated; minimap marker filtering was evaluated and left unfiltered to preserve per-frame HUD rebuild behavior; UnitAnimationIndexSystem validation passed after removing disabled freeze-diagnostic counter allocation; health/animation scheduling and change-filter candidates were evaluated and left synchronous/unfiltered where immediate refresh is required; UnitMoveTargetDiagnosticSystem scratch cleanup passed diagnostics focused validation; BuildingCombatSystem cleanup scratch passed focused validation; runtime Systems `ToEntityArray`/`ToComponentDataArray` grep is clean; architecture runner now fails on separate existing non-Burst `OnUpdate` debt (`Current=256`, `ceiling=23`).
+- Validation status: `git diff --check` passed; Unity batchmode compile passed after quick-win settings cleanup; main project validation was available, so shadow-project fallback was not needed; baseline render-budget, production, movement, transport, and armory/UI validations passed; Phase 1 camera, building visual, marker shadow/rendering, and quality-setting smoke validations passed; building placement command validation passed after wall-preview scratch-list cleanup and focused scratch-list coverage; vehicle visual adornments validation passed after health-bar expiry scheduling; transport validation passed after deploy-order and airdrop lookup array-snapshot cleanup; selection input validation passed after attack-target, board-target, deselect-all, move-target, and immediate-selected array-snapshot cleanup; building UI query validation passed after boundary lookup cleanup; scan intel focused validation passed after selected-source lookup cleanup; Phase 2 focused rendering budget, health, animation, minimap, production, and movement validations passed; render-budget `.Run()` helpers were evaluated, left synchronous pending an output-container redesign, and revalidated; minimap marker filtering was evaluated and left unfiltered to preserve per-frame HUD rebuild behavior; UnitAnimationIndexSystem validation passed after removing disabled freeze-diagnostic counter allocation; health/animation scheduling and change-filter candidates were evaluated and left synchronous/unfiltered where immediate refresh is required; UnitMoveTargetDiagnosticSystem scratch cleanup passed diagnostics focused validation; BuildingCombatSystem cleanup scratch passed focused validation; runtime Systems `ToEntityArray`/`ToComponentDataArray` grep is clean; Phase 3 managed component inventory classified all 10 managed component classes; Phase 3 scene/camera reference boundary slices passed Unity compile/focused validation (`/private/tmp/warline-ecs-audit-scene-reference-boundary-compile.log`, `/private/tmp/warline-ecs-audit-runtime-camera-boundary-validation.log`); Phase 3 diagnostics reference boundary slice passed Unity compile (`/private/tmp/warline-ecs-audit-diagnostics-boundary-compile.log`); Phase 3 VFX prefab reference conversion passed Unity compile and focused missile validations (`/private/tmp/warline-ecs-audit-attack-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-missile-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-air-missile-vfx-unityobjectref-validation.log`, `/private/tmp/warline-ecs-audit-ground-missile-vfx-unityobjectref-validation.log`); Phase 3 attached-light setup buffer slice passed Unity compile (`/private/tmp/warline-ecs-audit-attached-light-setup-buffer-compile-rerun.log`); Phase 3 pose mesh setup `UnityObjectRef` slice passed Unity compile (`/private/tmp/warline-ecs-audit-pose-mesh-unityobjectref-compile.log`); Phase 3 attached-light runtime boundary passed Unity compile and combat/death validation (`/private/tmp/warline-ecs-audit-attached-light-runtime-boundary-compile.log`, `/private/tmp/warline-ecs-audit-attached-light-runtime-combat-death-validation.log`) and managed component scan now reports 0 classes; Phase 3 static mutable gameplay registry guard passed bootstrap architecture validation (`/private/tmp/warline-ecs-audit-static-registry-guard-validation.log`); Phase 3 VFX playback boundary split passed Unity compile plus air and ground missile focused validations (`/private/tmp/warline-ecs-audit-vfx-presentation-boundary-compile.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-air-missile-validation.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-ground-missile-validation.log`); Phase 4 instantiation categorization passed `git diff --check`; Phase 4 order-marker preview pooling passed focused validation (`/private/tmp/warline-ecs-audit-selection-order-marker-pool-validation.log`); Phase 4 health-bar and vehicle destroyed visual entity-prefab ECB slice passed focused vehicle visual validation (`/private/tmp/warline-ecs-audit-entity-prefab-ecb-vehicle-visual-validation.log`); Phase 4 building destroyed visual wrapper-aware contract validation passed after updating the stale assertion (`/private/tmp/warline-ecs-audit-phase4-building-destroyed-visual-validation.log`); Phase 4 validation sweep passed selection/order marker, building selection marker, building faction visual, production, and nearest road-build focused validations (`/private/tmp/warline-ecs-audit-phase4-selection-order-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-selection-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-faction-visual-validation.log`, `/private/tmp/warline-ecs-audit-phase4-production-validation.log`, `/private/tmp/warline-ecs-audit-phase4-road-build-validation.log`); Phase 5 transport constants-only slice passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-transport-constants-validation.log`); Phase 5 shared boarding transport validation helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-validation-helper-validation.log`); Phase 5 boarding goal-order helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-goal-order-helper-validation.log`, test result passed before Unity batchmode teardown was manually terminated); Phase 5 plane-ramp calculation helpers passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-plane-ramp-calculation-helper-validation.log`); Phase 5 airdrop drop-execution helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-airdrop-drop-execution-helper-validation.log`); Phase 5 passenger capacity state helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-passenger-capacity-helper-validation.log`); Phase 5 disembark planning helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-disembark-planning-helper-validation.log`) and movement validation (`/private/tmp/warline-ecs-audit-phase5-movement-validation.log`); Phase 6 validation-exit helper passed batchmode smoke validation through movement runner (`/private/tmp/warline-ecs-audit-phase6-validation-exit-movement.log`); Phase 6 required validation-set runner exit conversions passed production, armory, build drawer, and render-budget validations (`/private/tmp/warline-ecs-audit-phase6-production-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-armory-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-builddrawer-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-renderbudget-validation-exit.log`); Phase 6 match-start initial-spawn PlayMode smoke passed (`/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode.log`, `/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode-results.xml`, `1/1` passed); Phase 6 focused EditMode coverage passed for city generation, unit combat, road build, and building placement (`/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-road-build-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml`); final medium-term validation sweep passed `git diff --check`, Unity compile, render-budget, movement, transport, production/build drawer, armory/UI, and combat-death PlayMode smoke; architecture runner still fails on separate existing non-Burst `OnUpdate` debt (`Current=256`, `ceiling=23`) deferred to Phase 7.
+- Latest medium-term validation: final PlayMode smoke passed with `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode.log` and result XML `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode-results.xml` (`1/1` passed).
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
 ## Agreement Assessment
@@ -184,62 +185,174 @@ Phase 2 notes:
 Purpose:
 Reduce managed `IComponentData` without hiding Unity object ownership in unmanaged code.
 
-- [ ] Classify each managed component as scene reference, camera reference, VFX/light reference, pose mesh setup, or diagnostics.
-- [ ] Move scene and camera references to explicit managed bootstrap or presentation boundaries.
-- [ ] Move performance diagnostics references to managed diagnostic ownership outside ECS component data.
-- [ ] Replace VFX prefab managed components with baked entity prefab refs where runtime spawning can be ECS-owned.
-- [ ] Keep VFX GameObject playback in passive managed presentation systems when Unity object access is required.
-- [ ] Replace light prefab/runtime managed components with baked refs, entity refs, or pooled managed presentation state.
-- [ ] Replace pose mesh setup managed component with baked mesh/entity data or a passive setup boundary.
-- [ ] Add architecture tests that block static mutable registries for gameplay behavior.
-- [ ] Run combat VFX, missile, attached light, camera, diagnostics, and compile validations.
+- [x] Classify each managed component as scene reference, camera reference, VFX/light reference, pose mesh setup, or diagnostics.
+- [x] Move scene and camera references to explicit managed bootstrap or presentation boundaries.
+- [x] Move match scene reference storage from managed `IComponentData` to `MatchSceneReferenceBoundarySystem`.
+- [x] Move runtime camera reference storage from managed `IComponentData` to `RuntimeCameraReferenceSystem` managed state.
+- [x] Move performance diagnostics references to managed diagnostic ownership outside ECS component data.
+- [x] Replace VFX prefab managed components with baked entity prefab refs or unmanaged Unity object refs where runtime playback remains GameObject-owned.
+- [x] Convert normal unit attack impact and muzzle-flash VFX references from managed component classes to `UnityObjectRef<GameObject>` struct components.
+- [x] Convert ground and air missile VFX references from managed component classes to `UnityObjectRef<GameObject>` struct components.
+- [x] Keep VFX GameObject playback in passive managed presentation systems when Unity object access is required.
+- [x] Replace light prefab/runtime managed components with baked refs, entity refs, or pooled managed presentation state.
+- [x] Convert attached-light setup data from managed component class to baked `UnitAttachedLightSetupElement` buffer.
+- [x] Move attached-light runtime instances from managed component data into `UnitAttachedLightSystem` managed presentation state.
+- [x] Replace pose mesh setup managed component with baked mesh/entity data or a passive setup boundary.
+- [x] Add architecture tests that block static mutable registries for gameplay behavior.
+- [x] Run combat VFX, missile, attached light, camera, diagnostics, and compile validations.
+
+Phase 3 notes:
+
+Managed component inventory:
+
+| Component | Category | Current owner/use | Boundary decision |
+| --- | --- | --- | --- |
+| `MatchSceneReferenceComponent` (retired) | Scene reference | Replaced by `MatchSceneReferenceBoundarySystem`, a disabled managed system that owns `MatchSceneView` state. | Completed scene-reference boundary slice; no managed `IComponentData` remains for match scene view state. |
+| `RuntimeCameraReferenceComponent` (retired) | Camera reference | Replaced by `RuntimeCameraReferenceSystem` managed state; render-budget and model-spawn systems resolve the camera from their owning `World`. | Completed camera-reference boundary slice; no managed `IComponentData` remains for runtime camera state. |
+| `PerformanceDiagnosticsReferenceComponent` (retired) | Diagnostics | Replaced by `PerformanceDiagnosticsReferenceBoundarySystem`; menu/match bootstraps still use `PerformanceDiagnosticsReferenceSystem` as a plain helper. | Completed diagnostics-reference boundary slice; no managed `IComponentData` remains for diagnostics ownership. |
+| `UnitAttackImpactVfxReference` | VFX prefab reference | Normal unit attack impact VFX reads a `UnityObjectRef<GameObject>` prefab from source entities. | Converted from managed component class to unmanaged struct component; playback remains pooled GameObject VFX. |
+| `UnitMuzzleFlashVfxReference` | VFX prefab reference | Normal unit attack muzzle flash reads a `UnityObjectRef<GameObject>` prefab plus offsets from source entities. | Converted from managed component class to unmanaged struct component; playback remains pooled GameObject VFX. |
+| `GroundMissileLauncherVfxReferenceComponent` | VFX prefab reference | Ground missile launcher/fire/impact systems read launcher, trail, explosion, and smoke prefabs through `UnityObjectRef<GameObject>`. | Converted from managed component class to unmanaged struct component; playback remains pooled GameObject VFX. |
+| `AirMissileLauncherVfxReferenceComponent` | VFX prefab reference | Air missile launcher systems read missile, launch, trail, airburst, air-target, and intercept prefabs through `UnityObjectRef<GameObject>`. | Converted from managed component class to unmanaged struct component; playback remains pooled GameObject VFX. |
+| `UnitAttachedLightSet` (retired) | Light setup/config | Replaced by baked `UnitAttachedLightSetupElement` buffer entries. | Setup data converted from managed component class to unmanaged buffer; runtime light instances remain managed presentation state. |
+| `UnitAttachedLightRuntime` (retired) | Light runtime instances | Replaced by `UnitAttachedLightSystem` managed presentation state keyed by entity; `UnitDeathSystem` emits `UnitAttachedLightCleanupRequest` data. | Runtime instances are no longer ECS component objects; GameObject ownership stays in the managed presentation boundary. |
+| `UnitPoseMeshesSetup` | Pose mesh setup | Carries optional `UnityObjectRef<Mesh>` and `UnityObjectRef<Material>` setup refs; no active runtime readers were found. | Converted from managed component class to unmanaged struct component; behavior unchanged because no runtime call sites existed. |
+
+Scene and camera reference boundary slices:
+
+- `MatchSceneReferenceSystem` now resolves a disabled managed `MatchSceneReferenceBoundarySystem` instead of creating an entity with a managed component object.
+- `MatchSceneReferenceComponent` was retired as managed `IComponentData`; the source file is preserved for Unity `.meta` stability.
+- Unity compile passed with `/private/tmp/warline-ecs-audit-scene-reference-boundary-compile.log`.
+- `RuntimeCameraReferenceSystem` now owns the current `Camera` as managed system state instead of writing a component object entity.
+- `UnitRenderBudgetSystem` and `UnitModelSpawnSystem` now resolve the camera through `SystemState.World`, removing their camera component queries.
+- `RuntimeCameraReferenceComponent` was retired as managed `IComponentData`; the source file is preserved for Unity `.meta` stability.
+- Runtime camera focused validation passed with `/private/tmp/warline-ecs-audit-runtime-camera-boundary-validation.log` (`RuntimeCameraReferenceFocusedValidation`, `tests=3`).
+- `PerformanceDiagnosticsReferenceSystem` is now a plain helper over `PerformanceDiagnosticsReferenceBoundarySystem`, preserving the menu-to-match diagnostics handoff without component-object storage.
+- `PerformanceDiagnosticsReferenceComponent` was retired as managed `IComponentData`; the source file is preserved for Unity `.meta` stability.
+- Diagnostics boundary compile passed with `/private/tmp/warline-ecs-audit-diagnostics-boundary-compile.log`.
+- Normal unit attack impact and muzzle-flash VFX references now bake as struct `IComponentData` with `UnityObjectRef<GameObject>` fields instead of class managed components.
+- `UnitAttackVfxRequestSystem` now reads normal component data and unwraps the `GameObject` only at the pooled VFX playback boundary.
+- Attack VFX `UnityObjectRef<GameObject>` compile passed with `/private/tmp/warline-ecs-audit-attack-vfx-unityobjectref-compile.log`.
+- Ground and air missile VFX references now bake as struct `IComponentData` with `UnityObjectRef<GameObject>` fields instead of class managed components.
+- Ground and air missile systems now read normal component data and unwrap `GameObject` prefabs only at the pooled VFX playback boundary.
+- Missile VFX `UnityObjectRef<GameObject>` compile passed with `/private/tmp/warline-ecs-audit-missile-vfx-unityobjectref-compile.log`.
+- Focused missile validations passed: `/private/tmp/warline-ecs-audit-air-missile-vfx-unityobjectref-validation.log` (`AirMissileLauncherValidation`, `PASS`) and `/private/tmp/warline-ecs-audit-ground-missile-vfx-unityobjectref-validation.log` (`GroundMissileAttackFocusedValidation`, `tests=5`).
+- Attached-light setup now bakes into `UnitAttachedLightSetupElement` buffer entries; `UnitAttachedLightSystem` consumes the buffer and owns spawned light `GameObject` instances in managed presentation state outside ECS component data.
+- Attached-light setup buffer compile passed with `/private/tmp/warline-ecs-audit-attached-light-setup-buffer-compile-rerun.log`.
+- Attached-light runtime cleanup now uses `UnitAttachedLightCleanupRequest` data from death flow; Unity compile passed with `/private/tmp/warline-ecs-audit-attached-light-runtime-boundary-compile.log` and combat/death validation passed with `/private/tmp/warline-ecs-audit-attached-light-runtime-combat-death-validation.log` (`CombatDeathFocusedValidation`, `tests=2`).
+- `UnitPoseMeshesSetup` now uses `UnityObjectRef<Mesh>` and `UnityObjectRef<Material>` fields in a struct component; no runtime or baker call sites referenced this component beyond its definition.
+- Pose mesh setup compile passed with `/private/tmp/warline-ecs-audit-pose-mesh-unityobjectref-compile.log`.
+- Managed component scan now reports `0` direct `class ... : IComponentData` classes under `Assets/Game/Scripts`.
+- `ScriptArchitectureAlignmentContractTests` now blocks new static mutable collection fields in runtime gameplay logic with an exact allowlist for existing utility/preview debts; bootstrap architecture validation passed with `/private/tmp/warline-ecs-audit-static-registry-guard-validation.log` (`BootstrapCompositionGuardrailValidation`, `tests=5`).
+- `UnitAttackVfxRequestSystem`, `GroundMissileRocketTrailSystem`, and `AirMissileProjectileTrailSystem` are now managed presentation `SystemBase` boundaries; missile launch/impact systems enqueue `CombatGameObjectVfxRequest` data and `CombatGameObjectVfxPlaybackSystem` performs pooled GameObject playback.
+- VFX playback boundary compile passed with `/private/tmp/warline-ecs-audit-vfx-presentation-boundary-compile.log`; focused air and ground missile validations passed with `/private/tmp/warline-ecs-audit-vfx-presentation-air-missile-validation.log` (`AirMissileLauncherValidation`, `PASS`) and `/private/tmp/warline-ecs-audit-vfx-presentation-ground-missile-validation.log` (`GroundMissileAttackFocusedValidation`, `tests=5`).
 
 ## Phase 4: Instantiation And Pooling
 
 Purpose:
 Remove hot runtime `Object.Instantiate` calls while preserving UI, editor, and one-time setup boundaries.
 
-- [ ] Categorize each `Object.Instantiate` call as gameplay entity spawn, visual GameObject, UI, editor-only, preview/cache, or one-time setup.
-- [ ] Leave editor-only migration/generation tools out of runtime performance scope.
-- [ ] Leave UI instantiation as managed UI work unless it becomes a measured UI performance issue.
-- [ ] Convert gameplay entity spawn paths to ECB/entity prefab instantiation where data is already baked.
-- [ ] Pool selection/order/building marker GameObjects instead of instantiating on demand.
-- [ ] Convert destroyed visual and wreck visuals only after prefab/entity visual data is explicit.
-- [ ] Keep road/building/decor visual instantiation managed until their visual data model is split from gameplay.
-- [ ] Add or update tests for marker reuse and visual lifecycle cleanup.
-- [ ] Run selection marker, order marker, destroyed visual, road visual, building visual, and production validations.
-- [ ] Document any intentionally retained managed instantiation boundaries.
+- [x] Categorize each `Object.Instantiate` call as gameplay entity spawn, visual GameObject, UI, editor-only, preview/cache, or one-time setup.
+- [x] Leave editor-only migration/generation tools out of runtime performance scope.
+- [x] Leave UI instantiation as managed UI work unless it becomes a measured UI performance issue.
+- [x] Convert gameplay entity spawn paths to ECB/entity prefab instantiation where data is already baked.
+- [x] Pool selection/order/building marker GameObjects instead of instantiating on demand.
+- [x] Convert destroyed visual and wreck visuals only after prefab/entity visual data is explicit.
+- [x] Keep road/building/decor visual instantiation managed until their visual data model is split from gameplay.
+- [x] Add or update tests for marker reuse and visual lifecycle cleanup.
+- [x] Run selection marker, order marker, destroyed visual, road visual, building visual, and production validations.
+- [x] Document any intentionally retained managed instantiation boundaries.
+
+Phase 4 notes:
+
+Instantiation categorization:
+
+- Editor-only migration/generation/validation calls are out of runtime scope: `BuildingDestroyedVisualPrefabMigration`, `RuntimeCitySpawnerStep13Validation`, `VehicleVisualAdornmentsMigration`, `UnitMidLodGenerator`, editor prefab hierarchy tools, and generated VFX asset tools.
+- UI calls remain managed UI work: transport passenger drawer rows, armory list rows, build drawer rows/queue rows, placement confirmation buttons, app canvas bootstrap, shell content, and screen route flow.
+- ECS entity prefab instantiation is already data-based in several paths: unit model spawn, selection marker entity spawn, initial unit/blocker spawn, citizen visible unit spawn, building spawn, transport airdrop visuals, health bars, vehicle destroyed visuals, unit respawn, and road-build ECS boundary spawn.
+- Managed visual GameObject instantiation remains in presentation/config boundaries: pooled combat VFX, building/selection/order markers, destroyed visual GameObjects, bounds/definition sampling, runtime city/grid/decor visuals, day/night skybox material, road/building placement visuals, road special visuals, runtime transport visuals, and preview/cache rendering.
+- Runtime root and setup objects remain one-time managed setup boundaries: runtime building/root objects, road runtime roots, placement outlines, preview root/camera, and city visual roots.
+- Selection/order/building marker pooling slice: building selection already reuses one marker, move/attack command markers already cache one marker each, attack target selection/ring markers remain cached, and attack/board preview markers now prewarm the full `MaxAttackTargetPreviewMarkers` pool during `SelectionOrderMarkerSystem.Initialize` instead of instantiating during hover preview updates.
+- Marker reuse coverage was added to `SelectionOrderMarkerSystemTests.Initialize_PrewarmsAttackTargetPreviewMarkerPool`; focused order-marker validation passed with `/private/tmp/warline-ecs-audit-selection-order-marker-pool-validation.log` (`SelectionOrderMarkerFocusedValidation`, `tests=15`).
+- `UnitRuntimeHealthBarSystem` and `VehicleDestroyedVisualSystem` now instantiate their baked ECS prefab entities through a short-lived ECB while preserving same-update playback and existing instance-reference behavior.
+- `UnitSelectionMarkerSystem`, `BuildingSpawnSystem`, `CitizenVisibleUnitSystem`, and `RoadBuildEcsBoundarySystem` remain direct `EntityManager.Instantiate` boundaries for now because they immediately inspect linked children, publish managed read models, or bridge command results in the same call. Those need separate design slices before delayed ECB playback is safe.
+- Vehicle destroyed visual data is explicit (`VehicleDestroyedVisualPrefabReference` entity prefab plus `VehicleDestroyedVisualSpawnRequest`), so the vehicle wreck visual path was included in the ECB slice. Building destroyed visuals remain managed because `BuildingDefinition.DestroyedVisualPrefab` is still a `GameObject` prefab and the runtime building object owns wrapper transforms.
+- Road, building placement, runtime city/grid/decor, bounds-sampling, and building destroyed visual instantiation are intentionally retained managed boundaries until their visual data models are split from gameplay/runtime GameObject state.
+- `BuildingDestroyedVisualSystemTests` now asserts the wrapper-aware destroyed visual contract introduced by the runtime system: destroyed visuals with an alive visual wrapper are parented under the runtime building, keep local wrapper scale, and preserve world scale through the parent.
+- Phase 4 focused validation passed for the touched entity-prefab ECB path with `/private/tmp/warline-ecs-audit-entity-prefab-ecb-vehicle-visual-validation.log` (`VehicleVisualAdornmentsFocusedValidation`, `tests=19`) and for the retained building destroyed visual boundary with `/private/tmp/warline-ecs-audit-phase4-building-destroyed-visual-validation.log` (`BuildingDestroyedVisualFocusedValidation`, `tests=2`).
+- Phase 4 validation sweep passed: selection/order markers `/private/tmp/warline-ecs-audit-phase4-selection-order-marker-validation.log` (`SelectionOrderMarkerFocusedValidation`, `tests=15`), building selection marker `/private/tmp/warline-ecs-audit-phase4-building-selection-marker-validation.log` (`BuildingSelectionMarkerFocusedValidation`, `tests=6`), building faction visual `/private/tmp/warline-ecs-audit-phase4-building-faction-visual-validation.log` (`BuildingFactionVisualFocusedValidation`, `tests=4`), production `/private/tmp/warline-ecs-audit-phase4-production-validation.log` (`BuildingProductionRequestValidation`, `tests=21`), and nearest available road validation `/private/tmp/warline-ecs-audit-phase4-road-build-validation.log` (`RoadBuildCommandRequestValidation`, `tests=6`).
 
 ## Phase 5: Transport Boarding Split
 
 Purpose:
 Split `TransportBoardingCommandSystem` without changing transport behavior.
 
-- [ ] Add named constants for distance penalties and drop intervals before moving behavior.
-- [ ] Identify current public/tested transport entry points and preserve their behavior.
-- [ ] Extract boarding request validation and goal assignment into a focused owner.
-- [ ] Extract plane ramp approach calculations into a focused owner.
-- [ ] Extract airdrop timing and drop execution into a focused owner.
-- [ ] Extract passenger capacity checks into a focused owner.
-- [ ] Extract disembark/landing logic into a focused owner.
-- [ ] Keep existing tests passing after each extraction.
-- [ ] Run transport boarding, airdrop, capacity, disembark, movement, and compile validations.
+- [x] Add named constants for distance penalties and drop intervals before moving behavior.
+- [x] Identify current public/tested transport entry points and preserve their behavior.
+- [x] Extract boarding request validation and goal assignment into a focused owner.
+- [x] Extract plane ramp approach calculations into a focused owner.
+- [x] Extract airdrop timing and drop execution into a focused owner.
+- [x] Extract passenger capacity checks into a focused owner.
+- [x] Extract disembark/landing logic into a focused owner.
+- [x] Keep existing tests passing after each extraction.
+- [x] Run transport boarding, airdrop, capacity, disembark, movement, and compile validations.
+
+Phase 5 notes:
+
+- Introduced named constants in `TransportBoardingCommandSystem` for boarding order capacity, transport click padding, plane-ramp search radii, plane-ramp rollout distance/radius padding, transport ring search radius, rope-disembark takeoff height, rope-disembark drop interval, and plane-door open duration. No control flow or ownership moved in this slice.
+- Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-transport-constants-validation.log` (`UnitTransportValidation`, `tests=73`).
+- Public command entry points to preserve during extraction: `ProcessCommandIntentRequests`, `TryRequestBoardTransportOrderToClickedUnit`, `TryIssueBoardTransportOrderToTransport`, `TryIssueBoardSelectedTransportOrderToClickedPassenger`, `TryIssueBoardSelectedTransportOrderToPassenger`, `IsBoardablePlayerTransportClick`, and `TryResolveBoardablePlayerTransportClick`.
+- Public/static helper entry points used by preview, deploy, air-pickup, and tests: `IsWithinTransportBoardingCommandRange`, `IsTransportLandedForBoarding`, `GetTransportBoardingDirectCells`, `IsBoardablePlayerTransport`, `IsBoardingCandidateForTransport`, `TryResolveBoardingPassengerKind`, `HasAvailableTransportBoardingSlot`, `HasAnyAvailableTransportBoardingSlot`, `IsPotentialVehicleCargoPassenger`, `IsVehicleBoardingCandidateForTransport`, `IsCargoPlaneTransport`, `IsSoldierBoardingCandidate`, `TryFindAirTransportPickupCellNearPassenger`, `ResolvePlaneRampApproachCell`, `TryResolvePlaneRampApproachCell`, `TryFindTransportApproachCell`, `ReserveFootprintCells`, `TryFindTransportDisembarkCell`, and `TryIssueDeployDisembark`.
+- Runtime callers to keep behavior-compatible: `SelectionGameplayStartupSystem` owns the command-system instance, `RtsSelectionCommandResultFlushSystem` drains command buffers through `ProcessCommandIntentRequests`, `RtsSelectionPointerTargetCommandSystem` uses click/preview/capacity helpers, `RtsSelectionBoardTargetModeCommandSystem` uses target classification helpers, `UnitTransportDeployOrderSystem` uses deploy-disembark and direct-cell helpers, and `UnitTransportAirPickupSystem` uses soldier and air-pickup helpers.
+- Validation coverage preserving these entry points: `UnitTransportValidationTests.RunBatchValidation` covers boarding, selected-transport passenger boarding, board-all requests, disembark, airdrop, rope disembark, deploy disembark, and click/exit-button flows; `UnitTransportBoardingSystemExtractionTests` covers static helper compatibility; `SelectionCommandRequestResultContractTests`, `RtsSelectionInputSystemTests`, and `TransportBoardingPerformanceValidation` cover command flush, architecture contracts, and selection-performance behavior.
+- Started the boarding validation extraction by consolidating the duplicated transport validity, landed-state, and rope-busy checks for both selected-passenger and selected-transport board commands into `TryValidateBoardingTransport`. The helper preserves the existing invalid-transport diagnostic result names for generic transport boarding and selected-transport boarding. Goal assignment remains in `TransportBoardingCommandSystem` and is the next part of this in-progress item.
+- Full transport validation passed after the helper extraction with `/private/tmp/warline-ecs-audit-phase5-boarding-validation-helper-validation.log` (`UnitTransportValidation`, `tests=73`).
+- Completed the boarding request validation and goal-assignment extraction by moving passenger cell/faction/footprint reads, boarding-goal search, pending-order construction, and reservation into `TryCreateTransportBoardingGoalOrder`. The three boarding paths still own command dispatch and diagnostics, but no longer duplicate goal-order construction. Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-boarding-goal-order-helper-validation.log` (`UnitTransportValidation`, `tests=73`); Unity batchmode hung after writing shutdown logs and was manually terminated after the pass result.
+- Extracted shared plane-ramp search calculations into focused helpers for ramp search radius, ring-candidate filtering, approach scoring, and distance scoring. The pathing/passability checks remain in the existing boarding/disembark flows. Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-plane-ramp-calculation-helper-validation.log` (`UnitTransportValidation`, `tests=73`).
+- Extracted airdrop passenger drop execution and timing into `StartPassengerDrop`, with drop duration and next-drop interval decisions isolated in `ResolveDropDurationSeconds` and `ResolveDropIntervalSeconds`. Passenger selection, landing-cell validation, and request completion remain in `ProcessAirdropRequest`. Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-airdrop-drop-execution-helper-validation.log` (`UnitTransportValidation`, `tests=73`).
+- Extracted passenger capacity counts into `TransportSlotAvailability`, centralizing soldier/vehicle occupied counts, capacities, available slots, and per-passenger-kind count resolution. Boarding command paths still own diagnostics and passenger planning. Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-passenger-capacity-helper-validation.log` (`UnitTransportValidation`, `tests=73`).
+- Extracted shared disembark/landing planning into `TryPlanPassengerDisembarkCells`, covering transport-ring exits, plane-ramp exits, footprint reservation, and optional plane-ramp rollout planning for bulk and single-passenger disembark. Passenger removal, visibility, and move-order issuing remain in the callers. Full transport validation passed with `/private/tmp/warline-ecs-audit-phase5-disembark-planning-helper-validation.log` (`UnitTransportValidation`, `tests=73`) and movement validation passed with `/private/tmp/warline-ecs-audit-phase5-movement-validation.log` (`UnitMovementBlockerValidation`).
 
 ## Phase 6: Test Infrastructure And Coverage
 
 Purpose:
 Make validation runners safe in the Editor and add integration coverage where the audit found gaps.
 
-- [ ] Create a shared validation-exit helper that exits only during batchmode validation.
-- [ ] Replace raw `EditorApplication.Exit` calls in the highest-used validation files first.
-- [ ] Preserve static validation methods used by automation.
-- [ ] Verify affected tests still run from Unity Test Runner without quitting the editor.
-- [ ] Add PlayMode smoke for match start to initial unit spawn.
-- [ ] Add PlayMode smoke for building placement to production.
-- [ ] Add PlayMode smoke for transport boarding to disembark.
-- [ ] Add PlayMode smoke for basic combat and death flow.
-- [ ] Add focused EditMode tests for city generation, unit combat, road build, and building placement gaps.
-- [ ] Run full focused validation set and at least one PlayMode smoke group.
+- [x] Create a shared validation-exit helper that exits only during batchmode validation.
+- [x] Replace raw `EditorApplication.Exit` calls in the highest-used validation files first.
+- [x] Preserve static validation methods used by automation.
+- [x] Verify affected tests still run from Unity Test Runner without quitting the editor.
+- [x] Add PlayMode smoke for match start to initial unit spawn.
+- [x] Add PlayMode smoke for building placement to production.
+- [x] Add PlayMode smoke for transport boarding to disembark.
+- [x] Add PlayMode smoke for basic combat and death flow.
+- [x] Add focused EditMode tests for city generation, unit combat, road build, and building placement gaps.
+- [x] Run full focused validation set and at least one PlayMode smoke group.
+
+Phase 6 notes:
+
+- Added `ValidationExit`, a shared editor-test helper that calls `EditorApplication.Exit(code)` only when `Application.isBatchMode` is true.
+- Converted the first high-use validation runners to the helper without changing static entry point names: `UnitTransportValidationTests.RunBatchValidation`, `UnitMovementBlockerValidationTests.RunBatchValidation`, `UnitMovementBlockerValidationTests.RunHoldCommandFocusedValidation`, `TransportBoardingPerformanceValidation.RunBatchValidation`, and `SelectionCommandRequestResultContractTests.RunBatchValidation`.
+- `ValidationExit` batchmode behavior was smoke-validated through `/private/tmp/warline-ecs-audit-phase6-validation-exit-movement.log` (`UnitMovementBlockerValidation`, passed).
+- Converted required validation-set runner exits to `ValidationExit` without changing static entry point names: `UnitRenderBudgetPerformanceValidation.RunBatchValidation`, all `BuildingProductionSystemTests` static production runners, `BuildDrawerCatalogQuerySystemTests.RunFocusedValidation`, and `ArmoryCurrentContentPrefabTests.RunFocusedValidation`.
+- Batchmode validation confirmed the converted runners still exit correctly for automation while `ValidationExit` no-ops outside batchmode for Editor Test Runner safety: production `/private/tmp/warline-ecs-audit-phase6-production-validation-exit.log`, armory `/private/tmp/warline-ecs-audit-phase6-armory-validation-exit.log`, build drawer `/private/tmp/warline-ecs-audit-phase6-builddrawer-validation-exit.log`, and render budget `/private/tmp/warline-ecs-audit-phase6-renderbudget-validation-exit.log`.
+- Added `InitialUnitsMatchStartPlayModeTests.MatchStartPlayRequested_SpawnsConfiguredInitialUnit`, a deterministic PlayMode smoke that verifies initial unit spawning is gated before match-start `PlayRequested` and then spawns the configured ECS unit once gameplay is marked active.
+- Focused PlayMode validation passed with `/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode-results.xml` (`1/1` passed).
+- Added `BuildingPlacementProductionPlayModeTests.BuildDrawerPlacementThenProduction_UsesRuntimeBoundaryData`, a deterministic PlayMode smoke covering configured building camp item placement followed by producer-backed unit production queueing from runtime boundary data.
+- Focused PlayMode validation passed with `/private/tmp/warline-ecs-audit-phase6-building-placement-production-playmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-building-placement-production-playmode-results.xml` (`1/1` passed).
+- Added `GameSceneTransportBoardingPlayModeTests.DeterministicHelicopterBoardThenExitCommand_BoardsAndDisembarksSameSoldier`, a deterministic PlayMode smoke that boards a selected soldier into a landed transport helicopter through the command path, then requests transport exit and verifies the same passenger completes rope drop/disperse and leaves the passenger buffer.
+- Focused PlayMode validation passed with `/private/tmp/warline-ecs-audit-phase6-transport-board-disembark-playmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-transport-board-disembark-playmode-results.xml` (`1/1` passed).
+- Added `CombatDeathPlayModeTests.SoldierAttackDamageThenDeath_DestroysTargetWithoutRespawn`, a deterministic PlayMode smoke covering lethal standard unit attack, death cleanup, empty respawn queue, and no delayed respawn.
+- Focused PlayMode validation passed with `/private/tmp/warline-ecs-audit-phase6-combat-death-playmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-combat-death-playmode-results.xml` (`1/1` passed).
+- Added `RuntimeCityGenerationFocusedTests`, covering deterministic city-center/base-exclusion planning and connected town-road/autobahn layout.
+- Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode-results.xml` (`2/2` passed).
+- Added `UnitCombatFocusedEditModeTests.StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState`, covering non-lethal standard attack damage, recent attacker state, health-bar visibility, attack cooldown, and trace state without death cleanup.
+- Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode-results.xml` (`1/1` passed).
+- Added road-build command failure-path coverage for missing runtime state and converted `RoadBuildCommandSystemTests.RunFocusedValidation` to `ValidationExit`.
+- Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-road-build-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-road-build-editmode-results.xml` (`7/7` passed).
+- Added building-placement configured-placement rejection coverage for missing config and converted `BuildingPlacementValidationSystemTests.RunPlacementCommandRequestValidation` to `ValidationExit`.
+- Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml` (`17/17` passed).
+- Final medium-term validation sweep passed: `git diff --check`; Unity compile `/private/tmp/warline-ecs-audit-medium-final-compile.log`; render budget `/private/tmp/warline-ecs-audit-medium-final-render-budget.log`; movement `/private/tmp/warline-ecs-audit-medium-final-movement.log`; transport `/private/tmp/warline-ecs-audit-medium-final-transport.log` (`73` tests); production `/private/tmp/warline-ecs-audit-medium-final-production.log` (`21` tests); build drawer `/private/tmp/warline-ecs-audit-medium-final-builddrawer.log` (`22` tests); armory/UI `/private/tmp/warline-ecs-audit-medium-final-armory.log` (`3` tests); combat-death PlayMode smoke `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode.log` and `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode-results.xml` (`1/1` passed).
 
 ## Phase 7: Long-Term ECS And Burst Migration
 
@@ -257,14 +370,14 @@ Convert only proven hot unmanaged work to `ISystem`/Burst while preserving manag
 
 ## Required Validation Set
 
-- [ ] `git diff --check`.
-- [ ] Unity batchmode compile.
-- [ ] Rendering budget focused validation.
-- [ ] Unit movement focused validation.
-- [ ] Transport boarding focused validation.
-- [ ] Production/build drawer focused validation.
-- [ ] Armory/UI focused validation.
-- [ ] Relevant PlayMode smoke after test infrastructure work.
+- [x] `git diff --check`.
+- [x] Unity batchmode compile.
+- [x] Rendering budget focused validation.
+- [x] Unit movement focused validation.
+- [x] Transport boarding focused validation.
+- [x] Production/build drawer focused validation.
+- [x] Armory/UI focused validation.
+- [x] Relevant PlayMode smoke after test infrastructure work.
 
 ## Completion Criteria
 

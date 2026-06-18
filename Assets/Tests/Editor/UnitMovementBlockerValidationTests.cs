@@ -34,13 +34,13 @@ public sealed class UnitMovementBlockerValidationTests
             tests.VehicleMovementCanDepartFromCurrentPaddedClearanceOccupancy();
             tests.InfantryOpenPathMovementAdvancesEveryFrame();
             Debug.Log("[UnitMovementBlockerValidation] result=Passed");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[UnitMovementBlockerValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -52,13 +52,13 @@ public sealed class UnitMovementBlockerValidationTests
             tests.HeldEngagedCombatMovementClearsTargetOutsideAttackRange();
             tests.AirHoldPositionDoesNotAutoReturnHomeWithoutTarget();
             Debug.Log("[HoldCommandMovementValidation] result=Passed tests=2");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[HoldCommandMovementValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

@@ -133,7 +133,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         if (runtimeGameplayState.PlayRequested == 0)
             return;
 
-        if (!RuntimeCameraReferenceSystem.TryGetWorldCamera(state.EntityManager, _queryContext.CameraReferenceQuery, out Camera camera))
+        if (!RuntimeCameraReferenceSystem.TryGetWorldCamera(state.World, out Camera camera))
             return;
 
         bool cameraMotionActive = _cameraMotionSystem.IsCameraMotionActive(camera, ref _scheduleSystem, ref _diagnosticStateSystem, Time.frameCount);

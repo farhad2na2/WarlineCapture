@@ -39,6 +39,7 @@ public sealed class SelectionOrderMarkerSystemTests
             RunCase(test => test.ShowAttackOrderMarker_UsesRuntimeBuildingBoundsWhenAvailable());
             RunCase(test => test.ShowAttackOrderMarker_UsesSelectionPrefabForEntityTargets());
             RunCase(test => test.ShowAttackOrderMarker_FallsBackToPrefabForUntargetedWorldPoint());
+            RunCase(test => test.Initialize_PrewarmsAttackTargetPreviewMarkerPool());
             RunCase(test => test.UpdateAttackTargetPreviewMarkers_ShowsOnlyLivingHostileTargets());
             RunCase(test => test.UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets());
             RunCase(test => test.MarkerAssetConfiguration_UsesDedicatedTargetLockPrefab());
@@ -549,6 +550,40 @@ public sealed class SelectionOrderMarkerSystemTests
     }
 
     [Test]
+    public void Initialize_PrewarmsAttackTargetPreviewMarkerPool()
+    {
+        using var world = new World("SelectionOrderMarkerSystemTests_AttackPreviewPool");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+        CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(2f, 0f, 3f), 100);
+
+        GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
+        GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerSystem();
+        try
+        {
+            markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
+
+            int prewarmedCount = CountChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime");
+            Assert.AreEqual(64, prewarmedCount);
+            Assert.AreEqual(0, CountActiveChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime"));
+
+            markers.UpdateAttackTargetPreviewMarkers(em, visible: true);
+
+            Assert.AreEqual(prewarmedCount, CountChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime"));
+            Assert.AreEqual(1, CountActiveChildren(runtimeRoot.transform, "AttackTargetPreviewMarkerRuntime"));
+        }
+        finally
+        {
+            markers.Dispose();
+            Object.DestroyImmediate(movePrefab);
+            Object.DestroyImmediate(attackPrefab);
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
     public void UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets()
     {
         using var world = new World("SelectionOrderMarkerSystemTests_BoardPreview");
@@ -724,6 +759,19 @@ public sealed class SelectionOrderMarkerSystemTests
         {
             Transform child = root.GetChild(i);
             if (child.name == childName && child.gameObject.activeSelf)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountChildren(Transform root, string childName)
+    {
+        int count = 0;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (child.name == childName)
                 count++;
         }
 

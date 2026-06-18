@@ -1008,7 +1008,7 @@ public static class MatchRuntimeShellSmokeValidation
         if (config == null)
             return;
 
-        em.AddComponentObject(launcher, new AirMissileLauncherVfxReferenceComponent
+        em.AddComponentData(launcher, new AirMissileLauncherVfxReferenceComponent
         {
             MissileVisualPrefab = config.MissileVisualPrefab,
             LaunchFlashPrefab = config.LaunchFlashPrefab,

@@ -23,13 +23,13 @@ public sealed class BuildingProductionSystemTests
             tests.BuildingGameplayComposition_InitializesRuntimeDollarsFromInitialUnitsConfig();
             tests.BuildingGameplayComposition_CampBuildingRequestStartsConfiguredPlacement();
             Debug.Log("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
         finally
         {
@@ -55,13 +55,13 @@ public sealed class BuildingProductionSystemTests
             tests.RebuildPendingProductionTimeline_ChainsQueuedItemsAfterActiveProduction();
             tests.RebuildPendingProductionTimeline_AfterActiveRemovalResetsNextActiveProgress();
             Debug.Log("[BuildingProductionCameraFocusValidation] result=Passed tests=10");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingProductionCameraFocusValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -74,13 +74,13 @@ public sealed class BuildingProductionSystemTests
             tests.ResolveProductionTransportSettings_UsesConfiguredTransportAuthoring();
             tests.ResolveProductionTransportSettings_DefaultsLargeVehicleToPlaneTransport();
             Debug.Log("[BuildingProductionMetadataValidation] result=Passed tests=3");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingProductionMetadataValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -91,13 +91,13 @@ public sealed class BuildingProductionSystemTests
             var tests = new BuildingProductionSystemTests();
             tests.PruneProducedUnits_RemovesDeadUnitsAndClearsDeadSlots();
             Debug.Log("[ProducedUnitSourceKeyStateValidation] result=Passed tests=1");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[ProducedUnitSourceKeyStateValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 
@@ -128,13 +128,13 @@ public sealed class BuildingProductionSystemTests
             tests.BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
             Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=21");
-            UnityEditor.EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[BuildingProductionRequestValidation] result=Failed");
-            UnityEditor.EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

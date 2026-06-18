@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -229,27 +230,20 @@ public struct AutoWanderMoveTag : IComponentData
 {
 }
 
-public sealed class UnitAttachedLightSet : IComponentData
+public struct UnitAttachedLightSetupElement : IBufferElementData
 {
-    [System.Serializable]
-    public sealed class Entry
-    {
-        public string Name;
-        public LightType Type;
-        public Color Color;
-        public float Intensity;
-        public float Range;
-        public float SpotAngle;
-        public float InnerSpotAngle;
-        public bool CastShadows;
-        public Vector3 LocalPosition;
-        public Quaternion LocalRotation;
-    }
-
-    public Entry[] Entries;
+    public FixedString64Bytes Name;
+    public LightType Type;
+    public Color Color;
+    public float Intensity;
+    public float Range;
+    public float SpotAngle;
+    public float InnerSpotAngle;
+    public byte CastShadows;
+    public float3 LocalPosition;
+    public quaternion LocalRotation;
 }
 
-public sealed class UnitAttachedLightRuntime : IComponentData
+public struct UnitAttachedLightCleanupRequest : IComponentData
 {
-    public GameObject[] Instances;
 }

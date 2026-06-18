@@ -1,6 +1,1 @@
-using Unity.Entities;
-
-public sealed class MatchSceneReferenceComponent : IComponentData
-{
-    public MatchSceneView View;
-}
+// Match scene references are owned by MatchSceneReferenceBoundarySystem.

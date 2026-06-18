@@ -3,12 +3,10 @@ using UnityEngine;
 
 public sealed partial class RuntimeCameraReferenceSystem : SystemBase
 {
-    private World _ownerWorld;
-    private Entity _cameraReferenceEntity;
+    public Camera WorldCamera { get; private set; }
 
     protected override void OnCreate()
     {
-        _ownerWorld = World;
         Enabled = false;
     }
 
@@ -23,70 +21,30 @@ public sealed partial class RuntimeCameraReferenceSystem : SystemBase
 
     public void SetWorldCamera(Camera camera)
     {
-        if (TryGetOrCreateCameraReference(out EntityManager entityManager, out Entity entity))
-            entityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity).WorldCamera = camera;
+        WorldCamera = camera;
     }
 
     public void ClearWorldCamera()
     {
-        if (TryGetCameraReference(out EntityManager entityManager, out Entity entity))
-            entityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity).WorldCamera = null;
+        WorldCamera = null;
     }
 
-    public static bool TryGetWorldCamera(EntityManager entityManager, EntityQuery cameraReferenceQuery, out Camera camera)
+    public static bool TryGetWorldCamera(EntityManager entityManager, out Camera camera)
+    {
+        return TryGetWorldCamera(entityManager.World, out camera);
+    }
+
+    public static bool TryGetWorldCamera(World world, out Camera camera)
     {
         camera = null;
-        if (cameraReferenceQuery.IsEmptyIgnoreFilter)
+        if (world == null || !world.IsCreated)
             return false;
 
-        Entity entity = cameraReferenceQuery.GetSingletonEntity();
-        if (!entityManager.Exists(entity) || !entityManager.HasComponent<RuntimeCameraReferenceComponent>(entity))
+        RuntimeCameraReferenceSystem referenceSystem = world.GetExistingSystemManaged<RuntimeCameraReferenceSystem>();
+        if (referenceSystem == null || referenceSystem.WorldCamera == null)
             return false;
 
-        camera = entityManager.GetComponentObject<RuntimeCameraReferenceComponent>(entity).WorldCamera;
+        camera = referenceSystem.WorldCamera;
         return camera != null;
-    }
-
-    private bool TryGetCameraReference(out EntityManager entityManager, out Entity entity)
-    {
-        entityManager = default;
-        entity = Entity.Null;
-        World world = _ownerWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        if (_cameraReferenceEntity != Entity.Null &&
-            entityManager.Exists(_cameraReferenceEntity) &&
-            entityManager.HasComponent<RuntimeCameraReferenceComponent>(_cameraReferenceEntity))
-        {
-            entity = _cameraReferenceEntity;
-            return true;
-        }
-
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        entity = query.GetSingletonEntity();
-        _cameraReferenceEntity = entity;
-        return true;
-    }
-
-    private bool TryGetOrCreateCameraReference(out EntityManager entityManager, out Entity entity)
-    {
-        if (TryGetCameraReference(out entityManager, out entity))
-            return true;
-
-        World world = _ownerWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        entity = entityManager.CreateEntity();
-        entityManager.SetName(entity, "RuntimeCameraReference");
-        entityManager.AddComponentObject(entity, new RuntimeCameraReferenceComponent());
-        _cameraReferenceEntity = entity;
-        return true;
     }
 }

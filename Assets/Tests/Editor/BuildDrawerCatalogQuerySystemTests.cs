@@ -116,12 +116,12 @@ public sealed class BuildDrawerCatalogQuerySystemTests
                 ref passed);
 
             Debug.Log($"[BuildDrawerCatalogQueryValidation] result=Passed tests={passed}");
-            EditorApplication.Exit(0);
+            ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             Debug.LogError($"[BuildDrawerCatalogQueryValidation] result=Failed passed={passed}\n{exception}");
-            EditorApplication.Exit(1);
+            ValidationExit.Failed();
         }
     }
 

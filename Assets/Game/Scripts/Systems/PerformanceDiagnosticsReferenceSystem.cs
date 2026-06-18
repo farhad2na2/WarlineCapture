@@ -1,8 +1,9 @@
 using Unity.Entities;
 
-public sealed partial class PerformanceDiagnosticsReferenceSystem : SystemBase
+[DisableAutoCreation]
+public sealed partial class PerformanceDiagnosticsReferenceBoundarySystem : SystemBase
 {
-    private Entity _referenceEntity;
+    public PerformanceDiagnosticsSystem Diagnostics { get; set; }
 
     protected override void OnCreate()
     {
@@ -13,90 +14,85 @@ public sealed partial class PerformanceDiagnosticsReferenceSystem : SystemBase
     {
     }
 
+    protected override void OnDestroy()
+    {
+        Diagnostics = null;
+    }
+}
+
+public sealed class PerformanceDiagnosticsReferenceSystem
+{
+    private World _referenceWorld;
+    private PerformanceDiagnosticsReferenceBoundarySystem _referenceBoundary;
+
     public void Register(PerformanceDiagnosticsSystem diagnostics)
     {
-        if (diagnostics == null || !TryGetOrCreateReference(out EntityManager entityManager, out Entity entity))
+        if (diagnostics == null || !TryGetOrCreateReference(out PerformanceDiagnosticsReferenceBoundarySystem boundary))
             return;
 
-        entityManager.GetComponentObject<PerformanceDiagnosticsReferenceComponent>(entity).Diagnostics = diagnostics;
+        boundary.Diagnostics = diagnostics;
     }
 
     public void Clear(PerformanceDiagnosticsSystem diagnostics)
     {
-        if (!TryGetReference(out EntityManager entityManager, out Entity entity))
+        if (!TryGetReference(out PerformanceDiagnosticsReferenceBoundarySystem boundary))
             return;
 
-        PerformanceDiagnosticsReferenceComponent reference =
-            entityManager.GetComponentObject<PerformanceDiagnosticsReferenceComponent>(entity);
-        if (diagnostics == null || reference.Diagnostics == diagnostics)
-            reference.Diagnostics = null;
+        if (diagnostics == null || boundary.Diagnostics == diagnostics)
+            boundary.Diagnostics = null;
     }
 
     public bool TryGet(World world, out PerformanceDiagnosticsSystem diagnostics)
     {
         diagnostics = null;
-        if (world == null || !world.IsCreated)
+        if (!TryGetReference(world, out PerformanceDiagnosticsReferenceBoundarySystem boundary))
             return false;
 
-        EntityManager entityManager = world.EntityManager;
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<PerformanceDiagnosticsReferenceComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        if (!entityManager.Exists(entity) ||
-            !entityManager.HasComponent<PerformanceDiagnosticsReferenceComponent>(entity))
-        {
-            return false;
-        }
-
-        diagnostics = entityManager.GetComponentObject<PerformanceDiagnosticsReferenceComponent>(entity).Diagnostics;
+        diagnostics = boundary.Diagnostics;
         return diagnostics != null;
     }
 
-    private bool TryGetReference(out EntityManager entityManager, out Entity entity)
+    private bool TryGetReference(out PerformanceDiagnosticsReferenceBoundarySystem boundary)
     {
-        entityManager = default;
-        entity = Entity.Null;
+        return TryGetReference(World.DefaultGameObjectInjectionWorld, out boundary);
+    }
 
-        World world = World.DefaultGameObjectInjectionWorld;
+    private bool TryGetReference(World world, out PerformanceDiagnosticsReferenceBoundarySystem boundary)
+    {
+        boundary = null;
+
         if (world == null || !world.IsCreated)
             return false;
 
-        entityManager = world.EntityManager;
-        if (_referenceEntity != Entity.Null &&
-            entityManager.Exists(_referenceEntity) &&
-            entityManager.HasComponent<PerformanceDiagnosticsReferenceComponent>(_referenceEntity))
+        if (_referenceWorld == world && _referenceBoundary != null)
         {
-            entity = _referenceEntity;
+            boundary = _referenceBoundary;
             return true;
         }
 
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<PerformanceDiagnosticsReferenceComponent>());
-        if (query.IsEmptyIgnoreFilter)
+        PerformanceDiagnosticsReferenceBoundarySystem existing =
+            world.GetExistingSystemManaged<PerformanceDiagnosticsReferenceBoundarySystem>();
+        if (existing == null)
             return false;
 
-        entity = query.GetSingletonEntity();
-        _referenceEntity = entity;
+        _referenceWorld = world;
+        _referenceBoundary = existing;
+        boundary = existing;
         return true;
     }
 
-    private bool TryGetOrCreateReference(out EntityManager entityManager, out Entity entity)
+    private bool TryGetOrCreateReference(out PerformanceDiagnosticsReferenceBoundarySystem boundary)
     {
-        if (TryGetReference(out entityManager, out entity))
+        if (TryGetReference(out boundary))
             return true;
 
         World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
             return false;
 
-        entityManager = world.EntityManager;
-        entity = entityManager.CreateEntity();
-        entityManager.SetName(entity, "PerformanceDiagnosticsReference");
-        entityManager.AddComponentObject(entity, new PerformanceDiagnosticsReferenceComponent());
-        _referenceEntity = entity;
+        boundary = world.GetOrCreateSystemManaged<PerformanceDiagnosticsReferenceBoundarySystem>();
+        _referenceWorld = world;
+        _referenceBoundary = boundary;
         return true;
     }
 }

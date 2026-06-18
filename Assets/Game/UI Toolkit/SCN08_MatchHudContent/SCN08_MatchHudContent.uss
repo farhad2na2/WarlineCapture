@@ -584,6 +584,248 @@
     display: none;
 }
 
+.passenger-chip-visible,
+.transport-passenger-drawer-visible {
+    display: flex;
+}
+
+.passenger-chip {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 5%;
+    height: 7%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 42;
+    -unity-slice-right: 42;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.passenger-chip-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    bottom: 0;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(238, 231, 199);
+}
+
+.transport-passenger-drawer {
+    position: absolute;
+    left: 101.5%;
+    top: 36%;
+    width: 92%;
+    height: 62%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 54;
+    -unity-slice-right: 54;
+    -unity-slice-top: 82;
+    -unity-slice-bottom: 82;
+}
+
+.passenger-drawer-header {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 5%;
+    height: 10%;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(230, 196, 74);
+}
+
+.passenger-empty-state {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 18%;
+    height: 15%;
+}
+
+.passenger-empty-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgba(238, 231, 199, 0.64);
+}
+
+.passenger-scroll-view {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 18%;
+    bottom: 20%;
+}
+
+.passenger-content {
+    flex-direction: column;
+}
+
+.passenger-footer {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 6%;
+    height: 11%;
+}
+
+.passenger-footer-button {
+    position: absolute;
+    top: 0;
+    width: 47%;
+    height: 100%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 46;
+    -unity-slice-right: 46;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
+}
+
+#ExitAllButton {
+    left: 0;
+}
+
+#CloseButton {
+    right: 0;
+}
+
+.passenger-footer-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    bottom: 0;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(238, 231, 199);
+}
+
+.passenger-item-view {
+    position: relative;
+    height: 78px;
+    margin-bottom: 7px;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 42;
+    -unity-slice-right: 42;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.passenger-portrait {
+    position: absolute;
+    left: 5%;
+    top: 14%;
+    width: 18%;
+    height: 72%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_squad_portrait.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.passenger-name {
+    position: absolute;
+    left: 27%;
+    right: 27%;
+    top: 13%;
+    height: 28%;
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(241, 232, 203);
+}
+
+.passenger-role {
+    position: absolute;
+    left: 27%;
+    right: 27%;
+    top: 43%;
+    height: 22%;
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgba(238, 231, 199, 0.72);
+}
+
+.passenger-health-frame {
+    position: absolute;
+    left: 27%;
+    right: 27%;
+    bottom: 13%;
+    height: 13%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 34;
+    -unity-slice-right: 34;
+    -unity-slice-top: 8;
+    -unity-slice-bottom: 8;
+}
+
+.passenger-health-fill {
+    position: absolute;
+    left: 4%;
+    top: 20%;
+    width: 72%;
+    height: 60%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 24;
+    -unity-slice-right: 24;
+    -unity-slice-top: 5;
+    -unity-slice-bottom: 5;
+}
+
+.passenger-health-text {
+    position: absolute;
+    left: 0;
+    right: 5%;
+    top: -140%;
+    height: 260%;
+    font-size: 9px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-right;
+    color: rgb(238, 231, 199);
+}
+
+.passenger-exit-button {
+    position: absolute;
+    right: 5%;
+    top: 19%;
+    width: 18%;
+    height: 62%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.passenger-exit-label {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 0;
+    bottom: 0;
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(238, 231, 199);
+}
+
 .threat-jump-panel {
     position: absolute;
     right: 0;
@@ -725,14 +967,15 @@
 .squad-card {
     position: absolute;
     top: 14%;
-    width: 22.4%;
+    width: 17.7%;
     height: 72%;
 }
 
-#SquadCard1 { left: 3.2%; }
-#SquadCard2 { left: 27.5%; }
-#SquadCard3 { left: 51.8%; }
-#SquadCard4 { left: 76.1%; }
+#SquadCard1 { left: 3.1%; }
+#SquadCard2 { left: 22.5%; }
+#SquadCard3 { left: 41.9%; }
+#SquadCard4 { left: 61.3%; }
+#SquadCard5 { left: 80.7%; }
 
 .squad-number {
     position: absolute;
@@ -797,6 +1040,10 @@
     width: 58%;
 }
 
+.empty-fill {
+    width: 0;
+}
+
 .squad-health-text {
     position: absolute;
     left: 8%;
@@ -831,8 +1078,8 @@
 #StopCommand { left: 66.4%; }
 #ScanCommand { left: 81.7%; }
 
-#BuildCommandRail,
-#SupportCommandRail {
+#BuildCommand,
+#SupportCommand {
     display: none;
 }
 
@@ -985,6 +1232,43 @@
     display: none;
 }
 
+.feedback-actions-visible {
+    display: flex;
+}
+
+.feedback-action {
+    position: absolute;
+    top: 16%;
+    width: 26%;
+    height: 68%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 42;
+    -unity-slice-right: 42;
+    -unity-slice-top: 26;
+    -unity-slice-bottom: 26;
+}
+
+#BoardAllButton {
+    right: 30%;
+}
+
+#CancelButton {
+    right: 3%;
+}
+
+.feedback-action-label {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 0;
+    bottom: 0;
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(238, 231, 199);
+}
+
 .selection-ring {
     position: absolute;
     left: 32%;
@@ -1090,3 +1374,4 @@
 .squad-portrait-2 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_vehicle_portrait.png"); }
 .squad-portrait-3 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_drone_portrait.png"); }
 .squad-portrait-4 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_bomb_suit_portrait.png"); }
+.squad-portrait-5 { background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_squad_portrait.png"); }

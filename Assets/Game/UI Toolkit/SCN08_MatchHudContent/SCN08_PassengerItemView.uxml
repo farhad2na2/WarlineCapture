@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="SCN08_MatchHudContent.uss" />
     <ui:VisualElement name="PassengerItemView" class="passenger-item-view">
+        <ui:VisualElement name="Portrait" class="passenger-portrait" />
         <ui:Label name="Name" class="passenger-name" text="Passenger" />
         <ui:Label name="Role" class="passenger-role" text="SOLDIER" />
         <ui:VisualElement name="HealthFrame" class="passenger-health-frame">

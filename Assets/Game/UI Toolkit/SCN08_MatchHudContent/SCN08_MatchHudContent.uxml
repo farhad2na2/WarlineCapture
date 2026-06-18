@@ -219,6 +219,15 @@
                             <ui:Label name="HealthText" class="squad-health-text" text="100/100" />
                         </ui:VisualElement>
                     </ui:Button>
+                    <ui:Button name="SquadCard5" class="squad-card" text="">
+                        <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:Label name="Number" class="squad-number" text="5" />
+                            <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-5" />
+                            <ui:Label name="Title" class="squad-card-title" text="RESERVE" />
+                            <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill empty-fill" /></ui:VisualElement>
+                            <ui:Label name="HealthText" class="squad-health-text" text="0/0" />
+                        </ui:VisualElement>
+                    </ui:Button>
                 </ui:VisualElement>
             </ui:VisualElement>
 
@@ -249,7 +258,7 @@
                         <ui:VisualElement name="Icon" class="stop-command-icon" />
                         <ui:Label name="Label" class="command-button-label" text="STOP" />
                     </ui:Button>
-                    <ui:Button name="BuildCommandRail" class="command-button" text="">
+                    <ui:Button name="BuildCommand" class="command-button" text="">
                         <ui:VisualElement name="Frame" class="command-button-frame" />
                         <ui:VisualElement name="Icon" class="build-command-icon" />
                         <ui:Label name="Label" class="command-button-label" text="BUILD" />
@@ -259,7 +268,7 @@
                         <ui:VisualElement name="Icon" class="scan-command-icon" />
                         <ui:Label name="Label" class="command-button-label" text="SCAN" />
                     </ui:Button>
-                    <ui:Button name="SupportCommandRail" class="command-button" text="">
+                    <ui:Button name="SupportCommand" class="command-button" text="">
                         <ui:VisualElement name="Frame" class="command-button-frame" />
                         <ui:VisualElement name="Icon" class="support-command-icon" />
                         <ui:Label name="Label" class="command-button-label" text="SUPPORT" />

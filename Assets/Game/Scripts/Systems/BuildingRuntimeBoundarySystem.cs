@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,11 +14,49 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
     private readonly List<int> _pendingSpawnRequestIndices = new();
     private readonly Dictionary<GameObject, FixedString128Bytes> _boundaryIdsByPrefab = new();
     private readonly Dictionary<string, FixedString128Bytes> _boundaryIdsByFallback = new();
+    private readonly Dictionary<ProductionSummaryKey, ProductionSummaryCounts> _productionSummaryCountsScratch = new();
+    private readonly HashSet<int> _producedReadModelBuildingIdsScratch = new();
     private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
     private float _nextPublishAt;
     private bool _forcePublishNextUpdate;
     private bool _configuredReadModelsPublished;
     private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
+
+    private readonly struct ProductionSummaryKey : IEquatable<ProductionSummaryKey>
+    {
+        public readonly byte FactionId;
+        public readonly FixedString128Bytes UnitId;
+
+        public ProductionSummaryKey(byte factionId, FixedString128Bytes unitId)
+        {
+            FactionId = factionId;
+            UnitId = unitId;
+        }
+
+        public bool Equals(ProductionSummaryKey other)
+        {
+            return FactionId == other.FactionId && UnitId.Equals(other.UnitId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ProductionSummaryKey other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (FactionId * 397) ^ UnitId.GetHashCode();
+            }
+        }
+    }
+
+    private struct ProductionSummaryCounts
+    {
+        public int ProducedCount;
+        public int QueuedCount;
+    }
 
     protected override void OnCreate()
     {
@@ -607,6 +646,9 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         if (runtimeBuildings == null)
             return;
 
+        _productionSummaryCountsScratch.Clear();
+        _producedReadModelBuildingIdsScratch.Clear();
+
         EntityManager producedUnitEntityManager = default;
         bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
                                 runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
@@ -615,14 +657,19 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         if (hasProducedUnitRows)
             producedUnitRows = em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
 
+        if (hasEntityManager && hasProducedUnitRows)
+        {
+            AccumulateProducedUnitReadModelSummaries(
+                runtimeBuildings,
+                producedUnitRows,
+                producedUnitEntityManager);
+        }
+
         if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
-                PublishRuntimeUnitProductionSummaryForBuilding(
+                AccumulateRuntimeUnitProductionSummaryForBuilding(
                     runtimeQueryContext,
-                    buffer,
-                    producedUnitRows,
-                    hasProducedUnitRows,
                     producedUnitEntityManager,
                     hasEntityManager,
                     pair.Value);
@@ -630,22 +677,18 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         else
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
-                PublishRuntimeUnitProductionSummaryForBuilding(
+                AccumulateRuntimeUnitProductionSummaryForBuilding(
                     runtimeQueryContext,
-                    buffer,
-                    producedUnitRows,
-                    hasProducedUnitRows,
                     producedUnitEntityManager,
                     hasEntityManager,
                     pair.Value);
         }
+
+        PublishAccumulatedProductionSummaries(buffer);
     }
 
-    private void PublishRuntimeUnitProductionSummaryForBuilding(
+    private void AccumulateRuntimeUnitProductionSummaryForBuilding(
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
-        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
-        DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows,
-        bool hasProducedUnitRows,
         EntityManager producedUnitEntityManager,
         bool hasEntityManager,
         RuntimeBuildingEntity building)
@@ -663,21 +706,12 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
                     continue;
 
                 FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
-                IncrementExistingProductionSummary(buffer, factionId, unitId, 0, 1);
+                AddProductionSummaryCount(factionId, unitId, producedDelta: 0, queuedDelta: 1);
             }
         }
 
-        if (hasEntityManager &&
-            TryPublishProducedUnitReadModelSummaryForBuilding(
-                buffer,
-                producedUnitRows,
-                hasProducedUnitRows,
-                producedUnitEntityManager,
-                building,
-                factionId))
-        {
+        if (_producedReadModelBuildingIdsScratch.Contains(building.Id))
             return;
-        }
 
         if (!hasEntityManager || building.ProducedUnits == null)
             return;
@@ -700,29 +734,28 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
             if (!TryResolveProducedUnitId(building, unit, producedUnitEntityManager, out FixedString128Bytes unitId))
                 continue;
 
-            IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
+            AddProductionSummaryCount(factionId, unitId, producedDelta: 1, queuedDelta: 0);
         }
     }
 
-    private static bool TryPublishProducedUnitReadModelSummaryForBuilding(
-        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+    private void AccumulateProducedUnitReadModelSummaries(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows,
-        bool hasProducedUnitRows,
-        EntityManager em,
-        RuntimeBuildingEntity building,
-        byte factionId)
+        EntityManager em)
     {
-        if (!hasProducedUnitRows)
-            return false;
-
-        bool foundBuildingRows = false;
         for (int i = 0; i < producedUnitRows.Length; i++)
         {
             BuildingProducedUnitReadModel producedUnit = producedUnitRows[i];
-            if (producedUnit.BuildingRuntimeId != building.Id)
+            _producedReadModelBuildingIdsScratch.Add(producedUnit.BuildingRuntimeId);
+            if (!TryGetRuntimeBuilding(runtimeBuildings, producedUnit.BuildingRuntimeId, out RuntimeBuildingEntity building) ||
+                building == null ||
+                building.IsDestroyed ||
+                !building.HasOwnerFaction)
+            {
                 continue;
+            }
 
-            foundBuildingRows = true;
+            byte factionId = building.OwnerFactionId;
             if (producedUnit.HasOwnerFaction == 0 ||
                 producedUnit.OwnerFactionId != factionId ||
                 !IsProducedUnitAlive(producedUnit.Unit, em) ||
@@ -731,10 +764,29 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
                 continue;
             }
 
-            IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
+            AddProductionSummaryCount(factionId, unitId, producedDelta: 1, queuedDelta: 0);
+        }
+    }
+
+    private static bool TryGetRuntimeBuilding(
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        int buildingRuntimeId,
+        out RuntimeBuildingEntity building)
+    {
+        if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+            return runtimeBuildingMap.TryGetValue(buildingRuntimeId, out building);
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+        {
+            if (pair.Key != buildingRuntimeId)
+                continue;
+
+            building = pair.Value;
+            return true;
         }
 
-        return foundBuildingRows;
+        building = null;
+        return false;
     }
 
     private void PublishConfiguredUnitProductionSummaryRows(
@@ -769,24 +821,39 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
         }
     }
 
-    private static void IncrementExistingProductionSummary(
-        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+    private void AddProductionSummaryCount(
         byte factionId,
         FixedString128Bytes unitId,
         int producedDelta,
         int queuedDelta)
     {
+        if (unitId.Length == 0 || (producedDelta == 0 && queuedDelta == 0))
+            return;
+
+        ProductionSummaryKey key = new(factionId, unitId);
+        _productionSummaryCountsScratch.TryGetValue(key, out ProductionSummaryCounts counts);
+        counts.ProducedCount += producedDelta;
+        counts.QueuedCount += queuedDelta;
+        _productionSummaryCountsScratch[key] = counts;
+    }
+
+    private void PublishAccumulatedProductionSummaries(
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer)
+    {
         for (int i = 0; i < buffer.Length; i++)
         {
             BuildingRuntimeUnitProductionSummary summary = buffer[i];
-            if (summary.FactionId != factionId || !summary.UnitId.Equals(unitId))
+            ProductionSummaryKey key = new(summary.FactionId, summary.UnitId);
+            if (!_productionSummaryCountsScratch.TryGetValue(key, out ProductionSummaryCounts counts))
                 continue;
 
-            summary.ProducedCount += producedDelta;
-            summary.QueuedCount += queuedDelta;
+            summary.ProducedCount += counts.ProducedCount;
+            summary.QueuedCount += counts.QueuedCount;
             buffer[i] = summary;
-            return;
+            _productionSummaryCountsScratch.Remove(key);
         }
+
+        _productionSummaryCountsScratch.Clear();
     }
 
     private bool TryResolveProducedUnitId(

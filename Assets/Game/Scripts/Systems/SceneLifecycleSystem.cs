@@ -333,6 +333,7 @@ public sealed partial class SceneLifecycleSystem : SystemBase
     private static void StopMatchGameplay(EntityManager em)
     {
         InitialUnitsRuntimeState.PlayRequested = false;
+        InitialUnitsRuntimeState.SimulationActive = false;
         InitialUnitsRuntimeState.SelectionModeActive = false;
         InitialUnitsRuntimeState.BuildModeActive = false;
         InitialUnitsRuntimeState.ZoomInHeld = false;
@@ -348,6 +349,7 @@ public sealed partial class SceneLifecycleSystem : SystemBase
             {
                 RuntimeGameplayStateComponent state = states[i];
                 state.PlayRequested = 0;
+                state.SimulationActive = 0;
                 state.SelectionModeActive = 0;
                 state.BuildModeActive = 0;
                 states[i] = state;

@@ -1,7 +1,5 @@
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -12,6 +10,8 @@ public partial struct AICombatOrderSystem : ISystem
 {
     private const float EvaluationIntervalSeconds = 0.25f;
     private const float OrderRefreshSeconds = 2f;
+    private const int MaxSquadsPerFrame = 8;
+    private const int MaxUnitOrderWritesPerFrame = 128;
     private EntityQuery _runtimeBuildingCombatQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityTypeHandle _entityType;
@@ -31,6 +31,7 @@ public partial struct AICombatOrderSystem : ISystem
     private EntityStorageInfoLookup _entityStorageInfoLookup;
     private NativeList<RuntimeBuildingCombatRecord> _runtimeBuildingCombatRecords;
     private float _nextEvaluationTime;
+    private int _nextSquadEvaluationCursor;
 
     private readonly struct RuntimeBuildingCombatRecord
     {
@@ -130,7 +131,7 @@ public partial struct AICombatOrderSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -138,7 +139,6 @@ public partial struct AICombatOrderSystem : ISystem
         if (now < _nextEvaluationTime)
             return;
 
-        _nextEvaluationTime = now + EvaluationIntervalSeconds;
         EntityManager em = state.EntityManager;
         EntityCommandBuffer ecb = default;
         bool hasEcb = false;
@@ -154,12 +154,29 @@ public partial struct AICombatOrderSystem : ISystem
         GridBreachContext gridBreachContext = default;
         bool breachContextCreated = false;
         UpdateOrderRefreshLookups(ref state);
+        int squadOrdinal = 0;
+        int processedSquads = 0;
+        int unitOrderWrites = 0;
+        int nextSquadCursor = 0;
+        bool budgetExhausted = false;
 
         foreach (var (squadRef, squadEntity) in SystemAPI
                      .Query<RefRW<AISquad>>()
                      .WithAll<AISquadUnit>()
                      .WithEntityAccess())
         {
+            int currentSquadOrdinal = squadOrdinal++;
+            if (currentSquadOrdinal < _nextSquadEvaluationCursor)
+                continue;
+
+            processedSquads++;
+            if (processedSquads > MaxSquadsPerFrame)
+            {
+                budgetExhausted = true;
+                nextSquadCursor = currentSquadOrdinal;
+                break;
+            }
+
             AISquad squad = squadRef.ValueRO;
             if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
                 continue;
@@ -173,20 +190,31 @@ public partial struct AICombatOrderSystem : ISystem
             }
 
             if (now - squad.LastOrderTime < OrderRefreshSeconds &&
-                CountMembersNeedingOrder(squadEntity, squad, state.Dependency) == 0)
+                CountMembersNeedingOrder(squadEntity, squad) == 0)
                 continue;
 
-            EnsureBreachContext(
-                ref state,
-                ref runtimeBuildings,
-                ref gridBreachContext,
-                ref breachContextCreated);
+            bool targetMayNeedBreach = em.HasComponent<RuntimeBuildingCombatTag>(squad.TargetEntity);
+            if (targetMayNeedBreach)
+            {
+                EnsureBreachContext(
+                    ref state,
+                    ref runtimeBuildings,
+                    ref gridBreachContext,
+                    ref breachContextCreated);
+            }
 
             float3 targetPosition = ResolveTargetPosition(em, squad.TargetEntity, squad.TargetCell);
             DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squadEntity);
             int issued = 0;
             for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
             {
+                if (unitOrderWrites >= MaxUnitOrderWritesPerFrame)
+                {
+                    budgetExhausted = true;
+                    nextSquadCursor = currentSquadOrdinal;
+                    break;
+                }
+
                 Entity unit = members[memberIndex].Unit;
                 if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
                     continue;
@@ -199,22 +227,41 @@ public partial struct AICombatOrderSystem : ISystem
 
                 IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
                 issued++;
+                unitOrderWrites++;
             }
 
             if (issued <= 0)
+            {
+                if (budgetExhausted)
+                    break;
                 continue;
+            }
 
             squad.LastOrderTime = now;
             squad.LastLogTime = now;
             squadRef.ValueRW = squad;
             if (shouldLog)
                 EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
+
+            if (budgetExhausted)
+                break;
         }
 
         if (hasEcb)
         {
             ecb.Playback(em);
             ecb.Dispose();
+        }
+
+        if (budgetExhausted && nextSquadCursor > 0 && nextSquadCursor < squadOrdinal)
+        {
+            _nextSquadEvaluationCursor = nextSquadCursor;
+            _nextEvaluationTime = now;
+        }
+        else
+        {
+            _nextSquadEvaluationCursor = 0;
+            _nextEvaluationTime = now + EvaluationIntervalSeconds;
         }
     }
 
@@ -274,106 +321,59 @@ public partial struct AICombatOrderSystem : ISystem
         _entityStorageInfoLookup.Update(ref state);
     }
 
-    private int CountMembersNeedingOrder(Entity squadEntity, AISquad squad, JobHandle dependency)
+    private int CountMembersNeedingOrder(Entity squadEntity, AISquad squad)
     {
-        using NativeReference<int> count = new(Allocator.TempJob);
+        if (!_squadUnitLookup.HasBuffer(squadEntity))
+            return 0;
 
-        new CountMembersNeedingOrderJob
+        DynamicBuffer<AISquadUnit> members = _squadUnitLookup[squadEntity];
+        int count = 0;
+        for (int i = 0; i < members.Length; i++)
         {
-            SquadEntity = squadEntity,
-            Squad = squad,
-            SquadUnitLookup = _squadUnitLookup,
-            FactionLookup = _factionLookup,
-            AIControlledLookup = _aiControlledLookup,
-            UnitHealthLookup = _unitHealthLookup,
-            UnitCombatLookup = _unitCombatLookup,
-            UnitAttackLookup = _unitAttackLookup,
-            UnitTransformLookup = _unitTransformLookup,
-            StaticGridBlockerLookup = _staticGridBlockerLookup,
-            BaseBreachOrderLookup = _baseBreachOrderLookup,
-            EngageTargetLookup = _engageTargetLookup,
-            EntityStorageInfoLookup = _entityStorageInfoLookup,
-            Count = count
-        }.Schedule(dependency).Complete();
+            Entity unit = members[i].Unit;
+            if (!CanReceiveCombatOrderFromLookups(unit, squad.FactionId))
+                continue;
+            if (_baseBreachOrderLookup.HasComponent(unit) &&
+                _baseBreachOrderLookup[unit].FinalTarget == squad.TargetEntity)
+            {
+                continue;
+            }
 
-        return count.Value;
+            if (!_engageTargetLookup.HasComponent(unit))
+            {
+                count++;
+                continue;
+            }
+
+            EngageTarget engage = _engageTargetLookup[unit];
+            if (engage.Target == squad.TargetEntity)
+                continue;
+
+            count++;
+        }
+
+        return count;
     }
 
-    [BurstCompile]
-    private struct CountMembersNeedingOrderJob : IJob
+    private bool CanReceiveCombatOrderFromLookups(Entity unit, byte factionId)
     {
-        public Entity SquadEntity;
-        public AISquad Squad;
-        [ReadOnly] public BufferLookup<AISquadUnit> SquadUnitLookup;
-        [ReadOnly] public ComponentLookup<Faction> FactionLookup;
-        [ReadOnly] public ComponentLookup<AIControlledTag> AIControlledLookup;
-        [ReadOnly] public ComponentLookup<UnitHealth> UnitHealthLookup;
-        [ReadOnly] public ComponentLookup<UnitCombat> UnitCombatLookup;
-        [ReadOnly] public ComponentLookup<UnitAttack> UnitAttackLookup;
-        [ReadOnly] public ComponentLookup<LocalTransform> UnitTransformLookup;
-        [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticGridBlockerLookup;
-        [ReadOnly] public ComponentLookup<BaseBreachOrder> BaseBreachOrderLookup;
-        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
-        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public NativeReference<int> Count;
-
-        public void Execute()
+        if (unit == Entity.Null ||
+            !_entityStorageInfoLookup.Exists(unit) ||
+            !_factionLookup.HasComponent(unit) ||
+            _factionLookup[unit].Id != factionId ||
+            !_aiControlledLookup.HasComponent(unit) ||
+            !_unitHealthLookup.HasComponent(unit) ||
+            _unitHealthLookup[unit].Current <= 0 ||
+            !_unitCombatLookup.HasComponent(unit) ||
+            !_unitAttackLookup.HasComponent(unit) ||
+            !_unitTransformLookup.HasComponent(unit) ||
+            _staticGridBlockerLookup.HasComponent(unit))
         {
-            if (!SquadUnitLookup.HasBuffer(SquadEntity))
-            {
-                Count.Value = 0;
-                return;
-            }
-
-            DynamicBuffer<AISquadUnit> members = SquadUnitLookup[SquadEntity];
-            int count = 0;
-            for (int i = 0; i < members.Length; i++)
-            {
-                Entity unit = members[i].Unit;
-                if (!CanReceiveCombatOrder(unit))
-                    continue;
-                if (BaseBreachOrderLookup.HasComponent(unit) &&
-                    BaseBreachOrderLookup[unit].FinalTarget == Squad.TargetEntity)
-                {
-                    continue;
-                }
-
-                if (!EngageTargetLookup.HasComponent(unit))
-                {
-                    count++;
-                    continue;
-                }
-
-                EngageTarget engage = EngageTargetLookup[unit];
-                if (engage.Target == Squad.TargetEntity)
-                    continue;
-
-                count++;
-            }
-
-            Count.Value = count;
+            return false;
         }
 
-        private bool CanReceiveCombatOrder(Entity unit)
-        {
-            if (unit == Entity.Null ||
-                !EntityStorageInfoLookup.Exists(unit) ||
-                !FactionLookup.HasComponent(unit) ||
-                FactionLookup[unit].Id != Squad.FactionId ||
-                !AIControlledLookup.HasComponent(unit) ||
-                !UnitHealthLookup.HasComponent(unit) ||
-                UnitHealthLookup[unit].Current <= 0 ||
-                !UnitCombatLookup.HasComponent(unit) ||
-                !UnitAttackLookup.HasComponent(unit) ||
-                !UnitTransformLookup.HasComponent(unit) ||
-                StaticGridBlockerLookup.HasComponent(unit))
-            {
-                return false;
-            }
-
-            UnitCombat combat = UnitCombatLookup[unit];
-            return combat.CanAttack != 0;
-        }
+        UnitCombat combat = _unitCombatLookup[unit];
+        return combat.CanAttack != 0;
     }
 
     private static bool CanReceiveCombatOrder(EntityManager em, Entity unit, byte factionId)

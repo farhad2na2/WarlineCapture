@@ -12,6 +12,7 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
     }
 
     internal readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
+    internal readonly RuntimeDiagnosticsSystem RuntimeDiagnosticsSystem = new();
     internal readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem;
     internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem;

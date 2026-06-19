@@ -31,6 +31,18 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
 
     public bool ShouldLogTransportBoarding => InitialUnitsRuntimeState.TransportBoardingDiagnostics;
 
+    public bool BuildingRuntimeSliceDiagnostics
+    {
+        get => ReadDiagnosticsState().BuildingRuntimeSliceDiagnostics != 0;
+        set => WriteDiagnosticsState(state =>
+        {
+            state.BuildingRuntimeSliceDiagnostics = ToByte(value);
+            return state;
+        });
+    }
+
+    public bool ShouldLogBuildingRuntimeSlices => InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics;
+
     protected override void OnCreate()
     {
         Enabled = false;
@@ -133,7 +145,8 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
         return new RuntimeDiagnosticsStateComponent
         {
             VerboseAILogs = ToByte(InitialUnitsRuntimeState.VerboseAILogs),
-            TransportBoardingDiagnostics = ToByte(InitialUnitsRuntimeState.TransportBoardingDiagnostics)
+            TransportBoardingDiagnostics = ToByte(InitialUnitsRuntimeState.TransportBoardingDiagnostics),
+            BuildingRuntimeSliceDiagnostics = ToByte(InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics)
         };
     }
 
@@ -141,6 +154,7 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
     {
         InitialUnitsRuntimeState.VerboseAILogs = state.VerboseAILogs != 0;
         InitialUnitsRuntimeState.TransportBoardingDiagnostics = state.TransportBoardingDiagnostics != 0;
+        InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = state.BuildingRuntimeSliceDiagnostics != 0;
     }
 
     private static byte ToByte(bool value)
@@ -151,6 +165,7 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
     private static bool DiagnosticsStateEquals(RuntimeDiagnosticsStateComponent left, RuntimeDiagnosticsStateComponent right)
     {
         return left.VerboseAILogs == right.VerboseAILogs &&
-            left.TransportBoardingDiagnostics == right.TransportBoardingDiagnostics;
+            left.TransportBoardingDiagnostics == right.TransportBoardingDiagnostics &&
+            left.BuildingRuntimeSliceDiagnostics == right.BuildingRuntimeSliceDiagnostics;
     }
 }

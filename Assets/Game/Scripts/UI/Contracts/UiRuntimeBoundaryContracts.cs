@@ -82,6 +82,7 @@ public interface IBuildingUiQuery
 public interface IMatchRuntimeState
 {
     bool PlayRequested { get; set; }
+    bool SimulationActive { get; set; }
     bool SelectionModeActive { get; set; }
     bool BuildModeActive { get; set; }
     bool ZoomInHeld { get; set; }

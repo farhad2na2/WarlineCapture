@@ -54,9 +54,11 @@ internal sealed partial class MapBuildingPlacementSpawnSystem : SystemBase
     private int _nextPlacementIndex;
     private bool _warnedFailedPlacement;
 
+    public bool IsComplete => _queued && _authoringHidden;
+
     public void Update(Context context)
     {
-        if (context.Config == null || !context.Config.SpawnOnMatchStart)
+        if (context.Config == null || !context.Config.SpawnOnMatchStart || IsComplete)
             return;
 
         if (_queued)

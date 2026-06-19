@@ -86,10 +86,11 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
     private uint _randomState = 0x6D2B79F5u;
 
     internal int LastClearedBlockerCells => _lastClearedBlockerCells;
+    public bool IsComplete => _queued && _authoringHidden;
 
     public void Update(Context context)
     {
-        if (context.Config == null || !context.Config.SpawnOnMatchStart)
+        if (context.Config == null || !context.Config.SpawnOnMatchStart || IsComplete)
             return;
 
         TryPublishPlacementReadModel(context);

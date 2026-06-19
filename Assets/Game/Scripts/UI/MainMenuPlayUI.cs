@@ -41,6 +41,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             return;
 
         _runtimeGameplayStateSystem.PlayRequested = false;
+        _runtimeGameplayStateSystem.SimulationActive = false;
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.BuildModeActive = false;
         _runtimeGameplayStateSystem.ZoomInHeld = false;

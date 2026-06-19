@@ -4,18 +4,19 @@ using UnityEngine;
 
 internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : SystemBase
 {
-    private const bool EnableDiagnostics = false;
     private const double SlowLogThresholdSeconds = 0.01d;
     private const double SlowLogCooldownSeconds = 1d;
     private double _nextSlowLogAt;
 
     public readonly struct Context
     {
+        public readonly Func<bool> ShouldLogDiagnostics;
         public readonly Func<int> GetRuntimeBuildingCount;
         public readonly Action<string> Log;
 
-        public Context(Func<int> getRuntimeBuildingCount, Action<string> log)
+        public Context(Func<bool> shouldLogDiagnostics, Func<int> getRuntimeBuildingCount, Action<string> log)
         {
+            ShouldLogDiagnostics = shouldLogDiagnostics;
             GetRuntimeBuildingCount = getRuntimeBuildingCount;
             Log = log;
         }
@@ -24,6 +25,8 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
     public readonly struct Timing
     {
         public readonly double Start;
+        public readonly double AfterMapPlacements;
+        public readonly double AfterBoundary;
         public readonly double AfterProductions;
         public readonly double AfterResources;
         public readonly double AfterHaulers;
@@ -40,6 +43,8 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
 
         public Timing(
             double start,
+            double afterMapPlacements,
+            double afterBoundary,
             double afterProductions,
             double afterResources,
             double afterHaulers,
@@ -55,6 +60,8 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
             double afterInput)
         {
             Start = start;
+            AfterMapPlacements = afterMapPlacements;
+            AfterBoundary = afterBoundary;
             AfterProductions = afterProductions;
             AfterResources = afterResources;
             AfterHaulers = afterHaulers;
@@ -71,9 +78,9 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
         }
     }
 
-    public static Context CreateContext(Func<int> getRuntimeBuildingCount, Action<string> log)
+    public static Context CreateContext(Func<bool> shouldLogDiagnostics, Func<int> getRuntimeBuildingCount, Action<string> log)
     {
-        return new Context(getRuntimeBuildingCount, log);
+        return new Context(shouldLogDiagnostics, getRuntimeBuildingCount, log);
     }
 
     protected override void OnCreate()
@@ -89,11 +96,17 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
     {
         double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double elapsed = now - timing.Start;
-        if (!EnableDiagnostics || elapsed < SlowLogThresholdSeconds || now < _nextSlowLogAt || !Application.isFocused)
+        if (context.ShouldLogDiagnostics == null ||
+            !context.ShouldLogDiagnostics() ||
+            elapsed < SlowLogThresholdSeconds ||
+            now < _nextSlowLogAt ||
+            !Application.isFocused)
             return;
 
         _nextSlowLogAt = now + SlowLogCooldownSeconds;
-        double afterProductions = Math.Max(timing.AfterProductions, timing.Start);
+        double afterMapPlacements = Math.Max(timing.AfterMapPlacements, timing.Start);
+        double afterBoundary = Math.Max(timing.AfterBoundary, afterMapPlacements);
+        double afterProductions = Math.Max(timing.AfterProductions, afterBoundary);
         double afterResources = Math.Max(timing.AfterResources, afterProductions);
         double afterHaulers = Math.Max(timing.AfterHaulers, afterResources);
         double afterResourceVisuals = Math.Max(timing.AfterResourceVisuals, afterHaulers);
@@ -108,8 +121,10 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
         double afterInput = Math.Max(timing.AfterInput, afterInputBuildingClick);
 
         context.Log?.Invoke(
-            $"[BuildingPlacementDiag] frame={UnityEngine.Time.frameCount} total={elapsed * 1000d:F1}ms " +
-            $"productions={(afterProductions - timing.Start) * 1000d:F1}ms " +
+            $"[BuildingRuntimeSliceDiag] frame={UnityEngine.Time.frameCount} total={elapsed * 1000d:F1}ms " +
+            $"mapPlacement={(afterMapPlacements - timing.Start) * 1000d:F1}ms " +
+            $"boundary={(afterBoundary - afterMapPlacements) * 1000d:F1}ms " +
+            $"productions={(afterProductions - afterBoundary) * 1000d:F1}ms " +
             $"resources={(afterResources - afterProductions) * 1000d:F1}ms " +
             $"haulers={(afterHaulers - afterResources) * 1000d:F1}ms " +
             $"resourceVisuals={(afterResourceVisuals - afterHaulers) * 1000d:F1}ms " +

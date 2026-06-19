@@ -14,16 +14,28 @@ public sealed partial class BuildingRuntimeUpdateSystem : SystemBase
 
     public readonly struct Context
     {
-        public readonly Action UpdateBuildingRuntimeTick;
+        public readonly Action UpdateBuildingStartupTick;
+        public readonly Action UpdateBuildingSimulationTick;
 
-        public Context(Action updateBuildingRuntimeTick)
+        public Context(Action updateBuildingStartupTick, Action updateBuildingSimulationTick)
         {
-            UpdateBuildingRuntimeTick = updateBuildingRuntimeTick;
+            UpdateBuildingStartupTick = updateBuildingStartupTick;
+            UpdateBuildingSimulationTick = updateBuildingSimulationTick;
         }
+    }
+
+    public void UpdateStartup(Context context)
+    {
+        context.UpdateBuildingStartupTick?.Invoke();
     }
 
     public void Update(Context context)
     {
-        context.UpdateBuildingRuntimeTick?.Invoke();
+        UpdateSimulation(context);
+    }
+
+    public void UpdateSimulation(Context context)
+    {
+        context.UpdateBuildingSimulationTick?.Invoke();
     }
 }

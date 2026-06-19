@@ -130,6 +130,16 @@ internal sealed class MatchRuntimeStateAdapter : IMatchRuntimeState
         }
     }
 
+    public bool SimulationActive
+    {
+        get => state != null && state.SimulationActive;
+        set
+        {
+            if (state != null)
+                state.SimulationActive = value;
+        }
+    }
+
     public bool SelectionModeActive
     {
         get => state != null && state.SelectionModeActive;

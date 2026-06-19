@@ -15,7 +15,8 @@ public sealed class AICombatOrderValidationTests
             InitialUnitsRuntimeState.VerboseAILogs = true;
             AssertIssuesCommandedEngageOrdersToSquadMembers(assertDiagnosticLog: false);
             AssertDoesNotIssueOrdersForManualPlayerFaction(assertUnexpectedLogs: false);
-            UnityEngine.Debug.Log("[AICombatOrderFocusedValidation] result=Passed tests=2");
+            AssertDoesNotIssueOrdersWhileSimulationInactive();
+            UnityEngine.Debug.Log("[AICombatOrderFocusedValidation] result=Passed tests=3");
         }
         catch (System.Exception ex)
         {
@@ -26,6 +27,7 @@ public sealed class AICombatOrderValidationTests
         finally
         {
             InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.SimulationActive = false;
             InitialUnitsRuntimeState.VerboseAILogs = false;
         }
     }
@@ -40,6 +42,7 @@ public sealed class AICombatOrderValidationTests
     public void TearDown()
     {
         InitialUnitsRuntimeState.PlayRequested = false;
+        InitialUnitsRuntimeState.SimulationActive = false;
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 
@@ -53,6 +56,12 @@ public sealed class AICombatOrderValidationTests
     public void AICombatOrderSystem_DoesNotIssueOrdersForManualPlayerFaction()
     {
         AssertDoesNotIssueOrdersForManualPlayerFaction(assertUnexpectedLogs: true);
+    }
+
+    [Test]
+    public void AICombatOrderSystem_DoesNotIssueOrdersWhileSimulationInactive()
+    {
+        AssertDoesNotIssueOrdersWhileSimulationInactive();
     }
 
     private static void AssertIssuesCommandedEngageOrdersToSquadMembers(bool assertDiagnosticLog)
@@ -152,6 +161,44 @@ public sealed class AICombatOrderValidationTests
 
         Assert.IsFalse(em.HasComponent<EngageTarget>(playerMember));
         Assert.IsFalse(em.HasComponent<AICombatOrderTag>(playerMember));
+    }
+
+    private static void AssertDoesNotIssueOrdersWhileSimulationInactive()
+    {
+        using var world = new World("AICombatOrderLoadingGateValidationTests");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
+        Entity member = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
+
+        Entity squadEntity = em.CreateEntity(typeof(AISquad));
+        em.SetComponentData(squadEntity, new AISquad
+        {
+            SquadId = 7,
+            FactionId = FactionIdentity.EnemyFactionId,
+            Purpose = (byte)AISquadPurpose.Attack,
+            TargetFactionId = FactionIdentity.PlayerFactionId,
+            TargetKind = (byte)AITargetKind.Threat,
+            TargetEntity = target,
+            RallyCell = new int2(5, 5),
+            TargetCell = new int2(20, 20),
+            TargetScore = 150,
+            MinUnits = 1,
+            MaxUnits = 4,
+            LastOrderTime = -999f,
+            LastLogTime = -999f
+        });
+        DynamicBuffer<AISquadUnit> members = em.AddBuffer<AISquadUnit>(squadEntity);
+        members.Add(new AISquadUnit { Unit = member });
+
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(em, false);
+        SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
+
+        system.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<EngageTarget>(member));
+        Assert.IsFalse(em.HasComponent<AICombatOrderTag>(member));
     }
 
     private static Entity CreateAttacker(EntityManager em, byte factionId, int2 cell, float3 position)

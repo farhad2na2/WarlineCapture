@@ -32,14 +32,17 @@ public sealed class RuntimeGameplayStateSystemTests
         var runtimeState = new RuntimeGameplayStateSystem();
 
         runtimeState.SelectionModeActive = true;
+        runtimeState.SimulationActive = true;
         runtimeState.SuppressNextWorldClick = true;
         runtimeState.PlayerAutoModeEnabled = true;
 
         Assert.IsTrue(InitialUnitsRuntimeState.SelectionModeActive);
+        Assert.IsTrue(InitialUnitsRuntimeState.SimulationActive);
         Assert.IsTrue(InitialUnitsRuntimeState.SuppressNextWorldClick);
         Assert.IsTrue(InitialUnitsRuntimeState.PlayerAutoModeEnabled);
         RuntimeGameplayStateComponent state = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, state.SelectionModeActive);
+        Assert.AreEqual(1, state.SimulationActive);
         Assert.AreEqual(1, state.SuppressNextWorldClick);
         Assert.AreEqual(1, state.PlayerAutoModeEnabled);
     }
@@ -80,6 +83,7 @@ public sealed class RuntimeGameplayStateSystemTests
     public void ReadGameplayState_MirrorsLegacyStateIntoEcsSingleton()
     {
         InitialUnitsRuntimeState.PlayRequested = true;
+        InitialUnitsRuntimeState.SimulationActive = true;
         InitialUnitsRuntimeState.BuildModeActive = true;
         InitialUnitsRuntimeState.PlayerAutoModeEnabled = true;
         var runtimeState = new RuntimeGameplayStateSystem();
@@ -87,12 +91,31 @@ public sealed class RuntimeGameplayStateSystemTests
         RuntimeGameplayStateComponent state = runtimeState.ReadGameplayState();
 
         Assert.AreEqual(1, state.PlayRequested);
+        Assert.AreEqual(1, state.SimulationActive);
         Assert.AreEqual(1, state.BuildModeActive);
         Assert.AreEqual(1, state.PlayerAutoModeEnabled);
         RuntimeGameplayStateComponent singleton = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, singleton.PlayRequested);
+        Assert.AreEqual(1, singleton.SimulationActive);
         Assert.AreEqual(1, singleton.BuildModeActive);
         Assert.AreEqual(1, singleton.PlayerAutoModeEnabled);
+    }
+
+    [Test]
+    public void ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation()
+    {
+        var runtimeState = new RuntimeGameplayStateSystem();
+        runtimeState.SimulationActive = true;
+        runtimeState.BuildModeActive = true;
+
+        runtimeState.ResetForGameplayStart();
+
+        RuntimeGameplayStateComponent state = ReadSingleton<RuntimeGameplayStateComponent>();
+        Assert.AreEqual(1, state.PlayRequested);
+        Assert.AreEqual(0, state.SimulationActive);
+        Assert.AreEqual(0, state.BuildModeActive);
+        Assert.IsTrue(InitialUnitsRuntimeState.PlayRequested);
+        Assert.IsFalse(InitialUnitsRuntimeState.SimulationActive);
     }
 
     [Test]
@@ -146,6 +169,7 @@ public sealed class RuntimeGameplayStateSystemTests
     private static void ResetLegacyState()
     {
         InitialUnitsRuntimeState.PlayRequested = false;
+        InitialUnitsRuntimeState.SimulationActive = false;
         InitialUnitsRuntimeState.InitialCameraFocusRequested = false;
         InitialUnitsRuntimeState.InitialCameraFocusWorld = Vector3.zero;
         InitialUnitsRuntimeState.SelectionModeActive = false;

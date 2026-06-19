@@ -4,6 +4,7 @@ using Unity.Mathematics;
 public struct RuntimeGameplayStateComponent : IComponentData
 {
     public byte PlayRequested;
+    public byte SimulationActive;
     public byte SelectionModeActive;
     public byte BuildModeActive;
     public byte FullscreenMapOpen;

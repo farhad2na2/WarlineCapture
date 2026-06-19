@@ -218,7 +218,8 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
         bool hadSlowStep,
         int impostorCount,
         bool gameplayInitialized,
-        bool playRequested)
+        bool playRequested,
+        bool simulationActive)
     {
         double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double totalSeconds = now - _frameStartTimestamp;
@@ -237,8 +238,8 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
             Debug.Log($"[FreezeDetect] Update hitch frame={UnityEngine.Time.frameCount} {_freezeLogBuilder}");
         }
 
-        LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested);
-        UpdateFrameRateDiagnostics(gameplayActive, now, impostorCount);
+        LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested, simulationActive);
+        UpdateFrameRateDiagnostics(gameplayActive, now, impostorCount, playRequested, simulationActive);
         CaptureGcCounts();
     }
 
@@ -463,7 +464,7 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
         _markerRecorders.Clear();
     }
 
-    private void UpdateFrameRateDiagnostics(bool gameplayActive, double now, int impostorCount)
+    private void UpdateFrameRateDiagnostics(bool gameplayActive, double now, int impostorCount, bool playRequested, bool simulationActive)
     {
         if (!_enableFrameRateDiagnostics)
             return;
@@ -505,7 +506,7 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
                 $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
                 $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
                 $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
-                $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)}{preGameDetails} " +
+                $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} simulationActive={(simulationActive ? 1 : 0)}{preGameDetails} " +
                 $"stepStats={BuildStepStatsString()} topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
             LogRenderSceneBreakdownIfNeeded(now, averageFps);
         }
@@ -590,7 +591,8 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
         double totalSeconds,
         double now,
         bool gameplayInitialized,
-        bool playRequested)
+        bool playRequested,
+        bool simulationActive)
     {
         if (!_enableSlowFrameDiagnostics || totalSeconds < SlowFrameDiagThresholdSeconds || now < _nextSlowFrameDiagTimestamp)
             return;
@@ -611,7 +613,7 @@ public sealed partial class PerformanceDiagnosticsSystem : SystemBase
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
             $"memory={BuildMemoryDiagString()} uiToolkit=0 " +
-            $"gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} " +
+            $"gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} simulationActive={(simulationActive ? 1 : 0)} " +
             $"focused={(Application.isFocused ? 1 : 0)} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} " +
             $"topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
     }

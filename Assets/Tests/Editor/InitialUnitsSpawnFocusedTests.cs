@@ -53,7 +53,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_RejectsReservedFootprint),
             nameof(InitialUnitsSpawnSystem_ResolvesConfiguredHelipadSlot),
             nameof(InitialUnitsSpawnSystem_PreservesBlockerProgressIncrement),
-            nameof(InitialUnitsSpawnSystem_WaitsThenFailOpens)
+            nameof(InitialUnitsSpawnSystem_WaitsForInitialBuildingCompletionWithoutFailOpen)
         };
 
         try
@@ -655,7 +655,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     }
 
     [Test]
-    public void InitialUnitsSpawnSystem_WaitsThenFailOpens()
+    public void InitialUnitsSpawnSystem_WaitsForInitialBuildingCompletionWithoutFailOpen()
     {
         using var world = new World("InitialUnitsSpawnCompletionTest");
         EntityManager em = world.EntityManager;
@@ -698,23 +698,25 @@ public sealed class InitialUnitsSpawnFocusedTests
                 ref diagnosticLogWriter,
                 out progressChanged);
 
-            Assert.IsTrue(completed);
+            Assert.IsFalse(completed);
             Assert.IsTrue(progressChanged);
             Assert.AreEqual(2, progress.InitialBuildingCompletionWaitFrames);
-            Assert.AreEqual(1, progress.InitialBuildingsSpawned);
+            Assert.AreEqual(0, progress.InitialBuildingsSpawned);
 
             using EntityQuery logQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialSpawnDiagnosticLogComponent>());
             Entity logEntity = logQuery.GetSingletonEntity();
             DynamicBuffer<InitialSpawnDiagnosticLogComponent> logs =
                 em.GetBuffer<InitialSpawnDiagnosticLogComponent>(logEntity);
-            Assert.AreEqual(1, logs.Length);
+            Assert.AreEqual(2, logs.Length);
             Assert.AreEqual(InitialSpawnDiagnosticLogComponent.WarningSeverity, logs[0].Severity);
-            StringAssert.Contains("fail-open initial building completion", logs[0].Message.ToString());
+            Assert.AreEqual(InitialSpawnDiagnosticLogComponent.WarningSeverity, logs[1].Severity);
+            StringAssert.Contains("waiting initial building completion", logs[0].Message.ToString());
+            StringAssert.Contains("startup loading gate remains blocked", logs[1].Message.ToString());
 
             ecb.Playback(em);
-            Assert.IsTrue(em.HasComponent<InitialUnitsSpawnInitialized>(configEntity));
-            Assert.IsFalse(em.HasComponent<InitialUnitsSpawnProgress>(configEntity));
-            Assert.IsFalse(em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity));
+            Assert.IsFalse(em.HasComponent<InitialUnitsSpawnInitialized>(configEntity));
+            Assert.IsTrue(em.HasComponent<InitialUnitsSpawnProgress>(configEntity));
+            Assert.IsTrue(em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity));
         }
         finally
         {

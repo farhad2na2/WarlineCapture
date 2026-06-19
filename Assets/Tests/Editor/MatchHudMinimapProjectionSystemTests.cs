@@ -422,6 +422,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
     private sealed class FakeMatchRuntimeState : IMatchRuntimeState
     {
         public bool PlayRequested { get; set; }
+        public bool SimulationActive { get; set; }
         public bool SelectionModeActive { get; set; }
         public bool BuildModeActive { get; set; }
         public bool ZoomInHeld { get; set; }

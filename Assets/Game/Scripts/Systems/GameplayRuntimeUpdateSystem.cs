@@ -54,38 +54,20 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
         IUnitImpostorRenderer unitImpostors,
         ref bool gameplayStartPending)
     {
-        bool gameplayActive = gameplayInitialized && runtimeGameplayStateSystem.PlayRequested;
+        bool playRequested = runtimeGameplayStateSystem.PlayRequested;
+        bool simulationActive = gameplayInitialized && runtimeGameplayStateSystem.SimulationActive;
+        bool startupActive = gameplayInitialized && playRequested && !simulationActive;
+        bool runtimeRequested = gameplayInitialized && playRequested;
         using (BeginUpdateMarker.Auto())
         {
-            performanceDiagnosticsSystem.BeginUpdate(gameplayActive);
+            performanceDiagnosticsSystem.BeginUpdate(simulationActive);
         }
 
         bool hadSlowStep = false;
 
         double stepStart;
-        if (gameplayActive)
+        if (runtimeRequested)
         {
-            stepStart = performanceDiagnosticsSystem.BeginStep();
-            using (RoadBuildMarker.Auto())
-            {
-                roadBuildRuntimeUpdate?.Invoke();
-            }
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
-
-            stepStart = performanceDiagnosticsSystem.BeginStep();
-            using (BuildingPlacementMarker.Auto())
-            {
-                buildingRuntimeUpdate?.Update(buildingRuntimeUpdateContext);
-            }
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
-
-            stepStart = performanceDiagnosticsSystem.BeginStep();
-            using (SelectionMarker.Auto())
-            {
-                selectionRuntimeUpdate?.Invoke();
-            }
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
-
             stepStart = performanceDiagnosticsSystem.BeginStep();
             using (RuntimeCityMarker.Auto())
             {
@@ -106,6 +88,40 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
                 runtimeDecorations?.Update();
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeDecorations", stepStart);
+        }
+
+        if (startupActive)
+        {
+            stepStart = performanceDiagnosticsSystem.BeginStep();
+            using (BuildingPlacementMarker.Auto())
+            {
+                buildingRuntimeUpdate?.UpdateStartup(buildingRuntimeUpdateContext);
+            }
+            hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingStartup", stepStart);
+        }
+
+        if (simulationActive)
+        {
+            stepStart = performanceDiagnosticsSystem.BeginStep();
+            using (RoadBuildMarker.Auto())
+            {
+                roadBuildRuntimeUpdate?.Invoke();
+            }
+            hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
+
+            stepStart = performanceDiagnosticsSystem.BeginStep();
+            using (BuildingPlacementMarker.Auto())
+            {
+                buildingRuntimeUpdate?.UpdateSimulation(buildingRuntimeUpdateContext);
+            }
+            hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
+
+            stepStart = performanceDiagnosticsSystem.BeginStep();
+            using (SelectionMarker.Auto())
+            {
+                selectionRuntimeUpdate?.Invoke();
+            }
+            hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
             using (DayNightMarker.Auto())
@@ -142,8 +158,9 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
                     runtimeDecorations))
             {
                 gameplayStartPending = false;
+                runtimeGameplayStateSystem.SimulationActive = true;
                 _loadingGateStartedFrame = -1;
-                Debug.Log($"[LoadingGate] ready frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
+                Debug.Log($"[LoadingGate] ready frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)} simulationActive=1");
             }
             else if (gameplayStartPending && ShouldFailOpenLoadingGate(
                          gameplayInitialized,
@@ -170,11 +187,12 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
         using (EndUpdateMarker.Auto())
         {
             performanceDiagnosticsSystem.EndUpdate(
-                gameplayActive,
+                simulationActive,
                 hadSlowStep,
                 unitImpostors?.LastDrawnCount ?? 0,
                 gameplayInitialized,
-                runtimeGameplayStateSystem.PlayRequested);
+                runtimeGameplayStateSystem.PlayRequested,
+                runtimeGameplayStateSystem.SimulationActive);
         }
     }
 
@@ -201,7 +219,7 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
         IUnitAttackTraceRenderer unitAttackTraces,
         IUnitImpostorRenderer unitImpostors)
     {
-        if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
+        if (!(gameplayInitialized && runtimeGameplayStateSystem.SimulationActive))
             return;
 
         double start = performanceDiagnosticsSystem.BeginTimedSection();
@@ -217,7 +235,7 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
         Action roadBuildOnGui,
         ISelectionRectangleView selectionRectangleView)
     {
-        if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
+        if (!(gameplayInitialized && runtimeGameplayStateSystem.SimulationActive))
             return;
 
         double start = performanceDiagnosticsSystem.BeginTimedSection();
@@ -287,6 +305,7 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
         _nextLoadingGateDiagnosticFrame = UnityEngine.Time.frameCount + LoadingGateDiagnosticIntervalFrames;
 
         bool playRequested = runtimeGameplayStateSystem.PlayRequested;
+        bool simulationActive = runtimeGameplayStateSystem.SimulationActive;
         string cityState = runtimeCity == null
             ? "null"
             : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)} blocker={runtimeCity.DescribeStartupBlocker(UnityEngine.Time.frameCount)}";
@@ -301,7 +320,7 @@ public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
 
         Debug.Log(
             $"[LoadingGate] waiting frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} " +
-            $"playRequested={(playRequested ? 1 : 0)} city={cityState} blockers={blockerState} decorations={decorationState} " +
+            $"playRequested={(playRequested ? 1 : 0)} simulationActive={(simulationActive ? 1 : 0)} city={cityState} blockers={blockerState} decorations={decorationState} " +
             $"initialSpawn=configs:{spawnConfigs},initialized:{spawnInitialized},progress:{spawnProgress}");
     }
 

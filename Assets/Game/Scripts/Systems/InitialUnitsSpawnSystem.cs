@@ -1448,11 +1448,13 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         {
             progress.InitialBuildingCompletionWaitFrames++;
             progressChanged = true;
-            if (progress.InitialBuildingCompletionWaitFrames >= maxInitialBuildingCompletionWaitFrames)
+            int warningInterval = math.max(1, maxInitialBuildingCompletionWaitFrames);
+            if (progress.InitialBuildingCompletionWaitFrames == 1 ||
+                progress.InitialBuildingCompletionWaitFrames % warningInterval == 0)
             {
-                progress.InitialBuildingsSpawned = 1;
-                canCompleteInitialSpawn = true;
-                diagnosticLogWriter.EnqueueWarning(em, $"[InitialSpawn] fail-open initial building completion after {progress.InitialBuildingCompletionWaitFrames} frames. The startup loading gate will clear, but initial buildings may be missing or incomplete.");
+                diagnosticLogWriter.EnqueueWarning(
+                    em,
+                    $"[InitialSpawn] waiting initial building completion frames={progress.InitialBuildingCompletionWaitFrames} requiresFactionBases={(config.CreateFactionBases != 0 ? 1 : 0)} configuredBuildings={(em.HasBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity) ? em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity).Length : 0)}. The startup loading gate remains blocked until the building boundary confirms completion.");
             }
         }
 

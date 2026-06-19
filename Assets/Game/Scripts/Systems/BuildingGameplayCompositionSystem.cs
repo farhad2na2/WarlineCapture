@@ -421,127 +421,136 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
         };
         BuildingPlacementRuntimeTickSystem.Context runtimeTickContext = default;
         bool runtimeTickContextReady = false;
-        void UpdateBuildingRuntimeTick()
+        bool EnsureRuntimeTickContext()
         {
-            if (!runtimeTickContextReady)
-            {
-                if (!tryGetEntityManager(out EntityManager em))
-                    return;
+            if (runtimeTickContextReady)
+                return true;
 
-                childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
-                BuildingPlacementRuntimeTickContextSystem.Source runtimeTickSource = _runtimeTickCompositionSystem.Create(
-                    childSystems,
-                    interactionContext,
-                    markerPropertyBlock,
-                    createRuntimeContextSource,
-                    (source, placementInteractionContext, placementMarkerPropertyBlock) => _placementInputTickCompositionSystem.Create(
-                        source,
-                        placementInteractionContext,
-                        placementMarkerPropertyBlock,
-                        rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
-                        createPlacementCommandContext,
-                        (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
-                            _placementInteractionCompositionSystem.CreateActivePlacementPointerContext(
-                                pointerSource,
-                                pointerInteractionContext,
-                                pointerMarkerPropertyBlock,
-                                tryGetGridForPlacementInput,
-                                tryGetGridCell,
-                                updatePlacementForInteraction),
-                        source => source.BuildingSelectionClickCompositionSystem.Create(
-                            source,
-                            tryGetGridForSelection,
+            if (!tryGetEntityManager(out EntityManager em))
+                return false;
+
+            childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+            BuildingPlacementRuntimeTickContextSystem.Source runtimeTickSource = _runtimeTickCompositionSystem.Create(
+                childSystems,
+                interactionContext,
+                markerPropertyBlock,
+                createRuntimeContextSource,
+                (source, placementInteractionContext, placementMarkerPropertyBlock) => _placementInputTickCompositionSystem.Create(
+                    source,
+                    placementInteractionContext,
+                    placementMarkerPropertyBlock,
+                    rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
+                    createPlacementCommandContext,
+                    (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
+                        _placementInteractionCompositionSystem.CreateActivePlacementPointerContext(
+                            pointerSource,
+                            pointerInteractionContext,
+                            pointerMarkerPropertyBlock,
+                            tryGetGridForPlacementInput,
                             tryGetGridCell,
-                            createBuildingSelectionContext)),
-                    source => _productionTickCompositionSystem.Create(
+                            updatePlacementForInteraction),
+                    source => source.BuildingSelectionClickCompositionSystem.Create(
                         source,
-                        productionSource => productionSource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
-                            productionSource,
-                            createRuntimeContextSource,
-                            createPlacementCommandContext),
-                        OilBarrelsPerFuelBarrel),
-                    (source, placementInteractionContext, placementMarkerPropertyBlock) => _runtimeBoundaryCompositionSystem.Create(
-                        source,
-                        placementInteractionContext,
-                        placementMarkerPropertyBlock,
-                        createBuildingRuntimeContextSource,
-                        boundarySource => boundarySource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
-                            boundarySource,
-                            createRuntimeContextSource,
-                            createPlacementCommandContext),
-                        createRuntimeContextSource),
-                    (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                        tryGetGridForSelection,
+                        tryGetGridCell,
+                        createBuildingSelectionContext)),
+                source => _productionTickCompositionSystem.Create(
+                    source,
+                    productionSource => productionSource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                        productionSource,
+                        createRuntimeContextSource,
+                        createPlacementCommandContext),
+                    OilBarrelsPerFuelBarrel),
+                (source, placementInteractionContext, placementMarkerPropertyBlock) => _runtimeBoundaryCompositionSystem.Create(
+                    source,
+                    placementInteractionContext,
+                    placementMarkerPropertyBlock,
+                    createBuildingRuntimeContextSource,
+                    boundarySource => boundarySource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                        boundarySource,
+                        createRuntimeContextSource,
+                        createPlacementCommandContext),
+                    createRuntimeContextSource),
+                (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                {
+                    BuildingRuntimeContextSystem.Source mapRuntimeContextSource =
+                        createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
+                    BuildingRuntimeSpawnSystem.Context mapSpawnContext =
+                        source.BuildingRuntimeContextSystem.CreateSpawnContext(mapRuntimeContextSource);
+                    bool TryGetMapGridData(
+                        out Entity gridEntity,
+                        out GridConfig grid,
+                        out DynamicBuffer<GridRoad> roads,
+                        out DynamicBlockerComponent blockerData)
                     {
-                        BuildingRuntimeContextSystem.Source mapRuntimeContextSource =
-                            createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
-                        BuildingRuntimeSpawnSystem.Context mapSpawnContext =
-                            source.BuildingRuntimeContextSystem.CreateSpawnContext(mapRuntimeContextSource);
-                        bool TryGetMapGridData(
-                            out Entity gridEntity,
-                            out GridConfig grid,
-                            out DynamicBuffer<GridRoad> roads,
-                            out DynamicBlockerComponent blockerData)
-                        {
-                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
-                        }
+                        return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                    }
 
-                        MapBuildingPlacementSpawnSystem.Context mapSpawnPlacementContext =
-                            new(
-                                mapBuildingPlacementConfig,
-                                mapBuildingAuthoringRoot,
-                                source.BuildingRuntimeSpawnSystem,
-                                mapSpawnContext,
-                                TryGetMapGridData,
-                                Debug.LogWarning);
-                        return () => source.MapBuildingPlacementSpawnSystem.Update(mapSpawnPlacementContext);
-                    },
-                    (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                    MapBuildingPlacementSpawnSystem.Context mapSpawnPlacementContext =
+                        new(
+                            mapBuildingPlacementConfig,
+                            mapBuildingAuthoringRoot,
+                            source.BuildingRuntimeSpawnSystem,
+                            mapSpawnContext,
+                            TryGetMapGridData,
+                            Debug.LogWarning);
+                    return () => source.MapBuildingPlacementSpawnSystem.Update(mapSpawnPlacementContext);
+                },
+                (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                {
+                    RuntimeUnitPrefabSystem.Context mapVehiclePrefabContext =
+                        BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
+                            source.BuildingRuntimeResourcePrefabContextSystem,
+                            runtimeResourcePrefabSource);
+
+                    bool TryGetMapGridData(
+                        out Entity gridEntity,
+                        out GridConfig grid,
+                        out DynamicBuffer<GridRoad> roads,
+                        out DynamicBlockerComponent blockerData)
                     {
-                        RuntimeUnitPrefabSystem.Context mapVehiclePrefabContext =
-                            BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
-                                source.BuildingRuntimeResourcePrefabContextSystem,
-                                runtimeResourcePrefabSource);
+                        return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                    }
 
-                        bool TryGetMapGridData(
-                            out Entity gridEntity,
-                            out GridConfig grid,
-                            out DynamicBuffer<GridRoad> roads,
-                            out DynamicBlockerComponent blockerData)
+                    bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
+                    {
+                        source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+                        EntityQuery boundaryQuery = source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery;
+                        if (boundaryQuery.IsEmptyIgnoreFilter)
                         {
-                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                            boundaryEntity = Entity.Null;
+                            return false;
                         }
 
-                        bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
-                        {
-                            source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
-                            EntityQuery boundaryQuery = source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery;
-                            if (boundaryQuery.IsEmptyIgnoreFilter)
-                            {
-                                boundaryEntity = Entity.Null;
-                                return false;
-                            }
+                        boundaryEntity = boundaryQuery.GetSingletonEntity();
+                        return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+                    }
 
-                            boundaryEntity = boundaryQuery.GetSingletonEntity();
-                            return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
-                        }
-
-                        MapVehiclePlacementSpawnSystem.Context mapVehiclePlacementContext =
-                            new(
-                                mapVehiclePlacementConfig,
-                                mapVehicleAuthoringRoot,
-                                source.RuntimeUnitPrefabSystem,
-                                mapVehiclePrefabContext,
-                                TryGetMapGridData,
-                                TryGetMapRuntimeBoundary,
-                                Debug.LogWarning);
-                        return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
-                    },
-                    DestroyedBuildingLifetimeSeconds);
-                runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);
-                runtimeTickContextReady = true;
-            }
-
-            childSystems.BuildingPlacementRuntimeTickSystem.Update(runtimeTickContext);
+                    MapVehiclePlacementSpawnSystem.Context mapVehiclePlacementContext =
+                        new(
+                            mapVehiclePlacementConfig,
+                            mapVehicleAuthoringRoot,
+                            source.RuntimeUnitPrefabSystem,
+                            mapVehiclePrefabContext,
+                            TryGetMapGridData,
+                            TryGetMapRuntimeBoundary,
+                            Debug.LogWarning);
+                    return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
+                },
+                DestroyedBuildingLifetimeSeconds);
+            runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);
+            runtimeTickContextReady = true;
+            return true;
+        }
+        void UpdateBuildingStartupTick()
+        {
+            if (EnsureRuntimeTickContext())
+                childSystems.BuildingPlacementRuntimeTickSystem.UpdateStartup(runtimeTickContext);
+        }
+        void UpdateBuildingSimulationTick()
+        {
+            if (EnsureRuntimeTickContext())
+                childSystems.BuildingPlacementRuntimeTickSystem.UpdateSimulation(runtimeTickContext);
         }
         return _resultSystem.Create(
             childSystems.BuildingSelectionClickSystem,
@@ -551,7 +560,7 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
                 tryGetGridCell,
                 createBuildingSelectionContext),
             runtimeUpdate,
-            new BuildingRuntimeUpdateSystem.Context(UpdateBuildingRuntimeTick),
+            new BuildingRuntimeUpdateSystem.Context(UpdateBuildingStartupTick, UpdateBuildingSimulationTick),
             childSystems.BuildingRuntimeCitySpawnSystem,
             childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
                 buildingRuntimeContextSource,

@@ -53,6 +53,7 @@ internal sealed partial class BuildingRuntimeTickCompositionSystem : SystemBase
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
             BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext(
+                () => source.RuntimeDiagnosticsSystem.ShouldLogBuildingRuntimeSlices,
                 () => source.RuntimeBuildingSystem.Count,
                 Debug.Log));
     }

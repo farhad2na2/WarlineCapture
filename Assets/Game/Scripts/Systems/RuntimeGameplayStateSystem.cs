@@ -32,6 +32,16 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         });
     }
 
+    public bool SimulationActive
+    {
+        get => ReadGameplayState().SimulationActive != 0;
+        set => WriteGameplayState(state =>
+        {
+            state.SimulationActive = ToByte(value);
+            return state;
+        });
+    }
+
     public bool SelectionModeActive
     {
         get => ReadGameplayState().SelectionModeActive != 0;
@@ -141,6 +151,7 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         WriteGameplayState(state =>
         {
             state.PlayRequested = 1;
+            state.SimulationActive = 0;
             state.SelectionModeActive = 0;
             state.BuildModeActive = 0;
             state.FullscreenMapOpen = 0;
@@ -336,6 +347,7 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         return new RuntimeGameplayStateComponent
         {
             PlayRequested = ToByte(InitialUnitsRuntimeState.PlayRequested),
+            SimulationActive = ToByte(InitialUnitsRuntimeState.SimulationActive),
             SelectionModeActive = ToByte(InitialUnitsRuntimeState.SelectionModeActive),
             BuildModeActive = ToByte(InitialUnitsRuntimeState.BuildModeActive),
             FullscreenMapOpen = ToByte(InitialUnitsRuntimeState.FullscreenMapOpen),
@@ -367,6 +379,7 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
     private static void ApplyLegacyGameplayState(RuntimeGameplayStateComponent state)
     {
         InitialUnitsRuntimeState.PlayRequested = state.PlayRequested != 0;
+        InitialUnitsRuntimeState.SimulationActive = state.SimulationActive != 0;
         InitialUnitsRuntimeState.SelectionModeActive = state.SelectionModeActive != 0;
         InitialUnitsRuntimeState.BuildModeActive = state.BuildModeActive != 0;
         InitialUnitsRuntimeState.FullscreenMapOpen = state.FullscreenMapOpen != 0;
@@ -395,6 +408,7 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
     private static bool GameplayStateEquals(RuntimeGameplayStateComponent left, RuntimeGameplayStateComponent right)
     {
         return left.PlayRequested == right.PlayRequested &&
+            left.SimulationActive == right.SimulationActive &&
             left.SelectionModeActive == right.SelectionModeActive &&
             left.BuildModeActive == right.BuildModeActive &&
             left.FullscreenMapOpen == right.FullscreenMapOpen &&

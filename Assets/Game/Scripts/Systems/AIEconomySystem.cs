@@ -39,7 +39,7 @@ public partial struct AIEconomySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;

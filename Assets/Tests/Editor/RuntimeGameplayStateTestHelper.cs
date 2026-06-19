@@ -8,9 +8,20 @@ internal static class RuntimeGameplayStateTestHelper
     public static void SetPlayRequested(EntityManager entityManager, bool playRequested)
     {
         InitialUnitsRuntimeState.PlayRequested = playRequested;
+        InitialUnitsRuntimeState.SimulationActive = playRequested;
         Entity entity = GetOrCreateRuntimeStateEntity(entityManager);
         RuntimeGameplayStateComponent state = entityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
         state.PlayRequested = playRequested ? (byte)1 : (byte)0;
+        state.SimulationActive = playRequested ? (byte)1 : (byte)0;
+        entityManager.SetComponentData(entity, state);
+    }
+
+    public static void SetSimulationActive(EntityManager entityManager, bool simulationActive)
+    {
+        InitialUnitsRuntimeState.SimulationActive = simulationActive;
+        Entity entity = GetOrCreateRuntimeStateEntity(entityManager);
+        RuntimeGameplayStateComponent state = entityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
+        state.SimulationActive = simulationActive ? (byte)1 : (byte)0;
         entityManager.SetComponentData(entity, state);
     }
 

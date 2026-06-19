@@ -80,6 +80,20 @@ internal sealed partial class BuildingProductionRuntimeTickSystem : SystemBase
         context.SetRandomState?.Invoke(randomState);
     }
 
+    public void UpdateActiveProductionTransports(Context context)
+    {
+        if (context.ProductionUpdateSystem == null)
+            return;
+
+        uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
+        context.ProductionUpdateSystem.UpdateActiveProductionTransports(
+            context.ProductionUpdateContext,
+            UnityEngine.Time.time,
+            UnityEngine.Time.deltaTime,
+            ref randomState);
+        context.SetRandomState?.Invoke(randomState);
+    }
+
     public void UpdateResourceProduction(Context context)
     {
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceSystem == null)

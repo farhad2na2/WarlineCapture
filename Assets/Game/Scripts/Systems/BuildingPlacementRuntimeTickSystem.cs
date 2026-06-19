@@ -8,10 +8,10 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
     private const double ProductionIntervalSeconds = 0.1d;
     private const double ResourceProductionIntervalSeconds = 1d;
     private const double ResourceHaulerIntervalSeconds = 0.25d;
-    private const double ResourceVisualIntervalSeconds = 0.25d;
     private const double ReservationCleanupIntervalSeconds = 0.5d;
     private const double DestroyedCleanupIntervalSeconds = 0.5d;
     private static readonly ProfilerMarker ProcessPendingProductionsMarker = new("BuildingPlacementRuntimeTick.ProcessPendingProductions");
+    private static readonly ProfilerMarker UpdateActiveProductionTransportsMarker = new("BuildingPlacementRuntimeTick.UpdateActiveProductionTransports");
     private static readonly ProfilerMarker UpdateResourceProductionMarker = new("BuildingPlacementRuntimeTick.UpdateResourceProduction");
     private static readonly ProfilerMarker UpdateResourceHaulersMarker = new("BuildingPlacementRuntimeTick.UpdateResourceHaulers");
     private static readonly ProfilerMarker UpdateBuildingResourceVisualsMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingResourceVisuals");
@@ -27,13 +27,13 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
     private double _nextProductionAt;
     private double _nextResourceProductionAt;
     private double _nextResourceHaulerAt;
-    private double _nextResourceVisualAt;
     private double _nextReservationCleanupAt;
     private double _nextDestroyedCleanupAt;
 
     public readonly struct Context
     {
         public readonly Action ProcessPendingProductions;
+        public readonly Action UpdateActiveProductionTransports;
         public readonly Action UpdateResourceProduction;
         public readonly Action UpdateResourceHaulers;
         public readonly Action UpdateBuildingResourceVisuals;
@@ -51,6 +51,7 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
 
         public Context(
             Action processPendingProductions,
+            Action updateActiveProductionTransports,
             Action updateResourceProduction,
             Action updateResourceHaulers,
             Action updateBuildingResourceVisuals,
@@ -67,6 +68,7 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
             BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
         {
             ProcessPendingProductions = processPendingProductions;
+            UpdateActiveProductionTransports = updateActiveProductionTransports;
             UpdateResourceProduction = updateResourceProduction;
             UpdateResourceHaulers = updateResourceHaulers;
             UpdateBuildingResourceVisuals = updateBuildingResourceVisuals;
@@ -204,6 +206,12 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
             }
             afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
+            using (UpdateActiveProductionTransportsMarker.Auto())
+            {
+                context.UpdateActiveProductionTransports?.Invoke();
+            }
+            afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
+
             now = afterProductions;
             if (now >= _nextResourceProductionAt)
             {
@@ -226,14 +234,9 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
             }
             afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-            now = afterHaulers;
-            if (now >= _nextResourceVisualAt)
+            using (UpdateBuildingResourceVisualsMarker.Auto())
             {
-                _nextResourceVisualAt = now + ResourceVisualIntervalSeconds;
-                using (UpdateBuildingResourceVisualsMarker.Auto())
-                {
-                    context.UpdateBuildingResourceVisuals?.Invoke();
-                }
+                context.UpdateBuildingResourceVisuals?.Invoke();
             }
             afterResourceVisuals = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

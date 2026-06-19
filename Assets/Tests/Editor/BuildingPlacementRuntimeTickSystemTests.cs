@@ -1,9 +1,27 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Unity.Entities;
 
 public sealed class BuildingPlacementRuntimeTickSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new BuildingPlacementRuntimeTickSystemTests();
+            tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
+            tests.SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary();
+            tests.SimulationTickUpdatesVisibleProductionTransportsAndResourceVisualsEveryFrame();
+            UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=3");
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError($"[BuildingPlacementRuntimeTickFocusedValidation] result=Failed error={exception}");
+            throw;
+        }
+    }
+
     [Test]
     public void StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues()
     {
@@ -41,17 +59,42 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
             calls.GetRange(0, 3));
     }
 
+    [Test]
+    public void SimulationTickUpdatesVisibleProductionTransportsAndResourceVisualsEveryFrame()
+    {
+        using World world = new("BuildingPlacementRuntimeTickVisualCadenceTests");
+        BuildingPlacementRuntimeTickSystem tickSystem = world.CreateSystemManaged<BuildingPlacementRuntimeTickSystem>();
+        var calls = new List<string>();
+
+        BuildingPlacementRuntimeTickSystem.Context context = CreateContext(
+            calls,
+            enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
+            enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
+            updateBuildingRuntimeBoundary: () => calls.Add("boundary"),
+            updateActiveProductionTransports: () => calls.Add("activeTransport"),
+            updateBuildingResourceVisuals: () => calls.Add("visuals"));
+
+        tickSystem.UpdateSimulation(context);
+        tickSystem.UpdateSimulation(context);
+
+        Assert.AreEqual(2, calls.Count(call => call == "activeTransport"));
+        Assert.AreEqual(2, calls.Count(call => call == "visuals"));
+    }
+
     private static BuildingPlacementRuntimeTickSystem.Context CreateContext(
         List<string> calls,
         System.Action enqueueMapBuildingPlacements,
         System.Action enqueueMapVehiclePlacements,
-        System.Action updateBuildingRuntimeBoundary)
+        System.Action updateBuildingRuntimeBoundary,
+        System.Action updateActiveProductionTransports = null,
+        System.Action updateBuildingResourceVisuals = null)
     {
         return new BuildingPlacementRuntimeTickSystem.Context(
             processPendingProductions: () => calls.Add("production"),
+            updateActiveProductionTransports: updateActiveProductionTransports ?? (() => calls.Add("activeTransport")),
             updateResourceProduction: () => calls.Add("resources"),
             updateResourceHaulers: () => calls.Add("haulers"),
-            updateBuildingResourceVisuals: () => calls.Add("visuals"),
+            updateBuildingResourceVisuals: updateBuildingResourceVisuals ?? (() => calls.Add("visuals")),
             cleanupRecentSpawnReservations: () => calls.Add("reservations"),
             syncDestroyedRuntimeBuildingCombatEntities: () => calls.Add("destroyedSync"),
             updateDestroyedBuildings: () => calls.Add("destroyed"),

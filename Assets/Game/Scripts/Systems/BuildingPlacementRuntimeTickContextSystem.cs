@@ -61,6 +61,7 @@ internal sealed partial class BuildingPlacementRuntimeTickContextSystem : System
     {
         return new BuildingPlacementRuntimeTickSystem.Context(
             () => _productionRuntimeTickSystem.ProcessPendingProductions(source.ProductionContext),
+            () => _productionRuntimeTickSystem.UpdateActiveProductionTransports(source.ProductionContext),
             () => _productionRuntimeTickSystem.UpdateResourceProduction(source.ProductionContext),
             () => _productionRuntimeTickSystem.UpdateResourceHaulers(source.ProductionContext),
             source.UpdateBuildingResourceVisuals,

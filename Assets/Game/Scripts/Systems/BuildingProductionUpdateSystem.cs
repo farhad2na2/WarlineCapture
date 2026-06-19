@@ -51,6 +51,35 @@ internal sealed partial class BuildingProductionUpdateSystem : SystemBase
             UpdatePendingProductionForBuilding(context, pair.Value, now, deltaTime, ref randomState);
     }
 
+    public void UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
+    {
+        if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.TransportSystem == null)
+            return;
+
+        if (context.RuntimeBuildingMap != null)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+            return;
+        }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+            UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+    }
+
+    private static void UpdateActiveProductionTransportForBuilding(
+        Context context,
+        RuntimeBuildingEntity building,
+        float now,
+        float deltaTime,
+        ref uint randomState)
+    {
+        if (building == null || building.ActiveTransport == null)
+            return;
+
+        context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
+    }
+
     private static void UpdatePendingProductionForBuilding(
         Context context,
         RuntimeBuildingEntity building,
@@ -59,12 +88,7 @@ internal sealed partial class BuildingProductionUpdateSystem : SystemBase
         ref uint randomState)
     {
         if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
-        {
-            context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
             return;
-        }
-
-        context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
 
         for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
         {

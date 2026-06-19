@@ -638,6 +638,9 @@ public partial struct UnitSelectionMarkerSystem : ISystem
 
     private static bool IsAirSelectionObjectOutlineSourceSuppressed(EntityManager em, Entity source, Entity owner)
     {
+        if (IsAirSelectionObjectOutlineBladeReferenceSource(em, source, owner))
+            return true;
+
         Entity current = source;
         for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
         {
@@ -647,6 +650,42 @@ public partial struct UnitSelectionMarkerSystem : ISystem
             string name = em.GetName(current);
             if (IsAirSelectionObjectOutlineSourceNameSuppressed(name))
                 return true;
+
+            if (current == owner || !em.HasComponent<Parent>(current))
+                return false;
+
+            current = em.GetComponentData<Parent>(current).Value;
+        }
+
+        return false;
+    }
+
+    private static bool IsAirSelectionObjectOutlineBladeReferenceSource(EntityManager em, Entity source, Entity owner)
+    {
+        if (source == Entity.Null ||
+            owner == Entity.Null ||
+            !em.Exists(source) ||
+            !em.Exists(owner) ||
+            !em.HasBuffer<UnitHelicopterBladeReference>(owner))
+        {
+            return false;
+        }
+
+        DynamicBuffer<UnitHelicopterBladeReference> blades = em.GetBuffer<UnitHelicopterBladeReference>(owner);
+        if (blades.Length == 0)
+            return false;
+
+        Entity current = source;
+        for (int depth = 0; depth < MaxSelectionObjectOutlineParentDepth; depth++)
+        {
+            if (current == Entity.Null || !em.Exists(current))
+                return false;
+
+            for (int i = 0; i < blades.Length; i++)
+            {
+                if (current == blades[i].Blade)
+                    return true;
+            }
 
             if (current == owner || !em.HasComponent<Parent>(current))
                 return false;

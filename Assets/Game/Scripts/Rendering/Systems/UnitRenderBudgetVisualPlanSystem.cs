@@ -233,6 +233,15 @@ public readonly struct UnitRenderBudgetVisualPlan
             forceImmediateDetailVisual = false;
         }
 
+        if (request.IsSelectedUnit && !request.IsCharacter)
+        {
+            shouldShowDetail = true;
+            shouldShowMid = false;
+            shouldShowLow = false;
+            shouldShowFar = false;
+            forceImmediateDetailVisual = true;
+        }
+
         bool keepDetailVisibleUntilReady =
             !shouldShowFar &&
             !shouldShowDetail &&

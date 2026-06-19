@@ -17,12 +17,13 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             var tests = new UnitHelicopterBladeSpinSystemTests();
             tests.AirborneAirUnitRotatesVisibleDetailBlade();
             tests.AirborneAirUnitRotatesBakedBladeReference();
+            tests.AirborneAirUnitRotatesLodBladeDescendants();
             tests.LandedAirUnitDoesNotRotateBakedBladeReference();
             tests.GroundedReturningAirUnitDoesNotRotateBakedBladeReference();
             tests.HelicopterPrefabsDoNotUseCompanionBladeSpinner();
             tests.HelicopterUnitPrefabsExposeBakedBladeTransforms();
             tests.FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs();
-            Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=7");
+            Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -98,6 +99,52 @@ public sealed class UnitHelicopterBladeSpinSystemTests
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
         Assert.Greater(math.length(after.value - before.value), 0.01f, "The baked blade buffer path must rotate airborne helicopters without relying on entity names.");
+    }
+
+    [Test]
+    public void AirborneAirUnitRotatesLodBladeDescendants()
+    {
+        using var world = new World(nameof(AirborneAirUnitRotatesLodBladeDescendants));
+        EntityManager em = world.EntityManager;
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualComponent), typeof(LocalTransform), typeof(UnitAirComponent));
+        em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+        em.SetComponentData(helicopter, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, LocalTransform.FromPosition(new float3(0f, 6f, 0f)));
+        em.SetComponentData(helicopter, new UnitAirComponent
+        {
+            HomePosition = float3.zero,
+            HomeInitialized = 1,
+            Airborne = 1
+        });
+
+        Entity midRoot = em.CreateEntity(typeof(LocalTransform));
+        Entity midBlade = em.CreateEntity(typeof(LocalTransform));
+        Entity lowRoot = em.CreateEntity(typeof(LocalTransform));
+        Entity lowBlade = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(midRoot, LocalTransform.Identity);
+        em.SetComponentData(midBlade, LocalTransform.Identity);
+        em.SetComponentData(lowRoot, LocalTransform.Identity);
+        em.SetComponentData(lowBlade, LocalTransform.Identity);
+        em.SetName(midRoot, "MidLod");
+        em.SetName(midBlade, "Blades_Main_Y");
+        em.SetName(lowRoot, "LowLod");
+        em.SetName(lowBlade, "Blades_Back_X");
+        em.AddBuffer<Child>(midRoot).Add(new Child { Value = midBlade });
+        em.AddBuffer<Child>(lowRoot).Add(new Child { Value = lowBlade });
+        em.AddComponentData(helicopter, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.AddComponentData(helicopter, new UnitLowLodInstanceReference { Instance = lowRoot });
+
+        quaternion midBefore = em.GetComponentData<LocalTransform>(midBlade).Rotation;
+        quaternion lowBefore = em.GetComponentData<LocalTransform>(lowBlade).Rotation;
+        SystemHandle system = world.CreateSystem<UnitHelicopterBladeSpinSystem>();
+        world.SetTime(new TimeData(1d, 0.25f));
+
+        system.Update(world.Unmanaged);
+
+        quaternion midAfter = em.GetComponentData<LocalTransform>(midBlade).Rotation;
+        quaternion lowAfter = em.GetComponentData<LocalTransform>(lowBlade).Rotation;
+        Assert.Greater(math.length(midAfter.value - midBefore.value), 0.01f, "A visible helicopter mid LOD must not leave static blades beside the detail rotor.");
+        Assert.Greater(math.length(lowAfter.value - lowBefore.value), 0.01f, "A visible helicopter low LOD must not leave static blades beside the detail rotor.");
     }
 
     [Test]

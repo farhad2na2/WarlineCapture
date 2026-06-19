@@ -125,6 +125,12 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             if (_modelLookup.HasComponent(entity))
                 modelRotated = RotateBladeDescendants(em, _childLookup, _modelLookup[entity].Instance, radians, rotatedBlades);
 
+            if (_midLookup.HasComponent(entity))
+                RotateBladeDescendants(em, _childLookup, _midLookup[entity].Instance, radians, rotatedBlades);
+
+            if (_lowLookup.HasComponent(entity))
+                RotateBladeDescendants(em, _childLookup, _lowLookup[entity].Instance, radians, rotatedBlades);
+
             if (shouldLogDiagnostics &&
                 !s_DiagnosticLogged &&
                 IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))

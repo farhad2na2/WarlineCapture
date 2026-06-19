@@ -138,10 +138,19 @@ public partial struct UnitRenderBudgetSystem : ISystem
 
         bool cameraMotionActive = _cameraMotionSystem.IsCameraMotionActive(camera, ref _scheduleSystem, ref _diagnosticStateSystem, Time.frameCount);
         int currentUnitCount = _queryContext.UnitQuery.CalculateEntityCount();
-        if (_scheduleSystem.ShouldSkipStableBudget(cameraMotionActive, currentUnitCount))
+        int currentSelectedUnitHash = CalculateSelectedUnitHash(_queryContext.SelectedUnitQuery, out int currentSelectedUnitCount);
+        if (_scheduleSystem.ShouldSkipStableBudget(
+                cameraMotionActive,
+                currentUnitCount,
+                currentSelectedUnitCount,
+                currentSelectedUnitHash))
             return;
 
-        if (_scheduleSystem.ShouldSkipUpdateFrame(cameraMotionActive, Time.frameCount))
+        if (_scheduleSystem.ShouldSkipUpdateFrame(
+                cameraMotionActive,
+                Time.frameCount,
+                currentSelectedUnitCount,
+                currentSelectedUnitHash))
             return;
 
         _scheduleSystem.ScheduleNextUpdate(cameraMotionActive, Time.frameCount, UpdateIntervalFrames);
@@ -353,7 +362,29 @@ public partial struct UnitRenderBudgetSystem : ISystem
             counters.VisibleMidSafetyPatched == 0 &&
             counters.MissingMidInstance == 0 &&
             counters.MissingLowInstance == 0;
-        _scheduleSystem.RecordBudgetStability(currentUnitCount, budgetStable);
+        _scheduleSystem.RecordBudgetStability(
+            currentUnitCount,
+            currentSelectedUnitCount,
+            currentSelectedUnitHash,
+            budgetStable);
+    }
+
+    private static int CalculateSelectedUnitHash(EntityQuery selectedUnitQuery, out int selectedUnitCount)
+    {
+        using NativeArray<Entity> selectedUnits = selectedUnitQuery.ToEntityArray(Allocator.Temp);
+        selectedUnitCount = selectedUnits.Length;
+        unchecked
+        {
+            int hash = selectedUnitCount;
+            for (int i = 0; i < selectedUnits.Length; i++)
+            {
+                Entity entity = selectedUnits[i];
+                hash = (hash * 397) ^ entity.Index;
+                hash = (hash * 397) ^ entity.Version;
+            }
+
+            return hash;
+        }
     }
 
 }

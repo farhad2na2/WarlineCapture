@@ -35,6 +35,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
             tests.UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden();
             tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
+            tests.UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference();
             tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
@@ -44,7 +45,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=19");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=20");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -384,6 +385,52 @@ public sealed class VehicleVisualAdornmentsSystemTests
 
         Entity outline = AssertSelectionObjectOutline(em, aircraft, aircraftRenderer, "Vehicle", visualRoot);
         Assert.AreEqual(1.35f, em.GetComponentData<LocalTransform>(outline).Scale, 0.001f);
+    }
+
+    [Test]
+    public void UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference()
+    {
+        using var world = new World(nameof(UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference));
+        EntityManager em = world.EntityManager;
+        Entity markerPrefab = CreateReferenceSelectionMarkerPrefab(em);
+        Entity helicopter = CreateVehicle(em, health: 100);
+        Entity visualRoot = CreateVisualInstance(em);
+        Entity bodyRenderer = CreateRenderableChild(em, visualRoot, "TransportHelicopterBody", 1.2f);
+        Entity bladePivot = em.CreateEntity(typeof(Parent), typeof(LocalTransform));
+        em.SetName(bladePivot, "MainSpinPivot");
+        em.SetComponentData(bladePivot, new Parent { Value = visualRoot });
+        em.SetComponentData(bladePivot, LocalTransform.Identity);
+        Entity bladeRenderer = CreateRenderableChild(em, bladePivot, "FastDiscVisual", 1.4f);
+        em.SetComponentData(bladeRenderer, LocalTransform.FromPositionRotationScale(new float3(2f, 0.2f, 0.3f), quaternion.identity, 1.4f));
+
+        DynamicBuffer<UnitHelicopterBladeReference> blades = em.AddBuffer<UnitHelicopterBladeReference>(helicopter);
+        blades.Add(new UnitHelicopterBladeReference
+        {
+            Blade = bladePivot,
+            Axis = 1
+        });
+        em.AddComponentData(helicopter, new UnitDetailedVisualReference { Root = visualRoot });
+        em.AddComponentData(helicopter, new UnitAirMovement
+        {
+            CruiseHeight = 18f,
+            RunwayTaxiSpeed = 0f
+        });
+        em.AddComponentData(helicopter, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+        em.AddComponent<SelectedUnitTag>(helicopter);
+
+        SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        system.Update(world.Unmanaged);
+
+        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(helicopter).Instance;
+        DynamicBuffer<SelectionObjectOutlineInstanceElement> outlines = em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker);
+        Assert.AreEqual(1, outlines.Length, "Selected helicopters must not create a static blue outline for spinning blade renderers.");
+        Entity outline = outlines[0].Value;
+        Assert.AreEqual(visualRoot, em.GetComponentData<Parent>(outline).Value);
+        Assert.AreEqual(em.GetComponentData<LocalTransform>(bodyRenderer).Position, em.GetComponentData<LocalTransform>(outline).Position);
+        Assert.AreNotEqual(
+            em.GetComponentData<LocalTransform>(bladeRenderer).Position,
+            em.GetComponentData<LocalTransform>(outline).Position,
+            "The remaining aircraft outline should come from the body renderer, not the blade renderer.");
     }
 
     [Test]

@@ -214,7 +214,9 @@ public readonly struct UnitRenderBudgetDecision
             shouldShowMid = activeVisual == UnitRenderVisualKind.Mid;
             shouldShowLow = activeVisual == UnitRenderVisualKind.Low;
             shouldShowFar = activeVisual == UnitRenderVisualKind.Far;
+            bool forceSelectedNonCharacterDetailRoots = isSelectedUnit && !isCharacter;
             bool applyVisualRoots =
+                forceSelectedNonCharacterDetailRoots ||
                 !hadVisualState ||
                 previousVisual != activeVisual ||
                 (activeVisual != desiredVisual && (desiredVisual == UnitRenderVisualKind.Mid || desiredVisual == UnitRenderVisualKind.Low));

@@ -1,3 +1,4 @@
+using SnivelerCode.GpuAnimation.Scripts.Components;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -28,6 +29,9 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterRenderPolicyForcesDetailedModelPath();
             tests.ImpostorTagRequestUsesCachedLookup();
             tests.UnselectedEnemyBeyondImpostorThresholdUsesFarVisual();
+            tests.SelectedVehicleForcesImmediateDetailedVisual();
+            tests.StableBudgetDoesNotSkipSelectedUnitsAndSelectionChanges();
+            tests.SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail();
             tests.MissingMeshLodInstanceKeepsDetailVisibleUntilReady();
             tests.VisualStateTransitionKeepsCurrentVisualUntilStableOrForced();
             tests.VisibilityChangeCollectionUsesCachedLookups();
@@ -43,7 +47,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=28");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=31");
         }
         catch (System.Exception ex)
         {
@@ -545,6 +549,218 @@ public sealed partial class UnitRenderBudgetSystemTests
         Assert.IsFalse(result.ShouldShowDetail);
         Assert.IsFalse(result.ShouldShowMid);
         Assert.IsFalse(result.ShouldShowLow);
+    }
+
+    [Test]
+    public void SelectedVehicleForcesImmediateDetailedVisual()
+    {
+        using var world = new World(nameof(SelectedVehicleForcesImmediateDetailedVisual));
+        using var ecb = new EntityCommandBuffer(Allocator.Temp);
+        using var readyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
+        EntityManager em = world.EntityManager;
+
+        UnitRenderBudgetVisualPlan.Result result = new UnitRenderBudgetVisualPlan().CreateDesiredVisualPlan(
+            em,
+            ecb,
+            readyTaggedThisFrame,
+            default,
+            new UnitRenderBudgetVisualPlan.Request
+            {
+                Unit = TestEntity(3),
+                DetailedBand = false,
+                MidBand = true,
+                LowBand = false,
+                HasMidLodInstance = true,
+                HasLowLodInstance = true,
+                IsCharacter = false,
+                IsEnemyUnit = false,
+                IsSelectedUnit = true,
+                Visible = 1,
+                DistanceSq = 10000f,
+                AlwaysDetailedDistanceSq = 18f * 18f,
+                EnemyAlwaysDetailedDistanceSq = 14f * 14f,
+                EnemyLowLodDistanceSq = 20f * 20f,
+                EnemyImpostorDistanceSq = 28f * 28f,
+                VisibleCharacterLowDistanceSq = 32f * 32f,
+                VisibleCharacterImpostorNearDistance = 48f,
+                VisibleCharacterImpostorFarDistance = 48f
+            },
+            new UnitRenderBudgetCharacterPolicy(),
+            new UnitRenderBudgetReadiness(),
+            new UnitRenderBudgetAnimationReadiness(),
+            new UnitRenderBudgetRenderableState());
+
+        Assert.AreEqual(UnitRenderVisualKind.Detail, result.DesiredVisual);
+        Assert.IsTrue(result.ShouldShowDetail);
+        Assert.IsFalse(result.ShouldShowMid);
+        Assert.IsFalse(result.ShouldShowLow);
+        Assert.IsFalse(result.ShouldShowFar);
+        Assert.IsTrue(result.ForceImmediateDetailVisual);
+    }
+
+    [Test]
+    public void StableBudgetDoesNotSkipSelectedUnitsAndSelectionChanges()
+    {
+        var schedule = new UnitRenderBudgetSchedule();
+        schedule.ScheduleNextUpdate(cameraMotionActive: false, frame: 10, updateIntervalFrames: 10);
+        schedule.RecordBudgetStability(
+            currentUnitCount: 12,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0,
+            budgetStable: true);
+
+        Assert.IsTrue(schedule.ShouldSkipStableBudget(
+            cameraMotionActive: false,
+            currentUnitCount: 12,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
+        Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: false,
+            frame: 15,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
+        Assert.IsFalse(schedule.ShouldSkipStableBudget(
+            cameraMotionActive: false,
+            currentUnitCount: 12,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 3075));
+        Assert.IsFalse(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: false,
+            frame: 15,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 3075));
+
+        schedule.RecordBudgetStability(
+            currentUnitCount: 12,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 3075,
+            budgetStable: true);
+        schedule.ScheduleNextUpdate(cameraMotionActive: false, frame: 20, updateIntervalFrames: 10);
+
+        Assert.IsFalse(schedule.ShouldSkipStableBudget(
+            cameraMotionActive: false,
+            currentUnitCount: 12,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 3075));
+        Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: false,
+            frame: 25,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 3075));
+        Assert.IsFalse(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: false,
+            frame: 25,
+            currentSelectedUnitCount: 1,
+            currentSelectedUnitHash: 4096));
+    }
+
+    [Test]
+    public void SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail()
+    {
+        using var world = new World(nameof(SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail));
+        EntityManager em = world.EntityManager;
+        Entity detailRoot = em.CreateEntity();
+        Entity midRoot = em.CreateEntity();
+        Entity lowRoot = em.CreateEntity();
+        Entity unit = em.CreateEntity(
+            typeof(UnitMovementBehavior),
+            typeof(SelectedUnitTag),
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitMidLodInstanceReference),
+            typeof(UnitLowLodInstanceReference),
+            typeof(UnitRenderVisualComponent));
+        em.SetComponentData(unit, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.SetComponentData(unit, new UnitDetailedVisualReference { Root = detailRoot });
+        em.SetComponentData(unit, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.SetComponentData(unit, new UnitLowLodInstanceReference { Instance = lowRoot });
+        em.SetComponentData(unit, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Detail,
+            Desired = (byte)UnitRenderVisualKind.Detail,
+            LastChangedFrame = 20
+        });
+
+        UnitRenderBudgetTestLookupSystem lookupSystem = world.GetOrCreateSystemManaged<UnitRenderBudgetTestLookupSystem>();
+        using var ecb = new EntityCommandBuffer(Allocator.Temp);
+        using var safetyTaggedThisFrame = new NativeHashSet<Entity>(4, Allocator.Temp);
+        using var readyTaggedThisFrame = new NativeHashSet<Entity>(4, Allocator.Temp);
+        using var distances = new NativeList<UnitRenderBudgetDistance.UnitDistance>(Allocator.Temp);
+        using var detailedUnits = new NativeHashSet<Entity>(1, Allocator.Temp);
+        using var midLodUnits = new NativeHashSet<Entity>(1, Allocator.Temp);
+        using var lowLodUnits = new NativeHashSet<Entity>(1, Allocator.Temp);
+        using var entitiesToShow = new NativeList<Entity>(Allocator.Temp);
+        using var entitiesToHide = new NativeList<Entity>(Allocator.Temp);
+        using var unitsToShowDetailed = new NativeList<Entity>(Allocator.Temp);
+        using var unitsToShowFarImpostor = new NativeList<Entity>(Allocator.Temp);
+        distances.Add(new UnitRenderBudgetDistance.UnitDistance
+        {
+            Unit = unit,
+            DistanceSq = 10000f,
+            Priority = 0,
+            Visible = 1
+        });
+        midLodUnits.Add(unit);
+        lowLodUnits.Add(unit);
+
+        var context = new UnitRenderBudgetDecision.Context
+        {
+            RenderStateEcb = ecb,
+            SafetyTaggedThisFrame = safetyTaggedThisFrame,
+            ReadyTaggedThisFrame = readyTaggedThisFrame,
+            ChildLookup = lookupSystem.GetChildLookup(),
+            AnimationIndexLookup = lookupSystem.GetMaterialAnimationIndexLookup(),
+            MoveVisualLookup = lookupSystem.GetMoveVisualLookup(),
+            MovementBehaviorLookup = lookupSystem.GetMovementBehaviorLookup(),
+            SourcePrefabKeyLookup = lookupSystem.GetSourcePrefabKeyLookup(),
+            FactionLookup = lookupSystem.GetFactionLookup(),
+            SelectedLookup = lookupSystem.GetSelectedLookup(),
+            VisualStateLookup = lookupSystem.GetVisualStateLookup(),
+            CulledUnitLookup = lookupSystem.GetCulledUnitLookup(),
+            EntityStorageInfoLookup = lookupSystem.GetEntityStorageInfoLookupForTests(),
+            DisabledLookup = lookupSystem.GetDisabledLookup(),
+            DisableRenderingLookup = lookupSystem.GetDisableRenderingLookup(),
+            CulledTagLookup = lookupSystem.GetCulledTagLookup(),
+            Distances = distances,
+            DetailedUnits = detailedUnits,
+            MidLodUnits = midLodUnits,
+            LowLodUnits = lowLodUnits,
+            EntitiesToShow = entitiesToShow,
+            EntitiesToHide = entitiesToHide,
+            UnitsToShowDetailed = unitsToShowDetailed,
+            UnitsToShowFarImpostor = unitsToShowFarImpostor,
+            AlwaysDetailedDistanceSq = 18f * 18f,
+            EnemyAlwaysDetailedDistanceSq = 14f * 14f,
+            EnemyLowLodDistanceSq = 20f * 20f,
+            EnemyImpostorDistanceSq = 28f * 28f,
+            VisibleCharacterLowDistanceSq = 32f * 32f,
+            VisibleCharacterImpostorNearDistance = 48f,
+            VisibleCharacterImpostorFarDistance = 48f,
+            ClassificationSystem = new UnitRenderBudgetClassification(),
+            CharacterPolicySystem = new UnitRenderBudgetCharacterPolicy(),
+            LodReferenceSystem = new UnitRenderBudgetLodReferences(),
+            LodReferenceLookups = lookupSystem.GetLodReferenceLookups(),
+            AnimationReadinessSystem = new UnitRenderBudgetAnimationReadiness(),
+            AnimationReadinessLookups = lookupSystem.GetAnimationReadinessLookups(),
+            RenderableQuerySystem = new UnitRenderBudgetRenderableState(),
+            RenderableQueryLookups = lookupSystem.GetRenderableQueryLookups(),
+            VisualStateSystem = new UnitRenderBudgetVisualState(),
+            ReadinessSystem = new UnitRenderBudgetReadiness(),
+            ReadinessLookups = lookupSystem.GetReadinessLookups(),
+            RenderSafetySystem = new UnitRenderBudgetRenderSafety(),
+            RenderSafetyLookups = lookupSystem.GetRenderSafetyLookups(),
+            VisualPlanSystem = new UnitRenderBudgetVisualPlan(),
+            VisibilityChangeSystem = new UnitRenderBudgetVisibilityChange(),
+            ImpostorTagSystem = new UnitRenderBudgetImpostorTag(),
+            CurrentFrame = 30
+        };
+
+        UnitRenderBudgetDecision.Result result = new UnitRenderBudgetDecision().Process(ref context);
+
+        Assert.AreEqual(2, result.Changed);
+        Assert.AreEqual(2, entitiesToHide.Length);
+        Assert.IsTrue(entitiesToHide.Contains(midRoot));
+        Assert.IsTrue(entitiesToHide.Contains(lowRoot));
+        Assert.AreEqual(0, entitiesToShow.Length);
     }
 
     [Test]
@@ -1060,6 +1276,26 @@ public sealed partial class UnitRenderBudgetSystemTests
             return GetComponentLookup<UnitSourcePrefabKey>(true);
         }
 
+        public ComponentLookup<Faction> GetFactionLookup()
+        {
+            return GetComponentLookup<Faction>(true);
+        }
+
+        public ComponentLookup<SelectedUnitTag> GetSelectedLookup()
+        {
+            return GetComponentLookup<SelectedUnitTag>(true);
+        }
+
+        public ComponentLookup<MaterialAnimationIndex> GetMaterialAnimationIndexLookup()
+        {
+            return GetComponentLookup<MaterialAnimationIndex>(true);
+        }
+
+        public ComponentLookup<UnitMoveVisualComponent> GetMoveVisualLookup()
+        {
+            return GetComponentLookup<UnitMoveVisualComponent>(true);
+        }
+
         public ComponentLookup<UnitRenderBudgetCulledUnitTag> GetCulledUnitLookup()
         {
             return GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
@@ -1115,6 +1351,16 @@ public sealed partial class UnitRenderBudgetSystemTests
             {
                 EntityStorageInfoLookup = GetEntityStorageInfoLookup(),
                 VisualReadyLookup = GetComponentLookup<UnitRenderVisualReadyTag>(true)
+            };
+        }
+
+        public UnitRenderBudgetAnimationReadiness.Lookups GetAnimationReadinessLookups()
+        {
+            return new UnitRenderBudgetAnimationReadiness.Lookups
+            {
+                MeshLodLookup = GetComponentLookup<MeshLODComponent>(true),
+                MaterialAlphaCompleteLookup = GetComponentLookup<MaterialAlphaCompleteTag>(true),
+                HasGpuAnimationMaterialLookups = 1
             };
         }
 
